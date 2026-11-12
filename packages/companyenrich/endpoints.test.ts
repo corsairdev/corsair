@@ -271,6 +271,57 @@ describe('Company endpoints', () => {
 		expectLogged('companies.searchPreview', { count: 1 });
 	});
 
+	it('accepts nullable filters in semantic interpretation responses', async () => {
+		const interpretation = {
+			filter: {
+				query: null,
+				country: null,
+				foundedYear: { min: null, max: 2020 },
+				fundingAmount: { min: 1_000_000, max: null },
+				fundingYear: { min: null, max: 2024 },
+				workforceGrowth: {
+					period: null,
+					department: null,
+					min: null,
+					max: 0.2,
+				},
+				workforceSize: [{ department: null, min: null, max: 10 }],
+			},
+		};
+		const previewItem = {
+			id: companyId,
+			logoUrl: 'https://example.com/logo.png',
+			updatedAt: '2026-10-19T00:00:00.000Z',
+		};
+
+		mockedRequest.mockResolvedValueOnce({
+			items: [company],
+			nextCursor: null,
+			interpretation,
+		});
+		await expect(
+			Companies.search(ctx, { semantic: { query: 'SaaS in the US' } }),
+		).resolves.toMatchObject({ interpretation });
+
+		mockedRequest.mockResolvedValueOnce({ count: 1, total: 1, interpretation });
+		await expect(
+			Companies.searchCount(ctx, {
+				semantic: { query: 'SaaS in the US' },
+			}),
+		).resolves.toMatchObject({ interpretation });
+
+		mockedRequest.mockResolvedValueOnce({
+			items: [previewItem],
+			total: 1,
+			interpretation,
+		});
+		await expect(
+			Companies.searchPreview(ctx, {
+				semantic: { query: 'SaaS in the US' },
+			}),
+		).resolves.toMatchObject({ interpretation });
+	});
+
 	it('rejects an invalid company input before making a request', async () => {
 		await expect(
 			Companies.enrichByDomain(ctx, { domain: 'x'.repeat(1025) }),

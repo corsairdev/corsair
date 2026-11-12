@@ -1,5 +1,9 @@
 import { AuthMissingError } from 'corsair/core';
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class CompanyEnrichAPIError extends Error {
@@ -18,6 +22,16 @@ export class CompanyEnrichAPIError extends Error {
  * https://docs.companyenrich.com/reference/get_v2-companies-enrich.md
  */
 export const COMPANYENRICH_API_BASE = 'https://api.companyenrich.com';
+
+// Corsair's endpoint error handlers own retry policy; keep the HTTP transport
+// to one attempt while still parsing Retry-After for the 429 handler.
+const COMPANYENRICH_NO_TRANSPORT_RETRIES: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: { retryAfter: 'retry-after' },
+};
 
 /** A query value the transport can serialise (arrays become repeated params). */
 export type CompanyEnrichQueryValue =
@@ -90,7 +104,9 @@ export async function makeCompanyEnrichRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: COMPANYENRICH_NO_TRANSPORT_RETRIES,
+		});
 	} catch (error) {
 		if (error instanceof Error) {
 			throw error;

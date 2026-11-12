@@ -627,7 +627,7 @@ await corsair.companyenrich.api.companies.enrichByProperties({
 
 `companies.get`
 
-Get a stored company by its CompanyEnrich ID. Costs 1 credit plus 1 per requested expansion.
+Get a stored company by its CompanyEnrich ID. Costs 1 credit plus 1 per financial, keywords, NAICS codes or technologies expansion; workforce adds 5 credits (6 total).
 
 **Risk:** `read`
 
@@ -807,7 +807,6 @@ Search companies by filters, a semantic query or lookalike seed domains, with cu
 ```ts
 await corsair.companyenrich.api.companies.search({
 	pageSize: 10,
-	cursor: 'company-page-2',
 	filter: { domain: 'acme.example', type: 'private' },
 });
 ```
@@ -1081,97 +1080,97 @@ await corsair.companyenrich.api.companies.search({
 ```ts
 {
   filter?: {
-    query?: string,
+    query?: string | null,
     id?: string | string[] | {
       in?: string[],
       notIn?: string[]
-    },
+    } | null,
     domain?: string | string[] | {
       in?: string[],
       notIn?: string[]
-    },
+    } | null,
     keywords?: string | string[] | {
       in?: string[],
       notIn?: string[],
       all?: string[]
-    },
+    } | null,
     technologies?: string | string[] | {
       in?: string[],
       notIn?: string[],
       all?: string[]
-    },
+    } | null,
     region?: string | string[] | {
       in?: string[],
       notIn?: string[]
-    },
+    } | null,
     country?: string | string[] | {
       in?: string[],
       notIn?: string[]
-    },
+    } | null,
     state?: number | number[] | {
       in?: number[],
       notIn?: number[]
-    },
+    } | null,
     city?: number | number[] | {
       in?: number[],
       notIn?: number[]
-    },
+    } | null,
     type?: private | public | self-employed | self-owned | partnership | nonprofit | educational | government | (private | public | self-employed | self-owned | partnership | nonprofit | educational | government)[] | {
       in?: (private | public | self-employed | self-owned | partnership | nonprofit | educational | government)[],
       notIn?: (private | public | self-employed | self-owned | partnership | nonprofit | educational | government)[]
-    },
+    } | null,
     employees?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[] | {
       in?: (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[],
       notIn?: (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[]
-    },
+    } | null,
     reportedEmployees?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[] | {
       in?: (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[],
       notIn?: (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[]
-    },
+    } | null,
     revenue?: under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b | (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b)[] | {
       in?: (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b)[],
       notIn?: (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b)[]
-    },
+    } | null,
     workforceGrowth?: {
-      period?: m6 | y1 | y2,
-      department?: overall | c_suite | product_management | engineering_technical | design | education | finance | human_resources | information_technology | legal | marketing | medical_health | operations | sales | consulting,
-      min?: number,
-      max?: number
-    },
+      period?: m6 | y1 | y2 | null,
+      department?: overall | c_suite | product_management | engineering_technical | design | education | finance | human_resources | information_technology | legal | marketing | medical_health | operations | sales | consulting | null,
+      min?: number | null,
+      max?: number | null
+    } | null,
     workforceSize?: {
-      department?: overall | c_suite | product_management | engineering_technical | design | education | finance | human_resources | information_technology | legal | marketing | medical_health | operations | sales | consulting,
-      min?: number,
-      max?: number
-    }[],
+      department?: overall | c_suite | product_management | engineering_technical | design | education | finance | human_resources | information_technology | legal | marketing | medical_health | operations | sales | consulting | null,
+      min?: number | null,
+      max?: number | null
+    }[] | null,
     naicsCodes?: string | string[] | {
       in?: string[],
       notIn?: string[],
       all?: string[]
-    },
+    } | null,
     categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | {
       in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
       notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
       all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[]
-    },
+    } | null,
     foundedYear?: {
-      min?: number,
-      max?: number
-    },
+      min?: number | null,
+      max?: number | null
+    } | null,
     fundingRounds?: seed | debt_financing | angel | venture | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other | (seed | debt_financing | angel | venture | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other)[] | {
       in?: (seed | debt_financing | angel | venture | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other)[],
       notIn?: (seed | debt_financing | angel | venture | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other)[]
-    },
+    } | null,
     fundingAmount?: {
-      min?: number,
-      max?: number
-    },
+      min?: number | null,
+      max?: number | null
+    } | null,
     fundingYear?: {
-      min?: number,
-      max?: number
-    },
+      min?: number | null,
+      max?: number | null
+    } | null,
     require?: linkedin | twitter | facebook | instagram | angellist | crunchbase | youtube | country | city | state | revenue | foundedYear | anyFunding | (linkedin | twitter | facebook | instagram | angellist | crunchbase | youtube | country | city | state | revenue | foundedYear | anyFunding)[] | {
       all: (linkedin | twitter | facebook | instagram | angellist | crunchbase | youtube | country | city | state | revenue | foundedYear | anyFunding)[]
-    }
+    } | null
   } | null,
   boost?: {
     names?: string[] | null,
@@ -1348,97 +1347,97 @@ await corsair.companyenrich.api.companies.searchCount({
 ```ts
 {
   filter?: {
-    query?: string,
+    query?: string | null,
     id?: string | string[] | {
       in?: string[],
       notIn?: string[]
-    },
+    } | null,
     domain?: string | string[] | {
       in?: string[],
       notIn?: string[]
-    },
+    } | null,
     keywords?: string | string[] | {
       in?: string[],
       notIn?: string[],
       all?: string[]
-    },
+    } | null,
     technologies?: string | string[] | {
       in?: string[],
       notIn?: string[],
       all?: string[]
-    },
+    } | null,
     region?: string | string[] | {
       in?: string[],
       notIn?: string[]
-    },
+    } | null,
     country?: string | string[] | {
       in?: string[],
       notIn?: string[]
-    },
+    } | null,
     state?: number | number[] | {
       in?: number[],
       notIn?: number[]
-    },
+    } | null,
     city?: number | number[] | {
       in?: number[],
       notIn?: number[]
-    },
+    } | null,
     type?: private | public | self-employed | self-owned | partnership | nonprofit | educational | government | (private | public | self-employed | self-owned | partnership | nonprofit | educational | government)[] | {
       in?: (private | public | self-employed | self-owned | partnership | nonprofit | educational | government)[],
       notIn?: (private | public | self-employed | self-owned | partnership | nonprofit | educational | government)[]
-    },
+    } | null,
     employees?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[] | {
       in?: (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[],
       notIn?: (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[]
-    },
+    } | null,
     reportedEmployees?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[] | {
       in?: (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[],
       notIn?: (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[]
-    },
+    } | null,
     revenue?: under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b | (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b)[] | {
       in?: (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b)[],
       notIn?: (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b)[]
-    },
+    } | null,
     workforceGrowth?: {
-      period?: m6 | y1 | y2,
-      department?: overall | c_suite | product_management | engineering_technical | design | education | finance | human_resources | information_technology | legal | marketing | medical_health | operations | sales | consulting,
-      min?: number,
-      max?: number
-    },
+      period?: m6 | y1 | y2 | null,
+      department?: overall | c_suite | product_management | engineering_technical | design | education | finance | human_resources | information_technology | legal | marketing | medical_health | operations | sales | consulting | null,
+      min?: number | null,
+      max?: number | null
+    } | null,
     workforceSize?: {
-      department?: overall | c_suite | product_management | engineering_technical | design | education | finance | human_resources | information_technology | legal | marketing | medical_health | operations | sales | consulting,
-      min?: number,
-      max?: number
-    }[],
+      department?: overall | c_suite | product_management | engineering_technical | design | education | finance | human_resources | information_technology | legal | marketing | medical_health | operations | sales | consulting | null,
+      min?: number | null,
+      max?: number | null
+    }[] | null,
     naicsCodes?: string | string[] | {
       in?: string[],
       notIn?: string[],
       all?: string[]
-    },
+    } | null,
     categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | {
       in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
       notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
       all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[]
-    },
+    } | null,
     foundedYear?: {
-      min?: number,
-      max?: number
-    },
+      min?: number | null,
+      max?: number | null
+    } | null,
     fundingRounds?: seed | debt_financing | angel | venture | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other | (seed | debt_financing | angel | venture | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other)[] | {
       in?: (seed | debt_financing | angel | venture | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other)[],
       notIn?: (seed | debt_financing | angel | venture | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other)[]
-    },
+    } | null,
     fundingAmount?: {
-      min?: number,
-      max?: number
-    },
+      min?: number | null,
+      max?: number | null
+    } | null,
     fundingYear?: {
-      min?: number,
-      max?: number
-    },
+      min?: number | null,
+      max?: number | null
+    } | null,
     require?: linkedin | twitter | facebook | instagram | angellist | crunchbase | youtube | country | city | state | revenue | foundedYear | anyFunding | (linkedin | twitter | facebook | instagram | angellist | crunchbase | youtube | country | city | state | revenue | foundedYear | anyFunding)[] | {
       all: (linkedin | twitter | facebook | instagram | angellist | crunchbase | youtube | country | city | state | revenue | foundedYear | anyFunding)[]
-    }
+    } | null
   } | null,
   boost?: {
     names?: string[] | null,
@@ -1632,97 +1631,97 @@ await corsair.companyenrich.api.companies.searchPreview({
 ```ts
 {
   filter?: {
-    query?: string,
+    query?: string | null,
     id?: string | string[] | {
       in?: string[],
       notIn?: string[]
-    },
+    } | null,
     domain?: string | string[] | {
       in?: string[],
       notIn?: string[]
-    },
+    } | null,
     keywords?: string | string[] | {
       in?: string[],
       notIn?: string[],
       all?: string[]
-    },
+    } | null,
     technologies?: string | string[] | {
       in?: string[],
       notIn?: string[],
       all?: string[]
-    },
+    } | null,
     region?: string | string[] | {
       in?: string[],
       notIn?: string[]
-    },
+    } | null,
     country?: string | string[] | {
       in?: string[],
       notIn?: string[]
-    },
+    } | null,
     state?: number | number[] | {
       in?: number[],
       notIn?: number[]
-    },
+    } | null,
     city?: number | number[] | {
       in?: number[],
       notIn?: number[]
-    },
+    } | null,
     type?: private | public | self-employed | self-owned | partnership | nonprofit | educational | government | (private | public | self-employed | self-owned | partnership | nonprofit | educational | government)[] | {
       in?: (private | public | self-employed | self-owned | partnership | nonprofit | educational | government)[],
       notIn?: (private | public | self-employed | self-owned | partnership | nonprofit | educational | government)[]
-    },
+    } | null,
     employees?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[] | {
       in?: (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[],
       notIn?: (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[]
-    },
+    } | null,
     reportedEmployees?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[] | {
       in?: (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[],
       notIn?: (1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K)[]
-    },
+    } | null,
     revenue?: under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b | (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b)[] | {
       in?: (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b)[],
       notIn?: (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b)[]
-    },
+    } | null,
     workforceGrowth?: {
-      period?: m6 | y1 | y2,
-      department?: overall | c_suite | product_management | engineering_technical | design | education | finance | human_resources | information_technology | legal | marketing | medical_health | operations | sales | consulting,
-      min?: number,
-      max?: number
-    },
+      period?: m6 | y1 | y2 | null,
+      department?: overall | c_suite | product_management | engineering_technical | design | education | finance | human_resources | information_technology | legal | marketing | medical_health | operations | sales | consulting | null,
+      min?: number | null,
+      max?: number | null
+    } | null,
     workforceSize?: {
-      department?: overall | c_suite | product_management | engineering_technical | design | education | finance | human_resources | information_technology | legal | marketing | medical_health | operations | sales | consulting,
-      min?: number,
-      max?: number
-    }[],
+      department?: overall | c_suite | product_management | engineering_technical | design | education | finance | human_resources | information_technology | legal | marketing | medical_health | operations | sales | consulting | null,
+      min?: number | null,
+      max?: number | null
+    }[] | null,
     naicsCodes?: string | string[] | {
       in?: string[],
       notIn?: string[],
       all?: string[]
-    },
+    } | null,
     categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | {
       in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
       notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
       all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[]
-    },
+    } | null,
     foundedYear?: {
-      min?: number,
-      max?: number
-    },
+      min?: number | null,
+      max?: number | null
+    } | null,
     fundingRounds?: seed | debt_financing | angel | venture | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other | (seed | debt_financing | angel | venture | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other)[] | {
       in?: (seed | debt_financing | angel | venture | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other)[],
       notIn?: (seed | debt_financing | angel | venture | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other)[]
-    },
+    } | null,
     fundingAmount?: {
-      min?: number,
-      max?: number
-    },
+      min?: number | null,
+      max?: number | null
+    } | null,
     fundingYear?: {
-      min?: number,
-      max?: number
-    },
+      min?: number | null,
+      max?: number | null
+    } | null,
     require?: linkedin | twitter | facebook | instagram | angellist | crunchbase | youtube | country | city | state | revenue | foundedYear | anyFunding | (linkedin | twitter | facebook | instagram | angellist | crunchbase | youtube | country | city | state | revenue | foundedYear | anyFunding)[] | {
       all: (linkedin | twitter | facebook | instagram | angellist | crunchbase | youtube | country | city | state | revenue | foundedYear | anyFunding)[]
-    }
+    } | null
   } | null,
   boost?: {
     names?: string[] | null,
@@ -1747,7 +1746,7 @@ Get observed headcount and department breakdowns for one company by ID or domain
 **Risk:** `read`
 
 ```ts
-await corsair.companyenrich.api.companies.workforce({ id: '00000000-0000-4000-8000-000000000001', cursor: 'workforce-page-2' });
+await corsair.companyenrich.api.companies.workforce({ id: '00000000-0000-4000-8000-000000000001' });
 ```
 
 **Input**
@@ -1919,7 +1918,6 @@ await corsair.companyenrich.api.geo.searchCities({
 	countryCodes: ['US'],
 	query: 'San Francisco',
 	pageSize: 10,
-	cursor: 'city-page-2',
 });
 ```
 
@@ -1971,7 +1969,7 @@ Search countries by a literal name substring, with cursor pagination. Free.
 **Risk:** `read`
 
 ```ts
-await corsair.companyenrich.api.geo.searchCountries({ query: 'United', pageSize: 10, cursor: 'country-page-2' });
+await corsair.companyenrich.api.geo.searchCountries({ query: 'United', pageSize: 10 });
 ```
 
 **Input**
@@ -2022,7 +2020,6 @@ await corsair.companyenrich.api.geo.searchStates({
 	countryCodes: ['US'],
 	query: 'California',
 	pageSize: 10,
-	cursor: 'state-page-2',
 });
 ```
 
@@ -2409,7 +2406,6 @@ Search people by person filters and an optional company query, with cursor pagin
 ```ts
 await corsair.companyenrich.api.people.search({
 	pageSize: 10,
-	cursor: 'people-page-2',
 	filter: { domain: 'acme.example', position: 'Engineer' },
 });
 ```

@@ -31,7 +31,6 @@ apiExamples:
       - workforce
   companies.search:
     pageSize: 10
-    cursor: company-page-2
     filter:
       domain: acme.example
       type: private
@@ -46,7 +45,6 @@ apiExamples:
       minScore: 0.8
   companies.workforce:
     id: 00000000-0000-4000-8000-000000000001
-    cursor: workforce-page-2
   geo.getCountry:
     countryCode: US
   geo.regions: {}
@@ -57,17 +55,14 @@ apiExamples:
       - US
     query: San Francisco
     pageSize: 10
-    cursor: city-page-2
   geo.searchCountries:
     query: United
     pageSize: 10
-    cursor: country-page-2
   geo.searchStates:
     countryCodes:
       - US
     query: California
     pageSize: 10
-    cursor: state-page-2
   industries.list: {}
   keywords.autocomplete:
     query: workflow automation
@@ -84,7 +79,6 @@ apiExamples:
       - education
   people.search:
     pageSize: 10
-    cursor: people-page-2
     filter:
       domain: acme.example
       position: Engineer

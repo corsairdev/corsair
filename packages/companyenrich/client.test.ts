@@ -55,6 +55,13 @@ describe('makeCompanyEnrichRequest', () => {
 		expect(mockedRequest.mock.calls[0]?.[1]).toEqual(
 			expect.objectContaining({ method: 'GET', url: '/v2/me' }),
 		);
+		expect(mockedRequest.mock.calls[0]?.[2]).toMatchObject({
+			rateLimitConfig: {
+				enabled: true,
+				maxRetries: 0,
+				headerNames: { retryAfter: 'retry-after' },
+			},
+		});
 	});
 
 	it('sends a validated POST body and preserves query parameters', async () => {

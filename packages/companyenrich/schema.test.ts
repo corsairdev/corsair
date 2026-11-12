@@ -480,6 +480,15 @@ describe('Companyenrich schema', () => {
 		expect(CompanySearchFilterSchema.safeParse({ domain: {} }).success).toBe(
 			false,
 		);
+		expect(
+			CompanySearchQuerySchema.safeParse({
+				filter: {
+					query: null,
+					country: null,
+					foundedYear: { min: null, max: null },
+				},
+			}).success,
+		).toBe(false);
 	});
 
 	it('does not expose unsupported past-experience exclusions', () => {

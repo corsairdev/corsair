@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Account,
 	Companies,
@@ -243,7 +244,7 @@ const companyenrichEndpointMeta = {
 	'companies.get': {
 		riskLevel: 'read',
 		description:
-			'Get a stored company by its CompanyEnrich ID. Costs 1 credit plus 1 per requested expansion.',
+			'Get a stored company by its CompanyEnrich ID. Costs 1 credit plus 1 per financial, keywords, NAICS codes or technologies expansion; workforce adds 5 credits (6 total).',
 	},
 	'companies.enrichByDomain': {
 		riskLevel: 'read',
@@ -396,6 +397,18 @@ export function companyenrich<const T extends CompanyenrichPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	const { DEFAULT: builtInDefault, ...builtInErrorHandlers } = errorHandlers;
+	const { DEFAULT: callerDefault, ...callerErrorHandlers } =
+		options.errorHandlers ?? {};
+	// Put caller handlers first for first-match dispatch, then re-apply their
+	// values so handlers with built-in names remain caller overrides.
+	const orderedErrorHandlers = {
+		...callerErrorHandlers,
+		...builtInErrorHandlers,
+		...callerErrorHandlers,
+		// DEFAULT matches everything, so keep the selected fallback last.
+		DEFAULT: callerDefault ?? builtInDefault,
+	};
 
 	return {
 		id: 'companyenrich',
@@ -410,19 +423,20 @@ export function companyenrich<const T extends CompanyenrichPluginOptions>(
 		webhooks: {},
 		endpointMeta: companyenrichEndpointMeta,
 		endpointSchemas: companyenrichEndpointSchemas,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
-		// Every v2 route requires the API token, so a missing stored key
-		// resolves to '' and the request helper raises AuthMissingError.
+		errorHandlers: orderedErrorHandlers,
+		// Every v2 route requires the API token; raise here so Corsair can attach
+		// the supported first-use connect guidance before the endpoint is called.
 		keyBuilder: async (ctx: CompanyenrichKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				return (await ctx.keys.get_api_key()) ?? '';
+				const apiKey = await ctx.keys.get_api_key();
+				if (!apiKey) {
+					throw new AuthMissingError('companyenrich', 'api_key');
+				}
+				return apiKey;
 			}
 
 			return '';

@@ -26,7 +26,8 @@ export const companiesGet: CompanyenrichEndpoints['companiesGet'] = async (
 	const parsedInput =
 		CompanyenrichEndpointInputSchemas.companiesGet.parse(input);
 
-	// 1 credit per company returned, plus 1 per paid expansion (docs:
+	// 1 credit per company returned; financial, keywords, naicsCodes and
+	// technologies add 1 each, while workforce adds 5 (6 total; docs:
 	// https://docs.companyenrich.com/reference/get_v2-companies-companyid.md).
 	const response = await makeCompanyEnrichRequest<CompanyResponse>(
 		`/v2/companies/${encodeURIComponent(parsedInput.companyId)}`,

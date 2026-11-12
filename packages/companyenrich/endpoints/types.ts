@@ -517,6 +517,74 @@ export const CompanySearchQuerySchema = z
 
 export type CompanySearchQuery = z.infer<typeof CompanySearchQuerySchema>;
 
+// Semantic interpretation is a response, not a request: CompanyEnrich's v2
+// response schema marks filter values nullable, including range bounds. Keep
+// the request schema above non-nullable so invalid caller input still fails.
+const YearRangeInterpretationSchema = z
+	.object({
+		min: z.number().int().nullish(),
+		max: z.number().int().nullish(),
+	})
+	.strict()
+	.nullish();
+
+const AmountRangeInterpretationSchema = z
+	.object({
+		min: z.number().nullish(),
+		max: z.number().nullish(),
+	})
+	.strict()
+	.nullish();
+
+const WorkforceGrowthInterpretationSchema = z
+	.object({
+		period: WorkforceGrowthPeriodSchema.nullish(),
+		department: WorkforceGrowthDepartmentSchema.nullish(),
+		min: z.number().nullish(),
+		max: z.number().nullish(),
+	})
+	.strict()
+	.nullish();
+
+const WorkforceSizeInterpretationSchema = z
+	.array(
+		z
+			.object({
+				department: WorkforceGrowthDepartmentSchema.nullish(),
+				min: z.number().int().nullish(),
+				max: z.number().int().nullish(),
+			})
+			.strict(),
+	)
+	.nullish();
+
+const CompanySearchInterpretationFilterSchema =
+	CompanySearchFilterSchema.extend({
+		query: CompanySearchFilterSchema.shape.query.nullable(),
+		id: CompanySearchFilterSchema.shape.id.nullable(),
+		domain: CompanySearchFilterSchema.shape.domain.nullable(),
+		keywords: CompanySearchFilterSchema.shape.keywords.nullable(),
+		technologies: CompanySearchFilterSchema.shape.technologies.nullable(),
+		region: CompanySearchFilterSchema.shape.region.nullable(),
+		country: CompanySearchFilterSchema.shape.country.nullable(),
+		state: CompanySearchFilterSchema.shape.state.nullable(),
+		city: CompanySearchFilterSchema.shape.city.nullable(),
+		type: CompanySearchFilterSchema.shape.type.nullable(),
+		employees: CompanySearchFilterSchema.shape.employees.nullable(),
+		reportedEmployees:
+			CompanySearchFilterSchema.shape.reportedEmployees.nullable(),
+		revenue: CompanySearchFilterSchema.shape.revenue.nullable(),
+		workforceGrowth: WorkforceGrowthInterpretationSchema,
+		workforceSize: WorkforceSizeInterpretationSchema,
+		naicsCodes: CompanySearchFilterSchema.shape.naicsCodes.nullable(),
+		categories: CompanySearchFilterSchema.shape.categories.nullable(),
+		foundedYear: YearRangeInterpretationSchema,
+		fundingRounds: CompanySearchFilterSchema.shape.fundingRounds.nullable(),
+		fundingAmount: AmountRangeInterpretationSchema,
+		fundingYear: YearRangeInterpretationSchema,
+		require: CompanySearchFilterSchema.shape.require.nullable(),
+	});
+
 // ── Company response shapes ─────────────────────────────────────────────────
 
 const CompanyCountrySchema = z
@@ -930,7 +998,7 @@ export type CompaniesSearchPreviewInput = z.infer<
 
 const CompanySemanticInterpretationSchema = z
 	.object({
-		filter: CompanySearchFilterSchema.nullish(),
+		filter: CompanySearchInterpretationFilterSchema.nullish(),
 		boost: z
 			.object({
 				names: z.array(z.string()).nullish(),

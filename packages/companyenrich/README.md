@@ -44,6 +44,8 @@ Every operation validates its input and response against a Zod schema. Search op
 | `positions.autocomplete` | `GET /v2/positions/autocomplete` | [Lookup positions](https://docs.companyenrich.com/reference/get_v2-positions-autocomplete.md) |
 | `account.me` | `GET /v2/me` | [Get current user information](https://docs.companyenrich.com/reference/get_v2-me.md) |
 
+`companies.get` costs 1 credit per returned company. The `financial`, `keywords`, `naicsCodes`, and `technologies` expansions add 1 credit each; `workforce` adds 5 credits, for 6 total with the company lookup.
+
 ## API-surface note
 
 The OSS catalog currently shows 32 operation slots. The current v2 reference index documents 25 operations, which are the operations implemented here. The catalog also includes older or otherwise unverified job/export operations and separate similar-company operations; v2 exposes lookalike search through `companies.search` and `companies.searchCount`, and its OpenAPI description excludes saved-list exports. Those unverified catalog operations are not implemented.
