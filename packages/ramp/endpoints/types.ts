@@ -1,5 +1,14 @@
 import { z } from 'zod';
 
+/** True for a `YYYY-MM-DD` string that names a real day (no 2026-02-30). */
+function isCalendarDate(value: string): boolean {
+	const parsed = new Date(`${value}T00:00:00Z`);
+	return (
+		!Number.isNaN(parsed.getTime()) &&
+		parsed.toISOString().slice(0, 10) === value
+	);
+}
+
 /** Ramp pages cap at 100 and default to 20. */
 export const RAMP_DEFAULT_PAGE_SIZE = 20;
 export const RAMP_MAX_PAGE_SIZE = 100;
@@ -174,9 +183,11 @@ const TransactionsListInputSchema = z.object({
 	has_been_approved: z.boolean().optional(),
 	all_requirements_met_and_approved: z.boolean().optional(),
 	requires_memo: z
-		.boolean()
+		.literal(true)
 		.optional()
-		.describe('Only transactions that require a memo and do not have one.'),
+		.describe(
+			'Pass `true` for only transactions that require a memo and do not have one. Ramp accepts only `true` (`false` answers 422); leave it out for every transaction.',
+		),
 	has_statement: z.boolean().optional(),
 	has_no_sync_commits: z.boolean().optional(),
 	min_amount: AmountFilterSchema.optional(),
@@ -695,6 +706,8 @@ const BillsUpdateInputSchema = z.object({
 	invoice_number: z.string().optional(),
 	due_at: z
 		.string()
+		.regex(/^\d{4}-\d{2}-\d{2}$/, 'due_at must be a YYYY-MM-DD date')
+		.refine(isCalendarDate, 'due_at must be a real calendar date')
 		.optional()
 		.describe('A new due date, as a `YYYY-MM-DD` date.'),
 });

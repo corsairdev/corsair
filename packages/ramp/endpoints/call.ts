@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { RampContext } from '..';
 import type { RampRequest } from '../client';
-import { makeRampRequest, rampApiBase } from '../client';
+import { makeRampRequest, RampAPIError, rampApiBase } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
@@ -25,11 +25,27 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makeRampRequest(
-		ctx.key,
-		toRequest(parsed),
-		rampApiBase(ctx.options?.environment),
-	);
+	// Checked before the request, not after: logEventFromContext seals the
+	// event with the account key when encryption at rest is on, and throws when
+	// the key is missing. Raised after a write, that failure would report a
+	// completed write as failed and invite a retry that repeats it.
+	assertEncryptionConfigured(ctx);
+	const request = toRequest(parsed);
+	const base = rampApiBase(ctx.options?.environment);
+	let raw: unknown;
+	try {
+		raw = await makeRampRequest(ctx.key, request, base);
+	} catch (error) {
+		// Ramp rejects a revoked or expired token (404 DEVELOPER_7002) before it
+		// acts, so one retry with a fresh token is safe for writes too. The hook
+		// is the one oauth_2 connections set in the keyBuilder.
+		const refreshAuth = (ctx as { _refreshAuth?: () => Promise<string> })
+			._refreshAuth;
+		if (!(error instanceof RampAPIError && error.isAuthError && refreshAuth)) {
+			throw error;
+		}
+		raw = await makeRampRequest(await refreshAuth(), request, base);
+	}
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);
@@ -55,4 +71,19 @@ export function queryOf(
 		([, value]) => value !== undefined,
 	);
 	return Object.fromEntries(kept);
+}
+
+/**
+ * Refuses a request that would succeed at Ramp and then fail while logging.
+ * `logEventFromContext` throws `encryptDataAtRest requires kek` when encryption
+ * is on and no key is set, so the check runs before the request leaves.
+ */
+function assertEncryptionConfigured(ctx: RampContext): void {
+	const encrypting = (ctx as { encryptDataAtRest?: boolean }).encryptDataAtRest;
+	const kek = (ctx as { kek?: string }).kek;
+	if (encrypting === true && !kek) {
+		throw new Error(
+			'encryptDataAtRest is enabled but no kek is configured, so the request would succeed and the event log would fail. Set a kek before calling this endpoint.',
+		);
+	}
 }

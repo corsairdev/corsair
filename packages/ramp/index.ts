@@ -361,6 +361,25 @@ export function ramp<const T extends RampPluginOptions>(
 					credentials.client_id &&
 					credentials.client_secret
 				) {
+					const clientId = credentials.client_id;
+					const clientSecret = credentials.client_secret;
+					const mint = async (): Promise<string> => {
+						const token = await requestRampClientCredentialsToken({
+							clientId,
+							clientSecret,
+							scopes: options.scopes ?? RAMP_DEFAULT_SCOPES,
+							environment: options.environment,
+						});
+						const mintedAt = Math.floor(Date.now() / 1000);
+						// Token first, then its expiry: the writes are separate, and a
+						// new expiry beside the old token would keep a dead token "fresh".
+						await ctx.keys.set_access_token(token.access_token);
+						await ctx.keys.set_expires_at(String(mintedAt + token.expires_in));
+						return token.access_token;
+					};
+					// A token Ramp revokes before its recorded expiry: the request
+					// path calls this once on an auth error to mint a new one.
+					(ctx as Record<string, unknown>)._refreshAuth = mint;
 					const [accessToken, expiresAt] = await Promise.all([
 						ctx.keys.get_access_token(),
 						ctx.keys.get_expires_at(),
@@ -373,17 +392,7 @@ export function ramp<const T extends RampPluginOptions>(
 					) {
 						return accessToken;
 					}
-					const token = await requestRampClientCredentialsToken({
-						clientId: credentials.client_id,
-						clientSecret: credentials.client_secret,
-						scopes: options.scopes ?? RAMP_DEFAULT_SCOPES,
-						environment: options.environment,
-					});
-					await Promise.all([
-						ctx.keys.set_access_token(token.access_token),
-						ctx.keys.set_expires_at(String(now + token.expires_in)),
-					]);
-					return token.access_token;
+					return mint();
 				}
 				return getOAuthAccessToken(ctx, {
 					plugin: 'ramp',

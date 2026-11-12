@@ -49,7 +49,7 @@ describe('transactions.list', () => {
 			entity_id: '24850cdb-1b3f-4eb9-bf20-967ca9f97605',
 			sk_category_id: 19,
 			has_been_approved: true,
-			requires_memo: false,
+			requires_memo: true,
 			min_amount: '10.50',
 			max_amount: 500,
 			include_count: true,
@@ -72,7 +72,7 @@ describe('transactions.list', () => {
 			entity_id: '24850cdb-1b3f-4eb9-bf20-967ca9f97605',
 			sk_category_id: '19',
 			has_been_approved: 'true',
-			requires_memo: 'false',
+			requires_memo: 'true',
 			min_amount: '10.50',
 			max_amount: '500',
 			include_count: 'true',
@@ -372,6 +372,25 @@ describe('bills.update', () => {
 			due_at: '2026-06-15',
 		});
 	});
+});
+
+describe('input checks that stop a request Ramp would refuse', () => {
+	it('rejects requires_memo: false, which Ramp answers with 422', async () => {
+		await expect(
+			callEndpoint(Transactions.list, { requires_memo: false }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it.each(['tomorrow', '2026-13-40', '2026-02-30', '2026-6-15'])(
+		'rejects the due date %s before sending the bill update',
+		async (due) => {
+			await expect(
+				callEndpoint(Spend.billsUpdate, { bill_id: BILL_ID, due_at: due }),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 });
 
 describe('reimbursements.list', () => {

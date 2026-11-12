@@ -1,8 +1,10 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import { RampAPIError } from './client';
+import { RAMP_TOKEN_TIMEOUT_MS, RampAPIError } from './client';
+import * as Org from './endpoints/org';
+import type { RampContext } from './index';
 import { RAMP_DEFAULT_SCOPES, ramp } from './index';
-import { TRANSACTION_PAGE } from './test-fixtures';
+import { BUSINESS, TRANSACTION_PAGE } from './test-fixtures';
 import { captureError, respond, spyOnFetch } from './test-support';
 
 const CLIENT_ID = 'ramp_id_test';
@@ -364,5 +366,189 @@ describe('environment', () => {
 		} finally {
 			testDb.cleanup();
 		}
+	});
+});
+
+describe('token request limits', () => {
+	it('gives the token request an abort signal and reports a timeout without the secret', async () => {
+		fetchMock.mockImplementationOnce(async (_url, init?: RequestInit) => {
+			expect(init?.signal).toBeInstanceOf(AbortSignal);
+			throw new DOMException('The operation timed out.', 'TimeoutError');
+		});
+		const { keys, writes } = oauthKeys({
+			client_id: CLIENT_ID,
+			client_secret: CLIENT_SECRET,
+		});
+
+		const error = await captureError(
+			keyBuilderOf(ramp({ authType: 'oauth_2' }))(oauthCtx(keys), 'endpoint'),
+		);
+
+		expect(error).toBeInstanceOf(RampAPIError);
+		expect(error.message).toBe(
+			`Ramp token request timed out after ${RAMP_TOKEN_TIMEOUT_MS / 1000} s`,
+		);
+		expect(error.message).not.toContain(CLIENT_SECRET);
+		expect(writes).toEqual({});
+	});
+
+	it('writes the new token before its expiry', async () => {
+		respond(fetchMock, {
+			access_token: 'ramp_tok_ordered',
+			expires_in: 864000,
+		});
+		const order: string[] = [];
+		const { keys } = oauthKeys({
+			client_id: CLIENT_ID,
+			client_secret: CLIENT_SECRET,
+		});
+		const setAccess = keys.set_access_token;
+		const setExpiry = keys.set_expires_at;
+		keys.set_access_token = async (value: string) => {
+			await new Promise((resolve) => setTimeout(resolve, 5));
+			order.push('access_token');
+			await setAccess(value);
+		};
+		keys.set_expires_at = async (value: string) => {
+			order.push('expires_at');
+			await setExpiry(value);
+		};
+
+		await keyBuilderOf(ramp({ authType: 'oauth_2' }))(
+			oauthCtx(keys),
+			'endpoint',
+		);
+
+		expect(order).toEqual(['access_token', 'expires_at']);
+	});
+});
+
+describe('client credentials refresh hook', () => {
+	it('mints a new token when the request path asks, even while the stored one looks fresh', async () => {
+		const { keys, writes } = oauthKeys({
+			client_id: CLIENT_ID,
+			client_secret: CLIENT_SECRET,
+			access_token: 'ramp_tok_revoked',
+			expires_at: String(now() + 86400),
+		});
+		const ctx = oauthCtx(keys);
+
+		const cached = await keyBuilderOf(ramp({ authType: 'oauth_2' }))(
+			ctx,
+			'endpoint',
+		);
+		expect(cached).toBe('ramp_tok_revoked');
+		expect(fetchMock).not.toHaveBeenCalled();
+
+		respond(fetchMock, {
+			access_token: 'ramp_tok_replacement',
+			expires_in: 864000,
+		});
+		const refresh = ctx._refreshAuth as () => Promise<string>;
+		await expect(refresh()).resolves.toBe('ramp_tok_replacement');
+		expect(formBody(tokenRequest(0).init).get('grant_type')).toBe(
+			'client_credentials',
+		);
+		expect(writes.access_token).toBe('ramp_tok_replacement');
+	});
+});
+
+describe('request path', () => {
+	const REJECTED_TOKEN = {
+		error_v2: {
+			message: 'Invalid access token',
+			error_code: 'DEVELOPER_7002',
+		},
+	};
+
+	function endpointCtx(extra: Record<string, unknown> = {}): RampContext {
+		// unknown: the endpoints read key, options, the refresh hook and the
+		// encryption settings; the rest of a real context is not needed here.
+		return {
+			key: 'ramp_tok_old',
+			options: {},
+			...extra,
+		} as unknown as RampContext;
+	}
+
+	function authHeader(call: number): string | undefined {
+		return header(tokenRequest(call).init, 'Authorization');
+	}
+
+	it('refreshes once and retries when Ramp rejects the token', async () => {
+		respond(fetchMock, REJECTED_TOKEN, 404);
+		respond(fetchMock, BUSINESS);
+		const refresh = jest.fn(async () => 'ramp_tok_new');
+
+		const result = await Org.businessGet(
+			endpointCtx({ _refreshAuth: refresh }) as never,
+			{} as never,
+		);
+
+		expect(result.business.id).toBe(BUSINESS.id);
+		expect(refresh).toHaveBeenCalledTimes(1);
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+		expect(authHeader(0)).toBe('Bearer ramp_tok_old');
+		expect(authHeader(1)).toBe('Bearer ramp_tok_new');
+	});
+
+	it('does not loop when the fresh token is rejected too', async () => {
+		respond(fetchMock, REJECTED_TOKEN, 404);
+		respond(fetchMock, REJECTED_TOKEN, 404);
+		const refresh = jest.fn(async () => 'ramp_tok_new');
+
+		const error = await captureError(
+			Org.businessGet(
+				endpointCtx({ _refreshAuth: refresh }) as never,
+				{} as never,
+			),
+		);
+
+		expect(error).toBeInstanceOf(RampAPIError);
+		expect((error as RampAPIError).isAuthError).toBe(true);
+		expect(refresh).toHaveBeenCalledTimes(1);
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it('throws the auth error unchanged when the connection has no refresh hook', async () => {
+		respond(fetchMock, REJECTED_TOKEN, 404);
+
+		const error = await captureError(
+			Org.businessGet(endpointCtx() as never, {} as never),
+		);
+
+		expect((error as RampAPIError).code).toBe('DEVELOPER_7002');
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('does not refresh on an error that is not about the token', async () => {
+		respond(
+			fetchMock,
+			{ error_v2: { message: 'Not found', error_code: 'DEVELOPER_7004' } },
+			404,
+		);
+		const refresh = jest.fn(async () => 'ramp_tok_new');
+
+		const error = await captureError(
+			Org.businessGet(
+				endpointCtx({ _refreshAuth: refresh }) as never,
+				{} as never,
+			),
+		);
+
+		expect((error as RampAPIError).isNotFound).toBe(true);
+		expect(refresh).not.toHaveBeenCalled();
+	});
+
+	it('refuses to send a write when encryption at rest has no key', async () => {
+		const error = await captureError(
+			Org.departmentsCreate(
+				endpointCtx({ encryptDataAtRest: true, kek: '' }) as never,
+				{ name: 'Engineering' } as never,
+			),
+		);
+
+		expect(error.message).toContain('encryptDataAtRest is enabled but no kek');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

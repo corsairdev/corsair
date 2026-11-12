@@ -282,6 +282,9 @@ export async function makeRampRequest(
 	}
 }
 
+/** How long a token request may take before the call gives up. */
+export const RAMP_TOKEN_TIMEOUT_MS = 30_000;
+
 export type RampClientCredentialsToken = {
 	access_token: string;
 	/** Seconds; Ramp issues client-credentials tokens for 864,000 (10 days). */
@@ -305,18 +308,34 @@ export async function requestRampClientCredentialsToken({
 	scopes: readonly string[];
 	environment?: RampEnvironment;
 }): Promise<RampClientCredentialsToken> {
-	const response = await fetch(rampTokenUrl(environment), {
-		method: 'POST',
-		headers: {
-			Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
-			'Content-Type': 'application/x-www-form-urlencoded',
-			Accept: 'application/json',
-		},
-		body: new URLSearchParams({
-			grant_type: 'client_credentials',
-			scope: scopes.join(' '),
-		}).toString(),
-	});
+	let response: Response;
+	try {
+		response = await fetch(rampTokenUrl(environment), {
+			method: 'POST',
+			headers: {
+				Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
+				'Content-Type': 'application/x-www-form-urlencoded',
+				Accept: 'application/json',
+			},
+			body: new URLSearchParams({
+				grant_type: 'client_credentials',
+				scope: scopes.join(' '),
+			}).toString(),
+			signal: AbortSignal.timeout(RAMP_TOKEN_TIMEOUT_MS),
+		});
+	} catch (error) {
+		const name = (error as { name?: string } | undefined)?.name;
+		if (name === 'TimeoutError' || name === 'AbortError') {
+			throw new RampAPIError(
+				`Ramp token request timed out after ${RAMP_TOKEN_TIMEOUT_MS / 1000} s`,
+				{ method: 'POST' },
+			);
+		}
+		const message = error instanceof Error ? error.message : 'unknown error';
+		throw new RampAPIError(`Ramp token request failed: ${message}`, {
+			method: 'POST',
+		});
+	}
 	const text = await response.text();
 	let body: unknown;
 	try {

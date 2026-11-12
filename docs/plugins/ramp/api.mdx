@@ -1119,7 +1119,7 @@ await corsair.ramp.api.transactions.list({ state: 'ALL', from_date: '2026-05-01T
 | `sk_category_id` | `number` | No | Ramp's own category code, for example 19 for restaurants. |
 | `has_been_approved` | `boolean` | No | — |
 | `all_requirements_met_and_approved` | `boolean` | No | — |
-| `requires_memo` | `boolean` | No | Only transactions that require a memo and do not have one. |
+| `requires_memo` | `true` | No | Pass `true` for only transactions that require a memo and do not have one. Ramp accepts only `true` (`false` answers 422); leave it out for every transaction. |
 | `has_statement` | `boolean` | No | — |
 | `has_no_sync_commits` | `boolean` | No | — |
 | `min_amount` | `string \| number` | No | A decimal amount, as a string or a number. |
