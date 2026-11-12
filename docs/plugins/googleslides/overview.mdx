@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Google Slides plugin"
+sidebarTitle: "Overview"
 description: "Presentation editor for building and sharing slide decks, with slides, text, shapes, images, tables and speaker notes."
 ---
 
@@ -17,11 +18,11 @@ Speaker notes. `slides.setNotes` reads the slide first to find the notes shape, 
 
 Text ranges. A range takes `type: 'ALL'`, `FROM_START_INDEX` with `startIndex`, or `FIXED_RANGE` with both indexes. Indexes are Unicode code units counted from the start of the shape's text, and Google appends a newline the caller did not type.
 
-Destructive operations. `presentations.delete`, `slides.remove` and `text.delete` are marked destructive for Corsair permissions. `text.updateStyle` requires every name in `fields` to appear in `style`, because Google rejects the whole batch otherwise.
+Destructive operations. `presentations.delete`, `slides.remove`, `text.delete` and `batch.update` are marked destructive for Corsair permissions. In `text.updateStyle`, a property named in `fields` but absent from `style` is reset to its default.
 
-Rate limits. Google answers a quota burst with 429, or with a 403 whose body says `rateLimitExceeded`. Both are retried up to four times, waiting for `Retry-After` when present and four seconds otherwise. An exhausted daily quota is not retried, because no wait inside the request can clear it.
+Rate limits. Google answers a quota burst with 429, or with a 403 whose body says `rateLimitExceeded`. Both are retried up to four times, waiting for `Retry-After` when present and sixty seconds otherwise, so a call can wait several minutes before it gives up. An exhausted daily quota is not retried, because no wait inside the request can clear it.
 
-Raw requests. `batch.update` takes any of the 49 `batchUpdate` request types, for operations without a typed endpoint such as `mergeTableCells` or `updateParagraphStyle`.
+Raw requests. `batch.update` takes the `batchUpdate` request types without a typed endpoint, such as `mergeTableCells` or `updateParagraphStyle`. Deletions are refused there; use the typed operation.
 
 Webhooks. Google Slides sends no push notifications, so the plugin has none.
 

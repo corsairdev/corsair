@@ -1,9 +1,8 @@
 ---
-title: API
+title: "Google Slides API reference"
+sidebarTitle: "API"
 description: "API reference for Google Slides: every `googleslides.api.*` operation with input and output types."
 ---
-
-Every `googleslides.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -498,9 +497,9 @@ await corsair.googleslides.api.presentations.copy({ presentationId: '1AbCdEfGhIj
 | `locale` | `string \| null` | No | — |
 | `revisionId` | `string \| null` | No | — |
 | `url` | `string` | Yes | — |
-| `slideCount` | `number` | Yes | — |
-| `layoutCount` | `number` | Yes | — |
-| `masterCount` | `number` | Yes | — |
+| `slideCount` | `number` | No | Absent when the copy could not be read back |
+| `layoutCount` | `number` | No | — |
+| `masterCount` | `number` | No | — |
 | `pageWidthEmu` | `number \| null` | No | — |
 | `pageHeightEmu` | `number \| null` | No | — |
 | `comments` | `object[] \| null` | No | Comment threads, when comment viewing was requested |
@@ -1409,7 +1408,7 @@ await corsair.googleslides.api.text.updateStyle({ presentationId: '1AbCdEfGhIjKl
 | `fields` | `(bold \| italic \| underline \| strikethrough \| smallCaps \| fontFamily \| fontSize \| foregroundColor \| backgroundColor \| baselineOffset)[]` | Yes | Properties the write applies; others are left untouched |
 | `cellLocation` | `object` | No | 0-based cell position; required when the target is a table |
 
-Google rejects the whole batch when `fields` names a property absent from `style`, so the schema rejects that combination before the request is sent.
+Only the properties named in `fields` change. A property named in `fields` but absent from `style` is reset to its default, which is how to clear a style.
 
 <AccordionGroup>
 <Accordion title="textRange full type">
