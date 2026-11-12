@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Userflow: every `userflow.api.*` operation with input and output types."
+title: "Userflow API reference"
+sidebarTitle: "API"
+description: "API reference for the Userflow plugin in Corsair: every `userflow.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `userflow.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -83,8 +82,8 @@ await corsair.userflow.api.accounts.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
-| `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
-| `order_by` | `(name \| created_at)[]` | No | — |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `order_by` | `name \| created_at \| string \| (name \| created_at \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
 
 
 
@@ -147,10 +146,10 @@ await corsair.userflow.api.attributes.list({ scope: 'user' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
-| `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
 | `scope` | `event \| group \| group_membership \| user` | No | Only attributes attached to this kind of object. |
 | `event_name` | `string[]` | No | Only attributes used by any of these events. |
-| `order_by` | `(created_at \| display_name \| name)[]` | No | — |
+| `order_by` | `created_at \| display_name \| name \| string \| (created_at \| display_name \| name \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
 
 
 
@@ -283,9 +282,10 @@ await corsair.userflow.api.content.list({ type: 'flow' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
-| `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
 | `type` | `announcement \| assistant \| banner \| checklist \| embed \| flow \| launcher \| resource_center \| tracker` | No | Only content of this type. |
-| `order_by` | `(created_at \| name)[]` | No | — |
+| `order_by` | `created_at \| name \| string \| (created_at \| name \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
 
 
 
@@ -341,7 +341,7 @@ await corsair.userflow.api.content.listVersions({ content_id: '54bce034-1303-420
 |------|------|----------|-------------|
 | `content_id` | `string` | Yes | Required: Userflow cannot list versions across content objects. |
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
-| `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
 | `number` | `number` | No | A specific version number. |
 | `order_by` | `number \| string \| (number \| string)[]` | No | Sort by version number, optionally prefixed with "-" for descending. |
 | `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
@@ -668,10 +668,10 @@ await corsair.userflow.api.contentSessions.list({ user_id: '34907ae0-24e0-4261-a
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
-| `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
 | `content_id` | `string` | No | Only sessions of this content. |
 | `user_id` | `string` | No | Only this user sessions. |
-| `order_by` | `(created_at \| last_activity_at)[]` | No | — |
+| `order_by` | `created_at \| last_activity_at \| string \| (created_at \| last_activity_at \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
 | `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
 
 
@@ -785,8 +785,8 @@ await corsair.userflow.api.eventDefinitions.list({ limit: 100 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
-| `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
-| `order_by` | `(created_at \| display_name \| name)[]` | No | — |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `order_by` | `created_at \| display_name \| name \| string \| (created_at \| display_name \| name \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
 
 
 
@@ -1005,7 +1005,7 @@ await corsair.userflow.api.groups.list({ limit: 50 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
-| `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
 | `condition` | `string` | No | — |
 | `user_id` | `string` | No | Only the groups this user belongs to. |
 | `segment_id` | `string` | No | Only the groups in this segment. |
@@ -1253,9 +1253,10 @@ await corsair.userflow.api.invites.list({ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3
 |------|------|----------|-------------|
 | `account_id` | `string` | Yes | — |
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
-| `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
 | `email` | `string` | No | Only the invite for this address. |
 | `is_expired` | `boolean` | No | Only expired invites, or only the ones still open. |
+| `order_by` | `name \| created_at \| string \| (name \| created_at \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
 
 
 
@@ -1370,10 +1371,10 @@ await corsair.userflow.api.members.list({ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3
 |------|------|----------|-------------|
 | `account_id` | `string` | Yes | — |
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
-| `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
 | `email` | `string[]` | No | — |
 | `role` | `(owner \| admin \| editor \| viewer)[]` | No | — |
-| `order_by` | `created_at[]` | No | — |
+| `order_by` | `created_at \| string \| (created_at \| string)[]` | No | Sort by `created_at`, or `-created_at` for newest first. |
 
 
 
@@ -1467,7 +1468,7 @@ await corsair.userflow.api.members.update({ account_id: '3f2a4b56-7c8d-9e0f-1a2b
 |------|------|----------|-------------|
 | `account_id` | `string` | Yes | — |
 | `id` | `string` | Yes | — |
-| `role` | `owner \| admin \| editor \| viewer` | No | The member new role in this account. |
+| `role` | `admin \| editor \| viewer` | No | The member new role in this account. owner cannot be set here; ownership is transferred in the app. |
 | `permissions` | `object[]` | No | Replaces the member permissions. Omit to leave them alone. |
 
 <AccordionGroup>
@@ -1679,7 +1680,7 @@ await corsair.userflow.api.users.list({ email: 'evelyn@example.com', order_by: [
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
-| `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
 | `email` | `string` | No | Only the user whose `email` attribute equals this value. |
 | `group_id` | `string` | No | Only members of this group. |
 | `segment_id` | `string` | No | Only users in this segment; the id is in the segment menu in the UI. |
@@ -1878,7 +1879,7 @@ await corsair.userflow.api.webhookSubscriptions.create({ url: 'https://acme.exam
 | `api_version` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `disabled` | `boolean \| null` | No | — |
-| `secret` | `string \| null` | No | Returned on create and update only, to verify signatures. |
+| `secret` | `string \| null` | No | Returned only by create; save it then to verify signatures. |
 | `topics` | `string[] \| null` | No | — |
 | `url` | `string \| null` | No | — |
 
@@ -1947,7 +1948,7 @@ await corsair.userflow.api.webhookSubscriptions.get({ id: 'c8783643-7f16-4a02-b7
 | `api_version` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `disabled` | `boolean \| null` | No | — |
-| `secret` | `string \| null` | No | Returned on create and update only, to verify signatures. |
+| `secret` | `string \| null` | No | Returned only by create; save it then to verify signatures. |
 | `topics` | `string[] \| null` | No | — |
 | `url` | `string \| null` | No | — |
 
@@ -1972,7 +1973,8 @@ await corsair.userflow.api.webhookSubscriptions.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
-| `starting_after` | `string` | No | Return items after this id. The last item id of the previous page works, as does the `next_page_url`. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `order_by` | `created_at \| url \| string \| (created_at \| url \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
 
 
 
@@ -2041,7 +2043,7 @@ await corsair.userflow.api.webhookSubscriptions.update({ id: 'c8783643-7f16-4a02
 | `api_version` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `disabled` | `boolean \| null` | No | — |
-| `secret` | `string \| null` | No | Returned on create and update only, to verify signatures. |
+| `secret` | `string \| null` | No | Returned only by create; save it then to verify signatures. |
 | `topics` | `string[] \| null` | No | — |
 | `url` | `string \| null` | No | — |
 
