@@ -340,6 +340,21 @@ describe('sending', () => {
 		expect(body.recipients?.[0]?.custom_params).toBeUndefined();
 	});
 
+	it("puts the caller's local_message_id on the recipient", async () => {
+		respond(fetchMock, templateSent);
+
+		await invoke(Messages.sendTemplate, {
+			whatsapp_number: '1234567890',
+			template_name: 'june_promo',
+			broadcast_name: 'June promo',
+			local_message_id: 'local-1',
+		});
+
+		expect(lastRequest(fetchMock).body).toMatchObject({
+			recipients: [{ target: '1234567890', local_message_id: 'local-1' }],
+		});
+	});
+
 	it('sends a + recipient as given in the template body', async () => {
 		respond(fetchMock, templateSent);
 
