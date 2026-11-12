@@ -1,0 +1,141 @@
+---
+title: "Kontent.ai plugin"
+sidebarTitle: "Overview"
+description: "Headless content delivery with Kontent.ai - read published content items by type, language, collection or filter, along with their content types, taxonomy terms and languages, from the Delivery API."
+---
+
+Use **Kontent.ai** through Corsair: one client, typed API calls.
+
+Copy your environment ID from Kontent.ai under Environment settings, General. It is a GUID such as `975bf280-fd91-488c-994c-2f04416e5ee3`, and it is both the first path segment of every call and the only credential a published read needs.
+
+Things to know before you call:
+
+- **The Delivery API reads published content only.** It has no write routes, so every operation here is a read. Draft and unpublished content needs a preview token, which each read accepts as `preview` and sends as a bearer header on that call alone.
+- **`depth` is bounded at 0 to 2, and Kontent clamps silently.** A live probe of `depth=99` answered `200` with depth 2 applied, so an out-of-range value looks like a complete answer. The plugin rejects anything outside 0 to 2 rather than returning a response that quietly disagrees with the request.
+- **Paging is `skip` and `limit`.** A list answers a `pagination` block whose `next_page` is a full URL, or an empty string on the last page. The plugin returns `next_skip`, the number to pass back, and null when the page is the last.
+- **An element's `value` type follows its `type`.** A `text` element is a string, a `number` a number, a `modular_content` an array of codenames, and an `asset` an array of objects. Some types carry no value at all: a `url_slug` element arrives as `{ type, name }` with no `value` key.
+- **Linked items come back under `modular_content`**, keyed by codename, and only when `depth` is above 0.
+- **The filter parameter is `in_filter`**, not `filter`, and takes Kontent's own expression syntax such as `elements.price[gt]=10`. It is passed through unchanged.
+- **A 404 does not say what is missing.** Three different codes answer 404: `105` is an unknown environment, which is a configuration mistake, while `100` and `101` are a missing item or type. The plugin exposes `errorCode` and `isEnvironmentNotFound` so a caller can tell them apart.
+- **Keep the `request_id`.** Kontent support asks for it, so it is on every error as `requestId`.
+- **No webhooks.** The Delivery API does not push; a caller polls, or uses Kontent's own webhook configuration outside this plugin.
+
+**What you get:**
+
+- 6 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/kontentai better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/kontentai better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/kontentai better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/kontentai better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { kontentai } from '@corsair-dev/kontentai';
+
+export const corsair = createCorsair({
+	plugins: [
+		kontentai(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+This plugin saves no credentials of its own. A call made without a stored key for the tenant throws `AuthMissingError`, which may carry a `connectUrl` to the page that collects one. For Kontent.ai that key is the environment ID.
+
+```ts
+kontentai()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'kontentai',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the first page of published items**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.kontentai.api.items.list({ limit: 10, depth: 1 });
+```
+
+
+**Read one item by codename**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.kontentai.api.items.get({ codename: 'about_us' });
+```
+
+
+See the full list on the [API](/plugins/kontentai/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/kontentai/api">
+    Every `kontentai.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

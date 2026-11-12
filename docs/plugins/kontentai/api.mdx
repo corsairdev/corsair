@@ -1,0 +1,420 @@
+---
+title: "Kontent.ai API reference"
+sidebarTitle: "API"
+description: "API reference for the Kontent.ai plugin in Corsair: every `kontentai.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Items
+
+### get
+
+`items.get`
+
+One content item by codename, with its elements and, on request, its linked items
+
+**Risk:** `read`
+
+```ts
+await corsair.kontentai.api.items.get({ codename: 'about_us', depth: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `codename` | `string` | Yes | The item, type or taxonomy codename, such as `about_us`. |
+| `depth` | `number` | No | How deep to resolve linked items: `0` returns no `modular_content`, `1` and `2` go deeper. Kontent clamps anything outside 0 to 2 without saying so. |
+| `language` | `string` | No | — |
+| `elements` | `string[]` | No | — |
+| `preview` | `string` | No | A preview token, so unpublished content comes back. Only a call that asks for it sends one. |
+
+A `preview` token returns unpublished content and is sent as a bearer header on that call alone.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `item` | `object` | Yes | — |
+| `modular_content` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="item full type">
+
+```ts
+{
+  system: {
+    id: string,
+    name?: string | null,
+    codename?: string | null,
+    language?: string | null,
+    type?: string | null,
+    collection?: string | null,
+    sitemap_locations?: string[] | null,
+    last_modified?: string | null,
+    workflow?: string | null,
+    workflow_step?: string | null
+  },
+  elements?: Record<string, {
+    type: string,
+    name?: string | null,
+    value?: any
+  }> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`items.list`
+
+Published content items by type, language, collection or filter, with `depth` deciding how far linked items resolve; `next_skip` gives the next page
+
+**Risk:** `read`
+
+```ts
+await corsair.kontentai.api.items.list({ limit: 10, depth: 1, type: 'about_us', language: 'en-US', order: 'system.last_modified' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | Items to skip. Defaults to 0. |
+| `limit` | `number` | No | Items per page. Defaults to 10, and 2000 is the maximum. |
+| `order` | `string` | No | A sort, such as `system.last_modified` or `elements.price[asc]`. Prefix a field with `-` or suffix it with `[desc]` to reverse it. |
+| `preview` | `string` | No | A preview token, so unpublished content comes back. Only a call that asks for it sends one. |
+| `depth` | `number` | No | How deep to resolve linked items: `0` returns no `modular_content`, `1` and `2` go deeper. Kontent clamps anything outside 0 to 2 without saying so. |
+| `type` | `string` | No | Only items of this content type codename. |
+| `language` | `string` | No | Only this language codename, such as `en-US`. |
+| `collection` | `string` | No | Only this collection. |
+| `in_filter` | `string` | No | A filter expression, such as `elements.price[gt]=10`. Kontent’s own syntax, passed through. |
+| `elements` | `string[]` | No | Return only these element codenames. |
+
+`depth` is 0 to 2; Kontent silently clamps anything outside it, so the plugin rejects it instead. `next_skip` is the next page, and null on the last one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `modular_content` | `Record<string, any> \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `next_skip` | `number \| null` | Yes | The `skip` for the next page; null on the last page. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  system: {
+    id: string,
+    name?: string | null,
+    codename?: string | null,
+    language?: string | null,
+    type?: string | null,
+    collection?: string | null,
+    sitemap_locations?: string[] | null,
+    last_modified?: string | null,
+    workflow?: string | null,
+    workflow_step?: string | null
+  },
+  elements?: Record<string, {
+    type: string,
+    name?: string | null,
+    value?: any
+  }> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  skip?: number | null,
+  limit?: number | null,
+  count?: number | null,
+  next_page?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Languages
+
+### list
+
+`languages.list`
+
+The environment’s languages, each with the codename to read content in
+
+**Risk:** `read`
+
+```ts
+await corsair.kontentai.api.languages.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | Items to skip. Defaults to 0. |
+| `limit` | `number` | No | Items per page. Defaults to 10, and 2000 is the maximum. |
+| `order` | `string` | No | A sort, such as `system.last_modified` or `elements.price[asc]`. Prefix a field with `-` or suffix it with `[desc]` to reverse it. |
+| `preview` | `string` | No | A preview token, so unpublished content comes back. Only a call that asks for it sends one. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `languages` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `next_skip` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="languages full type">
+
+```ts
+{
+  system: {
+    id: string,
+    name?: string | null,
+    codename?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  skip?: number | null,
+  limit?: number | null,
+  count?: number | null,
+  next_page?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Taxonomies
+
+### list
+
+`taxonomies.list`
+
+The taxonomy groups with their nested terms, which an item’s taxonomy element points at
+
+**Risk:** `read`
+
+```ts
+await corsair.kontentai.api.taxonomies.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | Items to skip. Defaults to 0. |
+| `limit` | `number` | No | Items per page. Defaults to 10, and 2000 is the maximum. |
+| `order` | `string` | No | A sort, such as `system.last_modified` or `elements.price[asc]`. Prefix a field with `-` or suffix it with `[desc]` to reverse it. |
+| `preview` | `string` | No | A preview token, so unpublished content comes back. Only a call that asks for it sends one. |
+
+Terms nest, so a term carries its own children.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taxonomies` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `next_skip` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="taxonomies full type">
+
+```ts
+{
+  system: {
+    id: string,
+    name?: string | null,
+    codename?: string | null,
+    last_modified?: string | null
+  },
+  terms?: {
+    name?: string | null,
+    codename?: string | null,
+    terms?: (recursive)[] | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  skip?: number | null,
+  limit?: number | null,
+  count?: number | null,
+  next_page?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Types
+
+### get
+
+`types.get`
+
+One content type by codename, with its element definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.kontentai.api.types.get({ codename: 'about_us' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `codename` | `string` | Yes | The item, type or taxonomy codename, such as `about_us`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="type full type">
+
+```ts
+{
+  system: {
+    id: string,
+    name?: string | null,
+    codename?: string | null,
+    last_modified?: string | null
+  },
+  elements?: Record<string, {
+    type: string,
+    name?: string | null,
+    taxonomy_group?: string | null,
+    options?: Record<string, any>[] | null
+  }> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`types.list`
+
+The content types, each with the element definitions an item of that type carries
+
+**Risk:** `read`
+
+```ts
+await corsair.kontentai.api.types.list({ limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | Items to skip. Defaults to 0. |
+| `limit` | `number` | No | Items per page. Defaults to 10, and 2000 is the maximum. |
+| `order` | `string` | No | A sort, such as `system.last_modified` or `elements.price[asc]`. Prefix a field with `-` or suffix it with `[desc]` to reverse it. |
+| `preview` | `string` | No | A preview token, so unpublished content comes back. Only a call that asks for it sends one. |
+
+Each type carries the element definitions an item of that type returns.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `types` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+| `next_skip` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="types full type">
+
+```ts
+{
+  system: {
+    id: string,
+    name?: string | null,
+    codename?: string | null,
+    last_modified?: string | null
+  },
+  elements?: Record<string, {
+    type: string,
+    name?: string | null,
+    taxonomy_group?: string | null,
+    options?: Record<string, any>[] | null
+  }> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  skip?: number | null,
+  limit?: number | null,
+  count?: number | null,
+  next_page?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
