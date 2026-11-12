@@ -6,7 +6,7 @@ overviewNote: |
   The key you connect decides what the plugin can do:
 
   - **Personal API key (`phx_...`)**: every action. Read actions call PostHog's private API (`/api/projects/{project_id}/...`), and capture looks up the project token (needs `project:read`). Create one under Settings → Personal API keys and tick the read scopes you need (see [Get Credentials](/plugins/posthog/get-credentials)).
-  - **Project token (`phc_...`)**: the five capture actions only (`events.*`). Read actions throw an error asking for a personal key.
+  - **Project token (`phc_...`)**: the five capture actions only (`events.eventCreate`, `aliasCreate`, `identityCreate`, `trackPage`, `trackScreen`). Read actions throw an error asking for a personal key.
 
   Things to know before you call:
 
