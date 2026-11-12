@@ -11,6 +11,7 @@ export class SvixAPIError extends Error {
 		message: string,
 		public readonly status: number,
 		public readonly retryAfter?: number,
+		// HTTP error bodies can be arbitrary JSON, text, or empty, so no fixed shape is safe.
 		public readonly body?: unknown,
 	) {
 		super(message);
@@ -34,10 +35,13 @@ export async function makeSvixRequest(
 	apiKey: string,
 	options: {
 		method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+		// This transport handles all operation-specific bodies and query types;
+		// their schemas validate them before dispatch, so a single shape is not viable.
 		body?: unknown;
 		query?: Record<string, unknown>;
 		idempotencyKey?: string;
 	},
+	// The response is untrusted and varies by operation; the caller validates it.
 ): Promise<unknown> {
 	if (!apiKey.trim()) throw new AuthMissingError('svix', 'api_key');
 	if (!['eu', 'us', 'ca', 'au'].includes(region))
@@ -61,9 +65,11 @@ export async function makeSvixRequest(
 				: { 'Idempotency-Key': options.idempotencyKey },
 	};
 	try {
+		// The endpoint-specific output schema, not this shared transport, determines the response type.
 		return await request<unknown>(config, requestOptions, { rateLimitConfig });
 	} catch (error) {
 		if (error instanceof ApiError) {
+			// Provider error bodies may be non-objects; inspect detail only after narrowing.
 			const body: unknown = error.body;
 			const data =
 				body && typeof body === 'object'

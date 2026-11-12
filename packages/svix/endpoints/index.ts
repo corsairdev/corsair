@@ -16,6 +16,8 @@ export function endpoint<K extends SvixOperationName>(name: K) {
 		ctx: SvixContext,
 		input: SvixEndpointInputs[K],
 	): Promise<SvixEndpointOutputs[K]> => {
+		// Each operation has different parsed path, query, and body fields; the dynamic
+		// route registry requires a common unknown-valued map rather than one fixed shape.
 		const data: Record<string, unknown> = {
 			...SvixEndpointInputSchemas[name].parse(input),
 		};
@@ -32,6 +34,7 @@ export function endpoint<K extends SvixOperationName>(name: K) {
 				throw new Error(`Missing path parameter ${key}`);
 			return encodeURIComponent(value);
 		});
+		// Query value types differ by operation and have already been schema-validated.
 		const query: Record<string, unknown> = {};
 		for (const key of route.query) {
 			if (data[key] !== undefined && data[key] !== null) query[key] = data[key];

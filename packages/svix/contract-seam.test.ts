@@ -12,10 +12,13 @@ jest.mock('corsair/http', () => ({
 const mockRequest = request as jest.Mock;
 const ctx = { key: 'fixture-token', options: { region: 'us' } } as SvixContext;
 const plugin = svix();
+// Fixtures select heterogeneous endpoints dynamically, so no single input or
+// output type fits; each handler validates the fixture at the public seam.
 const groups = plugin.endpoints as unknown as Record<
 	string,
 	Record<string, (context: SvixContext, input: unknown) => Promise<unknown>>
 >;
+// Inputs vary across the 61 fixture-selected operations and are validated by each handler.
 function call(
 	group: string,
 	name: string,
@@ -79,6 +82,46 @@ describe('Svix OpenAPI request seam', () => {
 				}),
 			);
 			expect(transport.rateLimitConfig.maxRetries).toBe(0);
+		},
+	);
+
+	it('provides a nonempty item for every list and poll response fixture', () => {
+		const lists = fixtures.flatMap((fixture) => {
+			const response = fixture.response;
+			return response && 'data' in response && Array.isArray(response.data)
+				? [response.data]
+				: [];
+		});
+		expect(lists).toHaveLength(11);
+		for (const items of lists) {
+			expect(items).toHaveLength(1);
+		}
+	});
+
+	it.each([
+		['attempts', 'listAttemptedMessages', 'eventType'],
+		['attempts', 'listAttemptedDestinations', 'url'],
+	])(
+		'rejects a malformed %s.%s item missing %s',
+		async (group, name, field) => {
+			const fixture = fixtures.find(
+				(entry) => entry.group === group && entry.name === name,
+			);
+			const response = fixture?.response;
+			if (
+				!fixture ||
+				!response ||
+				!('data' in response) ||
+				!Array.isArray(response.data) ||
+				!response.data[0]
+			) {
+				throw new Error(`Missing populated list fixture ${group}.${name}`);
+			}
+			const item = Object.fromEntries(
+				Object.entries(response.data[0]).filter(([key]) => key !== field),
+			);
+			mockRequest.mockResolvedValue({ ...response, data: [item] });
+			await expect(call(group, name, ctx, fixture.input)).rejects.toThrow();
 		},
 	);
 

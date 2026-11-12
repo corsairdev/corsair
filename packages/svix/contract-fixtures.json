@@ -13,7 +13,16 @@
     "body": null,
     "idempotencyKey": null,
     "response": {
-      "data": [],
+      "data": [
+        {
+          "name": "My first application",
+          "id": "app_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "createdAt": "2026-01-01T00:00:00Z",
+          "updatedAt": "2026-01-01T00:00:00Z",
+          "metadata": { "team": "billing" },
+          "uid": null
+        }
+      ],
       "iterator": "iterator",
       "done": false
     },
@@ -139,7 +148,18 @@
     "body": null,
     "idempotencyKey": null,
     "response": {
-      "data": [],
+      "data": [
+        {
+          "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "metadata": { "team": "billing" },
+          "url": "https://example.com/webhook/",
+          "description": "Webhook",
+          "createdAt": "2026-01-01T00:00:00Z",
+          "updatedAt": "2026-01-01T00:00:00Z",
+          "channels": ["project_123"],
+          "expiry": null
+        }
+      ],
       "iterator": "iterator",
       "done": false
     },
@@ -623,7 +643,21 @@
     "body": null,
     "idempotencyKey": null,
     "response": {
-      "data": [],
+      "data": [
+        {
+          "name": "user.signup",
+          "description": "A user has signed up",
+          "deprecated": false,
+          "createdAt": "2026-01-01T00:00:00Z",
+          "updatedAt": "2026-01-01T00:00:00Z",
+          "schemas": {
+            "1": {
+              "type": "object",
+              "properties": { "userId": { "type": "string" } }
+            }
+          }
+        }
+      ],
       "iterator": "iterator",
       "done": false
     },
@@ -770,7 +804,16 @@
     "body": null,
     "idempotencyKey": null,
     "response": {
-      "data": [],
+      "data": [
+        {
+          "eventType": "user.signup",
+          "payload": { "type": "user.created", "user": { "id": "123" } },
+          "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "channels": ["project_123"],
+          "deliverAt": null
+        }
+      ],
       "iterator": "iterator",
       "done": false
     },
@@ -968,7 +1011,27 @@
     "body": null,
     "idempotencyKey": null,
     "response": {
-      "data": [],
+      "data": [
+        {
+          "url": "https://example.com/webhook/",
+          "response": "{}",
+          "responseStatusCode": 200,
+          "responseDurationMs": 12,
+          "status": 0,
+          "statusText": "success",
+          "triggerType": 0,
+          "msgId": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "endpointId": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "id": "atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "msg": {
+            "eventType": "user.signup",
+            "payload": { "user": { "id": "123" } },
+            "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+            "timestamp": "2026-01-01T00:00:00Z"
+          }
+        }
+      ],
       "iterator": "iterator",
       "done": false
     },
@@ -990,7 +1053,22 @@
     "body": null,
     "idempotencyKey": null,
     "response": {
-      "data": [],
+      "data": [
+        {
+          "url": "https://example.com/webhook/",
+          "response": "{}",
+          "responseStatusCode": 200,
+          "responseDurationMs": 12,
+          "status": 0,
+          "statusText": "success",
+          "triggerType": 0,
+          "msgId": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "endpointId": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "id": "atmpt_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "msg": null
+        }
+      ],
       "iterator": "iterator",
       "done": false
     },
@@ -1012,7 +1090,18 @@
     "body": null,
     "idempotencyKey": null,
     "response": {
-      "data": [],
+      "data": [
+        {
+          "status": 0,
+          "statusText": "success",
+          "nextAttempt": null,
+          "eventType": "user.signup",
+          "payload": { "user": { "id": "123" } },
+          "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "channels": ["project_123"]
+        }
+      ],
       "iterator": "iterator",
       "done": false
     },
@@ -1034,7 +1123,20 @@
     "body": null,
     "idempotencyKey": null,
     "response": {
-      "data": [],
+      "data": [
+        {
+          "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "status": 0,
+          "statusText": "success",
+          "nextAttempt": null,
+          "url": "https://example.com/webhook/",
+          "description": "Webhook",
+          "createdAt": "2026-01-01T00:00:00Z",
+          "updatedAt": "2026-01-01T00:00:00Z",
+          "eventTypes": ["user.signup"],
+          "channels": ["project_123"]
+        }
+      ],
       "iterator": "iterator",
       "done": false
     },
@@ -1117,7 +1219,15 @@
     "body": null,
     "idempotencyKey": null,
     "response": {
-      "data": [],
+      "data": [
+        {
+          "eventType": "user.signup",
+          "payload": { "user": { "id": "123" } },
+          "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "headers": { "content-type": "application/json" }
+        }
+      ],
       "iterator": "x",
       "done": false
     },
@@ -1164,7 +1274,15 @@
     "body": null,
     "idempotencyKey": null,
     "response": {
-      "data": [],
+      "data": [
+        {
+          "eventType": "user.signup",
+          "payload": { "user": { "id": "123" } },
+          "id": "msg_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "timestamp": "2026-01-01T00:00:00Z",
+          "headers": null
+        }
+      ],
       "iterator": "x",
       "done": false
     },
@@ -1184,7 +1302,17 @@
     "body": null,
     "idempotencyKey": null,
     "response": {
-      "data": [],
+      "data": [
+        {
+          "id": "ep_1srOrx2ZWZBpBUvZwXKQmoEYga2",
+          "url": "https://example.com/webhook/",
+          "description": "Operational webhook",
+          "createdAt": "2026-01-01T00:00:00Z",
+          "updatedAt": "2026-01-01T00:00:00Z",
+          "metadata": { "team": "ops" },
+          "eventTypes": ["message.attempt.failing"]
+        }
+      ],
       "iterator": "iterator",
       "done": false
     },

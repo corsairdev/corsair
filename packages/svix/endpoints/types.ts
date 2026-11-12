@@ -1,7 +1,11 @@
 import { z } from 'zod';
 
 // Generated from Svix OpenAPI 1.960.0 at svix-webhooks commit 5103d75d.
-// Open-ended object fields represent provider-defined JSON payloads or metadata.
+// Svix leaves payloads, transformation parameters, MCP arguments, imported
+// OpenAPI documents, event schemas, and EmptyResponse properties open-ended.
+// Their contents are caller/provider-defined, so a fixed value schema would
+// reject valid data. This shared record preserves Svix's additionalProperties.
+const OpenEndedObjectSchema = z.record(z.string(), z.unknown());
 
 export const ApplicationInSchema = z
 	.object({
@@ -74,7 +78,7 @@ export const BatchMessageInSchema = z
 			.nullable()
 			.optional(),
 		eventType: z.string().max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')),
-		payload: z.record(z.string(), z.unknown()),
+		payload: OpenEndedObjectSchema,
 		channels: z
 			.array(z.string().max(128).regex(new RegExp('^[a-zA-Z0-9\\-_.:+]+$')))
 			.min(1)
@@ -87,10 +91,7 @@ export const BatchMessageInSchema = z
 			.max(5)
 			.nullable()
 			.optional(),
-		transformationsParams: z
-			.record(z.string(), z.unknown())
-			.nullable()
-			.optional(),
+		transformationsParams: OpenEndedObjectSchema.nullable().optional(),
 		deliverAt: z.string().nullable().optional(),
 		payloadRetentionPeriod: z
 			.number()
@@ -163,7 +164,7 @@ export const BulkReplayInSchema = z
 		statusCodeClass: StatusCodeClassSchema.nullable().optional(),
 	})
 	.passthrough();
-export const EmptyResponseSchema = z.record(z.string(), z.unknown());
+export const EmptyResponseSchema = OpenEndedObjectSchema;
 export const EndpointAttemptStatsSchema = z
 	.object({
 		success: z.number().int().min(0),
@@ -247,7 +248,7 @@ export const EndpointMessageOutSchema = z
 			.nullable()
 			.optional(),
 		eventType: z.string().max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')),
-		payload: z.record(z.string(), z.unknown()),
+		payload: OpenEndedObjectSchema,
 		channels: z
 			.array(z.string().max(128).regex(new RegExp('^[a-zA-Z0-9\\-_.:+]+$')))
 			.min(1)
@@ -407,14 +408,14 @@ export const EventExampleInSchema = z
 	.object({
 		eventType: z.string().max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')),
 		exampleIndex: z.number().int().min(0).optional(),
-		payload: z.record(z.string(), z.unknown()).nullable().optional(),
+		payload: OpenEndedObjectSchema.nullable().optional(),
 	})
 	.passthrough();
 export const EventTypeFromOpenApiSchema = z
 	.object({
 		name: z.string().max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')),
 		description: z.string(),
-		schemas: z.record(z.string(), z.unknown()).nullable().optional(),
+		schemas: OpenEndedObjectSchema.nullable().optional(),
 		deprecated: z.boolean(),
 		groupName: z
 			.string()
@@ -432,7 +433,7 @@ export const EventTypeImportOpenApiInSchema = z
 	.object({
 		dryRun: z.boolean().optional(),
 		replaceAll: z.boolean().optional(),
-		spec: z.record(z.string(), z.unknown()).nullable().optional(),
+		spec: OpenEndedObjectSchema.nullable().optional(),
 		specRaw: z.string().nullable().optional(),
 	})
 	.passthrough();
@@ -457,7 +458,7 @@ export const EventTypeInSchema = z
 			.optional(),
 		archived: z.boolean().optional(),
 		deprecated: z.boolean().optional(),
-		schemas: z.record(z.string(), z.unknown()).nullable().optional(),
+		schemas: OpenEndedObjectSchema.nullable().optional(),
 		groupName: z
 			.string()
 			.max(256)
@@ -481,7 +482,7 @@ export const EventTypeOutSchema = z
 			.optional(),
 		archived: z.boolean().optional(),
 		deprecated: z.boolean(),
-		schemas: z.record(z.string(), z.unknown()).nullable().optional(),
+		schemas: OpenEndedObjectSchema.nullable().optional(),
 		createdAt: z.string(),
 		updatedAt: z.string(),
 		groupName: z
@@ -511,7 +512,7 @@ export const EventTypePatchSchema = z
 			.optional(),
 		archived: z.boolean().optional(),
 		deprecated: z.boolean().optional(),
-		schemas: z.record(z.string(), z.unknown()).nullable().optional(),
+		schemas: OpenEndedObjectSchema.nullable().optional(),
 		featureFlags: z
 			.array(z.string().max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')))
 			.min(1)
@@ -534,7 +535,7 @@ export const EventTypeUpsertInSchema = z
 			.optional(),
 		archived: z.boolean().optional(),
 		deprecated: z.boolean().optional(),
-		schemas: z.record(z.string(), z.unknown()).nullable().optional(),
+		schemas: OpenEndedObjectSchema.nullable().optional(),
 		featureFlags: z
 			.array(z.string().max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')))
 			.min(1)
@@ -602,7 +603,7 @@ export const MessageOutSchema = z
 			.nullable()
 			.optional(),
 		eventType: z.string().max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')),
-		payload: z.record(z.string(), z.unknown()),
+		payload: OpenEndedObjectSchema,
 		channels: z
 			.array(z.string().max(128).regex(new RegExp('^[a-zA-Z0-9\\-_.:+]+$')))
 			.min(1)
@@ -748,7 +749,7 @@ export const McpEventsSubscribeDeliveryInSchema = z
 export const McpEventsSubscribeInSchema = z
 	.object({
 		name: z.string().max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')),
-		arguments: z.record(z.string(), z.unknown()).optional(),
+		arguments: OpenEndedObjectSchema.optional(),
 		delivery: McpEventsSubscribeDeliveryInSchema,
 		ttlMs: z.number().int().min(0).nullable().optional(),
 		secretGracePeriodSeconds: z
@@ -789,7 +790,7 @@ export const McpEventsUnsubscribeDeliveryInSchema = z
 export const McpEventsUnsubscribeInSchema = z
 	.object({
 		name: z.string().max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')),
-		arguments: z.record(z.string(), z.unknown()).optional(),
+		arguments: OpenEndedObjectSchema.optional(),
 		delivery: McpEventsUnsubscribeDeliveryInSchema,
 	})
 	.passthrough();
@@ -803,7 +804,7 @@ export const MessageInSchema = z
 			.nullable()
 			.optional(),
 		eventType: z.string().max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')),
-		payload: z.record(z.string(), z.unknown()),
+		payload: OpenEndedObjectSchema,
 		channels: z
 			.array(z.string().max(128).regex(new RegExp('^[a-zA-Z0-9\\-_.:+]+$')))
 			.min(1)
@@ -817,10 +818,7 @@ export const MessageInSchema = z
 			.max(5)
 			.nullable()
 			.optional(),
-		transformationsParams: z
-			.record(z.string(), z.unknown())
-			.nullable()
-			.optional(),
+		transformationsParams: OpenEndedObjectSchema.nullable().optional(),
 		deliverAt: z.string().nullable().optional(),
 		payloadRetentionPeriod: z
 			.number()
@@ -962,7 +960,7 @@ export const PollingEndpointMessageOutSchema = z
 			.nullable()
 			.optional(),
 		eventType: z.string().max(256).regex(new RegExp('^[a-zA-Z0-9\\-_.]+$')),
-		payload: z.record(z.string(), z.unknown()),
+		payload: OpenEndedObjectSchema,
 		channels: z
 			.array(z.string().max(128).regex(new RegExp('^[a-zA-Z0-9\\-_.:+]+$')))
 			.min(1)
