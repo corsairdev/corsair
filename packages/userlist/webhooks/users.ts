@@ -16,9 +16,10 @@ import {
  * User, company and relationship notifications share one shape: verify the
  * signature, parse, log, and answer what arrived.
  *
- * Nothing is persisted, because this plugin declares no entities. A webhook is
- * a signal and the payload is returned to the host, which decides what to
- * store — unlike an endpoint, it does not run inside a database transaction.
+ * No entity rows are written, because this plugin declares no entities. The
+ * payload is returned to the host, which decides what to store. The fields each
+ * topic's `log` picks (the user's identifier and email on user topics) do go to
+ * `corsair_events` when a database is configured.
  */
 async function handle<Payload extends z.ZodType>(
 	ctx: { key: string },
