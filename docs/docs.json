@@ -1790,6 +1790,14 @@
                 ]
               },
               {
+                "group": "Doppler Marketing Automation",
+                "pages": [
+                  "plugins/dopplermarketingautomation/overview",
+                  "plugins/dopplermarketingautomation/api",
+                  "plugins/dopplermarketingautomation/database"
+                ]
+              },
+              {
                 "group": "Dovetail",
                 "pages": [
                   "plugins/dovetail/overview",
