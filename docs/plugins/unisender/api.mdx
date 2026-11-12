@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Unisender: every `unisender.api.*` operation with input and output types."
+title: "Unisender API reference"
+sidebarTitle: "API"
+description: "API reference for the Unisender plugin in Corsair: every `unisender.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `unisender.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -20,7 +19,7 @@ Start or schedule a campaign from a message; omitting start_time sends it immedi
 **Risk:** `write`
 
 ```ts
-await corsair.unisender.api.campaigns.create({ message_id: 98765, start_time: '2026-12-01 09:00:00', timezone: 'Europe/Berlin' });
+await corsair.unisender.api.campaigns.create({ message_id: 98765, start_time: '2026-12-01 09:00', timezone: 'UTC' });
 ```
 
 **Input**
@@ -28,8 +27,8 @@ await corsair.unisender.api.campaigns.create({ message_id: 98765, start_time: '2
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `message_id` | `number` | Yes | The message from messages.createEmail. |
-| `start_time` | `string` | No | YYYY-MM-DD hh:mm:ss in the given timezone. Omit it to start immediately. |
-| `timezone` | `string` | No | The timezone start_time is in. |
+| `start_time` | `string` | No | YYYY-MM-DD hh:mm in the given timezone, at most 100 days ahead. Omit it to start immediately. |
+| `timezone` | `string` | No | The timezone start_time is in. UTC is the only value Unisender accepts; omit it to use the account timezone. |
 | `track_read` | `0 \| 1` | No | — |
 | `track_links` | `0 \| 1` | No | — |
 | `contacts` | `string` | No | A comma-separated address list, as an alternative to the message's list. |
@@ -100,7 +99,9 @@ await corsair.unisender.api.campaigns.list({ from: '2026-01-01 00:00:00', limit:
   sender_name?: string | null,
   sender_email?: string | null,
   message_id?: number | null,
-  lists?: (number | string)[] | null
+  list_id?: number | null,
+  lists?: (number | string)[] | null,
+  stats_url?: string | null
 }[]
 ```
 </Accordion>
@@ -116,12 +117,12 @@ await corsair.unisender.api.campaigns.list({ from: '2026-01-01 00:00:00', limit:
 
 `contacts.count`
 
-Count the contacts in a list, optionally narrowed by tag, kind or a substring
+Count the contacts in a list by kind (type address for email contacts, phone for SMS) or by tag; Unisender needs at least one of the two
 
 **Risk:** `read`
 
 ```ts
-await corsair.unisender.api.contacts.count({ list_id: 1 });
+await corsair.unisender.api.contacts.count({ list_id: 1, type: 'address' });
 ```
 
 **Input**
@@ -147,7 +148,7 @@ await corsair.unisender.api.contacts.count({ list_id: 1 });
 ```ts
 {
   listId?: number | null,
-  count?: number | null,
+  count?: number | string | null,
   searchParams?: Record<string, any> | null
 }
 ```
@@ -216,7 +217,19 @@ await corsair.unisender.api.contacts.export({ list_id: 1, notify_url: 'https://a
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `Record<string, any>` | Yes | — |
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  task_uuid?: string | null,
+  status?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -263,10 +276,10 @@ await corsair.unisender.api.contacts.get({ email: 'jordan@acme-logistics.com', i
     status?: string | null
   } | null,
   lists?: {
-    id?: number | null,
-    title?: string | null
+    id?: number | string | null,
+    name?: string | null
   }[] | null,
-  fields?: Record<string, any>[] | null,
+  fields?: Record<string, any> | Record<string, any>[] | null,
   details?: Record<string, any> | null
 }
 ```
@@ -281,20 +294,19 @@ await corsair.unisender.api.contacts.get({ email: 'jordan@acme-logistics.com', i
 
 `contacts.import`
 
-Import up to 500 contacts from columnar data; role addresses such as sales@ are skipped on purpose
+Import up to 500 contacts from columnar data, with list membership in an email_list_ids column; role addresses such as sales@ are skipped on purpose, and a `delete` column removes contacts
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.unisender.api.contacts.import({ list_ids: [1], field_names: ['email', 'Name'], data: [['jordan@acme-logistics.com', 'Jordan']] });
+await corsair.unisender.api.contacts.import({ field_names: ['email', 'Name', 'email_list_ids'], data: [['jordan@acme-logistics.com', 'Jordan', '1']] });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `list_ids` | `number[]` | Yes | The lists to add every imported contact to. |
-| `field_names` | `string[]` | Yes | The column names, which must include email. `tags` is a comma-separated tag list and `delete` set to 1 removes the contact. |
+| `field_names` | `string[]` | Yes | The column names, which must include email. `email_list_ids` is a comma-separated list of list codes to subscribe each row to, `tags` is a comma-separated tag list, and `delete` set to 1 removes the contact. |
 | `data` | `(string \| number \| boolean)[][]` | Yes | Rows, each with a value per field_names entry and in the same order. At most 500 contacts per call. |
 | `overwrite_tags` | `0 \| 1` | No | — |
 | `overwrite_lists` | `0 \| 1` | No | — |
@@ -311,15 +323,20 @@ await corsair.unisender.api.contacts.import({ list_ids: [1], field_names: ['emai
 <Accordion title="result full type">
 
 ```ts
-Record<string, {
-  created?: number | null,
+{
+  total?: number | null,
+  inserted?: number | null,
   updated?: number | null,
   deleted?: number | null,
-  skipped?: number | null,
   new_emails?: number | null,
   invalid?: number | null,
-  errors?: string[] | null
-}>
+  role_based?: number | null,
+  log?: {
+    index?: number | string | null,
+    code?: string | null,
+    message?: string | null
+  }[] | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -332,12 +349,12 @@ Record<string, {
 
 `contacts.subscribe`
 
-Add or update a contact in one or more lists, choosing whether to send a confirmation email; the resulting status says whether the address can be mailed yet
+Add or update a contact in one or more lists. By default (double_optin 0) Unisender emails the contact a confirmation request; pass double_optin 3 to add them with no email
 
 **Risk:** `write`
 
 ```ts
-await corsair.unisender.api.contacts.subscribe({ list_ids: [1], email: 'jordan@acme-logistics.com', fields: { Name: 'Jordan' }, double_optin: 1 });
+await corsair.unisender.api.contacts.subscribe({ list_ids: [1], email: 'jordan@acme-logistics.com', fields: { Name: 'Jordan' }, double_optin: 3 });
 ```
 
 **Input**
@@ -347,8 +364,8 @@ await corsair.unisender.api.contacts.subscribe({ list_ids: [1], email: 'jordan@a
 | `list_ids` | `number[]` | Yes | The lists to add the contact to. |
 | `email` | `string` | Yes | — |
 | `fields` | `Record<string, string \| number \| boolean>` | No | Custom field name to value, sent as fields[&lt;name&gt;]=value. |
-| `double_optin` | `0 \| 1 \| 3` | No | 0 adds without a confirmation email, 1 sends one, 3 adds without any email. Defaults to Unisender's own choice. |
-| `overwrite` | `0 \| 1` | No | 1 overwrites the contact's existing field values. |
+| `double_optin` | `0 \| 3 \| 4` | No | 0 sends a confirmation invitation and leaves the contact unconfirmed until it is accepted, 3 adds the contact as new with no email, 4 adds it silently when it already exists in your lists and sends an invitation otherwise. |
+| `overwrite` | `0 \| 1 \| 2` | No | 0 adds new fields and tags and keeps existing ones, 1 REPLACES every field and tag and removes the contact from all lists not named in list_ids, 2 replaces only the fields you send and keeps the rest. |
 | `tags` | `string[]` | No | Up to 10 tags to add. |
 
 
@@ -364,11 +381,7 @@ await corsair.unisender.api.contacts.subscribe({ list_ids: [1], email: 'jordan@a
 
 ```ts
 {
-  person?: Record<string, any> | null,
-  email?: {
-    email?: string | null,
-    status?: string | null
-  } | null
+  person_id?: number | string | null
 }
 ```
 </Accordion>
@@ -429,7 +442,7 @@ await corsair.unisender.api.fields.create({ name: 'company', type: 'string' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | The field name, as used in fields[...] arguments. |
-| `type` | `string \| text \| number \| date` | Yes | string for a short value, text for a long one. |
+| `type` | `string \| text \| number \| date \| bool` | Yes | string for a short value, text for a long one, bool for 1/0. Unisender stores every type as text; the type only changes the admin form. |
 | `is_visible` | `0 \| 1` | No | 1 to show the field in the admin. |
 | `view_pos` | `number` | No | Display order. |
 
@@ -480,7 +493,17 @@ await corsair.unisender.api.fields.delete({ id: 42 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `any` | Yes | — |
+| `result` | `object \| ""` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+} | ""
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -595,7 +618,17 @@ await corsair.unisender.api.lists.delete({ list_id: 1 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `any` | Yes | — |
+| `result` | `object \| ""` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+} | ""
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -691,7 +724,7 @@ await corsair.unisender.api.messages.createEmail({ sender_name: 'Acme', sender_e
 
 `messages.sendEmail`
 
-Send one transactional email to a single recipient; capped at 60 calls a minute and with no field substitution beyond the unsubscribe URL
+Send one transactional email to a single recipient, who is added to list_id if not already in it; capped at 60 calls a minute and with no field substitution beyond the unsubscribe URL
 
 **Risk:** `write`
 
@@ -720,17 +753,34 @@ await corsair.unisender.api.messages.sendEmail({ email: 'jordan@acme-logistics.c
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `object[]` | Yes | — |
+| `result` | `object \| object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="result full type">
 
 ```ts
 {
-  email_id?: number | null,
+  email_id?: number | string | null,
+  id?: string | number | null,
   email?: string | null,
   message_id?: number | null,
-  message?: string | null
+  message?: string | null,
+  index?: number | null,
+  errors?: {
+    code?: string | null,
+    message?: string | null
+  }[] | null
+} | {
+  email_id?: number | string | null,
+  id?: string | number | null,
+  email?: string | null,
+  message_id?: number | null,
+  message?: string | null,
+  index?: number | null,
+  errors?: {
+    code?: string | null,
+    message?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -756,7 +806,7 @@ await corsair.unisender.api.messages.status({ email_id: [123456789] });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `email_id` | `number[]` | Yes | Up to 500 email_id values from messages.sendEmail. |
+| `email_id` | `(number \| string)[]` | Yes | Up to 500 ids from messages.sendEmail: its email_id, or the string id a send with cc returns. |
 
 
 
@@ -772,7 +822,7 @@ await corsair.unisender.api.messages.status({ email_id: [123456789] });
 ```ts
 {
   statuses?: {
-    id?: number | null,
+    id?: number | string | null,
     status?: string | null
   }[] | null
 }

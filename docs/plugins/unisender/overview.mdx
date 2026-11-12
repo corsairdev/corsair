@@ -1,18 +1,19 @@
 ---
-title: Overview
+title: "Unisender plugin"
+sidebarTitle: "Overview"
 description: "Email marketing and transactional email with Unisender - manage lists, contacts, custom fields and tags, subscribe and import contacts, send transactional email, and create and list campaigns."
 ---
 
 Use **Unisender** through Corsair: one client, typed API calls.
 
-Create a key in Unisender under Account settings, API keys. Calls go to `https://api.unisender.com/en/api/<method>` and pass the key in the form body.
+Find the key in Unisender under Settings, Integration and API (Интеграция и API); the dashboard asks for the account password before it shows the whole key. Calls go to `https://api.unisender.com/en/api/<method>` and pass the key in the form body. The free plan includes API access.
 
 - **The English docs are gone.** `unisender.com/en/support/api/` answers `410 Gone`. The Russian pages under `/ru/support/api/` still document every method in full, and the field names are identical.
 - **Wrong key versus no key.** A wrong key answers `401 invalid_api_key`; *no* key at all answers `403 access_denied`. Both are treated as auth errors, so a missing credential surfaces as one either way.
-- **Double opt-in.** `contacts.subscribe` takes `double_optin` of 0, 1 or 3. 0 adds the contact with no email, 1 sends a confirmation email, and 3 adds the contact without sending anything and without marking them confirmed. `2` is not a documented value and is rejected by Unisender. A contact added with 1 starts as `invited` and only becomes `active` when they confirm; an `invited` address cannot be mailed.
+- **Double opt-in.** `contacts.subscribe` takes `double_optin` of 0, 3 or 4, and 0 is the default. 0 sends a confirmation email and the contact stays `invited`, outside the list, until they accept; an `invited` address cannot be mailed. 3 adds the contact as `new` with no email, for consent you already hold. 4 adds a contact who is already `new` or `active` silently and sends the invitation to anyone else. Any other value is refused. Omitting `double_optin` therefore sends an email.
 - **Unsubscribe versus exclude.** `contacts.unsubscribe` marks the contact unsubscribed, and only the contact can reverse that from a confirmation email. `contacts.exclude` only removes them from the given lists, and they can be subscribed again later.
-- **Imports skip some addresses.** `contacts.import` takes at most 500 rows per call. Unisender deliberately skips role addresses (`sales@`, `no-reply@`) and spam traps and reports them as `skipped`, so an import that reports fewer created than rows sent is normal, not a failure.
-- **Exports are asynchronous.** `contacts.export` returns an acknowledgement and posts the file to your `notify_url` when it is ready. There is no way to poll for it.
+- **Imports skip some addresses.** `contacts.import` takes at most 500 rows per call. List membership is a column: add `email_list_ids` to `field_names` with comma-separated list ids in each row. Unisender deliberately skips role addresses (`sales@`, `no-reply@`) and spam traps and counts them under `invalid` (and `role_based`), with the reason in `log`, so an import that inserts fewer rows than it was sent is normal, not a failure. Imports send no email.
+- **Exports are asynchronous.** `contacts.export` returns a `task_uuid` and posts the file to your `notify_url` when it is ready. Unisender's `async/getTaskResult` method reports the task and, once it is `completed`, a `file_to_download` URL; this plugin does not wrap it yet, so pass a `notify_url` you can receive.
 - **Sending limits.** `messages.sendEmail` accepts a body up to 1 MB, is limited to 1,000 messages a day and 60 calls a minute. `messages.createEmail` accepts a body up to 8 MB. The general allowance is 1,200 calls a minute.
 - **Delivery status is short-lived.** `messages.status` takes up to 500 `email_id` values from `messages.sendEmail`, and Unisender keeps those records for one month. A status beginning `err_` is a failure, `ok_` is a success or still in progress, and `not_sent` is its own case.
 - **A campaign without `start_time` sends immediately.** `campaigns.create` needs a `message_id` from `messages.createEmail`, and `campaigns.list` needs a `from` date and returns at most 10,000 rows a page.
@@ -113,15 +114,11 @@ await tenant.unisender.api.lists.list({});
 ```
 
 
-**Subscribe a contact with confirmation**
+**Create a contact list**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.unisender.api.contacts.subscribe({
-	list_ids: [1],
-	email: 'jordan@acme-logistics.com',
-	fields: { Name: 'Jordan', source: 'website' },
-});
+await tenant.unisender.api.lists.create({ title: 'Newsletter' });
 ```
 
 
