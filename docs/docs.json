@@ -3209,6 +3209,14 @@
                 ]
               },
               {
+                "group": "Recruitee",
+                "pages": [
+                  "plugins/recruitee/overview",
+                  "plugins/recruitee/api",
+                  "plugins/recruitee/database"
+                ]
+              },
+              {
                 "group": "RedCircle API",
                 "pages": [
                   "plugins/redcircle/overview",

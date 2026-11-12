@@ -383,6 +383,7 @@ export const BaseProviders = [
 	'reamaze',
 	'route4me',
 	'recallai',
+	'recruitee',
 	'redcircle',
 	'reddit',
 	'reducto',
@@ -898,6 +899,7 @@ export const ProviderDisplayNames = {
 	realphonevalidation: 'RealPhoneValidation',
 	reamaze: 'Re:amaze',
 	recallai: 'Recall.ai',
+	recruitee: 'Recruitee',
 	redcircle: 'RedCircle API',
 	reddit: 'Reddit',
 	reducto: 'Reducto',
@@ -1420,6 +1422,7 @@ export type AllProviders =
 	| 'reamaze'
 	| 'route4me'
 	| 'recallai'
+	| 'recruitee'
 	| 'redcircle'
 	| 'reddit'
 	| 'reducto'
