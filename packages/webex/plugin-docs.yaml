@@ -10,10 +10,11 @@ overviewNote: |
   - **Lists page by a `Link` header.** Webex returns `{ items: [...] }` and puts the next page in a `Link` header with `rel="next"`, not a cursor in the body. Each list returns that URL as `nextLink`; pass it back as `nextLink` to read the next page. The plugin only follows a `nextLink` on `https://webexapis.com` for the same list, since the token is sent with it.
   - **`max` caps at 1,000.** A larger value is rejected before the request rather than silently clamped.
   - **A message list needs a room.** Webex requires `roomId`; add `parentId` to read the replies in one thread of that room.
-  - **A message needs both a destination and content.** `roomId`, `toPersonId` or `toPersonEmail` for where, and `text`, `markdown` or one file URL in `files` for what. Webex returns `html` on messages but does not accept it when sending.
+  - **A message needs both a destination and content.** `roomId`, `toPersonId` or `toPersonEmail` for where, and `text`, `markdown`, `html` or one file URL in `files` for what. Webex takes one file per message.
   - **Updates send the required fields again.** Webex requires `title` on a room update, `roomId` plus `text` or `markdown` on a message edit, and `name` plus `targetUrl` on a webhook update, even when they do not change. A message can be edited at most 10 times, and a message with a file cannot be edited.
   - **A webhook's `secret` is the HMAC key Webex signs deliveries with.** It is the value worth capturing at creation, but it never reaches the event log: only `hasSecret` is recorded.
-  - **`status: 'inactive'` pauses a webhook** without deleting it, which is usually what a temporary stop wants.
+  - **`status: 'active'` turns a webhook back on** after Webex disabled it for failed deliveries. Webex refuses `inactive`, so delete a webhook to stop it.
+  - **A bot sees only what it is part of.** It lists the spaces it was added to, and in a group space it can list only the messages that mention it (`mentionedPeople: 'me'`); listing the whole space answers 403.
   - **Deletes answer 204 with no body**, so each one states what it did rather than returning an empty object.
   - **A voice clip and a transcript are both message objects.** `isVoiceClip` and `contentType` say which kind a message is, rather than there being a separate resource.
 examples:
@@ -81,6 +82,6 @@ apiExamples:
   webhooks.create:
     call: "{ name: 'Message hook', targetUrl: 'https://acme.example/hooks/webex', resource: 'messages', event: 'created', secret: 'your-signing-secret' }"
   webhooks.update:
-    call: "{ id: 'wh-1', status: 'inactive' }"
+    call: "{ id: 'wh-1', name: 'Message hook', targetUrl: 'https://acme.example/hooks/webex', status: 'active' }"
   webhooks.delete:
     call: "{ id: 'wh-1' }"

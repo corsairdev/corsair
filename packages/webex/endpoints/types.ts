@@ -291,7 +291,6 @@ export type MessageResponse = z.infer<typeof MessageResponseSchema>;
 /**
  * Sends a message. At least one of `text`, `markdown` or `files` is needed, and
  * the schema enforces that rather than letting Webex reject an empty message.
- * Webex renders `html` on messages it returns but does not accept it here.
  */
 const MessagesCreateInputSchema = z
 	.object({
@@ -306,6 +305,7 @@ const MessagesCreateInputSchema = z
 			.describe('A one-to-one message to this address.'),
 		text: z.string().optional(),
 		markdown: z.string().optional(),
+		html: z.string().optional(),
 		files: z
 			.array(z.string())
 			.min(1)
@@ -336,12 +336,13 @@ const MessagesCreateInputSchema = z
 		if (
 			!filled(value.text) &&
 			!filled(value.markdown) &&
+			!filled(value.html) &&
 			value.files === undefined
 		) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['text'],
-				message: 'A message needs non-empty text, markdown, or files.',
+				message: 'A message needs non-empty text, markdown, html, or files.',
 			});
 		}
 	});
@@ -600,9 +601,11 @@ const WebhooksUpdateInputSchema = z.object({
 		),
 	secret: z.string().optional(),
 	status: z
-		.enum(['active', 'inactive'])
+		.enum(['active'])
 		.optional()
-		.describe('inactive stops delivery without deleting the webhook.'),
+		.describe(
+			'active turns back on a webhook Webex disabled after failed deliveries. Webex refuses inactive; delete the webhook to stop it.',
+		),
 });
 
 export type WebhooksUpdateInput = z.infer<typeof WebhooksUpdateInputSchema>;

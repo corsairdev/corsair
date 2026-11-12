@@ -276,7 +276,7 @@ const webexEndpointMeta = {
 	'messages.create': {
 		riskLevel: 'write',
 		description:
-			'Post a message to a room or directly to a person, with text, markdown or one file attachment',
+			'Post a message to a room or directly to a person, with text, markdown, html or one file attachment',
 	},
 	'messages.update': {
 		riskLevel: 'write',
@@ -356,7 +356,7 @@ const webexEndpointMeta = {
 	'webhooks.update': {
 		riskLevel: 'write',
 		description:
-			'Change a webhook target, secret or status, or set it inactive to pause delivery',
+			'Change a webhook name, target or secret, or reactivate one Webex disabled; name and target are always sent',
 	},
 	'webhooks.delete': {
 		riskLevel: 'destructive',

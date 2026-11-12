@@ -189,7 +189,7 @@ describe('messages', () => {
 
 	it('rejects a message with no content', async () => {
 		await expect(invoke(Messages.create, { roomId: room.id })).rejects.toThrow(
-			'A message needs non-empty text, markdown, or files.',
+			'A message needs non-empty text, markdown, html, or files.',
 		);
 	});
 
@@ -462,14 +462,14 @@ describe('webhooks', () => {
 		).rejects.toThrow();
 	});
 
-	it('updates a webhook status', async () => {
-		respond(fetchMock, { ...webhook, status: 'inactive' });
+	it('reactivates a webhook', async () => {
+		respond(fetchMock, webhook);
 
 		await invoke(Webhooks.update, {
 			id: webhook.id,
 			name: 'Message hook',
 			targetUrl: 'https://acme.example/hooks/webex',
-			status: 'inactive',
+			status: 'active',
 		});
 
 		const sent = lastRequest(fetchMock);
@@ -477,8 +477,22 @@ describe('webhooks', () => {
 		expect(sent.body).toEqual({
 			name: 'Message hook',
 			targetUrl: 'https://acme.example/hooks/webex',
-			status: 'inactive',
+			status: 'active',
 		});
+	});
+
+	// Live run 2026-11-12: Webex answered 400 "The request could not be
+	// understood by the server due to malformed syntax." to status inactive.
+	it('refuses status inactive, which Webex rejects', async () => {
+		await expect(
+			invoke(Webhooks.update, {
+				id: webhook.id,
+				name: 'Message hook',
+				targetUrl: 'https://acme.example/hooks/webex',
+				status: 'inactive',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('deletes a webhook', async () => {
@@ -571,13 +585,6 @@ describe('spec fixes', () => {
 	it('refuses an empty message edit', async () => {
 		await expect(
 			invoke(Messages.update, { id: message.id, roomId: room.id }),
-		).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-
-	it('refuses an html-only message, since Webex does not accept html on create', async () => {
-		await expect(
-			invoke(Messages.create, { roomId: room.id, html: '<b>hi</b>' }),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
