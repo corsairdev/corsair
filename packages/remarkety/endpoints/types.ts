@@ -108,7 +108,10 @@ export type StoresCreateResponse = z.infer<typeof StoresCreateResponseSchema>;
  * rather than `PUT /stores/{storeId}`.
  */
 const StoresUpdateInputSchema = z.object({
-	id: z.number().int().describe('The numeric store id that stores.get returns.'),
+	id: z
+		.number()
+		.int()
+		.describe('The numeric store id that stores.get returns.'),
 	...StoreInputShape,
 });
 

@@ -604,7 +604,6 @@ describe('emailTemplates', () => {
 			}),
 		).rejects.toThrow();
 	});
-
 });
 
 describe('masterTemplates', () => {
@@ -629,7 +628,6 @@ describe('masterTemplates', () => {
 
 		expect(lastRequest(fetchMock).query.q).toBe('promo');
 	});
-
 });
 
 describe('products.list', () => {
