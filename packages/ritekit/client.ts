@@ -174,6 +174,12 @@ export type RiteKitImage = {
 
 const RITEKIT_IMAGE_TIMEOUT_MS = 60_000;
 
+/** A Retry-After in seconds, as milliseconds; the JSON path reads it the same way. */
+function retryAfterMs(header: string | null): number | undefined {
+	const seconds = header ? Number.parseInt(header, 10) : Number.NaN;
+	return Number.isNaN(seconds) ? undefined : seconds * 1000;
+}
+
 /**
  * Fetches a route that answers with an image. A refusal still arrives as JSON
  * and goes through the same error mapping as every other call; the URL, which
@@ -208,6 +214,7 @@ async function fetchRiteKitImage(
 
 	const contentType = response.headers.get('content-type') ?? '';
 	if (!response.ok || !contentType.startsWith('image/')) {
+		const retryAfter = retryAfterMs(response.headers.get('retry-after'));
 		// unknown: a refusal body is provider JSON, or text when it is not JSON.
 		let body: unknown;
 		try {
@@ -227,13 +234,22 @@ async function fetchRiteKitImage(
 				status: response.status,
 				code: fields.code,
 				info: fields.info,
+				retryAfter,
 				method: 'GET',
 				replayable,
 			},
 		);
 	}
 
-	const bytes = Buffer.from(await response.arrayBuffer());
+	let bytes: Buffer;
+	try {
+		bytes = Buffer.from(await response.arrayBuffer());
+	} catch (error) {
+		// The headers arrived but the body did not: a reset or the timeout.
+		const message =
+			error instanceof Error ? error.message : 'Unknown RiteKit error';
+		throw new RiteKitAPIError(message, { method: 'GET', replayable });
+	}
 	const type = contentType.split(';')[0]?.trim() || 'image/png';
 	return {
 		url: `data:${type};base64,${bytes.toString('base64')}`,

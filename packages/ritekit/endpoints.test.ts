@@ -362,6 +362,44 @@ describe('images', () => {
 		expect((error as Error).message).not.toContain('ritekit-test-key');
 	});
 
+	it('keeps the Retry-After delay of a throttled image call', async () => {
+		respond(
+			fetchMock,
+			{ result: false, message: 'Too many requests', code: 429 },
+			429,
+			{ 'Retry-After': '30' },
+		);
+
+		const error = await invoke(Images.quote, {
+			text: 'hello',
+			author: 'someone',
+		}).catch((caught: Error) => caught);
+
+		expect(error).toBeInstanceOf(RiteKitAPIError);
+		expect((error as RiteKitAPIError).retryAfter).toBe(30_000);
+	});
+
+	it('reports an image body that fails mid-read as a RiteKit error', async () => {
+		const response = new Response(QUOTE_IMAGE, {
+			status: 200,
+			headers: { 'Content-Type': 'image/png' },
+		});
+		jest
+			.spyOn(response, 'arrayBuffer')
+			.mockRejectedValue(new Error('socket hang up'));
+		fetchMock.mockResolvedValueOnce(response);
+
+		const error = await invoke(Images.quote, {
+			text: 'hello',
+			author: 'someone',
+		}).catch((caught: Error) => caught);
+
+		expect(error).toBeInstanceOf(RiteKitAPIError);
+		expect((error as Error).message).toContain('socket hang up');
+		expect((error as RiteKitAPIError).method).toBe('GET');
+		expect((error as Error).message).not.toContain('ritekit-test-key');
+	});
+
 	it('rejects a quote with no author', async () => {
 		await expect(invoke(Images.quote, { text: 'hello' })).rejects.toThrow();
 	});
