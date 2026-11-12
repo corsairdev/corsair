@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for ScrapingAnt: every `scrapingant.api.*` operation with input and output types."
+title: "ScrapingAnt API reference"
+sidebarTitle: "API"
+description: "API reference for the ScrapingAnt plugin in Corsair: every `scrapingant.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `scrapingant.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -76,9 +75,7 @@ await corsair.scrapingant.api.extract.data({ url: 'https://example.com/product',
 
 
 
-**Output:** `Record<string, unknown>`
-
-An object keyed by the camelCased property names from `extract_properties`, for example `{ title: 'Example Domain', price: 19.99 }`. A property the model could not find is `null`. The object is open: the keys come from the request text, so no schema can list them.
+**Output:** _empty object_
 
 
 ---
