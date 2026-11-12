@@ -150,11 +150,15 @@ export const refdomains: AhrefsEndpoints['refdomains'] = async (ctx, input) => {
 	);
 
 	for (const refdomain of response.refdomains) {
+		// Rows are stored by domain; a select without `domain` has nothing to key on.
+		const domain = refdomain.domain;
+		if (!domain) continue;
 		try {
-			const entityId = [input.target, refdomain.domain].join(':');
+			const entityId = [input.target, domain].join(':');
 
 			await ctx.db.refdomains.upsertByEntityId(entityId, {
 				...refdomain,
+				domain,
 				target: input.target,
 				updatedAt: new Date(),
 			});
@@ -190,16 +194,17 @@ export const topPages: AhrefsEndpoints['topPages'] = async (ctx, input) => {
 	);
 
 	for (const page of response.pages) {
+		// Rows are stored by URL; a select without `raw_url` has nothing to key on.
+		const rawUrl = page.raw_url;
+		if (!rawUrl) continue;
 		try {
-			const entityId = [
-				input.target,
-				input.country,
-				input.date,
-				page.raw_url,
-			].join(':');
+			const entityId = [input.target, input.country, input.date, rawUrl].join(
+				':',
+			);
 
 			await ctx.db.pages.upsertByEntityId(entityId, {
 				...page,
+				raw_url: rawUrl,
 				target: input.target,
 				country: input.country,
 				date: input.date,

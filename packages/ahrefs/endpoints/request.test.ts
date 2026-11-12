@@ -195,6 +195,17 @@ describe('callAhrefs schema checks', () => {
 		).rejects.toThrow('ahrefs.siteExplorer.getDomainRating');
 	});
 
+	it('accepts rows without the identity column when it was not selected', async () => {
+		mockedRequest.mockResolvedValueOnce({ pages: [{ sum_traffic: 120 }] });
+		const result = await endpoints.siteExplorer.topPages(ctx, {
+			target: 'ahrefs.com',
+			date: '2026-11-01',
+			country: 'us',
+			select: 'sum_traffic',
+		});
+		expect(result.pages).toEqual([{ sum_traffic: 120 }]);
+	});
+
 	it('validates input on the original Site Explorer actions too', async () => {
 		await expect(
 			endpoints.siteExplorer.getDomainRating(ctx, {

@@ -141,7 +141,7 @@ export const KeywordOverviewSchema = z
 		first_seen: z.string().nullable().optional(),
 		global_volume: z.number().int().nullable().optional(),
 		intents: AhrefsIntentsSchema.nullable().optional(),
-		keyword: z.string(),
+		keyword: z.string().nullable().optional(),
 		parent_topic: z.string().nullable().optional(),
 		parent_volume: z.number().int().nullable().optional(),
 		searches_pct_clicks_organic_and_paid: z.number().nullable().optional(),
@@ -184,7 +184,7 @@ export const OrganicKeywordsResponseSchema = z.object({
 
 export const RefdomainSchema = z
 	.object({
-		domain: z.string(),
+		domain: z.string().nullable().optional(),
 		domain_rating: z.number().nullable().optional(),
 		dofollow_links: z.number().int().nullable().optional(),
 		dofollow_refdomains: z.number().int().nullable().optional(),
@@ -201,7 +201,7 @@ export const RefdomainsResponseSchema = z.object({
 
 export const TopPageSchema = z
 	.object({
-		raw_url: z.string(),
+		raw_url: z.string().nullable().optional(),
 		keywords: z.number().int().nullable().optional(),
 		referring_domains: z.number().int().nullable().optional(),
 		sum_traffic: z.number().int().nullable().optional(),
@@ -263,7 +263,7 @@ export const SerpOverviewInputSchema = z.object({
 
 export const SerpPositionSchema = z
 	.object({
-		position: z.number().int(),
+		position: z.number().int().nullable().optional(),
 		url: z.string().nullable().optional(),
 		title: z.string().nullable().optional(),
 		type: z.array(z.string()).optional(),

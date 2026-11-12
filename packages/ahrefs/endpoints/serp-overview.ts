@@ -14,16 +14,20 @@ export const overview: AhrefsEndpoints['serpOverview'] = async (ctx, input) => {
 	);
 
 	for (const position of response.positions) {
+		// Rows are stored by position; skip them when `position` was not selected.
+		const rank = position.position;
+		if (rank == null) continue;
 		try {
 			const entityId = [
 				input.country,
 				input.keyword,
 				input.date ?? 'latest',
-				position.position,
+				rank,
 			].join(':');
 
 			await ctx.db.serpPositions.upsertByEntityId(entityId, {
 				...position,
+				position: rank,
 				country: input.country,
 				keyword: input.keyword,
 				requestedDate: input.date,
