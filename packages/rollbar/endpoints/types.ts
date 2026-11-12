@@ -334,9 +334,18 @@ export type ItemEventsResponse = z.infer<typeof ItemEventsResponseSchema>;
 
 // ── occurrences ───────────────────────────────────────────────────────────
 
+/** `/instances` allows larger pages than the other list routes. */
+const OccurrenceLimitSchema = z
+	.number()
+	.int()
+	.min(1)
+	.max(5000)
+	.optional()
+	.describe('Records per page, up to 5000.');
+
 const OccurrencesListInputSchema = z.object({
 	page: PageSchema,
-	limit: LimitSchema,
+	limit: OccurrenceLimitSchema,
 	project_id: z
 		.number()
 		.int()

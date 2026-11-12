@@ -267,6 +267,17 @@ describe('occurrences', () => {
 		expect(result.total_count).toBeNull();
 	});
 
+	it('accepts the occurrence route page size, up to 5000', async () => {
+		respond(fetchMock, OCCURRENCE_PAGE);
+
+		await invoke(Endpoints.occurrencesList, { limit: 5000 });
+		expect(lastRequest(fetchMock).query.limit).toBe('5000');
+
+		await expect(
+			invoke(Endpoints.occurrencesList, { limit: 5001 }),
+		).rejects.toThrow();
+	});
+
 	it('reads one occurrence', async () => {
 		respond(fetchMock, OCCURRENCE_RESULT);
 
