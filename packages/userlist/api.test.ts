@@ -1,5 +1,5 @@
 /**
- * Live smoke tests. CI skips this file by name, and it skips itself without a key.
+ * Live smoke tests. `pnpm test` and CI skip this file by name; only `test:live` runs it.
  *
  * Run with `USERLIST_API_KEY=... pnpm --filter @corsair-dev/userlist test:live`.
  *

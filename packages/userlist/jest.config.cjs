@@ -8,6 +8,8 @@ module.exports = {
 		'**/plugins/**/*.test.ts',
 		'**/setup/**/*.test.ts',
 	],
+	// api.test.ts writes real Userlist records: only `test:live` runs it.
+	testPathIgnorePatterns: ['/node_modules/', 'api\\.test\\.ts$'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',
