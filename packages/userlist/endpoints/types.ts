@@ -236,7 +236,7 @@ export type EventsCreateInput = z.infer<typeof EventsCreateInputSchema>;
 /** A part of a multipart body. */
 const MessagePartSchema = z
 	.object({
-		type: z.string().describe('The part type: `html` or `text`.'),
+		type: z.enum(['html', 'text']).describe('The part type.'),
 		content: z.string(),
 	})
 	.loose();
@@ -304,6 +304,18 @@ const MessagesSendInputSchema = z
 			.describe('A topic identifier from the account.'),
 	})
 	.superRefine((value, ctx) => {
+		if (value.body !== undefined) {
+			const multipart = value.body.type === 'multipart';
+			if (multipart !== Array.isArray(value.body.content)) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['body', 'content'],
+					message: multipart
+						? 'A multipart body needs an array of parts.'
+						: 'An html or text body needs a string.',
+				});
+			}
+		}
 		if (value.template === undefined) {
 			if (value.subject === undefined) {
 				ctx.addIssue({

@@ -376,8 +376,54 @@ describe('messages', () => {
 		});
 
 		expect(lastRequest(fetchMock).body).toMatchObject({
-			body: { type: 'multipart' },
+			body: {
+				type: 'multipart',
+				content: [
+					{ type: 'text', content: 'Thanks.' },
+					{ type: 'html', content: '<p>Thanks.</p>' },
+				],
+			},
 		});
+	});
+
+	it.each([
+		['multipart with a string', { type: 'multipart', content: 'Thanks.' }],
+		[
+			'html with an array of parts',
+			{ type: 'html', content: [{ type: 'html', content: '<p>Hi</p>' }] },
+		],
+		[
+			'a part type other than html or text',
+			{ type: 'multipart', content: [{ type: 'markdown', content: 'Hi' }] },
+		],
+	])('rejects a body that is %s before sending', async (_label, body) => {
+		await expect(
+			invoke(Messages.send, { user: 'user-123', subject: 'Hi', body }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('logs no channel when a template picks it', async () => {
+		respondEmpty(fetchMock);
+
+		await invoke(Messages.send, { template: 'welcome', user: 'user-123' });
+
+		const fields = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
+		expect(fields.channel).toBeUndefined();
+		expect(fields.template).toBe('welcome');
+	});
+
+	it('logs email when neither a template nor a channel is given', async () => {
+		respondEmpty(fetchMock);
+
+		await invoke(Messages.send, {
+			user: 'user-123',
+			subject: 'Hi',
+			body: { type: 'text', content: 'Hi' },
+		});
+
+		const fields = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
+		expect(fields.channel).toBe('email');
 	});
 
 	it('sends a web message to a user and refuses a to address', async () => {

@@ -48,7 +48,10 @@ export const send: UserlistEndpoints['messagesSend'] = (ctx, input) =>
 				parsed.template ??
 				(parsed.user === undefined ? parsed.to : ref(parsed.user)),
 			log: (parsed) => ({
-				channel: parsed.channel ?? 'email',
+				// A template picks its own channel, which the plugin cannot see.
+				channel:
+					parsed.channel ??
+					(parsed.template === undefined ? 'email' : undefined),
 				template: parsed.template,
 				user: parsed.user === undefined ? undefined : ref(parsed.user),
 			}),
