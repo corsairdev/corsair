@@ -18,6 +18,7 @@ import {
 	COMPANIES,
 	COMPANY_GET,
 	CUSTOMER_GET,
+	CUSTOMER_NOT_FOUND_IN_200,
 	CUSTOMERS,
 	CUSTOMERS_DELETED,
 	CUSTOMERS_RESUBSCRIBED,
@@ -238,13 +239,38 @@ describe('customers.get', () => {
 		const result = (await invoke(Customers.get, {
 			customerId: '5a9d595701c85b38114b5a1',
 		})) as {
-			data?: { subscribers?: { email?: string }[] };
+			data?: { email?: string };
 		};
 
 		expect(lastRequest(fetchMock).path).toBe(
 			'/api/v2/customers/5a9d595701c85b38114b5a1',
 		);
-		expect(result.data?.subscribers?.[0]?.email).toBe('john@example.com');
+		expect(result.data?.email).toBe('john@example.com');
+	});
+
+	it('logs a found customer from the object Retently returns in data', async () => {
+		respond(fetchMock, CUSTOMER_GET);
+
+		await invoke(Customers.get, { customerId: '5a9d595701c85b38114b5a1' });
+
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'retently.customers.get',
+			{ found: true },
+			'completed',
+		);
+	});
+
+	it('throws a not-found error when the 404 is only in the envelope', async () => {
+		respond(fetchMock, CUSTOMER_NOT_FOUND_IN_200);
+
+		// unknown: the rejection is narrowed by the assertions below.
+		const error = (await invoke(Customers.get, {
+			customerId: '000000000000000000000000',
+		}).catch((e: unknown) => e)) as { status?: number; isNotFound?: boolean };
+
+		expect(error.status).toBe(404);
+		expect(error.isNotFound).toBe(true);
 	});
 
 	it('percent-encodes the ID', async () => {
@@ -287,17 +313,32 @@ describe('customers.upsert', () => {
 		]);
 	});
 
-	it('parses the snake_case echo the upsert returns', async () => {
+	it('parses the per-email results the upsert returns', async () => {
 		respond(fetchMock, CUSTOMERS_UPSERTED);
 
 		const result = (await invoke(Customers.upsert, {
 			subscribers: [{ email: 'johnsmith@example.com' }],
 		})) as {
-			data?: { subscribers?: { first_name?: string; company?: string }[] };
+			data?: Record<string, { status?: string; company?: string }>;
 		};
 
-		expect(result.data?.subscribers?.[0]?.first_name).toBe('John');
-		expect(result.data?.subscribers?.[0]?.company).toBe('ACME');
+		expect(result.data?.['johnsmith@example.com']?.status).toBe('created');
+		expect(result.data?.['johnsmith@example.com']?.company).toBe('ACME');
+	});
+
+	it('counts the customers the upsert returned', async () => {
+		respond(fetchMock, CUSTOMERS_UPSERTED);
+
+		await invoke(Customers.upsert, {
+			subscribers: [{ email: 'johnsmith@example.com' }],
+		});
+
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'retently.customers.upsert',
+			{ sent: 1, returned: 1 },
+			'completed',
+		);
 	});
 
 	it('carries unset_properties and unset_tags through unchanged', async () => {
@@ -981,7 +1022,7 @@ describe('survey.send', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('surfaces a refusal that arrives as a 200 status field', async () => {
+	it('throws a refusal that arrives inside a 200 like the same refusal sent as a 400', async () => {
 		respond(fetchMock, {
 			success: false,
 			status: 'error',
@@ -989,14 +1030,19 @@ describe('survey.send', () => {
 			message: 'Campaign 5a9d595701c85b37224ab2d0 is not transactional',
 		});
 
-		const result = (await invoke(Survey.send, {
+		// unknown: the rejection is narrowed by the assertions below.
+		const error = (await invoke(Survey.send, {
 			campaign: 'c1',
 			subscribers: [{ email: 'a@example.com' }],
-		})) as { success?: boolean; status?: string; message?: string };
+		}).catch((e: unknown) => e)) as {
+			status?: number;
+			isValidationError?: boolean;
+			message?: string;
+		};
 
-		expect(result.success).toBe(false);
-		expect(result.status).toBe('error');
-		expect(result.message).toContain('not transactional');
+		expect(error.status).toBe(400);
+		expect(error.isValidationError).toBe(true);
+		expect(error.message).toContain('not transactional');
 	});
 });
 

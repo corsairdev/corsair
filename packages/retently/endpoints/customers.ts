@@ -1,6 +1,7 @@
 import type { RetentlyEndpoints } from '..';
 import { segment } from '../client';
 import { attributesQuery, call } from './call';
+import type { CustomersUpsertResponse } from './types';
 import {
 	RetentlyEndpointInputSchemas as Inputs,
 	RetentlyEndpointOutputSchemas as Outputs,
@@ -53,11 +54,16 @@ export const get: RetentlyEndpoints['customersGet'] = (ctx, input) =>
 			replayable: true,
 		}),
 		{
-			log: (_, result) => ({
-				found: (result.data?.subscribers?.length ?? 0) > 0,
-			}),
+			log: (_, result) => ({ found: Boolean(result.data?.id) }),
 		},
 	);
+
+/** Counts the customers in either upsert answer shape. */
+function upsertedCount(data: CustomersUpsertResponse['data']): number {
+	if (!data) return 0;
+	if (Array.isArray(data.subscribers)) return data.subscribers.length;
+	return Object.keys(data).length;
+}
 
 export const upsert: RetentlyEndpoints['customersUpsert'] = (ctx, input) =>
 	call(
@@ -79,7 +85,7 @@ export const upsert: RetentlyEndpoints['customersUpsert'] = (ctx, input) =>
 		{
 			log: (parsed, result) => ({
 				sent: parsed.subscribers.length,
-				returned: result.data?.subscribers?.length ?? 0,
+				returned: upsertedCount(result.data),
 			}),
 		},
 	);

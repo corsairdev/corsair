@@ -175,10 +175,11 @@ export async function makeRetentlyRequest(
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
+	// unknown: the body is provider JSON until the caller's output schema
+	// parses it; `request` cannot know the operation's shape.
+	let response: unknown;
 	try {
-		// unknown: the body is provider JSON until the caller's output schema
-		// parses it; `request` cannot know the operation's shape.
-		return await request<unknown>(configWith(apiKey), requestOptions, {
+		response = await request<unknown>(configWith(apiKey), requestOptions, {
 			rateLimitConfig: RETENTLY_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
@@ -210,4 +211,16 @@ export async function makeRetentlyRequest(
 			replayable,
 		});
 	}
+
+	// A by-ID lookup for a missing customer or feedback answers HTTP 200 with
+	// the 404 only in the envelope (seen live 11-12), so the envelope code is
+	// checked too.
+	const { code } = envelope(response);
+	if (code !== undefined && code >= 400) {
+		throw new RetentlyAPIError(
+			describeRetentlyError(code, response, 'Retently request failed'),
+			{ status: code, code, method, replayable },
+		);
+	}
+	return response;
 }

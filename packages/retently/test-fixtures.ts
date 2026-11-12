@@ -130,70 +130,114 @@ export const CUSTOMERS = {
 	},
 };
 
-// The list sample in the docs is abbreviated; this is the customer the
-// by-ID sample returns in its `subscribers` array.
+// A live GET /customers/{id} (11-12) puts the customer straight in `data`; the
+// docs sample shows a `subscribers` array instead. Values here are made up.
 export const CUSTOMER_GET = {
 	message: 'Success.',
 	code: 200,
 	data: {
-		subscribers: [
+		id: '5a9d595701c85b38114b5a1',
+		email: 'john@example.com',
+		firstName: 'John',
+		lastName: 'Smith',
+		companyName: 'ACME',
+		companyId: null,
+		jobTitle: null,
+		phoneNumber: null,
+		location: {
+			countryCode: null,
+			region: null,
+			country: null,
+			city: null,
+			state: null,
+			zipCode: null,
+			timezone: null,
+		},
+		tags: ['foo'],
+		integrationsLists: [],
+		createdDate: '2026-11-12T10:00:00.000Z',
+		updatedDate: '2026-11-12T10:00:00.000Z',
+		properties: [
 			{
-				email: 'john@example.com',
-				id: '5a9d595701c85b38114b5a1',
-				firstName: 'John',
-				lastName: 'Smith',
-				companyName: 'ACME',
-				companyId: '60444db01eeeb6bf89799999',
-				tags: ['foo', 'baz'],
-				createdDate: '2019-07-28T04:33:13.217Z',
-				properties: [
-					{
-						label: 'Subscription name',
-						name: 'subscription_name',
-						type: 'text',
-						value: 'Professional plan',
-					},
-				],
+				label: 'Subscription name',
+				name: 'subscription_name',
+				type: 'string',
+				value: 'Professional plan',
 			},
 		],
-		page: 1,
-		pages: 1,
-		limit: 1,
-		sort: '-createdDate',
-		total: 1,
+		isInQueue: false,
+		isInQueueSetAt: null,
+		lastSurveySent: {
+			openedDate: null,
+			surveyId: null,
+			metric: null,
+			receivedDate: null,
+			status: null,
+			campaignId: null,
+			resent: false,
+			sentBy: null,
+			channel: 'email',
+			isNegative: false,
+			isNeutral: false,
+			isPositive: false,
+			respondedDate: null,
+		},
+		isEmailDeliverable: true,
+		surveySubscriptionStatus: {
+			isOptedOut: false,
+			optOutDate: null,
+			optOutMessage: null,
+			optOutBy: null,
+			isSuppressed: false,
+			suppressedDate: null,
+			suppressedReason: null,
+		},
+		syncId: null,
+		isAtRisk: false,
+		source: 'API',
+		isAnonymous: false,
 	},
 };
 
-// The upsert sample echoes the request's snake_case names, not the camelCase
-// ones a lookup returns.
+// A live POST /customers (11-12) keys `data` by email, one result per
+// customer, rather than the `subscribers` array the docs sample shows.
 export const CUSTOMERS_UPSERTED = {
 	message: 'Request successfully sent.',
 	code: 200,
 	data: {
-		subscribers: [
-			{
-				email: 'johnsmith@example.com',
-				first_name: 'John',
-				last_name: 'Smith',
-				company: 'ACME',
-				tags: ['foo', 'bar', 'baz'],
-				createdDate: '2020-02-04T06:19:29.335Z',
-				properties: [
-					{
-						label: 'Subscription',
-						name: 'subscription',
-						type: 'string',
-						value: 'Free trial',
-					},
-				],
-			},
-		],
+		'johnsmith@example.com': {
+			id: '6a1f00000000000000000001',
+			email: 'johnsmith@example.com',
+			first_name: 'John',
+			last_name: '',
+			to: '',
+			company: 'ACME',
+			properties: [
+				{
+					name: 'subscription',
+					label: 'Subscription',
+					dataType: 'string',
+					source: 'API',
+					value: 'Free trial',
+					valueNumber: null,
+					valueDate: null,
+					valueBoolean: null,
+					valueArray: [],
+				},
+			],
+			tags: ['foo'],
+			status: 'created',
+			reason: '',
+		},
 	},
-	page: 1,
-	pages: 10,
-	limit: 20,
-	sort: '-createdDate',
-	total: 400,
+};
+
+// A live GET /customers/{id} or /feedback/{id} for an id that does not exist
+// answers HTTP 200 with the 404 only in the envelope.
+export const CUSTOMER_NOT_FOUND_IN_200 = {
+	message: 'Customers not found.',
+	code: 404,
+	data: null,
 };
 
 export const CUSTOMERS_UNSUBSCRIBED = {

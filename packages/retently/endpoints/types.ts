@@ -339,10 +339,16 @@ const CustomersGetInputSchema = z.object({
 export type CustomersGetInput = z.infer<typeof CustomersGetInputSchema>;
 
 /**
- * A by-ID lookup answers with the same `subscribers` array a list does, holding
- * exactly the one customer asked for.
+ * A by-ID lookup puts the customer straight in `data`. The docs sample shows a
+ * one-row `subscribers` array, but the live API (checked 11-12) does not.
  */
-const CustomersGetResponseSchema = CustomersListResponseSchema;
+const CustomersGetResponseSchema = z
+	.object({
+		message: z.string().nullish(),
+		code: z.number().nullish(),
+		data: CustomerSchema.nullish(),
+	})
+	.loose();
 
 export type CustomersGetResponse = z.infer<typeof CustomersGetResponseSchema>;
 
@@ -394,13 +400,46 @@ const CustomersUpsertInputSchema = z.object({
 
 export type CustomersUpsertInput = z.infer<typeof CustomersUpsertInputSchema>;
 
+/** One customer's outcome in an upsert answer. */
+const UpsertResultSchema = z
+	.object({
+		id: z.string().nullish(),
+		email: z.string().nullish(),
+		first_name: z.string().nullish(),
+		last_name: z.string().nullish(),
+		company: z.string().nullish(),
+		tags: z.array(z.string()).nullish(),
+		properties: z
+			.array(
+				z
+					.object({
+						label: z.string().nullish(),
+						name: z.string().nullish(),
+						dataType: z.string().nullish(),
+						value: JsonValueSchema.nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
+		status: z.string().nullish().describe('created or updated.'),
+		reason: z.string().nullish(),
+	})
+	.loose();
+
+/**
+ * The live API (checked 11-12) keys `data` by email, one result per customer.
+ * The docs sample shows a `subscribers` array instead, so that shape still
+ * parses.
+ */
 const CustomersUpsertResponseSchema = z
 	.object({
 		message: z.string().nullish(),
 		code: z.number().nullish(),
 		data: z
-			.object({ subscribers: z.array(CustomerSchema).nullish() })
-			.loose()
+			.union([
+				z.record(z.string(), UpsertResultSchema),
+				z.object({ subscribers: z.array(CustomerSchema).nullish() }).loose(),
+			])
 			.nullish(),
 		page: z.number().nullish(),
 		pages: z.number().nullish(),
