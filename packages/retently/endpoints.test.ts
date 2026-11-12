@@ -122,6 +122,7 @@ describe('customers.list', () => {
 		respond(fetchMock, CUSTOMERS);
 
 		const result = (await invoke(Customers.list, {})) as {
+			// unknown: only the row count is asserted, not the rows' shape.
 			data?: { subscribers?: unknown[]; total?: number };
 		};
 
@@ -134,6 +135,7 @@ describe('customers.list', () => {
 
 		const result = (await invoke(Customers.list, {})) as {
 			data?: {
+				// unknown: a property value is a string, number or boolean by type.
 				subscribers?: { properties?: { name?: string; value?: unknown }[] }[];
 			};
 		};
@@ -527,6 +529,7 @@ describe('feedback.list', () => {
 					score?: number;
 					comment?: string;
 					feedbackTopics?: { name?: string }[];
+					// unknown: an answer is a number, string or list by question type.
 					additionalQuestions?: { type?: string; answer?: unknown }[];
 				}[];
 			};

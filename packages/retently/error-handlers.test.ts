@@ -19,9 +19,11 @@ const context = {
 	originalError: new Error('failure'),
 } satisfies ErrorContext;
 
+// unknown: each handler returns its own retry shape; the assertions narrow it.
 function run(name: keyof typeof errorHandlers, error: Error): Promise<unknown> {
 	const handler = errorHandlers[name].handler;
 	// The handlers are declared with a narrower error type than the host's.
+	// unknown: the result is the retry shape, checked by each assertion.
 	return (handler as (e: Error, c: ErrorContext) => Promise<unknown>)(
 		error,
 		context,
@@ -126,6 +128,7 @@ describe('Retently error handlers', () => {
 	it('falls back to DEFAULT for anything else', async () => {
 		expect(await matches(new Error('something odd'))).toBe('DEFAULT');
 		await expect(
+			// unknown: the result is compared whole by toEqual below.
 			(errorHandlers.DEFAULT.handler as (e: Error) => Promise<unknown>)(
 				new Error('x'),
 			),
