@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Knack plugin"
+sidebarTitle: "Overview"
 description: "Read and write records in a Knack app - list tables and their fields, then query, create, update and delete records through the REST API."
 ---
 
@@ -74,7 +75,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. Knack needs both an Application ID and an API key, copied from the Builder under **Settings > API** (Next-Gen apps: **Settings > API & Code > API**). Store the pair on the account before the first call: a call with no saved pair throws `AuthMissingError` rather than reaching Knack.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 knack()

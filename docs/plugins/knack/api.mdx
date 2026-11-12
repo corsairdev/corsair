@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Knack: every `knack.api.*` operation with input and output types."
+title: "Knack API reference"
+sidebarTitle: "API"
+description: "API reference for the Knack plugin in Corsair: every `knack.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `knack.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -179,7 +178,7 @@ await corsair.knack.api.records.create({ object_key: 'object_3', fields: { field
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `object_key` | `string` | Yes | The table key, e.g. `object_3`. |
-| `fields` | `Record<string, string \| number \| boolean \| string[]>` | Yes | Field values keyed by Knack field name, e.g. `{ field_23: "Acme" }`. A connection field takes an array of record ids. Read-only mirrors such as `field_23_raw` are not accepted. |
+| `fields` | `Record<string, string \| number \| boolean \| string[] \| Record<string, any>>` | Yes | Field values keyed by Knack field name, e.g. `{ field_23: "Acme" }`. A connection field takes an array of record ids; name, email, address, link and date fields take an object such as `{ first: "Ada", last: "Lovelace" }` or `{ url: "https://example.com" }`. Read-only mirrors such as `field_23_raw` are not accepted. |
 
 Send only plain `field_N` keys. An empty field map is rejected because Knack would create a record with every field blank.
 
@@ -279,12 +278,12 @@ await corsair.knack.api.records.list({ object_key: 'object_3', rows_per_page: 25
 |------|------|----------|-------------|
 | `object_key` | `string` | Yes | The table key, e.g. `object_3`. |
 | `page` | `number` | No | Defaults to the first page. |
-| `rows_per_page` | `number` | No | How many records to return per page. |
+| `rows_per_page` | `number` | No | How many records to return per page: 25 by default, 1000 at most. |
 | `sort_field` | `string` | No | The field to sort by, e.g. `field_23`. |
 | `sort_order` | `asc \| desc` | No | Used only with `sort_field`. |
 | `filters` | `object[]` | No | Conditions a record must meet. All of them must match. |
 
-Page through with `page` and `rows_per_page`. `sort_order` is sent only with a `sort_field`. Operators include `is`, `is not`, `contains`, `starts with`, `ends with`, `is blank` and the comparison forms; every filter in a list must match.
+Page through with `page` and `rows_per_page`. `sort_order` is sent only with a `sort_field`. Operators are Knack's own: `is`, `is not`, `contains`, `starts with`, `ends with`, `is blank`, `is any`, and for numbers `higher than` / `lower than` (there is no `is greater than`); dates use `is before`, `is after` and the `is today` family. `is blank` takes no value. Every filter in a list must match. `rows_per_page` is 1000 at most.
 
 <AccordionGroup>
 <Accordion title="filters full type">
@@ -292,8 +291,8 @@ Page through with `page` and `rows_per_page`. `sort_order` is sent only with a `
 ```ts
 {
   field: string,
-  operator: is | is not | contains | does not contain | starts with | ends with | is blank | is not blank | is greater than | is less than | is greater than or equal to | is less than or equal to | is between,
-  value: string
+  operator: is | is not | contains | does not contain | starts with | ends with | is blank | is not blank | is any | higher than | lower than | is before | is after | is today | is today or before | is today or after | is before today | is after today | is before current time | is after current time,
+  value?: string
 }[]
 ```
 </Accordion>
@@ -343,7 +342,7 @@ await corsair.knack.api.records.update({ object_key: 'object_3', record_id: '6af
 |------|------|----------|-------------|
 | `object_key` | `string` | Yes | The table key, e.g. `object_3`. |
 | `record_id` | `string` | Yes | The record id, from `records.list`. |
-| `fields` | `Record<string, string \| number \| boolean \| string[]>` | Yes | Field values keyed by Knack field name, e.g. `{ field_23: "Acme" }`. A connection field takes an array of record ids. Read-only mirrors such as `field_23_raw` are not accepted. |
+| `fields` | `Record<string, string \| number \| boolean \| string[] \| Record<string, any>>` | Yes | Field values keyed by Knack field name, e.g. `{ field_23: "Acme" }`. A connection field takes an array of record ids; name, email, address, link and date fields take an object such as `{ first: "Ada", last: "Lovelace" }` or `{ url: "https://example.com" }`. Read-only mirrors such as `field_23_raw` are not accepted. |
 
 Only the fields you send change. The same read-only rule applies as on create.
 
