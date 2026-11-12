@@ -311,7 +311,7 @@ const OrdersListInputSchema = z.object({
 		.string()
 		.optional()
 		.describe(
-			'The next-page link the response hands back. Pass it verbatim rather than a page number.',
+			"The previous response's next link, passed as it came back; the plugin reads the cursor out of it. A bare cursor value also works.",
 		),
 });
 

@@ -1,4 +1,5 @@
 import type { RemoteRetrievalEndpoints } from '..';
+import type { RemoteRetrievalQuery } from '../client';
 import { call } from './call';
 import {
 	RemoteRetrievalEndpointInputSchemas as Inputs,
@@ -134,6 +135,24 @@ export const inprogress: RemoteRetrievalEndpoints['inprogressOrders'] = (
 	);
 
 /**
+ * The paging values for `/orders`.
+ *
+ * The response's `next` is a full link such as `…/orders?cursor=abc`, and callers
+ * pass it back as `cursor`. Sending that link as the cursor value would ask for
+ * `?cursor=https%3A…`, so a link is read for its query values instead; the request
+ * still goes to the fixed API host. A bare cursor value is sent as it is.
+ */
+function ordersPageQuery(cursor: string | undefined): RemoteRetrievalQuery {
+	if (cursor === undefined) return {};
+	if (!/^https?:\/\//i.test(cursor)) return { cursor };
+	try {
+		return Object.fromEntries(new URL(cursor).searchParams);
+	} catch {
+		return { cursor };
+	}
+}
+
+/**
  * Every order with its payment and shipping status.
  *
  * This is the only list route with a pagination envelope, and the docs say to page
@@ -151,7 +170,7 @@ export const list: RemoteRetrievalEndpoints['ordersList'] = (ctx, input) =>
 		({ cursor }) => ({
 			method: 'GET',
 			path: '/orders',
-			query: { cursor },
+			query: ordersPageQuery(cursor),
 			replayable: true,
 		}),
 		{

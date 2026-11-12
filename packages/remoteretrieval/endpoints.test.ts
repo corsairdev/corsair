@@ -315,6 +315,31 @@ describe('orders.list', () => {
 		expect(lastRequest(fetchMock).query.cursor).toBe('abc123');
 	});
 
+	it("reads the next page from the previous response's next link", async () => {
+		respond(fetchMock, ORDERS_ALL_WITH_NEXT);
+		const first = (await invoke(Api.list, {})) as { next?: string | null };
+		respond(fetchMock, ORDERS_ALL);
+
+		await invoke(Api.list, { cursor: first.next ?? undefined });
+
+		const request = lastRequest(fetchMock);
+		expect(request.origin).toBe('https://www.remoteretrieval.com');
+		expect(request.path).toBe('/api/v1/orders');
+		expect(request.query).toEqual({ cursor: 'abc' });
+	});
+
+	it('keeps the API host when the link names another one', async () => {
+		respond(fetchMock, ORDERS_ALL);
+
+		await invoke(Api.list, {
+			cursor: 'https://evil.example/steal?cursor=abc',
+		});
+
+		const request = lastRequest(fetchMock);
+		expect(request.origin).toBe('https://www.remoteretrieval.com');
+		expect(request.query).toEqual({ cursor: 'abc' });
+	});
+
 	it('reports whether another page exists', async () => {
 		respond(fetchMock, ORDERS_ALL_WITH_NEXT);
 

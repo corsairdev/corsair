@@ -14,7 +14,7 @@ overviewNote: |
 
   Reading, in practice:
 
-  - **The four order lists do not share a shape.** `orders.pending`, `orders.new`, `orders.inprogress` and `orders.get` answer a bare array (paged by `page`, up to 25); only `orders.list` answers `{next, previous, results}` and pages by the response's own `next` link. Use the cursor there rather than a page number.
+  - **The four order lists do not share a shape.** `orders.pending`, `orders.new`, `orders.inprogress` and `orders.get` answer a bare array (paged by `page`, up to 25); only `orders.list` answers `{next, previous, results}` and pages by the response's own `next` link: pass that link back as `cursor` and the plugin reads the cursor out of it.
   - **`orders.get` takes its ID as a query parameter, not a path segment.** The route is `device_returns` and the id is `?oid=`.
   - **The three list routes are a pipeline, not a filter.** `pending` is payment not yet completed (on hold), `new` is payment done and ready to process, and `inprogress` has the return leg started but the device not yet back. `orders.list` is the one place both `payment_status` and `order_status` appear together.
   - **`---` means "not started".** `shipments.send_status` and `return_status` carry that placeholder before a leg begins, so it is not a failure state to alert on.
