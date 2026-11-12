@@ -18,9 +18,9 @@ pnpm add @corsair-dev/respondio
 | `contacts.delete` | `respondio.api.contacts.delete` | `destructive` | Delete a contact and its conversation history |
 | `contacts.deleteTags` | `respondio.api.contacts.deleteTags` | `write` | Remove tags from a contact |
 | `contacts.get` | `respondio.api.contacts.get` | `read` | Read one contact by id:, email: or phone: identifier, with its fields, tags, assignee and lifecycle |
-| `contacts.lifecycle` | `respondio.api.contacts.lifecycle` | `write` | Move a contact to a lifecycle stage |
+| `contacts.lifecycle` | `respondio.api.contacts.lifecycle` | `write` | Move a contact to a lifecycle stage by name, or clear it with null |
 | `contacts.list` | `respondio.api.contacts.list` | `read` | List contacts with an $and or $or filter over fields, tags and lifecycle, a free-text search, and cursor paging |
-| `contacts.merge` | `respondio.api.contacts.merge` | `destructive` | Merge one contact into another and remove the second, keeping the first |
+| `contacts.merge` | `respondio.api.contacts.merge` | `destructive` | Merge two contacts by their IDs, setting the merged fields; the older contact stays and the other is removed |
 | `contacts.update` | `respondio.api.contacts.update` | `write` | Update a contact's fields by identifier |
 | `contacts.upsert` | `respondio.api.contacts.upsert` | `write` | Create or update a contact in one call, which is the safe choice when you do not know whether it exists |
 | `conversations.assign` | `respondio.api.conversations.assign` | `write` | Assign a contact to a user, or unassign it by sending a null assignee |
