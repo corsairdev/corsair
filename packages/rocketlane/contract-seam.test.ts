@@ -1204,7 +1204,7 @@ const operations = [
 		input: {
 			projectId: 1,
 		},
-		query: [],
+		query: ['limit', 'pageToken'],
 		hasBody: false,
 		void: false,
 	},
@@ -1481,7 +1481,12 @@ describe('Rocketlane public request seams', () => {
 			const rawInput = input as Record<string, unknown>;
 			expect(options.query).toEqual(
 				Object.fromEntries(
-					operation.query.map((name) => [name, rawInput[name]]),
+					operation.query.map((name) => [
+						name,
+						name === 'includeFields' && Array.isArray(rawInput[name])
+							? rawInput[name].join(',')
+							: rawInput[name],
+					]),
 				),
 			);
 			expect(options.body).toEqual(
@@ -1521,7 +1526,12 @@ describe('Rocketlane public request seams', () => {
 				method: operation.method,
 				url: pathFor(operation, values),
 				query: Object.fromEntries(
-					operation.query.map((key) => [key, values[key]]),
+					operation.query.map((key) => [
+						key,
+						key === 'includeFields' && Array.isArray(values[key])
+							? values[key].join(',')
+							: values[key],
+					]),
 				),
 				body: operation.hasBody ? values.body : undefined,
 			});
@@ -1657,6 +1667,20 @@ describe('Rocketlane public request seams', () => {
 		).toMatchObject({
 			pageSize: 25,
 			pageToken: 'page-two',
+		});
+	});
+
+	it('forwards placeholder pagination to the search request', async () => {
+		mockRequest.mockResolvedValue({ data: [], pagination: { hasMore: false } });
+		await Handlers.getPlaceholders({ key: 'test-api-key' } as never, {
+			projectId: 42,
+			limit: 25,
+			pageToken: 'page-two',
+		});
+		expect(mockRequest.mock.calls.at(-1)?.[1]).toMatchObject({
+			method: 'POST',
+			url: '1.0/projects/42/get-placeholders',
+			query: { limit: 25, pageToken: 'page-two' },
 		});
 	});
 });

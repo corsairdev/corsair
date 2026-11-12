@@ -52,4 +52,14 @@ describe('Rocketlane official REST surface', () => {
 	it('does not register inbound webhooks', () => {
 		expect(plugin.webhooks).toEqual({});
 	});
+
+	it('classifies permanent project deletion and placeholder search by effect', () => {
+		expect(plugin.endpointMeta?.['projects.deleteProject']).toMatchObject({
+			riskLevel: 'destructive',
+			irreversible: true,
+		});
+		expect(plugin.endpointMeta?.['projects.getPlaceholders']).toMatchObject({
+			riskLevel: 'read',
+		});
+	});
 });

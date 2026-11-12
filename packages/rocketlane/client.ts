@@ -49,8 +49,13 @@ export async function makeRocketlaneRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		// Some Rocketlane mutation endpoints accept documented query parameters too.
-		query,
+		// Rocketlane documents includeFields as a comma-separated query parameter.
+		query: query && {
+			...query,
+			...(Array.isArray(query.includeFields) && {
+				includeFields: query.includeFields.join(','),
+			}),
+		},
 	};
 
 	try {

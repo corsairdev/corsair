@@ -5382,7 +5382,11 @@ export const createProjectInputSchema = z.object({
 export const createProjectOutputSchema = z.lazy(
 	() => ProjectPublicAPIResponseEntity,
 );
-export const getPlaceholdersInputSchema = z.object({ projectId: z.number() });
+export const getPlaceholdersInputSchema = z.object({
+	projectId: z.number(),
+	limit: z.number().int().optional(),
+	pageToken: z.string().optional(),
+});
 export const getPlaceholdersOutputSchema = z.lazy(
 	() => ExampleAPIResponsePlaceholders,
 );

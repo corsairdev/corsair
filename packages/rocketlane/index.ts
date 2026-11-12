@@ -763,7 +763,8 @@ const rocketlaneEndpointMeta = {
 		description: 'Update project by Id',
 	},
 	'projects.deleteProject': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Delete project by Id',
 	},
 	'projects.unassignPlaceholders': {
@@ -799,7 +800,7 @@ const rocketlaneEndpointMeta = {
 		description: 'Create a project',
 	},
 	'projects.getPlaceholders': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get placeholders',
 	},
 	'phases.getPhase': { riskLevel: 'read', description: 'Get phase by Id' },

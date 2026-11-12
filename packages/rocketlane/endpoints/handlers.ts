@@ -1912,7 +1912,10 @@ export const getPlaceholders: RocketlaneEndpoints['getPlaceholders'] = async (
 		await makeRocketlaneRequest(
 			`1.0/projects/${encodeURIComponent(String(input.projectId))}/get-placeholders`,
 			ctx.key,
-			{ method: 'POST', query: {} },
+			{
+				method: 'POST',
+				query: { limit: input.limit, pageToken: input.pageToken },
+			},
 		),
 	);
 	await logEventFromContext(
