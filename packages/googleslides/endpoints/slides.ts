@@ -474,8 +474,9 @@ export const slidesSetNotes: GoogleSlidesEndpoints['slidesSetNotes'] = async (
 				);
 			}
 
-			// Existing notes have to go first: insertText appends at the end, so a
-			// set over non-empty notes would concatenate instead of replace. The
+			// Existing notes have to go first: insertText with no index writes at
+			// the start, so a set over non-empty notes would concatenate instead of
+			// replace. The
 			// raw text decides this, because a shape holding only blank lines still
 			// has content that an empty write would leave behind.
 			const hasExistingNotes =

@@ -396,7 +396,9 @@ const TextInsertInputSchema = z.object({
 		.int()
 		.min(0)
 		.optional()
-		.describe('Unicode code-unit offset; omitted appends'),
+		.describe(
+			'Unicode code-unit offset into the existing text. Omitted means 0, the start of the text',
+		),
 	cellLocation: TableCellLocationSchema.optional(),
 });
 

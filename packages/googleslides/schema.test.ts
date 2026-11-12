@@ -68,6 +68,18 @@ describe('input schemas', () => {
 	});
 });
 
+describe('field descriptions', () => {
+	it('says an omitted insertionIndex inserts at the start, as Google does', () => {
+		// Google reads a missing index as 0. A description that promised an append
+		// would put a closing line at the top of the shape.
+		const description =
+			GoogleSlidesEndpointInputSchemas.textInsert.shape.insertionIndex
+				.description ?? '';
+		expect(description).not.toMatch(/append/i);
+		expect(description).toMatch(/start/i);
+	});
+});
+
 describe('output schemas', () => {
 	it('rejects a presentation summary without an id', () => {
 		expect(() =>

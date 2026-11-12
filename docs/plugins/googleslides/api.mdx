@@ -1262,7 +1262,7 @@ await corsair.googleslides.api.text.insert({ presentationId: '1AbCdEfGhIjKlMnOpQ
 | `presentationId` | `string` | Yes | — |
 | `objectId` | `string` | Yes | Shape or table that receives the text |
 | `text` | `string` | Yes | — |
-| `insertionIndex` | `number` | No | Unicode code-unit offset; omitted appends |
+| `insertionIndex` | `number` | No | Unicode code-unit offset into the existing text. Omitted means 0, the start of the text |
 | `cellLocation` | `object` | No | 0-based cell position; required when the target is a table |
 
 <AccordionGroup>
