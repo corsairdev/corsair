@@ -1,0 +1,62 @@
+displayName: Unisender
+description: Email marketing and transactional email with Unisender - manage lists, contacts, custom fields and tags, subscribe and import contacts, send transactional email, and create and list campaigns.
+domain: unisender.com
+recommendedAuth: api_key
+overviewNote: |
+  Find the key in Unisender under Settings, Integration and API (Интеграция и API); the dashboard asks for the account password before it shows the whole key. Calls go to `https://api.unisender.com/en/api/<method>` and pass the key in the form body. The free plan includes API access.
+
+  - **The English docs are gone.** `unisender.com/en/support/api/` answers `410 Gone`. The Russian pages under `/ru/support/api/` still document every method in full, and the field names are identical.
+  - **Wrong key versus no key.** A wrong key answers `401 invalid_api_key`; *no* key at all answers `403 access_denied`. Both are treated as auth errors, so a missing credential surfaces as one either way.
+  - **Double opt-in.** `contacts.subscribe` takes `double_optin` of 0, 3 or 4, and 0 is the default. 0 sends a confirmation email and the contact stays `invited`, outside the list, until they accept; an `invited` address cannot be mailed. 3 adds the contact as `new` with no email, for consent you already hold. 4 adds a contact who is already `new` or `active` silently and sends the invitation to anyone else. Any other value is refused. Omitting `double_optin` therefore sends an email.
+  - **Unsubscribe versus exclude.** `contacts.unsubscribe` marks the contact unsubscribed, and only the contact can reverse that from a confirmation email. `contacts.exclude` only removes them from the given lists, and they can be subscribed again later.
+  - **Imports skip some addresses.** `contacts.import` takes at most 500 rows per call. List membership is a column: add `email_list_ids` to `field_names` with comma-separated list ids in each row. Unisender deliberately skips role addresses (`sales@`, `no-reply@`) and spam traps and counts them under `invalid` (and `role_based`), with the reason in `log`, so an import that inserts fewer rows than it was sent is normal, not a failure. Imports send no email.
+  - **Exports are asynchronous.** `contacts.export` returns a `task_uuid` and posts the file to your `notify_url` when it is ready. Unisender's `async/getTaskResult` method reports the task and, once it is `completed`, a `file_to_download` URL; this plugin does not wrap it yet, so pass a `notify_url` you can receive.
+  - **Sending limits.** `messages.sendEmail` accepts a body up to 1 MB, is limited to 1,000 messages a day and 60 calls a minute. `messages.createEmail` accepts a body up to 8 MB. The general allowance is 1,200 calls a minute.
+  - **Delivery status is short-lived.** `messages.status` takes up to 500 `email_id` values from `messages.sendEmail`, and Unisender keeps those records for one month. A status beginning `err_` is a failure, `ok_` is a success or still in progress, and `not_sent` is its own case.
+  - **A campaign without `start_time` sends immediately.** `campaigns.create` needs a `message_id` from `messages.createEmail`, and `campaigns.list` needs a `from` date and returns at most 10,000 rows a page.
+examples:
+  read:
+    path: lists.list
+    title: List contact lists
+    args: {}
+  write:
+    path: lists.create
+    title: Create a contact list
+    args:
+      title: Newsletter
+apiExamples:
+  lists.list: {}
+  lists.create:
+    call: "{ title: 'Newsletter', after_subscribe_url: 'https://acme.example/thanks' }"
+  lists.delete:
+    call: "{ list_id: 1 }"
+  contacts.get:
+    call: "{ email: 'jordan@acme-logistics.com', include_lists: true, include_fields: true }"
+  contacts.subscribe:
+    call: "{ list_ids: [1], email: 'jordan@acme-logistics.com', fields: { Name: 'Jordan' }, double_optin: 3 }"
+  contacts.unsubscribe:
+    call: "{ email: 'jordan@acme-logistics.com' }"
+  contacts.exclude:
+    call: "{ email: 'jordan@acme-logistics.com', list_ids: [1] }"
+  contacts.import:
+    call: "{ field_names: ['email', 'Name', 'email_list_ids'], data: [['jordan@acme-logistics.com', 'Jordan', '1']] }"
+  contacts.count:
+    call: "{ list_id: 1, type: 'address' }"
+  contacts.export:
+    call: "{ list_id: 1, notify_url: 'https://acme.example/export-ready', field_names: ['email', 'Name'] }"
+  fields.list: {}
+  fields.create:
+    call: "{ name: 'company', type: 'string' }"
+  fields.delete:
+    call: "{ id: 42 }"
+  tags.list: {}
+  messages.sendEmail:
+    call: "{ email: 'jordan@acme-logistics.com', sender_name: 'Acme', sender_email: 'hello@acme.example', subject: 'Your receipt', body: '<p>Thanks.</p>', list_id: 1 }"
+  messages.status:
+    call: "{ email_id: [123456789] }"
+  messages.createEmail:
+    call: "{ sender_name: 'Acme', sender_email: 'hello@acme.example', subject: 'November news', body: '<p>Hello.</p>', list_id: 1 }"
+  campaigns.create:
+    call: "{ message_id: 98765, start_time: '2026-12-01 09:00', timezone: 'UTC' }"
+  campaigns.list:
+    call: "{ from: '2026-01-01 00:00:00', limit: 100 }"
