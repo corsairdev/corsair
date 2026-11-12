@@ -8,18 +8,20 @@ overviewNote: |
   - **Only the newest token works.** Rentman keeps a single valid JWT per account, so clicking **Regenerate token** invalidates every integration already using the old one. A superseded token is refused by the gateway with `403`, which the plugin reports as an auth failure rather than a missing record.
   - **Every list is a cursor walk.** A collection answers `{ data, itemCount, limit, next_page_url }`, and `next_page_url` carries an opaque `cursor`. The plugin returns both `next_cursor` and `next_page_url`: pass the cursor back unchanged, because Rentman warns that it must not be built or edited. The cursor is null on the last page.
   - **Page size.** `limit` defaults to 300 and caps at 1500. The limit is carried into later pages by the cursor, so it only has to be set on the first request.
-  - **Filters are `field[operator]`.** Rentman reads a filter as a key such as `distance[lte]`, with the operators `lt`, `gt`, `lte`, `gte` and `neq`, plus `eq` and `neq` for strings. Each list models the operators its fields accept, so an unsupported one is rejected before the request rather than silently ignored.
+  - **Filters are `field[operator]`.** Rentman reads a filter as a key such as `distance[lte]`, with the operators `eq`, `lt`, `gt`, `lte`, `gte` and `neq`. Each list models the operators its fields accept, so an unsupported one is rejected before the request rather than silently ignored. Rentman answers `400` to a filter on a field the resource does not have.
+  - **Projects take no customer through the API.** Rentman answers `400` ("not permitted to set the following field: customer") to a project write that names one, so `projects.create` and `projects.update` leave the customer to the Rentman app.
+  - **Contacts keep two emails and two phones** (`email_1`, `email_2`, `phone_1`, `phone_2`). The plugin's `email` and `phone` inputs write the first of each. A contact `type` is `company` or `private`, and country codes are lowercase (`nl`).
   - **Linked items are paths by default.** A `customer` or `project` field comes back as `/contacts/12` unless you pass `expand`, which inlines the object. Nested expansions use dot notation and go three levels deep at most. `fields` projects the response, and a nested `fields` path must have a matching `expand`.
   - **Equipment has no `active` flag.** Availability is `in_shop`, `in_planner` and `in_archive`, and the list filter is `in_shop`.
   - **Contact addresses are nested in, flat out.** A contact carries three addresses, and the plugin takes each as an object under `mailing_address`, `visit_address` and `invoice_address`, then folds the prefix into the field names the API expects.
   - **Contact deletes are permanent.** `contacts.delete` has no undo and is marked destructive.
-  - **Retries.** Rentman documents no throughput window and no `Retry-After`, so a 429 is retried three times with exponential backoff. `500` and `502` are retried only for reads: a create that failed may already have written its record.
+  - **Rate limits.** Rentman allows 10 requests a second, 20 at once and 50,000 a day, and sends no `Retry-After`, so a 429 is retried three times with exponential backoff. `500` and `502` are retried only for reads: a create that failed may already have written its record.
 examples:
   read:
     path: contacts.list
     title: List contacts in one country
     args:
-      country: NL
+      country: nl
       limit: 100
       sort: +displayname
   write:
@@ -28,7 +30,7 @@ examples:
     args:
       name: Acme Inc
       type: company
-      country: NL
+      country: nl
       mailing_address:
         street: Damrak
         number: '1'
@@ -36,11 +38,11 @@ examples:
         postalcode: '1012 LG'
 apiExamples:
   contacts.list:
-    call: "{ country: 'NL', fields: ['displayname', 'email'], limit: 100 }"
+    call: "{ country: 'nl', fields: ['displayname', 'email_1'], limit: 100 }"
   contacts.get:
-    call: "{ contact_id: 12, expand: ['customer'] }"
+    call: "{ contact_id: 12, expand: ['default_person'] }"
   contacts.create:
-    call: "{ name: 'Acme Inc', type: 'company', country: 'NL', mailing_address: { street: 'Damrak', city: 'Amsterdam' } }"
+    call: "{ name: 'Acme Inc', type: 'company', email: 'info@acme.example', mailing_address: { street: 'Damrak', city: 'Amsterdam', country: 'nl' } }"
   contacts.update:
     call: "{ contact_id: 12, name: 'Acme B.V.' }"
   contacts.delete:
@@ -50,7 +52,7 @@ apiExamples:
   projects.get:
     call: "{ project_id: 201, expand: ['customer'] }"
   projects.create:
-    call: "{ name: 'Festival 2026', customer: 12, number: 'P-2026-001' }"
+    call: "{ name: 'Festival 2026', number: 'P-2026-001', account_manager: 44 }"
   projects.update:
     call: "{ project_id: 201, reference: 'PO-9988' }"
   equipment.list:
@@ -66,7 +68,7 @@ apiExamples:
   crew.get:
     call: "{ crew_id: 44 }"
   appointments.list:
-    call: "{ project: 201, start: { gte: '2026-07-01' } }"
+    call: "{ start: { gte: '2026-07-01' } }"
   appointments.get:
     call: "{ appointment_id: 55 }"
   invoices.list:
@@ -75,7 +77,8 @@ apiExamples:
     call: "{ invoice_id: 66 }"
 apiNotes:
   'contacts.list': 'The operator keys are percent-encoded brackets, such as `modified[gte]`.'
-  'contacts.create': 'The three address blocks are folded into `mailing_`, `visit_` and `invoice_` prefixed fields.'
+  'contacts.create': 'The three address blocks are folded into `mailing_`, `visit_` and `invoice_` prefixed fields; the visit address country is sent as `country`.'
+  'projects.create': 'Rentman refuses a customer on project writes; set it in the Rentman app.'
   'contacts.delete': 'Permanent; the API has no undo.'
   'equipment.list': 'Equipment has no `active` flag; availability is `in_shop`, `in_planner` and `in_archive`.'
   'projects.get': 'A linked item is a path like `/contacts/12` unless `expand` inlines it.'

@@ -15,8 +15,8 @@ function statusOf(error: Error): number | undefined {
  * - `500` and `502` are Rentman's own failures. The docs list both on every
  *   request, and only reads are replayed: a create that failed may have written.
  *
- * Rentman documents no throughput window and no `Retry-After`, so a 429 is
- * retried on the strategy's own backoff.
+ * Rentman allows 10 requests a second and 50,000 a day and sends no
+ * `Retry-After`, so a 429 is retried on the strategy's own backoff.
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {

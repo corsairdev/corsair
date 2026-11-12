@@ -226,12 +226,12 @@ const rentmanEndpointMeta = {
 	'projects.create': {
 		riskLevel: 'write',
 		description:
-			'Create a project for a customer contact with its number, account manager and deposit settings',
+			'Create a project with its number, account manager and deposit settings (Rentman sets no customer through the API)',
 	},
 	'projects.update': {
 		riskLevel: 'write',
 		description:
-			'Update a project: its name, customer, number, account manager or deposit settings',
+			'Update a project: its name, number, reference, account manager or deposit settings',
 	},
 	'equipment.list': {
 		riskLevel: 'read',
@@ -256,7 +256,7 @@ const rentmanEndpointMeta = {
 	'crew.list': {
 		riskLevel: 'read',
 		description:
-			'List crew members with name and availability filters, field projection and cursor paging',
+			'List crew members with name and active filters, field projection and cursor paging',
 	},
 	'crew.get': {
 		riskLevel: 'read',
@@ -266,7 +266,7 @@ const rentmanEndpointMeta = {
 	'appointments.list': {
 		riskLevel: 'read',
 		description:
-			'List calendar appointments with project and start/end filters plus cursor paging',
+			'List calendar appointments with start and end filters plus cursor paging',
 	},
 	'appointments.get': {
 		riskLevel: 'read',
