@@ -506,6 +506,7 @@ export const BaseProviders = [
 	'virustotal',
 	'waboxapp',
 	'wachete',
+	'waiverfile',
 	'wakatime',
 	'wati',
 	'webflow',
@@ -1036,6 +1037,7 @@ export const ProviderDisplayNames = {
 	virustotal: 'VirusTotal',
 	waboxapp: 'Waboxapp',
 	wachete: 'Wachete',
+	waiverfile: 'WaiverFile',
 	wakatime: 'WakaTime',
 	wati: 'Wati',
 	webflow: 'Webflow',
@@ -1573,6 +1575,7 @@ export type AllProviders =
 	| 'virustotal'
 	| 'waboxapp'
 	| 'wachete'
+	| 'waiverfile'
 	| 'wakatime'
 	| 'wati'
 	| 'webflow'
