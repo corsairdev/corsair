@@ -4085,5 +4085,37 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/ahrefs",
+    "dir": "packages/ahrefs",
+    "name": "Ahrefs",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2282,
+        "title": "Cover every Ahrefs MCP tool (Search Console, site audit, web analytics, more)"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/posthog",
+    "dir": "packages/posthog",
+    "name": "PostHog",
+    "version": "0.1.5",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2283,
+        "title": "Read, query and manage PostHog data with a personal API key"
+      }
+    ]
   }
 ]
