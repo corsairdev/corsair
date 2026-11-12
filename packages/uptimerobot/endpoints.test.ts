@@ -949,3 +949,40 @@ describe('status fields as UptimeRobot sends them', () => {
 		expect(result).toMatchObject({ status: 'ENABLED' });
 	});
 });
+
+describe('alert contacts on monitors.create', () => {
+	it('requires threshold and recurrence, which UptimeRobot answers 400 without', async () => {
+		await expect(
+			invoke(Monitors.create, {
+				friendlyName: 'Acme storefront',
+				type: 'HTTP',
+				interval: 300,
+				url: 'https://shop.acme.example',
+				timeout: 30,
+				assignedAlertContacts: [{ alertContactId: 42 }],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('sends threshold and recurrence of 0, the free-plan values', async () => {
+		respond(fetchMock, monitor, 201);
+
+		await invoke(Monitors.create, {
+			friendlyName: 'Acme storefront',
+			type: 'HTTP',
+			interval: 300,
+			url: 'https://shop.acme.example',
+			timeout: 30,
+			assignedAlertContacts: [
+				{ alertContactId: 42, threshold: 0, recurrence: 0 },
+			],
+		});
+
+		expect(lastRequest(fetchMock).body).toMatchObject({
+			assignedAlertContacts: [
+				{ alertContactId: 42, threshold: 0, recurrence: 0 },
+			],
+		});
+	});
+});

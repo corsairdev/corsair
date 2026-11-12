@@ -282,15 +282,28 @@ const MonitorsCreateInputSchema = z
 						alertContactId: z
 							.number()
 							.int()
-							.describe('From account.alertContacts.'),
-						threshold: z.number().int().min(0).optional(),
-						recurrence: z.number().int().min(0).optional(),
+							.describe(
+								"An id from an existing monitor's assignedAlertContacts (monitors.get).",
+							),
+						// UptimeRobot answers 400 when either is missing.
+						threshold: z
+							.number()
+							.int()
+							.min(0)
+							.describe('Minutes down before alerting. 0 on the free plan.'),
+						recurrence: z
+							.number()
+							.int()
+							.min(0)
+							.describe('Minutes between repeat alerts. 0 on the free plan.'),
 					})
 					.loose(),
 			)
 			.min(1)
 			.optional()
-			.describe('Who is alerted. Threshold and recurrence are paid-plan only.'),
+			.describe(
+				'Who is alerted. Threshold and recurrence are required; values above 0 need a paid plan.',
+			),
 		customFields: z
 			.record(z.string(), z.string())
 			.optional()
