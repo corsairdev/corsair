@@ -3583,6 +3583,14 @@
                 ]
               },
               {
+                "group": "TextIt",
+                "pages": [
+                  "plugins/textit/overview",
+                  "plugins/textit/api",
+                  "plugins/textit/database"
+                ]
+              },
+              {
                 "group": "TextRazor",
                 "pages": [
                   "plugins/textrazor/overview",
