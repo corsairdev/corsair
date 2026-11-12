@@ -364,6 +364,28 @@ describe('domains', () => {
 		expect(result.message).toBe('Domain created');
 	});
 
+	it('rejects a create or delete that answers success false', async () => {
+		respond(fetchMock, { success: false, message: 'Domain already exists' });
+		respond(fetchMock, { success: false, message: 'Domain not found' });
+
+		await expect(
+			invoke(Api.domainCreate, { domain: 'go.example.com' }),
+		).rejects.toThrow();
+		await expect(
+			invoke(Api.domainDelete, { domain: 'go.example.com' }),
+		).rejects.toThrow();
+	});
+
+	it('accepts the documented success true answer', async () => {
+		respond(fetchMock, { success: true });
+
+		const result = (await invoke(Api.domainCreate, {
+			domain: 'go.example.com',
+		})) as { success?: boolean };
+
+		expect(result.success).toBe(true);
+	});
+
 	it('types the message create and delete answer', async () => {
 		respond(fetchMock, DOMAIN_CREATED);
 		respond(fetchMock, DOMAIN_DELETED);

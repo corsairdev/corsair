@@ -256,7 +256,9 @@ export type DomainCreateInput = z.infer<typeof DomainCreateInputSchema>;
 const DomainCreateResponseSchema = z
 	.object({
 		message: z.string().nullish().describe('"Domain created" on success.'),
-		success: z.boolean().nullish(),
+		// The docs answer `{ success: true }`, live answers a message alone;
+		// `success: false` is a failure and is refused here.
+		success: z.literal(true).nullish(),
 	})
 	.loose();
 
@@ -332,7 +334,8 @@ export type DomainActiveResponse = z.infer<typeof DomainActiveResponseSchema>;
 const DomainDeleteResponseSchema = z
 	.object({
 		message: z.string().nullish().describe('"success" on deletion.'),
-		success: z.boolean().nullish(),
+		// As for create: `success: false` is a failure and is refused here.
+		success: z.literal(true).nullish(),
 	})
 	.loose();
 
