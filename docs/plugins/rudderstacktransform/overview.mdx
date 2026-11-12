@@ -11,7 +11,7 @@ Create a **workspace-level Service Access Token** under Settings, Access Tokens,
 The token goes in `Authorization: Bearer …`. Two things are easy to get wrong:
 
 - **Publishing is not a separate resource.** `publish` is a query flag on `transformations.create`, `transformations.update`, `libraries.create` and `libraries.update`. Without it the call only writes a *revision*: the code is not live, and `transformations.connect` answers `400 "Transformation is not published"`.
-- **Use the right region.** A token only works on the host its workspace lives in. Pass `region: 'eu'` when you sign in at `app.eu.rudderstack.com`; the default is the US host, `api.rudderstack.com`.
+- **Use the right region.** A token only works on the host its workspace lives in. Pass `region: 'eu'` when you sign in at `app.eu.rudderstack.com`; the default is the US host, `api.rudderstack.com`. `region` is a plugin option, not part of a tenant's credentials, so every tenant of one plugin instance uses the same host.
 
 Other things worth knowing:
 
