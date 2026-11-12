@@ -8,6 +8,7 @@ import {
 	Webhooks,
 	Workspace,
 } from './endpoints';
+import type { WatiEndpointInputs } from './endpoints/types';
 import {
 	broadcast,
 	broadcastList,
@@ -627,5 +628,14 @@ describe('webhooks', () => {
 
 		expect(result).toMatchObject({ success: true, id: 'wh-1' });
 		expect(lastRequest(fetchMock).method).toBe('DELETE');
+	});
+});
+
+describe('caller-facing input types', () => {
+	it('let callers omit the paging fields that have defaults', () => {
+		// tsc checks this file: the schema defaults make these fields optional for callers.
+		const firstPage: WatiEndpointInputs['segmentsList'] = { page_number: 1 };
+		const defaults: WatiEndpointInputs['contactsList'] = {};
+		expect([firstPage, defaults]).toHaveLength(2);
 	});
 });

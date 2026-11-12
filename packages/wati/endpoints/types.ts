@@ -11,6 +11,8 @@ import { z } from 'zod';
 /**
  * WATI requires both paging fields on every list route, and a request without them
  * can be refused, so they carry documented defaults rather than being optional.
+ * The `*Input` types below use `z.input`, so callers may still omit them: `call()`
+ * parses the input and fills the defaults before the request is built.
  */
 const PageSchema = {
 	page_number: z
@@ -87,7 +89,7 @@ const ContactsCreateInputSchema = z.object({
 		.describe('Custom attributes, as name/value pairs.'),
 });
 
-export type ContactsCreateInput = z.infer<typeof ContactsCreateInputSchema>;
+export type ContactsCreateInput = z.input<typeof ContactsCreateInputSchema>;
 
 const ContactsGetInputSchema = z.object({
 	target: z
@@ -96,7 +98,7 @@ const ContactsGetInputSchema = z.object({
 		.describe('The contact wa_id or phone number. A leading + is allowed.'),
 });
 
-export type ContactsGetInput = z.infer<typeof ContactsGetInputSchema>;
+export type ContactsGetInput = z.input<typeof ContactsGetInputSchema>;
 
 // One contact looks like a row of the contact list, so the same model is used;
 // an empty object exposed nothing and made the generated docs read "empty object".
@@ -106,7 +108,7 @@ export type ContactResponse = z.infer<typeof ContactResponseSchema>;
 
 const ContactsListInputSchema = z.object({ ...PageSchema });
 
-export type ContactsListInput = z.infer<typeof ContactsListInputSchema>;
+export type ContactsListInput = z.input<typeof ContactsListInputSchema>;
 
 const ContactsListResponseSchema = z
 	.object({
@@ -119,7 +121,7 @@ export type ContactsListResponse = z.infer<typeof ContactsListResponseSchema>;
 
 const ContactsCountInputSchema = z.object({});
 
-export type ContactsCountInput = z.infer<typeof ContactsCountInputSchema>;
+export type ContactsCountInput = z.input<typeof ContactsCountInputSchema>;
 
 const ContactsCountResponseSchema = z
 	.object({
@@ -133,7 +135,7 @@ const ContactsDeleteInputSchema = z.object({
 	target: z.string().min(1),
 });
 
-export type ContactsDeleteInput = z.infer<typeof ContactsDeleteInputSchema>;
+export type ContactsDeleteInput = z.input<typeof ContactsDeleteInputSchema>;
 
 /** A delete answers a flag, which the plugin states plainly. */
 const DeleteResponseSchema = z
@@ -185,7 +187,7 @@ const ConversationsListInputSchema = z.object({
 	channel_id: z.string().optional().describe('Filter by connected channel ID.'),
 });
 
-export type ConversationsListInput = z.infer<
+export type ConversationsListInput = z.input<
 	typeof ConversationsListInputSchema
 >;
 
@@ -245,7 +247,7 @@ const ConversationsMessagesInputSchema = z.object({
 	...PageSchema,
 });
 
-export type ConversationsMessagesInput = z.infer<
+export type ConversationsMessagesInput = z.input<
 	typeof ConversationsMessagesInputSchema
 >;
 
@@ -271,7 +273,7 @@ const MessagesSendTextInputSchema = z.object({
 	text: z.string().min(1),
 });
 
-export type MessagesSendTextInput = z.infer<typeof MessagesSendTextInputSchema>;
+export type MessagesSendTextInput = z.input<typeof MessagesSendTextInputSchema>;
 
 /**
  * A template send, which works outside the service window. `parameters` binds
@@ -310,7 +312,7 @@ const MessagesSendTemplateInputSchema = z.object({
 // No cross-field rule: `parameters` is omitted for a template with no
 // placeholders, which is a valid send, and `broadcast_name` is always required.
 
-export type MessagesSendTemplateInput = z.infer<
+export type MessagesSendTemplateInput = z.input<
 	typeof MessagesSendTemplateInputSchema
 >;
 
@@ -363,7 +365,7 @@ const MessagesSendFileInputSchema = z.object({
 	caption: z.string().optional(),
 });
 
-export type MessagesSendFileInput = z.infer<typeof MessagesSendFileInputSchema>;
+export type MessagesSendFileInput = z.input<typeof MessagesSendFileInputSchema>;
 
 // ── templates ─────────────────────────────────────────────────────────────
 
@@ -408,7 +410,7 @@ const TemplatesListInputSchema = z.object({
 		.describe('Only templates on this sending channel.'),
 });
 
-export type TemplatesListInput = z.infer<typeof TemplatesListInputSchema>;
+export type TemplatesListInput = z.input<typeof TemplatesListInputSchema>;
 
 const TemplatesListResponseSchema = z
 	.object({
@@ -424,7 +426,7 @@ export type TemplatesListResponse = z.infer<typeof TemplatesListResponseSchema>;
 
 const TemplatesGetInputSchema = z.object({ template_id: z.string().min(1) });
 
-export type TemplatesGetInput = z.infer<typeof TemplatesGetInputSchema>;
+export type TemplatesGetInput = z.input<typeof TemplatesGetInputSchema>;
 
 const TemplateResponseSchema = TemplateSchema;
 
@@ -449,7 +451,7 @@ export type WatiChannel = z.infer<typeof ChannelSchema>;
 
 const ChannelsListInputSchema = z.object({ ...PageSchema });
 
-export type ChannelsListInput = z.infer<typeof ChannelsListInputSchema>;
+export type ChannelsListInput = z.input<typeof ChannelsListInputSchema>;
 
 const ChannelsListResponseSchema = z
 	.object({
@@ -461,7 +463,7 @@ export type ChannelsListResponse = z.infer<typeof ChannelsListResponseSchema>;
 
 const CreditsInputSchema = z.object({});
 
-export type CreditsInput = z.infer<typeof CreditsInputSchema>;
+export type CreditsInput = z.input<typeof CreditsInputSchema>;
 
 const CreditsResponseSchema = z
 	.object({
@@ -521,7 +523,7 @@ const BroadcastsListInputSchema = z.object({
 		.describe('Only campaigns sent from this channel.'),
 });
 
-export type BroadcastsListInput = z.infer<typeof BroadcastsListInputSchema>;
+export type BroadcastsListInput = z.input<typeof BroadcastsListInputSchema>;
 
 const BroadcastsListResponseSchema = z
 	.object({
@@ -537,7 +539,7 @@ export type BroadcastsListResponse = z.infer<
 
 const BroadcastsGetInputSchema = z.object({ broadcast_id: z.string().min(1) });
 
-export type BroadcastsGetInput = z.infer<typeof BroadcastsGetInputSchema>;
+export type BroadcastsGetInput = z.input<typeof BroadcastsGetInputSchema>;
 
 const BroadcastResponseSchema = BroadcastSchema;
 
@@ -548,7 +550,7 @@ const BroadcastsRecipientsInputSchema = z.object({
 	...PageSchema,
 });
 
-export type BroadcastsRecipientsInput = z.infer<
+export type BroadcastsRecipientsInput = z.input<
 	typeof BroadcastsRecipientsInputSchema
 >;
 
@@ -611,7 +613,7 @@ export type WatiSegment = z.infer<typeof SegmentSchema>;
 
 const SegmentsListInputSchema = z.object({ ...PageSchema });
 
-export type SegmentsListInput = z.infer<typeof SegmentsListInputSchema>;
+export type SegmentsListInput = z.input<typeof SegmentsListInputSchema>;
 
 const SegmentsListResponseSchema = z
 	.object({
@@ -627,7 +629,7 @@ export type SegmentsListResponse = z.infer<typeof SegmentsListResponseSchema>;
 
 const SegmentsGetInputSchema = z.object({ segmentId: z.string().min(1) });
 
-export type SegmentsGetInput = z.infer<typeof SegmentsGetInputSchema>;
+export type SegmentsGetInput = z.input<typeof SegmentsGetInputSchema>;
 
 const SegmentResponseSchema = SegmentSchema;
 
@@ -670,7 +672,7 @@ const SegmentsEvaluateInputSchema = z.object({
 	...PageSchema,
 });
 
-export type SegmentsEvaluateInput = z.infer<typeof SegmentsEvaluateInputSchema>;
+export type SegmentsEvaluateInput = z.input<typeof SegmentsEvaluateInputSchema>;
 
 const SegmentEvaluateResponseSchema = z
 	.object({
@@ -711,7 +713,7 @@ export type WatiWebhook = z.infer<typeof WebhookSchema>;
 // The V3 list takes no paging and answers a bare array.
 const WebhooksListInputSchema = z.object({});
 
-export type WebhooksListInput = z.infer<typeof WebhooksListInputSchema>;
+export type WebhooksListInput = z.input<typeof WebhooksListInputSchema>;
 
 const WebhooksListResponseSchema = z
 	.object({
@@ -723,7 +725,7 @@ export type WebhooksListResponse = z.infer<typeof WebhooksListResponseSchema>;
 
 const WebhooksGetInputSchema = z.object({ id: z.string().min(1) });
 
-export type WebhooksGetInput = z.infer<typeof WebhooksGetInputSchema>;
+export type WebhooksGetInput = z.input<typeof WebhooksGetInputSchema>;
 
 const WebhookResponseSchema = WebhookSchema;
 
@@ -731,7 +733,7 @@ export type WebhookResponse = z.infer<typeof WebhookResponseSchema>;
 
 const WebhooksDeleteInputSchema = z.object({ id: z.string().min(1) });
 
-export type WebhooksDeleteInput = z.infer<typeof WebhooksDeleteInputSchema>;
+export type WebhooksDeleteInput = z.input<typeof WebhooksDeleteInputSchema>;
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
