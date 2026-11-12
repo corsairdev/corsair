@@ -19,7 +19,7 @@ Every analysis takes the same shape:
 
 - **Give `content` or `contentUri`, never both.** `contentUri` fetches the page server-side over http, https, ftp or ftps. The plugin rejects a request with neither, since there is nothing to analyse, and one with both, since Rosette treats them as alternatives.
 - **`language` and `profileId` are optional.** Setting `language` skips detection and is worth doing when you know it, because detection errors change the result of every downstream analysis. A `profileId` applies a saved profile.
-- **The result is a pure function of its input,** so a retry costs one more call but returns the same answer.
+- **A retry costs one more API call.** With `content` it returns the same answer. With `contentUri` Rosette fetches the page again, so a page that changed in between gives a different answer.
 
 Reading the answers:
 
