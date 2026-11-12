@@ -124,6 +124,26 @@ describe('Unisender client', () => {
 		expect(require('node:util').inspect(error)).not.toContain('BADKEY');
 	});
 
+	it('redacts the key from a refusal that arrives with HTTP 200', async () => {
+		// Unisender sends most refusals as 200 with a code (captured live 11-12).
+		respond(
+			{ error: "There is no user with api_key 'BADKEY'", code: 'invalid_arg' },
+			200,
+		);
+
+		const error = await failure(
+			makeUnisenderRequest('BADKEY', {
+				apiMethod: 'getLists',
+				form: {},
+				replayable: true,
+			}),
+		);
+
+		expect(error.code).toBe('invalid_arg');
+		expect(error.message).not.toContain('BADKEY');
+		expect(error.message).toContain('[redacted]');
+	});
+
 	it('treats a missing key, which is 403 access_denied, as an auth error too', async () => {
 		respond(ACCESS_DENIED, 403);
 

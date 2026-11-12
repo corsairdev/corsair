@@ -311,8 +311,9 @@ export async function makeUnisenderRequest(
 	// output schema, which would accept it as a result.
 	if (isUnisenderFailure(raw)) {
 		const fields = failure(raw);
+		// Most refusals arrive this way (live 11-12), so the key is redacted here too.
 		throw new UnisenderAPIError(
-			describeUnisenderError(undefined, raw, 'refused'),
+			describeUnisenderError(undefined, raw, 'refused', apiKey),
 			{
 				code: fields.code,
 				method: 'POST',
