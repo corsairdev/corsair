@@ -15,6 +15,7 @@ import {
 	installFetchMock,
 	invoke,
 	lastRequest,
+	requestAt,
 	respond,
 } from './test-support';
 
@@ -200,9 +201,12 @@ describe('detect', () => {
 		expect(result.detections?.[1]?.languageCode).toBe('de');
 		// Two passages mean two requests, each carrying a single `text`.
 		expect(fetchMock).toHaveBeenCalledTimes(2);
-		const first = lastRequest(fetchMock);
+		const first = requestAt(fetchMock, 0);
+		const second = requestAt(fetchMock, 1);
 		expect(first.path).toBe('/translate/v2/detect');
-		expect(first.body).toEqual({ text: 'Guten Tag' });
+		expect(first.body).toEqual({ text: 'Hello' });
+		expect(second.path).toBe('/translate/v2/detect');
+		expect(second.body).toEqual({ text: 'Guten Tag' });
 	});
 
 	it('sends folderId in each detect body when one is given', async () => {
