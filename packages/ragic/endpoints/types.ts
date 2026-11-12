@@ -417,7 +417,10 @@ const FieldSchema = z
 
 const SubtableSchema = z
 	.object({
-		subtableKey: z.string().nullish(),
+		subtableKey: z
+			.union([z.number(), z.string()])
+			.nullish()
+			.describe('The subtable id, a number in the reference response.'),
 		fields: z.array(FieldSchema).nullish(),
 	})
 	.loose();

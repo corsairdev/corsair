@@ -140,13 +140,16 @@ export const SCHEMA = {
 	],
 	subtables: [
 		{
-			subtableKey: '2000154',
+			// A number, as in the reference's sample response.
+			subtableKey: 2000154,
 			fields: [
 				{ fieldId: 2000147, fieldName: 'Contact Name', type: 'text' },
 				{ fieldId: 2000148, fieldName: 'Title', type: 'text' },
 			],
 		},
 	],
+	status: 'SUCCESS',
+	code: 200,
 };
 
 // Live: a protected sheet read with no key, and also with a wrong key. Both

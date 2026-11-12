@@ -545,7 +545,7 @@ describe('schema.get', () => {
 		const result = (await invoke(Records.schema, SHEET)) as {
 			sheet?: { sheetName?: string; keyFieldId?: number };
 			fields?: { fieldId?: number; fieldName?: string; type?: string }[];
-			subtables?: { subtableKey?: string }[];
+			subtables?: { subtableKey?: number | string }[];
 		};
 
 		expect(lastRequest(fetchMock).path).toBe('/demo/sales/1/metadata/schema');
@@ -572,10 +572,13 @@ describe('schema.get', () => {
 		respond(fetchMock, SCHEMA);
 
 		const result = (await invoke(Records.schema, SHEET)) as {
-			subtables?: { subtableKey?: string; fields?: { fieldId?: number }[] }[];
+			subtables?: {
+				subtableKey?: number | string;
+				fields?: { fieldId?: number }[];
+			}[];
 		};
 
-		expect(result.subtables?.[0]?.subtableKey).toBe('2000154');
+		expect(result.subtables?.[0]?.subtableKey).toBe(2000154);
 		expect(result.subtables?.[0]?.fields?.[0]?.fieldId).toBe(2000147);
 	});
 
