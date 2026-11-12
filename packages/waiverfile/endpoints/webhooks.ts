@@ -53,6 +53,8 @@ export const subscribe: WaiverFileEndpoints['webhooksSubscribe'] = (
 			method: 'POST',
 			path: `/api/v1/subscribe/${trigger}`,
 			query: { targetUrl },
+			// The URL may hold the receiver's token, and a 404 echoes it.
+			redact: [targetUrl],
 		}),
 		{
 			shape: okResult,
@@ -82,6 +84,8 @@ export const unsubscribe: WaiverFileEndpoints['webhooksUnsubscribe'] = (
 			method: 'DELETE',
 			path: `/api/v1/deletesubscribe/${trigger}`,
 			query: { targetUrl },
+			// The URL may hold the receiver's token, and a 404 echoes it.
+			redact: [targetUrl],
 		}),
 		{
 			shape: okResult,

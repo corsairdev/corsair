@@ -170,12 +170,18 @@ export type WaiverFileRequest = {
 	body?: unknown;
 	/** The media type, defaulting to JSON. */
 	mediaType?: string;
+	/**
+	 * Values to remove from an error besides the key, such as a webhook target
+	 * URL that may carry the receiver's token. WaiverFile's 404 echoes the whole
+	 * request URL.
+	 */
+	redact?: string[];
 };
 
 // unknown: callers parse the body with the endpoint's zod output schema.
 export async function makeWaiverFileRequest(
 	credentials: WaiverFileCredentials,
-	{ method, path, query, body, mediaType }: WaiverFileRequest,
+	{ method, path, query, body, mediaType, redact }: WaiverFileRequest,
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: WAIVERFILE_API_BASE,
@@ -203,7 +209,11 @@ export async function makeWaiverFileRequest(
 		if (error instanceof ApiError) {
 			// A 404 body echoes the whole request URL, key included, so the body
 			// is scrubbed before it reaches the message or the error object.
-			const body = scrubWaiverFileSecret(error.body, credentials.apiKey);
+			const body = scrubWaiverFileSecret(
+				error.body,
+				credentials.apiKey,
+				redact,
+			);
 			throw new WaiverFileAPIError(
 				describeWaiverFileError(error.status, body, `HTTP ${error.status}`),
 				{
@@ -218,7 +228,11 @@ export async function makeWaiverFileRequest(
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new WaiverFileAPIError(
-				scrubWaiverFileSecret(error.message, credentials.apiKey) as string,
+				scrubWaiverFileSecret(
+					error.message,
+					credentials.apiKey,
+					redact,
+				) as string,
 				{ method, path },
 			);
 		}
@@ -233,13 +247,18 @@ export async function makeWaiverFileRequest(
  * request fields.
  */
 // unknown: the error body is whatever WaiverFile or a proxy sent.
-export function scrubWaiverFileSecret(value: unknown, apiKey: string): unknown {
+export function scrubWaiverFileSecret(
+	value: unknown,
+	apiKey: string,
+	extra: string[] = [],
+): unknown {
+	const secrets = [apiKey, ...extra].filter((secret) => secret.length > 0);
 	const scrub = (text: string) => {
 		let out = text.replace(/([?&]apiKey=)[^&'"\s]*/gi, '$1[REDACTED]');
-		if (apiKey) {
-			out = out.split(apiKey).join('[REDACTED]');
-			const encoded = encodeURIComponent(apiKey);
-			if (encoded !== apiKey) out = out.split(encoded).join('[REDACTED]');
+		for (const secret of secrets) {
+			out = out.split(secret).join('[REDACTED]');
+			const encoded = encodeURIComponent(secret);
+			if (encoded !== secret) out = out.split(encoded).join('[REDACTED]');
 		}
 		return out;
 	};

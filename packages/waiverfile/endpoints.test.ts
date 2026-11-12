@@ -850,3 +850,34 @@ describe('a 200 without the container the route promises', () => {
 		});
 	});
 });
+
+describe('webhook errors', () => {
+	const targetUrl =
+		'https://acme.example/hooks/waiverfile?token=receiver-secret';
+
+	it.each([
+		['subscribe', Webhooks.subscribe],
+		['unsubscribe', Webhooks.unsubscribe],
+	])(
+		'keeps the target URL out of a %s error that echoes the request',
+		async (_name, endpoint) => {
+			respond(
+				fetchMock,
+				{
+					Message: `No HTTP resource was found that matches the request URI 'https://api.waiverfile.com/api/v1/subscribe/newevent?targetUrl=${encodeURIComponent(targetUrl)}&apiKey=${API_KEY}'.`,
+				},
+				404,
+			);
+
+			const error = (await invoke(endpoint, {
+				trigger: 'newevent',
+				targetUrl,
+			}).catch((thrown: unknown) => thrown)) as WaiverFileAPIError;
+
+			expect(error).toBeInstanceOf(WaiverFileAPIError);
+			const text = `${error.message} ${JSON.stringify(error.body)}`;
+			expect(text.includes('receiver-secret')).toBe(false);
+			expect(text.includes(API_KEY)).toBe(false);
+		},
+	);
+});
