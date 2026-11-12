@@ -3907,6 +3907,14 @@
                 ]
               },
               {
+                "group": "U301",
+                "pages": [
+                  "plugins/u301/overview",
+                  "plugins/u301/api",
+                  "plugins/u301/database"
+                ]
+              },
+              {
                 "group": "UniOne",
                 "pages": [
                   "plugins/unione/overview",

@@ -473,6 +473,7 @@ export const BaseProviders = [
 	'uniswapapi',
 	'updownio',
 	'uploadcare',
+	'u301',
 	'vapi',
 	'vaquill',
 	'vercel',
@@ -972,6 +973,7 @@ export const ProviderDisplayNames = {
 	uniswapapi: 'Uniswap',
 	updownio: 'Updown.io',
 	uploadcare: 'Uploadcare',
+	u301: 'U301',
 	vapi: 'Vapi',
 	vaquill: 'Vaquill',
 	vercel: 'Vercel',
@@ -1478,6 +1480,7 @@ export type AllProviders =
 	| 'uniswapapi'
 	| 'updownio'
 	| 'uploadcare'
+	| 'u301'
 	| 'vapi'
 	| 'vaquill'
 	| 'vercel'
