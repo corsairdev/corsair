@@ -86,10 +86,10 @@ export type SatisMeterErrorOptions = {
  * failures.
  *
  * SatisMeter looks the project or survey up *before* it checks the key, so a
- * read that fails auth answers **404 "Project not found"**, not 403. There is no
- * field in that response that separates "wrong key" from "wrong project id", so
- * nothing here pretends to: `isResourceNotFound` reports what the API said, and
- * `title` carries the sentence a caller needs to read.
+ * wrong project id answers **404 "Project not found"** whatever the key; only a
+ * project that exists gets to the key check, which answers 403 `Forbidden`.
+ * `isResourceNotFound` reports what the API said, and `title` carries the
+ * sentence a caller needs to read.
  */
 export class SatisMeterAPIError extends Error {
 	readonly status?: number;

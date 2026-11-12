@@ -16,10 +16,10 @@ function isApi(error: Error): error is SatisMeterAPIError {
  * provider actually processed would double-count an event. Every write handler
  * therefore checks `isReplayable` and gives up rather than guessing.
  *
- * The users API and the v3 reads also disagree on their errors: a bad key is a
- * 403 `Not authorized` on the users API, while a v3 read looks the project up
- * first and answers 404 `Project not found` before the key is ever checked. Both
- * are terminal here, which is the only thing a retry decision needs from them.
+ * Both bases look the project up before the key: a wrong project id answers
+ * 404 `Project not found` whatever the key, and a refused key on a real project
+ * answers 403 (`Forbidden`, or `Not authorized` for the write key on the users
+ * API). Both are terminal here, which is all a retry decision needs from them.
  */
 export const errorHandlers = {
 	// A write reached the users API with no usable credential: 400 "No write
@@ -36,10 +36,9 @@ export const errorHandlers = {
 	},
 	// 404 "Project not found", "Campaign not found" or "User not found".
 	//
-	// On a v3 read this can also mean a wrong key, because the project is looked
-	// up before the credential: the body is identical either way, so this does
-	// not retry and does not claim the key was right. The message the caller sees
-	// carries the provider's own sentence.
+	// The project is looked up before the credential, so a 404 says nothing
+	// about the key either way; this does not retry, and the message the caller
+	// sees carries the provider's own sentence.
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => isApi(error) && error.isResourceNotFound,
 		handler: async () => ({ maxRetries: 0 }),

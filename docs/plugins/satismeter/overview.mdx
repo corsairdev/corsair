@@ -11,8 +11,8 @@ Create an API key in SatisMeter under Settings > Integrations > API. That page a
 Things to know before you call:
 
 - **Use the API key, not the read or write key.** In newer projects a read request made with the read key returns 403, and a Users API request made with the write key returns 403 too. Your browser snippet keeps using the write key; leave it as it is.
-- **A 404 usually means the project ID.** Both bases look the project up before they check the key, so a wrong key and a wrong project ID return the same `404 Project not found`. If a call 404s, check the project ID first, then the key.
-- **One key, two bases.** Survey reads live under `/api/v3`; the users operations live under `/api` with no version. The plugin handles this, but it is why the users API's errors differ: it answers `403 Not authorized` for a bad key where a read answers a misleading 404.
+- **A 404 `Project not found` means the project ID.** Both bases look the project up before they check the key, so a wrong project ID answers 404 whichever key you send. A wrong key on the right project answers `403 Forbidden` on both bases.
+- **One key, two bases.** Survey reads live under `/api/v3`; the users operations live under `/api` with no version. The plugin picks the base for each call.
 - **Two calls page by cursor.** `responses.list` and `responses.listForSurvey` return at most 20 rows unless you pass `pageSize` (up to 100). Read `page.nextPageCursor` and pass it back as `pageCursor`; when it is absent there are no more pages.
 - **The default date range is 30 days.** Both response listings only return the last month unless you pass `startDate`, so older responses need an explicit range.
 - **A tracked event is not readable back.** `users.track` returns 204 and the event is stored, but the users API never exposes it: the `events` list in `users.list` holds survey activity (such as a filled response), not tracked events, and a track with no event name is rejected with `400 Event not specified`. Treat the 204 as acceptance, not as proof the event reached targeting. Survey targeting on events is configured in the dashboard.

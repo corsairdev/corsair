@@ -488,14 +488,14 @@ Delete a user’s personal data by internal id; their responses are anonymised, 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.satismeter.api.users.remove({ userId: '5808e7031a943c7e564cdb17' });
+await corsair.satismeter.api.users.remove({ id: '5808e7031a943c7e564cdb17' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `userId` | `string` | Yes | The user's internal `id` from `users.list`, not the `userId` you supplied. Deleting anonymises the user's responses rather than removing them. |
+| `id` | `string` | Yes | The user's internal `id` from `users.list`, not the `userId` you supplied. Deleting anonymises the user's responses rather than removing them. |
 
 Takes the internal `id` from `users.list`, not your own `userId`. It deletes personal data and anonymises the user\u2019s responses rather than deleting them, and cannot be undone. An unknown id answers 404 User not found.
 
@@ -505,7 +505,7 @@ Takes the internal `id` from `users.list`, not your own `userId`. It deletes per
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `userId` | `string` | Yes | — |
+| `id` | `string` | Yes | The internal id of the user that was deleted. |
 | `removed` | `true` | Yes | — |
 
 
