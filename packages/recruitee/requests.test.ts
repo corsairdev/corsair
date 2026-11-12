@@ -127,6 +127,19 @@ describe('candidates.list', () => {
 		expect(result.next_page).toBe(2);
 	});
 
+	it('stops on a partial last page when the caller left limit to Recruitee', async () => {
+		respond(fetchMock, {
+			hits: Array.from({ length: 15 }, () => SEARCH_HIT),
+			total: 75,
+		});
+
+		const result = (await invoke(Endpoints.candidatesList, {
+			page: 2,
+		})) as Awaited<ReturnType<typeof Endpoints.candidatesList>>;
+
+		expect(result.next_page).toBeNull();
+	});
+
 	it('stops on the last page', async () => {
 		respond(fetchMock, CANDIDATE_PAGE_MORE);
 

@@ -9,8 +9,12 @@ import { asRecord } from 'corsair/core';
  *
  * It is derived here rather than in a zod transform because the docs generator
  * reads a transform's input side and would omit it.
+ *
+ * `defaultLimit` is the page size the route uses when the caller sends no
+ * `limit` and the answer names none, so a short last page is not mistaken for
+ * the page size.
  */
-export function pagedShape(key: string, rowsKey = key) {
+export function pagedShape(key: string, rowsKey = key, defaultLimit?: number) {
 	return (
 		// unknown: the provider's JSON body; the operation's output schema
 		// validates whatever this returns.
@@ -29,10 +33,11 @@ export function pagedShape(key: string, rowsKey = key) {
 					? record.total
 					: undefined;
 		// The search sends no `meta.limit`; with no limit from the caller either,
-		// the page that came back is Recruitee's default size.
+		// the route's default size applies.
 		const limit =
 			parsed.limit ??
 			(typeof meta?.limit === 'number' ? meta.limit : undefined) ??
+			defaultLimit ??
 			returned;
 		let hasNext = false;
 		if (returned > 0 && total !== undefined) {

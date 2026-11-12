@@ -7,6 +7,9 @@ import {
 	RecruiteeEndpointOutputSchemas as Outputs,
 } from './types';
 
+/** Recruitee's documented default page size for the candidate search. */
+const CANDIDATE_SEARCH_PAGE_SIZE = 60;
+
 export const candidatesList: RecruiteeEndpoints['candidatesList'] = (
 	ctx,
 	input,
@@ -36,8 +39,9 @@ export const candidatesList: RecruiteeEndpoints['candidatesList'] = (
 			}),
 		}),
 		{
-			// The search answers `{ hits, total }`.
-			shape: pagedShape('candidates', 'hits'),
+			// The search answers `{ hits, total }` and pages by 60 when no
+			// `limit` is sent.
+			shape: pagedShape('candidates', 'hits', CANDIDATE_SEARCH_PAGE_SIZE),
 			log: (_, result) => ({
 				count: result.candidates.length,
 				hasNext: result.next_page !== null,
