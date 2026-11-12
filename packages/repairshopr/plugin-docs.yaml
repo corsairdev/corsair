@@ -1,0 +1,76 @@
+displayName: RepairShopr
+description: Repair desk and ticketing with RepairShopr - read and write customers, tickets, invoices and products, and list contact people and vendors, against a RepairShopr account's own subdomain.
+domain: repairshopr.com
+recommendedAuth: api_key
+overviewNote: |
+  Generate a key in RepairShopr under **Admin → API → API Tokens**. The key is specific to the user who created it, and every request also needs the account's **subdomain**, the part before `.repairshopr.com`, because the API is served from `https://<subdomain>.repairshopr.com/api/v1`. Store both. Things to know before you call:
+
+  - **The subdomain is half the credential.** Pass it when you create the plugin, or store it on the account beside the key. A missing or malformed value fails before a request is sent rather than resolving to a host that does not exist.
+  - **A 401 covers three different problems.** `Failed to authenticate account` means a bad key, a wrong subdomain, or a key that belongs to another account; RepairShopr does not separate them, so the plugin reports one auth error rather than guessing.
+  - **Paging is by page number.** Collections answer with their own array plus a `meta` block carrying `total_pages`, and `next_page` is derived from it. Only `invoices` accepts `per_page` (at most 25); the others use the account default.
+  - **Sorting names a column and a direction**, such as `firstname ASC` or `created_at DESC`.
+  - **Products and vendors may carry no `meta`.** Without it the plugin cannot tell whether more pages exist, so `next_page` is null rather than an invented number. A null there does not mean every record came back: ask for the next `page` yourself and stop when it comes back empty.
+  - **Money is a string on invoices.** `subtotal`, `total` and `tax` come back as decimal strings such as `"181.50"`, while product prices are numbers.
+  - **A contact spells its address differently from a customer.** A contact has `address1`/`address2`; a customer has `address`/`address_2`. Both are modelled as the API sends them.
+  - **Ticket status is the account's own list.** `status` takes any status name the account uses; the defaults are `New`, `In Progress`, `Resolved`, `Invoiced`, `Waiting for Parts`, `Waiting on Customer`, `Scheduled` and `Customer Reply`. `priority` takes one of `Urgent`, `High`, `Medium` or `Low`.
+  - **Creating a product needs a description.** RepairShopr rejects a product without one, so the schema requires it rather than letting the API return `Name can't be blank`.
+  - **A rejection echoes what you sent.** A `422` body carries every message at fault in `message` and the offending values in `params`, both exposed on the error.
+  - **Deletes are permanent.** `customers.delete` and `tickets.delete` have no undo and are marked destructive.
+  - **Retries.** RepairShopr documents no throughput window and no `Retry-After`, so a 429 is retried three times with exponential backoff. A `5xx` is retried only for a call the plugin declared read-only.
+examples:
+  read:
+    path: tickets.list
+    title: List a customer's open tickets
+    args:
+      customer_id: 1
+      status: New
+  write:
+    path: tickets.create
+    title: Create a repair ticket
+    args:
+      customer_id: 1
+      subject: Laptop will not boot
+apiExamples:
+  customers.list:
+    call: "{ page: 1, query: 'walkin', sort: 'created_at DESC' }"
+  customers.get:
+    call: "{ customer_id: 1 }"
+  customers.create:
+    call: "{ firstname: 'Walkin', lastname: 'Customer', email: 'walkin@example.com' }"
+  customers.update:
+    call: "{ customer_id: 1, business_name: 'Acme B.V.' }"
+  customers.delete:
+    call: "{ customer_id: 1 }"
+  tickets.list:
+    call: "{ customer_id: 1, status: 'New' }"
+  tickets.get:
+    call: "{ ticket_id: 3 }"
+  tickets.create:
+    call: "{ customer_id: 1, subject: 'Laptop will not boot', priority: 'High' }"
+  tickets.update:
+    call: "{ ticket_id: 3, status: 'Resolved' }"
+  tickets.delete:
+    call: "{ ticket_id: 3 }"
+  invoices.list:
+    call: "{ unpaid: true, per_page: 25 }"
+  invoices.get:
+    call: "{ invoice_id: 6 }"
+  products.list:
+    call: "{ sku: 'SSD-1TB' }"
+  products.get:
+    call: "{ product_id: 7 }"
+  products.create:
+    call: "{ name: 'SSD 1TB', description: 'Samsung 980 Pro', price_retail: 150 }"
+  products.update:
+    call: "{ product_id: 7, price_retail: 165 }"
+  contacts.list:
+    call: "{ customer_id: 1 }"
+  vendors.list:
+    call: "{ page: 1 }"
+apiNotes:
+  'customers.list': 'Pages by number; `meta.total_pages` is what `next_page` is derived from.'
+  'tickets.create': 'The status is a name from the account''s own status list.'
+  'invoices.list': 'Money fields come back as decimal strings on this resource.'
+  'products.list': '`next_page` comes from `meta.total_pages`. When the response has no `meta` block it is null, which does not mean every product came back: request the next `page` and stop when it is empty.'
+  'products.create': 'The description is required; RepairShopr rejects a product without one.'
+  'contacts.list': 'A contact spells its street `address1`, not `address` as a customer does.'
