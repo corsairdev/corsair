@@ -254,25 +254,36 @@ export type DeleteResponse = z.infer<typeof DeleteResponseSchema>;
 
 // ── messages ──────────────────────────────────────────────────────────────
 
-const MessagesListInputSchema = z.object({
-	roomId: z.string().min(1).describe('The room to list messages from.'),
-	parentId: z
-		.string()
-		.min(1)
-		.optional()
-		.describe('Only the replies in this thread of the room.'),
-	mentionedPeople: z
-		.string()
-		.optional()
-		.describe('Only messages mentioning this person.'),
-	before: z.string().optional().describe('ISO 8601: only earlier messages.'),
-	beforeMessage: z
-		.string()
-		.optional()
-		.describe('Only messages before this id.'),
-	max: MaxSchema,
-	nextLink: NextLinkSchema,
-});
+const MessagesListInputSchema = z
+	.object({
+		roomId: z.string().min(1).describe('The room to list messages from.'),
+		parentId: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Only the replies in this thread of the room.'),
+		mentionedPeople: z
+			.string()
+			.optional()
+			.describe('Only messages mentioning this person.'),
+		before: z.string().optional().describe('ISO 8601: only earlier messages.'),
+		beforeMessage: z
+			.string()
+			.optional()
+			.describe('Only messages before this id.'),
+		max: MaxSchema,
+		nextLink: NextLinkSchema,
+	})
+	.superRefine((input, ctx) => {
+		// Webex caps the page at 100 when mentionedPeople is set.
+		if (input.mentionedPeople !== undefined && (input.max ?? 0) > 100) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['max'],
+				message: 'max cannot exceed 100 when mentionedPeople is set.',
+			});
+		}
+	});
 
 export type MessagesListInput = z.infer<typeof MessagesListInputSchema>;
 
@@ -555,8 +566,11 @@ const WebhooksCreateInputSchema = z.object({
 			'uc_counters',
 			'serviceApp',
 			'adminBatchJobs',
+			'all',
 		])
-		.describe('The resource whose events to send.'),
+		.describe(
+			'The resource whose events to send. all, with event all, is the firehose for memberships, messages and rooms.',
+		),
 	event: z
 		.enum([
 			'created',
@@ -583,6 +597,12 @@ const WebhooksCreateInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('The HMAC key Webex signs deliveries with.'),
+	ownedBy: z
+		.enum(['org'])
+		.optional()
+		.describe(
+			'org makes an org-wide webhook (admin token). Needed for host or owner filters such as hostEmail.',
+		),
 });
 
 export type WebhooksCreateInput = z.infer<typeof WebhooksCreateInputSchema>;

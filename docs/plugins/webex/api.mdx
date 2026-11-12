@@ -197,7 +197,7 @@ await corsair.webex.api.messages.create({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vY
 
 Delete one message permanently
 
-**Risk:** `destructive`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.webex.api.messages.delete({ id: 'message-1' });
@@ -578,7 +578,7 @@ await corsair.webex.api.rooms.create({ title: 'Support triage', description: 'Wh
 
 Delete a space and its message history; this cannot be undone
 
-**Risk:** `destructive`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.webex.api.rooms.delete({ id: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY' });
@@ -1035,10 +1035,11 @@ await corsair.webex.api.webhooks.create({ name: 'Message hook', targetUrl: 'http
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `targetUrl` | `string` | Yes | — |
-| `resource` | `attachmentActions \| dataSources \| memberships \| messages \| rooms \| meetings \| recordings \| convergedRecordings \| meetingParticipants \| meetingTranscripts \| telephony_calls \| telephony_conference \| telephony_mwi \| uc_counters \| serviceApp \| adminBatchJobs` | Yes | The resource whose events to send. |
+| `resource` | `attachmentActions \| dataSources \| memberships \| messages \| rooms \| meetings \| recordings \| convergedRecordings \| meetingParticipants \| meetingTranscripts \| telephony_calls \| telephony_conference \| telephony_mwi \| uc_counters \| serviceApp \| adminBatchJobs \| all` | Yes | The resource whose events to send. all, with event all, is the firehose for memberships, messages and rooms. |
 | `event` | `created \| updated \| deleted \| started \| ended \| joined \| left \| migrated \| authorized \| deauthorized \| statusChanged \| all` | Yes | Which event on that resource, e.g. started or ended for meetings, joined or left for meetingParticipants. |
 | `filter` | `string` | No | Restrict to a room id, e.g. `roomId=abc`. |
 | `secret` | `string` | No | The HMAC key Webex signs deliveries with. |
+| `ownedBy` | `org` | No | org makes an org-wide webhook (admin token). Needed for host or owner filters such as hostEmail. |
 
 
 
