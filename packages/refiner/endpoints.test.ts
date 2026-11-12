@@ -256,7 +256,7 @@ describe('responses.list', () => {
 		expect(query['account_data[plan]']).toBe('pro');
 	});
 
-	it('joins the plural filters', async () => {
+	it('sends the plural filters as indexed array keys', async () => {
 		respond(fetchMock, RESPONSES);
 
 		await invoke(Responses.list, {
@@ -265,10 +265,15 @@ describe('responses.list', () => {
 			tag_uuids: ['d', 'e'],
 		});
 
+		// Live, a plain or comma-joined form_uuids answers 400 "The form uuids
+		// value must be an object."; form_uuids[0]=a&form_uuids[1]=b filters.
 		const query = lastRequest(fetchMock).query;
-		expect(query.form_uuids).toBe('a,b');
-		expect(query.segment_uuids).toBe('c');
-		expect(query.tag_uuids).toBe('d,e');
+		expect(query.form_uuids).toBeUndefined();
+		expect(query['form_uuids[0]']).toBe('a');
+		expect(query['form_uuids[1]']).toBe('b');
+		expect(query['segment_uuids[0]']).toBe('c');
+		expect(query['tag_uuids[0]']).toBe('d');
+		expect(query['tag_uuids[1]']).toBe('e');
 	});
 
 	it('sends with_attributes as 1 or 0, the form the API reads', async () => {
@@ -439,7 +444,8 @@ describe('reporting.get', () => {
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v1/reporting');
 		expect(request.query.type).toBe('nps');
-		expect(request.query.form_uuids).toBe('FORM_UUID');
+		expect(request.query.form_uuids).toBeUndefined();
+		expect(request.query['form_uuids[0]']).toBe('FORM_UUID');
 		expect(result.nps).toBe(53);
 		expect(result.count).toBe(66);
 		expect(result.data?.promoters).toBe(40);
@@ -507,7 +513,8 @@ describe('reporting.get', () => {
 		});
 
 		const query = lastRequest(fetchMock).query;
-		expect(query.question_identifiers).toBe('nps,csat');
+		expect(query['question_identifiers[0]']).toBe('nps');
+		expect(query['question_identifiers[1]']).toBe('csat');
 		expect(query['response_data[nps]']).toBe('9');
 		expect(query['contact_data[country]']).toBe('France');
 	});
@@ -633,9 +640,21 @@ describe('forms.list', () => {
 			}[];
 		};
 
-		expect(lastRequest(fetchMock).query.include_info).toBe('true');
+		expect(lastRequest(fetchMock).query.include_info).toBe('1');
 		expect(result.items?.[0]?.responses_count).toBe(0);
 		expect(result.items?.[0]?.page_url).toContain('survey.refiner.io');
+	});
+
+	it('sends include_info and include_config false as 0', async () => {
+		respond(fetchMock, FORMS);
+
+		await invoke(Forms.list, { include_info: false, include_config: false });
+
+		// Live, include_info=false still returned every info field; only 0 leaves
+		// them out.
+		const query = lastRequest(fetchMock).query;
+		expect(query.include_info).toBe('0');
+		expect(query.include_config).toBe('0');
 	});
 
 	it('rejects a list value Refiner does not document', async () => {

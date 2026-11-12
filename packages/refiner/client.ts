@@ -250,9 +250,21 @@ export function bracketQuery(
 	return query;
 }
 
-/** Joins a list into the comma-separated form Refiner accepts. */
-export function listParam(values: string[] | undefined): string | undefined {
-	return values && values.length > 0 ? values.join(',') : undefined;
+/**
+ * Builds the indexed keys Refiner reads for a list filter, such as
+ * `form_uuids[0]=a&form_uuids[1]=b`. Refiner answers a plain or comma-joined
+ * value with 400 "The form uuids value must be an object.", and `corsair/http`
+ * would repeat a bare key for an array, so the keys are built here.
+ */
+export function listQuery(
+	name: string,
+	values: string[] | undefined,
+): RefinerQuery {
+	const query: RefinerQuery = {};
+	values?.forEach((value, index) => {
+		query[`${name}[${index}]`] = value;
+	});
+	return query;
 }
 
 /** Encodes one path segment. */

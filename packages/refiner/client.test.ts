@@ -1,7 +1,7 @@
 import {
 	bracketQuery,
 	describeRefinerError,
-	listParam,
+	listQuery,
 	makeRefinerRequest,
 	REFINER_API_BASE,
 	RefinerAPIError,
@@ -198,14 +198,17 @@ describe('bracketQuery', () => {
 	});
 });
 
-describe('listParam', () => {
-	it('joins an array into a comma-separated value', () => {
-		expect(listParam(['a', 'b'])).toBe('a,b');
+describe('listQuery', () => {
+	it('builds one indexed key per value', () => {
+		expect(listQuery('form_uuids', ['a', 'b'])).toEqual({
+			'form_uuids[0]': 'a',
+			'form_uuids[1]': 'b',
+		});
 	});
 
-	it('returns undefined for an empty or absent list', () => {
-		expect(listParam([])).toBeUndefined();
-		expect(listParam(undefined)).toBeUndefined();
+	it('returns nothing for an empty or absent list', () => {
+		expect(listQuery('form_uuids', [])).toEqual({});
+		expect(listQuery('form_uuids', undefined)).toEqual({});
 	});
 });
 

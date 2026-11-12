@@ -21,8 +21,11 @@ export const list: RefinerEndpoints['formsList'] = (ctx, input) =>
 				list: which,
 				page,
 				page_length,
-				include_config,
-				include_info,
+				// Refiner reads 1 or 0 here; "false" counts as set and returns the fields.
+				include_config:
+					include_config === undefined ? undefined : include_config ? 1 : 0,
+				include_info:
+					include_info === undefined ? undefined : include_info ? 1 : 0,
 			},
 			replayable: true,
 		}),

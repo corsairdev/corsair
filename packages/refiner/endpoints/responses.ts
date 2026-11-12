@@ -1,5 +1,5 @@
 import type { RefinerEndpoints } from '..';
-import { bracketQuery, listParam } from '../client';
+import { bracketQuery, listQuery } from '../client';
 import { call } from './call';
 import {
 	RefinerEndpointInputSchemas as Inputs,
@@ -23,11 +23,11 @@ export const list: RefinerEndpoints['responsesList'] = (ctx, input) =>
 				page_cursor: parsed.page_cursor,
 				page_length: parsed.page_length,
 				form_uuid: parsed.form_uuid,
-				form_uuids: listParam(parsed.form_uuids),
+				...listQuery('form_uuids', parsed.form_uuids),
 				segment_uuid: parsed.segment_uuid,
-				segment_uuids: listParam(parsed.segment_uuids),
+				...listQuery('segment_uuids', parsed.segment_uuids),
 				tag_uuid: parsed.tag_uuid,
-				tag_uuids: listParam(parsed.tag_uuids),
+				...listQuery('tag_uuids', parsed.tag_uuids),
 				date_range_start: parsed.date_range_start,
 				date_range_end: parsed.date_range_end,
 				include: parsed.include,
@@ -141,10 +141,10 @@ export const report: RefinerEndpoints['reportingGet'] = (ctx, input) =>
 			path: '/reporting',
 			query: {
 				type: parsed.type,
-				question_identifiers: listParam(parsed.question_identifiers),
-				tag_uuids: listParam(parsed.tag_uuids),
-				form_uuids: listParam(parsed.form_uuids),
-				segment_uuids: listParam(parsed.segment_uuids),
+				...listQuery('question_identifiers', parsed.question_identifiers),
+				...listQuery('tag_uuids', parsed.tag_uuids),
+				...listQuery('form_uuids', parsed.form_uuids),
+				...listQuery('segment_uuids', parsed.segment_uuids),
 				date_range_start: parsed.date_range_start,
 				date_range_end: parsed.date_range_end,
 				...bracketQuery('response_data', parsed.response_data),
