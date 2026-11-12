@@ -26,8 +26,8 @@ await corsair.klazify.api.categories.iab({ url: 'https://cbsnews.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`. |
-| `email` | `string` | No | An email address to classify by its domain. Give this or `url`. |
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
 | `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
 
 Each category carries dynamic `IAB*` keys beside `name`, mapping IAB v1 and v3 ids to their labels.
@@ -139,8 +139,8 @@ await corsair.klazify.api.categorize.all({ url: 'https://cbsnews.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`. |
-| `email` | `string` | No | An email address to classify by its domain. Give this or `url`. |
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
 | `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
 
 The widest call: categories, logo, social profiles, company data and tech stack in one answer. Give `url` or `email`.
@@ -220,8 +220,8 @@ await corsair.klazify.api.categorize.realtime({ url: 'https://cbsnews.com', refr
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`. |
-| `email` | `string` | No | An email address to classify by its domain. Give this or `url`. |
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
 | `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
 
 Classification only. `refresh: true` re-crawls instead of returning the cached result.
@@ -273,8 +273,8 @@ await corsair.klazify.api.company.get({ url: 'https://cbsnews.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`. |
-| `email` | `string` | No | An email address to classify by its domain. Give this or `url`. |
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
 | `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
 
 Name, city, state, country, headcount range, revenue range, funding and tags. Revenue, funding and state are often null.
@@ -331,7 +331,7 @@ await corsair.klazify.api.discovery.search({ filters: { category: 'Shopping', co
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `top_n` | `number` | No | Only domains with a global rank at or below this are searched. Unranked domains are excluded when it is set. |
+| `top_n` | `number` | No | Only domains with a global rank at or below this are searched, 1 to 1,000,000. Unranked domains are excluded when it is set. |
 | `filters` | `object` | No | — |
 | `q` | `string` | No | Free-text search across domain, company and category. |
 | `sort` | `global_rank \| domain \| company_name \| monthly_visits_latest \| popularity_score` | No | — |
@@ -411,8 +411,8 @@ await corsair.klazify.api.domain.get({ url: 'https://apple.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`. |
-| `email` | `string` | No | An email address to classify by its domain. Give this or `url`. |
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
 | `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
 
 Registration and expiry dates plus the age in days and the days left.
@@ -462,8 +462,8 @@ await corsair.klazify.api.logo.get({ email: 'someone@cbsnews.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`. |
-| `email` | `string` | No | An email address to classify by its domain. Give this or `url`. |
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
 | `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
 
 Returns a CDN URL, or null or an empty string when no logo was found.
@@ -512,8 +512,8 @@ await corsair.klazify.api.similarDomains.get({ url: 'https://cbsnews.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`. |
-| `email` | `string` | No | An email address to classify by its domain. Give this or `url`. |
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
 | `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
 
 Up to 10 domains that share the site's category.
@@ -562,8 +562,8 @@ await corsair.klazify.api.tech.get({ url: 'https://cbsnews.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`. |
-| `email` | `string` | No | An email address to classify by its domain. Give this or `url`. |
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
 | `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
 
 Lowercase snake_case identifiers, e.g. `wordpress` or `google_tag_manager`.
@@ -623,8 +623,8 @@ await corsair.klazify.api.traffic.get({ url: 'https://cbsnews.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`. |
-| `email` | `string` | No | An email address to classify by its domain. Give this or `url`. |
+| `url` | `string` | No | The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both. |
+| `email` | `string` | No | An email address to classify by its domain. Give this or `url`, not both. |
 | `refresh` | `boolean` | No | Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification. |
 
 Global, country and category rank; monthly visits keyed by `YYYY-MM`; engagement figures as decimal strings, not numbers.
