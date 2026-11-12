@@ -3428,6 +3428,14 @@
                 ]
               },
               {
+                "group": "RudderStack Transformations",
+                "pages": [
+                  "plugins/rudderstacktransform/overview",
+                  "plugins/rudderstacktransform/api",
+                  "plugins/rudderstacktransform/database"
+                ]
+              },
+              {
                 "group": "Runpod",
                 "pages": [
                   "plugins/runpod/overview",
