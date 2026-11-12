@@ -15,10 +15,10 @@ export const list: WrikeEndpoints['contactsList'] = (ctx, input) =>
 			output: Outputs.contactsList,
 		},
 		input,
-		({ pageSize, nextPageToken, me, active, fields }) => ({
+		({ me, active, fields }) => ({
 			method: 'GET',
 			path: '/contacts',
-			query: { pageSize, nextPageToken, me, active, fields },
+			query: { me, active, fields },
 		}),
 		{
 			// Contacts are people, so only the count is logged.
@@ -26,7 +26,11 @@ export const list: WrikeEndpoints['contactsList'] = (ctx, input) =>
 		},
 	);
 
-/** One contact, by id or by the literal `me`. */
+/**
+ * One contact, by id or by the literal `me`. Wrike refuses `me` as a contact id
+ * (`Invalid ContactOrInvitation ID`), so `me` reads `/contacts?me=true`, which
+ * answers the same one-item envelope.
+ */
 export const get: WrikeEndpoints['contactsGet'] = (ctx, input) =>
 	call(
 		ctx,
@@ -36,10 +40,10 @@ export const get: WrikeEndpoints['contactsGet'] = (ctx, input) =>
 			output: Outputs.contactsGet,
 		},
 		input,
-		({ id: contactId }) => ({
-			method: 'GET',
-			path: `/contacts/${id(contactId)}`,
-		}),
+		({ id: contactId }) =>
+			contactId === 'me'
+				? { method: 'GET', path: '/contacts', query: { me: true } }
+				: { method: 'GET', path: `/contacts/${id(contactId)}` },
 		{
 			log: (_, result) => ({
 				id: result.data?.[0]?.id ?? undefined,

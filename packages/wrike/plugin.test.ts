@@ -50,8 +50,8 @@ describe('wrike plugin definition', () => {
 	it('registers as wrike with api_key auth and no webhook handlers', () => {
 		expect(plugin.id).toBe('wrike');
 		expect(plugin.options?.authType).toBe('api_key');
-		// Webhooks are configured in the Wrike app rather than through a REST
-		// route, so there is nothing for the plugin to receive.
+		// Wrike has webhook routes, but this plugin does not implement them, so
+		// there is nothing for it to receive.
 		expect(plugin.webhooks).toEqual({});
 		expect(
 			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
@@ -112,11 +112,12 @@ describe('wrike plugin definition', () => {
 		);
 	});
 
-	it('notes that a folder delete is refused unless recursive', () => {
+	it('says a folder delete takes the folder contents with it', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(meta['folders.delete' as keyof typeof meta]?.description).toContain(
-			'recursive',
-		);
+		const description =
+			meta['folders.delete' as keyof typeof meta]?.description ?? '';
+		expect(description).toContain('every folder and task inside it');
+		expect(description).not.toContain('recursive');
 	});
 
 	it('exports the endpoint schema map for the host', () => {

@@ -15,10 +15,10 @@ export const list: WrikeEndpoints['foldersList'] = (ctx, input) =>
 			output: Outputs.foldersList,
 		},
 		input,
-		({ pageSize, nextPageToken, fields }) => ({
+		({ pageSize, nextPageToken, project, title, permalink, fields }) => ({
 			method: 'GET',
 			path: '/folders',
-			query: { pageSize, nextPageToken, fields },
+			query: { pageSize, nextPageToken, project, title, permalink, fields },
 		}),
 		{
 			log: (_, result) => ({
@@ -137,9 +137,9 @@ export const update: WrikeEndpoints['foldersUpdate'] = (ctx, input) =>
 	);
 
 /**
- * Deletes a folder. A non-empty folder is refused unless `recursive` is set,
- * which is why the flag is separate rather than defaulted: the safe call is the
- * one that fails on a folder with contents.
+ * Deletes a folder. Wrike moves it to the recycle bin together with every
+ * descendant folder and task (unless one also has a parent outside it), and
+ * there is no flag that refuses a folder with contents.
  */
 export const remove: WrikeEndpoints['foldersDelete'] = (ctx, input) =>
 	call(
@@ -150,16 +150,12 @@ export const remove: WrikeEndpoints['foldersDelete'] = (ctx, input) =>
 			output: Outputs.foldersDelete,
 		},
 		input,
-		({ id: folderId, recursive }) => ({
+		({ id: folderId }) => ({
 			method: 'DELETE',
 			path: `/folders/${id(folderId)}`,
-			query: { recursive },
 		}),
 		{
 			shape: (_, parsed) => ({ id: parsed.id, deleted: true }),
-			log: (parsed) => ({
-				id: parsed.id,
-				recursive: parsed.recursive ?? false,
-			}),
+			log: (parsed) => ({ id: parsed.id }),
 		},
 	);

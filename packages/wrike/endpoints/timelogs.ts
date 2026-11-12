@@ -6,7 +6,10 @@ import {
 	WrikeEndpointOutputSchemas as Outputs,
 } from './types';
 
-/** All the time logs on the account, filtered. */
+/**
+ * All the time logs on the account, filtered. Wrike has no task or user filter
+ * here: one task's time is `timelogs.task`, and `me` narrows to the caller.
+ */
 export const list: WrikeEndpoints['timelogsList'] = (ctx, input) =>
 	call(
 		ctx,
@@ -16,24 +19,10 @@ export const list: WrikeEndpoints['timelogsList'] = (ctx, input) =>
 			output: Outputs.timelogsList,
 		},
 		input,
-		({
-			pageSize,
-			nextPageToken,
-			taskId,
-			userId,
-			trackedDate,
-			createdDate,
-		}) => ({
+		({ pageSize, nextPageToken, me, trackedDate, createdDate }) => ({
 			method: 'GET',
 			path: '/timelogs',
-			query: {
-				pageSize,
-				nextPageToken,
-				taskId,
-				userId,
-				trackedDate,
-				createdDate,
-			},
+			query: { pageSize, nextPageToken, me, trackedDate, createdDate },
 		}),
 		{
 			log: (_, result) => ({
@@ -130,10 +119,10 @@ export const listComments: WrikeEndpoints['commentsList'] = (ctx, input) =>
 			output: Outputs.commentsList,
 		},
 		input,
-		({ pageSize, nextPageToken }) => ({
+		({ limit }) => ({
 			method: 'GET',
 			path: '/comments',
-			query: { pageSize, nextPageToken },
+			query: { limit },
 		}),
 		{ log: (_, result) => ({ count: result.data?.length ?? 0 }) },
 	);
@@ -148,10 +137,9 @@ export const taskComments: WrikeEndpoints['taskComments'] = (ctx, input) =>
 			output: Outputs.taskComments,
 		},
 		input,
-		({ taskId, pageSize, nextPageToken }) => ({
+		({ taskId }) => ({
 			method: 'GET',
 			path: `/tasks/${id(taskId)}/comments`,
-			query: { pageSize, nextPageToken },
 		}),
 		{
 			log: (parsed, result) => ({
@@ -177,7 +165,9 @@ export const taskCommentsCreate: WrikeEndpoints['taskCommentsCreate'] = (
 		({ taskId, text }) => ({
 			method: 'POST',
 			path: `/tasks/${id(taskId)}/comments`,
-			body: { text },
+			// Wrike reads comment text as HTML unless told otherwise, and the input
+			// promises plain text.
+			body: { text, plainText: true },
 		}),
 		{
 			// The comment text is the user's content, so only that one was posted.
@@ -201,7 +191,7 @@ export const updateComment: WrikeEndpoints['commentsUpdate'] = (ctx, input) =>
 		({ id: commentId, text }) => ({
 			method: 'PUT',
 			path: `/comments/${id(commentId)}`,
-			body: { text },
+			body: { text, plainText: true },
 		}),
 		{
 			log: (_, result) => ({ id: result.data?.[0]?.id ?? undefined }),

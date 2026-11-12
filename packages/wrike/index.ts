@@ -267,12 +267,12 @@ const wrikeEndpointMeta = {
 	'folders.delete': {
 		riskLevel: 'destructive',
 		description:
-			'Delete a folder; a non-empty one is refused unless recursive is set, which deletes its contents too',
+			'Move a folder and every folder and task inside it to the recycle bin; Wrike does not refuse a folder with contents',
 	},
 	'timelogs.list': {
 		riskLevel: 'read',
 		description:
-			'List the time logged on the account, filtered by task, person or date',
+			'List the time logged on the account, filtered by tracked or created date, or only your own',
 	},
 	'timelogs.task': {
 		riskLevel: 'read',
@@ -281,7 +281,7 @@ const wrikeEndpointMeta = {
 	'timelogs.create': {
 		riskLevel: 'write',
 		description:
-			'Log hours against a task for a tracked date, optionally with a comment and category',
+			'Log hours against a task for a tracked date, with a comment (Wrike requires one, which may be empty) and an optional category',
 	},
 	'timelogs.delete': {
 		riskLevel: 'destructive',
@@ -289,7 +289,7 @@ const wrikeEndpointMeta = {
 	},
 	'comments.list': {
 		riskLevel: 'read',
-		description: 'List comments across the account',
+		description: 'List comments across the account, up to a limit',
 	},
 	'comments.task': {
 		riskLevel: 'read',
@@ -301,7 +301,8 @@ const wrikeEndpointMeta = {
 	},
 	'comments.update': {
 		riskLevel: 'write',
-		description: 'Edit the text of a comment you wrote',
+		description:
+			'Edit the text of a comment you wrote; Wrike allows it only in the 5 minutes after posting',
 	},
 	'comments.delete': {
 		riskLevel: 'destructive',

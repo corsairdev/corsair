@@ -7,10 +7,34 @@ import {
 } from './types';
 
 /**
- * Tasks are searched account-wide here. A list filter that Wrike takes as a
- * comma-separated value is joined rather than repeated, since that is the form
- * the API documents.
+ * Wrike reads a list filter as a JSON array in the query string
+ * (`status=["Active"]`); a comma-joined value is refused as invalid.
  */
+function jsonList(values: string[] | undefined): string | undefined {
+	return values === undefined ? undefined : JSON.stringify(values);
+}
+
+/**
+ * Wrike has no top-level start or due parameter on a create or an update; it
+ * takes one `dates` object. The shorthands are folded into it, and an explicit
+ * `dates` field wins.
+ */
+function foldDates<T extends object>(
+	dates: T | undefined,
+	startDate: string | undefined,
+	dueDate: string | undefined,
+): (T & { start?: string; due?: string }) | undefined {
+	if (dates === undefined && startDate === undefined && dueDate === undefined) {
+		return undefined;
+	}
+	return {
+		...(startDate === undefined ? {} : { start: startDate }),
+		...(dueDate === undefined ? {} : { due: dueDate }),
+		...(dates ?? ({} as T)),
+	};
+}
+
+/** Tasks are searched account-wide here. */
 export const list: WrikeEndpoints['tasksList'] = (ctx, input) =>
 	call(
 		ctx,
@@ -47,15 +71,15 @@ export const list: WrikeEndpoints['tasksList'] = (ctx, input) =>
 				pageSize,
 				nextPageToken,
 				title,
-				status: status?.join(','),
+				status: jsonList(status),
 				importance,
 				startDate,
 				dueDate,
 				createdDate,
 				updatedDate,
 				completedDate,
-				authors: authors?.join(','),
-				responsibles: responsibles?.join(','),
+				authors: jsonList(authors),
+				responsibles: jsonList(responsibles),
 				permalink,
 				type,
 				subTasks,
@@ -101,10 +125,10 @@ export const create: WrikeEndpoints['tasksCreate'] = (ctx, input) =>
 			output: Outputs.tasksCreate,
 		},
 		input,
-		({ folderId, ...body }) => ({
+		({ folderId, startDate, dueDate, dates, ...body }) => ({
 			method: 'POST',
 			path: `/folders/${id(folderId)}/tasks`,
-			body,
+			body: { ...body, dates: foldDates(dates, startDate, dueDate) },
 		}),
 		{
 			log: (parsed, result) => ({
@@ -124,10 +148,10 @@ export const update: WrikeEndpoints['tasksUpdate'] = (ctx, input) =>
 			output: Outputs.tasksUpdate,
 		},
 		input,
-		({ id: taskId, ...body }) => ({
+		({ id: taskId, startDate, dueDate, dates, ...body }) => ({
 			method: 'PUT',
 			path: `/tasks/${id(taskId)}`,
-			body,
+			body: { ...body, dates: foldDates(dates, startDate, dueDate) },
 		}),
 		{
 			log: (parsed, result) => ({

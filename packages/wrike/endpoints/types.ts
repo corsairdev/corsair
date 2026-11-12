@@ -14,6 +14,14 @@ function envelope<T extends z.ZodType>(item: T) {
 		.object({
 			kind: z.string().nullish(),
 			data: z.array(item).nullish(),
+			nextPageToken: z
+				.string()
+				.nullish()
+				.describe('Pass this back as `nextPageToken` to read the next page.'),
+			responseSize: z
+				.number()
+				.nullish()
+				.describe('The total number of matches across every page.'),
 		})
 		.loose();
 }
@@ -185,10 +193,12 @@ const SortSchema = {
 			'Status',
 			'Importance',
 			'Title',
-			'StartDate',
+			'StartFinishInterval',
 			'DueDate',
 			'CreatedDate',
 			'UpdatedDate',
+			'CompletedDate',
+			'LastAccessDate',
 		])
 		.optional(),
 	sortOrder: z.enum(['Asc', 'Desc']).optional(),
@@ -254,6 +264,19 @@ const TasksGetResponseSchema = envelope(TaskSchema);
 export type TasksGetResponse = z.infer<typeof TasksGetResponseSchema>;
 
 /**
+ * Wrike schedules a task through one `dates` object; there are no top-level
+ * start or due parameters on a create or an update.
+ */
+const TaskDatesInputSchema = z
+	.object({
+		type: z.enum(['Backlog', 'Milestone', 'Planned']).optional(),
+		start: z.string().optional().describe('yyyy-MM-dd'),
+		due: z.string().optional().describe('yyyy-MM-dd'),
+		duration: z.number().optional().describe('Minutes.'),
+	})
+	.loose();
+
+/**
  * Creates a task in a folder. Wrike has no `POST /tasks`: a task is always
  * created under a parent folder, and the account root is reached through the
  * root folder's id.
@@ -272,19 +295,18 @@ const TasksCreateInputSchema = z.object({
 		.optional()
 		.describe('Contact ids to assign.'),
 	followers: z.array(IdSchema).min(1).optional(),
-	startDate: z.string().optional(),
-	dueDate: z.string().optional(),
-	dates: z
-		.object({
-			type: z.enum(['Backlog', 'Milestone', 'Planned', 'Wrike']).optional(),
-			start: z.string().optional(),
-			due: z.string().optional(),
-			duration: z.number().optional(),
-		})
-		.loose()
+	startDate: z
+		.string()
 		.optional()
-		.describe('A richer date form than startDate and dueDate.'),
-	parentIds: z
+		.describe('Shorthand for `dates.start`, as yyyy-MM-dd.'),
+	dueDate: z
+		.string()
+		.optional()
+		.describe('Shorthand for `dates.due`, as yyyy-MM-dd.'),
+	dates: TaskDatesInputSchema.optional().describe(
+		'Wrike schedules a task through this object; startDate and dueDate are folded into it.',
+	),
+	parents: z
 		.array(IdSchema)
 		.min(1)
 		.optional()
@@ -292,6 +314,8 @@ const TasksCreateInputSchema = z.object({
 	// unknown: custom fields are account-defined, so their ids and values have no
 	// static shape; the object is passed through as the API sent it.
 	customFields: z.array(z.record(z.string(), z.unknown())).min(1).optional(),
+	// unknown: metadata entries are caller-defined `{ key, value }` pairs that
+	// Wrike stores as given.
 	metadata: z.array(z.record(z.string(), z.unknown())).min(1).optional(),
 });
 
@@ -311,15 +335,19 @@ const TasksUpdateInputSchema = z
 		addResponsibles: z.array(IdSchema).min(1).optional(),
 		removeResponsibles: z.array(IdSchema).min(1).optional(),
 		addFollowers: z.array(IdSchema).min(1).optional(),
-		removeFollowers: z.array(IdSchema).min(1).optional(),
 		startDate: z
 			.string()
+			.min(1)
 			.optional()
-			.describe('Send an empty string to clear it.'),
+			.describe('Shorthand for `dates.start`, as yyyy-MM-dd.'),
 		dueDate: z
 			.string()
+			.min(1)
 			.optional()
-			.describe('Send an empty string to clear it.'),
+			.describe('Shorthand for `dates.due`, as yyyy-MM-dd.'),
+		dates: TaskDatesInputSchema.optional().describe(
+			'Reschedule the task; `{ type: "Backlog" }` clears its dates.',
+		),
 		restore: z
 			.boolean()
 			.optional()
@@ -359,10 +387,40 @@ export type DeleteResponse = z.infer<typeof DeleteResponseSchema>;
 
 // ── folders ───────────────────────────────────────────────────────────────
 
-const FoldersListInputSchema = z.object({
-	...PagingSchema,
-	fields: FieldsSchema,
-});
+/**
+ * With no filter Wrike answers the whole folder tree (`kind: folderTree`), which
+ * it does not page. A filter switches it to `kind: folders`, which pages.
+ */
+const FoldersListInputSchema = z
+	.object({
+		...PagingSchema,
+		project: z
+			.boolean()
+			.optional()
+			.describe('Only projects (true) or only plain folders (false).'),
+		title: z.string().min(1).optional().describe('A substring of the title.'),
+		permalink: z
+			.string()
+			.optional()
+			.describe('A folder permalink, exact match.'),
+		fields: FieldsSchema,
+	})
+	.superRefine((value, ctx) => {
+		const paged =
+			value.pageSize !== undefined || value.nextPageToken !== undefined;
+		const filtered =
+			value.project !== undefined ||
+			value.title !== undefined ||
+			value.permalink !== undefined;
+		if (paged && !filtered) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['pageSize'],
+				message:
+					'Wrike pages folders only when a filter is set: add project, title or permalink.',
+			});
+		}
+	});
 
 export type FoldersListInput = z.infer<typeof FoldersListInputSchema>;
 
@@ -390,7 +448,6 @@ const FoldersCreateInputSchema = z.object({
 		.min(1)
 		.optional()
 		.describe('Contact ids to share with.'),
-	...PagingSchema,
 });
 
 export type FoldersCreateInput = z.infer<typeof FoldersCreateInputSchema>;
@@ -433,24 +490,23 @@ const FoldersUpdateResponseSchema = envelope(FolderSchema);
 
 export type FoldersUpdateResponse = z.infer<typeof FoldersUpdateResponseSchema>;
 
-const FoldersDeleteInputSchema = z.object({
-	id: IdSchema,
-	recursive: z
-		.boolean()
-		.optional()
-		.describe(
-			'Also delete the folder contents. Without it a non-empty folder is refused.',
-		),
-});
+/**
+ * Wrike moves the folder and every descendant folder and task to the recycle
+ * bin; there is no flag that refuses a non-empty folder.
+ */
+const FoldersDeleteInputSchema = z.object({ id: IdSchema });
 
 export type FoldersDeleteInput = z.infer<typeof FoldersDeleteInputSchema>;
 
 // ── timelogs ──────────────────────────────────────────────────────────────
 
+/** Account-wide. For one task's time, use `timelogs.task`. */
 const TimelogsListInputSchema = z.object({
 	...PagingSchema,
-	taskId: z.string().optional().describe('Only this task.'),
-	userId: z.string().optional().describe('Only this person.'),
+	me: z
+		.boolean()
+		.optional()
+		.describe('Only the time logged by the user behind the token.'),
 	trackedDate: z
 		.string()
 		.optional()
@@ -482,7 +538,9 @@ const TimelogsCreateInputSchema = z.object({
 		.string()
 		.min(1)
 		.describe('The day the work belongs to, as yyyy-MM-dd.'),
-	comment: z.string().optional(),
+	comment: z
+		.string()
+		.describe('Wrike requires a comment on every time entry; it may be empty.'),
 	categoryId: z.string().optional().describe('A timelog category id.'),
 });
 
@@ -500,10 +558,7 @@ export type TimelogsDeleteInput = z.infer<typeof TimelogsDeleteInputSchema>;
 
 // ── comments ──────────────────────────────────────────────────────────────
 
-const TaskCommentsInputSchema = z.object({
-	taskId: IdSchema,
-	...PagingSchema,
-});
+const TaskCommentsInputSchema = z.object({ taskId: IdSchema });
 
 export type TaskCommentsInput = z.infer<typeof TaskCommentsInputSchema>;
 
@@ -511,7 +566,17 @@ const TaskCommentsResponseSchema = envelope(CommentSchema);
 
 export type TaskCommentsResponse = z.infer<typeof TaskCommentsResponseSchema>;
 
-const CommentsListInputSchema = z.object({ ...PagingSchema });
+/** Wrike does not page account comments; it caps them with `limit`. */
+const CommentsListInputSchema = z.object({
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe(
+			'The most comments to return. Wrike returns up to 1000 by default.',
+		),
+});
 
 export type CommentsListInput = z.infer<typeof CommentsListInputSchema>;
 
@@ -520,7 +585,9 @@ const TaskCommentsCreateInputSchema = z.object({
 	text: z
 		.string()
 		.min(1)
-		.describe('The comment text. Plain text; Wrike renders the links itself.'),
+		.describe(
+			'The comment text, sent as plain text: Wrike strips any HTML tags rather than rendering them.',
+		),
 });
 
 export type TaskCommentsCreateInput = z.infer<
@@ -535,7 +602,12 @@ export type TaskCommentsCreateResponse = z.infer<
 
 const CommentsUpdateInputSchema = z.object({
 	id: IdSchema,
-	text: z.string().min(1),
+	text: z
+		.string()
+		.min(1)
+		.describe(
+			'Plain text, as on create. Wrike allows an edit only in the 5 minutes after posting.',
+		),
 });
 
 export type CommentsUpdateInput = z.infer<typeof CommentsUpdateInputSchema>;
@@ -553,7 +625,6 @@ export type CommentsDeleteInput = z.infer<typeof CommentsDeleteInputSchema>;
 // ── contacts and account ──────────────────────────────────────────────────
 
 const ContactsListInputSchema = z.object({
-	...PagingSchema,
 	me: z.boolean().optional().describe('Only the contact behind the token.'),
 	active: z
 		.boolean()
