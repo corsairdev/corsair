@@ -1,0 +1,799 @@
+---
+title: "Geocodio API reference"
+sidebarTitle: "API"
+description: "API reference for the Geocodio plugin in Corsair: every `geocodio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Distance
+
+### fromOrigin
+
+`distance.fromOrigin`
+
+Measure driving or straight-line distance and duration from one origin to many destinations, optionally filtering and sorting by either
+
+**Risk:** `read`
+
+```ts
+await corsair.geocodio.api.distance.fromOrigin({ origin: '1109 N Highland St, Arlington, VA 22201', destinations: ['1600 Pennsylvania Ave NW, Washington, DC 20500'], mode: 'driving' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | Yes | The starting address or `lat,lng` pair |
+| `destinations` | `string[]` | Yes | The addresses or `lat,lng` pairs to measure from the origin |
+| `mode` | `driving \| haversine \| straightline` | No | `driving` follows roads and gives a duration; `haversine` and `straightline` are the as-the-crow-flies distance |
+| `units` | `miles \| km` | No | Which distance figure to use |
+| `max_results` | `number` | No | Caps the destinations returned |
+| `max_distance` | `number` | No | Drops destinations farther than this |
+| `max_duration` | `number` | No | Drops destinations slower than this |
+| `min_distance` | `number` | No | Drops destinations nearer than this |
+| `min_duration` | `number` | No | Drops destinations faster than this |
+| `order_by` | `distance \| duration` | No | Which figure to sort by |
+| `sort_order` | `asc \| desc` | No | Sort direction |
+| `country` | `string` | No | Restricts and formats the lookup as `US`, `CA`, `MX`, `GB`, `AU` or `NZ`, which also changes how an address is parsed |
+| `enterprise` | `boolean` | No | Uses the enterprise host |
+
+The route accepts `driving`, `haversine` and `straightline`; only `driving` returns a duration.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `Record<string, any>` | No | — |
+| `mode` | `string` | No | — |
+| `destinations` | `object[]` | Yes | — |
+| `_warnings` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="destinations full type">
+
+```ts
+{
+  query?: string,
+  location?: number[],
+  id?: string,
+  distance_miles?: number,
+  distance_km?: number,
+  duration_seconds?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### matrix
+
+`distance.matrix`
+
+Measure every origin against every destination, or pair each origin with one destination, in a single request
+
+**Risk:** `read`
+
+```ts
+await corsair.geocodio.api.distance.matrix({ origins: ['38.886665,-77.094733'], destinations: ['38.8977,-77.0365'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origins` | `string[]` | Yes | The starting addresses or `lat,lng` pairs, one row each |
+| `destinations` | `string[]` | Yes | The addresses or `lat,lng` pairs, one column each |
+| `calculation_type` | `matrix \| one-to-one` | No | `matrix` measures every origin against every destination; `one-to-one` pairs each origin with one destination |
+| `mode` | `driving \| straightline` | No | `driving` follows roads and gives a duration; `straightline` is the as-the-crow-flies distance |
+| `units` | `miles \| km` | No | Which distance figure to order and filter by |
+| `max_results` | `number` | No | Caps the cells returned |
+| `max_distance` | `number` | No | Drops cells farther than this |
+| `max_duration` | `number` | No | Drops cells slower than this |
+| `min_distance` | `number` | No | Drops cells nearer than this |
+| `min_duration` | `number` | No | Drops cells faster than this |
+| `order_by` | `distance \| duration` | No | Which figure to sort by |
+| `sort_order` | `asc \| desc` | No | Sort direction |
+| `country` | `string` | No | Restricts and formats the lookup as `US`, `CA`, `MX`, `GB`, `AU` or `NZ`, which also changes how an address is parsed |
+
+`calculation_type: one-to-one` pairs each origin with one destination instead of crossing them.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mode` | `string` | No | — |
+| `results` | `object[]` | Yes | — |
+| `_warnings` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  origin?: Record<string, any>,
+  destinations: {
+    query?: string,
+    location?: number[],
+    id?: string,
+    distance_miles?: number,
+    distance_km?: number,
+    duration_seconds?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Geocode
+
+### batch
+
+`geocode.batch`
+
+Geocode up to 10,000 addresses in one request, answered in the order they were sent
+
+**Risk:** `read`
+
+```ts
+await corsair.geocodio.api.geocode.batch({ addresses: ['1109 N Highland St, Arlington, VA 22201'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `string[]` | Yes | The addresses to geocode in one request |
+| `fields` | `string[]` | No | Data appends to add to each result, such as `timezone`, `congressional_district`, `stateleg`, `school`, `census`, `zip4`, or a Census ACS name |
+| `country` | `string` | No | Restricts and formats the lookup as `US`, `CA`, `MX`, `GB`, `AU` or `NZ`, which also changes how an address is parsed |
+| `enterprise` | `boolean` | No | Uses the enterprise host |
+
+Up to 10,000 addresses in one POST, answered in order.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `_warnings` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  stable_address_key?: string,
+  address_components: {
+    number?: string,
+    predirectional?: string,
+    street?: string,
+    suffix?: string,
+    postdirectional?: string,
+    unit_type?: string,
+    unit_number?: string,
+    formatted_street?: string,
+    city?: string,
+    county?: string,
+    state_province?: string,
+    postal_code?: string,
+    country?: string,
+    nation?: string,
+    building_name?: string,
+    sublocality?: string
+  },
+  address_lines?: string[],
+  formatted_address: string,
+  location: {
+    lat: number,
+    lng: number
+  },
+  accuracy: number,
+  accuracy_type: string,
+  match_type?: string | null,
+  source?: string,
+  fields?: Record<string, any>,
+  destinations?: {
+    query?: string,
+    location?: number[],
+    id?: string,
+    distance_miles?: number,
+    distance_km?: number,
+    duration_seconds?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### batchReverse
+
+`geocode.batchReverse`
+
+Reverse geocode up to 10,000 coordinate pairs in one request, answered in the order they were sent
+
+**Risk:** `read`
+
+```ts
+await corsair.geocodio.api.geocode.batchReverse({ coordinates: ['38.886665,-77.094733'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coordinates` | `string[]` | Yes | The `lat,lng` pairs to reverse geocode in one request |
+| `fields` | `string[]` | No | Data appends to add to each result, such as `timezone`, `congressional_district`, `stateleg`, `school`, `census`, `zip4`, or a Census ACS name |
+| `country` | `string` | No | Restricts and formats the lookup as `US`, `CA`, `MX`, `GB`, `AU` or `NZ`, which also changes how an address is parsed |
+| `enterprise` | `boolean` | No | Uses the enterprise host |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `_warnings` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  stable_address_key?: string,
+  address_components: {
+    number?: string,
+    predirectional?: string,
+    street?: string,
+    suffix?: string,
+    postdirectional?: string,
+    unit_type?: string,
+    unit_number?: string,
+    formatted_street?: string,
+    city?: string,
+    county?: string,
+    state_province?: string,
+    postal_code?: string,
+    country?: string,
+    nation?: string,
+    building_name?: string,
+    sublocality?: string
+  },
+  address_lines?: string[],
+  formatted_address: string,
+  location: {
+    lat: number,
+    lng: number
+  },
+  accuracy: number,
+  accuracy_type: string,
+  match_type?: string | null,
+  source?: string,
+  fields?: Record<string, any>,
+  destinations?: {
+    query?: string,
+    location?: number[],
+    id?: string,
+    distance_miles?: number,
+    distance_km?: number,
+    duration_seconds?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forward
+
+`geocode.forward`
+
+Turn an address into coordinates, with a confidence score, the accuracy type that says how the match was made, and the parsed components. Data appends such as timezone or congressional district come back under `fields`
+
+**Risk:** `read`
+
+```ts
+await corsair.geocodio.api.geocode.forward({ q: '1109 N Highland St, Arlington, VA 22201', fields: ['timezone'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | A single-line address, such as `1109 N Highland St, Arlington, VA 22201` |
+| `street` | `string` | No | The street line, without the city |
+| `street2` | `string` | No | The unit, suite or floor |
+| `city` | `string` | No | The city |
+| `county` | `string` | No | The county |
+| `state_province` | `string` | No | The state or province |
+| `postal_code` | `string` | No | The ZIP or postal code |
+| `country` | `string` | No | Restricts and formats the lookup as `US`, `CA`, `MX`, `GB`, `AU` or `NZ`, which also changes how an address is parsed |
+| `limit` | `number` | No | How many matches to return, at most 100 |
+| `fields` | `string[]` | No | Data appends to add to each result, such as `timezone`, `congressional_district`, `stateleg`, `school`, `census`, `zip4`, or a Census ACS name |
+| `enterprise` | `boolean` | No | Uses api.enterprise.geocod.io, for accounts that have one |
+
+Send either `q` or the components; `fields` appends data such as `timezone` under `fields`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `_warnings` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  stable_address_key?: string,
+  address_components: {
+    number?: string,
+    predirectional?: string,
+    street?: string,
+    suffix?: string,
+    postdirectional?: string,
+    unit_type?: string,
+    unit_number?: string,
+    formatted_street?: string,
+    city?: string,
+    county?: string,
+    state_province?: string,
+    postal_code?: string,
+    country?: string,
+    nation?: string,
+    building_name?: string,
+    sublocality?: string
+  },
+  address_lines?: string[],
+  formatted_address: string,
+  location: {
+    lat: number,
+    lng: number
+  },
+  accuracy: number,
+  accuracy_type: string,
+  match_type?: string | null,
+  source?: string,
+  fields?: Record<string, any>,
+  destinations?: {
+    query?: string,
+    location?: number[],
+    id?: string,
+    distance_miles?: number,
+    distance_km?: number,
+    duration_seconds?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### parse
+
+`geocode.parse`
+
+Split an address into its components without geocoding it, so it costs no lookup
+
+**Risk:** `read`
+
+```ts
+await corsair.geocodio.api.geocode.parse({ q: '1109 N Highland St, Arlington, VA 22201' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | An address to split into its components, without geocoding it |
+
+Splits an address without geocoding it, so it costs no lookup.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address_components` | `object` | Yes | — |
+| `formatted_address` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="address_components full type">
+
+```ts
+{
+  number?: string,
+  predirectional?: string,
+  street?: string,
+  suffix?: string,
+  postdirectional?: string,
+  unit_type?: string,
+  unit_number?: string,
+  formatted_street?: string,
+  city?: string,
+  county?: string,
+  state_province?: string,
+  postal_code?: string,
+  country?: string,
+  nation?: string,
+  building_name?: string,
+  sublocality?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverse
+
+`geocode.reverse`
+
+Turn a latitude and longitude into the nearest address, with the same confidence and components a forward lookup returns
+
+**Risk:** `read`
+
+```ts
+await corsair.geocodio.api.geocode.reverse({ q: '38.886665,-77.094733' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | A `lat,lng` pair, such as `38.886665,-77.094733` |
+| `fields` | `string[]` | No | Data appends to add to each result, such as `timezone`, `congressional_district`, `stateleg`, `school`, `census`, `zip4`, or a Census ACS name |
+| `country` | `string` | No | Restricts the lookup to one country, which sharpens a border case |
+| `enterprise` | `boolean` | No | Uses the enterprise host |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `_warnings` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  stable_address_key?: string,
+  address_components: {
+    number?: string,
+    predirectional?: string,
+    street?: string,
+    suffix?: string,
+    postdirectional?: string,
+    unit_type?: string,
+    unit_number?: string,
+    formatted_street?: string,
+    city?: string,
+    county?: string,
+    state_province?: string,
+    postal_code?: string,
+    country?: string,
+    nation?: string,
+    building_name?: string,
+    sublocality?: string
+  },
+  address_lines?: string[],
+  formatted_address: string,
+  location: {
+    lat: number,
+    lng: number
+  },
+  accuracy: number,
+  accuracy_type: string,
+  match_type?: string | null,
+  source?: string,
+  fields?: Record<string, any>,
+  destinations?: {
+    query?: string,
+    location?: number[],
+    id?: string,
+    distance_miles?: number,
+    distance_km?: number,
+    duration_seconds?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jobs
+
+### delete
+
+`jobs.delete`
+
+Delete a distance job and its stored result
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.geocodio.api.jobs.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | The job ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `download_url` | `string` | No | — |
+| `expires_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`jobs.get`
+
+Read one distance job, whose status says whether its result is ready
+
+**Risk:** `read`
+
+```ts
+await corsair.geocodio.api.jobs.get({ identifier: 'abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | The job ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `download_url` | `string` | No | — |
+| `expires_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `completed_at` | `string` | No | — |
+| `callback_url` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`jobs.list`
+
+List the asynchronous distance matrix jobs on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.geocodio.api.jobs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | The page of jobs to read |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `Record<string, any>` | No | — |
+| `meta` | `Record<string, any>` | No | — |
+| `_warnings` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  identifier: string,
+  name?: string,
+  status?: string,
+  download_url?: string,
+  expires_at?: string,
+  created_at?: string,
+  completed_at?: string,
+  callback_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lists
+
+### all
+
+`lists.all`
+
+List the uploaded spreadsheets and their processing status
+
+**Risk:** `read`
+
+```ts
+await corsair.geocodio.api.lists.all({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | The page of lists to read |
+
+There is no upload route here, so a new spreadsheet has to be uploaded from the dashboard.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `from` | `number` | No | — |
+| `to` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+| `next_page_url` | `string \| null` | No | — |
+| `prev_page_url` | `string \| null` | No | — |
+| `first_page_url` | `string \| null` | No | — |
+| `path` | `string` | No | — |
+| `_warnings` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status?: string,
+  file?: Record<string, any>,
+  fields?: string[],
+  download_url?: string,
+  expires_at?: string,
+  _warnings?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`lists.delete`
+
+Delete an uploaded spreadsheet and its results
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.geocodio.api.lists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The list ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `file` | `Record<string, any>` | No | — |
+| `fields` | `string[]` | No | — |
+| `download_url` | `string` | No | — |
+| `expires_at` | `string` | No | — |
+| `_warnings` | `string[]` | No | — |
+
+
+
+---
+
+### get
+
+`lists.get`
+
+Read one spreadsheet list, whose status and download URL say when its results are ready
+
+**Risk:** `read`
+
+```ts
+await corsair.geocodio.api.lists.get({ id: 'abc123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The list ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `file` | `Record<string, any>` | No | — |
+| `fields` | `string[]` | No | — |
+| `download_url` | `string` | No | — |
+| `expires_at` | `string` | No | — |
+| `_warnings` | `string[]` | No | — |
+
+
+
+---
+
