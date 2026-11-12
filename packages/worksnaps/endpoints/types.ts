@@ -67,6 +67,8 @@ const TimeEntrySchema = z
 		// open string: `online` or `offline` today.
 		type: z.string().nullish(),
 		task_name: z.string().nullish(),
+		// The screenshot thumbnail, per the API reference's time-entry reply.
+		thumbnail_url: z.string().nullish(),
 	})
 	.loose();
 
