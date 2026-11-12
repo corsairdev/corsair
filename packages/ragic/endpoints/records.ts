@@ -182,10 +182,12 @@ export const comment: RagicEndpoints['recordsComment'] = (ctx, input) =>
 				parsed.sheetIndex,
 				parsed.recordId,
 			),
-			// The comment travels as `c` in the body, which the docs send
-			// form-encoded; JSON with the same key reads the same way, and the
-			// attachment parameter is left out because this plugin sends no files.
-			body: { c: parsed.comment },
+			// Ragic only treats the POST as a comment with the `comment` flag, and
+			// only reads `c` from a multipart body: live, a JSON or urlencoded `c`
+			// answered code 103, and without the flag the POST was a plain save that
+			// added nothing. The attachment (`at`) is left out: no files here.
+			query: { comment: '' },
+			formData: { c: parsed.comment },
 			// A second comment posts a second comment.
 			replayable: false,
 		}),

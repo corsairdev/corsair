@@ -42,11 +42,26 @@ export type CapturedRequest = {
 	body: unknown;
 	// unknown: a body is arbitrary JSON, narrowed by asRecord.
 	bodyRecord: Record<string, unknown> | null;
+	/** The multipart body, when the request sent one. */
+	formData?: FormData;
 };
 
 export function lastRequest(fetchMock: jest.SpyInstance): CapturedRequest {
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
 	const parsed = new URL(url);
+	if (init.body instanceof FormData) {
+		return {
+			origin: parsed.origin,
+			path: parsed.pathname,
+			query: Object.fromEntries(parsed.searchParams),
+			queryAll: (name: string) => parsed.searchParams.getAll(name),
+			method: init.method,
+			headers: new Headers(init.headers),
+			body: undefined,
+			bodyRecord: null,
+			formData: init.body,
+		};
+	}
 	return {
 		origin: parsed.origin,
 		path: parsed.pathname,

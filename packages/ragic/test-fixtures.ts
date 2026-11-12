@@ -91,13 +91,17 @@ export const INVALID_FIELD = {
 	code: 202,
 };
 
-// Comment fields by fixed id: 61 timestamp, 65 commenter, 66 text, 67 attachment, 73 ms.
+// Live (trimmed): the comment just added, keyed by its row id. 61 timestamp,
+// 65 commenter, 66 text, 73 ms; 67 (attachment) is absent without a file.
 export const COMMENT_ADDED = {
-	'61': '2025/02/13 14:30',
-	'65': 'John Smith',
-	'66': 'Please review this order.',
-	'67': '',
-	'73': '1739425800000',
+	'4': {
+		_ragicId: 4,
+		_parentRagicId: 4,
+		'61': '2026/11/12 01:58:25',
+		'73': 1794466705815,
+		'65': 'John Smith',
+		'66': 'Please review this order.',
+	},
 };
 
 export const TASK_PROGRESS = {

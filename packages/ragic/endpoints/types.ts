@@ -369,11 +369,15 @@ const RecordsCommentInputSchema = SheetSchema.extend({
 export type RecordsCommentInput = z.infer<typeof RecordsCommentInputSchema>;
 
 /**
- * The comment just added, keyed by fixed field ids: 61 the formatted timestamp, 65
- * the commenter, 66 the text, 67 the attachment filename, 73 the raw timestamp in
- * milliseconds.
+ * The comment just added, wrapped like a record set: keyed by the comment's row
+ * id, with fixed field ids inside: 61 the formatted timestamp, 65 the commenter,
+ * 66 the text, 67 the attachment filename, 73 the timestamp in milliseconds, plus
+ * `_ragicId` and `_parentRagicId` (the record). Seen live; the reference shows the
+ * inner object only.
  */
-const RecordsCommentResponseSchema = JsonObjectSchema;
+const RecordsCommentResponseSchema = RecordSetSchema.describe(
+	'The comment just added, keyed by its row id: 61 time, 65 commenter, 66 text, 67 attachment, 73 time in ms.',
+);
 
 export type RecordsCommentResponse = z.infer<
 	typeof RecordsCommentResponseSchema

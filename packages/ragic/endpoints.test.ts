@@ -507,10 +507,13 @@ describe('records.comment', () => {
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('POST');
 		expect(request.path).toBe('/demo/sales/1/2');
-		expect(request.bodyRecord).toEqual({ c: 'Please review this order.' });
-		// The comment's fixed field ids: 66 is the text, 65 the commenter.
-		expect(result['66']).toBe('Please review this order.');
-		expect(result['65']).toBe('John Smith');
+		// The comment flag and a multipart `c` are what make it a comment.
+		expect(request.query.comment).toBe('');
+		expect(request.formData?.get('c')).toBe('Please review this order.');
+		expect(request.headers.get('Content-Type')).toBeNull();
+		// Keyed by the comment's row id; 66 is the text, 65 the commenter.
+		expect(result['4']?.['66']).toBe('Please review this order.');
+		expect(result['4']?.['65']).toBe('John Smith');
 	});
 
 	it('rejects an empty comment', async () => {

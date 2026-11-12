@@ -190,6 +190,8 @@ export type RagicRequest = {
 	query?: RagicQuery;
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
+	/** Sent as multipart/form-data instead of a JSON body; the comment route reads only this. */
+	formData?: Record<string, string>;
 	/** Declared per operation so a write is never replayed. */
 	replayable: boolean;
 };
@@ -244,13 +246,14 @@ const RAGIC_COMMON_QUERY: RagicQuery = {
 export async function makeRagicRequest(
 	apiKey: string,
 	server: string,
-	{ method, path, query, body, replayable }: RagicRequest,
+	{ method, path, query, body, formData, replayable }: RagicRequest,
 ): Promise<unknown> {
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
 		query: { ...query, ...RAGIC_COMMON_QUERY },
 		body,
+		formData,
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
