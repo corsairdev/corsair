@@ -304,6 +304,7 @@ export const BaseProviders = [
 	'kaggle',
 	'keenable',
 	'kibana',
+	'kickbox',
 	'klaviyo',
 	'kling',
 	'leexi',
@@ -790,6 +791,7 @@ export const ProviderDisplayNames = {
 	kaggle: 'Kaggle',
 	keenable: 'Keenable',
 	kibana: 'Kibana',
+	kickbox: 'Kickbox',
 	klaviyo: 'Klaviyo',
 	kling: 'Kling',
 	leexi: 'Leexi',
@@ -1283,6 +1285,7 @@ export type AllProviders =
 	| 'kaggle'
 	| 'keenable'
 	| 'kibana'
+	| 'kickbox'
 	| 'klaviyo'
 	| 'kling'
 	| 'leexi'
