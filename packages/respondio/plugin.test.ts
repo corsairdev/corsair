@@ -94,6 +94,17 @@ describe('respondio plugin definition', () => {
 		expect(destructive.sort()).toEqual(['contacts.delete', 'contacts.merge']);
 	});
 
+	it('marks contact deletion and merging as irreversible', () => {
+		const meta = plugin.endpointMeta ?? {};
+		const irreversible = operations.filter(
+			(operation) =>
+				meta[operation as keyof typeof meta]?.irreversible === true,
+		);
+
+		// Neither the deleted history nor the merged-away contact comes back.
+		expect(irreversible.sort()).toEqual(['contacts.delete', 'contacts.merge']);
+	});
+
 	it('marks messages.send as a write, since it reaches the customer', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(meta['messages.send' as keyof typeof meta]?.riskLevel).toBe('write');

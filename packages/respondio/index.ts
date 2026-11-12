@@ -226,6 +226,7 @@ const respondioEndpointMeta = {
 	},
 	'contacts.delete': {
 		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Delete a contact and its conversation history',
 	},
 	'contacts.upsert': {
@@ -235,6 +236,7 @@ const respondioEndpointMeta = {
 	},
 	'contacts.merge': {
 		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Merge two contacts by their IDs, setting the merged fields; the older contact stays and the other is removed',
 	},
