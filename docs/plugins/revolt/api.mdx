@@ -14,7 +14,7 @@ description: "API reference for the Revolt (Stoat) plugin in Corsair: every `rev
 
 `channels.delete`
 
-Close a channel permanently; its message history is gone
+Delete a server channel and its messages, leave a group, or close a direct message (its messages stay)
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -634,7 +634,7 @@ await corsair.revolt.api.messages.list({ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1
 | `before` | `string` | No | A message id, such as `01F8Z0T8Y4W4Z8X3K5M2N1P0Q9`. |
 | `after` | `string` | No | A message id, such as `01F8Z0T8Y4W4Z8X3K5M2N1P0Q9`. |
 | `nearby` | `string` | No | A message id, such as `01F8Z0T8Y4W4Z8X3K5M2N1P0Q9`. |
-| `sort` | `Oldest \| Latest \| Relevance` | No | Only meaningful with `nearby`. |
+| `sort` | `Oldest \| Latest \| Relevance` | No | Message order, `Latest` by default. Stoat ignores it when `nearby` is set. |
 | `include_users` | `boolean` | No | Return the authors as `users` and `members` beside the messages. Defaults to true. |
 
 The response carries `users` and `members` beside the messages, so authors resolve without a second call.
@@ -1126,9 +1126,9 @@ await corsair.revolt.api.reactions.add({ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1
 |------|------|----------|-------------|
 | `channel_id` | `string` | Yes | — |
 | `message_id` | `string` | Yes | A message id, such as `01F8Z0T8Y4W4Z8X3K5M2N1P0Q9`. |
-| `emoji` | `string` | Yes | A unicode emoji or a custom emoji id in `:id:` form. |
+| `emoji` | `string` | Yes | A unicode emoji, or a custom emoji id as it is, without colons. |
 
-The emoji is a unicode character or a custom emoji id in `:id:` form.
+The emoji is a unicode character or a bare custom emoji id, without colons.
 
 
 
