@@ -1,0 +1,145 @@
+---
+title: "Wachete plugin"
+sidebarTitle: "Overview"
+description: "Web change monitoring with Wachete - create and update monitors that watch a page or crawl a portal, read check history and diffs, list the notifications they triggered, and organise everything into folders."
+---
+
+Use **Wachete** through Corsair: one client, typed API calls.
+
+Find your **userId** and **apiKey** in the Wachete profile; those are what the API trades for a bearer token.
+
+- **Two-step auth.** `POST /thirdparty/v1/user/apilogin` exchanges `{ userId, apiKey }` for a `token`, and every other call sends `Authorization: bearer <token>` — the word `bearer` lowercased, as Wachete's own docs write it. The plugin accepts a packed `<userId>\n<apiKey>` key and does the login itself, caching the token until it expires, or a bare token if you already have one.
+- **Creating and updating are one call, but the two use different methods.** `tasks.upsert` is a `PUT` on the *collection* and `folders.upsert` is a `POST` on the same collection; in both, the body's `id` decides between creating and updating, not the route.
+- **The enums are ambiguous, and the plugin accepts both forms.** Wachete's OpenAPI document declares alert, job and messaging types as integers, but that same document's own example payload sends names (`"Error"`, `"NotEq"`, `"Webhook"`, `"SinglePage"`) and the prose docs do too. The plugin accepts a name or the number and sends what you give it, so either contract works.
+- **Alert names.** `Error`, `Changed`, `NotEq`, `Eq`, `Contains`, `NotContains`, `StartsWith`, `EndsWith`, `Regex`, `Lower`, `Greater`, `Exists`, `NotExists`. Messaging names: `Email`, `Webhook`, `Sms`, `Slack`, `Teams`, `Telegram`, `Pushover`, `Discord`.
+- **A `SinglePage` monitor takes no crawling settings.** `crawlingDepth`, `urlFilter`, `crawlBinaryContent` and `crawlPagesFromAllDomains` only apply to a `Portal` monitor, so sending them on a `SinglePage` one is rejected before the request rather than silently ignored.
+- **`tasks.search` sits after `/task/{id}` in the API's path table.** A router that matched `{id}` first would treat "search" as a monitor id; Wachete's own routing resolves it, and the plugin calls `/task/search` explicitly.
+- **Deleting a folder deletes its contents.** `folders.delete` removes every subfolder and monitor inside it, which makes it the most destructive call here — far more than `tasks.delete`, which removes one monitor.
+- **The last value lives in `data`.** A monitor's `data.raw` is what the last check read, `data.valueChangedTimestamp` is when it last differed, and `data.error` is set when the check failed — so a monitor can be `failedCount` without any notification arriving.
+- **History and notifications page by continuation token.** Both answer `continuationToken`, which is null on the last page. `data.list` can return a Google-style diff per entry with `returnDiff`, which is much larger than the raw values.
+- **`notifications.get` carries the sent HTML.** It answers JSON with the monitor's `name`, `url`, `timestampUtc` and the alert as the `html` that was sent. The plugin's event log records the HTML's length, never its content, which is the watched page's text.
+
+**What you get:**
+
+- 12 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/wachete better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/wachete better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/wachete better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/wachete better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { wachete } from '@corsair-dev/wachete';
+
+export const corsair = createCorsair({
+	plugins: [
+		wachete(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+wachete()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'wachete',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a monitor**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.wachete.api.tasks.get({ id: '9f7e1ae7-9a7f-49e0-baa2-ffd8760f7b9e' });
+```
+
+
+**Watch a page daily**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.wachete.api.tasks.upsert({
+	name: 'My First Monitor',
+	url: 'http://www.mypage.com',
+	xPath: '/',
+	recurrenceInSeconds: 86400,
+});
+```
+
+
+See the full list on the [API](/plugins/wachete/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/wachete/api">
+    Every `wachete.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
