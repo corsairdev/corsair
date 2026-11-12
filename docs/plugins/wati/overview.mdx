@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "WATI plugin"
+sidebarTitle: "Overview"
 description: "WhatsApp messaging with WATI - manage contacts, read conversations and their messages, send text, template and file messages, and read templates, channels, campaigns, segments and webhook subscriptions."
 ---
 
@@ -12,12 +13,12 @@ Create an API token in the WATI app under **Connector → API → Create API Tok
 - **Two distinct 401s.** `missing_token` means no key was sent at all; `invalid_token` means one was sent and is wrong, malformed or expired. Both are auth errors, but the difference tells you whether the credential was configured at all, so the plugin exposes both.
 - **A 403 is not only a scope problem.** The docs are explicit that the role, the plan and access to a particular channel can each cause it, so the plugin treats it as a permission error rather than blaming the scope.
 - **Free text only works inside 24 hours.** `messages.sendText` is refused outside the customer service window; `messages.sendTemplate` is the only route through. That is why they are separate operations rather than one with a flag.
-- **`broadcast_name` makes a send a campaign.** It groups the template send as a campaign in WATI, and the plugin requires `parameters` alongside it — a campaign with nothing bound only makes sense for a template with no placeholders.
+- **Every template send is a campaign.** WATI requires `broadcast_name` even for one recipient and records the send under it. Leave out `parameters` for a template with no placeholders. A 200 can still carry `success: false` with `error`, and each recipient row can carry its own `errors`.
 - **A conversation target is not a contact ID.** `conversations.messages` takes a wa_id, a phone number or a conversation ID, and the docs warn against substituting a bare contact ID, which is a different value.
-- **A leading `+` has to be encoded.** A contact target may start with `+`, which is percent-encoded so the value stays one path segment rather than becoming a space.
-- **Paging is `page_number` and `page_size`.** One-based, capped at 100 per page.
+- **A leading `+` has to be encoded in a path.** A contact target may start with `+`, which is percent-encoded when it is part of the URL so it stays one path segment. Send routes take the target in the JSON body, where it is sent as given.
+- **Paging is `page_number` and `page_size`.** One-based, capped at 100 per page. `broadcasts.list` also needs `date_from` and `date_to`: the live API refuses the list without them, though the reference does not mark them.
 - **Custom attributes are pairs, not a map.** A contact's `custom_params` is a list of `{ name, value }`, which is WATI's own shape.
-- **Creating a webhook still needs V2.** The V3 routes list, read and delete subscriptions, but creation has not moved to V3 — so the plugin wraps the three that exist and says so rather than reaching into a different API version.
+- **Creating a webhook still needs V2.** The V3 routes list, read and delete subscriptions, but creation has not moved to V3 — so the plugin wraps the three that exist and says so rather than reaching into a different API version. The V3 list has no paging.
 
 **What you get:**
 
@@ -77,7 +78,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-A call with no saved key throws `AuthMissingError`. Save a WATI API token on the account before calling, or pass `key` in the plugin options. A dedicated account's own host goes in `apiHost`.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 wati()
@@ -122,6 +123,7 @@ const tenant = corsair.withTenant('acme');
 await tenant.wati.api.messages.sendTemplate({
 	whatsapp_number: '1234567890',
 	template_name: 'order_update',
+	broadcast_name: 'order_update_jordan',
 	parameters: [{ name: '1', value: 'Jordan' }],
 });
 ```

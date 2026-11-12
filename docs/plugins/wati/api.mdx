@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for WATI: every `wati.api.*` operation with input and output types."
+title: "WATI API reference"
+sidebarTitle: "API"
+description: "API reference for the WATI plugin in Corsair: every `wati.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `wati.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -30,8 +29,11 @@ await corsair.wati.api.account.credits({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `credits` | `number \| null` | No | — |
-| `balance` | `number \| null` | No | — |
+| `credit` | `number \| null` | No | The credit balance. |
+| `welcome_credit` | `number \| null` | No | — |
+| `remaining_free_conversations_count` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `auto_charge_enabled` | `boolean \| null` | No | — |
 
 
 
@@ -68,8 +70,13 @@ await corsair.wati.api.broadcasts.get({ broadcast_id: 'bc-1' });
 | `name` | `string \| null` | No | — |
 | `status` | `string \| null` | No | — |
 | `template_name` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `channel_id` | `string \| null` | No | — |
 | `created` | `string \| null` | No | — |
+| `last_updated` | `string \| null` | No | — |
 | `scheduled` | `string \| null` | No | — |
+| `scheduled_at` | `string \| null` | No | — |
+| `statistics` | `Record<string, number \| null> \| null` | No | — |
 | `sent` | `number \| null` | No | — |
 | `delivered` | `number \| null` | No | — |
 | `read` | `number \| null` | No | — |
@@ -88,7 +95,7 @@ List campaigns with their delivery counts
 **Risk:** `read`
 
 ```ts
-await corsair.wati.api.broadcasts.list({ page_number: 1 });
+await corsair.wati.api.broadcasts.list({ page_number: 1, date_from: '2026-11-01', date_to: '2026-11-30' });
 ```
 
 **Input**
@@ -97,6 +104,9 @@ await corsair.wati.api.broadcasts.list({ page_number: 1 });
 |------|------|----------|-------------|
 | `page_number` | `number` | No | The page to return, 1-based. Defaults to 1. |
 | `page_size` | `number` | No | Items per page, up to 100. Defaults to 20. |
+| `date_from` | `string` | Yes | Campaigns created from this date, e.g. 2026-11-01. |
+| `date_to` | `string` | Yes | Campaigns created up to this date, e.g. 2026-11-30. |
+| `channel` | `string` | No | Only campaigns sent from this channel. |
 
 
 
@@ -121,8 +131,13 @@ await corsair.wati.api.broadcasts.list({ page_number: 1 });
   name?: string | null,
   status?: string | null,
   template_name?: string | null,
+  template_id?: string | null,
+  channel_id?: string | null,
   created?: string | null,
+  last_updated?: string | null,
   scheduled?: string | null,
+  scheduled_at?: string | null,
+  statistics?: Record<string, number | null> | null,
   sent?: number | null,
   delivered?: number | null,
   read?: number | null,
@@ -140,8 +155,13 @@ await corsair.wati.api.broadcasts.list({ page_number: 1 });
   name?: string | null,
   status?: string | null,
   template_name?: string | null,
+  template_id?: string | null,
+  channel_id?: string | null,
   created?: string | null,
+  last_updated?: string | null,
   scheduled?: string | null,
+  scheduled_at?: string | null,
+  statistics?: Record<string, number | null> | null,
   sent?: number | null,
   delivered?: number | null,
   read?: number | null,
@@ -183,6 +203,7 @@ await corsair.wati.api.broadcasts.recipients({ broadcast_id: 'bc-1', page_number
 |------|------|----------|-------------|
 | `recipients` | `object[] \| null` | No | — |
 | `recipient_list` | `object[] \| null` | No | — |
+| `total_count` | `number \| null` | No | — |
 | `page_number` | `number \| null` | No | — |
 | `page_size` | `number \| null` | No | — |
 | `total` | `number \| null` | No | — |
@@ -193,6 +214,14 @@ await corsair.wati.api.broadcasts.recipients({ broadcast_id: 'bc-1', page_number
 
 ```ts
 {
+  id?: string | null,
+  contact_id?: string | null,
+  contact_name?: string | null,
+  contact_phone?: string | null,
+  failed_code?: string | null,
+  message_id?: string | null,
+  local_message_id?: string | null,
+  created?: string | null,
   wa_id?: string | null,
   phone?: string | null,
   name?: string | null,
@@ -209,6 +238,14 @@ await corsair.wati.api.broadcasts.recipients({ broadcast_id: 'bc-1', page_number
 
 ```ts
 {
+  id?: string | null,
+  contact_id?: string | null,
+  contact_name?: string | null,
+  contact_phone?: string | null,
+  failed_code?: string | null,
+  message_id?: string | null,
+  local_message_id?: string | null,
+  created?: string | null,
   wa_id?: string | null,
   phone?: string | null,
   name?: string | null,
@@ -237,10 +274,16 @@ List the channels connected to the workspace
 **Risk:** `read`
 
 ```ts
-await corsair.wati.api.channels.list({});
+await corsair.wati.api.channels.list({ page_number: 1, page_size: 20 });
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_number` | `number` | No | The page to return, 1-based. Defaults to 1. |
+| `page_size` | `number` | No | Items per page, up to 100. Defaults to 20. |
+
 
 
 **Output**
@@ -258,6 +301,7 @@ await corsair.wati.api.channels.list({});
   channel_id?: string | null,
   name?: string | null,
   type?: string | null,
+  channel?: string | null,
   status?: string | null,
   phone_number?: string | null
 }[] | null
@@ -290,8 +334,7 @@ await corsair.wati.api.contacts.count({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `count` | `number \| null` | No | — |
-| `total` | `number \| null` | No | — |
+| `contact_count` | `number \| null` | No | The number of contacts. |
 
 
 
@@ -392,7 +435,10 @@ await corsair.wati.api.contacts.delete({ target: '+1234567890' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
-| `message` | `string \| null` | No | — |
+| `id` | `string \| null` | No | — |
+| `contact_id` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `cleanup_completed` | `boolean \| null` | No | — |
 
 
 
@@ -559,8 +605,11 @@ await corsair.wati.api.conversations.list({ page_number: 1, channel_type: 'whats
 {
   id?: string | null,
   conversation_id?: string | null,
+  contact_id?: string | null,
   wa_id?: string | null,
   contact_name?: string | null,
+  started_date?: string | null,
+  last_updated?: string | null,
   phone?: string | null,
   channel_id?: string | null,
   channel_type?: string | null,
@@ -622,6 +671,13 @@ await corsair.wati.api.conversations.messages({ target: 'conv-1', page_number: 1
   conversation_id?: string | null,
   wa_id?: string | null,
   message_type?: string | null,
+  type?: string | null,
+  event_type?: string | null,
+  ticket_id?: string | null,
+  owner?: boolean | null,
+  operator_name?: string | null,
+  local_message_id?: string | null,
+  failed_detail?: string | null,
   text?: string | null,
   content?: any | null,
   status?: string | null,
@@ -661,7 +717,6 @@ await corsair.wati.api.messages.sendFile({ target: 'conv-1', url: 'https://acme.
 | `target` | `string` | Yes | — |
 | `url` | `string` | Yes | A publicly reachable media URL. |
 | `caption` | `string` | No | — |
-| `filename` | `string` | No | — |
 
 
 
@@ -669,11 +724,38 @@ await corsair.wati.api.messages.sendFile({ target: 'conv-1', url: 'https://acme.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `any \| null` | No | — |
-| `message` | `string \| null` | No | — |
-| `success` | `boolean \| null` | No | — |
-| `id` | `string \| null` | No | — |
-| `local_message_id` | `string \| null` | No | — |
+| `message` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  id?: string | null,
+  message_id?: string | null,
+  conversation_id?: string | null,
+  wa_id?: string | null,
+  message_type?: string | null,
+  type?: string | null,
+  event_type?: string | null,
+  ticket_id?: string | null,
+  owner?: boolean | null,
+  operator_name?: string | null,
+  local_message_id?: string | null,
+  failed_detail?: string | null,
+  text?: string | null,
+  content?: any | null,
+  status?: string | null,
+  timestamp?: string | null,
+  created?: string | null,
+  from_me?: boolean | null,
+  operator?: string | null,
+  template_name?: string | null,
+  media_url?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -688,7 +770,7 @@ Send an approved template with bound placeholders, optionally as a named campaig
 **Risk:** `write`
 
 ```ts
-await corsair.wati.api.messages.sendTemplate({ whatsapp_number: '1234567890', template_name: 'order_update', parameters: [{ name: '1', value: 'Jordan' }] });
+await corsair.wati.api.messages.sendTemplate({ whatsapp_number: '1234567890', template_name: 'order_update', broadcast_name: 'order_update_jordan', parameters: [{ name: '1', value: 'Jordan' }] });
 ```
 
 **Input**
@@ -719,11 +801,24 @@ await corsair.wati.api.messages.sendTemplate({ whatsapp_number: '1234567890', te
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `any \| null` | No | — |
-| `message` | `string \| null` | No | — |
 | `success` | `boolean \| null` | No | — |
-| `id` | `string \| null` | No | — |
-| `local_message_id` | `string \| null` | No | — |
+| `broadcast_id` | `string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+| `recipients` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  local_message_id?: string | null,
+  phone_number?: string | null,
+  target?: string | null,
+  errors?: string[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -754,11 +849,38 @@ await corsair.wati.api.messages.sendText({ target: 'conv-1', text: 'Your order s
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `any \| null` | No | — |
-| `message` | `string \| null` | No | — |
-| `success` | `boolean \| null` | No | — |
-| `id` | `string \| null` | No | — |
-| `local_message_id` | `string \| null` | No | — |
+| `message` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  id?: string | null,
+  message_id?: string | null,
+  conversation_id?: string | null,
+  wa_id?: string | null,
+  message_type?: string | null,
+  type?: string | null,
+  event_type?: string | null,
+  ticket_id?: string | null,
+  owner?: boolean | null,
+  operator_name?: string | null,
+  local_message_id?: string | null,
+  failed_detail?: string | null,
+  text?: string | null,
+  content?: any | null,
+  status?: string | null,
+  timestamp?: string | null,
+  created?: string | null,
+  from_me?: boolean | null,
+  operator?: string | null,
+  template_name?: string | null,
+  media_url?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -775,7 +897,7 @@ Evaluate a segment to see how many contacts match, without saving anything
 **Risk:** `read`
 
 ```ts
-await corsair.wati.api.segments.evaluate({ segmentId: 'seg-1' });
+await corsair.wati.api.segments.evaluate({ groups: [{ operator: 'AND', conditions: [{ attribute: 'contact_status', operator: 'eq', value: 'active' }] }] });
 ```
 
 **Input**
@@ -808,8 +930,12 @@ await corsair.wati.api.segments.evaluate({ segmentId: 'seg-1' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `count` | `number \| null` | No | — |
 | `contacts` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `pageNumber` | `number \| null` | No | — |
+| `pageSize` | `number \| null` | No | — |
+| `hasNextPage` | `boolean \| null` | No | — |
+| `count` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="contacts full type">
@@ -870,8 +996,13 @@ await corsair.wati.api.segments.get({ segmentId: 'seg-1' });
 | `id` | `string \| null` | No | — |
 | `segmentId` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
+| `tag` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `hitCount` | `number \| null` | No | — |
+| `totalContactCount` | `number \| null` | No | — |
 | `contact_count` | `number \| null` | No | — |
 | `created` | `string \| null` | No | — |
+| `lastUpdated` | `string \| null` | No | — |
 
 
 
@@ -903,6 +1034,8 @@ await corsair.wati.api.segments.list({ page_number: 1 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `segments` | `object[] \| null` | No | — |
+| `pageNumber` | `number \| null` | No | — |
+| `pageSize` | `number \| null` | No | — |
 | `page_number` | `number \| null` | No | — |
 | `page_size` | `number \| null` | No | — |
 | `total` | `number \| null` | No | — |
@@ -916,8 +1049,13 @@ await corsair.wati.api.segments.list({ page_number: 1 });
   id?: string | null,
   segmentId?: string | null,
   name?: string | null,
+  tag?: string | null,
+  description?: string | null,
+  hitCount?: number | null,
+  totalContactCount?: number | null,
   contact_count?: number | null,
-  created?: string | null
+  created?: string | null,
+  lastUpdated?: string | null
 }[] | null
 ```
 </Accordion>
@@ -958,9 +1096,36 @@ await corsair.wati.api.templates.get({ template_id: 'tpl-1' });
 | `language` | `string \| null` | No | — |
 | `status` | `string \| null` | No | APPROVED, PENDING, REJECTED and so on. |
 | `category` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `custom_params` | `object[] \| null` | No | — |
+| `language_option` | `object \| null` | No | — |
+| `last_modified` | `string \| null` | No | — |
 | `components` | `any[] \| null` | No | — |
 | `created` | `string \| null` | No | — |
 | `updated` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_params full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="language_option full type">
+
+```ts
+{
+  key?: string | null,
+  value?: string | null,
+  text?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -992,6 +1157,7 @@ await corsair.wati.api.templates.list({ page_number: 1, page_size: 20 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `templates` | `object[] \| null` | No | — |
 | `messageTemplates` | `object[] \| null` | No | — |
 | `message_templates` | `object[] \| null` | No | — |
 | `page_number` | `number \| null` | No | — |
@@ -1000,6 +1166,33 @@ await corsair.wati.api.templates.list({ page_number: 1, page_size: 20 });
 | `total_pages` | `number \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  language?: string | null,
+  status?: string | null,
+  category?: string | null,
+  body?: string | null,
+  custom_params?: {
+    name: string,
+    value: string
+  }[] | null,
+  language_option?: {
+    key?: string | null,
+    value?: string | null,
+    text?: string | null
+  } | null,
+  last_modified?: string | null,
+  components?: any[] | null,
+  created?: string | null,
+  updated?: string | null
+}[] | null
+```
+</Accordion>
+
 <Accordion title="messageTemplates full type">
 
 ```ts
@@ -1009,6 +1202,17 @@ await corsair.wati.api.templates.list({ page_number: 1, page_size: 20 });
   language?: string | null,
   status?: string | null,
   category?: string | null,
+  body?: string | null,
+  custom_params?: {
+    name: string,
+    value: string
+  }[] | null,
+  language_option?: {
+    key?: string | null,
+    value?: string | null,
+    text?: string | null
+  } | null,
+  last_modified?: string | null,
   components?: any[] | null,
   created?: string | null,
   updated?: string | null
@@ -1025,6 +1229,17 @@ await corsair.wati.api.templates.list({ page_number: 1, page_size: 20 });
   language?: string | null,
   status?: string | null,
   category?: string | null,
+  body?: string | null,
+  custom_params?: {
+    name: string,
+    value: string
+  }[] | null,
+  language_option?: {
+    key?: string | null,
+    value?: string | null,
+    text?: string | null
+  } | null,
+  last_modified?: string | null,
   components?: any[] | null,
   created?: string | null,
   updated?: string | null
@@ -1064,7 +1279,10 @@ await corsair.wati.api.webhooks.delete({ id: 'wh-1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
-| `message` | `string \| null` | No | — |
+| `id` | `string \| null` | No | — |
+| `contact_id` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `cleanup_completed` | `boolean \| null` | No | — |
 
 
 
@@ -1097,8 +1315,10 @@ await corsair.wati.api.webhooks.get({ id: 'wh-1' });
 | `id` | `string \| null` | No | — |
 | `url` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
+| `phone_number` | `string \| null` | No | — |
 | `event_types` | `string[] \| null` | No | — |
-| `status` | `string \| null` | No | — |
+| `eventTypes` | `string[] \| null` | No | — |
+| `status` | `string \| null` | No | Enabled, Disabled or Defective. |
 | `created` | `string \| null` | No | — |
 
 
@@ -1114,16 +1334,10 @@ List webhook subscriptions; creating one still needs the V2 route, which this pl
 **Risk:** `read`
 
 ```ts
-await corsair.wati.api.webhooks.list({ page_number: 1 });
+await corsair.wati.api.webhooks.list({});
 ```
 
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `page_number` | `number` | No | The page to return, 1-based. Defaults to 1. |
-| `page_size` | `number` | No | Items per page, up to 100. Defaults to 20. |
-
+**Input:** _empty object_
 
 
 **Output**
@@ -1131,10 +1345,6 @@ await corsair.wati.api.webhooks.list({ page_number: 1 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `webhooks` | `object[] \| null` | No | — |
-| `page_number` | `number \| null` | No | — |
-| `page_size` | `number \| null` | No | — |
-| `total` | `number \| null` | No | — |
-| `total_pages` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="webhooks full type">
@@ -1144,7 +1354,9 @@ await corsair.wati.api.webhooks.list({ page_number: 1 });
   id?: string | null,
   url?: string | null,
   name?: string | null,
+  phone_number?: string | null,
   event_types?: string[] | null,
+  eventTypes?: string[] | null,
   status?: string | null,
   created?: string | null
 }[] | null
