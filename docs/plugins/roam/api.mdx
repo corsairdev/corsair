@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Roam HQ: every `roam.api.*` operation with input and output types."
+title: "Roam HQ API reference"
+sidebarTitle: "API"
+description: "API reference for the Roam HQ plugin in Corsair: every `roam.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `roam.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -29,16 +28,16 @@ await corsair.roam.api.chat.history({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68
 |------|------|----------|-------------|
 | `chat_id` | `string` | No | The chat uuid. |
 | `group_id` | `string` | No | The group uuid. |
-| `user_ids` | `string[]` | No | Only messages from these users. |
+| `user_ids` | `string[]` | No | Read the direct or multi-person chat with these users instead of a chat or group. |
 | `thread_timestamp` | `number` | No | Only the replies in this thread. |
 | `after` | `string` | No | Only messages after this timestamp. |
 | `before` | `string` | No | Only messages before this timestamp. |
 | `ascending` | `boolean` | No | — |
 | `cursor` | `string` | No | The `next_cursor` from the previous page, passed through unchanged. |
-| `limit` | `number` | No | Records per page. Roam applies its own default when omitted. |
+| `limit` | `number` | No | Records per page, at most 200. Roam applies its own default when omitted. |
 | `expand` | `string[]` | No | Relations to inline, as a comma-separated list on the wire. |
 
-Needs `chat_id` or `group_id`; without one Roam reads an unscoped history.
+Needs exactly one of `chat_id`, `group_id` or `user_ids`. Poll options come back as `{ id, text }` objects.
 
 
 
@@ -88,23 +87,21 @@ Needs `chat_id` or `group_id`; without one Roam reads an unscoped history.
     email?: string | null
   } | null,
   poll?: {
-    question: string,
-    options: string[],
-    allowMultipleAnswers?: boolean,
-    closesAt?: string
+    question?: string | null,
+    options?: {
+      id?: string | null,
+      text?: string | null
+    }[] | null,
+    allowMultipleAnswers?: boolean | null,
+    closesAt?: string | null
   } | null,
   blocks?: {
-    type: header | section | context | divider | actions,
-    text?: JsonValue,
-    fields?: JsonValue[],
-    elements?: JsonValue[],
-    accessory?: JsonValue,
-    block_id?: string
+    type?: string | null
   }[] | null,
   voice?: {
+    audioUrl?: string | null,
     duration?: number | null,
-    url?: string | null,
-    waveform?: number[] | null
+    transcript?: string | null
   } | null
 }[]
 ```
@@ -131,7 +128,7 @@ await corsair.roam.api.chat.list({ limit: 20 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | Records per page. Roam applies its own default when omitted. |
+| `limit` | `number` | No | Records per page, at most 50. Roam applies its own default when omitted. |
 | `cursor` | `string` | No | The `next_cursor` from the previous page, passed through unchanged. |
 | `expand` | `string[]` | No | Relations to inline, as a comma-separated list on the wire. |
 
@@ -151,11 +148,21 @@ await corsair.roam.api.chat.list({ limit: 20 });
 ```ts
 {
   id?: string | null,
-  name?: string | null,
-  created?: string | null,
   type?: string | null,
-  isGroup?: boolean | null,
-  memberIds?: string[] | null
+  name?: string | null,
+  groupId?: string | null,
+  threadTimestamp?: number | null,
+  created?: string | null,
+  lastMessageTime?: string | null,
+  isUnread?: boolean | null,
+  preview?: {
+    text?: string | null,
+    contentType?: string | null,
+    senderId?: string | null,
+    mentioned?: boolean | null
+  } | null,
+  isMuted?: boolean | null,
+  isPinned?: boolean | null
 }[]
 ```
 </Accordion>
@@ -174,7 +181,7 @@ Post a message to a chat, group or direct conversation, or schedule one for late
 **Risk:** `write`
 
 ```ts
-await corsair.roam.api.chat.post({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', text: 'Standup in five' });
+await corsair.roam.api.chat.post({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', text: 'Standup in five', sync: true });
 ```
 
 **Input**
@@ -185,7 +192,7 @@ await corsair.roam.api.chat.post({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c17
 | `group_id` | `string` | No | The group to post into. |
 | `user_ids` | `string[]` | No | Open a direct chat with these users. |
 | `thread_timestamp` | `number` | No | — |
-| `thread_key` | `string` | No | — |
+| `thread_key` | `string` | No | An external id that threads every post sharing it under the first one. |
 | `reply_timestamp` | `number` | No | — |
 | `text` | `string` | No | — |
 | `markdown` | `boolean` | No | — |
@@ -195,10 +202,10 @@ await corsair.roam.api.chat.post({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c17
 | `color` | `string` | No | — |
 | `poll` | `object` | No | — |
 | `sender` | `object` | No | — |
-| `sync` | `boolean` | No | — |
-| `send_at` | `string` | No | Schedule the post for this ISO 8601 time instead of sending now. |
+| `sync` | `boolean` | No | Wait for the post and return its `timestamp`, which `chat.update`, `reactions.add` and thread replies need. Without it the answer has no timestamp. |
+| `send_at` | `string` | No | Schedule the post for this ISO 8601 time instead of sending now: in the future, within 30 days, on a 15-minute UTC boundary. |
 
-Exactly one of `text`, `items`, `asset_ids`, `blocks` or `poll`; `send_at` schedules instead of sending.
+Pass `sync: true` to get the `timestamp` back. `text`, `items` and `asset_ids` combine; `blocks` and `poll` stand alone; `send_at` schedules instead of sending.
 
 <AccordionGroup>
 <Accordion title="blocks full type">
@@ -254,6 +261,7 @@ Exactly one of `text`, `items`, `asset_ids`, `blocks` or `poll`; `send_at` sched
 {
   ok?: boolean | null,
   chatId?: string | null,
+  threadTimestamp?: number | null,
   timestamp?: number | null,
   scheduledMessageId?: string | null,
   sendAt?: string | null
@@ -292,7 +300,7 @@ await corsair.roam.api.chat.update({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c
 | `blocks` | `object[]` | No | — |
 | `color` | `string` | No | — |
 
-Needs exactly one new content type, and identifies the message by chat and timestamp.
+Needs `text` or `blocks`, and identifies the message by chat and timestamp.
 
 <AccordionGroup>
 <Accordion title="blocks full type">
@@ -325,7 +333,8 @@ Needs exactly one new content type, and identifies the message by chat and times
 {
   ok?: boolean | null,
   chatId?: string | null,
-  timestamp?: number | null
+  timestamp?: number | null,
+  threadTimestamp?: number | null
 }
 ```
 </Accordion>
@@ -346,7 +355,7 @@ List groups with a search phrase and type filter, plus cursor paging
 **Risk:** `read`
 
 ```ts
-await corsair.roam.api.groups.list({ limit: 20, type: 'public' });
+await corsair.roam.api.groups.list({ limit: 20, type: 'standard' });
 ```
 
 **Input**
@@ -354,8 +363,8 @@ await corsair.roam.api.groups.list({ limit: 20, type: 'public' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | No | A search phrase. |
-| `type` | `string` | No | The group type. |
-| `limit` | `number` | No | Records per page. Roam applies its own default when omitted. |
+| `type` | `string` | No | Comma-separated group types: `standard`, `magicast`, `meeting`, `roam` or `onair`. |
+| `limit` | `number` | No | Records per page, at most 100. Roam applies its own default when omitted. |
 | `cursor` | `string` | No | The `next_cursor` from the previous page, passed through unchanged. |
 
 
@@ -411,9 +420,9 @@ await corsair.roam.api.meetings.list({ after: '2026-11-01T00:00:00.000Z', limit:
 |------|------|----------|-------------|
 | `before` | `string` | No | Only meetings before this timestamp. |
 | `after` | `string` | No | Only meetings after this timestamp. |
-| `limit` | `number` | No | Records per page. Roam applies its own default when omitted. |
+| `limit` | `number` | No | Records per page, at most 100. Roam applies its own default when omitted. |
 | `cursor` | `string` | No | The `next_cursor` from the previous page, passed through unchanged. |
-| `expand` | `string[]` | No | Relations to inline, as a comma-separated list on the wire. |
+| `expand` | `(summary \| actionItems \| chapters)[]` | No | Fields to inline on each meeting. Roam caps `limit` at 10 when any is set. |
 
 
 
@@ -432,19 +441,29 @@ await corsair.roam.api.meetings.list({ after: '2026-11-01T00:00:00.000Z', limit:
 {
   id?: string | null,
   title?: string | null,
-  startedAt?: string | null,
-  endedAt?: string | null,
-  created?: string | null,
-  duration?: number | null,
-  status?: string | null,
-  participants?: {
-    id?: string | null,
+  subtitle?: string | null,
+  start?: string | null,
+  participantCount?: number | null,
+  hasVideo?: boolean | null,
+  videoStatus?: string | null,
+  host?: {
     type?: string | null,
+    id?: string | null,
     name?: string | null,
-    imageUrl?: string | null,
     email?: string | null
+  } | null,
+  summary?: string | null,
+  actionItems?: {
+    id?: string | null,
+    title?: string | null,
+    complete?: boolean | null,
+    assigneeId?: string | null
   }[] | null,
-  locationId?: string | null
+  chapters?: {
+    name?: string | null,
+    start?: number | null,
+    synopsis?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -458,7 +477,7 @@ await corsair.roam.api.meetings.list({ after: '2026-11-01T00:00:00.000Z', limit:
 
 `meetings.transcript`
 
-Fetch a meeting’s transcript segments with their speaker and timing
+Fetch a meeting’s transcript cues with their speaker id and timing
 
 **Risk:** `read`
 
@@ -472,7 +491,7 @@ await corsair.roam.api.meetings.transcript({ meeting_id: '11111111-2222-3333-444
 |------|------|----------|-------------|
 | `meeting_id` | `string` | Yes | The meeting uuid. |
 
-Returns segments with their speaker, start and end; the plugin asks for JSON rather than WebVTT.
+Returns `cues` with the speaker's user id, start and end; the plugin asks for JSON rather than WebVTT.
 
 
 
@@ -488,15 +507,12 @@ Returns segments with their speaker, start and end; the plugin asks for JSON rat
 ```ts
 {
   id?: string | null,
-  language?: string | null,
-  segments?: {
+  cues?: {
+    speakerId?: string | null,
+    text?: string | null,
     start?: number | null,
-    end?: number | null,
-    speaker?: string | null,
-    text?: string | null
-  }[] | null,
-  vtt?: string | null,
-  ok?: boolean | null
+    end?: number | null
+  }[] | null
 }
 ```
 </Accordion>
@@ -561,7 +577,7 @@ The `name` is an emoji name such as `thumbsup`, not the emoji character.
 
 `reactions.list`
 
-List the reactions on a message with their counts and users
+List the reactions on a message, and the votes on each option when it is a poll
 
 **Risk:** `read`
 
@@ -584,6 +600,7 @@ await corsair.roam.api.reactions.list({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `reactions` | `object[]` | Yes | — |
+| `pollVotes` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="reactions full type">
@@ -594,6 +611,18 @@ await corsair.roam.api.reactions.list({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec
   count?: number | null,
   users?: string[] | null
 }[]
+```
+</Accordion>
+
+<Accordion title="pollVotes full type">
+
+```ts
+{
+  optionId?: string | null,
+  text?: string | null,
+  count?: number | null,
+  users?: string[] | null
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -608,7 +637,7 @@ await corsair.roam.api.reactions.list({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec
 
 `token.info`
 
-Read the account behind the token: its user, granted scopes and pinned API version
+Read the account behind the token: its user, bot, workspace and granted scopes
 
 **Risk:** `read`
 
@@ -618,7 +647,7 @@ await corsair.roam.api.token.info({});
 
 **Input:** _empty object_
 
-Also reports the API version the response was rendered with, and the token's granted scopes.
+Also reports the API client id, the bot the token posts as, the workspace and the granted scopes.
 
 
 **Output**
@@ -651,9 +680,21 @@ Also reports the API version the response was rendered with, and the token's gra
       reason?: string | null
     } | null
   } | null,
+  bot?: {
+    id?: string | null,
+    type?: string | null,
+    name?: string | null,
+    imageUrl?: string | null,
+    email?: string | null
+  } | null,
+  clientId?: string | null,
   scopes?: string[] | null,
-  version?: string | null,
-  expiresAt?: string | null
+  roam?: {
+    id?: string | null,
+    name?: string | null,
+    imageUrl?: string | null,
+    iconUrl?: string | null
+  } | null
 }
 ```
 </Accordion>
@@ -742,7 +783,7 @@ await corsair.roam.api.users.list({ limit: 50, q: 'sam' });
 |------|------|----------|-------------|
 | `ids` | `string[]` | No | Only these user uuids. |
 | `q` | `string` | No | A search phrase. |
-| `limit` | `number` | No | Records per page. Roam applies its own default when omitted. |
+| `limit` | `number` | No | Records per page, at most 100. Roam applies its own default when omitted. |
 | `cursor` | `string` | No | The `next_cursor` from the previous page, passed through unchanged. |
 | `expand` | `string[]` | No | Relations to inline, as a comma-separated list on the wire. |
 
