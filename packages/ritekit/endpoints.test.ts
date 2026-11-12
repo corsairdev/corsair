@@ -45,7 +45,10 @@ const mockLog = jest.mocked(logEventFromContext);
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// A fetch a test did not queue a response for throws instead of reaching the network.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch');
+	});
 	mockLog.mockClear();
 });
 
