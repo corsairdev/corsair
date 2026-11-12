@@ -258,6 +258,7 @@ describe('vehicles.create', () => {
 			vehicle_license_plate: 'AB-123-CD',
 			vehicle_make: 'Ford',
 			is_operational: true,
+			skills: ['refrigerated'],
 		})) as Awaited<ReturnType<typeof Dispatch.vehiclesCreate>>;
 
 		expect(lastRequest(fetchMock).json()).toEqual({
@@ -265,6 +266,7 @@ describe('vehicles.create', () => {
 			vehicle_license_plate: 'AB-123-CD',
 			vehicle_make: 'Ford',
 			is_operational: true,
+			skills: ['refrigerated'],
 		});
 		expect(result.vehicle.vehicle_license_plate).toBe('AB-123-CD');
 	});

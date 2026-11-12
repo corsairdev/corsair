@@ -173,7 +173,7 @@ export const vehiclesCreate: Route4meEndpoints['vehiclesCreate'] = (
 				max_length: parsed.max_length,
 				total_weight: parsed.total_weight,
 				max_weight_per_axle: parsed.max_weight_per_axle,
-				required_skills: parsed.required_skills,
+				skills: parsed.skills,
 			}),
 		}),
 		{

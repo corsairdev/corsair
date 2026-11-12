@@ -549,7 +549,11 @@ const VehiclesCreateInputSchema = z.object({
 	max_length: z.number().optional(),
 	total_weight: z.number().optional(),
 	max_weight_per_axle: z.number().optional(),
-	required_skills: z.array(z.string()).optional(),
+	// The vehicle endpoints call this `skills`, unlike orders and contacts.
+	skills: z
+		.array(z.string().min(1).max(64))
+		.optional()
+		.describe('Skills this vehicle offers, matched against required skills.'),
 });
 
 export type VehiclesCreateInput = z.input<typeof VehiclesCreateInputSchema>;
