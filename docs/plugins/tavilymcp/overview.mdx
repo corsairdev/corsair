@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Tavily MCP plugin"
+sidebarTitle: "Overview"
 description: "MCP server exposing Tavily web search tools for AI agent research workflows."
 ---
 
@@ -17,16 +18,20 @@ Use **Tavily MCP** through Corsair: one client, typed API calls, local DB sync.
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/tavilymcp
+npm install corsair @corsair-dev/tavilymcp better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/tavilymcp
+yarn add corsair @corsair-dev/tavilymcp better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/tavilymcp
+pnpm install corsair @corsair-dev/tavilymcp better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/tavilymcp
+bun add corsair @corsair-dev/tavilymcp better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 

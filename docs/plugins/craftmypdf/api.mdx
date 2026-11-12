@@ -1,0 +1,1186 @@
+---
+title: "CraftMyPDF API reference"
+sidebarTitle: "API"
+description: "API reference for the CraftMyPDF plugin in Corsair: every `craftmypdf.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getInfo
+
+`account.getInfo`
+
+Read the account name, credit usage and template count against their limits
+
+**Risk:** `read`
+
+```ts
+await corsair.craftmypdf.api.account.getInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `username` | `string \| null` | No | — |
+| `is_team` | `boolean \| null` | No | — |
+| `quota_counter` | `number \| string \| null` | No | — |
+| `quota_max` | `number \| string \| null` | No | — |
+| `template_counter` | `number \| string \| null` | No | — |
+| `template_max` | `number \| string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+
+
+
+---
+
+## Editor
+
+### createSession
+
+`editor.createSession`
+
+Create a signed URL that lets its bearer edit a template in the embedded designer; the URL is a credential
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.editor.createSession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Template the session edits. |
+| `expiration` | `number` | Yes | Minutes until the session expires, for example 1440 for a day. |
+| `canSave` | `boolean` | No | Allow saving changes. |
+| `canCreatePDF` | `boolean` | No | Allow generating a PDF. |
+| `canViewSettings` | `boolean` | No | Show the settings panel. |
+| `canPreview` | `boolean` | No | Allow the preview. |
+| `canEditJSON` | `boolean` | No | Allow editing the JSON data. |
+| `canShowHeader` | `boolean` | No | Show the CraftMyPDF header. |
+| `canShowLayers` | `boolean` | No | Show the layers panel. |
+| `canShowPropertyPanel` | `boolean` | No | Show the property panel. |
+| `canShowHelp` | `boolean` | No | Show the help tab. |
+| `canShowData` | `boolean` | No | Show the data tab. |
+| `canShowExpressionDoc` | `boolean` | No | Show the expression documentation tab. |
+| `canShowPropertyBinding` | `boolean` | No | Show property binding for elements. |
+| `canShowBackURL` | `boolean` | No | Show the back button. |
+| `jsonMode` | `1 \| 2` | No | 1 makes the JSON editor editable, 2 makes it read-only. |
+| `backURL` | `string` | No | Where the back button goes. |
+
+The returned URL is a signed token that lets its bearer edit the template, so treat it as a credential and deactivate it when done.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `expire_after_unix_timestamp` | `number \| string \| null` | No | — |
+| `expire_after` | `string \| number \| null` | No | — |
+| `token_uuid` | `string \| null` | No | — |
+
+
+
+---
+
+### deactivateSession
+
+`editor.deactivateSession`
+
+Revoke an editor session so its URL stops working
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.editor.deactivateSession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token_uuid` | `string` | Yes | The token_uuid that editor.createSession returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+## Pdf
+
+### addText
+
+`pdf.addText`
+
+Draw text such as page numbers or headers on chosen pages of a PDF and return a new file
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.pdf.addText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | URL of the source PDF. |
+| `textSettings` | `object[]` | Yes | Text to draw on the PDF. One entry can cover many pages; several entries stack. |
+| `expiration` | `number` | No | Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5. |
+| `output_file` | `string` | No | Name of the generated file, for example output.pdf. |
+| `cloud_storage` | `number` | No | 1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1. |
+
+<AccordionGroup>
+<Accordion title="textSettings full type">
+
+```ts
+{
+  page_selector: string,
+  text: string,
+  position: top-left | top-center | top-right | middle-left | center | middle-right | bottom-left | bottom-center | bottom-right,
+  offset_x?: number,
+  offset_y?: number,
+  font_size?: number,
+  hex_color?: string,
+  font_family?: Courier | Courier-Bold | Courier-Oblique | Courier-BoldOblique | Helvetica | Helvetica-Bold | Helvetica-Oblique | Helvetica-BoldOblique | Times-Roman | Times-Bold | Times-Italic | Times-BoldItalic | Symbol | ZapfDingbats,
+  opacity?: number,
+  rotation?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `file` | `string \| null` | No | — |
+| `transaction_ref` | `string \| null` | No | — |
+| `anchors` | `object[] \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `file_size` | `number \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="anchors full type">
+
+```ts
+{
+  page?: number | null,
+  text?: string | null,
+  level?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addWatermark
+
+`pdf.addWatermark`
+
+Stamp a text watermark on every page of a PDF and return a new file
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.pdf.addWatermark({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | URL of the source PDF. |
+| `text` | `string` | Yes | Watermark text. |
+| `font_size` | `number` | No | Font size in points. CraftMyPDF defaults to 40. |
+| `opacity` | `number` | No | 0 is transparent and 1 is opaque. Defaults to 0.5. |
+| `rotation` | `number` | No | Rotation in degrees. CraftMyPDF defaults to 45. |
+| `hex_color` | `string` | No | Hex colour, for example #FF0000. |
+| `font_family` | `Courier \| Courier-Bold \| Courier-Oblique \| Courier-BoldOblique \| Helvetica \| Helvetica-Bold \| Helvetica-Oblique \| Helvetica-BoldOblique \| Times-Roman \| Times-Bold \| Times-Italic \| Times-BoldItalic \| Symbol \| ZapfDingbats` | No | Base-14 PDF font. Defaults to Helvetica. |
+| `expiration` | `number` | No | Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5. |
+| `output_file` | `string` | No | Name of the generated file, for example output.pdf. |
+| `cloud_storage` | `number` | No | 1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1. |
+| `postaction_s3_filekey` | `string` | No | File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator. |
+| `postaction_s3_bucket` | `string` | No | Overrides the configured AWS bucket for the S3 post action. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `file` | `string \| null` | No | — |
+| `transaction_ref` | `string \| null` | No | — |
+| `anchors` | `object[] \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `file_size` | `number \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="anchors full type">
+
+```ts
+{
+  page?: number | null,
+  text?: string | null,
+  level?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`pdf.create`
+
+Generate a PDF from a template and JSON data, synchronously; consumes one credit per PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.pdf.create({
+  template_id: '05f77b2b18ad809a',
+  data: { invoice_number: 'INV38379', total_amount: 82542.56 },
+  expiration: 60,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Template to generate from. Several comma-separated IDs generate one PDF per template. |
+| `data` | `string \| Record<string, JsonValue>` | No | Template JSON data, either an object or a stringified JSON string. |
+| `load_data_from` | `string` | No | URL to fetch the template JSON from. CraftMyPDF overwrites data with this content, so data can be omitted. |
+| `version` | `string \| number` | No | Template version. Omit to use the latest version of the template. |
+| `expiration` | `number` | No | Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5. |
+| `output_file` | `string` | No | Name of the generated file, for example output.pdf. |
+| `image_resample_res` | `number` | No | Downsamples images in the PDF to this resolution in DPI to shrink the file. Suggested values are 1200, 600, 300, 150 and 72. |
+| `cloud_storage` | `number` | No | 1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1. |
+| `postaction_s3_filekey` | `string` | No | File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator. |
+| `postaction_s3_bucket` | `string` | No | Overrides the configured AWS bucket for the S3 post action. |
+| `password_protected` | `boolean` | No | Encrypt the generated PDF with password. |
+| `password` | `string` | No | Password for the generated PDF. |
+| `paging` | `continuous \| reset` | No | Page numbering when several templates are combined. continuous keeps counting across documents; reset restarts at 1 for each. |
+
+A synchronous call can take up to 100 seconds, so the plugin waits 120 seconds before timing out. Each call spends one credit.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `file` | `string \| null` | No | — |
+| `transaction_ref` | `string \| null` | No | — |
+| `anchors` | `object[] \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `file_size` | `number \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="anchors full type">
+
+```ts
+{
+  page?: number | null,
+  text?: string | null,
+  level?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createAsync
+
+`pdf.createAsync`
+
+Queue a PDF generation and return at once with a transaction reference, delivering the file to a webhook URL; consumes one credit per PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.pdf.createAsync({
+  template_id: '05f77b2b18ad809a',
+  data: { invoice_number: 'INV38379' },
+  webhook_url: 'https://example.com/pdf-handler',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Template to generate from. |
+| `data` | `string \| Record<string, JsonValue>` | Yes | Template JSON data, either an object or a stringified JSON string. |
+| `version` | `string \| number` | No | Template version. Omit to use the latest version of the template. |
+| `expiration` | `number` | No | Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5. |
+| `webhook_url` | `string` | No | CraftMyPDF calls this URL with a GET once the PDF is ready, adding file (the PDF URL), transaction_ref, status, message and details as query parameters. This is the only way to get the file URL: transactions.list records the job and its status, but no file URL. |
+| `image_resample_res` | `number` | No | Downsamples images in the PDF to this resolution in DPI to shrink the file. Suggested values are 1200, 600, 300, 150 and 72. |
+| `cloud_storage` | `number` | No | 1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1. |
+| `postaction_s3_filekey` | `string` | No | File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator. |
+| `postaction_s3_bucket` | `string` | No | Overrides the configured AWS bucket for the S3 post action. |
+
+CraftMyPDF calls `webhook_url` with a GET once the file is ready, appending file (the PDF URL), transaction_ref, status, message and details as query parameters. The webhook is the only place the file URL arrives. `transactions.list` shows the job and its status, but no file URL, so pass `webhook_url` if you need the file.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `transaction_ref` | `string \| null` | No | — |
+| `is_async` | `boolean \| null` | No | — |
+
+
+
+---
+
+### createImage
+
+`pdf.createImage`
+
+Render a template to a JPEG or PNG image instead of a PDF; consumes one credit per image
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.pdf.createImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Template to render. |
+| `data` | `string \| Record<string, JsonValue>` | No | Template JSON data, either an object or a stringified JSON string. |
+| `load_data_from` | `string` | No | URL to fetch the template JSON from. |
+| `version` | `string \| number` | No | Template version. Omit to use the latest version of the template. |
+| `expiration` | `number` | No | Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5. |
+| `output_file` | `string` | No | Name of the generated image, for example output.jpg. |
+| `output_type` | `jpeg \| png` | No | Image format. CraftMyPDF defaults to jpeg. |
+| `cloud_storage` | `number` | No | 1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1. |
+| `postaction_s3_filekey` | `string` | No | File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator. |
+| `postaction_s3_bucket` | `string` | No | Overrides the configured AWS bucket for the S3 post action. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `file` | `string \| null` | No | — |
+| `transaction_ref` | `string \| null` | No | — |
+| `anchors` | `object[] \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `file_size` | `number \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="anchors full type">
+
+```ts
+{
+  page?: number | null,
+  text?: string | null,
+  level?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createMerge
+
+`pdf.createMerge`
+
+Render several templates, each with its own data, into one combined PDF; consumes one credit per template
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.pdf.createMerge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | Templates to render, in order, into one PDF. |
+| `data` | `string \| Record<string, JsonValue>` | No | Data used by every template that does not carry its own. |
+| `expiration` | `number` | No | Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5. |
+| `output_file` | `string` | No | Name of the generated file, for example output.pdf. |
+| `paging` | `continuous \| reset` | No | Page numbering across the merged documents. CraftMyPDF defaults to reset here, unlike pdf.create. |
+| `cloud_storage` | `number` | No | 1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1. |
+| `image_resample_res` | `number` | No | Downsamples images in the PDF to this resolution in DPI to shrink the file. Suggested values are 1200, 600, 300, 150 and 72. |
+| `postaction_s3_filekey` | `string` | No | File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator. |
+| `postaction_s3_bucket` | `string` | No | Overrides the configured AWS bucket for the S3 post action. |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  template_id: string,
+  data?: string | Record<string, JsonValue>,
+  version?: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `file` | `string \| null` | No | — |
+| `transaction_ref` | `string \| null` | No | — |
+| `anchors` | `object[] \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `file_size` | `number \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="anchors full type">
+
+```ts
+{
+  page?: number | null,
+  text?: string | null,
+  level?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createParallel
+
+`pdf.createParallel`
+
+Generate a batch of PDFs in one request, each from its own template data, optionally merging them into a single file; consumes one credit per PDF
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.pdf.createParallel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | One generation request per PDF, run in parallel. |
+| `merge` | `boolean` | No | Also merge every generated PDF into one file, returned as merge_result. Defaults to false. |
+| `merge_expiration` | `number` | No | Minutes the merged file stays available. Only used when merge is true. |
+
+Each request entry carries its own template data. Set `merge` to also receive one combined PDF.
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  template_id: string,
+  data?: string | Record<string, JsonValue>,
+  version?: string | number,
+  output_file?: string,
+  meta?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `merge_result` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  file?: string | null,
+  transaction_ref?: string | null,
+  status?: string | null,
+  total_pages?: number | null,
+  file_size?: number | null,
+  template_id?: string | null,
+  index?: number | null,
+  meta?: string | null,
+  message?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="merge_result full type">
+
+```ts
+{
+  file?: string | null,
+  transaction_ref?: string | null,
+  status?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInfo
+
+`pdf.getInfo`
+
+Read the page count and document properties of a PDF at a URL
+
+**Risk:** `read`
+
+```ts
+await corsair.craftmypdf.api.pdf.getInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | URL of the PDF to inspect. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `totalPages` | `number \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `author` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `creator` | `string \| null` | No | — |
+| `keywords` | `string \| null` | No | — |
+| `producer` | `string \| null` | No | — |
+| `creationDate` | `string \| null` | No | — |
+| `modificationDate` | `string \| null` | No | — |
+
+
+
+---
+
+### merge
+
+`pdf.merge`
+
+Merge several PDFs fetched by URL into one file
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.pdf.merge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | PDF URLs to merge, in order. |
+| `expiration` | `number` | No | Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5. |
+| `output_file` | `string` | No | Name of the generated file, for example output.pdf. |
+| `cloud_storage` | `number` | No | 1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1. |
+| `postaction_s3_filekey` | `string` | No | File name for the S3 post action, without an extension. It must be unique, and / works as a folder separator. |
+| `postaction_s3_bucket` | `string` | No | Overrides the configured AWS bucket for the S3 post action. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `file` | `string \| null` | No | — |
+| `transaction_ref` | `string \| null` | No | — |
+| `anchors` | `object[] \| null` | No | — |
+| `total_pages` | `number \| null` | No | — |
+| `file_size` | `number \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="anchors full type">
+
+```ts
+{
+  page?: number | null,
+  text?: string | null,
+  level?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateFields
+
+`pdf.updateFields`
+
+Fill the form fields of a PDF and optionally make them read-only, returning a new file
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.pdf.updateFields({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | URL of the PDF whose form fields to fill. |
+| `fields` | `object[]` | Yes | Field values to apply. |
+| `expiration` | `number` | No | Minutes the generated file stays on the CDN. 1 to 10080; CraftMyPDF defaults to 5. |
+| `output_file` | `string` | No | Name of the generated file, for example output.pdf. |
+| `cloud_storage` | `number` | No | 1 to keep the generated file on the CraftMyPDF CDN, 0 to skip it (for example when S3 post actions are configured). Defaults to 1. |
+
+CraftMyPDF answers `success` even when a field does not exist in the document and reports the failure only in `field_statuses`. The plugin also returns the failures as `failed_fields`, so check it is empty before treating the form as filled.
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  id: string,
+  value?: string,
+  readOnly?: boolean,
+  fontSize?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `file` | `string \| null` | No | — |
+| `transaction_ref` | `string \| null` | No | — |
+| `field_statuses` | `object[] \| null` | No | — |
+| `failed_fields` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="field_statuses full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  message?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="failed_fields full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  message?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### createFrom
+
+`templates.createFrom`
+
+Create a new template by copying an existing one
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.templates.createFrom({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Template to copy. |
+| `name` | `string` | No | Name of the new template. |
+| `version` | `string \| number` | No | Template version. Omit to use the latest version of the template. |
+| `group_name` | `string` | No | Group for the new template, for example a customer name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `from_template_id` | `string \| null` | No | — |
+| `from_template_version` | `string \| number \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Permanently delete a template
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.craftmypdf.api.templates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Template to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one template, including its body and sample JSON data
+
+**Risk:** `read`
+
+```ts
+await corsair.craftmypdf.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Template to read. |
+| `version` | `string \| number` | No | Template version. Omit to use the latest version of the template. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `json` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `version` | `number \| string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List the templates on the account with the ids generation calls need
+
+**Risk:** `read`
+
+```ts
+await corsair.craftmypdf.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | How many templates to return. CraftMyPDF defaults to 300. |
+| `offset` | `number` | No | How many records to skip. Defaults to 0. |
+| `group_name` | `string` | No | Only templates in this group. |
+
+CraftMyPDF reports no total, so `next_offset` is present only when the page came back full. Pass it as `offset` to read the next page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `templates` | `object[]` | Yes | — |
+| `next_offset` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  template_id?: string | null,
+  name?: string | null,
+  status?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  group_name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listVersions
+
+`templates.listVersions`
+
+List the saved versions of a template
+
+**Risk:** `read`
+
+```ts
+await corsair.craftmypdf.api.templates.listVersions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Template whose versions to list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `reference_id` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `versions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="versions full type">
+
+```ts
+{
+  version?: number | null,
+  keep?: boolean | null,
+  description?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryUsage
+
+`templates.queryUsage`
+
+Report how many PDFs and credits the given templates used in a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.craftmypdf.api.templates.queryUsage({
+  template_ids: ['bba77b234e84443e'],
+  start_date: '2025-01-30T00:00:00Z',
+  end_date: '2025-01-30T11:59:59Z',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_ids` | `string[]` | Yes | Templates to report on. |
+| `start_date` | `string` | No | Start of the window, ISO 8601 in UTC, for example 2025-01-30T00:00:00Z. |
+| `end_date` | `string` | No | End of the window, ISO 8601 in UTC. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `template_ids` | `string[] \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `end_date` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  template_id?: string | null,
+  total_credit?: number | string | null,
+  total_count?: number | string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retainVersions
+
+`templates.retainVersions`
+
+Mark template versions to protect from automatic cleanup, or release the ones already kept; a released version can be cleaned up later
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.templates.retainVersions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Template whose versions to mark. |
+| `versions` | `number[]` | Yes | Version numbers to mark. |
+| `keep` | `boolean` | Yes | True protects these versions from the automatic cleanup; false releases them. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `versions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="versions full type">
+
+```ts
+{
+  version?: number | null,
+  keep?: boolean | null,
+  description?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### transfer
+
+`templates.transfer`
+
+Move a template to another team, after which this account no longer owns it
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.templates.transfer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Template to transfer. |
+| `team_id` | `string` | Yes | Team to transfer it to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Change a template's name, sample JSON data or body; the body is what the template renders
+
+**Risk:** `write`
+
+```ts
+await corsair.craftmypdf.api.templates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Template to update. |
+| `name` | `string` | No | New template name. |
+| `json` | `string` | No | New sample JSON data, as a stringified JSON document. |
+| `body` | `string` | No | New template body. CraftMyPDF warns to change this only when you know the template format. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+## Transactions
+
+### list
+
+`transactions.list`
+
+List past generations with their status, credit cost and file size
+
+**Risk:** `read`
+
+```ts
+await corsair.craftmypdf.api.transactions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | How many transactions to return. CraftMyPDF defaults to 300. |
+| `offset` | `number` | No | How many records to skip. Defaults to 0. |
+
+`next_offset` is present only when the page came back full.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `transactions` | `object[]` | Yes | — |
+| `next_offset` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="transactions full type">
+
+```ts
+{
+  transaction_ref?: string | null,
+  transaction_type?: string | null,
+  exec_tm?: number | null,
+  credit?: number | string | null,
+  created_at?: string | null,
+  resp_file_size?: number | null,
+  resp_status?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
