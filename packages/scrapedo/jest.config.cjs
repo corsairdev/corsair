@@ -8,6 +8,9 @@ module.exports = {
 		'**/plugins/**/*.test.ts',
 		'**/setup/**/*.test.ts',
 	],
+	// api.test.ts calls the live API and spends credits; only test:live, whose
+	// --testPathIgnorePatterns replaces this list, runs it.
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',
