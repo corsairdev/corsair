@@ -609,6 +609,19 @@ export type TransactionsGetResponse = z.infer<
 	typeof TransactionsGetResponseSchema
 >;
 
+/** One split of a transaction to create; YNAB's SaveSubTransaction. */
+const SubtransactionInputSchema = z
+	.object({
+		amount: MilliunitsSchema.describe(
+			'This split, in milliunits, with the same sign as the parent amount.',
+		),
+		payee_id: z.string().nullish(),
+		payee_name: z.string().nullish(),
+		category_id: z.string().nullish(),
+		memo: z.string().nullish(),
+	})
+	.strict();
+
 /** One transaction to create, in the shape a bulk create takes. */
 const TransactionInputShape = {
 	account_id: IdSchema,
@@ -635,13 +648,19 @@ const TransactionInputShape = {
 		.describe(
 			'An idempotency key. A transaction whose import_id already exists on the same account is skipped, not updated, and is reported in `duplicate_import_ids`.',
 		),
+	subtransactions: z
+		.array(SubtransactionInputSchema)
+		.optional()
+		.describe(
+			'Splits the transaction across categories. The split amounts must add up to `amount`.',
+		),
 };
 
 /** Creates one or more transactions in a single call. */
 const TransactionsCreateInputSchema = z.object({
 	budgetId: BudgetIdSchema,
 	transactions: z
-		.array(z.object(TransactionInputShape).loose())
+		.array(z.object(TransactionInputShape).strict())
 		.min(1)
 		.max(500),
 });
@@ -746,12 +765,14 @@ const ScheduledGetResponseSchema = envelope(
 
 export type ScheduledGetResponse = z.infer<typeof ScheduledGetResponseSchema>;
 
-// A scheduled transaction takes the transaction fields except cleared, approved
-// and import_id, which YNAB's SaveScheduledTransaction does not have.
+// A scheduled transaction takes the transaction fields except cleared, approved,
+// import_id and subtransactions, which YNAB's SaveScheduledTransaction does not
+// have. Its schema is strict so those fields fail here instead of reaching YNAB.
 const {
 	cleared: _cleared,
 	approved: _approved,
 	import_id: _importId,
+	subtransactions: _subtransactions,
 	...ScheduledTransactionInputShape
 } = TransactionInputShape;
 
@@ -779,7 +800,7 @@ const ScheduledCreateInputSchema = z.object({
 				'everyOtherYear',
 			]),
 		})
-		.loose(),
+		.strict(),
 });
 
 export type ScheduledCreateInput = z.infer<typeof ScheduledCreateInputSchema>;

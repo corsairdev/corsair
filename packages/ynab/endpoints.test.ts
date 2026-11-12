@@ -685,4 +685,79 @@ describe('round 2 review fixes', () => {
 			`/v1/budgets/${budgetId}/months/current/categories/${categoryId}`,
 		);
 	});
+
+	it('sends split subtransactions and checks their amounts', async () => {
+		respond(fetchMock, {
+			data: { transaction_ids: ['t1'], transactions: [] },
+		});
+		await invoke(Transactions.create, {
+			budgetId,
+			transactions: [
+				{
+					account_id: accountId,
+					date: '2024-06-01',
+					amount: -10_000,
+					subtransactions: [
+						{ amount: -6_000, category_id: categoryId },
+						{ amount: -4_000, memo: 'rest' },
+					],
+				},
+			],
+		});
+		expect(lastRequest(fetchMock).body).toMatchObject({
+			transactions: [
+				{
+					subtransactions: [
+						{ amount: -6_000, category_id: categoryId },
+						{ amount: -4_000, memo: 'rest' },
+					],
+				},
+			],
+		});
+
+		fetchMock.mockClear();
+		await expect(
+			invoke(Transactions.create, {
+				budgetId,
+				transactions: [
+					{
+						account_id: accountId,
+						date: '2024-06-01',
+						amount: -10_000,
+						subtransactions: [{ amount: '1000' }],
+					},
+				],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects fields a transaction write does not take', async () => {
+		await expect(
+			invoke(Transactions.create, {
+				budgetId,
+				transactions: [
+					{
+						account_id: accountId,
+						date: '2024-06-01',
+						amount: 0,
+						clearedd: 'cleared',
+					},
+				],
+			}),
+		).rejects.toThrow();
+		await expect(
+			invoke(Transactions.scheduledCreate, {
+				budgetId,
+				scheduled_transaction: {
+					account_id: accountId,
+					date: '2099-07-01',
+					amount: -1_000,
+					frequency: 'monthly',
+					cleared: 'cleared',
+				},
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });
