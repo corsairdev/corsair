@@ -1,0 +1,39 @@
+displayName: Mails.so
+description: Email address validation with Mails.so - check one address for deliverability, start a batch validation job for a list, and read the job back with its per-address results.
+domain: mails.so
+recommendedAuth: api_key
+overviewNote: |
+  Sign up at mails.so for an API key (see https://docs.mails.so/authentication). The key goes in the `x-mails-api-key` header; the plugin sends it there and nowhere else. Things to know before you send:
+
+  - **Single validation.** `validations.single` takes one address and returns its verdict (`result`, `reason`, a 0-100 `score`) plus the format, domain, MX, block-list, catch-all, generic, disposable and free-provider checks. A malformed address is not an error: Mails.so answers it as `undeliverable` with reason `invalid_format`. The `result` values are `deliverable`, `undeliverable`, `risky` and a fourth for checks that could not finish. They stay plain strings, so a value Mails.so adds later does not fail a call.
+  - **Test and placeholder domains.** `example.com` addresses come back `undeliverable` with reason `invalid_domain` and `is_disposable: true`.
+  - **Batch validation is asynchronous.** `validations.batch` starts a job and returns it at once, with its `id` and a `pending` status but no results. Read it with `validations.getBatch` using that `id`. While the job runs, the read answers with `status: 'processing'` and only the `id` and `created_at`; when it is done, `status` is `completed` and the job carries `stats` (counts per verdict and reason) and `emails` (one validation per address). Mails.so documents no failed status and no way to cancel or delete a job, so poll until `completed` and decide your own timeout.
+  - **A batch needs at least 2 different addresses.** Mails.so refuses a smaller one with a 400 and code `BATCH_TOO_SMALL`; the plugin checks this before sending. Use `validations.single` for one address.
+  - **Batch may need a paid plan.** Mails.so documents batch validation as paid-plan only, but a free account with credits started and finished a batch in our test on 2026-11-11. An account Mails.so refuses gets `MailssoSubscriptionRequiredError` ("Paid subscription required to use list validations"), which is not retried. That error text is the documented one; we have not seen it live.
+  - **A batch is a write.** `validations.batch` starts a job on your account, and Mails.so documents no way to delete one, so it is not retried after a server error or a dropped connection.
+  - **Errors.** Failures arrive as `{ data: null, error: '<message>' }`, and the plugin throws `MailssoAPIError` with that message. A 200 response whose `error` is set is treated as a failure too.
+  - **Webhooks.** Mails.so sends none, so the plugin does not receive webhooks.
+examples:
+  read:
+    path: validations.single
+    title: Validate an email address
+    args:
+      email: hello@example.com
+  write:
+    path: validations.batch
+    title: Start a batch validation
+    args:
+      emails:
+        - first@example.com
+        - second@example.com
+apiExamples:
+  validations.single:
+    call: "{ email: 'hello@example.com' }"
+  validations.batch:
+    call: "{ emails: ['first@example.com', 'second@example.com', 'third@example.com'] }"
+  validations.getBatch:
+    call: "{ id: '3aace594-f454-42e4-9cb3-198b6253320c' }"
+apiNotes:
+  validations.single: 'A malformed address answers 200 with result undeliverable and reason invalid_format, not an error. Mails.so reports the failure of a request as { data: null, error }, which the plugin throws as MailssoAPIError.'
+  validations.batch: 'Needs at least 2 different addresses. Mails.so documents batches as paid-plan only, though a free account with credits ran one in our test. Returns the job at once with status pending and no results; read it with validations.getBatch. A write: it starts a job on your account that the API cannot delete, and it is never replayed after a 5xx.'
+  validations.getBatch: 'Reads processing with only the id and created_at while the job runs (HTTP 202 with a progress note in error), then completed with stats and emails. Mails.so documents no failed status and no cancel route.'
