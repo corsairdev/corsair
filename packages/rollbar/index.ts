@@ -178,7 +178,7 @@ const rollbarEndpointMeta = {
 	'occurrences.get': {
 		riskLevel: 'read',
 		description:
-			'Fetch one occurrence with its level, timestamp, request and person context',
+			'Fetch one occurrence: its ids, timestamp and the payload the notifier sent under data (level, trace, request, person)',
 	},
 	'projects.list': {
 		riskLevel: 'read',

@@ -12,17 +12,17 @@ pnpm add @corsair-dev/rollbar
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `deploys.create` | `rollbar.api.deploys.create` | `write` | Record a deploy with its environment, revision and optional status and comment |
-| `deploys.list` | `rollbar.api.deploys.list` | `read` | List deploys with environment and project filters, newest first |
-| `itemComments.create` | `rollbar.api.itemComments.create` | `write` | Add a comment to an item |
-| `itemComments.list` | `rollbar.api.itemComments.list` | `read` | List the comments on an item, newest first |
+| `deploys.create` | `rollbar.api.deploys.create` | `write` | Record a deploy with its environment, revision and optional status and comment; needs a project token with post_server_item scope |
+| `deploys.list` | `rollbar.api.deploys.list` | `read` | List deploys in a project, newest first, with page paging |
+| `itemComments.create` | `rollbar.api.itemComments.create` | `write` | Add a comment to an item, posted as the token owner; needs a personal access token with write scope and the project_id |
+| `itemComments.list` | `rollbar.api.itemComments.list` | `read` | List the comments and resolve notes on an item, oldest first (Rollbar marks this route deprecated in favour of itemEvents.list) |
 | `itemEvents.list` | `rollbar.api.itemEvents.list` | `read` | List the history events for an item: status changes, assignments and comments |
 | `items.get` | `rollbar.api.items.get` | `read` | Fetch one item with its occurrence counts, timestamps and resolution state |
 | `items.list` | `rollbar.api.items.list` | `read` | List error items with status, level, environment and assignee filters plus page paging |
 | `items.update` | `rollbar.api.items.update` | `write` | Update an item: its status, level, title, assignee, resolved-in version or snooze |
-| `occurrences.get` | `rollbar.api.occurrences.get` | `read` | Fetch one occurrence with its level, timestamp, request and person context |
+| `occurrences.get` | `rollbar.api.occurrences.get` | `read` | Fetch one occurrence: its ids, timestamp and the payload the notifier sent under data (level, trace, request, person) |
 | `occurrences.list` | `rollbar.api.occurrences.list` | `read` | List occurrences in a project with page paging, for a forward walk from a known id |
-| `projects.list` | `rollbar.api.projects.list` | `read` | List the projects the token can see on the account |
+| `projects.list` | `rollbar.api.projects.list` | `read` | List the projects the token can see; needs an account or personal access token |
 
 ## Auth
 
