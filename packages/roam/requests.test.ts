@@ -47,6 +47,8 @@ describe('token.info', () => {
 		expect(request.method).toBe('GET');
 		expect(result.token.user?.email).toBe('sam@example.com');
 		expect(result.token.scopes).toEqual(['chat:read', 'chat:write']);
+		expect(result.token.clientId).toBe('client-123');
+		expect(result.token.roam?.name).toBe('Corsair Plugin Test');
 	});
 });
 
@@ -94,6 +96,7 @@ describe('chat.list and chat.history', () => {
 
 		expect(lastRequest(fetchMock).path).toBe('/v1/chat.list');
 		expect(result.chats[0]?.name).toBe('Water Runners');
+		expect(result.chats[0]?.groupId).toBe(GROUP_ID);
 		expect(result.next_cursor).toBeNull();
 		expect(result.has_more).toBe(false);
 	});
@@ -297,6 +300,7 @@ describe('reactions', () => {
 
 		expect(result.reactions[0]?.count).toBe(2);
 		expect(result.reactions[0]?.users).toEqual([USER.id]);
+		expect(result.pollVotes?.[0]?.optionId).toBe('opt-1');
 	});
 
 	it('rejects a reaction with no name', async () => {

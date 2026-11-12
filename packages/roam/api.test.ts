@@ -26,14 +26,15 @@ function liveContext(): RoamContext {
 }
 
 describeIfKey('live Roam HQ API', () => {
-	it('reads the token info, which also confirms the pinned version', async () => {
+	it('reads the token info: its user, client and scopes', async () => {
 		const result = await Endpoints.tokenInfo(
 			liveContext() as never,
 			{} as never,
 		);
 
 		expect(result.token.user?.id).toBeTruthy();
-		expect(result.token.version).toBeTruthy();
+		expect(result.token.clientId).toBeTruthy();
+		expect(Array.isArray(result.token.scopes)).toBe(true);
 	});
 
 	it('lists chats and users through the output schema', async () => {

@@ -68,9 +68,11 @@ export const USER_REF = {
 
 export const TOKEN_INFO = {
 	ok: true,
-	user: USER,
+	user: { id: USER_ID, name: 'Sam Rivera', email: 'sam@example.com' },
+	bot: { id: GROUP_ID, name: 'Corsair bot' },
+	clientId: 'client-123',
 	scopes: ['chat:read', 'chat:write'],
-	version: '2026-08-25',
+	roam: { id: '42', name: 'Corsair Plugin Test' },
 };
 
 export const USER_PAGE = {
@@ -81,11 +83,10 @@ export const USER_PAGE = {
 
 export const CHAT = {
 	id: CHAT_ID,
-	name: 'Water Runners',
-	created: '2026-01-10T10:00:00.000Z',
 	type: 'group',
-	isGroup: true,
-	memberIds: [USER_ID],
+	name: 'Water Runners',
+	groupId: GROUP_ID,
+	created: '2026-01-10T10:00:00.000Z',
 };
 
 export const CHAT_PAGE = {
@@ -192,7 +193,10 @@ export const REACTION_ADD = {
 
 export const REACTION_LIST = {
 	ok: true,
+	chatId: CHAT_ID,
+	timestamp: TIMESTAMP,
 	reactions: [{ name: 'thumbsup', count: 2, users: [USER_ID] }],
+	pollVotes: [{ optionId: 'opt-1', text: 'Pizza', count: 1, users: [USER_ID] }],
 };
 
 export const GROUP = {

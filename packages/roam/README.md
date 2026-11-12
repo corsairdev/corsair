@@ -20,8 +20,8 @@ pnpm add @corsair-dev/roam
 | `meetings.list` | `roam.api.meetings.list` | `read` | List meetings with a time window, plus cursor paging |
 | `meetings.transcript` | `roam.api.meetings.transcript` | `read` | Fetch a meeting’s transcript cues with their speaker id and timing |
 | `reactions.add` | `roam.api.reactions.add` | `write` | Add an emoji reaction to a message |
-| `reactions.list` | `roam.api.reactions.list` | `read` | List the reactions on a message with their counts and users |
-| `token.info` | `roam.api.token.info` | `read` | Read the account behind the token: its user, granted scopes and pinned API version |
+| `reactions.list` | `roam.api.reactions.list` | `read` | List the reactions on a message, and the votes on each option when it is a poll |
+| `token.info` | `roam.api.token.info` | `read` | Read the account behind the token: its user, bot, workspace and granted scopes |
 | `users.info` | `roam.api.users.info` | `read` | Look up one person or bot by uuid or email, including their role and availability |
 | `users.list` | `roam.api.users.list` | `read` | List directory members with a search phrase or an explicit id list, plus cursor paging |
 

@@ -278,10 +278,10 @@ export const reactionList: RoamEndpoints['reactionList'] = (ctx, input) =>
 			}),
 		}),
 		{
-			// This answer carries the reactions array and no paging block.
+			// This answer carries the reactions and poll votes and no paging block.
 			shape: (raw) => {
 				const record = asRecord(raw);
-				return { reactions: record?.reactions };
+				return { reactions: record?.reactions, pollVotes: record?.pollVotes };
 			},
 			log: (_, result) => ({ count: result.reactions.length }),
 		},

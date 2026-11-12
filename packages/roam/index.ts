@@ -145,7 +145,7 @@ const roamEndpointMeta = {
 	'token.info': {
 		riskLevel: 'read',
 		description:
-			'Read the account behind the token: its user, granted scopes and pinned API version',
+			'Read the account behind the token: its user, bot, workspace and granted scopes',
 	},
 	'users.info': {
 		riskLevel: 'read',
@@ -181,7 +181,8 @@ const roamEndpointMeta = {
 	},
 	'reactions.list': {
 		riskLevel: 'read',
-		description: 'List the reactions on a message with their counts and users',
+		description:
+			'List the reactions on a message, and the votes on each option when it is a poll',
 	},
 	'groups.list': {
 		riskLevel: 'read',

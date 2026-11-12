@@ -52,7 +52,7 @@ apiExamples:
   meetings.transcript:
     call: "{ meeting_id: '11111111-2222-3333-4444-555555555555' }"
 apiNotes:
-  'token.info': 'Also reports the API version the response was rendered with, and the token''s granted scopes.'
+  'token.info': 'Also reports the API client id, the bot the token posts as, the workspace and the granted scopes.'
   'chat.history': 'Needs exactly one of `chat_id`, `group_id` or `user_ids`. Poll options come back as `{ id, text }` objects.'
   'chat.post': 'Exactly one of `text`, `items`, `asset_ids`, `blocks` or `poll`; `send_at` schedules instead of sending.'
   'chat.update': 'Needs exactly one new content type, and identifies the message by chat and timestamp.'

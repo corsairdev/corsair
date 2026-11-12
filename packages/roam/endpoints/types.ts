@@ -180,10 +180,22 @@ export type TokenInfoInput = z.input<typeof TokenInfoInputSchema>;
 const TokenInfoResponseSchema = z.object({
 	token: z
 		.object({
-			user: UserSchema.nullish(),
+			user: UserSchema.nullish().describe('The person who owns the token.'),
+			bot: UserRefSchema.nullish().describe(
+				'The bot persona the token posts as.',
+			),
+			clientId: z.string().nullish().describe('The API client id.'),
 			scopes: z.array(z.string()).nullish(),
-			version: z.string().nullish(),
-			expiresAt: z.string().nullish(),
+			roam: z
+				.object({
+					id: z.string().nullish(),
+					name: z.string().nullish(),
+					imageUrl: z.string().nullish(),
+					iconUrl: z.string().nullish(),
+				})
+				.loose()
+				.nullish()
+				.describe('The workspace the token belongs to.'),
 		})
 		.loose(),
 });
@@ -228,14 +240,31 @@ const ChatListInputSchema = z.object({
 
 export type ChatListInput = z.input<typeof ChatListInputSchema>;
 
+/**
+ * A chat row. The inbox fields (`lastMessageTime`, `isUnread`, `preview`,
+ * `isMuted`, `isPinned`) are filled only for personal tokens.
+ */
 const ChatSchema = z
 	.object({
 		id: z.string().nullish(),
+		type: z.string().nullish().describe('`dm` or `group`.'),
 		name: z.string().nullish(),
+		groupId: z.string().nullish(),
+		threadTimestamp: z.number().nullish(),
 		created: z.string().nullish(),
-		type: z.string().nullish(),
-		isGroup: z.boolean().nullish(),
-		memberIds: z.array(z.string()).nullish(),
+		lastMessageTime: z.string().nullish(),
+		isUnread: z.boolean().nullish(),
+		preview: z
+			.object({
+				text: z.string().nullish(),
+				contentType: z.string().nullish(),
+				senderId: z.string().nullish(),
+				mentioned: z.boolean().nullish(),
+			})
+			.loose()
+			.nullish(),
+		isMuted: z.boolean().nullish(),
+		isPinned: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -432,6 +461,7 @@ const ChatPostResponseSchema = z.object({
 	post: z.object({
 		ok: z.boolean().nullish(),
 		chatId: z.string().nullish(),
+		threadTimestamp: z.number().nullish(),
 		timestamp: z.number().nullish(),
 		scheduledMessageId: z.string().nullish(),
 		sendAt: z.string().nullish(),
@@ -476,6 +506,7 @@ const ChatUpdateResponseSchema = z.object({
 		ok: z.boolean().nullish(),
 		chatId: z.string().nullish(),
 		timestamp: z.number().nullish(),
+		threadTimestamp: z.number().nullish(),
 	}),
 });
 
@@ -521,8 +552,19 @@ const ReactionSchema = z
 
 export type RoamReaction = z.infer<typeof ReactionSchema>;
 
+/** Votes per option, filled when the message is a poll. */
+const PollVoteSchema = z
+	.object({
+		optionId: z.string().nullish(),
+		text: z.string().nullish(),
+		count: z.number().nullish(),
+		users: z.array(z.string()).nullish(),
+	})
+	.loose();
+
 const ReactionListResponseSchema = z.object({
 	reactions: z.array(ReactionSchema),
+	pollVotes: z.array(PollVoteSchema).nullish(),
 });
 
 export type ReactionListResponse = z.infer<typeof ReactionListResponseSchema>;
