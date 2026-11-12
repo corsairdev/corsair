@@ -184,6 +184,24 @@ const MonitorsGetResponseSchema = MonitorSchema;
 
 export type MonitorsGetResponse = z.infer<typeof MonitorsGetResponseSchema>;
 
+/** The types whose create body requires `timeout`, per UptimeRobot's spec. */
+const TYPES_NEEDING_TIMEOUT: ReadonlySet<string> = new Set([
+	'HTTP',
+	'KEYWORD',
+	'PING',
+	'PORT',
+	'API',
+	'UDP',
+]);
+
+/** The types whose create body requires `config`, per UptimeRobot's spec. */
+const TYPES_NEEDING_CONFIG: ReadonlySet<string> = new Set([
+	'DNS',
+	'API',
+	'UDP',
+	'VISUAL_COMPARISON',
+]);
+
 /**
  * Creating a monitor.
  *
@@ -191,8 +209,10 @@ export type MonitorsGetResponse = z.infer<typeof MonitorsGetResponseSchema>;
  * checked against the chosen type:
  *
  * - `HEARTBEAT` needs no URL at all — the monitor is its own ping endpoint.
- * - `KEYWORD` needs `url`, `timeout`, `keywordType` and `keywordCaseType`.
+ * - `KEYWORD` needs `url`, `timeout`, `keywordType`, `keywordCaseType` and `keywordValue`.
  * - `PORT` and `UDP` need `url` and `port`.
+ * - HTTP, KEYWORD, PING, PORT, API and UDP need `timeout` (at most 60).
+ * - DNS, API, UDP and VISUAL_COMPARISON need `config`.
  * - everything else needs `url`.
  */
 const MonitorsCreateInputSchema = z
@@ -240,9 +260,11 @@ const MonitorsCreateInputSchema = z
 			.number()
 			.int()
 			.min(1)
-			.max(90)
+			.max(60)
 			.optional()
-			.describe('Seconds to wait. Required for KEYWORD monitors.'),
+			.describe(
+				'Seconds to wait, at most 60. Required for HTTP, KEYWORD, PING, PORT, API and UDP monitors.',
+			),
 		gracePeriod: z
 			.number()
 			.int()
@@ -353,11 +375,26 @@ const MonitorsCreateInputSchema = z
 				message: `A ${value.type} monitor needs a port.`,
 			});
 		}
+		// UptimeRobot answers 400 when one of these types has no timeout.
+		if (TYPES_NEEDING_TIMEOUT.has(value.type) && value.timeout === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['timeout'],
+				message: `A ${value.type} monitor needs a timeout.`,
+			});
+		}
+		if (TYPES_NEEDING_CONFIG.has(value.type) && value.config === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['config'],
+				message: `A ${value.type} monitor needs config.`,
+			});
+		}
 		if (value.type === 'KEYWORD') {
 			for (const key of [
-				'timeout',
 				'keywordType',
 				'keywordCaseType',
+				'keywordValue',
 			] as const) {
 				if (value[key] === undefined) {
 					ctx.addIssue({

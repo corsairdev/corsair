@@ -142,6 +142,7 @@ describe('monitors', () => {
 			type: 'HTTP',
 			interval: 300,
 			url: 'https://shop.acme.example',
+			timeout: 30,
 		});
 
 		expect(result).toEqual(monitor);
@@ -757,6 +758,7 @@ describe('review fixes', () => {
 			type: 'Info',
 		});
 
+		// unknown: the sent body is whatever the endpoint serialized; only one key is read.
 		const sent = lastRequest(fetchMock).body as Record<string, unknown>;
 		expect(sent.startDate).toBeUndefined();
 	});
@@ -784,11 +786,13 @@ describe('review fixes', () => {
 			type: 'API',
 			interval: 60,
 			url: 'https://api.acme.example/health',
+			timeout: 30,
 			config: { apiAssertions: { assertions: [] } },
 			httpMethodType: 'POST',
 			customHttpHeaders: { 'X-Token': 'abc' },
 		});
 
+		// unknown: the sent body is whatever the endpoint serialized; a few keys are read.
 		const body = lastRequest(fetchMock).body as Record<string, unknown>;
 		expect(body.config).toEqual({ apiAssertions: { assertions: [] } });
 		expect(body.httpMethodType).toBe('POST');
@@ -803,9 +807,62 @@ describe('review fixes', () => {
 			config: { thirdPartyService: { providerId: 4317 } },
 		});
 
+		// unknown: the sent body is whatever the endpoint serialized; a few keys are read.
 		const body = lastRequest(fetchMock).body as Record<string, unknown>;
 		expect(body.type).toBe('THIRD_PARTY_SERVICE');
 		expect(body.url).toBeUndefined();
 		expect(body.friendlyName).toBeUndefined();
+	});
+});
+
+describe('fixes from the 11-12 review and live run', () => {
+	it('requires a timeout on an HTTP monitor, which UptimeRobot rejects without one', async () => {
+		await expect(
+			invoke(Monitors.create, {
+				friendlyName: 'No timeout',
+				type: 'HTTP',
+				interval: 300,
+				url: 'https://shop.acme.example',
+			}),
+		).rejects.toThrow('A HTTP monitor needs a timeout.');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('caps the timeout at 60 seconds, as UptimeRobot does', async () => {
+		await expect(
+			invoke(Monitors.create, {
+				friendlyName: 'Slow',
+				type: 'HTTP',
+				interval: 300,
+				url: 'https://shop.acme.example',
+				timeout: 90,
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('requires keywordValue on a KEYWORD monitor', async () => {
+		await expect(
+			invoke(Monitors.create, {
+				friendlyName: 'Login page',
+				type: 'KEYWORD',
+				interval: 300,
+				url: 'https://acme.example/login',
+				timeout: 30,
+				keywordType: 'ALERT_NOT_EXISTS',
+				keywordCaseType: 'CaseInsensitive',
+			}),
+		).rejects.toThrow('A KEYWORD monitor needs keywordValue.');
+	});
+
+	it('requires config on a DNS monitor', async () => {
+		await expect(
+			invoke(Monitors.create, {
+				friendlyName: 'DNS',
+				type: 'DNS',
+				interval: 300,
+				url: 'acme.example',
+			}),
+		).rejects.toThrow('A DNS monitor needs config.');
 	});
 });
