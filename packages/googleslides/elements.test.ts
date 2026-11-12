@@ -79,6 +79,17 @@ describe('elements.createShape', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('points a missing shape size at elementProperties.size, which the schema can drop', async () => {
+		const error = await ElementsEndpoints.createShape(ctx, {
+			presentationId: 'deck-1',
+			shapeType: 'RECTANGLE',
+			elementProperties: { pageObjectId: 'slide-1' },
+		}).catch((caught: unknown) => caught as Error); // unknown: rejection.
+		// elementProperties itself is required, so advice to omit it would fail.
+		expect(String(error)).toMatch(/omit elementProperties\.size/);
+		expect(String(error)).not.toMatch(/Omit elementProperties to/);
+	});
+
 	it('rejects a shape type outside the supported set', async () => {
 		await expect(
 			ElementsEndpoints.createShape(ctx, {

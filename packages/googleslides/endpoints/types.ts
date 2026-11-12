@@ -176,7 +176,7 @@ function requireElementSize(
 			code: 'custom',
 			path: ['elementProperties', 'size'],
 			message:
-				'A shape needs both width and height. Omit elementProperties to let Google size an image or table.',
+				'A shape needs both width and height in elementProperties.size. Only images and tables can omit elementProperties.size and let Google size them.',
 		});
 	}
 }
