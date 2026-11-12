@@ -168,6 +168,7 @@ describe('empty collections, as the live API sends them', () => {
 	] as const)('reads <%s/> as an empty list', async (root, endpoint, input) => {
 		respondText(fetchMock, `${XML_HEAD}<${root}/>`);
 
+		// unknown: each case has a different response type; only the list under `root` is read.
 		const result = (await invoke(endpoint, input)) as Record<string, unknown>;
 
 		expect(result[root]).toEqual([]);
@@ -377,6 +378,7 @@ describe('the account behind the token', () => {
 	it('does not return the API token', async () => {
 		respondText(fetchMock, meXml);
 
+		// unknown: the test checks a key is absent, so the user is read as an open record.
 		const result = (await invoke(Users.me, {})) as {
 			user: Record<string, unknown>;
 		};
@@ -395,6 +397,7 @@ describe('errors', () => {
 
 		const error = (await invoke(Assignments.taskList, {
 			project_id: 5001,
+			// unknown: a rejection can carry any value; the cast narrows it.
 		}).catch((caught: unknown) => caught)) as WorksnapsAPIError;
 
 		expect(error).toBeInstanceOf(WorksnapsAPIError);

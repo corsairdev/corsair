@@ -516,6 +516,7 @@ describe('users and reports', () => {
 		for (const result of [got, listed, updated]) {
 			expect(JSON.stringify(result)).not.toContain('not-a-real-token');
 		}
+		// unknown: only the row count is asserted here.
 		expect((listed as { users?: unknown[] }).users).toHaveLength(1);
 	});
 

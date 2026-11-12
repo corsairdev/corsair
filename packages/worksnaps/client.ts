@@ -198,6 +198,7 @@ export async function makeWorksnapsRequest(
 }
 
 /** Narrows a caught value to this plugin's error. */
+// unknown: a catch block can receive any value, which is what this narrows.
 export function isWorksnapsFailure(error: unknown): error is WorksnapsAPIError {
 	return error instanceof WorksnapsAPIError;
 }

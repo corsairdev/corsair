@@ -132,6 +132,7 @@ describe('toValue', () => {
 		);
 		const value = root && toValue(root);
 		expect(Array.isArray(value)).toBe(true);
+		// unknown: the decoder returns untyped values; only the length is asserted.
 		expect((value as unknown[]).length).toBe(2);
 	});
 
