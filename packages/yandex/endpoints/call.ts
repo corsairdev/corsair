@@ -2,9 +2,38 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { YandexContext } from '..';
 import type { YandexRequest } from '../client';
-import { makeYandexRequest } from '../client';
+import { makeYandexRequest, YandexAPIError } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
+
+/** Retries for one detect passage, matching the rate-limit handler's count. */
+const PASSAGE_RETRIES = 3;
+
+/**
+ * Sends one detect passage, retrying a rate limit or a 5xx in place. A failure
+ * that reaches Corsair's retry replays the whole endpoint, which would send
+ * every earlier passage again, so a long batch could keep spending its quota
+ * on the same first passages. Other errors are thrown at once.
+ *
+ * unknown: the response body, which the caller's output schema validates.
+ */
+async function sendPassage(
+	key: string,
+	request: YandexRequest,
+): Promise<unknown> {
+	for (let attempt = 0; ; attempt++) {
+		try {
+			return await makeYandexRequest(key, request);
+		} catch (error) {
+			const retryable =
+				error instanceof YandexAPIError &&
+				(error.isResourceExhausted || (error.status ?? 0) >= 500);
+			if (!retryable || attempt >= PASSAGE_RETRIES) throw error;
+			const wait = error.retryAfter ?? 1000 * 2 ** attempt;
+			await new Promise((resolve) => setTimeout(resolve, wait));
+		}
+	}
+}
 
 /**
  * Validates the input, sends the request, shapes and validates the response,
@@ -40,7 +69,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		for (const text of texts) {
 			// A single passage per request, which is what the route documents.
 			const base = toRequest(parsed);
-			const raw = await makeYandexRequest(ctx.key, {
+			const raw = await sendPassage(ctx.key, {
 				...base,
 				body: { ...(base.body as object), text },
 			});

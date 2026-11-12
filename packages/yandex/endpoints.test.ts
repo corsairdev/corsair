@@ -2,9 +2,11 @@ import { logEventFromContext } from 'corsair/core';
 import { YandexAPIError } from './client';
 import { Translate } from './endpoints';
 import {
+	badArgument,
 	detected,
 	detectedGerman,
 	languages,
+	resourceExhausted,
 	translated,
 	translatedHtml,
 	translatedMany,
@@ -207,6 +209,38 @@ describe('detect', () => {
 		expect(first.body).toEqual({ text: 'Hello' });
 		expect(second.path).toBe('/translate/v2/detect');
 		expect(second.body).toEqual({ text: 'Guten Tag' });
+	});
+
+	it('retries a rate-limited passage in place instead of restarting the batch', async () => {
+		respond(fetchMock, detected);
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(resourceExhausted), {
+				status: 429,
+				headers: { 'Content-Type': 'application/json', 'Retry-After': '0' },
+			}),
+		);
+		respond(fetchMock, detectedGerman);
+
+		const result = (await invoke(Translate.detect, {
+			texts: ['Hello', 'Guten Tag'],
+		})) as { detections?: { languageCode?: string }[] };
+
+		expect(result.detections?.map((d) => d.languageCode)).toEqual(['en', 'de']);
+		// 'Hello' went out once; only the refused passage was sent again.
+		expect(fetchMock).toHaveBeenCalledTimes(3);
+		expect(requestAt(fetchMock, 0).body).toEqual({ text: 'Hello' });
+		expect(requestAt(fetchMock, 1).body).toEqual({ text: 'Guten Tag' });
+		expect(requestAt(fetchMock, 2).body).toEqual({ text: 'Guten Tag' });
+	});
+
+	it('does not retry a passage the API refused as invalid', async () => {
+		respond(fetchMock, detected);
+		respond(fetchMock, badArgument, 400);
+
+		await expect(
+			invoke(Translate.detect, { texts: ['Hello', 'Guten Tag'] }),
+		).rejects.toBeInstanceOf(YandexAPIError);
+		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
 
 	it('sends folderId in each detect body when one is given', async () => {
