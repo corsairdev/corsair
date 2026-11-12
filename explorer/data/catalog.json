@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-11T19:36:19.834Z",
-  "corsairVersion": "0.1.169",
+  "generatedAt": "2026-11-12T03:34:20.158Z",
+  "corsairVersion": "0.1.170",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -3720,6 +3720,22 @@
         "api": 72,
         "webhooks": 0,
         "db": 8
+      }
+    },
+    {
+      "id": "gong",
+      "displayName": "Gong",
+      "description": "Read Gong calls, transcripts, users, stats, library folders and Engage flows, upload calls and CRM data, and run Gong's data privacy requests.",
+      "npmPackageName": "@corsair-dev/gong",
+      "authTypes": [
+        "api_key",
+        "oauth_2"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 66,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -65207,6 +65223,402 @@
       "kind": "api",
       "shortPath": "vpcs.release",
       "haystack": "vpcs.release gmicloud.api.vpcs.release release the default vpc destructive"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "accountsEnrich.getResults",
+      "haystack": "accountsenrich.getresults gong.api.accountsenrich.getresults retrieve account enrichment results for a job. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "accountsEnrich.start",
+      "haystack": "accountsenrich.start gong.api.accountsenrich.start start an account enrichment job. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "auditing.listLogs",
+      "haystack": "auditing.listlogs gong.api.auditing.listlogs retrieve gong audit log entries for a time range. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "calls.add",
+      "haystack": "calls.add gong.api.calls.add create a gong call from an externally recorded conversation. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "calls.addRecording",
+      "haystack": "calls.addrecording gong.api.calls.addrecording upload media for a previously created gong call. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "calls.get",
+      "haystack": "calls.get gong.api.calls.get retrieve details for one gong call. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "calls.getTranscripts",
+      "haystack": "calls.gettranscripts gong.api.calls.gettranscripts retrieve transcripts for calls matching the filter. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "calls.list",
+      "haystack": "calls.list gong.api.calls.list list calls within a requested date range. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "calls.listExtensive",
+      "haystack": "calls.listextensive gong.api.calls.listextensive retrieve calls with detailed content and filters. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "coaching.list",
+      "haystack": "coaching.list gong.api.coaching.list list coaching metrics for users. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "contactsEnrich.getResults",
+      "haystack": "contactsenrich.getresults gong.api.contactsenrich.getresults retrieve contact enrichment results for a job. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "contactsEnrich.start",
+      "haystack": "contactsenrich.start gong.api.contactsenrich.start start a contact enrichment job. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "crm.deleteIntegration",
+      "haystack": "crm.deleteintegration gong.api.crm.deleteintegration delete a gong crm integration and the crm objects uploaded through it. destructive"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "crm.getObjects",
+      "haystack": "crm.getobjects gong.api.crm.getobjects retrieve crm objects by crm ids. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "crm.getRequestStatus",
+      "haystack": "crm.getrequeststatus gong.api.crm.getrequeststatus retrieve crm request status. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "crm.listIntegrations",
+      "haystack": "crm.listintegrations gong.api.crm.listintegrations list gong crm integrations. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "crm.listSchemaFields",
+      "haystack": "crm.listschemafields gong.api.crm.listschemafields list selected crm schema fields. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "crm.registerIntegration",
+      "haystack": "crm.registerintegration gong.api.crm.registerintegration register a gong crm integration. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "crm.uploadObjects",
+      "haystack": "crm.uploadobjects gong.api.crm.uploadobjects upload crm objects from a data file. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "crm.uploadSchemaFields",
+      "haystack": "crm.uploadschemafields gong.api.crm.uploadschemafields upload selected crm schema fields. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "dataPrivacy.findEmailReferences",
+      "haystack": "dataprivacy.findemailreferences gong.api.dataprivacy.findemailreferences find gong records associated with an email address. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "dataPrivacy.findPhoneReferences",
+      "haystack": "dataprivacy.findphonereferences gong.api.dataprivacy.findphonereferences find gong records associated with a phone number. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "dataPrivacy.purgeEmailAddress",
+      "haystack": "dataprivacy.purgeemailaddress gong.api.dataprivacy.purgeemailaddress delete an email address and the emails, calls, leads and contacts tied to it. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "dataPrivacy.purgePhoneNumber",
+      "haystack": "dataprivacy.purgephonenumber gong.api.dataprivacy.purgephonenumber delete a phone number and the calls, leads and contacts tied to it. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "digitalInteractions.add",
+      "haystack": "digitalinteractions.add gong.api.digitalinteractions.add add a digital interaction event to gong. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "engageFlows.assign",
+      "haystack": "engageflows.assign gong.api.engageflows.assign assign prospects to flows. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "engageFlows.assignedProspects",
+      "haystack": "engageflows.assignedprospects gong.api.engageflows.assignedprospects retrieve prospects assigned to flows. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "engageFlows.bulkAssignment",
+      "haystack": "engageflows.bulkassignment gong.api.engageflows.bulkassignment submit a bulk flow assignment. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "engageFlows.folders",
+      "haystack": "engageflows.folders gong.api.engageflows.folders list engage flow folders. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "engageFlows.getBulkAssignment",
+      "haystack": "engageflows.getbulkassignment gong.api.engageflows.getbulkassignment retrieve a bulk flow assignment. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "engageFlows.list",
+      "haystack": "engageflows.list gong.api.engageflows.list list engage flows. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "engageFlows.search",
+      "haystack": "engageflows.search gong.api.engageflows.search search engage flows. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "engageFlows.steps",
+      "haystack": "engageflows.steps gong.api.engageflows.steps retrieve steps for engage flows. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "engageFlows.unassign",
+      "haystack": "engageflows.unassign gong.api.engageflows.unassign unassign flows by instance id. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "engageFlows.unassignProspects",
+      "haystack": "engageflows.unassignprospects gong.api.engageflows.unassignprospects unassign prospect flows by crm id. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "entities.ask",
+      "haystack": "entities.ask gong.api.entities.ask ask a question about a crm entity. uses gong credits. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "entities.generateBrief",
+      "haystack": "entities.generatebrief gong.api.entities.generatebrief generate an ai brief for a crm entity. uses gong credits. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "integrationSettings.update",
+      "haystack": "integrationsettings.update gong.api.integrationsettings.update update gong integration settings. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "library.folderContent",
+      "haystack": "library.foldercontent gong.api.library.foldercontent list calls in a library folder. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "library.folders",
+      "haystack": "library.folders gong.api.library.folders retrieve public library folders. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "outcomes.list",
+      "haystack": "outcomes.list gong.api.outcomes.list list available call outcomes. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "permissions.addCallUsers",
+      "haystack": "permissions.addcallusers gong.api.permissions.addcallusers grant individual users access to calls. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "permissions.createProfile",
+      "haystack": "permissions.createprofile gong.api.permissions.createprofile create a permission profile. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "permissions.deleteCallUsers",
+      "haystack": "permissions.deletecallusers gong.api.permissions.deletecallusers remove individual users from call access. destructive"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "permissions.getCallUsers",
+      "haystack": "permissions.getcallusers gong.api.permissions.getcallusers retrieve users with individual call access. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "permissions.getProfile",
+      "haystack": "permissions.getprofile gong.api.permissions.getprofile retrieve a permission profile. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "permissions.listProfiles",
+      "haystack": "permissions.listprofiles gong.api.permissions.listprofiles list permission profiles for a workspace. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "permissions.listProfileUsers",
+      "haystack": "permissions.listprofileusers gong.api.permissions.listprofileusers list users attached to a permission profile. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "permissions.updateProfile",
+      "haystack": "permissions.updateprofile gong.api.permissions.updateprofile update a permission profile. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "settings.briefs",
+      "haystack": "settings.briefs gong.api.settings.briefs list briefs. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "settings.scorecards",
+      "haystack": "settings.scorecards gong.api.settings.scorecards list scorecards. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "settings.trackers",
+      "haystack": "settings.trackers gong.api.settings.trackers list keyword trackers. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "stats.aggregate",
+      "haystack": "stats.aggregate gong.api.stats.aggregate retrieve aggregate user activity. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "stats.aggregateByPeriod",
+      "haystack": "stats.aggregatebyperiod gong.api.stats.aggregatebyperiod retrieve aggregate activity by period. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "stats.answeredScorecards",
+      "haystack": "stats.answeredscorecards gong.api.stats.answeredscorecards retrieve answered scorecard statistics. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "stats.dayByDay",
+      "haystack": "stats.daybyday gong.api.stats.daybyday retrieve daily user activity. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "stats.interaction",
+      "haystack": "stats.interaction gong.api.stats.interaction retrieve interaction statistics. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "targets.listDefinitions",
+      "haystack": "targets.listdefinitions gong.api.targets.listdefinitions list target definitions. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "targets.uploadAssignments",
+      "haystack": "targets.uploadassignments gong.api.targets.uploadassignments upload target assignments. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "tasks.list",
+      "haystack": "tasks.list gong.api.tasks.list list gong tasks. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "tasks.updateReminder",
+      "haystack": "tasks.updatereminder gong.api.tasks.updatereminder update a task reminder. write"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get gong.api.users.get retrieve a user by gong user identifier. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "users.getHistory",
+      "haystack": "users.gethistory gong.api.users.gethistory retrieve the settings history for a gong user. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list gong.api.users.list list users in the gong company workspace. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "users.listMultiple",
+      "haystack": "users.listmultiple gong.api.users.listmultiple list users matching the supplied filters. read"
+    },
+    {
+      "pluginId": "gong",
+      "kind": "api",
+      "shortPath": "workspaces.list",
+      "haystack": "workspaces.list gong.api.workspaces.list list company workspaces. read"
     },
     {
       "pluginId": "googleaddressvalidation",
