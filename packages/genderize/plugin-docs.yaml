@@ -1,0 +1,37 @@
+displayName: Genderize
+description: Predict the gender behind a first or full name with Genderize - one name or a batch, each answer scored with a confidence and the number of records behind it.
+domain: genderize.io
+recommendedAuth: api_key
+overviewNote: |
+  Copy the API key from your Genderize dashboard. The key travels as the `apikey` **query parameter**, which is where the API expects it, not as a header.
+
+  Things to know before you call:
+
+  - **A key is optional.** A live probe without one still answered, because Genderize serves an IP-scoped allowance before it asks for an account. Passing a key raises the allowance and is what the account is billed against, so configure one for anything beyond a trial.
+  - **A name it does not know is not an error.** The answer is HTTP 200 with `gender: null`, `probability: 0` and `count: 0`. The request still costs a credit, so check `gender` rather than relying on the call to fail.
+  - **A full name is more accurate than a first name.** Every part carries signal: a surname such as Jónsdóttir is used only by women, so `Alex Jónsdóttir` resolves as female even though `Alex` alone leans male. Genderize finds the name parts itself, so `Tanaka Hiroshi` and `Hiroshi Tanaka` give the same answer.
+  - **Country changes the answer.** `Kim` is mostly female worldwide but overwhelmingly male in Denmark, so pass `country_id` when the country is known.
+  - **A batch is charged per name.** `batch` sends up to the plan's window in one request and answers an array in the same order as the input. Its `country_id` applies to every name in it, not to one.
+  - **429 means two different things.** It is either the monthly quota or a short-term throttle (`Request too low to process`), and the plugin retries it with backoff.
+examples:
+  read:
+    path: name.predict
+    title: Predict the gender behind a name
+    args:
+      name: peter
+  read2:
+    path: batch.names
+    title: Predict several names in one request
+    args:
+      names:
+        - peter
+        - lois
+        - stewie
+apiExamples:
+  name.predict:
+    call: "{ name: 'peter' }"
+  batch.names:
+    call: "{ names: ['peter', 'lois', 'stewie'] }"
+apiNotes:
+  name.predict: 'Scoping by `country_id` changes the answer for names such as Kim or Andrea.'
+  batch.names: 'Charged per name; `country_id` applies to every name in the batch.'
