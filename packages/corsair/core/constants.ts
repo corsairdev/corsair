@@ -255,6 +255,7 @@ export const BaseProviders = [
 	'foursquare',
 	'fundable',
 	'gemini',
+	'gagelist',
 	'giphy',
 	'github',
 	'gitlab',
@@ -789,6 +790,7 @@ export const ProviderDisplayNames = {
 	foursquare: 'Foursquare',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
+	gagelist: 'Gagelist',
 	giphy: 'Giphy',
 	github: 'GitHub',
 	gitlab: 'GitLab',
@@ -1330,6 +1332,7 @@ export type AllProviders =
 	| 'foursquare'
 	| 'fundable'
 	| 'gemini'
+	| 'gagelist'
 	| 'giphy'
 	| 'github'
 	| 'gitlab'
