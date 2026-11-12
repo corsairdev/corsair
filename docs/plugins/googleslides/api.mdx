@@ -390,7 +390,7 @@ Move, scale or rotate a page element
 **Risk:** `write`
 
 ```ts
-await corsair.googleslides.api.elements.updateTransform({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'shape_1', transform: { translateX: 914400, translateY: 457200 }, applyMode: 'ABSOLUTE' });
+await corsair.googleslides.api.elements.updateTransform({ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'shape_1', transform: { scaleX: 1, scaleY: 1, translateX: 914400, translateY: 457200, unit: 'EMU' }, applyMode: 'ABSOLUTE' });
 ```
 
 **Input**

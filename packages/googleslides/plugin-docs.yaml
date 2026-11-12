@@ -89,7 +89,7 @@ apiExamples:
   elements.setAltText:
     call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'image_1', title: 'Revenue chart', description: 'Revenue rising 12% year over year' }"
   elements.updateTransform:
-    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'shape_1', transform: { translateX: 914400, translateY: 457200 }, applyMode: 'ABSOLUTE' }"
+    call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectId: 'shape_1', transform: { scaleX: 1, scaleY: 1, translateX: 914400, translateY: 457200, unit: 'EMU' }, applyMode: 'ABSOLUTE' }"
   elements.zOrder:
     call: "{ presentationId: '1AbCdEfGhIjKlMnOpQrStUvWxYz', objectIds: ['shape_1'], operation: 'BRING_TO_FRONT' }"
   elements.group:
