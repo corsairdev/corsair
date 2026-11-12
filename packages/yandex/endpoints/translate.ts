@@ -71,6 +71,7 @@ export const detect: YandexEndpoints['detectLanguages'] = (ctx, input) =>
 			// the single ordered result the output schema describes.
 			detectEach: true,
 			shape: (raw, parsed) => {
+				// unknown: the code is checked for a string below before it is used.
 				const single = raw as { languageCode?: unknown };
 				return {
 					detections: [

@@ -229,6 +229,7 @@ export async function makeYandexRequest(
 }
 
 /** Narrows a caught value to this plugin's error. */
+// unknown: a catch block can receive any value, which is what this narrows.
 export function isYandexFailure(error: unknown): error is YandexAPIError {
 	return error instanceof YandexAPIError;
 }
