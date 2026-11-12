@@ -16,7 +16,7 @@ function statusOf(error: Error): number | undefined {
  * - `422` is a rejected body: Recruitee validates a candidate and an offer.
  * - `429` is the documented **1000 requests per minute** per token. No
  *   `Retry-After` is documented, so the handler backs off on its own.
- * - `5xx` is only replayed for a read.
+ * - `5xx` is only replayed for a read, as is a fetch that failed in transport.
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
@@ -55,6 +55,19 @@ export const errorHandlers = {
 			error instanceof RecruiteeAPIError &&
 			error.replayable &&
 			(error.status ?? 0) >= 500,
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
+	NETWORK_ERROR: {
+		// A fetch that rejected (reset, DNS, timeout) carries no status. Only a
+		// read is replayed: a write may have reached Recruitee before the
+		// connection dropped.
+		match: (error: Error) =>
+			error instanceof RecruiteeAPIError &&
+			error.replayable &&
+			error.status === undefined,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

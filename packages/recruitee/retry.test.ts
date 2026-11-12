@@ -149,4 +149,45 @@ describe('retry behaviour', () => {
 			testDb.cleanup();
 		}
 	});
+
+	it('retries a read whose fetch failed in transport', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient({
+			key: 'rc-key',
+			company_id: '1111',
+		});
+		try {
+			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+			respond(fetchMock, OFFER_PAGE);
+
+			const result = await withFakeTimers(
+				corsair.recruitee.api.offers.list({}),
+			);
+
+			expect(result.offers).toHaveLength(1);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does not replay a write whose fetch failed in transport', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient({
+			key: 'rc-key',
+			company_id: '1111',
+		});
+		try {
+			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+
+			await expect(
+				withFakeTimers(
+					corsair.recruitee.api.offers.create({ title: 'Backend Engineer' }),
+				),
+			).rejects.toThrow(/fetch failed/);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
 });
