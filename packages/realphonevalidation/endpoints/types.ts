@@ -15,25 +15,6 @@ import { z } from 'zod';
 // - `error_text` and `RESPONSEMSG` are `{}` rather than a string when there is
 //   nothing to report, so both are typed to accept either.
 
-/**
- * The services build their JSON from XML, so an element with no text arrives as
- * `{}` rather than `""` (error_text and RESPONSEMSG show it). A text field reads
- * that as null, so an empty caller name or carrier cannot fail a lookup that
- * has already been charged.
- * unknown: preprocess sees the raw value before the string schema checks it.
- */
-function emptyToNull(value: unknown): unknown {
-	return value !== null &&
-		typeof value === 'object' &&
-		!Array.isArray(value) &&
-		Object.keys(value).length === 0
-		? null
-		: value;
-}
-
-/** A text output field: a string, null, absent, or {} read as null. */
-const Text = () => z.preprocess(emptyToNull, z.string().nullish());
-
 /** The body's empty object where a string is expected. */
 const EmptyOrTextSchema = z
 	.union([z.string(), z.record(z.string(), z.never())])
@@ -91,16 +72,23 @@ export type TurboV3Input = z.infer<typeof TurboV3InputSchema>;
  */
 const TurboV3ResponseSchema = z
 	.object({
-		status: Text().describe(
-			'connected, disconnected, busy, unreachable, invalid phone, restricted, pending, connected-75, disconnected-70.',
-		),
+		status: z
+			.string()
+			.nullish()
+			.describe(
+				'connected, disconnected, busy, unreachable, invalid phone, restricted, pending, connected-75, disconnected-70.',
+			),
 		error_text: EmptyOrTextSchema.nullish(),
-		phone_type: Text().describe('Mobile, Landline or VoIP.'),
-		caller_name: Text().describe(
-			'The subscriber name, when the carrier exposes it.',
-		),
-		carrier: Text(),
-		caller_type: Text().describe('Consumer, Business or Unavailable.'),
+		phone_type: z.string().nullish().describe('Mobile, Landline or VoIP.'),
+		caller_name: z
+			.string()
+			.nullish()
+			.describe('The subscriber name, when the carrier exposes it.'),
+		carrier: z.string().nullish(),
+		caller_type: z
+			.string()
+			.nullish()
+			.describe('Consumer, Business or Unavailable.'),
 	})
 	.loose();
 
@@ -116,9 +104,9 @@ export type TurboStandardInput = z.infer<typeof TurboStandardInputSchema>;
 
 const TurboStandardResponseSchema = z
 	.object({
-		status: Text(),
+		status: z.string().nullish(),
 		error_text: EmptyOrTextSchema.nullish(),
-		phone_type: Text().describe('Mobile, Landline or VoIP.'),
+		phone_type: z.string().nullish().describe('Mobile, Landline or VoIP.'),
 	})
 	.loose();
 
@@ -138,12 +126,15 @@ export type TurboInput = z.infer<typeof TurboInputSchema>;
  */
 const TurboResponseSchema = z
 	.object({
-		status: Text(),
+		status: z.string().nullish(),
 		error_text: EmptyOrTextSchema.nullish(),
-		iscell: Text().describe(
-			'Y for a cell phone, N for a landline, V for VoIP when enabled.',
-		),
-		carrier: Text(),
+		iscell: z
+			.string()
+			.nullish()
+			.describe(
+				'Y for a cell phone, N for a landline, V for VoIP when enabled.',
+			),
+		carrier: z.string().nullish(),
 	})
 	.loose();
 
@@ -163,10 +154,10 @@ export type ScrubInput = z.infer<typeof ScrubInputSchema>;
  */
 const ScrubResponseSchema = z
 	.object({
-		status: Text(),
+		status: z.string().nullish(),
 		error_text: EmptyOrTextSchema.nullish(),
-		iscell: Text(),
-		carrier: Text(),
+		iscell: z.string().nullish(),
+		carrier: z.string().nullish(),
 	})
 	.loose();
 
@@ -182,9 +173,9 @@ export type ScrubPlusInput = z.infer<typeof ScrubPlusInputSchema>;
 
 const ScrubPlusResponseSchema = z
 	.object({
-		status: Text(),
+		status: z.string().nullish(),
 		error_text: EmptyOrTextSchema.nullish(),
-		phone_type: Text().describe('Mobile, Landline or VoIP.'),
+		phone_type: z.string().nullish().describe('Mobile, Landline or VoIP.'),
 	})
 	.loose();
 
@@ -205,9 +196,10 @@ export type ActiveInput = z.infer<typeof ActiveInputSchema>;
  */
 const ActiveResponseSchema = z
 	.object({
-		RESPONSECODE: Text().describe(
-			'L active landline, C active cell, V active VoIP, N inactive.',
-		),
+		RESPONSECODE: z
+			.string()
+			.nullish()
+			.describe('L active landline, C active cell, V active VoIP, N inactive.'),
 		RESPONSEMSG: EmptyOrTextSchema.nullish(),
 	})
 	.loose();
@@ -224,9 +216,10 @@ export type WirelessIdInput = z.infer<typeof WirelessIdInputSchema>;
 
 const WirelessIdResponseSchema = z
 	.object({
-		RESPONSECODE: Text().describe(
-			'landline or cell. Anything else is a refusal.',
-		),
+		RESPONSECODE: z
+			.string()
+			.nullish()
+			.describe('landline or cell. Anything else is a refusal.'),
 		RESPONSEMSG: EmptyOrTextSchema.nullish(),
 	})
 	.loose();
@@ -246,24 +239,29 @@ export type DncLookupInput = z.infer<typeof DncLookupInputSchema>;
  * could not be checked against that list, so it is not a "no": treat it as
  * unknown rather than cleared.
  */
-const DncFlagSchema = Text().describe(
-	'Y is on the list, N is not, ? means a timeout or an unchecked list. Treat ? as unknown, not as cleared.',
-);
+const DncFlagSchema = z
+	.string()
+	.nullish()
+	.describe(
+		'Y is on the list, N is not, ? means a timeout or an unchecked list. Treat ? as unknown, not as cleared.',
+	);
 
 const DncLookupResponseSchema = z
 	.object({
-		RESPONSECODE: Text().describe(
-			'OK, or -1, 102 or invalid-phone for a refusal.',
-		),
+		RESPONSECODE: z
+			.string()
+			.nullish()
+			.describe('OK, or -1, 102 or invalid-phone for a refusal.'),
 		RESPONSEMSG: EmptyOrTextSchema.nullish(),
 		national_dnc: DncFlagSchema,
 		state_dnc: DncFlagSchema,
 		dma: DncFlagSchema,
-		litigator: Text().describe(
-			'Y, N or ? for a known TCPA litigator or serial plaintiff.',
-		),
-		iscell: Text().describe('Y cell, N landline, V VoIP.'),
-		id: Text().describe('An internal identifier.'),
+		litigator: z
+			.string()
+			.nullish()
+			.describe('Y, N or ? for a known TCPA litigator or serial plaintiff.'),
+		iscell: z.string().nullish().describe('Y cell, N landline, V VoIP.'),
+		id: z.string().nullish().describe('An internal identifier.'),
 	})
 	.loose();
 
@@ -280,9 +278,9 @@ export type DncPlusInput = z.infer<typeof DncPlusInputSchema>;
 /** The DNC lists plus the connection status, in the lowercase style. */
 const DncPlusResponseSchema = z
 	.object({
-		status: Text(),
+		status: z.string().nullish(),
 		error_text: EmptyOrTextSchema.nullish(),
-		iscell: Text(),
+		iscell: z.string().nullish(),
 		national_dnc: DncFlagSchema,
 		state_dnc: DncFlagSchema,
 		dma: DncFlagSchema,
@@ -302,14 +300,14 @@ export type FraudCheckInput = z.infer<typeof FraudCheckInputSchema>;
 
 const FraudLocationSchema = z
 	.object({
-		city: Text(),
-		state: Text(),
-		zip: Text(),
-		country_name: Text(),
-		country_iso2: Text(),
+		city: z.string().nullish(),
+		state: z.string().nullish(),
+		zip: z.string().nullish(),
+		country_name: z.string().nullish(),
+		country_iso2: z.string().nullish(),
 		latitude: z.number().nullish(),
 		longitude: z.number().nullish(),
-		time_zone: Text(),
+		time_zone: z.string().nullish(),
 	})
 	.loose();
 
@@ -321,34 +319,39 @@ const FraudLocationSchema = z
  */
 const FraudCheckResponseSchema = z
 	.object({
-		status: Text().describe('"0" on success.'),
+		status: z.string().nullish().describe('"0" on success.'),
 		error_text: EmptyOrTextSchema.nullish(),
-		id: Text(),
-		req_phone: Text().describe('The number as submitted.'),
-		tstatus: Text(),
-		tdesc: Text(),
-		phn_type: Text().describe('A numeric code; see phn_desc.'),
-		phn_desc: Text().describe('LANDLINE, VOIP, WIRELESS and so on.'),
-		risk_level: Text().describe('low, medium or high.'),
-		recommendation: Text().describe(
-			'What the score suggests, such as allow, flag or block.',
-		),
-		score: Text().describe(
-			'A numeric string from 0 to 1000; higher is riskier.',
-		),
-		carrier: Text(),
-		location_city: Text(),
-		location_state: Text(),
-		location_zip: Text(),
-		location_country_name: Text(),
-		location_country_iso2: Text(),
-		location_country_iso3: Text(),
-		location_latitude: Text(),
-		location_longitude: Text(),
-		location_time_zone: Text(),
-		numbering_original_complete_phone_number: Text(),
-		numbering_original_country_code: Text(),
-		numbering_original_phone_number: Text(),
+		id: z.string().nullish(),
+		req_phone: z.string().nullish().describe('The number as submitted.'),
+		tstatus: z.string().nullish(),
+		tdesc: z.string().nullish(),
+		phn_type: z.string().nullish().describe('A numeric code; see phn_desc.'),
+		phn_desc: z
+			.string()
+			.nullish()
+			.describe('LANDLINE, VOIP, WIRELESS and so on.'),
+		risk_level: z.string().nullish().describe('low, medium or high.'),
+		recommendation: z
+			.string()
+			.nullish()
+			.describe('What the score suggests, such as allow, flag or block.'),
+		score: z
+			.string()
+			.nullish()
+			.describe('A numeric string from 0 to 1000; higher is riskier.'),
+		carrier: z.string().nullish(),
+		location_city: z.string().nullish(),
+		location_state: z.string().nullish(),
+		location_zip: z.string().nullish(),
+		location_country_name: z.string().nullish(),
+		location_country_iso2: z.string().nullish(),
+		location_country_iso3: z.string().nullish(),
+		location_latitude: z.string().nullish(),
+		location_longitude: z.string().nullish(),
+		location_time_zone: z.string().nullish(),
+		numbering_original_complete_phone_number: z.string().nullish(),
+		numbering_original_country_code: z.string().nullish(),
+		numbering_original_phone_number: z.string().nullish(),
 	})
 	.loose();
 
@@ -370,12 +373,15 @@ export type ReassignedInput = z.infer<typeof ReassignedInputSchema>;
 
 const ReassignedResponseSchema = z
 	.object({
-		RESPONSECODE: Text().describe('OK, or -1 for a problem.'),
+		RESPONSECODE: z.string().nullish().describe('OK, or -1 for a problem.'),
 		RESPONSEMSG: EmptyOrTextSchema.nullish(),
-		reassigned: Text().describe(
-			'yes, no, no_data or undetermined. no_data means the carriers recorded no change since 27 January 2021, not that the number is safe to call.',
-		),
-		id: Text().describe('-1 on an error.'),
+		reassigned: z
+			.string()
+			.nullish()
+			.describe(
+				'yes, no, no_data or undetermined. no_data means the carriers recorded no change since 27 January 2021, not that the number is safe to call.',
+			),
+		id: z.string().nullish().describe('-1 on an error.'),
 	})
 	.loose();
 
@@ -391,18 +397,28 @@ export type EmailVerifyInput = z.infer<typeof EmailVerifyInputSchema>;
 
 const EmailVerifyResponseSchema = z
 	.object({
-		retval: Text().describe(
-			'"0" for a good answer, "-1" when the request failed.',
-		),
+		retval: z
+			.string()
+			.nullish()
+			.describe('"0" for a good answer, "-1" when the request failed.'),
 		error_text: EmptyOrTextSchema.nullish(),
 		error_code: EmptyOrTextSchema.nullish(),
 		error: EmptyOrTextSchema.nullish(),
-		id: Text(),
-		status: Text().describe('valid, invalid, unknown or accept_all.'),
-		connected: Text().describe(
-			'Y or N: the address is connected to an active online network.',
-		),
-		disposable: Text().describe('Y or N: a disposable email provider.'),
+		id: z.string().nullish(),
+		status: z
+			.string()
+			.nullish()
+			.describe('valid, invalid, unknown or accept_all.'),
+		connected: z
+			.string()
+			.nullish()
+			.describe(
+				'Y or N: the address is connected to an active online network.',
+			),
+		disposable: z
+			.string()
+			.nullish()
+			.describe('Y or N: a disposable email provider.'),
 	})
 	.loose();
 

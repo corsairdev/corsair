@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { asRecord, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { RealPhoneValidationContext } from '..';
 import type {
@@ -8,6 +8,39 @@ import type {
 import { assertNotRefused, makeRealPhoneValidationRequest } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
+
+/**
+ * Fields whose schema takes the empty object itself, documented as `{}` when
+ * there is nothing to report.
+ */
+const EMPTY_OBJECT_FIELDS = new Set([
+	'error_text',
+	'RESPONSEMSG',
+	'error_code',
+	'error',
+]);
+
+/**
+ * The services build their JSON from XML, so an element with no text arrives
+ * as `{}` rather than `""` (error_text and RESPONSEMSG show it). Every other
+ * top-level `{}` becomes null, so an empty caller name or carrier cannot fail
+ * the output schema after the lookup was charged.
+ * unknown: raw is the response body; the output schema checks the result.
+ */
+export function emptyElementsToNull(raw: unknown): unknown {
+	const record = asRecord(raw);
+	if (!record) return raw;
+	return Object.fromEntries(
+		Object.entries(record).map(([key, value]) => {
+			const inner = asRecord(value);
+			const empty =
+				!EMPTY_OBJECT_FIELDS.has(key) &&
+				inner !== null &&
+				Object.keys(inner).length === 0;
+			return [key, empty ? null : value];
+		}),
+	);
+}
 
 /**
  * Validates the input, sends the request, checks the body is not a refusal, shapes
@@ -49,8 +82,9 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	// would accept it as a result.
 	assertNotRefused(raw, operation.service, request);
 
+	const body = emptyElementsToNull(raw);
 	const result = operation.output.parse(
-		options.shape ? options.shape(raw, parsed) : raw,
+		options.shape ? options.shape(body, parsed) : body,
 	);
 
 	await logEventFromContext(
