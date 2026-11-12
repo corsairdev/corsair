@@ -408,6 +408,7 @@ export const BaseProviders = [
 	'sapsuccessfactors',
 	'satismeter',
 	'scaleai',
+	'scrapedo',
 	'scrapegraphai',
 	'scrapingant',
 	'search1api',
@@ -918,6 +919,7 @@ export const ProviderDisplayNames = {
 	sapsuccessfactors: 'SAP SuccessFactors',
 	satismeter: 'SatisMeter',
 	scaleai: 'Scale AI',
+	scrapedo: 'Scrape.do',
 	scrapegraphai: 'ScrapeGraphAI',
 	scrapingant: 'ScrapingAnt',
 	search1api: 'Search1API',
@@ -1435,6 +1437,7 @@ export type AllProviders =
 	| 'sapsuccessfactors'
 	| 'satismeter'
 	| 'scaleai'
+	| 'scrapedo'
 	| 'scrapegraphai'
 	| 'scrapingant'
 	| 'search1api'
