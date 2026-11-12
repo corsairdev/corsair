@@ -212,7 +212,7 @@ const unisenderEndpointMeta = {
 	'contacts.subscribe': {
 		riskLevel: 'write',
 		description:
-			'Add or update a contact in one or more lists. By default (double_optin 0) Unisender emails the contact a confirmation request; pass double_optin 3 to add them with no email',
+			'Add or update a contact in one or more lists. By default (double_optin 0) Unisender emails the contact a confirmation request; pass double_optin 3 to add them with no email. Returns only person_id; read the confirmation status with contacts.get',
 	},
 	'contacts.unsubscribe': {
 		riskLevel: 'write',
