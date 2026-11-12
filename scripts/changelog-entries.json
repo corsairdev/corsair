@@ -3482,5 +3482,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/ritekit",
+    "dir": "packages/ritekit",
+    "name": "RiteKit",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
