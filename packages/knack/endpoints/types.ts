@@ -82,6 +82,9 @@ export const KnackFieldsSchema = z
 			z.number(),
 			z.boolean(),
 			z.array(z.string()),
+			// unknown: a compound field's parts depend on its type in the caller's
+			// app (name, email, address, link, date), which Knack validates.
+			z.record(z.string(), z.unknown()),
 		]),
 	)
 	.describe(

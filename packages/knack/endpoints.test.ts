@@ -418,6 +418,21 @@ describe('records.create', () => {
 	});
 
 	// A `_raw` mirror is read-only, and Knack rejects it, so it fails here first.
+	// Knack's own POST example writes an address as an object and a link as
+	// `{ url }`; name, email and date fields take objects too.
+	it('sends compound field values as objects', async () => {
+		respond(record);
+
+		const fields = {
+			field_16: { street: '123 Fake St.', city: 'Amonate', zip: '24601' },
+			field_17: { url: 'https://example.com' },
+			field_20: { first: 'Ada', last: 'Lovelace' },
+		};
+		await invoke(Records.create, { object_key: 'object_1', fields });
+
+		expect(lastRequest().body).toEqual(fields);
+	});
+
 	it('rejects a read-only _raw field without calling the API', async () => {
 		await expect(
 			invoke(Records.create, {
