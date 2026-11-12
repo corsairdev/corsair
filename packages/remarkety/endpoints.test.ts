@@ -664,12 +664,13 @@ describe('masterTemplates', () => {
 
 		const result = (await invoke(Campaigns.masterTemplates, {
 			storeId: STORE_ID,
-		})) as { name?: string; public?: boolean }[];
+		})) as { metadata?: { id?: number; name?: string; public?: boolean } }[];
 
 		expect(lastRequest(fetchMock).path).toBe(
 			'/api/v1/stores/1/master-templates',
 		);
-		expect(result[0]?.name).toBe('Promo base');
+		expect(result[0]?.metadata?.id).toBe(22690);
+		expect(result[0]?.metadata?.name).toBe('Amazing Christmas For Everyone');
 	});
 
 	it('passes the search term', async () => {
@@ -726,30 +727,47 @@ describe('products.list', () => {
 });
 
 describe('rules', () => {
-	it('lists every rule with its operators', async () => {
+	it('lists every rule, keyed by rule type', async () => {
 		respond(fetchMock, RULES);
 
-		const result = (await invoke(Campaigns.rules, { storeId: STORE_ID })) as {
-			type?: string;
-			operators?: string[];
-		}[];
+		const result = (await invoke(Campaigns.rules, {
+			storeId: STORE_ID,
+		})) as Record<string, { operators?: string[]; possibleValues?: object }>;
 
 		expect(lastRequest(fetchMock).path).toBe('/api/v1/stores/1/rules');
-		expect(result).toHaveLength(2);
-		expect(result[0]?.operators).toEqual(['eq', 'gte']);
+		expect(Object.keys(result)).toEqual([
+			'CART_FOLLOWUP_TIME',
+			'CAMPAIGN_ACTION',
+		]);
+		expect(result.CAMPAIGN_ACTION?.operators).toEqual(['is', 'is not']);
+		expect(result.CAMPAIGN_ACTION?.possibleValues).toEqual({
+			'1': 'Opened',
+			'2': 'Clicked',
+			'3': 'Purchase',
+		});
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'remarkety.rules.list',
+			{ rules: 2 },
+			'completed',
+		);
 	});
 
-	it('reads one rule type', async () => {
+	it('reads one rule type, whose possibleValues may be a string', async () => {
 		respond(fetchMock, RULE);
 
 		const result = (await invoke(Campaigns.rule, {
 			storeId: STORE_ID,
-			ruleType: 'delay',
-		})) as { displayName?: string; possibleValues?: unknown[] };
+			ruleType: 'CART_FOLLOWUP_TIME',
+		})) as { displayName?: string; possibleValues?: string };
 
-		expect(lastRequest(fetchMock).path).toBe('/api/v1/stores/1/rules/delay');
-		expect(result.displayName).toBe('Delay');
-		expect(result.possibleValues).toHaveLength(3);
+		expect(lastRequest(fetchMock).path).toBe(
+			'/api/v1/stores/1/rules/CART_FOLLOWUP_TIME',
+		);
+		expect(result.displayName).toBe(
+			'Number of hours since last modification of cart',
+		);
+		expect(result.possibleValues).toBe('');
 	});
 });
 

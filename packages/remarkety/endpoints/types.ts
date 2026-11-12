@@ -518,10 +518,16 @@ const MasterTemplateMetadataSchema = z
 		date_uploaded: z.string().nullish(),
 		public: z.boolean().nullish(),
 		tags: z.array(z.string()).nullish(),
+		thumbnail: z.string().nullish(),
+		editor: z.string().nullish(),
+		campaignTypes: z.array(z.number()).nullish(),
 	})
 	.loose();
 
-const MasterTemplatesListResponseSchema = z.array(MasterTemplateMetadataSchema);
+/** Each listed template wraps its details in `metadata`. */
+const MasterTemplatesListResponseSchema = z.array(
+	z.object({ metadata: MasterTemplateMetadataSchema.nullish() }).loose(),
+);
 
 export type MasterTemplatesListResponse = z.infer<
 	typeof MasterTemplatesListResponseSchema
@@ -593,23 +599,28 @@ const RulesListInputSchema = z.object({
 
 export type RulesListInput = z.infer<typeof RulesListInputSchema>;
 
-/** What one rule accepts: its input type, operators and possible values. */
+/**
+ * What one rule accepts: its input type, operators and possible values.
+ *
+ * Live, `possibleValues` is an empty string for a free-text rule, a map such as
+ * `{"1": "Opened", "2": "Clicked"}` for a select, an array, or null, so it is any
+ * JSON value.
+ */
 const RuleDefinitionSchema = z
 	.object({
 		inputType: z.string().nullish(),
 		displayName: z.string().nullish(),
 		operators: z.array(z.string()).nullish(),
 		details: z.string().nullish(),
-		possibleValues: z.array(JsonValueSchema).nullish(),
-		defaultValue: z.array(JsonValueSchema).nullish(),
+		possibleValues: JsonValueSchema.nullish().describe(
+			'A string, a map of value to label, or a list, depending on the rule.',
+		),
+		defaultValue: JsonValueSchema.nullish(),
 	})
 	.loose();
 
-const RulesListResponseSchema = z.array(
-	RuleDefinitionSchema.extend({
-		type: z.string().nullish().describe('The rule type these options are for.'),
-	}).loose(),
-);
+/** Every rule the store supports, keyed by rule type (CART_FOLLOWUP_TIME, …). */
+const RulesListResponseSchema = z.record(z.string(), RuleDefinitionSchema);
 
 export type RulesListResponse = z.infer<typeof RulesListResponseSchema>;
 

@@ -356,7 +356,7 @@ export const rules: RemarketyEndpoints['rulesList'] = (ctx, input) =>
 			replayable: true,
 		}),
 		{
-			log: (_, result) => ({ rules: result.length }),
+			log: (_, result) => ({ rules: Object.keys(result).length }),
 		},
 	);
 

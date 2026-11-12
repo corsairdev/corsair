@@ -91,14 +91,20 @@ export const EMAIL_PREVIEW = {
 	coupon: { code: 'SAVE10' },
 };
 
+// Live shape (trimmed): each template's details sit under `metadata`.
 export const MASTER_TEMPLATES = [
 	{
-		id: 3,
-		name: 'Promo base',
-		author: 'Remarkety',
-		date_uploaded: '2025-01-01',
-		public: true,
-		tags: ['promo'],
+		metadata: {
+			id: 22690,
+			name: 'Amazing Christmas For Everyone',
+			date_uploaded: '2025-11-09 12:56:26',
+			days_ago_uploaded: 367,
+			public: true,
+			tags: [],
+			thumbnail: 'https://cdn.example.com/templates/christmas.jpg',
+			editor: 'beefree-v1',
+			campaignTypes: [1],
+		},
 	},
 ];
 
@@ -113,32 +119,28 @@ export const PRODUCTS = [
 	},
 ];
 
-export const RULES = [
-	{
-		type: 'delay',
-		inputType: 'number',
-		displayName: 'Delay',
-		operators: ['eq', 'gte'],
-		details: 'Days to wait before the action runs.',
-		possibleValues: [1, 2, 3],
-		defaultValue: [1],
+// Live shape (trimmed): a map keyed by rule type, and possibleValues is an empty
+// string for a free-text rule and a value-to-label map for a select.
+export const RULES = {
+	CART_FOLLOWUP_TIME: {
+		inputType: 'interval-hours',
+		displayName: 'Number of hours since last modification of cart',
+		operators: ['is'],
+		details: 'Number of hours since last modification of cart',
+		defaultValue: [],
+		possibleValues: '',
 	},
-	{
-		type: 'segment',
-		inputType: 'select',
-		displayName: 'Segment',
-		operators: ['in'],
+	CAMPAIGN_ACTION: {
+		inputType: 'select-single',
+		displayName: 'CAMPAIGN_ACTION',
+		operators: ['is', 'is not'],
+		details: 'CAMPAIGN_ACTION_CONDITION_DESCRIPTION',
+		defaultValue: [],
+		possibleValues: { '1': 'Opened', '2': 'Clicked', '3': 'Purchase' },
 	},
-];
-
-export const RULE = {
-	inputType: 'number',
-	displayName: 'Delay',
-	operators: ['eq', 'gte'],
-	details: 'Days to wait before the action runs.',
-	possibleValues: [1, 2, 3],
-	defaultValue: [1],
 };
+
+export const RULE = RULES.CART_FOLLOWUP_TIME;
 
 export const SEGMENT_COUNT = { count: 4213 };
 
