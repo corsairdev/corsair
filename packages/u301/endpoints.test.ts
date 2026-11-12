@@ -128,7 +128,7 @@ describe('links.create', () => {
 
 		await expect(
 			invoke(Api.create, { url: 'https://example.com' }),
-		).rejects.toThrow('Monthly link allowance exceeded');
+		).rejects.toThrow('MONTHLY_LINK_LIMIT_REACHED: Monthly link limit reached');
 	});
 });
 

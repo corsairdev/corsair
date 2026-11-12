@@ -132,9 +132,16 @@ export const BAD_REQUEST = {
 	requestId: 'req_123',
 };
 
+// The documented monthly-quota body (https://u301.com/docs/link-quotas): the
+// reason is in `error`, not `message`.
 export const QUOTA = {
-	message: 'Monthly link allowance exceeded',
-	code: 'RATE_LIMITED',
+	error:
+		'Monthly link limit reached (100/100). Upgrade your plan or wait until next month.',
+	code: 'MONTHLY_LINK_LIMIT_REACHED',
+	limit: 100,
+	used: 100,
+	remaining: 0,
+	resets_at: '2026-12-01T00:00:00.000Z',
 };
 
 export const SERVER_ERROR = { message: 'Internal server error' };

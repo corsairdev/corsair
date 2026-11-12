@@ -136,7 +136,30 @@ describe('U301 client', () => {
 		);
 
 		expect(error.isQuotaError).toBe(true);
-		expect(error.code).toBe('RATE_LIMITED');
+		expect(error.isRateLimited).toBe(false);
+		expect(error.code).toBe('MONTHLY_LINK_LIMIT_REACHED');
+		expect(error.message).toContain('Monthly link limit reached');
+	});
+
+	it('treats a RATE_LIMITED 429 as a short-term limit, not the monthly quota', async () => {
+		// U301's error table documents RATE_LIMITED as "too many requests in a given
+		// amount of time"; only MONTHLY_LINK_LIMIT_REACHED is the allowance.
+		respond({ message: 'Too many requests', code: 'RATE_LIMITED' }, 429, {
+			'Retry-After': '60',
+		});
+
+		const error = await failure(
+			makeU301Request(KEY, {
+				method: 'GET',
+				path: '/shorten/list',
+				replayable: true,
+			}),
+		);
+
+		expect(error.isQuotaError).toBe(false);
+		expect(error.isRateLimited).toBe(true);
+		// The header is read even though corsair/http does not retry the 429 itself.
+		expect(error.retryAfter).toBe(60_000);
 	});
 
 	it('records whether the failed call may be replayed', async () => {
@@ -229,7 +252,7 @@ describe('describeU301Error', () => {
 
 	it('adds the code beside the status', () => {
 		expect(describeU301Error(429, QUOTA, 'x')).toBe(
-			'U301 429 RATE_LIMITED: Monthly link allowance exceeded',
+			'U301 429 MONTHLY_LINK_LIMIT_REACHED: Monthly link limit reached (100/100). Upgrade your plan or wait until next month.',
 		);
 	});
 

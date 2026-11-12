@@ -84,12 +84,19 @@ describe('U301 error handlers', () => {
 		expect(await matches(error)).toBe('VALIDATION_ERROR');
 	});
 
-	it('matches a 429 as the link quota, before the rate-limit idea', async () => {
-		const error = apiError({ status: 429, code: 'RATE_LIMITED' });
+	it('retries a RATE_LIMITED 429 on a replayable call, since it is not the quota', async () => {
+		const error = apiError({
+			status: 429,
+			code: 'RATE_LIMITED',
+			replayable: true,
+			retryAfter: 60_000,
+		});
 
-		expect(await matches(error)).toBe('QUOTA_ERROR');
-		// Waiting cannot add allowance, so it is never retried.
-		await expect(run('QUOTA_ERROR', error)).resolves.toEqual({ maxRetries: 0 });
+		expect(await matches(error)).toBe('RATE_LIMIT_ERROR');
+		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toMatchObject({
+			maxRetries: 3,
+			headersRetryAfterMs: 60_000,
+		});
 	});
 
 	it('treats the documented monthly-limit code as a quota, never retried', async () => {

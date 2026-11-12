@@ -98,9 +98,9 @@ export class U301APIError extends Error {
 	 * two are kept apart rather than folded into one flag.
 	 */
 	get isQuotaError(): boolean {
-		return (
-			this.code === U301_MONTHLY_LIMIT_CODE || this.code === 'RATE_LIMITED'
-		);
+		// RATE_LIMITED is the code U301 documents for "too many requests in a given
+		// amount of time", the temporary kind, so it is not matched here.
+		return this.code === U301_MONTHLY_LIMIT_CODE;
 	}
 
 	/** A 429 that is only a throughput limit, so waiting and resending can work. */
@@ -221,9 +221,10 @@ export type U301Request = {
 };
 
 /**
- * U301 documents a `429` for the monthly link allowance rather than for a request
- * rate, so `corsair/http` must not treat it as a rate limit and retry it: doing so
- * would spend the allowance again. Retries live in error-handlers.ts.
+ * A U301 `429` is either the monthly link allowance (`MONTHLY_LINK_LIMIT_REACHED`)
+ * or a short-term request rate (`RATE_LIMITED`). `corsair/http` must not resend
+ * either on its own: a resent create could spend the allowance again. Retries
+ * live in error-handlers.ts, which tells the two apart.
  */
 const U301_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -231,7 +232,8 @@ const U301_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
-	// A 429 here is the link quota, which no amount of waiting fixes.
+	// Core still treats every 429 as a rate limit and reads Retry-After into the
+	// ApiError; with maxRetries 0 it does not resend, and error-handlers.ts decides.
 	isRateLimitError: () => false,
 };
 
