@@ -375,7 +375,7 @@ const DonationsCreateInputSchema = z.object({
 	type: z
 		.enum(['ONLINE', 'OFFLINE'])
 		.describe(
-			'How the payment was taken. Either way this only records a payment made elsewhere; Raisely charges nothing on this route.',
+			'Raisely stores every donation recorded on this route as `OFFLINE`, whatever is sent, so pass `OFFLINE`. The route only records a payment made elsewhere and charges nothing.',
 		),
 	campaign_uuid: z
 		.string()

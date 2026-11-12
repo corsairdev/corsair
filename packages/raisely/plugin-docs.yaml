@@ -9,7 +9,7 @@ overviewNote: |
   - **Two routes are not on the plain REST shape.** `/donations` POST takes its record under `data`, and `/profiles` requires a `campaign` query parameter. Both are enforced by the schemas here rather than left to a 422.
   - **Offsets, not pages.** Every collection answers `{ data, pagination }` with `total`, `offset` and `limit`, and the plugin returns `next_offset` for the next call. Do not add `limit` to the offset: the response already reports both.
   - **A sort without an order is ignored.** Raisely applies `sort` only when `order` is also present, so the plugin sends the pair together or neither.
-  - **Donation types.** `type` takes `ONLINE` for a donation taken through a gateway or `OFFLINE` for one recorded by hand; `mode` takes `LIVE` or `TEST`. An unknown value is rejected before the request is sent.
+  - **Donation types.** `type` takes `ONLINE` or `OFFLINE`, but Raisely stores a donation recorded through `donations.create` as `OFFLINE` either way; `mode` takes `LIVE` or `TEST`. An unknown value is rejected before the request is sent.
   - **Amounts are integers in the smallest currency unit.** A `$25.00` donation arrives as `2500`, and `donations.create` expects the same.
   - **Errors are RFC 7807 problem documents.** `detail` is the summary, `errors` names each field at fault, and `code` is the machine-readable reason. `instance` is the id Raisely support asks for; all four are exposed on `RaiselyAPIError`.
   - **`410 Gone` is not a 404.** A soft-deleted campaign or donation answers `410`; both are reported as not-found, since no retry recovers either.
