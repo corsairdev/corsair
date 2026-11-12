@@ -43,6 +43,8 @@ const thirdParty = {
 };
 const mutationPayload = { clientMutationId: null };
 
+// This table combines different endpoint inputs and outputs; each public call
+// remains independently typed and validates its fixture at the endpoint seam.
 type Case = {
 	path: string;
 	args: Record<string, unknown>;

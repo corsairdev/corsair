@@ -150,9 +150,11 @@ export type BaseFlyPlugin<T extends FlyPluginOptions> = CorsairPlugin<
 export type InternalFlyPlugin = BaseFlyPlugin<FlyPluginOptions>;
 export type ExternalFlyPlugin<T extends FlyPluginOptions> = BaseFlyPlugin<T>;
 
+export function fly(): ExternalFlyPlugin<{}>;
 export function fly<const T extends FlyPluginOptions>(
-	incomingOptions: FlyPluginOptions & T = {} as FlyPluginOptions & T,
-): ExternalFlyPlugin<T> {
+	incomingOptions: FlyPluginOptions & T,
+): ExternalFlyPlugin<T>;
+export function fly(incomingOptions: FlyPluginOptions = {}): InternalFlyPlugin {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,

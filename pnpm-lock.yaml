@@ -6416,6 +6416,9 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
+      graphql:
+        specifier: 16.14.0
+        version: 16.14.0
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))

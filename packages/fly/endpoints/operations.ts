@@ -147,6 +147,8 @@ const thirdPartyFields =
 const clientMutationId = optionalString;
 
 type Risk = 'read' | 'write' | 'destructive';
+// Each operation has a different validated variables object; the shared factory
+// cannot prescribe its field values without losing the individual schema types.
 function operation<
 	I extends z.ZodType<Record<string, unknown>>,
 	O extends z.ZodType,
@@ -180,6 +182,7 @@ const orgSelector = {
 };
 const orgDecl = '$id: ID, $name: String, $slug: String';
 const orgArgs = 'id: $id, name: $name, slug: $slug';
+// Mutation input fields likewise vary by operation and are validated by `input`.
 const mutation = <
 	I extends z.ZodType<Record<string, unknown>>,
 	O extends z.ZodType,
