@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Demio plugin"
+sidebarTitle: "Overview"
 description: "Webinar and event data from Demio - list events and their dates, register attendees, and read who attended each session."
 ---
 
@@ -12,7 +13,7 @@ Demio issues two credentials and every request carries both, so connect with the
 - **Identifying the event.** `registrations.create` takes either `id` or `ref_url`, the event's public registration page link. Omit `date_id` to put the registrant on the event's next date, and pass one to choose a date.
 - **Registration is the only write.** It adds a person to an event and sends them a join link. Every other operation reads.
 - **On-demand dates.** Inside `events.get`, an on-demand date reports `status: 'on-demand'` with `timestamp`, `datetime` and `zone` all null. `events.getDate` describes the same date as `status: 'running'` with the current time as its `timestamp`.
-- **The participant status has two spellings.** Filter with `did-not-attend` and `left-early`; each participant comes back with `did not attend` and `left early`.
+- **The participant status has two spellings.** Filter with `did-not-attend` and `left-early`; each participant comes back with `did not attend` and `left early`. Demio ignores a `status` it does not recognise and returns every registrant, so a misspelled filter widens the list instead of failing.
 - **Rate limits answer 417, not 429.** Each endpoint accepts 180 requests a minute, and accounts also carry a daily call allowance. A per-minute limit is retried up to twice: a `Retry-After` from Demio sets the wait, and without one the plugin waits the documented minute, because a shorter delay would retry inside the same window. A spent daily allowance fails immediately, since no retry restores it.
 - **No paging.** The events and participants operations return the whole set with no page parameters and no cursor, so a large account receives every record in one answer.
 - **Registration needs a verified account email.** A live registration against an account whose owner has not confirmed their address answers 400 `{"errors":["Your email is not verified. Please, verify your email address."]}`. Verify the address Demio sent to the account owner before relying on `registrations.create`.
@@ -78,7 +79,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. Demio needs both an API key and an API secret from **Account Settings > API**; store the pair on the account before the first call, because a call with no saved pair throws `AuthMissingError` rather than reaching the API.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 demio()

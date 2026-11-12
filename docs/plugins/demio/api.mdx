@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Demio: every `demio.api.*` operation with input and output types."
+title: "Demio API reference"
+sidebarTitle: "API"
+description: "API reference for the Demio plugin in Corsair: every `demio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `demio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -253,7 +252,7 @@ await corsair.demio.api.reports.participants({ date_id: 1575 });
 | `date_id` | `number` | Yes | The event date id from `events.get` or `events.getDate`. |
 | `status` | `attended \| did-not-attend \| completed \| left-early \| banned` | No | Narrows the list. Omit it to receive every registrant. |
 
-Filter with the hyphenated values `attended`, `did-not-attend`, `completed`, `left-early` and `banned`; the `status` each participant returns uses spaces.
+Filter with the hyphenated values `attended`, `did-not-attend`, `completed`, `left-early` and `banned`; the `status` each participant returns uses spaces. An unrecognised value is ignored and every registrant comes back.
 
 
 
