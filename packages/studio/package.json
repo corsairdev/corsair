@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/studio",
-  "version": "0.1.24",
+  "version": "0.1.25",
   "description": "Local dashboard for inspecting and configuring your Corsair instance",
   "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
