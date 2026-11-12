@@ -1,36 +1,49 @@
 import { asRecord } from 'corsair/core';
 
 /**
- * Recruitee answers a collection as `{ <key>: [] }` with the rows at the top
- * level; some routes also carry `meta`. Paging is `limit`/`offset`, so
- * `next_offset` is derived from the rows returned and the caller's offset.
+ * Recruitee pages its collections by `page` (1-based) and `limit`. The offers
+ * and locations routes answer `{ <key>: [], meta: { limit, page, total_count } }`;
+ * the candidate search answers `{ hits: [], total }`. `next_page` is derived from
+ * the total when the route sends one, otherwise from whether a full page came
+ * back.
  *
  * It is derived here rather than in a zod transform because the docs generator
  * reads a transform's input side and would omit it.
  */
-export function listShape(key: string) {
+export function pagedShape(key: string, rowsKey = key) {
 	return (
+		// unknown: the provider's JSON body; the operation's output schema
+		// validates whatever this returns.
 		raw: unknown,
-		// unknown: the parsed input, narrowed to the offset this shaper reads.
-		parsed: { offset?: number; limit?: number },
+		parsed: { page?: number; limit?: number },
 	) => {
 		const record = asRecord(raw);
-		const rows = record?.[key];
+		const rows = record?.[rowsKey];
 		const returned = Array.isArray(rows) ? rows.length : 0;
-		const offset = parsed.offset ?? 0;
-		const limit = parsed.limit;
 		const meta = asRecord(record?.meta);
-		// A full page may have more behind it; a short one is the last.
-		const hasNext =
-			limit !== undefined &&
-			returned >= limit &&
-			(meta?.total === undefined ||
-				typeof meta.total !== 'number' ||
-				offset + returned < meta.total);
+		const page = parsed.page ?? 1;
+		const total =
+			typeof meta?.total_count === 'number'
+				? meta.total_count
+				: typeof record?.total === 'number'
+					? record.total
+					: undefined;
+		// The search sends no `meta.limit`; with no limit from the caller either,
+		// the page that came back is Recruitee's default size.
+		const limit =
+			parsed.limit ??
+			(typeof meta?.limit === 'number' ? meta.limit : undefined) ??
+			returned;
+		let hasNext = false;
+		if (returned > 0 && total !== undefined) {
+			hasNext = page * limit < total;
+		} else if (returned > 0) {
+			hasNext = returned >= limit;
+		}
 		return {
 			[key]: rows,
-			meta,
-			next_offset: hasNext ? offset + returned : null,
+			total: total ?? null,
+			next_page: hasNext ? page + 1 : null,
 		};
 	};
 }
@@ -38,6 +51,8 @@ export function listShape(key: string) {
 /** Wraps a single-object answer under the operation's field. */
 export function singleShape(key: string) {
 	return (
+		// unknown: the provider's JSON body; the operation's output schema
+		// validates the field read from it.
 		raw: unknown,
 		// unknown: the operation input, unused by this shaper.
 		_parsed: unknown,

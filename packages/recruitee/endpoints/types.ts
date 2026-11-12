@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-/** Recruitee pages by `limit`/`offset`; its own default limit applies. */
+/** Recruitee pages by `page` and `limit`; its own default limit applies. */
 const LimitSchema = z
 	.number()
 	.int()
@@ -10,66 +10,103 @@ const LimitSchema = z
 		'Records per page. Recruitee applies its own default when omitted.',
 	);
 
-const OffsetSchema = z
+const PageSchema = z
 	.number()
 	.int()
-	.min(0)
+	.min(1)
 	.optional()
-	.describe('Records to skip, 0-based.');
+	.describe('The page to read, 1-based. Defaults to 1.');
 
-const pagingQuery = { limit: LimitSchema, offset: OffsetSchema };
+const pagingQuery = { limit: LimitSchema, page: PageSchema };
 
 const pagingFields = {
-	meta: z
-		.object({
-			total: z.number().nullish(),
-			page: z.number().nullish(),
-			limit: z.number().nullish(),
-		})
-		.loose()
-		.nullish(),
-	next_offset: z
+	total: z
 		.number()
 		.nullable()
-		.describe('Pass as `offset` to read the next page; null on the last.'),
+		.describe('How many records match in total, when the route says.'),
+	next_page: z
+		.number()
+		.nullable()
+		.describe('Pass as `page` to read the next page; null on the last.'),
 };
 
 // ── candidates ────────────────────────────────────────────────────────────
 
 /**
- * `/search/new/candidates` filters by stage, offer and status. The parameters
- * are query strings, and Recruitee rejects a body on this route.
+ * `/search/new/candidates` takes its filters as one `filters_json` array and
+ * pages by `page`; the plugin builds that array from these fields.
  */
 const CandidatesListInputSchema = z.object({
 	...pagingQuery,
-	query: z.string().optional().describe('A free-text search.'),
+	query: z
+		.string()
+		.optional()
+		.describe(
+			'A free-text search over name, emails, phones, tags, sources, stage, cover letter and CV.',
+		),
 	offer_id: z
 		.number()
 		.int()
 		.optional()
 		.describe('Only candidates on this offer.'),
-	stage: z.string().optional().describe('The pipeline stage name.'),
-	status: z.string().optional().describe('The candidate status.'),
-	department_id: z.number().int().optional(),
-	location_id: z.number().int().optional(),
+	stage: z
+		.string()
+		.optional()
+		.describe('Only candidates in a stage with this name, such as `Applied`.'),
+	status: z
+		.string()
+		.optional()
+		.describe('The candidate status: `qualified`, `disqualified` or `new`.'),
+	department_id: z
+		.number()
+		.int()
+		.optional()
+		.describe('Only candidates on offers in this department.'),
+	location_id: z
+		.number()
+		.int()
+		.optional()
+		.describe('Only candidates on offers at this location.'),
 	sort_by: z
 		.string()
 		.optional()
-		.describe('The column to sort on, such as `created_at`.'),
-	sort_direction: z.enum(['asc', 'desc']).optional(),
+		.describe(
+			'The column to sort on, such as `created_at`, `candidate_name` or `relevance`.',
+		),
+	sort_direction: z
+		.enum(['asc', 'desc'])
+		.optional()
+		.describe('Defaults to `desc` when `sort_by` is set.'),
 });
 
 export type CandidatesListInput = z.input<typeof CandidatesListInputSchema>;
 
-/** A placement: the candidate's position on a stage of an offer. */
+/**
+ * A placement: the candidate's position on a stage of an offer. The search
+ * route nests `offer` and `stage` as objects; the candidate route sends
+ * `offer_id` and `stage_id` instead.
+ */
 const PlacementSchema = z
 	.object({
 		id: z.number().nullish(),
 		candidate_id: z.number().nullish(),
 		offer_id: z.number().nullish(),
-		stage: z.string().nullish(),
+		talent_pool_id: z.number().nullish(),
+		offer: z
+			.object({
+				id: z.number().nullish(),
+				title: z.string().nullish(),
+				kind: z.string().nullish(),
+				status: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+		stage: z
+			.object({ id: z.number().nullish(), name: z.string().nullish() })
+			.loose()
+			.nullish(),
 		stage_id: z.number().nullish(),
-		status: z.string().nullish(),
+		disqualified: z.boolean().nullish(),
 		created_at: z.string().nullish(),
 		updated_at: z.string().nullish(),
 	})
@@ -95,13 +132,12 @@ const CandidateSchema = z
 		links: z.array(z.string()).nullish(),
 		cover_letter: z.string().nullish(),
 		sources: z.array(z.string()).nullish(),
-		status: z.string().nullish(),
-		stage: z.string().nullish(),
 		admin_id: z.number().nullish(),
 		created_at: z.string().nullish(),
 		updated_at: z.string().nullish(),
 		last_activity_at: z.string().nullish(),
-		my_last_rating: z.number().nullish(),
+		// A score on numeric scales, or a word such as `yes` on thumbs scales.
+		my_last_rating: z.union([z.number(), z.string()]).nullish(),
 		photo_url: z.string().nullish(),
 		cv_url: z.string().nullish(),
 		placements: z.array(PlacementSchema).nullish(),
@@ -158,14 +194,16 @@ export type CandidatesCreateResponse = z.infer<
 	typeof CandidatesCreateResponseSchema
 >;
 
+/**
+ * The profile fields the update route takes. Stage moves and disqualification
+ * belong to the candidate's placement on an offer, not to this route.
+ */
 const CandidatesUpdateInputSchema = z.object({
 	candidate_id: z.number().int().positive(),
 	name: z.string().optional(),
 	emails: z.array(z.string()).optional(),
 	phones: z.array(z.string()).optional(),
 	cover_letter: z.string().optional(),
-	status: z.string().optional(),
-	stage: z.string().optional(),
 });
 
 export type CandidatesUpdateInput = z.input<typeof CandidatesUpdateInputSchema>;
@@ -197,10 +235,20 @@ export type CandidatesDeleteResponse = z.infer<
 
 const OffersListInputSchema = z.object({
 	...pagingQuery,
-	query: z.string().optional(),
-	department_id: z.number().int().optional(),
-	location_id: z.number().int().optional(),
-	status: z.enum(['published', 'draft', 'archived']).optional(),
+	department_id: z
+		.number()
+		.int()
+		.optional()
+		.describe('Only offers in this department.'),
+	location_id: z
+		.number()
+		.int()
+		.optional()
+		.describe('Only offers at this location.'),
+	status: z
+		.enum(['draft', 'published', 'internal', 'closed', 'archived'])
+		.optional()
+		.describe('Only offers in this status.'),
 	kind: z
 		.enum(['job', 'talent_pool'])
 		.optional()
@@ -219,7 +267,9 @@ const OfferSchema = z
 		department: z.string().nullish(),
 		department_id: z.number().nullish(),
 		location: z.string().nullish(),
-		location_id: z.number().nullish(),
+		location_ids: z.array(z.number()).nullish(),
+		city: z.string().nullish(),
+		country_code: z.string().nullish(),
 		description: z.string().nullish(),
 		requirements: z.string().nullish(),
 		created_at: z.string().nullish(),
@@ -247,16 +297,25 @@ export type OffersGetInput = z.input<typeof OffersGetInputSchema>;
 const OffersGetResponseSchema = z.object({ offer: OfferSchema });
 export type OffersGetResponse = z.infer<typeof OffersGetResponseSchema>;
 
+/**
+ * A new offer starts as a draft; publishing is a separate step in Recruitee, so
+ * the create route takes no status.
+ */
 const OffersCreateInputSchema = z.object({
 	title: z.string().min(1),
 	kind: z.enum(['job', 'talent_pool']).optional(),
-	description: z.string().optional(),
-	requirements: z.string().optional(),
+	description: z.string().optional().describe('The description, as HTML.'),
+	requirements: z
+		.string()
+		.optional()
+		.describe('The requirements, as HTML. Recruitee requires them for a job.'),
 	department_id: z.number().int().optional(),
-	location_id: z.number().int().optional(),
-	// A new offer starts as a draft unless it is published explicitly, which is
-	// what the create route does.
-	status: z.enum(['draft', 'published']).optional(),
+	location_ids: z
+		.array(z.number().int())
+		.optional()
+		.describe(
+			'Location ids from `locations.list`. Recruitee requires at least one for a job.',
+		),
 });
 
 export type OffersCreateInput = z.input<typeof OffersCreateInputSchema>;
@@ -275,9 +334,8 @@ export type OffersUpdateResponse = z.infer<typeof OffersUpdateResponseSchema>;
 
 // ── departments and locations ─────────────────────────────────────────────
 
-const DepartmentsListInputSchema = z.object({
-	...pagingQuery,
-});
+/** The departments route returns every department in one answer. */
+const DepartmentsListInputSchema = z.object({});
 
 export type DepartmentsListInput = z.input<typeof DepartmentsListInputSchema>;
 
@@ -295,7 +353,6 @@ export type RecruiteeDepartment = z.infer<typeof DepartmentSchema>;
 
 const DepartmentsListResponseSchema = z.object({
 	departments: z.array(DepartmentSchema),
-	...pagingFields,
 });
 
 export type DepartmentsListResponse = z.infer<
@@ -313,10 +370,11 @@ const LocationSchema = z
 		id: z.number().nullish(),
 		name: z.string().nullish(),
 		city: z.string().nullish(),
-		country: z.string().nullish(),
+		state_name: z.string().nullish(),
 		country_code: z.string().nullish(),
+		full_address: z.string().nullish(),
 		note: z.string().nullish(),
-		offers_count: z.number().nullish(),
+		archived_at: z.string().nullish(),
 	})
 	.loose();
 

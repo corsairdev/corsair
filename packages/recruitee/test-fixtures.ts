@@ -32,6 +32,9 @@ export const NOT_FOUND = {
 	errors: [{ code: 'not_found', data: {}, message: 'Not found' }],
 };
 
+/** The live 404 from `/c/{company}/candidates/1`, verbatim. */
+export const PAGE_NOT_FOUND = { error: ['Page not found'] };
+
 export const CANDIDATE = {
 	id: CANDIDATE_ID,
 	name: 'John Smith',
@@ -41,8 +44,6 @@ export const CANDIDATE = {
 	links: [],
 	cover_letter: 'I would like to apply.',
 	sources: ['careers-site'],
-	status: 'open',
-	stage: 'Applied',
 	admin_id: 99,
 	created_at: '2026-08-19T10:21:09.046Z',
 	updated_at: '2026-08-20T10:21:09.046Z',
@@ -50,14 +51,68 @@ export const CANDIDATE = {
 	my_last_rating: null,
 	photo_url: null,
 	cv_url: 'https://example.com/cv.pdf',
-	placements: [],
+	placements: [
+		{
+			id: 142979997,
+			candidate_id: CANDIDATE_ID,
+			offer_id: OFFER_ID,
+			stage_id: 13946406,
+			talent_pool_id: null,
+			location_ids: [307959],
+		},
+	],
 	tags: ['senior'],
 };
 
-export const CANDIDATE_PAGE = { candidates: [CANDIDATE] };
+/**
+ * A search hit, trimmed from a live `/search/new/candidates` answer: the
+ * placement nests `offer` and `stage` as objects, and `stage` can be null.
+ */
+export const SEARCH_HIT = {
+	id: CANDIDATE_ID,
+	name: 'John Smith',
+	emails: ['john@example.com'],
+	phones: [],
+	sources: ['Indeed'],
+	tags: ['Sample'],
+	source: 'manual',
+	positive_ratings: 0,
+	created_at: '2026-10-26T06:43:01.146466Z',
+	placements: [
+		{
+			id: 142979997,
+			candidate_id: CANDIDATE_ID,
+			offer: {
+				id: OFFER_ID,
+				status: 'published',
+				title: 'Senior Backend Engineer',
+				kind: 'job',
+				slug: 'senior-backend-engineer',
+				location_ids: [],
+			},
+			stage: { id: 13946406, name: 'Applied', time_limit: null },
+			disqualified: false,
+		},
+		{
+			id: 142980004,
+			candidate_id: CANDIDATE_ID,
+			offer: { id: 2824613, kind: 'talent_pool', title: 'Rising stars' },
+			stage: null,
+			disqualified: false,
+		},
+	],
+};
+
+/** The search's envelope: `hits` and `total`, with no `meta`. */
+export const CANDIDATE_PAGE = {
+	aggregations: null,
+	hits: [SEARCH_HIT],
+	total: 1,
+};
 export const CANDIDATE_PAGE_MORE = {
-	candidates: [CANDIDATE],
-	meta: { total: 5, page: 1, limit: 1 },
+	aggregations: null,
+	hits: [SEARCH_HIT],
+	total: 5,
 };
 
 export const OFFER = {
@@ -68,8 +123,10 @@ export const OFFER = {
 	kind: 'job',
 	department: 'Engineering',
 	department_id: DEPARTMENT_ID,
-	location: 'Berlin',
-	location_id: 2,
+	location: 'Germany, Berlin, Berlin',
+	location_ids: [2],
+	city: 'Berlin',
+	country_code: 'DE',
 	description: 'Build the API.',
 	requirements: 'Five years of experience.',
 	created_at: '2026-01-01T00:00:00.000Z',
@@ -78,7 +135,10 @@ export const OFFER = {
 	translations: [],
 };
 
-export const OFFER_PAGE = { offers: [OFFER] };
+export const OFFER_PAGE = {
+	meta: { limit: 1000, page: 1, total_count: 1 },
+	offers: [OFFER],
+};
 
 export const DEPARTMENT = {
 	id: DEPARTMENT_ID,
@@ -93,10 +153,14 @@ export const LOCATION = {
 	id: 2,
 	name: 'Berlin',
 	city: 'Berlin',
-	country: 'Germany',
+	state_name: 'Berlin',
 	country_code: 'DE',
+	full_address: 'Germany, Berlin, Berlin',
 	note: null,
-	offers_count: 2,
+	archived_at: null,
 };
 
-export const LOCATION_PAGE = { locations: [LOCATION] };
+export const LOCATION_PAGE = {
+	meta: { limit: 1000, page: 1, total_count: 1 },
+	locations: [LOCATION],
+};

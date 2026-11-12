@@ -1,7 +1,7 @@
 import type { RecruiteeEndpoints } from '..';
 import { companyPath, segment } from '../client';
-import { call, queryOf } from './call';
-import { deletedShape, listShape, singleShape } from './shape';
+import { call, candidateFilters, queryOf } from './call';
+import { deletedShape, pagedShape, singleShape } from './shape';
 import {
 	RecruiteeEndpointInputSchemas as Inputs,
 	RecruiteeEndpointOutputSchemas as Outputs,
@@ -21,28 +21,26 @@ export const candidatesList: RecruiteeEndpoints['candidatesList'] = (
 		input,
 		(companyId, parsed) => ({
 			method: 'GET',
-			// The search route is the one that filters; `/candidates` itself is
-			// the create route.
+			// The search route is the one that filters. It reads every filter
+			// from one `filters_json` array and ignores `query` and `offset`.
 			path: companyPath(companyId, '/search/new/candidates'),
 			replayable: true,
 			query: queryOf({
-				query: parsed.query,
-				offer_id: parsed.offer_id,
-				stage: parsed.stage,
-				status: parsed.status,
-				department_id: parsed.department_id,
-				location_id: parsed.location_id,
-				sort_by: parsed.sort_by,
-				sort_direction: parsed.sort_direction,
+				filters_json: candidateFilters(parsed),
+				sort_by:
+					parsed.sort_by !== undefined
+						? `${parsed.sort_by}_${parsed.sort_direction ?? 'desc'}`
+						: undefined,
 				limit: parsed.limit,
-				offset: parsed.offset,
+				page: parsed.page,
 			}),
 		}),
 		{
-			shape: listShape('candidates'),
+			// The search answers `{ hits, total }`.
+			shape: pagedShape('candidates', 'hits'),
 			log: (_, result) => ({
 				count: result.candidates.length,
-				hasNext: result.next_offset !== null,
+				hasNext: result.next_page !== null,
 			}),
 		},
 	);
@@ -137,8 +135,6 @@ export const candidatesUpdate: RecruiteeEndpoints['candidatesUpdate'] = (
 					emails: parsed.emails,
 					phones: parsed.phones,
 					cover_letter: parsed.cover_letter,
-					status: parsed.status,
-					stage: parsed.stage,
 				}),
 			},
 		}),
@@ -187,21 +183,22 @@ export const offersList: RecruiteeEndpoints['offersList'] = (ctx, input) =>
 			method: 'GET',
 			path: companyPath(companyId, '/offers'),
 			replayable: true,
+			// The filters are arrays (`statuses[]=published`); a bare `status` or
+			// `department_id` is ignored and every offer comes back.
 			query: queryOf({
-				query: parsed.query,
-				department_id: parsed.department_id,
-				location_id: parsed.location_id,
-				status: parsed.status,
+				'department_ids[]': parsed.department_id,
+				'location_ids[]': parsed.location_id,
+				'statuses[]': parsed.status,
 				kind: parsed.kind,
 				limit: parsed.limit,
-				offset: parsed.offset,
+				page: parsed.page,
 			}),
 		}),
 		{
-			shape: listShape('offers'),
+			shape: pagedShape('offers'),
 			log: (_, result) => ({
 				count: result.offers.length,
-				hasNext: result.next_offset !== null,
+				hasNext: result.next_page !== null,
 			}),
 		},
 	);
@@ -246,8 +243,7 @@ export const offersCreate: RecruiteeEndpoints['offersCreate'] = (ctx, input) =>
 					description: parsed.description,
 					requirements: parsed.requirements,
 					department_id: parsed.department_id,
-					location_id: parsed.location_id,
-					status: parsed.status,
+					location_ids: parsed.location_ids,
 				}),
 			},
 		}),
@@ -279,8 +275,7 @@ export const offersUpdate: RecruiteeEndpoints['offersUpdate'] = (ctx, input) =>
 						description: rest.description,
 						requirements: rest.requirements,
 						department_id: rest.department_id,
-						location_id: rest.location_id,
-						status: rest.status,
+						location_ids: rest.location_ids,
 					}),
 				},
 			};
@@ -303,18 +298,14 @@ export const departmentsList: RecruiteeEndpoints['departmentsList'] = (
 			output: Outputs.departmentsList,
 		},
 		input,
-		(companyId, parsed) => ({
+		(companyId) => ({
 			method: 'GET',
+			// The route takes no paging and answers every department at once.
 			path: companyPath(companyId, '/departments'),
 			replayable: true,
-			query: queryOf({ limit: parsed.limit, offset: parsed.offset }),
 		}),
 		{
-			shape: listShape('departments'),
-			log: (_, result) => ({
-				count: result.departments.length,
-				hasNext: result.next_offset !== null,
-			}),
+			log: (_, result) => ({ count: result.departments.length }),
 		},
 	);
 
@@ -334,13 +325,13 @@ export const locationsList: RecruiteeEndpoints['locationsList'] = (
 			method: 'GET',
 			path: companyPath(companyId, '/locations'),
 			replayable: true,
-			query: queryOf({ limit: parsed.limit, offset: parsed.offset }),
+			query: queryOf({ limit: parsed.limit, page: parsed.page }),
 		}),
 		{
-			shape: listShape('locations'),
+			shape: pagedShape('locations'),
 			log: (_, result) => ({
 				count: result.locations.length,
-				hasNext: result.next_offset !== null,
+				hasNext: result.next_page !== null,
 			}),
 		},
 	);

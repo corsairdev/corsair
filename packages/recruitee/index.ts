@@ -162,7 +162,7 @@ const recruiteeEndpointMeta = {
 	'candidates.list': {
 		riskLevel: 'read',
 		description:
-			'Search candidates with offer, stage, status and location filters, plus offset paging',
+			'Search candidates by text, offer, stage, status, department or location, a page at a time',
 	},
 	'candidates.get': {
 		riskLevel: 'read',
@@ -177,7 +177,7 @@ const recruiteeEndpointMeta = {
 	'candidates.update': {
 		riskLevel: 'write',
 		description:
-			'Update a candidate: their name, contacts, cover letter, status or stage',
+			'Update a candidate profile: their name, emails, phones or cover letter',
 	},
 	'candidates.delete': {
 		riskLevel: 'destructive',
@@ -187,7 +187,7 @@ const recruiteeEndpointMeta = {
 	'offers.list': {
 		riskLevel: 'read',
 		description:
-			'List offers (jobs and talent pools) with department, location, status and kind filters',
+			'List offers with status, department, location and kind filters, a page at a time',
 	},
 	'offers.get': {
 		riskLevel: 'read',
@@ -197,12 +197,12 @@ const recruiteeEndpointMeta = {
 	'offers.create': {
 		riskLevel: 'write',
 		description:
-			'Create an offer as a job or a talent pool, optionally already published',
+			'Create an offer as a draft job or talent pool; publishing is done in Recruitee',
 	},
 	'offers.update': {
 		riskLevel: 'write',
 		description:
-			'Update an offer: its title, description, requirements, department, location or status',
+			'Update an offer: its title, description, requirements, department or locations',
 	},
 	'departments.list': {
 		riskLevel: 'read',
@@ -210,7 +210,8 @@ const recruiteeEndpointMeta = {
 	},
 	'locations.list': {
 		riskLevel: 'read',
-		description: 'List the company locations with how many offers each has',
+		description:
+			'List the company locations with their city, country and address',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof recruiteeEndpointsNested

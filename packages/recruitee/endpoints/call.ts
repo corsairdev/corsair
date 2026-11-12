@@ -66,7 +66,7 @@ export type RecruiteeValue = string | number | boolean | string[] | number[];
 
 /**
  * Drops unset values so an absent filter is not serialised. Recruitee reads
- * `limit` and `offset` strictly enough that an empty value is a different query.
+ * `limit` and `page` strictly enough that an empty value is a different query.
  * The same helper builds a request body, whose candidate members are lists.
  */
 export function queryOf(
@@ -76,6 +76,54 @@ export function queryOf(
 		(entry): entry is [string, RecruiteeValue] => entry[1] !== undefined,
 	);
 	return Object.fromEntries(kept);
+}
+
+/** The candidate-search fields that become `filters_json` entries. */
+type CandidateFilterInput = {
+	query?: string;
+	offer_id?: number;
+	stage?: string;
+	status?: string;
+	department_id?: number;
+	location_id?: number;
+};
+
+/**
+ * Builds the `filters_json` array `/search/new/candidates` reads, in the shapes
+ * its reference documents. Returns undefined when no filter is set, so the
+ * parameter is left off.
+ */
+export function candidateFilters(
+	input: CandidateFilterInput,
+): string | undefined {
+	// unknown: each filter is a free-form JSON object whose keys depend on the
+	// filter kind; it is only serialised, never read back.
+	const filters: Record<string, unknown>[] = [];
+	if (input.query !== undefined) {
+		filters.push({ field: 'all', query: input.query });
+	}
+	if (input.status !== undefined) {
+		filters.push({ field: 'status', in: [input.status] });
+	}
+	if (input.offer_id !== undefined) {
+		filters.push({ filter: 'jobs', id: { in: [input.offer_id] } });
+	}
+	if (input.stage !== undefined) {
+		filters.push({ filter: 'stages', name: { in: [input.stage] } });
+	}
+	if (input.department_id !== undefined) {
+		filters.push({
+			filter: 'jobs',
+			department_id: { in: [input.department_id] },
+		});
+	}
+	if (input.location_id !== undefined) {
+		filters.push({
+			filter: 'jobs',
+			'locations.id': { in: [input.location_id] },
+		});
+	}
+	return filters.length > 0 ? JSON.stringify(filters) : undefined;
 }
 
 /** Wraps a path under the company prefix. */

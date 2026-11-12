@@ -9,6 +9,7 @@ import {
 	OFFER,
 	OFFER_ID,
 	OFFER_PAGE,
+	SEARCH_HIT,
 } from './test-fixtures';
 import { invoke, lastRequest, respond, spyOnFetch } from './test-support';
 
@@ -42,52 +43,96 @@ describe('the company prefix', () => {
 });
 
 describe('candidates.list', () => {
-	it('searches the candidates route with filters', async () => {
+	it('sends the filters as one filters_json array and reads hits', async () => {
 		respond(fetchMock, CANDIDATE_PAGE);
 
 		const result = (await invoke(Endpoints.candidatesList, {
 			query: 'john',
 			offer_id: OFFER_ID,
 			stage: 'Applied',
+			status: 'qualified',
+			department_id: 7,
+			location_id: 2,
 			limit: 10,
-			offset: 0,
+			page: 1,
 		})) as Awaited<ReturnType<typeof Endpoints.candidatesList>>;
 
 		const request = lastRequest(fetchMock);
 		// `/candidates` is the create route; the search route filters.
 		expect(request.path).toBe('/c/1111/search/new/candidates');
 		expect(request.query).toEqual({
-			query: 'john',
-			offer_id: String(OFFER_ID),
-			stage: 'Applied',
+			filters_json: JSON.stringify([
+				{ field: 'all', query: 'john' },
+				{ field: 'status', in: ['qualified'] },
+				{ filter: 'jobs', id: { in: [OFFER_ID] } },
+				{ filter: 'stages', name: { in: ['Applied'] } },
+				{ filter: 'jobs', department_id: { in: [7] } },
+				{ filter: 'jobs', 'locations.id': { in: [2] } },
+			]),
 			limit: '10',
-			offset: '0',
+			page: '1',
 		});
 		expect(result.candidates[0]?.name).toBe('John Smith');
-		expect(result.next_offset).toBeNull();
+		expect(result.candidates[0]?.placements?.[0]?.stage?.name).toBe('Applied');
+		expect(result.total).toBe(1);
+		expect(result.next_page).toBeNull();
 	});
 
-	it('offers the next offset when a full page came back with more to read', async () => {
+	it('sends no filters_json when no filter is set', async () => {
+		respond(fetchMock, CANDIDATE_PAGE);
+
+		await invoke(Endpoints.candidatesList, {});
+
+		expect(lastRequest(fetchMock).query).toEqual({});
+	});
+
+	it('joins sort_by and sort_direction the way the search expects', async () => {
+		respond(fetchMock, CANDIDATE_PAGE);
+
+		await invoke(Endpoints.candidatesList, { sort_by: 'created_at' });
+		expect(lastRequest(fetchMock).query.sort_by).toBe('created_at_desc');
+
+		respond(fetchMock, CANDIDATE_PAGE);
+		await invoke(Endpoints.candidatesList, {
+			sort_by: 'candidate_name',
+			sort_direction: 'asc',
+		});
+		expect(lastRequest(fetchMock).query.sort_by).toBe('candidate_name_asc');
+	});
+
+	it('offers the next page when the total says more remain', async () => {
 		respond(fetchMock, CANDIDATE_PAGE_MORE);
 
 		const result = (await invoke(Endpoints.candidatesList, {
 			limit: 1,
-			offset: 0,
 		})) as Awaited<ReturnType<typeof Endpoints.candidatesList>>;
 
-		expect(result.next_offset).toBe(1);
-		expect(result.meta?.total).toBe(5);
+		expect(result.next_page).toBe(2);
+		expect(result.total).toBe(5);
 	});
 
-	it('stops on a short page even when records remain', async () => {
+	it('offers the next page even when the caller left limit to Recruitee', async () => {
+		respond(fetchMock, {
+			hits: Array.from({ length: 60 }, () => SEARCH_HIT),
+			total: 75,
+		});
+
+		const result = (await invoke(Endpoints.candidatesList, {})) as Awaited<
+			ReturnType<typeof Endpoints.candidatesList>
+		>;
+
+		expect(result.next_page).toBe(2);
+	});
+
+	it('stops on the last page', async () => {
 		respond(fetchMock, CANDIDATE_PAGE_MORE);
 
 		const result = (await invoke(Endpoints.candidatesList, {
-			limit: 10,
-			offset: 0,
+			limit: 1,
+			page: 5,
 		})) as Awaited<ReturnType<typeof Endpoints.candidatesList>>;
 
-		expect(result.next_offset).toBeNull();
+		expect(result.next_page).toBeNull();
 	});
 });
 
@@ -103,7 +148,7 @@ describe('candidates.get', () => {
 			`/c/1111/candidates/${CANDIDATE_ID}`,
 		);
 		expect(result.candidate.emails).toEqual(['john@example.com']);
-		expect(result.candidate.stage).toBe('Applied');
+		expect(result.candidate.placements?.[0]?.stage_id).toBe(13946406);
 	});
 });
 
@@ -147,13 +192,25 @@ describe('candidates.update and delete', () => {
 
 		await invoke(Endpoints.candidatesUpdate, {
 			candidate_id: CANDIDATE_ID,
-			stage: 'Interview',
+			name: 'John A. Smith',
 		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('PATCH');
 		expect(request.path).toBe(`/c/1111/candidates/${CANDIDATE_ID}`);
-		expect(request.json()).toEqual({ candidate: { stage: 'Interview' } });
+		expect(request.json()).toEqual({ candidate: { name: 'John A. Smith' } });
+	});
+
+	it('sends no stage on the profile update, which the route ignores', async () => {
+		respond(fetchMock, { candidate: CANDIDATE });
+
+		await invoke(Endpoints.candidatesUpdate, {
+			candidate_id: CANDIDATE_ID,
+			stage: 'Interview',
+		});
+
+		// Stage moves belong to the placement, so the field is not in the schema.
+		expect(lastRequest(fetchMock).json()).toEqual({ candidate: {} });
 	});
 
 	it('deletes a candidate and reports the id', async () => {
@@ -169,16 +226,41 @@ describe('candidates.update and delete', () => {
 });
 
 describe('offers', () => {
-	it('lists offers with a status filter', async () => {
+	it('sends the list filters as the arrays the route reads', async () => {
 		respond(fetchMock, OFFER_PAGE);
 
 		const result = (await invoke(Endpoints.offersList, {
 			status: 'published',
+			department_id: 7,
+			location_id: 2,
+			page: 2,
+			limit: 25,
 		})) as Awaited<ReturnType<typeof Endpoints.offersList>>;
 
 		expect(lastRequest(fetchMock).path).toBe('/c/1111/offers');
-		expect(lastRequest(fetchMock).query).toEqual({ status: 'published' });
+		// A bare `status` is ignored by Recruitee and every offer comes back.
+		expect(lastRequest(fetchMock).query).toEqual({
+			'statuses[]': 'published',
+			'department_ids[]': '7',
+			'location_ids[]': '2',
+			page: '2',
+			limit: '25',
+		});
 		expect(result.offers[0]?.title).toBe('Senior Backend Engineer');
+		expect(result.total).toBe(1);
+	});
+
+	it('pages offers by meta.total_count', async () => {
+		respond(fetchMock, {
+			meta: { limit: 2, page: 1, total_count: 3 },
+			offers: [OFFER, OFFER],
+		});
+
+		const result = (await invoke(Endpoints.offersList, {
+			limit: 2,
+		})) as Awaited<ReturnType<typeof Endpoints.offersList>>;
+
+		expect(result.next_page).toBe(2);
 	});
 
 	it('reads one offer by id', async () => {
@@ -199,6 +281,7 @@ describe('offers', () => {
 			title: 'Senior Backend Engineer',
 			kind: 'job',
 			department_id: 7,
+			location_ids: [2],
 		});
 
 		expect(lastRequest(fetchMock).json()).toEqual({
@@ -206,6 +289,7 @@ describe('offers', () => {
 				title: 'Senior Backend Engineer',
 				kind: 'job',
 				department_id: 7,
+				location_ids: [2],
 			},
 		});
 	});
@@ -222,12 +306,14 @@ describe('offers', () => {
 
 		await invoke(Endpoints.offersUpdate, {
 			offer_id: OFFER_ID,
-			status: 'draft',
+			title: 'Staff Backend Engineer',
 		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe(`/c/1111/offers/${OFFER_ID}`);
-		expect(request.json()).toEqual({ offer: { status: 'draft' } });
+		expect(request.json()).toEqual({
+			offer: { title: 'Staff Backend Engineer' },
+		});
 	});
 });
 
@@ -240,6 +326,7 @@ describe('departments and locations', () => {
 		>;
 
 		expect(lastRequest(fetchMock).path).toBe('/c/1111/departments');
+		expect(lastRequest(fetchMock).query).toEqual({});
 		expect(result.departments[0]?.offers_count).toBe(3);
 	});
 
@@ -250,8 +337,10 @@ describe('departments and locations', () => {
 			ReturnType<typeof Endpoints.locationsList>
 		>;
 
+		expect(lastRequest(fetchMock).query).toEqual({});
 		expect(result.locations[0]?.country_code).toBe('DE');
-		expect(result.locations[0]?.offers_count).toBe(2);
+		expect(result.total).toBe(1);
+		expect(result.next_page).toBeNull();
 	});
 });
 
