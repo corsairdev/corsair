@@ -22,16 +22,13 @@ const operations = [
 	'campaigns.create',
 	'campaigns.delete',
 	'campaigns.get',
-	'campaigns.stats',
 	'campaigns.types',
 	'campaigns.update',
 	'contacts.create',
 	'contacts.unsubscribe',
 	'emailTemplates.get',
-	'emailTemplates.preview',
 	'emailTemplates.update',
 	'masterTemplates.list',
-	'masterTemplates.switch',
 	'products.list',
 	'rules.get',
 	'rules.list',
@@ -56,7 +53,7 @@ describe('remarkety plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the twenty-three catalog operations', () => {
+	it('exposes exactly the twenty catalog operations', () => {
 		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
@@ -106,10 +103,8 @@ describe('remarkety plugin definition', () => {
 
 		expect(reads.sort()).toEqual([
 			'campaigns.get',
-			'campaigns.stats',
 			'campaigns.types',
 			'emailTemplates.get',
-			'emailTemplates.preview',
 			'masterTemplates.list',
 			'products.list',
 			'rules.get',

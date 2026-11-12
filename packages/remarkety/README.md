@@ -15,16 +15,13 @@ pnpm add @corsair-dev/remarkety
 | `campaigns.create` | `remarkety.api.campaigns.create` | `write` | Create a campaign from a type and its actions, each an email or an api webhook with the rules that decide when it runs |
 | `campaigns.delete` | `remarkety.api.campaigns.delete` | `destructive` | Delete a campaign |
 | `campaigns.get` | `remarkety.api.campaigns.get` | `read` | Read one campaign by id |
-| `campaigns.stats` | `remarkety.api.campaigns.stats` | `read` | Read sent counts and generated revenue per campaign, in USD and in the store currency |
 | `campaigns.types` | `remarkety.api.campaigns.types` | `read` | Read the campaign types the store supports and their options |
 | `campaigns.update` | `remarkety.api.campaigns.update` | `write` | Update a campaign, including its mode, which can start or stop real sending |
 | `contacts.create` | `remarkety.api.contacts.create` | `write` | Create a contact in a store, optionally with double opt-in and marketing permission |
 | `contacts.unsubscribe` | `remarkety.api.contacts.unsubscribe` | `write` | Unsubscribe one email address from a store |
 | `emailTemplates.get` | `remarkety.api.emailTemplates.get` | `read` | Read one campaign rule's email template |
-| `emailTemplates.preview` | `remarkety.api.emailTemplates.preview` | `read` | Read the sample data a campaign template merges against, optionally for a real shopper or order |
 | `emailTemplates.update` | `remarkety.api.emailTemplates.update` | `write` | Replace one campaign rule's email template |
 | `masterTemplates.list` | `remarkety.api.masterTemplates.list` | `read` | List the master email templates available to a store |
-| `masterTemplates.switch` | `remarkety.api.masterTemplates.switch` | `write` | Convert a template into a new master template so it can be reused across campaigns |
 | `products.list` | `remarkety.api.products.list` | `read` | Search a store's synced products by name or SKU, with paging and an update-time filter |
 | `rules.get` | `remarkety.api.rules.get` | `read` | Read one rule type's operators and possible values |
 | `rules.list` | `remarkety.api.rules.list` | `read` | Read every rule a campaign action can use, with its operators and possible values |

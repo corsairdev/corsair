@@ -10,7 +10,7 @@ import { z } from 'zod';
 // - Every store-scoped route needs a `storeId`, and the spec leaves that path
 //   parameter undeclared while the routes clearly take it. It is required here
 //   because without it the path cannot be built.
-// - The email-template, preview and rules routes declare **no** security in the
+// - The email-template and rules routes declare **no** security in the
 //   spec, yet they are store-scoped and the live host refuses an unauthenticated
 //   call, so the plugin authenticates all of them.
 
@@ -363,39 +363,6 @@ export type CampaignsDeleteResponse = z.infer<
 	typeof CampaignsDeleteResponseSchema
 >;
 
-const CampaignsStatsInputSchema = z.object({
-	storeId: StoreIdSchema,
-	campaignId: z
-		.number()
-		.int()
-		.optional()
-		.describe('Only this campaign. Omit it for every campaign.'),
-});
-
-export type CampaignsStatsInput = z.infer<typeof CampaignsStatsInputSchema>;
-
-/**
- * One campaign's performance. Revenue comes twice: `totalOrdersUSD` normalised to
- * dollars and `totalOrders` in the store's own currency, so the two differ whenever
- * the store is not priced in USD.
- */
-const CampaignStatsSchema = z
-	.object({
-		campaignId: z.number().nullish(),
-		startDate: z.string().nullish(),
-		sent: z.number().nullish(),
-		numOrders: z.number().nullish(),
-		totalOrdersUSD: MoneySchema.nullish(),
-		totalOrders: MoneySchema.nullish(),
-	})
-	.loose();
-
-const CampaignsStatsResponseSchema = z.array(CampaignStatsSchema);
-
-export type CampaignsStatsResponse = z.infer<
-	typeof CampaignsStatsResponseSchema
->;
-
 const CampaignsTypesInputSchema = z.object({
 	storeId: StoreIdSchema,
 	type: z
@@ -463,42 +430,6 @@ export type EmailTemplateUpdateResponse = z.infer<
 	typeof EmailTemplateUpdateResponseSchema
 >;
 
-const EmailPreviewInputSchema = z.object({
-	storeId: StoreIdSchema,
-	campaignId: z.number().int(),
-	ruleId: z.number().int(),
-	type: z.string().min(1).describe('The campaign type.'),
-	shopper: z
-		.number()
-		.int()
-		.optional()
-		.describe('A shopper ID, as the store knows it, to build the data for.'),
-	order: z
-		.number()
-		.int()
-		.optional()
-		.describe('An order ID to build the data for.'),
-});
-
-export type EmailPreviewInput = z.infer<typeof EmailPreviewInputSchema>;
-
-/**
- * The sample data a campaign's merge fields resolve against, which is the concrete
- * answer to "what variables can this template use".
- */
-const EmailPreviewResponseSchema = z
-	.object({
-		type: z.string().nullish(),
-		shopper: JsonObjectSchema.nullish(),
-		order: JsonObjectSchema.nullish(),
-		cart: JsonObjectSchema.nullish(),
-		recommendations: z.array(JsonObjectSchema).nullish(),
-		coupon: JsonObjectSchema.nullish(),
-	})
-	.loose();
-
-export type EmailPreviewResponse = z.infer<typeof EmailPreviewResponseSchema>;
-
 // ── master templates ──────────────────────────────────────────────────────
 
 const MasterTemplatesListInputSchema = z.object({
@@ -531,23 +462,6 @@ const MasterTemplatesListResponseSchema = z.array(
 
 export type MasterTemplatesListResponse = z.infer<
 	typeof MasterTemplatesListResponseSchema
->;
-
-const MasterTemplateSwitchInputSchema = z.object({
-	storeId: StoreIdSchema,
-	masterTemplateId: z.number().int(),
-	type: z.string().optional().describe('editor-v1 or html.'),
-	html: z.string().optional().describe('The current template HTML to convert.'),
-});
-
-export type MasterTemplateSwitchInput = z.infer<
-	typeof MasterTemplateSwitchInputSchema
->;
-
-const MasterTemplateSwitchResponseSchema = EmailTemplateSchema;
-
-export type MasterTemplateSwitchResponse = z.infer<
-	typeof MasterTemplateSwitchResponseSchema
 >;
 
 // ── products ──────────────────────────────────────────────────────────────
@@ -742,13 +656,10 @@ export const RemarketyEndpointInputSchemas = {
 	campaignsUpdate: CampaignsUpdateInputSchema,
 	campaignsGet: CampaignsGetInputSchema,
 	campaignsDelete: CampaignsDeleteInputSchema,
-	campaignsStats: CampaignsStatsInputSchema,
 	campaignsTypes: CampaignsTypesInputSchema,
 	emailTemplateGet: EmailTemplateGetInputSchema,
 	emailTemplateUpdate: EmailTemplateUpdateInputSchema,
-	emailPreview: EmailPreviewInputSchema,
 	masterTemplatesList: MasterTemplatesListInputSchema,
-	masterTemplateSwitch: MasterTemplateSwitchInputSchema,
 	productsList: ProductsListInputSchema,
 	rulesList: RulesListInputSchema,
 	rulesGet: RulesGetInputSchema,
@@ -768,13 +679,10 @@ export const RemarketyEndpointOutputSchemas = {
 	campaignsUpdate: CampaignsUpdateResponseSchema,
 	campaignsGet: CampaignsGetResponseSchema,
 	campaignsDelete: CampaignsDeleteResponseSchema,
-	campaignsStats: CampaignsStatsResponseSchema,
 	campaignsTypes: CampaignsTypesResponseSchema,
 	emailTemplateGet: EmailTemplateGetResponseSchema,
 	emailTemplateUpdate: EmailTemplateUpdateResponseSchema,
-	emailPreview: EmailPreviewResponseSchema,
 	masterTemplatesList: MasterTemplatesListResponseSchema,
-	masterTemplateSwitch: MasterTemplateSwitchResponseSchema,
 	productsList: ProductsListResponseSchema,
 	rulesList: RulesListResponseSchema,
 	rulesGet: RulesGetResponseSchema,

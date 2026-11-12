@@ -106,36 +106,6 @@ export const remove: RemarketyEndpoints['campaignsDelete'] = (ctx, input) =>
 		},
 	);
 
-/**
- * Campaign performance.
- *
- * Revenue is reported twice: `totalOrdersUSD` normalised to dollars and
- * `totalOrders` in the store's own currency, so a store not priced in USD gets two
- * different numbers for the same orders.
- */
-export const stats: RemarketyEndpoints['campaignsStats'] = (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'campaigns.stats',
-			input: Inputs.campaignsStats,
-			output: Outputs.campaignsStats,
-		},
-		input,
-		({ storeId, campaignId }) => ({
-			method: 'GET',
-			path: storePath(storeId, '/campaigns/stats'),
-			query: { campaignId },
-			replayable: true,
-		}),
-		{
-			log: (_, result) => ({
-				campaigns: result.length,
-				orders: result.reduce((total, row) => total + (row.numOrders ?? 0), 0),
-			}),
-		},
-	);
-
 /** The campaign types the store supports, optionally only one type's options. */
 export const types: RemarketyEndpoints['campaignsTypes'] = (ctx, input) =>
 	call(
@@ -221,39 +191,6 @@ export const updateTemplate: RemarketyEndpoints['emailTemplateUpdate'] = (
 		},
 	);
 
-/**
- * The sample data a campaign's merge fields resolve against.
- *
- * Passing a `shopper` or `order` builds the data for that real record, which is the
- * most reliable way to see what a template will actually receive.
- */
-export const preview: RemarketyEndpoints['emailPreview'] = (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'emailTemplates.preview',
-			input: Inputs.emailPreview,
-			output: Outputs.emailPreview,
-		},
-		input,
-		({ storeId, campaignId, ruleId, type, shopper, order }) => ({
-			method: 'GET',
-			path: storePath(
-				storeId,
-				`/campaigns/${segment(campaignId)}/rule/${segment(ruleId)}/preview`,
-			),
-			query: { type, shopper, order },
-			replayable: true,
-		}),
-		{
-			log: (_, result) => ({
-				type: result.type ?? undefined,
-				hasShopper: result.shopper !== null && result.shopper !== undefined,
-				hasOrder: result.order !== null && result.order !== undefined,
-			}),
-		},
-	);
-
 // ── master templates ──────────────────────────────────────────────────────
 
 export const masterTemplates: RemarketyEndpoints['masterTemplatesList'] = (
@@ -276,40 +213,6 @@ export const masterTemplates: RemarketyEndpoints['masterTemplatesList'] = (
 		}),
 		{
 			log: (_, result) => ({ templates: result.length }),
-		},
-	);
-
-/**
- * Converts a campaign's current HTML into a new master template, which is how an
- * existing design becomes reusable across campaigns.
- */
-export const switchTemplate: RemarketyEndpoints['masterTemplateSwitch'] = (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'masterTemplates.switch',
-			input: Inputs.masterTemplateSwitch,
-			output: Outputs.masterTemplateSwitch,
-		},
-		input,
-		({ storeId, masterTemplateId, type, html }) => ({
-			method: 'POST',
-			path: storePath(
-				storeId,
-				`/master-templates/switch/${segment(masterTemplateId)}`,
-			),
-			body: { type, html },
-			// A replay re-converts the same HTML into the same template.
-			replayable: true,
-		}),
-		{
-			log: (_, result) => ({
-				type: result.type ?? undefined,
-				htmlLength: result.html?.length ?? 0,
-			}),
 		},
 	);
 

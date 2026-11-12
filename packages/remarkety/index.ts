@@ -62,13 +62,10 @@ export type RemarketyEndpoints = {
 	campaignsUpdate: RemarketyEndpoint<'campaignsUpdate'>;
 	campaignsGet: RemarketyEndpoint<'campaignsGet'>;
 	campaignsDelete: RemarketyEndpoint<'campaignsDelete'>;
-	campaignsStats: RemarketyEndpoint<'campaignsStats'>;
 	campaignsTypes: RemarketyEndpoint<'campaignsTypes'>;
 	emailTemplateGet: RemarketyEndpoint<'emailTemplateGet'>;
 	emailTemplateUpdate: RemarketyEndpoint<'emailTemplateUpdate'>;
-	emailPreview: RemarketyEndpoint<'emailPreview'>;
 	masterTemplatesList: RemarketyEndpoint<'masterTemplatesList'>;
-	masterTemplateSwitch: RemarketyEndpoint<'masterTemplateSwitch'>;
 	productsList: RemarketyEndpoint<'productsList'>;
 	rulesList: RemarketyEndpoint<'rulesList'>;
 	rulesGet: RemarketyEndpoint<'rulesGet'>;
@@ -93,17 +90,14 @@ const remarketyEndpointsNested = {
 		update: Campaigns.update,
 		get: Campaigns.get,
 		delete: Campaigns.remove,
-		stats: Campaigns.stats,
 		types: Campaigns.types,
 	},
 	emailTemplates: {
 		get: Campaigns.template,
 		update: Campaigns.updateTemplate,
-		preview: Campaigns.preview,
 	},
 	masterTemplates: {
 		list: Campaigns.masterTemplates,
-		switch: Campaigns.switchTemplate,
 	},
 	products: {
 		list: Campaigns.products,
@@ -163,10 +157,6 @@ export const remarketyEndpointSchemas = {
 		input: RemarketyEndpointInputSchemas.campaignsDelete,
 		output: RemarketyEndpointOutputSchemas.campaignsDelete,
 	},
-	'campaigns.stats': {
-		input: RemarketyEndpointInputSchemas.campaignsStats,
-		output: RemarketyEndpointOutputSchemas.campaignsStats,
-	},
 	'campaigns.types': {
 		input: RemarketyEndpointInputSchemas.campaignsTypes,
 		output: RemarketyEndpointOutputSchemas.campaignsTypes,
@@ -179,17 +169,9 @@ export const remarketyEndpointSchemas = {
 		input: RemarketyEndpointInputSchemas.emailTemplateUpdate,
 		output: RemarketyEndpointOutputSchemas.emailTemplateUpdate,
 	},
-	'emailTemplates.preview': {
-		input: RemarketyEndpointInputSchemas.emailPreview,
-		output: RemarketyEndpointOutputSchemas.emailPreview,
-	},
 	'masterTemplates.list': {
 		input: RemarketyEndpointInputSchemas.masterTemplatesList,
 		output: RemarketyEndpointOutputSchemas.masterTemplatesList,
-	},
-	'masterTemplates.switch': {
-		input: RemarketyEndpointInputSchemas.masterTemplateSwitch,
-		output: RemarketyEndpointOutputSchemas.masterTemplateSwitch,
 	},
 	'products.list': {
 		input: RemarketyEndpointInputSchemas.productsList,
@@ -267,11 +249,6 @@ const remarketyEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Delete a campaign',
 	},
-	'campaigns.stats': {
-		riskLevel: 'read',
-		description:
-			'Read sent counts and generated revenue per campaign, in USD and in the store currency',
-	},
 	'campaigns.types': {
 		riskLevel: 'read',
 		description: 'Read the campaign types the store supports and their options',
@@ -284,19 +261,9 @@ const remarketyEndpointMeta = {
 		riskLevel: 'write',
 		description: "Replace one campaign rule's email template",
 	},
-	'emailTemplates.preview': {
-		riskLevel: 'read',
-		description:
-			'Read the sample data a campaign template merges against, optionally for a real shopper or order',
-	},
 	'masterTemplates.list': {
 		riskLevel: 'read',
 		description: 'List the master email templates available to a store',
-	},
-	'masterTemplates.switch': {
-		riskLevel: 'write',
-		description:
-			'Convert a template into a new master template so it can be reused across campaigns',
 	},
 	'products.list': {
 		riskLevel: 'read',
@@ -383,8 +350,6 @@ export type {
 	CampaignsDeleteResponse,
 	CampaignsGetInput,
 	CampaignsGetResponse,
-	CampaignsStatsInput,
-	CampaignsStatsResponse,
 	CampaignsTypesInput,
 	CampaignsTypesResponse,
 	CampaignsUpdateInput,
@@ -393,14 +358,10 @@ export type {
 	ContactsCreateResponse,
 	ContactsUnsubscribeInput,
 	ContactsUnsubscribeResponse,
-	EmailPreviewInput,
-	EmailPreviewResponse,
 	EmailTemplateGetInput,
 	EmailTemplateGetResponse,
 	EmailTemplateUpdateInput,
 	EmailTemplateUpdateResponse,
-	MasterTemplateSwitchInput,
-	MasterTemplateSwitchResponse,
 	MasterTemplatesListInput,
 	MasterTemplatesListResponse,
 	ProductsListInput,

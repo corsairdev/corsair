@@ -4,8 +4,6 @@ import {
 	CAMPAIGN,
 	CAMPAIGN_RUNNING,
 	CAMPAIGN_TYPES,
-	CAMPAIGNS_STATS,
-	EMAIL_PREVIEW,
 	EMAIL_TEMPLATE,
 	EMAIL_TEMPLATE_EDITOR,
 	MASTER_TEMPLATES,
@@ -471,46 +469,6 @@ describe('campaigns.get and delete', () => {
 	});
 });
 
-describe('campaigns.stats', () => {
-	it('reads revenue in both currencies', async () => {
-		respond(fetchMock, CAMPAIGNS_STATS);
-
-		const result = (await invoke(Campaigns.stats, { storeId: STORE_ID })) as {
-			campaignId?: number;
-			totalOrdersUSD?: { amount?: number; currency?: string };
-			totalOrders?: { amount?: number; currency?: string };
-		}[];
-
-		expect(lastRequest(fetchMock).path).toBe(
-			'/api/v1/stores/1/campaigns/stats',
-		);
-		// The USD figure and the store-currency figure differ, which is the point.
-		expect(result[0]?.totalOrdersUSD?.amount).toBe(4120.5);
-		expect(result[0]?.totalOrders?.currency).toBe('EUR');
-	});
-
-	it('passes a single campaign id', async () => {
-		respond(fetchMock, CAMPAIGNS_STATS);
-
-		await invoke(Campaigns.stats, { storeId: STORE_ID, campaignId: 7 });
-
-		expect(lastRequest(fetchMock).query.campaignId).toBe('7');
-	});
-
-	it('logs the campaign count and order total', async () => {
-		respond(fetchMock, CAMPAIGNS_STATS);
-
-		await invoke(Campaigns.stats, { storeId: STORE_ID });
-
-		expect(mockLog).toHaveBeenCalledWith(
-			expect.anything(),
-			'remarkety.campaigns.stats',
-			{ campaigns: 2, orders: 37 },
-			'completed',
-		);
-	});
-});
-
 describe('campaigns.types', () => {
 	it('reads the map of campaign types', async () => {
 		respond(fetchMock, CAMPAIGN_TYPES);
@@ -608,54 +566,6 @@ describe('emailTemplates', () => {
 		).rejects.toThrow();
 	});
 
-	it('reads the preview data, including the shopper and order', async () => {
-		respond(fetchMock, EMAIL_PREVIEW);
-
-		const result = (await invoke(Campaigns.preview, {
-			storeId: STORE_ID,
-			campaignId: 7,
-			ruleId: 1,
-			type: 'abandoned-cart',
-		})) as {
-			shopper?: { firstName?: string };
-			order?: unknown;
-			coupon?: { code?: string };
-		};
-
-		expect(lastRequest(fetchMock).path).toBe(
-			'/api/v1/stores/1/campaigns/7/rule/1/preview',
-		);
-		expect(result.shopper?.firstName).toBe('Jane');
-		expect(result.coupon?.code).toBe('SAVE10');
-	});
-
-	it('passes a real shopper and order to the preview', async () => {
-		respond(fetchMock, EMAIL_PREVIEW);
-
-		await invoke(Campaigns.preview, {
-			storeId: STORE_ID,
-			campaignId: 7,
-			ruleId: 1,
-			type: 'abandoned-cart',
-			shopper: 42,
-			order: 99,
-		});
-
-		expect(lastRequest(fetchMock).query).toMatchObject({
-			shopper: '42',
-			order: '99',
-		});
-	});
-
-	it('rejects a preview with no type', async () => {
-		await expect(
-			invoke(Campaigns.preview, {
-				storeId: STORE_ID,
-				campaignId: 7,
-				ruleId: 1,
-			}),
-		).rejects.toThrow();
-	});
 });
 
 describe('masterTemplates', () => {
@@ -681,20 +591,6 @@ describe('masterTemplates', () => {
 		expect(lastRequest(fetchMock).query.q).toBe('promo');
 	});
 
-	it('converts HTML into a master template', async () => {
-		respond(fetchMock, EMAIL_TEMPLATE);
-
-		await invoke(Campaigns.switchTemplate, {
-			storeId: STORE_ID,
-			masterTemplateId: 3,
-			type: 'html',
-			html: '<html></html>',
-		});
-
-		const request = lastRequest(fetchMock);
-		expect(request.path).toBe('/api/v1/stores/1/master-templates/switch/3');
-		expect(request.bodyRecord).toMatchObject({ html: '<html></html>' });
-	});
 });
 
 describe('products.list', () => {

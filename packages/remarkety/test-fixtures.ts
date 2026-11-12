@@ -36,26 +36,6 @@ export const CAMPAIGN = {
 
 export const CAMPAIGN_RUNNING = { ...CAMPAIGN, mode: 'run' };
 
-export const CAMPAIGNS_STATS = [
-	{
-		campaignId: 7,
-		startDate: '2026-04-01',
-		sent: 1200,
-		numOrders: 34,
-		totalOrdersUSD: { amount: 4120.5, currency: 'USD' },
-		// The store's own currency, which differs from the USD figure.
-		totalOrders: { amount: 3700, currency: 'EUR' },
-	},
-	{
-		campaignId: 8,
-		startDate: '2026-04-15',
-		sent: 400,
-		numOrders: 3,
-		totalOrdersUSD: { amount: 210, currency: 'USD' },
-		totalOrders: { amount: 210, currency: 'USD' },
-	},
-];
-
 // A JSON map keyed by campaign type.
 export const CAMPAIGN_TYPES = {
 	'abandoned-cart': {
@@ -77,18 +57,6 @@ export const EMAIL_TEMPLATE_EDITOR = {
 	type: 'editor-v1',
 	html: '<div>{{shopper.firstName}}</div>',
 	masterTemplate: { id: 3, name: 'Base' },
-};
-
-export const EMAIL_PREVIEW = {
-	type: 'abandoned-cart',
-	shopper: { email: 'jane@example.com', firstName: 'Jane', lastName: 'Doe' },
-	order: { total: { amount: 120, currency: 'USD' }, status: 'pending' },
-	cart: {
-		url: 'https://shop.example.com/cart',
-		total: { amount: 120, currency: 'USD' },
-	},
-	recommendations: [{ title: 'A product', sku: 'SKU-1' }],
-	coupon: { code: 'SAVE10' },
 };
 
 // Live shape (trimmed): each template's details sit under `metadata`.
