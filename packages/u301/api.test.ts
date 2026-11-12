@@ -47,7 +47,7 @@ describeIfKey('live U301 API', () => {
 			liveContext() as never,
 			{
 				page: 1,
-				perPage: 5,
+				perPage: 10,
 			} as never,
 		);
 
@@ -61,7 +61,7 @@ describeIfKey('live U301 API', () => {
 			liveContext() as never,
 			{
 				page: 1,
-				perPage: 1,
+				perPage: 10,
 			} as never,
 		);
 		// A list row names its short link `shortUrl`, with a scheme the endpoint

@@ -450,6 +450,7 @@ describe('domains', () => {
 		expect(lastRequest(fetchMock).path).toBe(
 			'/v3/shorten/domains/active/go.example.com',
 		);
+		expect(lastRequest(fetchMock).method).toBe('PATCH');
 		// Kept as the API spells it.
 		expect(result.actived).toBe(true);
 	});
