@@ -21,7 +21,7 @@ overviewNote: |
   - **`stores.update` is `PUT /stores` with the id in the body**, not `PUT /stores/{id}`. The same is true of `campaigns.update`, which is `PUT /stores/{storeId}/campaigns`.
   - **`mode` decides whether a campaign sends.** `run` starts it contacting shoppers, `test` sends a sample to `testEmail`, and `stop` halts it. Check the current mode with `campaigns.get` before updating, and remember a `stop` is the safe state to build in.
   - **An email action needs a subject and a `baseTemplate`; an api action needs a `webhook`.** The plugin rejects either omission rather than creating a campaign Remarkety cannot run. This endpoint version expects exactly one action.
-  - **`stores.status` is the sync health check.** `syncLastError` is populated only when `syncStatus` is `ERROR`, so a nil error on any other status means nothing.
+  - **`stores.status` is the sync health check, and `syncStatus` is the field to read.** `syncLastError` holds the last runner message even on a healthy store (for example `Campaign runner completed ( success: 0 )` with `syncStatus: OK`), so a non-empty value is not a failure.
   - **Deleting a store is destructive and final.** There is no archive state, and a store's campaigns and contacts go with it.
 examples:
   read:

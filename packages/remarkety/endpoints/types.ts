@@ -148,16 +148,22 @@ export type StoreStatusInput = z.infer<typeof StoreStatusInputSchema>;
 
 /**
  * The sync state, which is how a caller checks whether Remarkety is actually
- * receiving the store's data. `syncLastError` is only set when `syncStatus` is
- * ERROR.
+ * receiving the store's data. `syncLastError` holds the last runner message and
+ * is filled in on a healthy store too (live: "Campaign runner completed ( success:
+ * 0 )" with `syncStatus: OK`), so `syncStatus` is what says whether it failed.
  */
 const StoreStatusResponseSchema = z
 	.object({
 		syncStatus: z
 			.string()
 			.nullish()
-			.describe('The current sync status; ERROR means syncLastError is set.'),
-		syncLastError: z.string().nullish(),
+			.describe('The current sync status, such as OK or ERROR.'),
+		syncLastError: z
+			.string()
+			.nullish()
+			.describe(
+				'The last sync or runner message. It is set on a healthy store too; read syncStatus to tell a failure.',
+			),
 		lastSyncSuccess: z.string().nullish(),
 		lastSyncAttempt: z.string().nullish(),
 	})

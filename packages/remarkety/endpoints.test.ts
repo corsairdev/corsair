@@ -148,7 +148,20 @@ describe('stores.status', () => {
 		expect(result.syncStatus).toBe('OK');
 	});
 
-	it('keeps the sync error, which only appears when the status is ERROR', async () => {
+	it('logs no error for a healthy store whose syncLastError holds a runner message', async () => {
+		respond(fetchMock, STORE_STATUS);
+
+		await invoke(Stores.status, { storeId: STORE_ID });
+
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'remarkety.stores.status',
+			{ syncStatus: 'OK', hasError: false },
+			'completed',
+		);
+	});
+
+	it('keeps the sync error when the status is ERROR', async () => {
 		respond(fetchMock, STORE_STATUS_ERROR);
 
 		const result = (await invoke(Stores.status, { storeId: STORE_ID })) as {

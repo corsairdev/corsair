@@ -111,8 +111,9 @@ export const remove: RemarketyEndpoints['storesDelete'] = (ctx, input) =>
  * The store's sync status.
  *
  * This is the check that Remarkety is actually receiving the store's data, and the
- * one place a sync failure surfaces: `syncLastError` is set only when
- * `syncStatus` is ERROR.
+ * one place a sync failure surfaces. Live, `syncLastError` carries the last
+ * runner message even when `syncStatus` is OK, so only the status says whether
+ * the sync failed.
  */
 export const status: RemarketyEndpoints['storeStatus'] = (ctx, input) =>
 	call(
@@ -131,8 +132,7 @@ export const status: RemarketyEndpoints['storeStatus'] = (ctx, input) =>
 		{
 			log: (_, result) => ({
 				syncStatus: result.syncStatus ?? undefined,
-				hasError:
-					result.syncLastError !== null && result.syncLastError !== undefined,
+				hasError: result.syncStatus === 'ERROR',
 			}),
 		},
 	);

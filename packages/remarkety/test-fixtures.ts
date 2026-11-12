@@ -13,10 +13,12 @@ export const STORE = {
 	domain: 'https://shop.example.com',
 };
 
+// Live: a healthy store still carries the last runner message in syncLastError.
 export const STORE_STATUS = {
 	syncStatus: 'OK',
-	lastSyncSuccess: '2026-05-01T10:00:00Z',
-	lastSyncAttempt: '2026-05-01T10:05:00Z',
+	lastSyncSuccess: null,
+	lastSyncAttempt: null,
+	syncLastError: 'Campaign runner completed ( success: 0 )',
 };
 
 export const STORE_STATUS_ERROR = {
