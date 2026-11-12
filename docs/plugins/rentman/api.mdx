@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Rentman: every `rentman.api.*` operation with input and output types."
+title: "Rentman API reference"
+sidebarTitle: "API"
+description: "API reference for the Rentman plugin in Corsair: every `rentman.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `rentman.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -47,7 +46,7 @@ await corsair.rentman.api.appointments.get({ appointment_id: 55 });
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
   start?: string | null,
@@ -60,7 +59,7 @@ await corsair.rentman.api.appointments.get({ appointment_id: 55 });
   recurrence_interval_unit?: string | null,
   recurrence_enddate?: string | null,
   recurrence_interval?: number | null,
-  recurrence_group?: string | null,
+  recurrence_group?: number | null,
   recurrence_weekdays?: string | null,
   synchronization_id?: string | null,
   synchronisation_uri?: string | null
@@ -77,12 +76,12 @@ await corsair.rentman.api.appointments.get({ appointment_id: 55 });
 
 `appointments.list`
 
-List calendar appointments with project and start/end filters plus cursor paging
+List calendar appointments with start and end filters plus cursor paging
 
 **Risk:** `read`
 
 ```ts
-await corsair.rentman.api.appointments.list({ project: 201, start: { gte: '2026-07-01' } });
+await corsair.rentman.api.appointments.list({ start: { gte: '2026-07-01' } });
 ```
 
 **Input**
@@ -94,7 +93,6 @@ await corsair.rentman.api.appointments.list({ project: 201, start: { gte: '2026-
 | `fields` | `string[]` | No | Return only these fields. `id`, `created` and `modified` always come back. |
 | `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
 | `sort` | `string` | No | A comma-separated sort, such as `+id,-firstname`: `+` ascending, `-` descending. |
-| `project` | `number` | No | Only this project id. |
 | `start` | `object` | No | — |
 | `end` | `object` | No | — |
 | `modified` | `object` | No | — |
@@ -165,7 +163,7 @@ The date operators are `lt`, `gt`, `lte`, `gte` and `neq`.
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
   start?: string | null,
@@ -178,7 +176,7 @@ The date operators are `lt`, `gt`, `lte`, `gte` and `neq`.
   recurrence_interval_unit?: string | null,
   recurrence_enddate?: string | null,
   recurrence_interval?: number | null,
-  recurrence_group?: string | null,
+  recurrence_group?: number | null,
   recurrence_weekdays?: string | null,
   synchronization_id?: string | null,
   synchronisation_uri?: string | null
@@ -202,7 +200,7 @@ Create a company or person contact with its mailing, visit and invoice addresses
 **Risk:** `write`
 
 ```ts
-await corsair.rentman.api.contacts.create({ name: 'Acme Inc', type: 'company', country: 'NL', mailing_address: { street: 'Damrak', city: 'Amsterdam' } });
+await corsair.rentman.api.contacts.create({ name: 'Acme Inc', type: 'company', email: 'info@acme.example', mailing_address: { street: 'Damrak', city: 'Amsterdam', country: 'nl' } });
 ```
 
 **Input**
@@ -210,7 +208,7 @@ await corsair.rentman.api.contacts.create({ name: 'Acme Inc', type: 'company', c
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `folder` | `string` | No | — |
-| `type` | `string` | No | `company` or `person`; Rentman derives `displayname` from it. |
+| `type` | `private \| company` | No | `company` or `private` (a person); Rentman derives `displayname` from it. |
 | `ext_name_line` | `string` | No | — |
 | `name` | `string` | No | The company name. |
 | `firstname` | `string` | No | — |
@@ -220,18 +218,18 @@ await corsair.rentman.api.contacts.create({ name: 'Acme Inc', type: 'company', c
 | `code` | `string` | No | — |
 | `accounting_code` | `string` | No | — |
 | `vendor_accounting_code` | `string` | No | — |
-| `country` | `string` | No | A two-letter country code. |
+| `country` | `string` | No | The visit address country, a two-letter code such as `nl`. Same as `visit_address.country`. |
 | `longitude` | `number` | No | — |
 | `latitude` | `number` | No | — |
 | `distance` | `number` | No | — |
 | `travel_time` | `number` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
+| `email` | `string` | No | The primary email address, stored as `email_1`. |
+| `phone` | `string` | No | The primary phone number, stored as `phone_1`. |
 | `mailing_address` | `object` | No | — |
 | `visit_address` | `object` | No | — |
 | `invoice_address` | `object` | No | — |
 
-The three address blocks are folded into `mailing_`, `visit_` and `invoice_` prefixed fields.
+The three address blocks are folded into `mailing_`, `visit_` and `invoice_` prefixed fields; the visit address country is sent as `country`.
 
 <AccordionGroup>
 <Accordion title="mailing_address full type">
@@ -302,7 +300,7 @@ The three address blocks are folded into `mailing_`, `visit_` and `invoice_` pre
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
   firstname?: string | null,
@@ -313,26 +311,50 @@ The three address blocks are folded into `mailing_`, `visit_` and `invoice_` pre
   type?: string | null,
   code?: string | null,
   accounting_code?: string | null,
-  folder?: string | null,
+  vendor_accounting_code?: string | null,
+  folder?: string | Record<string, any> | null,
   country?: string | null,
   distance?: number | null,
   travel_time?: number | null,
   longitude?: number | null,
   latitude?: number | null,
-  email?: string | null,
-  phone?: string | null,
-  mailing_city?: string | null,
+  email_1?: string | null,
+  email_2?: string | null,
+  phone_1?: string | null,
+  phone_2?: string | null,
+  website?: string | null,
+  VAT_code?: string | null,
+  commerce_code?: string | null,
   mailing_street?: string | null,
+  mailing_number?: string | null,
+  mailing_unit_number?: string | null,
+  mailing_district?: string | null,
+  mailing_extra_address_line?: string | null,
   mailing_postalcode?: string | null,
+  mailing_city?: string | null,
+  mailing_state?: string | null,
   mailing_country?: string | null,
-  visit_city?: string | null,
   visit_street?: string | null,
+  visit_number?: string | null,
+  visit_unit_number?: string | null,
+  visit_district?: string | null,
+  visit_extra_address_line?: string | null,
   visit_postalcode?: string | null,
-  visit_country?: string | null,
-  invoice_city?: string | null,
+  visit_city?: string | null,
+  visit_state?: string | null,
   invoice_street?: string | null,
+  invoice_number?: string | null,
+  invoice_unit_number?: string | null,
+  invoice_district?: string | null,
+  invoice_extra_address_line?: string | null,
   invoice_postalcode?: string | null,
-  invoice_country?: string | null
+  invoice_city?: string | null,
+  invoice_state?: string | null,
+  invoice_country?: string | null,
+  default_person?: string | Record<string, any> | null,
+  admin_contactperson?: string | Record<string, any> | null,
+  tags?: string | null,
+  custom?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -384,7 +406,7 @@ Fetch one contact with its address blocks and linked items expanded on request
 **Risk:** `read`
 
 ```ts
-await corsair.rentman.api.contacts.get({ contact_id: 12, expand: ['customer'] });
+await corsair.rentman.api.contacts.get({ contact_id: 12, expand: ['default_person'] });
 ```
 
 **Input**
@@ -411,7 +433,7 @@ await corsair.rentman.api.contacts.get({ contact_id: 12, expand: ['customer'] })
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
   firstname?: string | null,
@@ -422,26 +444,50 @@ await corsair.rentman.api.contacts.get({ contact_id: 12, expand: ['customer'] })
   type?: string | null,
   code?: string | null,
   accounting_code?: string | null,
-  folder?: string | null,
+  vendor_accounting_code?: string | null,
+  folder?: string | Record<string, any> | null,
   country?: string | null,
   distance?: number | null,
   travel_time?: number | null,
   longitude?: number | null,
   latitude?: number | null,
-  email?: string | null,
-  phone?: string | null,
-  mailing_city?: string | null,
+  email_1?: string | null,
+  email_2?: string | null,
+  phone_1?: string | null,
+  phone_2?: string | null,
+  website?: string | null,
+  VAT_code?: string | null,
+  commerce_code?: string | null,
   mailing_street?: string | null,
+  mailing_number?: string | null,
+  mailing_unit_number?: string | null,
+  mailing_district?: string | null,
+  mailing_extra_address_line?: string | null,
   mailing_postalcode?: string | null,
+  mailing_city?: string | null,
+  mailing_state?: string | null,
   mailing_country?: string | null,
-  visit_city?: string | null,
   visit_street?: string | null,
+  visit_number?: string | null,
+  visit_unit_number?: string | null,
+  visit_district?: string | null,
+  visit_extra_address_line?: string | null,
   visit_postalcode?: string | null,
-  visit_country?: string | null,
-  invoice_city?: string | null,
+  visit_city?: string | null,
+  visit_state?: string | null,
   invoice_street?: string | null,
+  invoice_number?: string | null,
+  invoice_unit_number?: string | null,
+  invoice_district?: string | null,
+  invoice_extra_address_line?: string | null,
   invoice_postalcode?: string | null,
-  invoice_country?: string | null
+  invoice_city?: string | null,
+  invoice_state?: string | null,
+  invoice_country?: string | null,
+  default_person?: string | Record<string, any> | null,
+  admin_contactperson?: string | Record<string, any> | null,
+  tags?: string | null,
+  custom?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -460,7 +506,7 @@ List contacts with country, type and folder filters, field projection and cursor
 **Risk:** `read`
 
 ```ts
-await corsair.rentman.api.contacts.list({ country: 'NL', fields: ['displayname', 'email'], limit: 100 });
+await corsair.rentman.api.contacts.list({ country: 'nl', fields: ['displayname', 'email_1'], limit: 100 });
 ```
 
 **Input**
@@ -473,8 +519,8 @@ await corsair.rentman.api.contacts.list({ country: 'NL', fields: ['displayname',
 | `expand` | `string[]` | No | Inline these linked resources instead of returning a path string. Nested links use dot notation and go three levels deep at most. |
 | `sort` | `string` | No | A comma-separated sort, such as `+id,-firstname`: `+` ascending, `-` descending. |
 | `country` | `string` | No | A two-letter country code. |
-| `type` | `string` | No | The contact type, such as `company` or `person`. |
-| `folder` | `string` | No | The folder path a contact is filed under. |
+| `type` | `private \| company` | No | The contact type: `company` or `private` (a person). |
+| `folder` | `string` | No | The folder a contact is filed under, as a path such as `/folders/34`. |
 | `modified` | `object` | No | — |
 
 The operator keys are percent-encoded brackets, such as `modified[gte]`.
@@ -515,7 +561,7 @@ The operator keys are percent-encoded brackets, such as `modified[gte]`.
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
   firstname?: string | null,
@@ -526,26 +572,50 @@ The operator keys are percent-encoded brackets, such as `modified[gte]`.
   type?: string | null,
   code?: string | null,
   accounting_code?: string | null,
-  folder?: string | null,
+  vendor_accounting_code?: string | null,
+  folder?: string | Record<string, any> | null,
   country?: string | null,
   distance?: number | null,
   travel_time?: number | null,
   longitude?: number | null,
   latitude?: number | null,
-  email?: string | null,
-  phone?: string | null,
-  mailing_city?: string | null,
+  email_1?: string | null,
+  email_2?: string | null,
+  phone_1?: string | null,
+  phone_2?: string | null,
+  website?: string | null,
+  VAT_code?: string | null,
+  commerce_code?: string | null,
   mailing_street?: string | null,
+  mailing_number?: string | null,
+  mailing_unit_number?: string | null,
+  mailing_district?: string | null,
+  mailing_extra_address_line?: string | null,
   mailing_postalcode?: string | null,
+  mailing_city?: string | null,
+  mailing_state?: string | null,
   mailing_country?: string | null,
-  visit_city?: string | null,
   visit_street?: string | null,
+  visit_number?: string | null,
+  visit_unit_number?: string | null,
+  visit_district?: string | null,
+  visit_extra_address_line?: string | null,
   visit_postalcode?: string | null,
-  visit_country?: string | null,
-  invoice_city?: string | null,
+  visit_city?: string | null,
+  visit_state?: string | null,
   invoice_street?: string | null,
+  invoice_number?: string | null,
+  invoice_unit_number?: string | null,
+  invoice_district?: string | null,
+  invoice_extra_address_line?: string | null,
   invoice_postalcode?: string | null,
-  invoice_country?: string | null
+  invoice_city?: string | null,
+  invoice_state?: string | null,
+  invoice_country?: string | null,
+  default_person?: string | Record<string, any> | null,
+  admin_contactperson?: string | Record<string, any> | null,
+  tags?: string | null,
+  custom?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -572,7 +642,7 @@ await corsair.rentman.api.contacts.update({ contact_id: 12, name: 'Acme B.V.' })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `folder` | `string` | No | — |
-| `type` | `string` | No | `company` or `person`; Rentman derives `displayname` from it. |
+| `type` | `private \| company` | No | `company` or `private` (a person); Rentman derives `displayname` from it. |
 | `ext_name_line` | `string` | No | — |
 | `name` | `string` | No | The company name. |
 | `firstname` | `string` | No | — |
@@ -582,13 +652,13 @@ await corsair.rentman.api.contacts.update({ contact_id: 12, name: 'Acme B.V.' })
 | `code` | `string` | No | — |
 | `accounting_code` | `string` | No | — |
 | `vendor_accounting_code` | `string` | No | — |
-| `country` | `string` | No | A two-letter country code. |
+| `country` | `string` | No | The visit address country, a two-letter code such as `nl`. Same as `visit_address.country`. |
 | `longitude` | `number` | No | — |
 | `latitude` | `number` | No | — |
 | `distance` | `number` | No | — |
 | `travel_time` | `number` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
+| `email` | `string` | No | The primary email address, stored as `email_1`. |
+| `phone` | `string` | No | The primary phone number, stored as `phone_1`. |
 | `mailing_address` | `object` | No | — |
 | `visit_address` | `object` | No | — |
 | `invoice_address` | `object` | No | — |
@@ -663,7 +733,7 @@ await corsair.rentman.api.contacts.update({ contact_id: 12, name: 'Acme B.V.' })
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
   firstname?: string | null,
@@ -674,26 +744,50 @@ await corsair.rentman.api.contacts.update({ contact_id: 12, name: 'Acme B.V.' })
   type?: string | null,
   code?: string | null,
   accounting_code?: string | null,
-  folder?: string | null,
+  vendor_accounting_code?: string | null,
+  folder?: string | Record<string, any> | null,
   country?: string | null,
   distance?: number | null,
   travel_time?: number | null,
   longitude?: number | null,
   latitude?: number | null,
-  email?: string | null,
-  phone?: string | null,
-  mailing_city?: string | null,
+  email_1?: string | null,
+  email_2?: string | null,
+  phone_1?: string | null,
+  phone_2?: string | null,
+  website?: string | null,
+  VAT_code?: string | null,
+  commerce_code?: string | null,
   mailing_street?: string | null,
+  mailing_number?: string | null,
+  mailing_unit_number?: string | null,
+  mailing_district?: string | null,
+  mailing_extra_address_line?: string | null,
   mailing_postalcode?: string | null,
+  mailing_city?: string | null,
+  mailing_state?: string | null,
   mailing_country?: string | null,
-  visit_city?: string | null,
   visit_street?: string | null,
+  visit_number?: string | null,
+  visit_unit_number?: string | null,
+  visit_district?: string | null,
+  visit_extra_address_line?: string | null,
   visit_postalcode?: string | null,
-  visit_country?: string | null,
-  invoice_city?: string | null,
+  visit_city?: string | null,
+  visit_state?: string | null,
   invoice_street?: string | null,
+  invoice_number?: string | null,
+  invoice_unit_number?: string | null,
+  invoice_district?: string | null,
+  invoice_extra_address_line?: string | null,
   invoice_postalcode?: string | null,
-  invoice_country?: string | null
+  invoice_city?: string | null,
+  invoice_state?: string | null,
+  invoice_country?: string | null,
+  default_person?: string | Record<string, any> | null,
+  admin_contactperson?: string | Record<string, any> | null,
+  tags?: string | null,
+  custom?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -741,7 +835,7 @@ await corsair.rentman.api.crew.get({ crew_id: 44 });
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   firstname?: string | null,
   middle_name?: string | null,
@@ -749,8 +843,8 @@ await corsair.rentman.api.crew.get({ crew_id: 44 });
   email?: string | null,
   phone?: string | null,
   active?: boolean | null,
-  avatar?: string | null,
-  folder?: string | null,
+  avatar?: string | Record<string, any> | null,
+  folder?: string | Record<string, any> | null,
   company_name?: string | null,
   external_reference?: string | null,
   tags?: string | null,
@@ -764,7 +858,8 @@ await corsair.rentman.api.crew.get({ crew_id: 44 });
   extraaddressline?: string | null,
   state?: string | null,
   country?: string | null,
-  custom?: Record<string, string | number> | null
+  default_warehouse?: string | Record<string, any> | null,
+  custom?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -778,7 +873,7 @@ await corsair.rentman.api.crew.get({ crew_id: 44 });
 
 `crew.list`
 
-List crew members with name and availability filters, field projection and cursor paging
+List crew members with name and active filters, field projection and cursor paging
 
 **Risk:** `read`
 
@@ -797,7 +892,6 @@ await corsair.rentman.api.crew.list({ active: true, sort: '+lastname' });
 | `sort` | `string` | No | A comma-separated sort, such as `+id,-firstname`: `+` ascending, `-` descending. |
 | `name` | `object` | No | — |
 | `active` | `boolean` | No | — |
-| `crew_type` | `string` | No | The crew member type. |
 | `modified` | `object` | No | — |
 
 <AccordionGroup>
@@ -850,7 +944,7 @@ await corsair.rentman.api.crew.list({ active: true, sort: '+lastname' });
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   firstname?: string | null,
   middle_name?: string | null,
@@ -858,8 +952,8 @@ await corsair.rentman.api.crew.list({ active: true, sort: '+lastname' });
   email?: string | null,
   phone?: string | null,
   active?: boolean | null,
-  avatar?: string | null,
-  folder?: string | null,
+  avatar?: string | Record<string, any> | null,
+  folder?: string | Record<string, any> | null,
   company_name?: string | null,
   external_reference?: string | null,
   tags?: string | null,
@@ -873,7 +967,8 @@ await corsair.rentman.api.crew.list({ active: true, sort: '+lastname' });
   extraaddressline?: string | null,
   state?: string | null,
   country?: string | null,
-  custom?: Record<string, string | number> | null
+  default_warehouse?: string | Record<string, any> | null,
+  custom?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -904,8 +999,8 @@ await corsair.rentman.api.equipment.create({ name: 'Yamaha QL5 Mixer', code: 'AU
 | `name` | `string` | Yes | The equipment name. |
 | `code` | `string` | No | — |
 | `in_shop` | `boolean` | No | Whether the item is offered in the shop. Equipment has no `active` flag. |
-| `folder` | `string` | No | — |
-| `type` | `number` | No | — |
+| `folder` | `string` | No | A folder link such as `/folders/11`. |
+| `type` | `item \| set \| case` | No | — |
 | `price` | `number` | No | The rental price. |
 | `list_price` | `number` | No | The replacement value. |
 | `weight` | `number` | No | — |
@@ -933,26 +1028,27 @@ await corsair.rentman.api.equipment.create({ name: 'Yamaha QL5 Mixer', code: 'AU
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
   code?: string | null,
-  folder?: string | null,
-  factor_group?: string | null,
+  folder?: string | Record<string, any> | null,
+  factor_group?: string | Record<string, any> | null,
   unit?: string | null,
   type?: string | null,
-  taxclass?: string | null,
-  ledger?: string | null,
-  ledger_debit?: string | null,
+  taxclass?: string | Record<string, any> | null,
+  ledger?: string | Record<string, any> | null,
+  ledger_debit?: string | Record<string, any> | null,
   defaultgroup?: string | null,
   country_of_origin?: string | null,
-  image?: string | null,
+  image?: string | Record<string, any> | null,
   in_shop?: boolean | null,
   in_planner?: boolean | null,
   in_archive?: boolean | null,
-  rental_sales?: boolean | null,
+  rental_sales?: string | null,
+  is_physical?: string | null,
   temporary?: boolean | null,
-  stock_management?: boolean | null,
+  stock_management?: string | null,
   price?: number | null,
   list_price?: number | null,
   subrental_costs?: number | null,
@@ -967,7 +1063,8 @@ await corsair.rentman.api.equipment.create({ name: 'Yamaha QL5 Mixer', code: 'AU
   power?: number | null,
   current?: number | null,
   internal_remark?: string | null,
-  external_remark?: string | null
+  external_remark?: string | null,
+  custom?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -1013,26 +1110,27 @@ await corsair.rentman.api.equipment.get({ equipment_id: 33 });
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
   code?: string | null,
-  folder?: string | null,
-  factor_group?: string | null,
+  folder?: string | Record<string, any> | null,
+  factor_group?: string | Record<string, any> | null,
   unit?: string | null,
   type?: string | null,
-  taxclass?: string | null,
-  ledger?: string | null,
-  ledger_debit?: string | null,
+  taxclass?: string | Record<string, any> | null,
+  ledger?: string | Record<string, any> | null,
+  ledger_debit?: string | Record<string, any> | null,
   defaultgroup?: string | null,
   country_of_origin?: string | null,
-  image?: string | null,
+  image?: string | Record<string, any> | null,
   in_shop?: boolean | null,
   in_planner?: boolean | null,
   in_archive?: boolean | null,
-  rental_sales?: boolean | null,
+  rental_sales?: string | null,
+  is_physical?: string | null,
   temporary?: boolean | null,
-  stock_management?: boolean | null,
+  stock_management?: string | null,
   price?: number | null,
   list_price?: number | null,
   subrental_costs?: number | null,
@@ -1047,7 +1145,8 @@ await corsair.rentman.api.equipment.get({ equipment_id: 33 });
   power?: number | null,
   current?: number | null,
   internal_remark?: string | null,
-  external_remark?: string | null
+  external_remark?: string | null,
+  custom?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -1150,26 +1249,27 @@ Equipment has no `active` flag; availability is `in_shop`, `in_planner` and `in_
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
   code?: string | null,
-  folder?: string | null,
-  factor_group?: string | null,
+  folder?: string | Record<string, any> | null,
+  factor_group?: string | Record<string, any> | null,
   unit?: string | null,
   type?: string | null,
-  taxclass?: string | null,
-  ledger?: string | null,
-  ledger_debit?: string | null,
+  taxclass?: string | Record<string, any> | null,
+  ledger?: string | Record<string, any> | null,
+  ledger_debit?: string | Record<string, any> | null,
   defaultgroup?: string | null,
   country_of_origin?: string | null,
-  image?: string | null,
+  image?: string | Record<string, any> | null,
   in_shop?: boolean | null,
   in_planner?: boolean | null,
   in_archive?: boolean | null,
-  rental_sales?: boolean | null,
+  rental_sales?: string | null,
+  is_physical?: string | null,
   temporary?: boolean | null,
-  stock_management?: boolean | null,
+  stock_management?: string | null,
   price?: number | null,
   list_price?: number | null,
   subrental_costs?: number | null,
@@ -1184,7 +1284,8 @@ Equipment has no `active` flag; availability is `in_shop`, `in_planner` and `in_
   power?: number | null,
   current?: number | null,
   internal_remark?: string | null,
-  external_remark?: string | null
+  external_remark?: string | null,
+  custom?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1213,8 +1314,8 @@ await corsair.rentman.api.equipment.update({ equipment_id: 33, price: 165 });
 | `name` | `string` | No | The equipment name. |
 | `code` | `string` | No | — |
 | `in_shop` | `boolean` | No | Whether the item is offered in the shop. Equipment has no `active` flag. |
-| `folder` | `string` | No | — |
-| `type` | `number` | No | — |
+| `folder` | `string` | No | A folder link such as `/folders/11`. |
+| `type` | `item \| set \| case` | No | — |
 | `price` | `number` | No | The rental price. |
 | `list_price` | `number` | No | The replacement value. |
 | `weight` | `number` | No | — |
@@ -1243,26 +1344,27 @@ await corsair.rentman.api.equipment.update({ equipment_id: 33, price: 165 });
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
   code?: string | null,
-  folder?: string | null,
-  factor_group?: string | null,
+  folder?: string | Record<string, any> | null,
+  factor_group?: string | Record<string, any> | null,
   unit?: string | null,
   type?: string | null,
-  taxclass?: string | null,
-  ledger?: string | null,
-  ledger_debit?: string | null,
+  taxclass?: string | Record<string, any> | null,
+  ledger?: string | Record<string, any> | null,
+  ledger_debit?: string | Record<string, any> | null,
   defaultgroup?: string | null,
   country_of_origin?: string | null,
-  image?: string | null,
+  image?: string | Record<string, any> | null,
   in_shop?: boolean | null,
   in_planner?: boolean | null,
   in_archive?: boolean | null,
-  rental_sales?: boolean | null,
+  rental_sales?: string | null,
+  is_physical?: string | null,
   temporary?: boolean | null,
-  stock_management?: boolean | null,
+  stock_management?: string | null,
   price?: number | null,
   list_price?: number | null,
   subrental_costs?: number | null,
@@ -1277,7 +1379,8 @@ await corsair.rentman.api.equipment.update({ equipment_id: 33, price: 165 });
   power?: number | null,
   current?: number | null,
   internal_remark?: string | null,
-  external_remark?: string | null
+  external_remark?: string | null,
+  custom?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -1325,19 +1428,26 @@ await corsair.rentman.api.invoices.get({ invoice_id: 66 });
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   number?: string | null,
-  project?: string | null,
-  contact?: string | null,
-  status?: string | null,
+  subject?: string | null,
+  project?: string | Record<string, any> | null,
+  customer?: string | Record<string, any> | null,
+  contact?: string | Record<string, any> | null,
+  account_manager?: string | Record<string, any> | null,
   date?: string | null,
   expiration?: string | null,
-  total_excl_vat?: number | null,
-  total_incl_vat?: number | null,
-  amount_paid?: number | null,
-  balance?: number | null,
-  locked?: boolean | null
+  invoicetype?: string | null,
+  finalized?: boolean | null,
+  price?: number | null,
+  price_invat?: number | null,
+  vat_amount?: number | null,
+  total_paid?: number | null,
+  outstanding_balance?: number | null,
+  is_paid?: boolean | null,
+  date_sent?: string | null,
+  payment_date?: string | null
 }
 ```
 </Accordion>
@@ -1422,19 +1532,26 @@ await corsair.rentman.api.invoices.list({ project: 201, number: { eq: 'F-2026-00
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   number?: string | null,
-  project?: string | null,
-  contact?: string | null,
-  status?: string | null,
+  subject?: string | null,
+  project?: string | Record<string, any> | null,
+  customer?: string | Record<string, any> | null,
+  contact?: string | Record<string, any> | null,
+  account_manager?: string | Record<string, any> | null,
   date?: string | null,
   expiration?: string | null,
-  total_excl_vat?: number | null,
-  total_incl_vat?: number | null,
-  amount_paid?: number | null,
-  balance?: number | null,
-  locked?: boolean | null
+  invoicetype?: string | null,
+  finalized?: boolean | null,
+  price?: number | null,
+  price_invat?: number | null,
+  vat_amount?: number | null,
+  total_paid?: number | null,
+  outstanding_balance?: number | null,
+  is_paid?: boolean | null,
+  date_sent?: string | null,
+  payment_date?: string | null
 }[]
 ```
 </Accordion>
@@ -1450,12 +1567,12 @@ await corsair.rentman.api.invoices.list({ project: 201, number: { eq: 'F-2026-00
 
 `projects.create`
 
-Create a project for a customer contact with its number, account manager and deposit settings
+Create a project with its number, account manager and deposit settings (Rentman sets no customer through the API)
 
 **Risk:** `write`
 
 ```ts
-await corsair.rentman.api.projects.create({ name: 'Festival 2026', customer: 12, number: 'P-2026-001' });
+await corsair.rentman.api.projects.create({ name: 'Festival 2026', number: 'P-2026-001', account_manager: 44 });
 ```
 
 **Input**
@@ -1463,14 +1580,15 @@ await corsair.rentman.api.projects.create({ name: 'Festival 2026', customer: 12,
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | The project name. |
-| `customer` | `number` | Yes | The contact id the project belongs to. |
 | `number` | `string` | No | — |
 | `reference` | `string` | No | — |
-| `account_manager` | `number` | No | A crew member id. |
-| `deposit_status` | `string` | No | — |
+| `account_manager` | `number` | No | A crew member id, sent as the link `/crew/<id>`. |
+| `deposit_status` | `no_deposit_paid \| deposit_paid \| deposit_returned` | No | — |
 | `color` | `string` | No | — |
 | `conditions` | `string` | No | — |
 | `refundabledeposit` | `number` | No | — |
+
+Rentman refuses a customer on project writes; set it in the Rentman app.
 
 
 
@@ -1488,21 +1606,21 @@ await corsair.rentman.api.projects.create({ name: 'Festival 2026', customer: 12,
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
-  number?: string | null,
+  number?: number | string | null,
   reference?: string | null,
-  project_type?: string | null,
+  project_type?: string | Record<string, any> | null,
   deposit_status?: string | null,
   color?: string | null,
   conditions?: string | null,
   tags?: string | null,
-  customer?: string | null,
-  cust_contact?: string | null,
-  loc_contact?: string | null,
-  location?: string | null,
-  account_manager?: string | null,
+  customer?: string | Record<string, any> | null,
+  cust_contact?: string | Record<string, any> | null,
+  loc_contact?: string | Record<string, any> | null,
+  location?: string | Record<string, any> | null,
+  account_manager?: string | Record<string, any> | null,
   usageperiod_start?: string | null,
   usageperiod_end?: string | null,
   planperiod_start?: string | null,
@@ -1527,7 +1645,7 @@ await corsair.rentman.api.projects.create({ name: 'Festival 2026', customer: 12,
   current?: number | null,
   purchasecosts?: number | null,
   volume?: number | null,
-  custom?: Record<string, string | number> | null
+  custom?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -1575,21 +1693,21 @@ A linked item is a path like `/contacts/12` unless `expand` inlines it.
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
-  number?: string | null,
+  number?: number | string | null,
   reference?: string | null,
-  project_type?: string | null,
+  project_type?: string | Record<string, any> | null,
   deposit_status?: string | null,
   color?: string | null,
   conditions?: string | null,
   tags?: string | null,
-  customer?: string | null,
-  cust_contact?: string | null,
-  loc_contact?: string | null,
-  location?: string | null,
-  account_manager?: string | null,
+  customer?: string | Record<string, any> | null,
+  cust_contact?: string | Record<string, any> | null,
+  loc_contact?: string | Record<string, any> | null,
+  location?: string | Record<string, any> | null,
+  account_manager?: string | Record<string, any> | null,
   usageperiod_start?: string | null,
   usageperiod_end?: string | null,
   planperiod_start?: string | null,
@@ -1614,7 +1732,7 @@ A linked item is a path like `/contacts/12` unless `expand` inlines it.
   current?: number | null,
   purchasecosts?: number | null,
   volume?: number | null,
-  custom?: Record<string, string | number> | null
+  custom?: Record<string, any> | null
 }
 ```
 </Accordion>
@@ -1647,7 +1765,7 @@ await corsair.rentman.api.projects.list({ name: { eq: 'Festival 2026' }, limit: 
 | `sort` | `string` | No | A comma-separated sort, such as `+id,-firstname`: `+` ascending, `-` descending. |
 | `name` | `object` | No | — |
 | `number` | `object` | No | — |
-| `deposit_status` | `string` | No | — |
+| `deposit_status` | `string` | No | `no_deposit_paid`, `deposit_paid` or `deposit_returned`. |
 | `modified` | `object` | No | — |
 
 <AccordionGroup>
@@ -1714,21 +1832,21 @@ await corsair.rentman.api.projects.list({ name: { eq: 'Festival 2026' }, limit: 
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
-  number?: string | null,
+  number?: number | string | null,
   reference?: string | null,
-  project_type?: string | null,
+  project_type?: string | Record<string, any> | null,
   deposit_status?: string | null,
   color?: string | null,
   conditions?: string | null,
   tags?: string | null,
-  customer?: string | null,
-  cust_contact?: string | null,
-  loc_contact?: string | null,
-  location?: string | null,
-  account_manager?: string | null,
+  customer?: string | Record<string, any> | null,
+  cust_contact?: string | Record<string, any> | null,
+  loc_contact?: string | Record<string, any> | null,
+  location?: string | Record<string, any> | null,
+  account_manager?: string | Record<string, any> | null,
   usageperiod_start?: string | null,
   usageperiod_end?: string | null,
   planperiod_start?: string | null,
@@ -1753,7 +1871,7 @@ await corsair.rentman.api.projects.list({ name: { eq: 'Festival 2026' }, limit: 
   current?: number | null,
   purchasecosts?: number | null,
   volume?: number | null,
-  custom?: Record<string, string | number> | null
+  custom?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -1767,7 +1885,7 @@ await corsair.rentman.api.projects.list({ name: { eq: 'Festival 2026' }, limit: 
 
 `projects.update`
 
-Update a project: its name, customer, number, account manager or deposit settings
+Update a project: its name, number, reference, account manager or deposit settings
 
 **Risk:** `write`
 
@@ -1780,11 +1898,10 @@ await corsair.rentman.api.projects.update({ project_id: 201, reference: 'PO-9988
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | The project name. |
-| `customer` | `number` | No | The contact id the project belongs to. |
 | `number` | `string` | No | — |
 | `reference` | `string` | No | — |
-| `account_manager` | `number` | No | A crew member id. |
-| `deposit_status` | `string` | No | — |
+| `account_manager` | `number` | No | A crew member id, sent as the link `/crew/<id>`. |
+| `deposit_status` | `no_deposit_paid \| deposit_paid \| deposit_returned` | No | — |
 | `color` | `string` | No | — |
 | `conditions` | `string` | No | — |
 | `refundabledeposit` | `number` | No | — |
@@ -1806,21 +1923,21 @@ await corsair.rentman.api.projects.update({ project_id: 201, reference: 'PO-9988
   id?: number | null,
   created?: string | null,
   modified?: string | null,
-  creator?: string | null,
+  creator?: string | Record<string, any> | null,
   displayname?: string | null,
   name?: string | null,
-  number?: string | null,
+  number?: number | string | null,
   reference?: string | null,
-  project_type?: string | null,
+  project_type?: string | Record<string, any> | null,
   deposit_status?: string | null,
   color?: string | null,
   conditions?: string | null,
   tags?: string | null,
-  customer?: string | null,
-  cust_contact?: string | null,
-  loc_contact?: string | null,
-  location?: string | null,
-  account_manager?: string | null,
+  customer?: string | Record<string, any> | null,
+  cust_contact?: string | Record<string, any> | null,
+  loc_contact?: string | Record<string, any> | null,
+  location?: string | Record<string, any> | null,
+  account_manager?: string | Record<string, any> | null,
   usageperiod_start?: string | null,
   usageperiod_end?: string | null,
   planperiod_start?: string | null,
@@ -1845,7 +1962,7 @@ await corsair.rentman.api.projects.update({ project_id: 201, reference: 'PO-9988
   current?: number | null,
   purchasecosts?: number | null,
   volume?: number | null,
-  custom?: Record<string, string | number> | null
+  custom?: Record<string, any> | null
 }
 ```
 </Accordion>
