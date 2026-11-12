@@ -17,9 +17,9 @@ function isApi(error: Error): error is ScrapeDoAPIError {
  *
  * The 400 is the subtle one. Scrape.do documents **two different 400s**: one for
  * a bad request to Scrape.do (no credit consumed, retrying is pointless) and one
- * for a bad request *to the target* (a credit is consumed). `isTargetRejection`
- * reads `PossibleCauses` to tell them apart; both are terminal here, but the
- * distinction is exposed on the error so a caller can tell why.
+ * for a bad request *to the target* (a credit is consumed). On the scrape
+ * surface a target 400 is returned as a result; `isTargetRejection` is true
+ * only for a 400 without Scrape.do's error envelope. Both are terminal here.
  */
 export const errorHandlers = {
 	// 401: the token is inactive or the subscription is suspended. The docs warn
