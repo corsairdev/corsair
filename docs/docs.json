@@ -223,6 +223,14 @@
                 ]
               },
               {
+                "group": "Adyntel",
+                "pages": [
+                  "plugins/adyntel/overview",
+                  "plugins/adyntel/api",
+                  "plugins/adyntel/database"
+                ]
+              },
+              {
                 "group": "AeroLeads",
                 "pages": [
                   "plugins/aeroleads/overview",
@@ -1457,6 +1465,14 @@
                 ]
               },
               {
+                "group": "CommCare",
+                "pages": [
+                  "plugins/commcare/overview",
+                  "plugins/commcare/api",
+                  "plugins/commcare/database"
+                ]
+              },
+              {
                 "group": "Composio",
                 "pages": [
                   "plugins/composio/overview",
@@ -1545,6 +1561,14 @@
                 ]
               },
               {
+                "group": "CraftMyPDF",
+                "pages": [
+                  "plugins/craftmypdf/overview",
+                  "plugins/craftmypdf/api",
+                  "plugins/craftmypdf/database"
+                ]
+              },
+              {
                 "group": "Crow Terminal",
                 "pages": [
                   "plugins/crowterminal/overview",
@@ -1608,6 +1632,14 @@
                   "plugins/daffy/overview",
                   "plugins/daffy/api",
                   "plugins/daffy/database"
+                ]
+              },
+              {
+                "group": "Databox",
+                "pages": [
+                  "plugins/databox/overview",
+                  "plugins/databox/api",
+                  "plugins/databox/database"
                 ]
               },
               {
@@ -1797,6 +1829,14 @@
                   "plugins/dropboxsign/overview",
                   "plugins/dropboxsign/api",
                   "plugins/dropboxsign/database"
+                ]
+              },
+              {
+                "group": "Dropcontact",
+                "pages": [
+                  "plugins/dropcontact/overview",
+                  "plugins/dropcontact/api",
+                  "plugins/dropcontact/database"
                 ]
               },
               {
@@ -2153,6 +2193,14 @@
                 ]
               },
               {
+                "group": "Gong",
+                "pages": [
+                  "plugins/gong/overview",
+                  "plugins/gong/api",
+                  "plugins/gong/database"
+                ]
+              },
+              {
                 "group": "Google Address Validation",
                 "pages": [
                   "plugins/googleaddressvalidation/overview",
@@ -2289,6 +2337,15 @@
                 ]
               },
               {
+                "group": "Happy Scribe",
+                "pages": [
+                  "plugins/happyscribe/overview",
+                  "plugins/happyscribe/api",
+                  "plugins/happyscribe/database",
+                  "plugins/happyscribe/webhooks"
+                ]
+              },
+              {
                 "group": "Harvest",
                 "pages": [
                   "plugins/harvest/overview",
@@ -2318,6 +2375,14 @@
                   "plugins/heygen/overview",
                   "plugins/heygen/api",
                   "plugins/heygen/database"
+                ]
+              },
+              {
+                "group": "Heyy",
+                "pages": [
+                  "plugins/heyy/overview",
+                  "plugins/heyy/api",
+                  "plugins/heyy/database"
                 ]
               },
               {
@@ -2377,6 +2442,14 @@
                   "plugins/hunterio/overview",
                   "plugins/hunterio/api",
                   "plugins/hunterio/database"
+                ]
+              },
+              {
+                "group": "ImageKit",
+                "pages": [
+                  "plugins/imagekit/overview",
+                  "plugins/imagekit/api",
+                  "plugins/imagekit/database"
                 ]
               },
               {
@@ -2614,11 +2687,27 @@
                 ]
               },
               {
+                "group": "Mails.so",
+                "pages": [
+                  "plugins/mailsso/overview",
+                  "plugins/mailsso/api",
+                  "plugins/mailsso/database"
+                ]
+              },
+              {
                 "group": "Mailtrap",
                 "pages": [
                   "plugins/mailtrap/overview",
                   "plugins/mailtrap/api",
                   "plugins/mailtrap/database"
+                ]
+              },
+              {
+                "group": "Mapbox",
+                "pages": [
+                  "plugins/mapbox/overview",
+                  "plugins/mapbox/api",
+                  "plugins/mapbox/database"
                 ]
               },
               {
@@ -2630,11 +2719,27 @@
                 ]
               },
               {
+                "group": "Melo",
+                "pages": [
+                  "plugins/melo/overview",
+                  "plugins/melo/api",
+                  "plugins/melo/database"
+                ]
+              },
+              {
                 "group": "Mem0",
                 "pages": [
                   "plugins/mem0/overview",
                   "plugins/mem0/api",
                   "plugins/mem0/database"
+                ]
+              },
+              {
+                "group": "MemberSpot",
+                "pages": [
+                  "plugins/memberspot/overview",
+                  "plugins/memberspot/api",
+                  "plugins/memberspot/database"
                 ]
               },
               {
@@ -2795,6 +2900,14 @@
                 ]
               },
               {
+                "group": "OneDesk",
+                "pages": [
+                  "plugins/onedesk/overview",
+                  "plugins/onedesk/api",
+                  "plugins/onedesk/database"
+                ]
+              },
+              {
                 "group": "OneDrive",
                 "pages": [
                   "plugins/onedrive/overview",
@@ -2810,6 +2923,14 @@
                   "plugins/openai/overview",
                   "plugins/openai/api",
                   "plugins/openai/database"
+                ]
+              },
+              {
+                "group": "OpenGraph.io",
+                "pages": [
+                  "plugins/opengraph/overview",
+                  "plugins/opengraph/api",
+                  "plugins/opengraph/database"
                 ]
               },
               {
@@ -2930,6 +3051,14 @@
                   "plugins/pinecone/overview",
                   "plugins/pinecone/api",
                   "plugins/pinecone/database"
+                ]
+              },
+              {
+                "group": "Placid",
+                "pages": [
+                  "plugins/placid/overview",
+                  "plugins/placid/api",
+                  "plugins/placid/database"
                 ]
               },
               {
@@ -3153,6 +3282,15 @@
                   "plugins/salesforce/api",
                   "plugins/salesforce/database",
                   "plugins/salesforce/webhooks"
+                ]
+              },
+              {
+                "group": "Sanity",
+                "pages": [
+                  "plugins/sanity/overview",
+                  "plugins/sanity/api",
+                  "plugins/sanity/database",
+                  "plugins/sanity/webhooks"
                 ]
               },
               {
