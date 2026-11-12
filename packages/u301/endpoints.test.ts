@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import * as Api from './endpoints';
+import { U301EndpointOutputSchemas as Outputs } from './endpoints/types';
 import {
 	AUDIENCE,
 	BAD_REQUEST,
@@ -143,6 +144,15 @@ describe('links.list', () => {
 		expect(lastRequest(fetchMock).path).toBe('/v3/shorten/list');
 		expect(result.links).toHaveLength(2);
 		expect(result.links?.[0]?.statsClicks).toBe(42);
+	});
+
+	it('types the paging metadata the list returns', async () => {
+		respond(fetchMock, LINKS);
+
+		const result = Outputs.linkList.parse(await invoke(Api.list, {}));
+
+		expect(result.metadata?.total).toBe(2);
+		expect(result.metadata?.page).toBe(1);
 	});
 
 	it('passes paging', async () => {
@@ -304,6 +314,22 @@ describe('domains', () => {
 		expect(result.homePageRedirectUrl).toBe('https://example.com');
 	});
 
+	it('types the documented DNS settings, which finish the custom-domain setup', async () => {
+		respond(fetchMock, DOMAIN_DETAIL);
+
+		const result = Outputs.domainGet.parse(
+			await invoke(Api.domainGet, { domain: 'go.example.com' }),
+		);
+
+		expect(result.isGlobal).toBe(false);
+		expect(result.dnsSettings?.cnameValue).toBe('babbette971.bender.u301.com');
+		expect(result.dnsSettings?.isHostedOnCloudflare).toBe(true);
+		expect(result.dnsSettings?.subdomain).toBe('go');
+		expect(result.dnsSettings?.cloudflareAuthUrl).toContain(
+			'dash.cloudflare.com',
+		);
+	});
+
 	it('checks the active status, whose field is spelled actived', async () => {
 		respond(fetchMock, DOMAIN_ACTIVE);
 
@@ -436,6 +462,17 @@ describe('analytics', () => {
 		expect(request.query.range).toBe('30d');
 		expect(result.data?.[0]?.label).toBe('United States');
 		expect(result.data?.[0]?.click).toBe(210);
+	});
+
+	it('does not fail a read when the API echoes a range it adds later', async () => {
+		respond(fetchMock, { ...AUDIENCE, range: '90d' });
+
+		const result = (await invoke(Api.audience, {
+			dimension: 'countries',
+			range: '30d',
+		})) as { range?: string };
+
+		expect(result.range).toBe('90d');
 	});
 
 	it('accepts each documented dimension', async () => {

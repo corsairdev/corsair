@@ -50,8 +50,10 @@ export const LINK = {
 	updatedAt: '2026-05-01T10:00:00.000Z',
 };
 
+/** The list wraps rows in `links` and pages in `metadata`, per the SDK's schema. */
 export const LINKS = {
 	links: [LINK, { ...LINK, slug: 'abc123', statsClicks: 0 }],
+	metadata: { total: 2, perPage: 10, page: 1 },
 };
 
 export const LINK_DELETED = { message: 'success' };
@@ -85,6 +87,17 @@ export const DOMAIN_DETAIL = {
 	createdAt: '2026-04-01T10:00:00.000Z',
 	updatedAt: '2026-05-01T10:00:00.000Z',
 	isPrimary: false,
+	isGlobal: false,
+	// The shape of the docs' Get Domain Details example.
+	dnsSettings: {
+		cnameValue: 'babbette971.bender.u301.com',
+		isHostedOnCloudflare: true,
+		baseDomain: 'example.com',
+		subdomain: 'go',
+		domainConnectUrl: 'api.cloudflare.com/client/v4/dns/domainconnect',
+		cloudflareAuthUrl:
+			'https://dash.cloudflare.com/domainconnect/v2/domainTemplates/providers/u301.com/services/bender/apply',
+	},
 };
 
 /** The field is spelled `actived` by the API, which the model keeps. */

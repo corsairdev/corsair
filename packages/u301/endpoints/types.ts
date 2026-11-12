@@ -167,14 +167,20 @@ const LinkSchema = z
 
 export type U301Link = z.infer<typeof LinkSchema>;
 
-/**
- * The list answers `{links, ...}`. The pagination fields beyond `links` are not
- * spelled out in the docs, so the object stays loose and the count comes from the
- * array.
- */
+/** The paging block of a list answer, as the SDK's list schema reads it. */
+const LinkListMetadataSchema = z
+	.object({
+		total: z.number().nullish().describe('Links in the workspace.'),
+		perPage: z.number().nullish(),
+		page: z.number().nullish(),
+	})
+	.loose();
+
+/** The list answers `{links, metadata}`. */
 const LinkListResponseSchema = z
 	.object({
 		links: z.array(LinkSchema).nullish(),
+		metadata: LinkListMetadataSchema.nullish(),
 	})
 	.loose();
 
@@ -253,17 +259,27 @@ const DomainRefInputSchema = z.object({
 export type DomainRefInput = z.infer<typeof DomainRefInputSchema>;
 
 /**
- * The DNS records to create for a custom domain. `cnameValue` is the target the
- * CNAME must point at, which is the field the setup flow actually needs.
+ * What a custom domain needs in DNS, as the Get Domain Details page documents it.
+ * `cnameValue` is the target the CNAME on `subdomain` must point at; on a domain
+ * hosted on Cloudflare, `cloudflareAuthUrl` adds the record in one click.
  */
 const DnsSettingsSchema = z
 	.object({
-		cnameName: z.string().nullish(),
-		cnameValue: z.string().nullish(),
-		aName: z.string().nullish(),
-		aValue: z.string().nullish(),
-		txtName: z.string().nullish(),
-		txtValue: z.string().nullish(),
+		cnameValue: z
+			.string()
+			.nullish()
+			.describe('The target the CNAME record must point at.'),
+		isHostedOnCloudflare: z.boolean().nullish(),
+		baseDomain: z.string().nullish(),
+		subdomain: z
+			.string()
+			.nullish()
+			.describe('The host the CNAME record is created on.'),
+		domainConnectUrl: z.string().nullish(),
+		cloudflareAuthUrl: z
+			.string()
+			.nullish()
+			.describe('A link that adds the record on Cloudflare in one click.'),
 	})
 	.loose();
 
@@ -280,6 +296,7 @@ const DomainDetailSchema = z
 		createdAt: z.string().nullish(),
 		updatedAt: z.string().nullish(),
 		isPrimary: z.boolean().nullish(),
+		isGlobal: z.boolean().nullish().describe('True for a U301-owned domain.'),
 		dnsSettings: DnsSettingsSchema.nullish(),
 	})
 	.loose();
@@ -406,7 +423,7 @@ const AudienceInputSchema = z.object({
 	dimension: z
 		.enum(U301_TOP_DIMENSIONS)
 		.describe(
-			'Which breakdown to read: countries, cities, referrers, browsers, os or devices.',
+			'Which breakdown to read: countries, cities, referers, browsers, operating-systems or device-types.',
 		),
 	range: z.enum(U301_RANGES).describe('The window to aggregate over.'),
 	timezone: z
@@ -434,7 +451,9 @@ const AudienceRowSchema = z
 const AudienceResponseSchema = z
 	.object({
 		datetimeRange: z.array(z.string()).nullish(),
-		range: z.enum(U301_RANGES).nullish(),
+		// A string, not the input enum: an output must not fail on a range U301
+		// adds later, after the call has already happened.
+		range: z.string().nullish(),
 		data: z.array(AudienceRowSchema).nullish(),
 	})
 	.loose();
