@@ -2556,6 +2556,14 @@
                 ]
               },
               {
+                "group": "Keyword",
+                "pages": [
+                  "plugins/keyword/overview",
+                  "plugins/keyword/api",
+                  "plugins/keyword/database"
+                ]
+              },
+              {
                 "group": "Kibana",
                 "pages": [
                   "plugins/kibana/overview",
