@@ -20,6 +20,8 @@ const context = {
 	originalError: new Error('failure'),
 } satisfies ErrorContext;
 
+// unknown: each handler resolves to its own retry decision; the tests only
+// check whether it resolves or rejects, so the shared type stays open.
 function run(name: keyof typeof errorHandlers, error: Error): Promise<unknown> {
 	const handler = errorHandlers[name].handler;
 	return (handler as (e: Error, c: ErrorContext) => Promise<unknown>)(
