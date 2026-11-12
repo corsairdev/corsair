@@ -13,6 +13,8 @@ import { asRecord } from 'corsair/core';
  */
 export function pagedShape(key: string) {
 	return (
+		// unknown: untrusted provider JSON; the operation's output schema checks
+		// whatever this shaper returns.
 		raw: unknown,
 		// unknown: the operation input, unused by this shaper.
 		_parsed: unknown,
@@ -45,6 +47,8 @@ export function pagedShape(key: string) {
  */
 export function singleShape(key: string) {
 	return (
+		// unknown: untrusted provider JSON; the operation's output schema checks
+		// whatever this shaper returns.
 		raw: unknown,
 		// unknown: the operation input, unused by this shaper.
 		_parsed: unknown,
