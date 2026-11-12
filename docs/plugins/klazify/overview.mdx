@@ -1,11 +1,12 @@
 ---
-title: Overview
+title: "Klazify plugin"
+sidebarTitle: "Overview"
 description: "Website classification from any URL or email - IAB and Klazify categories, company data, tech stack, logos, traffic, domain age and similar domains."
 ---
 
 Use **Klazify** through Corsair: one client, typed API calls.
 
-Klazify classifies a website from its URL, or from an email's domain, and returns the categories, company data, tech stack, logo and traffic in separate endpoints or all at once.
+Klazify classifies a website from its URL, or from an email's domain. `categorize.all` returns the categories, company data, tech stack, logo and social profiles in one answer, and the narrower endpoints return one block each. Traffic comes only from `traffic.get`.
 
 - **A paid plan is required.** Klazify advertises a free key, but an account on the free plan cannot call any endpoint: every route answers `401` with `error: "Plan free no available"` and a message asking you to upgrade. The plugin reports that as `PLAN_REQUIRED_ERROR` so it is not mistaken for a bad key.
 - **Two targets.** Every classification endpoint takes a `url` or an `email`; give one. `refresh: true` forces a live crawl instead of the cached result, on every paid plan including Starter.
@@ -74,7 +75,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. Klazify needs an API key from your dashboard, and a **paid plan**: an account on the free plan cannot call any endpoint, and every request answers `401` with `error: "Plan free no available"`. Save the key on the account before the first call, because a call with no saved key throws `AuthMissingError` rather than reaching Klazify.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 klazify()

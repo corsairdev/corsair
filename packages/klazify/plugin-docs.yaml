@@ -3,7 +3,7 @@ description: Website classification from any URL or email - IAB and Klazify cate
 domain: klazify.com
 recommendedAuth: api_key
 overviewNote: |
-  Klazify classifies a website from its URL, or from an email's domain, and returns the categories, company data, tech stack, logo and traffic in separate endpoints or all at once.
+  Klazify classifies a website from its URL, or from an email's domain. `categorize.all` returns the categories, company data, tech stack, logo and social profiles in one answer, and the narrower endpoints return one block each. Traffic comes only from `traffic.get`.
 
   - **A paid plan is required.** Klazify advertises a free key, but an account on the free plan cannot call any endpoint: every route answers `401` with `error: "Plan free no available"` and a message asking you to upgrade. The plugin reports that as `PLAN_REQUIRED_ERROR` so it is not mistaken for a bad key.
   - **Two targets.** Every classification endpoint takes a `url` or an `email`; give one. `refresh: true` forces a live crawl instead of the cached result, on every paid plan including Starter.
