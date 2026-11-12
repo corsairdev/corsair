@@ -3436,6 +3436,14 @@
                 ]
               },
               {
+                "group": "Roboflow",
+                "pages": [
+                  "plugins/roboflow/overview",
+                  "plugins/roboflow/api",
+                  "plugins/roboflow/database"
+                ]
+              },
+              {
                 "group": "Rootly",
                 "pages": [
                   "plugins/rootly/overview",

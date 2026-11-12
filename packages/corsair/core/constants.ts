@@ -408,6 +408,7 @@ export const BaseProviders = [
 	'revolt',
 	'ritekit',
 	'roam',
+	'roboflow',
 	'rocketlane',
 	'rocketreach',
 	'rollbar',
@@ -932,6 +933,7 @@ export const ProviderDisplayNames = {
 	revolt: 'Revolt (Stoat)',
 	ritekit: 'RiteKit',
 	roam: 'Roam HQ',
+	roboflow: 'Roboflow',
 	rocketlane: 'Rocketlane',
 	rocketreach: 'RocketReach',
 	rollbar: 'Rollbar',
@@ -1463,6 +1465,7 @@ export type AllProviders =
 	| 'revolt'
 	| 'ritekit'
 	| 'roam'
+	| 'roboflow'
 	| 'rocketlane'
 	| 'rocketreach'
 	| 'rollbar'
