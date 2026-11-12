@@ -247,7 +247,9 @@ export const KnackRecordsListInputSchema = z.object({
 		.min(1)
 		.max(1000)
 		.optional()
-		.describe('How many records to return per page: 25 by default, 1000 at most.'),
+		.describe(
+			'How many records to return per page: 25 by default, 1000 at most.',
+		),
 	sort_field: z
 		.string()
 		.regex(/^field_\d+$/, 'A field key looks like `field_23`.')
