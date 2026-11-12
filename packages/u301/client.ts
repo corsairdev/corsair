@@ -13,9 +13,9 @@ import { ApiError, request } from 'corsair/http';
 export const U301_API_BASE = 'https://api.u301.com/v3';
 
 /**
- * U301 needs **two** credentials: an API key, and a workspace ID that routes the
- * call to the right workspace. The key goes in `Authorization: Bearer`, and the
- * workspace in the `workspaceId` query parameter on every single call.
+ * U301 takes an API key, and optionally a workspace ID that routes the call to
+ * another workspace than the key's own. The key goes in `Authorization: Bearer`,
+ * and the workspace in the `workspaceId` query parameter.
  *
  * They are carried together in the one key string a Corsair plugin receives,
  * separated by a newline, because there is no second key slot. `parseU301Key`
@@ -126,7 +126,22 @@ function failure(body: unknown): {
 	const errorText = record?.error;
 	const code = record?.code;
 	const requestId = record?.requestId;
-	const rawErrors = record?.errors;
+	// A query the API's own validator refuses answers
+	// `{ success: false, error: { issues: [{ path, message }] } }`, so the issues
+	// are read as the per-field details when there is no top-level `errors`.
+	const nested = asRecord(errorText);
+	const rawErrors =
+		record?.errors ??
+		(Array.isArray(nested?.issues)
+			? nested.issues.map((issue) => {
+					const problem = asRecord(issue);
+					const path = problem?.path;
+					return {
+						field: Array.isArray(path) ? path.join('.') : undefined,
+						message: problem?.message,
+					};
+				})
+			: undefined);
 	const details = Array.isArray(rawErrors)
 		? rawErrors.flatMap((entry) => {
 				const problem = asRecord(entry);
@@ -137,13 +152,16 @@ function failure(body: unknown): {
 					: [];
 			})
 		: undefined;
+	const nestedMessage = nested?.message;
 	return {
 		message:
 			typeof message === 'string' && message.length > 0
 				? message
 				: typeof errorText === 'string' && errorText.length > 0
 					? errorText
-					: undefined,
+					: typeof nestedMessage === 'string' && nestedMessage.length > 0
+						? nestedMessage
+						: undefined,
 		code: typeof code === 'string' && code.length > 0 ? code : undefined,
 		requestId:
 			typeof requestId === 'string' && requestId.length > 0
@@ -189,8 +207,7 @@ export function composeU301Key(apiKey: string, workspaceId: string): string {
 
 /**
  * Unpacks the key. A value that looks like `<key>\n<workspace>` is split; anything
- * else is treated as a bare key with no workspace, which the caller reports as a
- * configuration error rather than sending a request that must fail.
+ * else is a bare key with no workspace, sent without `workspaceId`.
  */
 export function parseU301Key(composite: string): {
 	apiKey: string;
@@ -253,19 +270,14 @@ export async function makeU301Request(
 	{ method, path, query, body, replayable }: U301Request,
 ): Promise<unknown> {
 	const { apiKey, workspaceId } = parseU301Key(compositeKey);
-	if (!workspaceId) {
-		// Sending without it would return a 401 that looks like a bad key, so the real
-		// problem is reported here instead.
-		throw new U301APIError(
-			'U301 needs a workspace ID as well as an API key: set the key to "<api key>\\n<workspace id>".',
-			{ method, replayable },
-		);
-	}
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
-		query: { ...query, workspaceId },
+		// Without a workspace ID U301 answers for the key's own workspace (live
+		// 11-12, a user key, on the list, domain and analytics routes), so it is
+		// sent only when one was given.
+		query: workspaceId ? { ...query, workspaceId } : query,
 		body,
 		mediaType: body === undefined ? undefined : 'application/json',
 	};

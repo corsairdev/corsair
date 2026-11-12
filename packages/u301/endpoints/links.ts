@@ -175,7 +175,7 @@ export const domainCreate: U301Endpoints['domainCreate'] = (ctx, input) =>
 		{
 			log: (parsed, result) => ({
 				domain: parsed.domain,
-				success: result.success ?? undefined,
+				message: result.message ?? undefined,
 			}),
 		},
 	);
@@ -251,7 +251,7 @@ export const domainDelete: U301Endpoints['domainDelete'] = (ctx, input) =>
 		{
 			log: (parsed, result) => ({
 				domain: parsed.domain,
-				success: result.success ?? undefined,
+				message: result.message ?? undefined,
 			}),
 		},
 	);

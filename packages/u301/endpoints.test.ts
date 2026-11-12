@@ -7,6 +7,7 @@ import {
 	CLICKS,
 	DOMAIN_ACTIVE,
 	DOMAIN_CREATED,
+	DOMAIN_DELETED,
 	DOMAIN_DETAIL,
 	DOMAIN_NOT_READY,
 	DOMAINS,
@@ -15,6 +16,8 @@ import {
 	LINK_DELETED,
 	LINK_REUSED,
 	LINKS,
+	LIST_PER_PAGE_TOO_SMALL,
+	PRO_ONLY,
 	QUOTA,
 	SETTINGS_OK,
 } from './test-fixtures';
@@ -181,6 +184,15 @@ describe('links.list', () => {
 		);
 	});
 
+	it('refuses a page size outside the 10 to 200 the API accepts', async () => {
+		// Live: perPage=5 answers 400 "must be greater than or equal to 10", and
+		// perPage=1000 answers "less than or equal to 200".
+		for (const perPage of [5, 201]) {
+			await expect(invoke(Api.list, { perPage })).rejects.toThrow();
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a page below 1', async () => {
 		await expect(invoke(Api.list, { page: 0 })).rejects.toThrow();
 	});
@@ -299,7 +311,7 @@ describe('domains', () => {
 		const result = (await invoke(Api.domainCreate, {
 			domain: 'go.example.com',
 			shortCodeLength: 5,
-		})) as { success?: boolean };
+		})) as { message?: string };
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('PUT');
@@ -308,7 +320,22 @@ describe('domains', () => {
 			domain: 'go.example.com',
 			shortCodeLength: 5,
 		});
-		expect(result.success).toBe(true);
+		expect(result.message).toBe('Domain created');
+	});
+
+	it('types the message create and delete answer', async () => {
+		respond(fetchMock, DOMAIN_CREATED);
+		respond(fetchMock, DOMAIN_DELETED);
+
+		const created = Outputs.domainCreate.parse(
+			await invoke(Api.domainCreate, { domain: 'go.example.com' }),
+		);
+		const deleted = Outputs.domainDelete.parse(
+			await invoke(Api.domainDelete, { domain: 'go.example.com' }),
+		);
+
+		expect(created.message).toBe('Domain created');
+		expect(deleted.message).toBe('success');
 	});
 
 	it('rejects a slug length outside the documented 3-10', async () => {
@@ -383,7 +410,7 @@ describe('domains', () => {
 	});
 
 	it('deletes a domain', async () => {
-		respond(fetchMock, DOMAIN_CREATED);
+		respond(fetchMock, DOMAIN_DELETED);
 
 		await invoke(Api.domainDelete, { domain: 'go.example.com' });
 
@@ -533,6 +560,33 @@ describe('analytics', () => {
 });
 
 describe('error propagation', () => {
+	it("reads the reason from the API's nested validation body", async () => {
+		respond(fetchMock, LIST_PER_PAGE_TOO_SMALL, 400);
+
+		const error = await invoke(Api.domainList, {}).catch((e: Error) => e);
+
+		expect(String(error)).toContain(
+			'perPage: Number must be greater than or equal to 10',
+		);
+		expect((error as { details?: unknown }).details).toEqual([
+			{
+				field: 'perPage',
+				message: 'Number must be greater than or equal to 10',
+			},
+		]);
+	});
+
+	it('names the plan when a redirect setting is Pro only', async () => {
+		respond(fetchMock, PRO_ONLY, 403);
+
+		await expect(
+			invoke(Api.domainHomeRedirect, {
+				domain: 'go.example.com',
+				homePageRedirectUrl: 'https://example.com',
+			}),
+		).rejects.toThrow('only available for Pro Plan');
+	});
+
 	it('surfaces the per-field errors from a validation failure', async () => {
 		respond(fetchMock, BAD_REQUEST, 422);
 

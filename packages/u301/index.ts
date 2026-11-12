@@ -25,12 +25,12 @@ import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { U301Schema } from './schema';
 
 /**
- * U301 needs an API key **and** a workspace ID on every call, and Corsair's key
- * slot holds one string, so the key is
- * `"<api key>\n<workspace id>"`.
+ * U301 takes an API key, plus an optional workspace ID that picks the workspace.
+ * Without one, U301 answers for the key's own workspace. Corsair's key slot holds
+ * one string, so a key with a workspace is `"<api key>\n<workspace id>"`.
  *
  * `key` in the options accepts the same two-line form. The `apiKey` and
- * `workspaceId` options are the clearer alternative, and either one alone is not
+ * `workspaceId` options are the clearer alternative; `workspaceId` alone is not
  * enough.
  */
 export type U301PluginOptions = {
@@ -212,11 +212,13 @@ const u301EndpointMeta = {
 	},
 	'domains.homeRedirect': {
 		riskLevel: 'write',
-		description: "Set where a domain's root redirects to",
+		description:
+			"Set where a domain's root redirects to; U301 allows it on the Pro plan only and answers 403 on the free plan",
 	},
 	'domains.notFoundRedirect': {
 		riskLevel: 'write',
-		description: 'Set where an unknown slug on a domain redirects to',
+		description:
+			'Set where an unknown slug on a domain redirects to; U301 allows it on the Pro plan only and answers 403 on the free plan',
 	},
 	'analytics.clicks': {
 		riskLevel: 'read',
@@ -268,8 +270,10 @@ export function u301<const T extends U301PluginOptions>(
 
 			// Building from the separate options is the clearer setup, and a caller who
 			// sets both does not have to know the packed layout.
-			if (source === 'endpoint' && options.apiKey && options.workspaceId) {
-				return composeU301Key(options.apiKey, options.workspaceId);
+			if (source === 'endpoint' && options.apiKey) {
+				return options.workspaceId
+					? composeU301Key(options.apiKey, options.workspaceId)
+					: options.apiKey;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {

@@ -118,9 +118,15 @@ describe('u301 key builder', () => {
 		).resolves.toBe('key-1\nws-1');
 	});
 
-	it('does not build from a half-set pair, since a workspace alone cannot work', async () => {
+	it('builds from apiKey alone, since a workspace ID is optional', async () => {
 		await expect(
 			buildKey(u301({ apiKey: 'key-1' }), keyContext(null)),
+		).resolves.toBe('key-1');
+	});
+
+	it('does not build from a workspace ID alone', async () => {
+		await expect(
+			buildKey(u301({ workspaceId: 'ws-1' }), keyContext(null)),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 

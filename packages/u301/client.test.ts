@@ -74,18 +74,19 @@ describe('U301 client', () => {
 		);
 	});
 
-	it('refuses to send without a workspace ID, since every route needs one', async () => {
-		const error = await failure(
-			makeU301Request(API_KEY, {
-				method: 'GET',
-				path: '/shorten/list',
-				replayable: true,
-			}),
-		);
+	it('sends a bare key without a workspace ID, which U301 answers for the key', async () => {
+		// Live 11-12: a user key with no workspaceId gets 200 on the list, domain
+		// and analytics routes, for the key's own workspace.
+		respond({ links: [], metadata: { total: 0, perPage: 20, page: 1 } }, 200);
 
-		// A request without it would come back 401 and look like a bad key.
-		expect(error.message).toContain('workspace ID');
-		expect(fetchMock).not.toHaveBeenCalled();
+		await makeU301Request(API_KEY, {
+			method: 'GET',
+			path: '/shorten/list',
+			replayable: true,
+		});
+
+		const [url] = fetchMock.mock.calls[0] as [string];
+		expect(new URL(url).searchParams.has('workspaceId')).toBe(false);
 	});
 
 	it('serialises a body as JSON', async () => {

@@ -8,8 +8,8 @@ import { z } from 'zod';
 //
 // Two things worth knowing before reading the models:
 //
-// - The workspace ID is a query parameter on every route, not part of the path or
-//   the body. It travels in the composite key and the client adds it.
+// - The workspace ID is an optional query parameter, not part of the path or the
+//   body. It travels in the composite key and the client adds it when present.
 // - A link looks different on create than on read: a create answers `shortLink`,
 //   `isReused` and `url`, while a read answers `shortUrl`, `originalUrl`,
 //   `statsClicks` and the archived/suspended flags. Both are modelled as they are
@@ -128,12 +128,14 @@ export type LinkCreateResponse = z.infer<typeof LinkCreateResponseSchema>;
 
 const LinkListInputSchema = z.object({
 	page: z.number().int().min(1).optional().describe('1-based page number.'),
+	// The API refuses a page size outside 10 to 200 with a 400.
 	perPage: z
 		.number()
 		.int()
-		.min(1)
+		.min(10)
+		.max(200)
 		.optional()
-		.describe('Items per page. Defaults to 10.'),
+		.describe('Items per page, 10 to 200. Defaults to 20.'),
 });
 
 export type LinkListInput = z.infer<typeof LinkListInputSchema>;
@@ -248,8 +250,10 @@ const DomainCreateInputSchema = z.object({
 
 export type DomainCreateInput = z.infer<typeof DomainCreateInputSchema>;
 
+/** Live, a create answers `{ message: "Domain created" }`. */
 const DomainCreateResponseSchema = z
 	.object({
+		message: z.string().nullish().describe('"Domain created" on success.'),
 		success: z.boolean().nullish(),
 	})
 	.loose();
@@ -322,8 +326,10 @@ const DomainActiveResponseSchema = z
 
 export type DomainActiveResponse = z.infer<typeof DomainActiveResponseSchema>;
 
+/** Live, a delete answers `{ message: "success" }`. */
 const DomainDeleteResponseSchema = z
 	.object({
+		message: z.string().nullish().describe('"success" on deletion.'),
 		success: z.boolean().nullish(),
 	})
 	.loose();

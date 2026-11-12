@@ -73,7 +73,34 @@ export const DOMAINS = [
 	},
 ];
 
-export const DOMAIN_CREATED = { success: true };
+// Live 11-12: create and delete answer a message, not `{ success }`.
+export const DOMAIN_CREATED = { message: 'Domain created' };
+
+export const DOMAIN_DELETED = { message: 'success' };
+
+// Live 11-12: a free workspace setting either redirect.
+export const PRO_ONLY = {
+	message: 'This feature is only available for Pro Plan',
+};
+
+// Live 11-12: a query the API's own validator refuses, `perPage=5`.
+export const LIST_PER_PAGE_TOO_SMALL = {
+	success: false,
+	error: {
+		issues: [
+			{
+				code: 'too_small',
+				minimum: 10,
+				type: 'number',
+				inclusive: true,
+				exact: false,
+				message: 'Number must be greater than or equal to 10',
+				path: ['perPage'],
+			},
+		],
+		name: 'ZodError',
+	},
+};
 
 export const DOMAIN_DETAIL = {
 	domain: 'go.example.com',
