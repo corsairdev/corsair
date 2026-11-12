@@ -11,9 +11,16 @@ import { z } from 'zod';
  * shapes are from live jobs rather than the doc's examples.
  */
 
+// Zod still runs this refinement after `z.url()` has rejected the value, so a
+// malformed URL reaches `new URL()` here; the catch keeps that a validation
+// issue instead of a TypeError thrown out of `safeParse`.
 const HttpUrl = z.url().refine((value) => {
-	const protocol = new URL(value).protocol;
-	return protocol === 'http:' || protocol === 'https:';
+	try {
+		const protocol = new URL(value).protocol;
+		return protocol === 'http:' || protocol === 'https:';
+	} catch {
+		return false;
+	}
 }, 'The URL scheme must be http:// or https://');
 
 // ── shared scrape options ─────────────────────────────────────────────────

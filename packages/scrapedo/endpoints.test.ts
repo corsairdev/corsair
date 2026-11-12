@@ -14,6 +14,15 @@ describe('scrape input validation', () => {
 		).toThrow(/scheme/);
 	});
 
+	it('reports a malformed URL as a validation issue instead of throwing', () => {
+		for (const url of ['not a url', 'http://', '::::']) {
+			const result = Inputs.scrapeHtml.safeParse({ url });
+			expect(result.success).toBe(false);
+		}
+		const job = Inputs.jobsStart.safeParse({ targets: ['not a url'] });
+		expect(job.success).toBe(false);
+	});
+
 	it('rejects a missing url', () => {
 		expect(() => Inputs.scrapeHtml.parse({})).toThrow();
 	});
