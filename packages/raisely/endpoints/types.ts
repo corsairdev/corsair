@@ -140,6 +140,17 @@ export const CustomValuesSchema = z
 	)
 	.nullish();
 
+/**
+ * The same maps as Raisely returns them. A campaign's `config` nests objects
+ * inside arrays several levels deep (menus, donation amounts, page layouts), and
+ * an account's custom fields can hold lists, so the output side takes any JSON
+ * value. Inputs keep `CustomValuesSchema`.
+ */
+const CustomValuesOutputSchema = z
+	// unknown: the keys and value shapes are the account's own configuration.
+	.record(z.string(), z.unknown())
+	.nullish();
+
 // ── campaigns ─────────────────────────────────────────────────────────────
 
 const CampaignsListInputSchema = z.object({
@@ -197,9 +208,9 @@ const CampaignSchema = z
 		// The campaign's theme settings, which nest: a key can hold another
 		// object. It is what `pruneConfig` exists to drop, because it dwarfs
 		// every other field.
-		config: CustomValuesSchema,
-		public: CustomValuesSchema,
-		private: CustomValuesSchema,
+		config: CustomValuesOutputSchema,
+		public: CustomValuesOutputSchema,
+		private: CustomValuesOutputSchema,
 	})
 	.loose();
 
@@ -316,8 +327,8 @@ const DonationSchema = z
 		// unknown: the UTM parameters Raisely recorded on the creating
 		// interaction, whose names come from the caller's own links.
 		context: z.record(z.string(), z.string()).nullish(),
-		public: CustomValuesSchema,
-		private: CustomValuesSchema,
+		public: CustomValuesOutputSchema,
+		private: CustomValuesOutputSchema,
 	})
 	.loose();
 
@@ -463,8 +474,8 @@ const ProfileSchema = z
 		teamProfile: NestedProfileRefSchema.nullish(),
 		organisationProfile: NestedProfileRefSchema.nullish(),
 		tags: z.array(z.string()).nullish(),
-		public: CustomValuesSchema,
-		private: CustomValuesSchema,
+		public: CustomValuesOutputSchema,
+		private: CustomValuesOutputSchema,
 	})
 	.loose();
 

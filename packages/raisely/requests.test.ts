@@ -101,6 +101,39 @@ describe('campaigns.get', () => {
 	});
 });
 
+describe('campaign config', () => {
+	it('reads the nested config and arrays a real campaign returns', async () => {
+		// Trimmed from Raisely's public `basic-peer-to-peer` template campaign
+		// on 2026-11-12: config nests objects in arrays several levels deep.
+		respond(fetchMock, {
+			data: {
+				...CAMPAIGN,
+				config: {
+					menu: [{ link: '/donate', title: 'Donate', subMenu: [] }],
+					amounts: [
+						{
+							count: 1,
+							interval: 'ONCE',
+							amounts: [{ amount: 3000, title: '' }],
+						},
+					],
+					donation: { upsell: { isStepEnabled: true, stepTitle: 'Monthly' } },
+					createdWithDFv3: true,
+				},
+				public: { tags: ['a', 'b'], nested: { deeper: { value: 1 } } },
+			},
+		});
+
+		const result = (await invoke(Endpoints.campaignsGet, {
+			campaign: 'basic-peer-to-peer',
+		})) as Awaited<ReturnType<typeof Endpoints.campaignsGet>>;
+
+		expect(result.campaign.config?.createdWithDFv3).toBe(true);
+		expect(Array.isArray(result.campaign.config?.menu)).toBe(true);
+		expect(result.campaign.public?.tags).toEqual(['a', 'b']);
+	});
+});
+
 describe('donations.list', () => {
 	it('sends the donation filters', async () => {
 		respond(fetchMock, DONATION_PAGE);
