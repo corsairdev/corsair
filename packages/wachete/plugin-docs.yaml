@@ -14,7 +14,7 @@ overviewNote: |
   - **Deleting a folder deletes its contents.** `folders.delete` removes every subfolder and monitor inside it, which makes it the most destructive call here — far more than `tasks.delete`, which removes one monitor.
   - **The last value lives in `data`.** A monitor's `data.raw` is what the last check read, `data.valueChangedTimestamp` is when it last differed, and `data.error` is set when the check failed — so a monitor can be `failedCount` without any notification arriving.
   - **History and notifications page by continuation token.** Both answer `continuationToken`, which is null on the last page. `data.list` can return a Google-style diff per entry with `returnDiff`, which is much larger than the raw values.
-  - **One route returns HTML.** `notifications.get` answers the notification as the HTML that was sent, not JSON — so the plugin reports that a body came back and its length, never the watched page's text.
+  - **`notifications.get` carries the sent HTML.** It answers JSON with the monitor's `name`, `url`, `timestampUtc` and the alert as the `html` that was sent. The plugin's event log records the HTML's length, never its content, which is the watched page's text.
 examples:
   read:
     path: tasks.get

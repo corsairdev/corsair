@@ -172,7 +172,8 @@ const wacheteEndpointMeta = {
 	},
 	'notifications.get': {
 		riskLevel: 'read',
-		description: 'Read one notification as the HTML that was sent',
+		description:
+			'Read one notification: the monitor name, URL, time and the HTML that was sent',
 	},
 	'data.list': {
 		riskLevel: 'read',

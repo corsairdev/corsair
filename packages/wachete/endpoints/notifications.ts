@@ -30,8 +30,8 @@ export const list: WacheteEndpoints['notificationsList'] = (ctx, input) =>
 	);
 
 /**
- * One notification as the HTML that was sent — the rendered alert, not a
- * structured value. It is the only route that returns HTML rather than JSON.
+ * One notification: JSON with the monitor's name and URL, when it fired, and
+ * the alert as the HTML that was sent.
  */
 export const get: WacheteEndpoints['notificationsGet'] = (ctx, input) =>
 	call(
