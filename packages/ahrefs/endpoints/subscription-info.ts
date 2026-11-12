@@ -1,17 +1,21 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
-import type { LimitsAndUsageResponse } from './types';
+import { checkAhrefsOutput } from './request';
 import { AhrefsEndpointInputSchemas } from './types';
 
 export const limitsAndUsage: AhrefsEndpoints['limitsAndUsage'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAhrefsRequest<LimitsAndUsageResponse>(
-		'/subscription-info/limits-and-usage',
-		ctx.key,
-		{ query: AhrefsEndpointInputSchemas.limitsAndUsage.parse(input) },
+	const response = checkAhrefsOutput(
+		'limitsAndUsage',
+		'ahrefs.subscriptionInfo.limitsAndUsage',
+		await makeAhrefsRequest<unknown>(
+			'/subscription-info/limits-and-usage',
+			ctx.key,
+			{ query: AhrefsEndpointInputSchemas.limitsAndUsage.parse(input) },
+		),
 	);
 
 	try {

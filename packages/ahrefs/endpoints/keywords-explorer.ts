@@ -1,8 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
-import { callAhrefs } from './request';
-import type { KeywordsOverviewResponse } from './types';
+import { callAhrefs, checkAhrefsOutput } from './request';
 import { AhrefsEndpointInputSchemas } from './types';
 
 export const overview: AhrefsEndpoints['keywordsOverview'] = async (
@@ -16,16 +15,16 @@ export const overview: AhrefsEndpoints['keywordsOverview'] = async (
 	const { target_mode, ...parsed } =
 		AhrefsEndpointInputSchemas.keywordsOverview.parse(input);
 
-	const response = await makeAhrefsRequest<KeywordsOverviewResponse>(
-		'/keywords-explorer/overview',
-		ctx.key,
-		{
+	const response = checkAhrefsOutput(
+		'keywordsOverview',
+		'ahrefs.keywordsExplorer.overview',
+		await makeAhrefsRequest<unknown>('/keywords-explorer/overview', ctx.key, {
 			query: {
 				...parsed,
 				mode: parsed.mode ?? target_mode,
 				keywords,
 			},
-		},
+		}),
 	);
 
 	// Sync keywords to database

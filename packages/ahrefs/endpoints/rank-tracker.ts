@@ -1,18 +1,19 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
-import { callAhrefs } from './request';
-import type { RankTrackerOverviewResponse } from './types';
+import { callAhrefs, checkAhrefsOutput } from './request';
 import { AhrefsEndpointInputSchemas } from './types';
 
 export const overview: AhrefsEndpoints['rankTrackerOverview'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAhrefsRequest<RankTrackerOverviewResponse>(
-		'/rank-tracker/overview',
-		ctx.key,
-		{ query: AhrefsEndpointInputSchemas.rankTrackerOverview.parse(input) },
+	const response = checkAhrefsOutput(
+		'rankTrackerOverview',
+		'ahrefs.rankTracker.overview',
+		await makeAhrefsRequest<unknown>('/rank-tracker/overview', ctx.key, {
+			query: AhrefsEndpointInputSchemas.rankTrackerOverview.parse(input),
+		}),
 	);
 
 	for (const overview of response.overviews) {

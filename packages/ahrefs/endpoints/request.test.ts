@@ -171,6 +171,18 @@ describe('callAhrefs schema checks', () => {
 		expect(options?.query).not.toHaveProperty('target_mode');
 	});
 
+	it('checks responses on the original actions too', async () => {
+		mockedRequest.mockResolvedValueOnce({ unexpected: true });
+		const result = await endpoints.siteExplorer.getDomainRating(ctx, {
+			target: 'ahrefs.com',
+			date: '2026-11-01',
+		});
+		expect(result).toEqual({ unexpected: true });
+		expect(warn).toHaveBeenCalledWith(
+			expect.stringContaining('ahrefs.siteExplorer.getDomainRating'),
+		);
+	});
+
 	it('validates input on the original Site Explorer actions too', async () => {
 		await expect(
 			endpoints.siteExplorer.getDomainRating(ctx, {

@@ -1,24 +1,19 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
-import { callAhrefs } from './request';
-import type {
-	BacklinksStatsResponse,
-	DomainRatingResponse,
-	OrganicKeywordsResponse,
-	RefdomainsResponse,
-	TopPagesResponse,
-} from './types';
+import { callAhrefs, checkAhrefsOutput } from './request';
 import { AhrefsEndpointInputSchemas } from './types';
 
 export const getDomainRating: AhrefsEndpoints['getDomainRating'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAhrefsRequest<DomainRatingResponse>(
-		'/site-explorer/domain-rating',
-		ctx.key,
-		{ query: AhrefsEndpointInputSchemas.getDomainRating.parse(input) },
+	const response = checkAhrefsOutput(
+		'getDomainRating',
+		'ahrefs.siteExplorer.getDomainRating',
+		await makeAhrefsRequest<unknown>('/site-explorer/domain-rating', ctx.key, {
+			query: AhrefsEndpointInputSchemas.getDomainRating.parse(input),
+		}),
 	);
 
 	try {
@@ -51,10 +46,14 @@ export const backlinksStats: AhrefsEndpoints['backlinksStats'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAhrefsRequest<BacklinksStatsResponse>(
-		'/site-explorer/backlinks-stats',
-		ctx.key,
-		{ query: AhrefsEndpointInputSchemas.backlinksStats.parse(input) },
+	const response = checkAhrefsOutput(
+		'backlinksStats',
+		'ahrefs.siteExplorer.backlinksStats',
+		await makeAhrefsRequest<unknown>(
+			'/site-explorer/backlinks-stats',
+			ctx.key,
+			{ query: AhrefsEndpointInputSchemas.backlinksStats.parse(input) },
+		),
 	);
 
 	try {
@@ -90,10 +89,14 @@ export const organicKeywords: AhrefsEndpoints['organicKeywords'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAhrefsRequest<OrganicKeywordsResponse>(
-		'/site-explorer/organic-keywords',
-		ctx.key,
-		{ query: AhrefsEndpointInputSchemas.organicKeywords.parse(input) },
+	const response = checkAhrefsOutput(
+		'organicKeywords',
+		'ahrefs.siteExplorer.organicKeywords',
+		await makeAhrefsRequest<unknown>(
+			'/site-explorer/organic-keywords',
+			ctx.key,
+			{ query: AhrefsEndpointInputSchemas.organicKeywords.parse(input) },
+		),
 	);
 
 	for (const keyword of response.keywords) {
@@ -138,10 +141,12 @@ export const organicKeywords: AhrefsEndpoints['organicKeywords'] = async (
 };
 
 export const refdomains: AhrefsEndpoints['refdomains'] = async (ctx, input) => {
-	const response = await makeAhrefsRequest<RefdomainsResponse>(
-		'/site-explorer/refdomains',
-		ctx.key,
-		{ query: AhrefsEndpointInputSchemas.refdomains.parse(input) },
+	const response = checkAhrefsOutput(
+		'refdomains',
+		'ahrefs.siteExplorer.refdomains',
+		await makeAhrefsRequest<unknown>('/site-explorer/refdomains', ctx.key, {
+			query: AhrefsEndpointInputSchemas.refdomains.parse(input),
+		}),
 	);
 
 	for (const refdomain of response.refdomains) {
@@ -176,10 +181,12 @@ export const refdomains: AhrefsEndpoints['refdomains'] = async (ctx, input) => {
 };
 
 export const topPages: AhrefsEndpoints['topPages'] = async (ctx, input) => {
-	const response = await makeAhrefsRequest<TopPagesResponse>(
-		'/site-explorer/top-pages',
-		ctx.key,
-		{ query: AhrefsEndpointInputSchemas.topPages.parse(input) },
+	const response = checkAhrefsOutput(
+		'topPages',
+		'ahrefs.siteExplorer.topPages',
+		await makeAhrefsRequest<unknown>('/site-explorer/top-pages', ctx.key, {
+			query: AhrefsEndpointInputSchemas.topPages.parse(input),
+		}),
 	);
 
 	for (const page of response.pages) {

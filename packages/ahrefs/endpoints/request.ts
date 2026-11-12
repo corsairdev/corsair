@@ -27,6 +27,33 @@ export type AhrefsCall<K extends AhrefsEndpointKey> = {
 const warnedEndpoints = new Set<string>();
 
 /**
+ * Checks a raw Ahrefs response against the endpoint's output schema. A match
+ * returns the parsed data; a mismatch logs one warning per event and returns
+ * the response unchanged, because Ahrefs' responses drift from its spec and a
+ * schema gap should not fail a call the API answered.
+ */
+export function checkAhrefsOutput<K extends AhrefsEndpointKey>(
+	endpoint: K,
+	event: string,
+	// The raw body is unknown until it is checked against the output schema.
+	raw: unknown,
+): AhrefsEndpointOutputs[K] {
+	const checked = AhrefsEndpointOutputSchemas[endpoint].safeParse(raw);
+	if (!checked.success && !warnedEndpoints.has(event)) {
+		warnedEndpoints.add(event);
+		const issue = checked.error.issues[0];
+		console.warn(
+			`[ahrefs] ${event}: response does not match the schema at "${
+				issue?.path.join('.') ?? ''
+			}" (${issue?.message ?? 'unknown issue'}); returning it unchanged`,
+		);
+	}
+	// TypeScript cannot tie the indexed schema map back to K, so the parsed
+	// data (or the unchanged response on drift) is returned as K's output type.
+	return (checked.success ? checked.data : raw) as AhrefsEndpointOutputs[K];
+}
+
+/**
  * Sends one Ahrefs API call. The input is parsed with the endpoint's input
  * schema first (invalid input throws before any request, unknown keys are
  * dropped), then split into query string and JSON body. The response is
@@ -74,21 +101,7 @@ export async function callAhrefs<K extends AhrefsEndpointKey>(
 		body: bodyKeys.size > 0 ? body : undefined,
 	});
 
-	const checked = AhrefsEndpointOutputSchemas[call.endpoint].safeParse(raw);
-	if (!checked.success && !warnedEndpoints.has(call.event)) {
-		warnedEndpoints.add(call.event);
-		const issue = checked.error.issues[0];
-		console.warn(
-			`[ahrefs] ${call.event}: response does not match the schema at "${
-				issue?.path.join('.') ?? ''
-			}" (${issue?.message ?? 'unknown issue'}); returning it unchanged`,
-		);
-	}
-	// TypeScript cannot tie the indexed schema map back to K, so the parsed
-	// data (or the unchanged response on drift) is returned as K's output type.
-	const response = (
-		checked.success ? checked.data : raw
-	) as AhrefsEndpointOutputs[K];
+	const response = checkAhrefsOutput(call.endpoint, call.event, raw);
 
 	const logged: Record<string, unknown> = {};
 	for (const key of call.logKeys ?? []) {
