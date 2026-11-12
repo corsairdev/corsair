@@ -247,8 +247,7 @@ const rudderStackTransformationEndpointMeta = {
 	},
 	'libraries.listVersions': {
 		riskLevel: 'read',
-		description:
-			'List the revisions of a library and which of them is published',
+		description: 'List the revisions of a library, newest or oldest first',
 	},
 	'libraries.getVersion': {
 		riskLevel: 'read',

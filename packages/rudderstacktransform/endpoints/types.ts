@@ -277,7 +277,12 @@ export const LibrarySchema = z
 			.describe(
 				'The name a transformation imports this library by. It cannot be changed after creation.',
 			),
-		isPublished: z.boolean().nullish().describe('Present on revision rows.'),
+		isPublished: z
+			.boolean()
+			.nullish()
+			.describe(
+				'Documented on revision rows, but the live API left it out on 11-12.',
+			),
 	})
 	.loose();
 

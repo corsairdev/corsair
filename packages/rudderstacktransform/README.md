@@ -17,7 +17,7 @@ pnpm add @corsair-dev/rudderstacktransform
 | `libraries.get` | `rudderstacktransform.api.libraries.get` | `read` | Read one published library by ID |
 | `libraries.getVersion` | `rudderstacktransform.api.libraries.getVersion` | `read` | Read one revision of a library |
 | `libraries.list` | `rudderstacktransform.api.libraries.list` | `read` | List the published libraries in the workspace |
-| `libraries.listVersions` | `rudderstacktransform.api.libraries.listVersions` | `read` | List the revisions of a library and which of them is published |
+| `libraries.listVersions` | `rudderstacktransform.api.libraries.listVersions` | `read` | List the revisions of a library, newest or oldest first |
 | `libraries.publish` | `rudderstacktransform.api.libraries.publish` | `write` | Publish chosen transformation and library revisions after RudderStack runs their code, so a failing test publishes nothing |
 | `libraries.update` | `rudderstacktransform.api.libraries.update` | `write` | Update a library, writing a new revision and publishing it only when publish is true; the name and language cannot change |
 | `transformations.connect` | `rudderstacktransform.api.transformations.connect` | `write` | Connect a published transformation to a destination, replacing any transformation already connected to it |
