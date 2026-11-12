@@ -330,8 +330,13 @@ const ReviewSchema = z
 		title: z.string().nullish(),
 		body: z.string().nullish(),
 		date: z.string().nullish(),
-		nickname: z.string().nullish(),
-		verified_purchase: z.boolean().nullish(),
+		source: z
+			.object({
+				author_name: z.string().nullish(),
+				verified_purchase: z.boolean().nullish(),
+			})
+			.loose()
+			.nullish(),
 		helpful_votes: z.number().nullish(),
 		recommended: z.boolean().nullish(),
 	})

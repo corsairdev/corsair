@@ -175,6 +175,38 @@ describe('products.get', () => {
 });
 
 describe('reviews.list', () => {
+	it.each([{ author_name: 42 }, { verified_purchase: 'yes' }])(
+		'rejects malformed review source fields %p',
+		async (source) => {
+			respond(fetchMock, {
+				...REVIEWS_PAGE,
+				reviews: [{ ...REVIEWS_PAGE.reviews[0], source }],
+			});
+			await expect(
+				invoke(Endpoints.reviewsList, { tcin: TCIN }),
+			).rejects.toThrow();
+		},
+	);
+
+	it('preserves the documented review source and extra provider fields', async () => {
+		const review = {
+			id: 'review-source',
+			rating: 5,
+			source: {
+				author_name: 'Jordan',
+				verified_purchase: true,
+				is_external_source: false,
+			},
+		};
+		respond(fetchMock, { ...REVIEWS_PAGE, reviews: [review] });
+		const result = (await invoke(Endpoints.reviewsList, {
+			tcin: TCIN,
+		})) as Awaited<ReturnType<typeof Endpoints.reviewsList>>;
+		expect(result.reviews).toMatchObject([review]);
+		expect(result.reviews[0]?.source?.author_name).toBe('Jordan');
+		expect(result.reviews[0]?.source?.verified_purchase).toBe(true);
+	});
+
 	it('rejects a review request with no selector before sending it', async () => {
 		await expect(invoke(Endpoints.reviewsList, {})).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
