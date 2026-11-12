@@ -28,7 +28,7 @@ pnpm add @corsair-dev/virustotal
 | `ipAddresses.rescan` | `virustotal.api.ipAddresses.rescan` | `write` | Ask VirusTotal to reanalyse an IP address |
 | `urls.addComment` | `virustotal.api.urls.addComment` | `write` | Comment on a URL publicly |
 | `urls.comments` | `virustotal.api.urls.comments` | `read` | List the comments on a URL, with cursor paging |
-| `urls.get` | `virustotal.api.urls.get` | `read` | Read a URL report by its base64url identifier, which `urlId()` builds from a raw URL |
+| `urls.get` | `virustotal.api.urls.get` | `read` | Read a URL report by the base64url identifier `urlId()` builds or the SHA-256 id a report returns; the base64url form carries the full URL to VirusTotal |
 | `urls.rescan` | `virustotal.api.urls.rescan` | `write` | Ask VirusTotal to reanalyse a URL already submitted |
 | `urls.scan` | `virustotal.api.urls.scan` | `write` | Submit a URL for analysis; it is added to the public dataset, answers an analysis id to poll, and cannot be withdrawn |
 

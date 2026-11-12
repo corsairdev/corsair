@@ -226,7 +226,7 @@ const virustotalEndpointMeta = {
 	'urls.get': {
 		riskLevel: 'read',
 		description:
-			'Read a URL report by its base64url identifier, which `urlId()` builds from a raw URL',
+			'Read a URL report by the base64url identifier `urlId()` builds or the SHA-256 id a report returns; the base64url form carries the full URL to VirusTotal',
 	},
 	'urls.rescan': {
 		riskLevel: 'write',

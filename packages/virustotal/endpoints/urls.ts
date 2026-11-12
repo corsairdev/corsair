@@ -39,8 +39,9 @@ export const scan: VirustotalEndpoints['urlsScan'] = (ctx, input) =>
 	);
 
 /**
- * Reads a URL report. The id must be the base64url identifier, not the raw
- * URL — `urlId()` converts one to the other.
+ * Reads a URL report. The id is the unpadded base64url identifier (`urlId()`
+ * converts a raw URL) or the SHA-256 id a URL report returns; VirusTotal
+ * resolves both. The base64url form decodes back to the full URL.
  */
 export const get: VirustotalEndpoints['urlsGet'] = (ctx, input) =>
 	call(

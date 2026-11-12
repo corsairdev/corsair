@@ -333,7 +333,7 @@ const UrlIdSchema = z
 	.string()
 	.min(1)
 	.describe(
-		'The URL identifier: the URL as unpadded base64url, which `urlId()` produces from a raw URL.',
+		'The URL identifier: the URL as unpadded base64url, which `urlId()` produces from a raw URL, or the SHA-256 `id` a URL report returns.',
 	);
 
 const PagingSchema = {
@@ -426,7 +426,7 @@ const UrlsGetInputSchema = z.object({
 		.string()
 		.min(1)
 		.describe(
-			'The URL identifier, as base64url. Pass `urls.get` a raw URL and it will not resolve — use `urlId()`.',
+			'The URL identifier: the URL as unpadded base64url, which `urlId()` builds from a raw URL, or the SHA-256 `id` a URL report returns. A raw URL will not resolve.',
 		),
 });
 
