@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T18:43:53.462Z",
+  "generatedAt": "2026-11-12T18:58:51.268Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
@@ -908,7 +908,7 @@
     "radar": "twenty-icons",
     "ragic": "twenty-icons",
     "raisely": "twenty-icons",
-    "ramp": "twenty-icons",
+    "ramp": "url-override",
     "razorpay": "twenty-icons",
     "realphonevalidation": "twenty-icons",
     "reamaze": "twenty-icons",
