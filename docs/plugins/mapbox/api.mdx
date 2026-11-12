@@ -1,0 +1,641 @@
+---
+title: "Mapbox API reference"
+sidebarTitle: "API"
+description: "API reference for the Mapbox plugin in Corsair: every `mapbox.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Directions
+
+### route
+
+`directions.route`
+
+Get a route between 2 to 25 waypoints for driving, driving with traffic, walking or cycling, with optional steps, annotations and alternatives; throws when Mapbox finds no route
+
+**Risk:** `read`
+
+```ts
+await corsair.mapbox.api.directions.route({ profile: 'mapbox/driving', coordinates: [{ longitude: 2.35, latitude: 48.85 }, { longitude: 2.3, latitude: 48.86 }], steps: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `mapbox/driving-traffic \| mapbox/driving \| mapbox/walking \| mapbox/cycling` | Yes | Routing profile: mapbox/driving-traffic (live and historic traffic, falls back to driving where there is no traffic data), mapbox/driving, mapbox/walking or mapbox/cycling. |
+| `coordinates` | `object[]` | Yes | Between 2 and 25 waypoints, visited in order. Each is &#123; longitude, latitude &#125;. |
+| `alternatives` | `boolean` | No | Also return up to two alternative routes. |
+| `annotations` | `(duration \| distance \| speed \| congestion \| congestion_numeric \| maxspeed \| closure)[]` | No | Extra per-segment data on each leg. Needs overview: "full". congestion, congestion_numeric and closure need mapbox/driving-traffic; maxspeed needs a driving profile. |
+| `continue_straight` | `boolean` | No | Keep the direction of travel when leaving intermediate waypoints. Mapbox defaults to true for the driving profiles and false for walking and cycling. |
+| `exclude` | `(motorway \| toll \| ferry \| unpaved \| cash_only_tolls)[]` | No | Road types to avoid. Driving profiles take all five; walking takes ferry and cash_only_tolls; cycling also takes unpaved. |
+| `geometries` | `geojson \| polyline \| polyline6` | No | Geometry encoding: polyline (default, precision 5), polyline6 (precision 6) or geojson (a LineString). |
+| `overview` | `full \| simplified \| false` | No | Route overview geometry: simplified (default), full, or false for none. |
+| `steps` | `boolean` | No | Return turn-by-turn steps on each leg. |
+| `language` | `string` | No | Language of step instructions, such as en or fr. Needs steps: true. |
+
+Throws a MapboxAPIError with code NoRoute or NoSegment when Mapbox finds no route; it answers those with HTTP 200.
+
+<AccordionGroup>
+<Accordion title="coordinates full type">
+
+```ts
+{
+  longitude: number,
+  latitude: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `uuid` | `string \| null` | No | — |
+| `waypoints` | `object[] \| null` | No | — |
+| `routes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="waypoints full type">
+
+```ts
+{
+  name: string,
+  location: number[],
+  distance?: number | null,
+  waypoint_index?: number | null,
+  trips_index?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="routes full type">
+
+```ts
+{
+  geometry?: string | {
+    type: string,
+    coordinates: number[][] | number[][][] | number[][][][]
+  } | null,
+  distance: number,
+  duration: number,
+  weight?: number | null,
+  weight_name?: string | null,
+  legs: {
+    steps?: {
+      distance: number,
+      duration: number,
+      name?: string | null,
+      mode?: string | null,
+      geometry?: string | {
+        type: string,
+        coordinates: number[][] | number[][][] | number[][][][]
+      } | null,
+      maneuver?: {
+        location?: number[] | null,
+        type?: string | null,
+        instruction?: string | null
+      } | null
+    }[] | null,
+    summary?: string | null,
+    distance: number,
+    duration: number,
+    weight?: number | null,
+    annotation?: {
+      duration?: number[] | null,
+      distance?: number[] | null,
+      speed?: number[] | null,
+      congestion?: string[] | null,
+      congestion_numeric?: (number | null)[] | null
+    } | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Geocoding
+
+### forward
+
+`geocoding.forward`
+
+Turn an address or place name into coordinates and structured address context; a query with no match returns an empty features list
+
+**Risk:** `read`
+
+```ts
+await corsair.mapbox.api.geocoding.forward({ q: 'Paris', types: ['place'], limit: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search text: an address, place name or similar. At most 256 characters and 20 words or numbers, no semicolons. |
+| `autocomplete` | `boolean` | No | Return results that start with the text (true, the default) or only exact matches (false). Each autocomplete keystroke counts as a request. |
+| `bbox` | `[number, number, number, number]` | No | Limit results to this box, as [minLongitude, minLatitude, maxLongitude, maxLatitude]. It cannot cross the 180th meridian. |
+| `country` | `string[]` | No | Limit results to these ISO 3166 alpha-2 country codes. |
+| `language` | `string` | No | Language of the response text as an IETF tag such as en or fr-CA; comma-separate several. |
+| `limit` | `number` | No | Maximum results, 1 to 10. Defaults to 5. Mapbox ignores a value outside that range without an error, so the plugin rejects it. |
+| `proximity` | `ip \| object` | No | Bias results toward a location: &#123; longitude, latitude &#125;, or "ip" to bias by the caller's IP address. |
+| `types` | `(country \| region \| postcode \| district \| place \| locality \| neighborhood \| street \| address \| secondary_address)[]` | No | Only return these feature types. |
+| `worldview` | `us \| cl \| cn \| in \| jp \| ar \| ma \| rs \| ru \| tr \| twc` | No | Which regional view of disputed boundaries to return. |
+
+Searches by text; for structured address input or permanent storage, call Mapbox directly. Mapbox ignores a limit outside 1 to 10, so the plugin rejects it.
+
+<AccordionGroup>
+<Accordion title="proximity full type">
+
+```ts
+ip | {
+  longitude: number,
+  latitude: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `features` | `object[]` | Yes | — |
+| `attribution` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="features full type">
+
+```ts
+{
+  type: string,
+  id?: string | null,
+  geometry: {
+    type: string,
+    coordinates: number[]
+  },
+  properties: {
+    mapbox_id: string,
+    feature_type: string,
+    name: string,
+    name_preferred?: string | null,
+    full_address?: string | null,
+    place_formatted?: string | null,
+    coordinates: {
+      longitude: number,
+      latitude: number,
+      accuracy?: string | null
+    },
+    bbox?: number[] | null,
+    context?: Record<string, {
+      mapbox_id?: string | null,
+      name?: string | null,
+      wikidata_id?: string | null
+    }> | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverse
+
+`geocoding.reverse`
+
+Turn a longitude and latitude into the address, place or other features at that point
+
+**Risk:** `read`
+
+```ts
+await corsair.mapbox.api.geocoding.reverse({ longitude: 2.3522, latitude: 48.8566, types: ['address'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `longitude` | `number` | Yes | Longitude in decimal degrees, -180 to 180. |
+| `latitude` | `number` | Yes | Latitude in decimal degrees, -90 to 90. |
+| `country` | `string[]` | No | Limit results to these ISO 3166 alpha-2 country codes. |
+| `language` | `string` | No | Language of the response text as an IETF tag such as en or fr-CA; comma-separate several. |
+| `limit` | `number` | No | Maximum results, 1 to 5. Defaults to 1. More than 1 needs exactly one entry in types. Mapbox ignores a value outside that range without an error, so the plugin rejects it. |
+| `types` | `(country \| region \| postcode \| district \| place \| locality \| neighborhood \| street \| address \| secondary_address)[]` | No | Only return these feature types. |
+| `worldview` | `us \| cl \| cn \| in \| jp \| ar \| ma \| rs \| ru \| tr \| twc` | No | Which regional view of disputed boundaries to return. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `features` | `object[]` | Yes | — |
+| `attribution` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="features full type">
+
+```ts
+{
+  type: string,
+  id?: string | null,
+  geometry: {
+    type: string,
+    coordinates: number[]
+  },
+  properties: {
+    mapbox_id: string,
+    feature_type: string,
+    name: string,
+    name_preferred?: string | null,
+    full_address?: string | null,
+    place_formatted?: string | null,
+    coordinates: {
+      longitude: number,
+      latitude: number,
+      accuracy?: string | null
+    },
+    bbox?: number[] | null,
+    context?: Record<string, {
+      mapbox_id?: string | null,
+      name?: string | null,
+      wikidata_id?: string | null
+    }> | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Isochrone
+
+### get
+
+`isochrone.get`
+
+Get the area reachable from a point within up to four travel times or distances, as GeoJSON lines or polygons
+
+**Risk:** `read`
+
+```ts
+await corsair.mapbox.api.isochrone.get({ profile: 'mapbox/walking', coordinate: { longitude: 2.35, latitude: 48.85 }, contours_minutes: [5, 10], polygons: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `mapbox/driving-traffic \| mapbox/driving \| mapbox/walking \| mapbox/cycling` | Yes | Routing profile: mapbox/driving-traffic (live and historic traffic, falls back to driving where there is no traffic data), mapbox/driving, mapbox/walking or mapbox/cycling. |
+| `coordinate` | `object` | Yes | The point the contours are centered on. |
+| `contours_minutes` | `number[]` | No | Travel times in minutes, 1 to 60, up to four, strictly increasing. Give this or contours_meters, not both. |
+| `contours_meters` | `number[]` | No | Travel distances in meters, 1 to 100000, up to four, strictly increasing. Give this or contours_minutes, not both. |
+| `contours_colors` | `string[]` | No | Hex colors without a leading #, one per contour, such as ff0000. |
+| `polygons` | `boolean` | No | Return contours as polygons (true) or linestrings (false, the default). |
+| `denoise` | `number` | No | 0 to 1; removes contours smaller than this fraction of the largest. Defaults to 1. |
+| `generalize` | `number` | No | Douglas-Peucker tolerance in meters, 0 or more. Mapbox chooses one when omitted. |
+| `exclude` | `(motorway \| toll \| ferry \| unpaved \| cash_only_tolls)[]` | No | Road types to avoid. Driving profiles only. |
+| `depart_at` | `string` | No | Departure time, so contours reflect traffic then. Without a zone it is local to the coordinate. |
+
+Give contours_minutes (1 to 60) or contours_meters (1 to 100000), up to four, strictly increasing. Mapbox returns the largest contour first.
+
+<AccordionGroup>
+<Accordion title="coordinate full type">
+
+```ts
+{
+  longitude: number,
+  latitude: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string \| null` | No | — |
+| `features` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="features full type">
+
+```ts
+{
+  type?: string | null,
+  properties: {
+    contour: number,
+    metric: string,
+    color?: string | null
+  },
+  geometry: {
+    type: string,
+    coordinates: number[][] | number[][][] | number[][][][]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Matrix
+
+### calculate
+
+`matrix.calculate`
+
+Get travel times, distances or both between up to 25 points (10 with traffic), as a sources by destinations table
+
+**Risk:** `read`
+
+```ts
+await corsair.mapbox.api.matrix.calculate({ profile: 'mapbox/walking', coordinates: [{ longitude: 2.35, latitude: 48.85 }, { longitude: 2.3, latitude: 48.86 }, { longitude: 2.4, latitude: 48.87 }], annotations: ['duration', 'distance'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `mapbox/driving-traffic \| mapbox/driving \| mapbox/walking \| mapbox/cycling` | Yes | Routing profile: mapbox/driving-traffic (live and historic traffic, falls back to driving where there is no traffic data), mapbox/driving, mapbox/walking or mapbox/cycling. |
+| `coordinates` | `object[]` | Yes | Between 2 and 25 points, or at most 10 for mapbox/driving-traffic. Each is &#123; longitude, latitude &#125;. |
+| `annotations` | `(duration \| distance)[]` | No | Which matrices to return: duration (default), distance, or both. |
+| `sources` | `all \| number[]` | No | Zero-based indexes into coordinates to use as sources, or "all" (default). |
+| `destinations` | `all \| number[]` | No | Zero-based indexes into coordinates to use as destinations, or "all" (default). |
+
+Up to 25 coordinates, or 10 for mapbox/driving-traffic. A null cell means no route between that pair.
+
+<AccordionGroup>
+<Accordion title="coordinates full type">
+
+```ts
+{
+  longitude: number,
+  latitude: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string \| null` | Yes | Ok, or null when some pairs are unroutable (those cells are null). |
+| `durations` | `(number \| null)[][] \| null` | No | Seconds from each source (row) to each destination (column); null where no route exists. |
+| `distances` | `(number \| null)[][] \| null` | No | Meters from each source (row) to each destination (column); null where no route exists. Only present when annotations includes distance. |
+| `sources` | `object[]` | Yes | — |
+| `destinations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  name: string,
+  location: number[],
+  distance?: number | null,
+  waypoint_index?: number | null,
+  trips_index?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="destinations full type">
+
+```ts
+{
+  name: string,
+  location: number[],
+  distance?: number | null,
+  waypoint_index?: number | null,
+  trips_index?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tilequery
+
+### query
+
+`tilequery.query`
+
+List the features of one or more vector tilesets at or near a point, nearest first
+
+**Risk:** `read`
+
+```ts
+await corsair.mapbox.api.tilequery.query({ tileset_ids: ['mapbox.mapbox-streets-v8'], coordinate: { longitude: 2.3522, latitude: 48.8566 }, radius: 100, limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tileset_ids` | `string[]` | Yes | One to 25 vector tileset IDs, such as mapbox.mapbox-streets-v8. |
+| `coordinate` | `object` | Yes | The point to query. |
+| `radius` | `number` | No | Search distance in meters. 0 (the default) is a point-in-polygon query. Needed for point and line data. |
+| `limit` | `number` | No | Maximum features, 1 to 50. Defaults to 5. |
+| `dedupe` | `boolean` | No | Remove duplicate features (true, the default) or keep them. |
+| `geometry` | `polygon \| linestring \| point` | No | Only return features of this original geometry type. |
+| `layers` | `string[]` | No | Only query these layers, such as poi_label and building. |
+
+Needs a radius for point and line data. A default token showed a limit of 50 requests a minute.
+
+<AccordionGroup>
+<Accordion title="coordinate full type">
+
+```ts
+{
+  longitude: number,
+  latitude: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `features` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="features full type">
+
+```ts
+{
+  type: string,
+  id?: number | string | null,
+  geometry: {
+    type: string,
+    coordinates: number[]
+  },
+  properties: {
+    tilequery: {
+      distance: number,
+      geometry: string,
+      layer: string
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Trips
+
+### optimize
+
+`trips.optimize`
+
+Find the fastest order to visit 2 to 12 stops (Optimization v1, answered immediately); throws on NoSegment or an unsupported roundtrip/source/destination combination
+
+**Risk:** `read`
+
+```ts
+await corsair.mapbox.api.trips.optimize({ profile: 'mapbox/driving', coordinates: [{ longitude: 2.35, latitude: 48.85 }, { longitude: 2.3, latitude: 48.86 }, { longitude: 2.4, latitude: 48.87 }], roundtrip: false, source: 'first', destination: 'last' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `mapbox/driving-traffic \| mapbox/driving \| mapbox/walking \| mapbox/cycling` | Yes | Routing profile: mapbox/driving-traffic (live and historic traffic, falls back to driving where there is no traffic data), mapbox/driving, mapbox/walking or mapbox/cycling. |
+| `coordinates` | `object[]` | Yes | Between 2 and 12 stops. Each is &#123; longitude, latitude &#125;. The first is the start unless source is "any". |
+| `annotations` | `(duration \| distance \| speed)[]` | No | Extra per-segment data on each leg. Needs overview: "full". |
+| `destination` | `any \| last` | No | End at the last coordinate, or any (default). |
+| `geometries` | `geojson \| polyline \| polyline6` | No | Geometry encoding: polyline (default, precision 5), polyline6 (precision 6) or geojson (a LineString). |
+| `language` | `string` | No | Language of step instructions, such as en or fr. Needs steps: true. |
+| `overview` | `full \| simplified \| false` | No | Route overview geometry: simplified (default), full, or false for none. |
+| `roundtrip` | `boolean` | No | Return to the start (true, the default). With false, source must be "first" and destination "last"; Mapbox answers NotImplemented for any other pair. |
+| `source` | `any \| first` | No | Start at the first coordinate, or any (default). |
+| `steps` | `boolean` | No | Return turn-by-turn steps on each leg. |
+
+Optimization v1, answered immediately. roundtrip: false needs source: first and destination: last; Mapbox answers NotImplemented for any other pair.
+
+<AccordionGroup>
+<Accordion title="coordinates full type">
+
+```ts
+{
+  longitude: number,
+  latitude: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `waypoints` | `object[]` | Yes | — |
+| `trips` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="waypoints full type">
+
+```ts
+{
+  name: string,
+  location: number[],
+  distance?: number | null,
+  waypoint_index?: number | null,
+  trips_index?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="trips full type">
+
+```ts
+{
+  geometry?: string | {
+    type: string,
+    coordinates: number[][] | number[][][] | number[][][][]
+  } | null,
+  distance: number,
+  duration: number,
+  weight?: number | null,
+  weight_name?: string | null,
+  legs: {
+    steps?: {
+      distance: number,
+      duration: number,
+      name?: string | null,
+      mode?: string | null,
+      geometry?: string | {
+        type: string,
+        coordinates: number[][] | number[][][] | number[][][][]
+      } | null,
+      maneuver?: {
+        location?: number[] | null,
+        type?: string | null,
+        instruction?: string | null
+      } | null
+    }[] | null,
+    summary?: string | null,
+    distance: number,
+    duration: number,
+    weight?: number | null,
+    annotation?: {
+      duration?: number[] | null,
+      distance?: number[] | null,
+      speed?: number[] | null,
+      congestion?: string[] | null,
+      congestion_numeric?: (number | null)[] | null
+    } | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
