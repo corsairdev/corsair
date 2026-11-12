@@ -1,0 +1,146 @@
+---
+title: "WATI plugin"
+sidebarTitle: "Overview"
+description: "WhatsApp messaging with WATI - manage contacts, read conversations and their messages, send text, template and file messages, and read templates, channels, campaigns, segments and webhook subscriptions."
+---
+
+Use **WATI** through Corsair: one client, typed API calls.
+
+Create an API token in the WATI app under **Connector → API → Create API Token**, choosing the scopes each endpoint needs. It goes in `Authorization: Bearer` and is sent to `{your-host}/api/ext/v3`. A dedicated account can be issued its own host: pass it as `apiHost`, which takes precedence over `region`.
+
+- **The region is a plugin option.** WATI has three regional hosts — Global (`https://live-mt-server.wati.io`), EU (`https://eu-api.wati.io`) and KSA (`https://ksa-api.wati.io`) — and a token only works against the one its workspace lives in. Nothing in the token says which, so pass `region: 'eu'` or `'ksa'`; the default is Global.
+- **V3 puts no tenant in the path.** The token identifies the workspace, so routes are `/api/ext/v3/...`. Only the older V1/V2 routes take a `tenantId`, and this plugin does not use them.
+- **Two distinct 401s.** `missing_token` means no key was sent at all; `invalid_token` means one was sent and is wrong, malformed or expired. Both are auth errors, but the difference tells you whether the credential was configured at all, so the plugin exposes both.
+- **A 403 is not only a scope problem.** The docs are explicit that the role, the plan and access to a particular channel can each cause it, so the plugin treats it as a permission error rather than blaming the scope.
+- **Free text only works inside 24 hours.** `messages.sendText` is refused outside the customer service window; `messages.sendTemplate` is the only route through. That is why they are separate operations rather than one with a flag.
+- **Every template send is a campaign.** WATI requires `broadcast_name` even for one recipient and records the send under it. Leave out `parameters` for a template with no placeholders. A 200 can still carry `success: false` with `error`, and each recipient row can carry its own `errors`.
+- **A conversation target is not a contact ID.** `conversations.messages` takes a wa_id, a phone number or a conversation ID, and the docs warn against substituting a bare contact ID, which is a different value.
+- **A leading `+` has to be encoded in a path.** A contact target may start with `+`, which is percent-encoded when it is part of the URL so it stays one path segment. Send routes take the target in the JSON body, where it is sent as given.
+- **Paging is `page_number` and `page_size`.** One-based, capped at 100 per page. `broadcasts.list` also needs `date_from` and `date_to`: the live API refuses the list without them, though the reference does not mark them.
+- **Custom attributes are pairs, not a map.** A contact's `custom_params` is a list of `{ name, value }`, which is WATI's own shape.
+- **Creating a webhook still needs V2.** The V3 routes list, read and delete subscriptions, but creation has not moved to V3 — so the plugin wraps the three that exist and says so rather than reaching into a different API version. The V3 list has no paging.
+
+**What you get:**
+
+- 23 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/wati better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/wati better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/wati better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/wati better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { wati } from '@corsair-dev/wati';
+
+export const corsair = createCorsair({
+	plugins: [
+		wati(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+wati()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'wati',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List contacts**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.wati.api.contacts.list({ page_number: 1, page_size: 20 });
+```
+
+
+**Send an approved template**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.wati.api.messages.sendTemplate({
+	whatsapp_number: '1234567890',
+	template_name: 'order_update',
+	broadcast_name: 'order_update_jordan',
+	parameters: [{ name: '1', value: 'Jordan' }],
+});
+```
+
+
+See the full list on the [API](/plugins/wati/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/wati/api">
+    Every `wati.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
