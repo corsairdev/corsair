@@ -232,12 +232,6 @@ async function requestBinary<T>(options: {
 			`DigiCert binary response exceeds ${MAX_BINARY_BYTES} bytes`,
 		);
 	}
-	const contentType = response.headers.get('content-type') ?? '';
-	if (contentType.toLowerCase().includes('json')) {
-		// `unknown`: response.json() is untrusted until the operation schema parses it.
-		const parsed: unknown = await response.json();
-		return parsed as T;
-	}
 	const reader = response.body?.getReader();
 	if (!reader) return [] as T;
 	const chunks: Uint8Array[] = [];

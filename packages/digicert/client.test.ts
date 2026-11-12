@@ -237,6 +237,40 @@ describe('makeDigicertRequest', () => {
 		}
 	});
 
+	it('returns JSON report downloads as bytes even when content type is JSON', async () => {
+		const originalFetch = global.fetch;
+		const payload = Uint8Array.from([
+			0x7b, 0x22, 0x69, 0x64, 0x22, 0x3a, 0x31, 0x7d,
+		]);
+		global.fetch = jest.fn(
+			async () =>
+				new Response(payload, {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				}),
+		) as typeof fetch;
+		try {
+			await expect(
+				makeDigicertRequest(
+					'reportLibrary',
+					'/report/{report_identifier}/{report_run_identifier}/download',
+					'report-key',
+					{
+						method: 'GET',
+						path: {
+							report_identifier: 'report-1',
+							report_run_identifier: 'run-1',
+						},
+						query: { report_format: 'JSON' },
+						binary: true,
+					},
+				),
+			).resolves.toEqual(Array.from(payload));
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+
 	it('keeps path parameters inside one encoded URL segment', async () => {
 		const originalFetch = global.fetch;
 		global.fetch = jest.fn(

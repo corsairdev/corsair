@@ -13309,7 +13309,7 @@ Move orders
 
 ```ts
 await corsair.digicert.api.certcentralApi.moveOrders({
-	query: { target_account_id: 1 },
+	path: { target_account_id: 1 },
 	body: { order_ids: 'example' },
 });
 ```
@@ -13318,8 +13318,8 @@ await corsair.digicert.api.certcentralApi.moveOrders({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
-| `query` | `object` | Yes | — |
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
 | `body` | `object` | Yes | — |
@@ -13329,6 +13329,7 @@ await corsair.digicert.api.certcentralApi.moveOrders({
 
 ```ts
 {
+  target_account_id: number
 }
 ```
 </Accordion>
@@ -13337,7 +13338,6 @@ await corsair.digicert.api.certcentralApi.moveOrders({
 
 ```ts
 {
-  target_account_id: number
 }
 ```
 </Accordion>
@@ -27614,6 +27614,7 @@ Returns PEM certificate content; avoid logging response bodies.
   id: string,
   subject_common_name: string,
   subject_org_name: string,
+  valid_from?: string,
   issuer_common_name: string,
   status: string,
   valid_to: string,
@@ -34553,12 +34554,12 @@ await corsair.digicert.api.customReports.orders({ fields: ['id', 'status'], stat
 | `status` | `string` | No | — |
 | `valid_from` | `string` | No | — |
 | `valid_till` | `string` | No | — |
-| `container_id` | `number` | No | — |
-| `organization_id` | `number` | No | — |
+| `container_id` | `string` | No | — |
+| `organization_id` | `string` | No | — |
 | `product_name_id` | `string` | No | — |
 | `serial_number` | `string` | No | — |
 | `signature_hash` | `string` | No | — |
-| `user_id` | `number` | No | — |
+| `user_id` | `string` | No | — |
 | `date_created` | `string` | No | — |
 | `ca_cert_id` | `string` | No | — |
 | `common_name` | `string` | No | — |
@@ -58207,8 +58208,8 @@ Download report
 
 ```ts
 await corsair.digicert.api.reportLibraryApi.downloadReport({
-	path: { report_identifier: 'example', report_run_identifier: 'example' },
-	query: { report_format: 'example' },
+	path: { report_identifier: '00000000-0000-4000-8000-000000000001', report_run_identifier: '00000000-0000-4000-8000-000000000002' },
+	query: { report_format: 'EXCEL' },
 });
 ```
 
@@ -58236,7 +58237,7 @@ await corsair.digicert.api.reportLibraryApi.downloadReport({
 
 ```ts
 {
-  report_format: string,
+  report_format: JSON | CSV | EXCEL | ZIP,
   split_report_sequence?: number
 }
 ```
@@ -58261,7 +58262,7 @@ await corsair.digicert.api.reportLibraryApi.downloadReport({
 
 
 
-**Output:** `JsonValue`
+**Output:** `number[]`
 
 
 ---
@@ -58529,24 +58530,26 @@ Start report run
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.reportLibraryApi.startReportRun({});
+await corsair.digicert.api.reportLibraryApi.startReportRun({
+	path: { report_identifier: '00000000-0000-4000-8000-000000000001' },
+});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
-| `body` | `JsonValue` | No | — |
 
 <AccordionGroup>
 <Accordion title="path full type">
 
 ```ts
 {
+  report_identifier: string
 }
 ```
 </Accordion>
