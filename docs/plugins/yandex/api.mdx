@@ -1,0 +1,147 @@
+---
+title: "Yandex Translate API reference"
+sidebarTitle: "API"
+description: "API reference for the Yandex Translate plugin in Corsair: every `yandex.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Detect Languages
+
+### run
+
+`detectLanguages.run`
+
+Detect the language of each passage, one result per entry and in order
+
+**Risk:** `read`
+
+```ts
+await corsair.yandex.api.detectLanguages.run({ texts: ['Hello', 'Guten Tag'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `texts` | `string[]` | Yes | — |
+| `folderId` | `string` | No | The Yandex Cloud folder to bill and scope the call to. Required with a user account's IAM token; leave it out with a service-account API key or IAM token, which use the service account's folder. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `detections` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="detections full type">
+
+```ts
+{
+  languageCode: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## List Languages
+
+### run
+
+`listLanguages.run`
+
+List the supported languages, with their codes and display names
+
+**Risk:** `read`
+
+```ts
+await corsair.yandex.api.listLanguages.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | No | The Yandex Cloud folder to bill and scope the call to. Required with a user account's IAM token; leave it out with a service-account API key or IAM token, which use the service account's folder. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `languages` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="languages full type">
+
+```ts
+{
+  code?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Translate
+
+### text
+
+`translate.text`
+
+Translate up to 1,000 passages into a target language, detecting the source per passage when it is not given
+
+**Risk:** `read`
+
+```ts
+await corsair.yandex.api.translate.text({ targetLanguageCode: 'ru', texts: ['Hello'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `targetLanguageCode` | `string` | Yes | The language to translate into, such as `ru` or `en`. |
+| `texts` | `string[]` | Yes | The passages to translate. Each is translated separately. |
+| `sourceLanguageCode` | `string` | No | The source language. Omit to detect it. |
+| `format` | `PLAIN_TEXT \| HTML` | No | How the text is interpreted. Defaults to PLAIN_TEXT. |
+| `speller` | `boolean` | No | Correct spelling in the result. |
+| `folderId` | `string` | No | The Yandex Cloud folder to bill and scope the call to. Required with a user account's IAM token; leave it out with a service-account API key or IAM token, which use the service account's folder. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `translations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="translations full type">
+
+```ts
+{
+  text: string,
+  detectedLanguageCode?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
