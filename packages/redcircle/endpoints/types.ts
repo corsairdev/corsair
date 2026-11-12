@@ -116,6 +116,15 @@ const ProductsGetInputSchema = z
 
 export type ProductsGetInput = z.input<typeof ProductsGetInputSchema>;
 
+const PriceSchema = z
+	.object({
+		value: z.number().nullish(),
+		currency: z.string().nullish(),
+		symbol: z.string().nullish(),
+		raw: z.string().nullish(),
+	})
+	.loose();
+
 /**
  * A product variant: a size or colour, with its own price and availability.
  * RedCircle returns a small fixed set of keys per variant.
@@ -128,7 +137,7 @@ const VariantSchema = z
 		link: z.string().nullish(),
 		swatch_image: z.string().nullish(),
 		availability: z.string().nullish(),
-		price: z.number().nullish(),
+		price: z.union([z.number(), PriceSchema]).nullish(),
 	})
 	.loose();
 
@@ -162,15 +171,6 @@ const UsageHistorySchema = z
 	})
 	.loose();
 
-const PriceSchema = z
-	.object({
-		value: z.number().nullish(),
-		currency: z.string().nullish(),
-		symbol: z.string().nullish(),
-		raw: z.string().nullish(),
-	})
-	.loose();
-
 // Search responses use URL strings; product responses document media objects.
 const MediaSchema = z.union([
 	z.string(),
@@ -184,8 +184,8 @@ const ProductSchema = z
 		link: z.string().nullish(),
 		tcin: z.string().nullish(),
 		dpci: z.string().nullish(),
-		class_id: z.number().nullish(),
-		department_id: z.number().nullish(),
+		class_id: z.union([z.string(), z.number()]).nullish(),
+		department_id: z.union([z.string(), z.number()]).nullish(),
 		sponsored: z.boolean().nullish(),
 		brand: z.string().nullish(),
 		brand_link: z.string().nullish(),
@@ -270,7 +270,17 @@ const SearchResultSchema = z
 	.object({
 		position: z.number().nullish(),
 		product: ProductSchema.nullish(),
-		offers: z.array(OfferSchema).nullish(),
+		offers: z
+			.union([
+				z.array(OfferSchema),
+				z
+					.object({
+						primary: OfferSchema.nullish(),
+						all_offers: z.array(OfferSchema).nullish(),
+					})
+					.loose(),
+			])
+			.nullish(),
 		fulfillment: FulfillmentSchema.nullish(),
 	})
 	.loose();

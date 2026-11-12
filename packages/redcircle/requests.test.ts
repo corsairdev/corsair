@@ -22,6 +22,18 @@ afterEach(() => {
 });
 
 describe('search.products', () => {
+	it('preserves documented offer objects and string department ids', async () => {
+		const row = {
+			position: 1,
+			product: { ...PRODUCT, class_id: '02', department_id: '081' },
+			offers: { primary: { price: 8.99, currency: 'USD' }, all_offers: [] },
+		};
+		respond(fetchMock, { ...SEARCH_PAGE, search_results: [row] });
+		await expect(
+			invoke(Endpoints.searchProducts, { search_term: 'pens' }),
+		).resolves.toMatchObject({ search_results: [row] });
+	});
+
 	it('searches by term with the live response shape', async () => {
 		respond(fetchMock, SEARCH_PAGE);
 
@@ -104,6 +116,17 @@ describe('search.products', () => {
 });
 
 describe('products.get', () => {
+	it('preserves documented variant price objects', async () => {
+		const product = {
+			...PRODUCT,
+			variants: [{ tcin: TCIN, price: { value: 8.99, currency: 'USD' } }],
+		};
+		respond(fetchMock, { ...PRODUCT_RESULT, product });
+		await expect(
+			invoke(Endpoints.productsGet, { tcin: TCIN }),
+		).resolves.toMatchObject({ product });
+	});
+
 	it('preserves documented image and video objects', async () => {
 		const product = {
 			...PRODUCT,
