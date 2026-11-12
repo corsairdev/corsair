@@ -150,6 +150,12 @@ const OrderInputSchema = z
 			.positive()
 			.optional()
 			.describe('The insured value. Required when ins_active is 1.'),
+		custom_msg: z
+			.string()
+			.optional()
+			.describe(
+				'A message for the shipment. In the provider Postman collection, not in the API reference.',
+			),
 		employee_info: EmployeeInputSchema,
 		company_info: CompanyInputSchema,
 		new_employee_info: NewEmployeeInputSchema.optional(),

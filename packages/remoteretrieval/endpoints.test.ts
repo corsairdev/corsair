@@ -220,6 +220,19 @@ describe('orders.create', () => {
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('Steele Street');
 	});
 
+	it('sends custom_msg on the order', async () => {
+		respond(fetchMock, ORDER_CREATED);
+
+		await invoke(Api.create, {
+			orders: [{ ...ORDER, custom_msg: 'Please include the charger.' }],
+		});
+
+		const sent = lastRequest(fetchMock).bodyRecord?.orders as {
+			custom_msg?: string;
+		}[];
+		expect(sent[0]?.custom_msg).toBe('Please include the charger.');
+	});
+
 	it.each([429, 503])(
 		'sends a create once when the API answers %i',
 		async (status) => {
