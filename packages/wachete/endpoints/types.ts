@@ -142,6 +142,74 @@ const UrlFilterSchema = z
 	})
 	.describe('Portal only: which crawled URLs to keep or skip.');
 
+// ── read-back shapes ──────────────────────────────────────────────────────
+
+/**
+ * An enum as Wachete reads it back. The OpenAPI document declares integers and
+ * the examples use names, and Wachete adds values over time (`JobType` already
+ * has a 2 that `ClientJobType` does not), so a response is not rejected for a
+ * value the input schemas do not list.
+ */
+const OutputEnumSchema = z.union([z.string(), z.number()]);
+
+/** `DiffElement`: one diff operation and its text. */
+const DiffElementSchema = z
+	.object({
+		operation: z.number().nullish(),
+		text: z.string().nullish(),
+	})
+	.loose();
+
+/** `ClientData`: the last check of a monitor or one entry of its history. */
+const ClientDataSchema = z
+	.object({
+		lastCheckTimestamp: z.string().nullish(),
+		valueChangedTimestamp: z.string().nullish(),
+		raw: z.string().nullish(),
+		error: z.string().nullish(),
+		diff: z.array(DiffElementSchema).nullish(),
+	})
+	.loose();
+
+const AlertOutputSchema = z
+	.object({
+		type: OutputEnumSchema.nullish(),
+		value: z.string().nullish(),
+		parameters: z
+			.object({
+				compare: OutputEnumSchema.nullish(),
+				value: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+	})
+	.loose();
+
+const UrlFilterOutputSchema = z
+	.object({
+		include: z
+			.array(
+				z
+					.object({
+						filter: z.string().nullish(),
+						type: OutputEnumSchema.nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
+		exclude: z
+			.array(
+				z
+					.object({
+						filter: z.string().nullish(),
+						type: OutputEnumSchema.nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
+	})
+	.loose();
+
 // ── the monitor ───────────────────────────────────────────────────────────
 
 /**
@@ -154,35 +222,43 @@ const ClientTaskSchema = z
 		name: z.string().nullish(),
 		method: z.string().nullish(),
 		url: z.string().nullish(),
-		headers: HeadersSchema.nullish(),
+		headers: z
+			.array(
+				z
+					.object({ key: z.string().nullish(), value: z.string().nullish() })
+					.loose(),
+			)
+			.nullish(),
 		body: z.string().nullish(),
 		xPath: z.string().nullish(),
 		excludeXPath: z.string().nullish(),
 		regex: z.string().nullish(),
-		alerts: z.array(AlertSchema).nullish(),
+		alerts: z.array(AlertOutputSchema).nullish(),
 		recurrenceInSeconds: z.number().nullish(),
 		folderId: z.string().nullish(),
-		data: z
-			.object({
-				lastCheckTimestamp: z.string().nullish(),
-				valueChangedTimestamp: z.string().nullish(),
-				raw: z.string().nullish(),
-				error: z.string().nullish(),
-				diff: z.array(z.unknown()).nullish(),
-			})
-			.loose()
+		data: ClientDataSchema.nullish(),
+		notificationEndpoints: z
+			.array(
+				z
+					.object({
+						type: OutputEnumSchema.nullish(),
+						value: z.string().nullish(),
+					})
+					.loose(),
+			)
 			.nullish(),
-		notificationEndpoints: z.array(NotificationEndpointSchema).nullish(),
-		proxies: z.array(z.object({ location: z.string() }).loose()).nullish(),
-		location: LocationSchema.nullish(),
+		proxies: z
+			.array(z.object({ location: z.string().nullish() }).loose())
+			.nullish(),
+		location: OutputEnumSchema.nullish(),
 		dynamicContent: z.boolean().nullish(),
 		scrollPage: z.boolean().nullish(),
 		ignoreInvalidPages: z.boolean().nullish(),
 		collectRawHtml: z.boolean().nullish(),
-		jobType: JobTypeSchema.nullish(),
+		jobType: OutputEnumSchema.nullish(),
 		crawlingDepth: z.number().nullish(),
 		crawlBinaryContent: z.boolean().nullish(),
-		urlFilter: UrlFilterSchema.nullish(),
+		urlFilter: UrlFilterOutputSchema.nullish(),
 		crawlPagesFromAllDomains: z.boolean().nullish(),
 		note: z.string().nullish(),
 	})
@@ -316,11 +392,17 @@ const TasksPagesInputSchema = z.object({
 
 export type TasksPagesInput = z.infer<typeof TasksPagesInputSchema>;
 
-/**
- * The pages of one monitor, as a bare array. Each page is a free-form record: the
- * fields depend on the monitor type, so the shape belongs to Wachete.
- */
-const PagesResponseSchema = z.array(z.record(z.string(), z.unknown()));
+/** The pages of one Portal monitor, as a bare array of `ClientPage`. */
+const PagesResponseSchema = z.array(
+	z
+		.object({
+			id: z.string().nullish(),
+			name: z.string().nullish(),
+			url: z.string().nullish(),
+			data: ClientDataSchema.nullish(),
+		})
+		.loose(),
+);
 
 export type PagesResponse = z.infer<typeof PagesResponseSchema>;
 
@@ -351,7 +433,7 @@ export type NotificationsListInput = z.infer<
 const NotificationSchema = z
 	.object({
 		id: z.string().nullish(),
-		type: AlertTypeSchema.nullish(),
+		type: OutputEnumSchema.nullish(),
 		current: z.string().nullish(),
 		comparand: z.string().nullish(),
 		html: z.string().nullish(),
@@ -386,10 +468,15 @@ const NotificationsGetInputSchema = z.object({
 
 export type NotificationsGetInput = z.infer<typeof NotificationsGetInputSchema>;
 
-/** One notification rendered as HTML, as it was sent. */
+/**
+ * One notification as JSON (`ClientAlertContentResponse`): the monitor's name
+ * and URL, when it fired, and the alert as the HTML that was sent. `jobType`
+ * here is `JobType`, which has a third value (2) that a monitor's own
+ * `ClientJobType` does not.
+ */
 const NotificationHtmlResponseSchema = z
 	.object({
-		jobType: JobTypeSchema.nullish(),
+		jobType: OutputEnumSchema.nullish(),
 		syntheticExpression: z.string().nullish(),
 		url: z.string().nullish(),
 		name: z.string().nullish(),
@@ -422,20 +509,7 @@ export type DataListInput = z.infer<typeof DataListInputSchema>;
 
 const DataListResponseSchema = z
 	.object({
-		data: z
-			.array(
-				z
-					.object({
-						lastCheckTimestamp: z.string().nullish(),
-						valueChangedTimestamp: z.string().nullish(),
-						raw: z.string().nullish(),
-						error: z.string().nullish(),
-						// Each diff entry is an operation with its text.
-						diff: z.array(z.unknown()).nullish(),
-					})
-					.loose(),
-			)
-			.nullish(),
+		data: z.array(ClientDataSchema).nullish(),
 		continuationToken: z.string().nullish(),
 	})
 	.loose();

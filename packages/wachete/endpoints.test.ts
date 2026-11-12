@@ -497,3 +497,63 @@ describe('review fixes', () => {
 		).rejects.toThrow();
 	});
 });
+
+describe('read-back values the input schemas do not list', () => {
+	it('reads a notification whose jobType is 2, which JobType declares', async () => {
+		respond(fetchMock, { ...notificationHtml, jobType: 2 });
+
+		const result = await invoke(Notifications.get, { alertId: 'alert-1' });
+
+		expect(result).toMatchObject({ jobType: 2 });
+	});
+
+	it('reads a monitor with an enum value added after this plugin and nulls the spec allows', async () => {
+		respond(fetchMock, {
+			...task,
+			alerts: [{ type: 11, value: null, parameters: { compare: 'Between' } }],
+			notificationEndpoints: [{ type: 128, value: null }],
+			headers: [{ key: null, value: null }],
+			proxies: [{ location: null }],
+			location: 'de',
+			jobType: 2,
+		});
+
+		const result = await invoke(Tasks.get, { id: taskId });
+
+		expect(result).toMatchObject({ jobType: 2, location: 'de' });
+	});
+
+	it('lists a notification whose alert type is outside 0 to 10', async () => {
+		respond(fetchMock, { data: [{ ...notification, type: 11 }] });
+
+		const result = await invoke(Notifications.list, {});
+
+		expect(result).toMatchObject({ data: [{ type: 11 }] });
+	});
+
+	it('types a diff entry as its operation and text', async () => {
+		const entry = {
+			lastCheckTimestamp: '2015-07-12T12:52:48Z',
+			diff: [{ operation: 1, text: 'added' }],
+		};
+		respond(fetchMock, { data: [entry], continuationToken: null });
+
+		const result = await invoke(Data.list, { id: taskId, returnDiff: true });
+
+		expect(result).toMatchObject({ data: [entry] });
+	});
+
+	it('reads a Portal page with its last check', async () => {
+		const page = {
+			id: 'page-1',
+			name: '/',
+			url: 'http://www.mypage.com',
+			data: { lastCheckTimestamp: '2015-07-12T12:52:48Z', raw: 'text' },
+		};
+		respond(fetchMock, [page]);
+
+		const result = await invoke(Tasks.pages, { id: 'portal-1' });
+
+		expect(result).toEqual([page]);
+	});
+});
