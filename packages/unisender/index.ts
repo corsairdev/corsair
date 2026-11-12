@@ -236,7 +236,7 @@ const unisenderEndpointMeta = {
 	'contacts.count': {
 		riskLevel: 'read',
 		description:
-			'Count the contacts in a list, optionally narrowed by tag, kind or a substring',
+			'Count the contacts in a list by kind (type address for email contacts, phone for SMS) or by tag; Unisender needs at least one of the two',
 	},
 	'contacts.export': {
 		riskLevel: 'write',

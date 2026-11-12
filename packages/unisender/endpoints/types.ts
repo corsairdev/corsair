@@ -309,18 +309,36 @@ export type ContactsImportResponse = z.infer<
 	typeof ContactsImportResponseSchema
 >;
 
-const ContactsCountInputSchema = z.object({
-	list_id: ListIdSchema,
-	tag_id: z.number().int().optional().describe('Only contacts with this tag.'),
-	type: z
-		.enum(['address', 'phone'])
-		.optional()
-		.describe('Only contacts of this kind.'),
-	search: z
-		.string()
-		.optional()
-		.describe('A substring of an address or phone; needs `type`.'),
-});
+/**
+ * Unisender refuses a count with no `params` at all ("Required parameter 'params'
+ * can not be empty", invalid_arg, captured live 11-12), so at least one of tag_id or
+ * type is required. type `address` counts every contact with an email in the list.
+ */
+const ContactsCountInputSchema = z
+	.object({
+		list_id: ListIdSchema,
+		tag_id: z
+			.number()
+			.int()
+			.optional()
+			.describe('Only contacts with this tag.'),
+		type: z
+			.enum(['address', 'phone'])
+			.optional()
+			.describe('Only contacts of this kind.'),
+		search: z
+			.string()
+			.optional()
+			.describe('A substring of an address or phone; needs `type`.'),
+	})
+	.refine((input) => input.tag_id !== undefined || input.type !== undefined, {
+		message:
+			'Unisender needs a filter: pass type (address or phone) or tag_id. Use type: address to count every contact with an email.',
+	})
+	.refine((input) => input.search === undefined || input.type !== undefined, {
+		message: 'search works only together with type.',
+		path: ['search'],
+	});
 
 export type ContactsCountInput = z.infer<typeof ContactsCountInputSchema>;
 

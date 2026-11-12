@@ -46,7 +46,7 @@ apiExamples:
   contacts.import:
     call: "{ list_ids: [1], field_names: ['email', 'Name'], data: [['jordan@acme-logistics.com', 'Jordan']] }"
   contacts.count:
-    call: "{ list_id: 1 }"
+    call: "{ list_id: 1, type: 'address' }"
   contacts.export:
     call: "{ list_id: 1, notify_url: 'https://acme.example/export-ready', field_names: ['email', 'Name'] }"
   fields.list: {}

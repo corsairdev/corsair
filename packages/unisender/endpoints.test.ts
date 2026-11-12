@@ -268,6 +268,11 @@ describe('contacts', () => {
 		expect(result.result.count).toBe(1234);
 	});
 
+	it('refuses a count with no filter before calling, since Unisender requires one', async () => {
+		await expect(invoke(Api.count, { list_id: 55688 })).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('requests an export on the async route', async () => {
 		respond(fetchMock, EXPORT_REQUESTED);
 
