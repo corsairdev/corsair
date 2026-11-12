@@ -225,7 +225,7 @@ const remarketyEndpointMeta = {
 	'contacts.create': {
 		riskLevel: 'write',
 		description:
-			'Create a contact in a store, optionally with double opt-in and marketing permission',
+			'Create or update a contact in a store; Remarkety emails a double opt-in request unless doubleOptin is false',
 	},
 	'contacts.unsubscribe': {
 		riskLevel: 'write',
