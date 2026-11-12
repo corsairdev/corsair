@@ -66,7 +66,6 @@ await corsair.raisely.api.campaigns.get({ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aaa
   allowExperiments?: boolean | null,
   showRaiselyCheckbox?: boolean | null,
   publicKey?: string | null,
-  privateKey?: string | null,
   profile?: {
     uuid?: string | null,
     name?: string | null,
@@ -156,7 +155,6 @@ await corsair.raisely.api.campaigns.list({ status: 'ACTIVE', limit: 100, sort: '
   allowExperiments?: boolean | null,
   showRaiselyCheckbox?: boolean | null,
   publicKey?: string | null,
-  privateKey?: string | null,
   profile?: {
     uuid?: string | null,
     name?: string | null,
@@ -272,7 +270,7 @@ A designation is what a donation is attributed to; `publicName` is the label sho
 
 `donations.create`
 
-Record a donation for a campaign, with the donor details and the gateway it came through
+Record a donation already paid elsewhere, with the donor details and the gateway it came through; it charges no one and sends no receipt
 
 **Risk:** `write`
 
@@ -288,7 +286,7 @@ await corsair.raisely.api.donations.create({ amount: 2500, currency: 'USD', emai
 | `currency` | `string` | Yes | A three-letter currency code. |
 | `email` | `string` | Yes | The donor email. |
 | `method` | `string` | Yes | The payment gateway, such as `CREDIT_CARD`, `PAYPAL` or `APPLE_PAY`. |
-| `type` | `ONLINE \| OFFLINE` | Yes | Whether the donation was taken online or recorded by hand. |
+| `type` | `ONLINE \| OFFLINE` | Yes | How the payment was taken. Either way this only records a payment made elsewhere; Raisely charges nothing on this route. |
 | `campaign_uuid` | `string` | No | The campaign the donation belongs to. |
 | `profile_uuid` | `string` | No | The fundraising profile the donation is credited to. |
 | `firstName` | `string` | No | — |
@@ -305,8 +303,8 @@ await corsair.raisely.api.donations.create({ amount: 2500, currency: 'USD', emai
 | `phoneNumber` | `string` | No | — |
 | `mode` | `LIVE \| TEST` | No | — |
 | `designation` | `string` | No | The designation uuid to attribute the donation to. |
-| `public` | `Record<string, string \| number \| boolean \| Record<string, string \| number \| boolean \| null> \| null> \| null` | No | — |
-| `private` | `Record<string, string \| number \| boolean \| Record<string, string \| number \| boolean \| null> \| null> \| null` | No | — |
+| `public` | `Record<string, string \| number \| boolean \| Record<string, string \| number \| boolean \| null> \| (string \| number \| boolean)[] \| null> \| null` | No | — |
+| `private` | `Record<string, string \| number \| boolean \| Record<string, string \| number \| boolean \| null> \| (string \| number \| boolean)[] \| null> \| null` | No | — |
 
 The record is sent under `data`; amounts are integers in the smallest currency unit.
 
@@ -937,14 +935,14 @@ await corsair.raisely.api.profiles.update({ profile_path: 'jordan-lee', goal: 60
 |------|------|----------|-------------|
 | `profile_path` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `description` | `string` | No | — |
+| `description` | `string \| null` | No | The profile description; null clears it. |
 | `goal` | `number` | No | — |
-| `photoUrl` | `string` | No | — |
-| `pronouns` | `string` | No | — |
+| `photoUrl` | `string \| null` | No | The profile photo URL; null clears it. |
+| `pronouns` | `string \| null` | No | The fundraiser pronouns; null clears them. |
 | `shared` | `boolean` | No | — |
 | `status` | `string` | No | — |
-| `public` | `Record<string, string \| number \| boolean \| Record<string, string \| number \| boolean \| null> \| null> \| null` | No | — |
-| `private` | `Record<string, string \| number \| boolean \| Record<string, string \| number \| boolean \| null> \| null> \| null` | No | — |
+| `public` | `Record<string, string \| number \| boolean \| Record<string, string \| number \| boolean \| null> \| (string \| number \| boolean)[] \| null> \| null` | No | — |
+| `private` | `Record<string, string \| number \| boolean \| Record<string, string \| number \| boolean \| null> \| (string \| number \| boolean)[] \| null> \| null` | No | — |
 
 The body is sent under `data`, and the path identifies the record rather than the body.
 
