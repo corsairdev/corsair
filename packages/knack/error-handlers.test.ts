@@ -103,6 +103,33 @@ describe('error handler classification', () => {
 	});
 });
 
+describe('classification by status only', () => {
+	// A rejected write whose text happens to mention 429 or a rate limit is
+	// still a 400: it must not be retried as a rate limit.
+	it('does not treat a 400 that mentions a rate limit as one', async () => {
+		// The client puts Knack's own text in the message, as here.
+		const text = 'field_3: rate limit 429 is not a valid value';
+		const { name, result } = await resolve(
+			new KnackAPIError(`Knack 400: ${text}`, {
+				status: 400,
+				method: 'POST',
+				messages: [text],
+			}),
+		);
+		expect(name).toBe('VALIDATION_ERROR');
+		expect(result.maxRetries).toBe(0);
+	});
+
+	it('does not treat a transport failure that mentions a key as auth', async () => {
+		const { name } = await resolve(
+			new KnackAPIError('Invalid API key header rejected by proxy', {
+				method: 'GET',
+			}),
+		);
+		expect(name).not.toBe('AUTH_ERROR');
+	});
+});
+
 describe('server failures', () => {
 	it('retries a 500 on a read', async () => {
 		const { name, result } = await resolve(

@@ -5,10 +5,6 @@ function statusOf(error: Error): number | undefined {
 	return error instanceof KnackAPIError ? error.status : undefined;
 }
 
-function messageOf(error: Error): string {
-	return error.message.toLowerCase();
-}
-
 /**
  * Knack documents a fixed ceiling of 10 requests a second, and says a caller
  * should wait under a second before retrying. A daily plan limit answers the
@@ -17,11 +13,9 @@ function messageOf(error: Error): string {
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (statusOf(error) === 429) return true;
-			const message = messageOf(error);
-			return message.includes('rate limit') || message.includes('429');
-		},
+		// Status only: the message carries Knack's own text, and a rejected
+		// write that mentions "429" must not be retried as a rate limit.
+		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => {
 			const retryAfter =
 				error instanceof KnackAPIError ? error.retryAfter : undefined;
@@ -41,12 +35,7 @@ export const errorHandlers = {
 	AUTH_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
-			if (status === 401 || status === 403) return true;
-			const message = messageOf(error);
-			return (
-				message.includes('invalid api key') ||
-				message.includes('invalid api request')
-			);
+			return status === 401 || status === 403;
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
