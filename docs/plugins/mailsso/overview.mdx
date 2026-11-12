@@ -1,0 +1,140 @@
+---
+title: "Mails.so plugin"
+sidebarTitle: "Overview"
+description: "Email address validation with Mails.so - check one address for deliverability, start a batch validation job for a list, and read the job back with its per-address results."
+---
+
+Use **Mails.so** through Corsair: one client, typed API calls.
+
+Sign up at mails.so for an API key (see https://docs.mails.so/authentication). The key goes in the `x-mails-api-key` header; the plugin sends it there and nowhere else. Things to know before you send:
+
+- **Single validation.** `validations.single` takes one address and returns its verdict (`result`, `reason`, a 0-100 `score`) plus the format, domain, MX, block-list, catch-all, generic, disposable and free-provider checks. A malformed address is not an error: Mails.so answers it as `undeliverable` with reason `invalid_format`. The `result` values are `deliverable`, `undeliverable`, `risky` and a fourth for checks that could not finish. They stay plain strings, so a value Mails.so adds later does not fail a call.
+- **Test and placeholder domains.** `example.com` addresses come back `undeliverable` with reason `invalid_domain` and `is_disposable: true`.
+- **Batch validation is asynchronous.** `validations.batch` starts a job and returns it at once, with its `id` and a `pending` status but no results. Read it with `validations.getBatch` using that `id`. While the job runs, the read answers with `status: 'processing'` and only the `id` and `created_at`; when it is done, `status` is `completed` and the job carries `stats` (counts per verdict and reason) and `emails` (one validation per address). Mails.so documents no failed status and no way to cancel or delete a job, so poll until `completed` and decide your own timeout.
+- **A batch needs at least 2 different addresses.** Mails.so refuses a smaller one with a 400 and code `BATCH_TOO_SMALL`; the plugin checks this before sending. Use `validations.single` for one address.
+- **Batch may need a paid plan.** Mails.so documents batch validation as paid-plan only, but a free account with credits started and finished a batch in our test on 2026-11-11. An account Mails.so refuses gets `MailssoSubscriptionRequiredError` ("Paid subscription required to use list validations"), which is not retried. That error text is the documented one; we have not seen it live.
+- **A batch is a write.** `validations.batch` starts a job on your account, and Mails.so documents no way to delete one, so it is not retried after a server error or a dropped connection.
+- **Errors.** Failures arrive as `{ data: null, error: '<message>' }`, and the plugin throws `MailssoAPIError` with that message. A 200 response whose `error` is set is treated as a failure too.
+- **Webhooks.** Mails.so sends none, so the plugin does not receive webhooks.
+
+**What you get:**
+
+- 3 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/mailsso better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/mailsso better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/mailsso better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/mailsso better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { mailsso } from '@corsair-dev/mailsso';
+
+export const corsair = createCorsair({
+	plugins: [
+		mailsso(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+mailsso()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'mailsso',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Validate an email address**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.mailsso.api.validations.single({ email: 'hello@example.com' });
+```
+
+
+**Start a batch validation**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.mailsso.api.validations.batch({
+	emails: ['first@example.com', 'second@example.com'],
+});
+```
+
+
+See the full list on the [API](/plugins/mailsso/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/mailsso/api">
+    Every `mailsso.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
