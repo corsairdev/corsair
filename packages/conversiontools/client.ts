@@ -52,6 +52,8 @@ function redactUploadSessionText(
 	return redacted;
 }
 
+// `unknown` because provider error bodies and request values are arbitrary
+// JSON; this helper narrows strings/arrays/objects as it walks them.
 function redactUploadSessionValue(
 	value: unknown,
 	sessionUrl: string,
@@ -76,6 +78,8 @@ function redactUploadSessionValue(
 	return value;
 }
 
+// `unknown` because a rejected value has no static type; instanceof narrows it
+// to ApiError before any error metadata is read.
 function sanitizeUploadSessionError(
 	error: unknown,
 	endpoint: string,

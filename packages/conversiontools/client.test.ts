@@ -210,7 +210,8 @@ describe('makeConversiontoolsRequest', () => {
 			method: 'PUT',
 			body: new Blob(['xml']),
 			baseUrl: 'https://api.conversiontools.io',
-		}).catch((caught: unknown) => caught);
+		}) // `unknown` because a rejection value has no static type; assertions below narrow it.
+			.catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ApiError);
 		if (error instanceof ApiError) {
@@ -239,7 +240,8 @@ describe('makeConversiontoolsRequest', () => {
 			method: 'PUT',
 			body: new Blob(['xml']),
 			baseUrl: 'https://api.conversiontools.io',
-		}).catch((caught: unknown) => caught);
+		}) // `unknown` because a rejection value has no static type; assertions below narrow it.
+			.catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(Error);
 		if (error instanceof Error) {
@@ -310,7 +312,8 @@ describe('binary download requests', () => {
 		const error = await makeConversiontoolsDownloadByIdRequest(
 			'0123456789abcdef0123456789abcdef',
 			'test-download-key',
-		).catch((caught: unknown) => caught);
+		) // `unknown` because a rejection value has no static type; assertions below narrow it.
+			.catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ConversiontoolsDownloadError);
 		if (error instanceof ConversiontoolsDownloadError) {
@@ -332,7 +335,8 @@ describe('binary download requests', () => {
 
 		const error = await makeConversiontoolsDownloadFromLinkRequest(
 			'abcdef0123456789abcdef0123456789',
-		).catch((caught: unknown) => caught);
+		) // `unknown` because a rejection value has no static type; assertions below narrow it.
+			.catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ConversiontoolsDownloadError);
 		if (error instanceof ConversiontoolsDownloadError) {
@@ -380,7 +384,8 @@ describe('binary download requests', () => {
 		const error = await makeConversiontoolsDownloadByIdRequest(
 			'0123456789abcdef0123456789abcdef',
 			'test-download-key',
-		).catch((caught: unknown) => caught);
+		) // `unknown` because a rejection value has no static type; assertions below narrow it.
+			.catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ConversiontoolsDownloadError);
 		if (error instanceof ConversiontoolsDownloadError) {
