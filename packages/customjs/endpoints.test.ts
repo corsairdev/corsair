@@ -418,7 +418,8 @@ describe('javascript.run', () => {
 		expect(error).toMatchObject({
 			status: 500,
 			providerMessage: 'boom from script',
-			replayable: true,
+			// The code may already have written something, so a 5xx is never replayed.
+			replayable: false,
 		});
 		expect((error as CustomjsAPIError).message).toBe(
 			'CustomJS 500: boom from script',
@@ -963,5 +964,56 @@ describe('error envelopes', () => {
 			isTransportError: true,
 			replayable: false,
 		});
+	});
+
+	// A 200 whose body is cut off rejects from the body read, after the headers
+	// arrived. Without wrapping that read, a native error escapes and no retry
+	// handler matches it.
+	it.each([
+		['a PDF', () => Pdf.fromHtml, { html: '<h1>x</h1>' }],
+		['a text answer', () => Javascript.run, { code: 'return 1' }],
+		['a JSON answer', () => Pages.list, {}],
+	])('wraps an interrupted %s body', async (_, endpoint, input) => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				new ReadableStream({
+					start(controller) {
+						// One chunk, then a failure, so the headers are fine and the
+						// body dies mid-transfer.
+						controller.enqueue(new Uint8Array([1, 2, 3]));
+						controller.error(new TypeError('terminated'));
+					},
+				}),
+				{ status: 200, headers: { 'Content-Type': 'application/pdf' } },
+			),
+		);
+
+		const error = await captureError(invoke(endpoint(), input));
+
+		expect(error).toBeInstanceOf(CustomjsAPIError);
+		expect(error).toMatchObject({
+			isTransportError: true,
+			message: 'terminated',
+		});
+	});
+
+	// A render leaves nothing behind, so an interrupted body may be fetched again.
+	it('marks an interrupted render as replayable', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				new ReadableStream({
+					start(controller) {
+						controller.error(new TypeError('terminated'));
+					},
+				}),
+				{ status: 200, headers: { 'Content-Type': 'application/pdf' } },
+			),
+		);
+
+		const error = await captureError(
+			invoke(Pdf.fromHtml, { html: '<h1>x</h1>' }),
+		);
+
+		expect(error).toMatchObject({ isTransportError: true, replayable: true });
 	});
 });

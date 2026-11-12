@@ -19,17 +19,26 @@ function isServerFailure(error: Error): boolean {
 	return status !== undefined && status >= 500;
 }
 
+/** One CustomJS rate-limit window: 20 calls a minute on the free tier. */
+export const RATE_LIMIT_WINDOW_MS = 60_000;
+
 export const errorHandlers = {
 	// CustomJS answers an exhausted window with 403 and the body
 	// `{"message":"Too Many Requests"}`, not 429: the window is per workspace and
-	// the count is in `x-ratelimit-remaining`. Nothing it documents names a reset
-	// time, so the fallback below is the free tier's 20 calls a minute.
+	// the count is in `x-ratelimit-remaining`.
+	//
+	// CustomJS does not document a reset time and sent no `Retry-After` in any
+	// probe, so the fallback is the whole window. Core applies
+	// `headersRetryAfterMs` verbatim on every attempt, so the default 1s/2s/4s
+	// backoff would spend all four attempts inside the same exhausted window and
+	// report a rate-limit error while it was still closed.
 	RATE_LIMIT_ERROR: {
 		match: isRateLimit,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof CustomjsAPIError ? error.retryAfter : undefined,
+				(error instanceof CustomjsAPIError ? error.retryAfter : undefined) ??
+				RATE_LIMIT_WINDOW_MS,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

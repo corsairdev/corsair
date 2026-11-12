@@ -170,7 +170,10 @@ const customjsEndpointMeta = {
 		description: 'Render Markdown to PDF, returning the bytes as base64',
 	},
 	'screenshot.capture': {
-		riskLevel: 'read',
+		// `write`, not `read`: `commands` can click and type, which submits forms on
+		// the visited site. A capture with no commands is a pure read, but one risk
+		// level covers the whole operation.
+		riskLevel: 'write',
 		description:
 			'Capture a URL as PNG after optional click, type, wait and scroll steps, cropped to a box when one is given',
 	},
@@ -185,9 +188,12 @@ const customjsEndpointMeta = {
 			'Run JavaScript inline and return its Buffer result as base64, for PDFs and images; the code can call any bundled NPM module and reach the network',
 	},
 	'scrape.page': {
-		riskLevel: 'read',
+		// `write`, not `read`: the steps include `type`, `click` and `evaluate`,
+		// which can submit a form or run code on the visited site. `read` would let
+		// a read-only caller change a site and skip approval in strict mode.
+		riskLevel: 'write',
 		description:
-			'Drive a browser through exact steps and return the extracted values, with no model tokens spent per step',
+			'Drive a browser through exact steps (navigate, click, type, evaluate and extract) and return the extracted values, with no model tokens spent per step',
 	},
 	'scrape.agent': {
 		riskLevel: 'write',

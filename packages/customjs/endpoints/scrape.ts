@@ -12,6 +12,9 @@ import {
  * The older `/scraper` route is not wrapped. It answered 500 with its own
  * documented payload ("TypeError: r is not iterable"), so exposing it would give
  * callers a route that cannot work.
+ *
+ * Not replayable: `type` and `click` can submit a form, and `evaluate` runs
+ * arbitrary JavaScript in the page, so a 5xx may arrive after that write landed.
  */
 export const page: CustomjsEndpoints['scrapePage'] = (ctx, input) =>
 	call(
@@ -21,7 +24,7 @@ export const page: CustomjsEndpoints['scrapePage'] = (ctx, input) =>
 			input: Inputs.scrapePage,
 			output: Outputs.scrapePage,
 			reader: 'json',
-			replayable: true,
+			replayable: false,
 		},
 		input,
 		({ url, commands, returnType }) => ({

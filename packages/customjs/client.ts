@@ -269,6 +269,25 @@ async function errorFromResponse(
 	});
 }
 
+/**
+ * Reads a successful response body, normalising a dropped connection the same
+ * way `send` does. A 200 whose body is cut off mid-transfer rejects from
+ * `text()`/`arrayBuffer()`/`json()` with a native error, which no retry handler
+ * matches; wrapping it here is what lets the transport handlers see it, and
+ * `replayable` decides whether a retry is allowed.
+ */
+async function readBody<T>(
+	res: Response,
+	request: CustomjsRequest,
+	read: (res: Response) => Promise<T>,
+): Promise<T> {
+	try {
+		return await read(res);
+	} catch (error) {
+		throw transportError(error, request);
+	}
+}
+
 /** For JSON routes: a 2xx body that is not JSON is a failure, not an empty result. */
 export async function makeCustomjsJsonRequest<T>(
 	apiKey: string,
@@ -279,7 +298,7 @@ export async function makeCustomjsJsonRequest<T>(
 		options.host === 'pages'
 			? await sendToPages(apiKey, request)
 			: await send(apiKey, request);
-	const text = await res.text();
+	const text = await readBody(res, request, (r) => r.text());
 	try {
 		return JSON.parse(text) as T;
 	} catch {
@@ -300,7 +319,7 @@ export async function makeCustomjsTextRequest(
 	request: CustomjsRequest,
 ): Promise<string> {
 	const res = await send(apiKey, request);
-	return res.text();
+	return readBody(res, request, (r) => r.text());
 }
 
 /** For the render routes, which answer with the bytes of a PDF or PNG. */
@@ -309,7 +328,15 @@ export async function makeCustomjsBinaryRequest(
 	request: CustomjsRequest,
 ): Promise<CustomjsBinary> {
 	const res = await send(apiKey, request);
-	const bytes = Buffer.from(await res.arrayBuffer());
+	// The content type comes from the headers, which arrived before the body, so
+	// it survives a body failure.
+	const contentType =
+		res.headers.get('content-type') ?? 'application/octet-stream';
+	const bytes = Buffer.from(
+		await readBody(res, request, async (r) =>
+			Buffer.from(await r.arrayBuffer()),
+		),
+	);
 	if (bytes.length === 0) {
 		// CustomJS can answer 200 with an empty body when rendering fails. An
 		// empty file looks like a successful render to the caller.
@@ -321,7 +348,7 @@ export async function makeCustomjsBinaryRequest(
 	}
 	return {
 		base64: bytes.toString('base64'),
-		contentType: res.headers.get('content-type') ?? 'application/octet-stream',
+		contentType,
 		byteLength: bytes.length,
 	};
 }

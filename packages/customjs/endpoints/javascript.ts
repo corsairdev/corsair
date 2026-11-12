@@ -13,6 +13,9 @@ import {
  * The route answers `text/plain` whatever the script returns, so `output` is a
  * string. A script returning an object gets JSON text; one with no `return` gets
  * an empty string.
+ *
+ * The code is arbitrary, so it can send a POST, charge a card, or send an email,
+ * and a 5xx can arrive after that write succeeded. Neither call is replayed.
  */
 export const run: CustomjsEndpoints['javascriptRun'] = (ctx, input) =>
 	call(
@@ -22,7 +25,7 @@ export const run: CustomjsEndpoints['javascriptRun'] = (ctx, input) =>
 			input: Inputs.javascriptRun,
 			output: Outputs.javascriptRun,
 			reader: 'text',
-			replayable: true,
+			replayable: false,
 		},
 		input,
 		({ code, input: scriptInput }) => ({
@@ -47,6 +50,9 @@ export const run: CustomjsEndpoints['javascriptRun'] = (ctx, input) =>
 /**
  * The same route with `returnBinary`, for code that returns a Buffer. CustomJS
  * answers with the bytes and the type it thinks they are.
+ *
+ * Not replayable, for the same reason as `javascript.run`: the code decides what
+ * it does, so a retry can repeat a write it already made.
  */
 export const runBinary: CustomjsEndpoints['javascriptRunBinary'] = (
 	ctx,
@@ -59,7 +65,7 @@ export const runBinary: CustomjsEndpoints['javascriptRunBinary'] = (
 			input: Inputs.javascriptRunBinary,
 			output: Outputs.javascriptRunBinary,
 			reader: 'binary',
-			replayable: true,
+			replayable: false,
 		},
 		input,
 		({ code, input: scriptInput }) => ({

@@ -214,6 +214,83 @@ describe('retry behaviour', () => {
 		}
 	});
 
+	// The code decides what it does, so a script that already sent a POST must not
+	// be run again after a failure.
+	it('never replays inline JavaScript on a 5xx', async () => {
+		const { corsair, testDb } = await createClient({
+			key: 'customjs-test-key',
+		});
+		try {
+			respondFailure(502);
+
+			const error = await captureError(
+				corsair.customjs.api.javascript.run({ code: 'return 1' }),
+			);
+
+			expect(error).toMatchObject({ status: 502, replayable: false });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	// A click or a type can submit a form, so the steps are not safe to repeat.
+	it('never replays browser commands on a 5xx', async () => {
+		const { corsair, testDb } = await createClient({
+			key: 'customjs-test-key',
+		});
+		try {
+			respondFailure(502);
+
+			const error = await captureError(
+				corsair.customjs.api.scrape.page({
+					url: 'https://example.com',
+					commands: [
+						{ action: 'click', selector: 'button[type=submit]' },
+						{ action: 'extract', selector: 'h1', as: 'heading' },
+					],
+				}),
+			);
+
+			expect(error).toMatchObject({ status: 502, replayable: false });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	// A body that dies after the headers arrived used to escape as a native error,
+	// so the transport handlers never saw it and the read got no retry.
+	it('retries a render whose body was cut off', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient({
+			key: 'customjs-test-key',
+		});
+		try {
+			fetchMock.mockResolvedValueOnce(
+				new Response(
+					new ReadableStream({
+						start(controller) {
+							controller.enqueue(new Uint8Array([1, 2, 3]));
+							controller.error(new TypeError('terminated'));
+						},
+					}),
+					{ status: 200, headers: { 'Content-Type': 'application/pdf' } },
+				),
+			);
+			respondPdf();
+
+			const result = await withFakeTimers(
+				corsair.customjs.api.pdf.fromHtml({ html: '<h1>Hello</h1>' }),
+			);
+
+			expect(result.byteLength).toBe(PDF_BYTES.length);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('replays a render on a 5xx, which leaves nothing behind', async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient({
@@ -235,8 +312,8 @@ describe('retry behaviour', () => {
 	});
 
 	// CustomJS sends no reset time, so this pins the fallback the plugin uses when
-	// there is no Retry-After header: the documented backoff, stepped by hand.
-	it('waits the documented backoff when no Retry-After is sent', async () => {
+	// there is no Retry-After header: the whole 60s window, stepped by hand.
+	it('waits the whole window when no Retry-After is sent', async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient({
 			key: 'customjs-test-key',
@@ -256,10 +333,12 @@ describe('retry behaviour', () => {
 			await jest.advanceTimersByTimeAsync(0);
 			expect(settled).toBe(false);
 
-			// Backoff is exponential from 1s: the first wait is one second.
-			await jest.advanceTimersByTimeAsync(999);
+			// A short backoff would fire here and retry inside the closed window.
+			await jest.advanceTimersByTimeAsync(7_000);
 			expect(settled).toBe(false);
-			await jest.advanceTimersByTimeAsync(1);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+
+			await jest.advanceTimersByTimeAsync(53_000);
 			await expect(run).resolves.toMatchObject({
 				contentType: 'application/pdf',
 			});

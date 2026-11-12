@@ -22,8 +22,8 @@ pnpm add @corsair-dev/customjs
 | `pdf.fromHtml` | `customjs.api.pdf.fromHtml` | `read` | Render HTML or a Nunjucks template to PDF in Chromium, returning the bytes as base64 with an optional page size |
 | `pdf.fromMarkdown` | `customjs.api.pdf.fromMarkdown` | `read` | Render Markdown to PDF, returning the bytes as base64 |
 | `scrape.agent` | `customjs.api.scrape.agent` | `write` | Give an AI agent a plain-language goal and let it drive a browser for up to maxSteps actions; it bills model tokens and can submit forms on the site it visits |
-| `scrape.page` | `customjs.api.scrape.page` | `read` | Drive a browser through exact steps and return the extracted values, with no model tokens spent per step |
-| `screenshot.capture` | `customjs.api.screenshot.capture` | `read` | Capture a URL as PNG after optional click, type, wait and scroll steps, cropped to a box when one is given |
+| `scrape.page` | `customjs.api.scrape.page` | `write` | Drive a browser through exact steps (navigate, click, type, evaluate and extract) and return the extracted values, with no model tokens spent per step |
+| `screenshot.capture` | `customjs.api.screenshot.capture` | `write` | Capture a URL as PNG after optional click, type, wait and scroll steps, cropped to a box when one is given |
 
 ## Auth
 

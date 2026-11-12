@@ -435,9 +435,9 @@ await corsair.customjs.api.scrape.agent({ goal: 'Go to shop.example.com and list
 
 `scrape.page`
 
-Drive a browser through exact steps and return the extracted values, with no model tokens spent per step
+Drive a browser through exact steps (navigate, click, type, evaluate and extract) and return the extracted values, with no model tokens spent per step
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
 await corsair.customjs.api.scrape.page({ url: 'https://example.com', commands: [{ action: 'extract', selector: 'h1', as: 'heading' }], returnType: 'json' });
@@ -546,7 +546,7 @@ A `wait` step here takes `ms`; the screenshot route takes `value` for the same t
 
 Capture a URL as PNG after optional click, type, wait and scroll steps, cropped to a box when one is given
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
 await corsair.customjs.api.screenshot.capture({ url: 'https://example.com', commands: [{ action: 'click', selector: '#accept-cookies' }, { action: 'wait', value: 500 }], box: { x: 0, y: 0, width: 1200, height: 800 } });

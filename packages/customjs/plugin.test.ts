@@ -76,8 +76,8 @@ describe('customjs plugin definition', () => {
 			'pdf.fromHtml': 'read',
 			'pdf.fromMarkdown': 'read',
 			'scrape.agent': 'write',
-			'scrape.page': 'read',
-			'screenshot.capture': 'read',
+			'scrape.page': 'write',
+			'screenshot.capture': 'write',
 		});
 	});
 
@@ -96,6 +96,21 @@ describe('customjs plugin definition', () => {
 			expect(typeof schemas.input.safeParse).toBe('function');
 			expect(typeof schemas.output.safeParse).toBe('function');
 		}
+	});
+
+	// Both accept `click` and `type`, which submit forms on the visited site, so a
+	// `read` label would let a read-only caller change a site and skip approval in
+	// strict mode.
+	it('marks the operations that can change a visited site as writes', () => {
+		const meta = plugin.endpointMeta ?? {};
+
+		expect(meta['scrape.page']?.riskLevel).toBe('write');
+		expect(meta['screenshot.capture']?.riskLevel).toBe('write');
+		expect(meta['javascript.run']?.riskLevel).toBe('write');
+		expect(meta['javascript.runBinary']?.riskLevel).toBe('write');
+		// The pure reads in the plugin stay reads.
+		expect(meta['pages.list']?.riskLevel).toBe('read');
+		expect(meta['pdf.fromHtml']?.riskLevel).toBe('read');
 	});
 });
 
