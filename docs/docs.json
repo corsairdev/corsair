@@ -3335,6 +3335,14 @@
                 ]
               },
               {
+                "group": "ScrapingAnt",
+                "pages": [
+                  "plugins/scrapingant/overview",
+                  "plugins/scrapingant/api",
+                  "plugins/scrapingant/database"
+                ]
+              },
+              {
                 "group": "Search1API",
                 "pages": [
                   "plugins/search1api/overview",
