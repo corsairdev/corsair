@@ -1,0 +1,173 @@
+import { AuthMissingError } from 'corsair/core';
+import { RoamEndpointInputSchemas } from './endpoints/types';
+import type { RoamKeyBuilderContext } from './index';
+import { roam } from './index';
+
+function keyContext(
+	apiKey: string | undefined,
+	authType: 'api_key' = 'api_key',
+): RoamKeyBuilderContext {
+	return {
+		authType,
+		keys: {
+			get_api_key: async () => apiKey,
+		},
+		// unknown: the fixture implements the one method the builder calls, not
+		// the full AccountKeyManager, so the cast sits here rather than at every
+		// call site.
+	} as unknown as RoamKeyBuilderContext;
+}
+
+type KeyBuilder = (
+	ctx: RoamKeyBuilderContext,
+	source: string,
+) => Promise<string>;
+
+/**
+ * unknown: the map values are concrete endpoints with per-operation signatures,
+ * which a single record type cannot name; the tests only read their key names.
+ */
+type PluginInternals = {
+	endpoints: Record<string, Record<string, unknown>>;
+	// unknown: a schema's input and output types differ per operation, so the
+	// shared view names only that the entries exist.
+	endpointSchemas: Record<string, { input?: unknown; output?: unknown }>;
+	endpointMeta: Record<string, { riskLevel: string; description: string }>;
+	webhooks: Record<string, unknown>;
+	// unknown: the matcher narrows its own request argument; a test that calls it
+	// with no headers cannot name a stricter parameter type.
+	pluginWebhookMatcher?: (request: unknown) => boolean;
+};
+
+function internalsOf(plugin: ReturnType<typeof roam>): PluginInternals {
+	// unknown: the plugin's own type parameterises these by operation, so one
+	// shared view of them has to widen first.
+	return plugin as unknown as PluginInternals;
+}
+
+// unknown: `keyBuilder` is optional on the public plugin type and its source
+// parameter is narrowed per call site, so the builder is widened to this
+// signature once rather than casting at each call.
+function keyBuilderOf(candidate: { keyBuilder?: unknown }): KeyBuilder {
+	return candidate.keyBuilder as KeyBuilder;
+}
+
+function required<T>(source: Record<string, T | undefined>, key: string): T {
+	const value = source[key];
+	if (value === undefined) {
+		throw new Error(`Expected "${key}" to be registered`);
+	}
+	return value;
+}
+
+const OPERATIONS = [
+	'chat.history',
+	'chat.list',
+	'chat.post',
+	'chat.update',
+	'groups.list',
+	'meetings.list',
+	'meetings.transcript',
+	'reactions.add',
+	'reactions.list',
+	'token.info',
+	'users.info',
+	'users.list',
+];
+
+describe('roam plugin', () => {
+	it('has the id and default auth type core registers under', () => {
+		const plugin = roam();
+
+		expect(plugin.id).toBe('roam');
+		expect(plugin.options?.authType).toBe('api_key');
+	});
+
+	it('declares every operation as a registered endpoint schema', () => {
+		const plugin = internalsOf(roam());
+
+		expect(Object.keys(plugin.endpointSchemas).sort()).toEqual(OPERATIONS);
+	});
+
+	it('gives every operation a description and a risk level', () => {
+		const plugin = internalsOf(roam());
+
+		for (const [operation, meta] of Object.entries(plugin.endpointMeta)) {
+			expect(meta.description.length).toBeGreaterThan(20);
+			expect(['read', 'write', 'destructive']).toContain(meta.riskLevel);
+			expect(operation).toMatch(/^[a-zA-Z]+\.[a-zA-Z]+$/);
+		}
+	});
+
+	it('marks the three writes and the rest as reads', () => {
+		const plugin = internalsOf(roam());
+
+		expect(required(plugin.endpointMeta, 'chat.post').riskLevel).toBe('write');
+		expect(required(plugin.endpointMeta, 'chat.update').riskLevel).toBe(
+			'write',
+		);
+		expect(required(plugin.endpointMeta, 'reactions.add').riskLevel).toBe(
+			'write',
+		);
+		expect(required(plugin.endpointMeta, 'chat.history').riskLevel).toBe(
+			'read',
+		);
+	});
+
+	it('exposes an input schema for every operation the nested map holds', () => {
+		const plugin = internalsOf(roam());
+		const nested: string[] = [];
+		for (const [group, operations] of Object.entries(plugin.endpoints)) {
+			for (const operation of Object.keys(operations)) {
+				nested.push(`${group}.${operation}`);
+			}
+		}
+
+		expect(nested.sort()).toEqual(Object.keys(plugin.endpointSchemas).sort());
+	});
+
+	it('declares no webhook receiver, because deliveries are configured in Roam', () => {
+		const plugin = internalsOf(roam());
+
+		expect(plugin.webhooks).toEqual({});
+		expect(plugin.pluginWebhookMatcher?.({ headers: {} })).toBe(false);
+	});
+
+	it('exports an input schema for each endpoint key', () => {
+		expect(Object.keys(RoamEndpointInputSchemas)).toHaveLength(
+			OPERATIONS.length,
+		);
+	});
+});
+
+describe('keyBuilder', () => {
+	it('prefers the inline key over the stored one', async () => {
+		const plugin = roam({ key: 'inline-key' });
+
+		const key = await keyBuilderOf(plugin)(
+			keyContext('stored-key'),
+			'endpoint',
+		);
+
+		expect(key).toBe('inline-key');
+	});
+
+	it('falls back to the stored account key', async () => {
+		const plugin = roam();
+
+		const key = await keyBuilderOf(plugin)(
+			keyContext('stored-key'),
+			'endpoint',
+		);
+
+		expect(key).toBe('stored-key');
+	});
+
+	it('throws AuthMissingError when neither key exists', async () => {
+		const plugin = roam();
+
+		await expect(
+			keyBuilderOf(plugin)(keyContext(undefined), 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+});
