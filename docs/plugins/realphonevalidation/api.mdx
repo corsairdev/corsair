@@ -187,8 +187,8 @@ await corsair.realphonevalidation.api.fraudCheck({ phone: '7275555555' });
 | `error_text` | `string \| Record<string, never> \| null` | No | An error string, or &#123;&#125; when there is no error. |
 | `id` | `string \| null` | No | — |
 | `req_phone` | `string \| null` | No | The number as submitted. |
-| `tstatus` | `string \| null` | No | — |
-| `tdesc` | `string \| null` | No | — |
+| `tstatus` | `string \| null` | No | The lookup outcome: 300 completed, 301 partly completed (some fields empty), 500 not attempted (no score or risk fields), 501 the number does not exist, 599 contact support. |
+| `tdesc` | `string \| null` | No | The tstatus in words. |
 | `phn_type` | `string \| null` | No | A numeric code; see phn_desc. |
 | `phn_desc` | `string \| null` | No | LANDLINE, VOIP, WIRELESS and so on. |
 | `risk_level` | `string \| null` | No | low, medium or high. |
