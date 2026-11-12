@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "PostHog plugin"
+sidebarTitle: "Overview"
 description: "Product analytics platform for event tracking, feature flags, session replay, and experiments."
 ---
 
@@ -18,16 +19,20 @@ Use **PostHog** through Corsair: one client, typed API calls, local DB sync, and
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/posthog
+npm install corsair @corsair-dev/posthog better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/posthog
+yarn add corsair @corsair-dev/posthog better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/posthog
+pnpm install corsair @corsair-dev/posthog better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/posthog
+bun add corsair @corsair-dev/posthog better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
