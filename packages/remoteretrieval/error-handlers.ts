@@ -30,15 +30,22 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 429, if it ever arrives; the docs document no limit.
+	// 429, if it ever arrives; the docs document no limit. Like a 5xx, it is retried
+	// only for an operation that declared itself replayable: a create is never
+	// resent, because a second send would book and bill a second shipment.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			apiError(error)?.status === 429 || apiError(error)?.code === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 2,
-			headersRetryAfterMs: apiError(error)?.retryAfter,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) => {
+			const api = apiError(error);
+			return api?.replayable === true
+				? {
+						maxRetries: 2,
+						headersRetryAfterMs: api.retryAfter,
+						retryStrategy: 'exponential_backoff' as const,
+					}
+				: { maxRetries: 0 };
+		},
 	},
 	// 5xx, and only for an operation that declared itself replayable. Creating an
 	// order books a real shipment, so it is never resent.

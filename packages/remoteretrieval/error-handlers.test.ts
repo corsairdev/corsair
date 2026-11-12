@@ -78,12 +78,27 @@ describe('Remote Retrieval error handlers', () => {
 	});
 
 	it('matches a 429 as a rate limit if one arrives', async () => {
-		const error = apiError({ status: 429, retryAfter: 3000 });
+		const error = apiError({ status: 429, retryAfter: 3000, replayable: true });
 
 		expect(await matches(error)).toBe('RATE_LIMIT_ERROR');
 		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toMatchObject({
 			maxRetries: 2,
 			headersRetryAfterMs: 3000,
+		});
+	});
+
+	it('never retries a create that got a 429', async () => {
+		// A resend would book and bill a second shipment.
+		const create = apiError({
+			status: 429,
+			method: 'POST',
+			retryAfter: 3000,
+			replayable: false,
+		});
+
+		expect(await matches(create)).toBe('RATE_LIMIT_ERROR');
+		await expect(run('RATE_LIMIT_ERROR', create)).resolves.toEqual({
+			maxRetries: 0,
 		});
 	});
 
