@@ -185,6 +185,10 @@
   "gmail": {
     "from": "https://svgl.app/library/gmail.svg"
   },
+  "gong": {
+    "from": "https://media.brand.dev/1eded259-b947-4ae6-95ad-1498fd75e2fb.svg",
+    "note": "found with the context.dev Brand API for gong.io"
+  },
   "googleaddressvalidation": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/google_address_validation.svg"
   },
