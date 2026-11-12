@@ -1,0 +1,37 @@
+{
+  "count": 6,
+  "next": "https://us.posthog.com/api/projects/309833/dashboards/?limit=2&offset=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 2010750,
+      "name": "Analytics basics (wizard)",
+      "description": "Key views for the events instrumented by the PostHog wizard.",
+      "pinned": true,
+      "created_at": "2026-08-19T09:34:17.367400Z",
+      "created_by": {
+        "id": 636283,
+        "uuid": "019f5aed-1469-0000-9e4e-e282cc6ee87f",
+        "distinct_id": "distinct-id-1",
+        "first_name": "Test",
+        "last_name": "Test",
+        "email": "user@example.com",
+        "is_email_verified": true,
+        "hedgehog_config": null,
+        "role_at_organization": "engineering"
+      },
+      "last_accessed_at": "2026-10-06T15:41:37.091156Z",
+      "last_viewed_at": null,
+      "folder": "Unfiled/Dashboards",
+      "file_system_id": "01a0195f-171f-7e30-a447-f4651c5ac0c4",
+      "file_system_path": "Unfiled/Dashboards/Analytics basics (wizard)",
+      "is_shared": false,
+      "deleted": false,
+      "creation_mode": "default",
+      "user_access_level": "editor",
+      "last_refresh": null,
+      "team_id": 309833,
+      "tags": ["wizard"]
+    }
+  ]
+}

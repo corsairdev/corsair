@@ -6,9 +6,22 @@ description: "Product analytics platform for event tracking, feature flags, sess
 
 Use **PostHog** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
+The key you connect decides what the plugin can do:
+
+- **Personal API key (`phx_...`)**: every action. Read actions call PostHog's private API (`/api/projects/{project_id}/...`), and the capture actions look up the project token from the project once and cache it. Create one under Settings → Personal API keys and tick the read scopes you need (see [Get Credentials](/plugins/posthog/get-credentials)).
+- **Project token (`phc_...`)**: the five capture actions only (`events.*`). Read actions throw an error asking for a personal key.
+
+Things to know before you call:
+
+- **`project_id` is required for read actions.** It is the number in your PostHog URL (`/project/12345`).
+- **Region is detected.** Without a `host` option, the first call goes to the US cloud; a 401 there retries once on the EU cloud and the plugin remembers which one answered. Set `host` for self-hosted PostHog.
+- **`query.run` is the general tool.** Pass a HogQL string (`select event, count() from events group by event`) or any PostHog query object with a `kind` (`TrendsQuery`, `FunnelsQuery`, `RetentionQuery`...). List event and property names first with `eventDefinitions.list` and `propertyDefinitions.list`.
+- **Error tracking issues come from an `ErrorTrackingQuery`**, so each issue carries occurrence, user and session counts for the date range (last 7 days by default).
+- **`featureFlags.update` replaces `filters` whole.** Read the flag with `featureFlags.get` first and send back the full release conditions with your change.
+
 **What you get:**
 
-- 5 typed API operations
+- 29 typed API operations
 - 1 synced entity (`events`) for fast `.search()` / `.list()`
 - 1 incoming webhook event types
 
@@ -98,9 +111,12 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Read**
+**Count yesterday's events with HogQL**
 
-_No read-style endpoint inferred; pick any operation from the [API](/plugins/posthog/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.posthog.api.query.run({ query: 'select event, count() from events where timestamp > now() - interval 1 day group by event order by count() desc limit 10' });
+```
 
 
 **Capture an event**

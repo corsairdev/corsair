@@ -1,0 +1,29 @@
+{
+  "id": 574157,
+  "content": "corsair plugin test, safe to delete",
+  "date_marker": "2026-11-12T12:56:02.089000Z",
+  "creation_type": "USR",
+  "dashboard_item": null,
+  "dashboard_id": null,
+  "dashboard_name": null,
+  "insight_short_id": null,
+  "insight_name": null,
+  "insight_derived_name": null,
+  "created_by": {
+    "id": 823519,
+    "uuid": "01a17792-e2c3-0000-6440-326f9c1491f0",
+    "distinct_id": "distinct-id-1",
+    "first_name": "Test",
+    "last_name": "Test",
+    "email": "user@example.com",
+    "is_email_verified": true,
+    "hedgehog_config": null,
+    "role_at_organization": "engineering"
+  },
+  "created_at": "2026-11-12T12:56:02.385508Z",
+  "updated_at": "2026-11-12T12:56:02.385860Z",
+  "deleted": false,
+  "scope": "project",
+  "emoji": null,
+  "hidden_in_user_interface": null
+}

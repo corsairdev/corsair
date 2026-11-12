@@ -1,0 +1,67 @@
+{
+  "id": 309833,
+  "uuid": "019c4574-8197-0000-9da4-20df023ec2d0",
+  "organization": "019c4574-818b-0000-9a04-748335a0596a",
+  "name": "Default project",
+  "created_at": "2026-02-10T02:49:49.206221Z",
+  "updated_at": "2026-11-09T08:19:43.938570Z",
+  "timezone": "UTC",
+  "api_token": "phc_test_token",
+  "is_demo": false,
+  "test_account_filters": [
+    {
+      "key": "$host",
+      "type": "event",
+      "value": "^(localhost|127\\.0\\.0\\.1)($|:)",
+      "operator": "not_regex"
+    }
+  ],
+  "person_on_events_querying_enabled": true,
+  "group_types": [],
+  "primary_dashboard": 1266166,
+  "product_intents": [
+    {
+      "product_type": "product_analytics",
+      "created_at": "2026-02-10T02:50:30.783744Z",
+      "onboarding_completed_at": "2026-02-12T07:10:21.185068Z",
+      "updated_at": "2026-02-16T15:11:09.674025Z"
+    },
+    {
+      "product_type": "endpoints",
+      "created_at": "2026-08-08T12:49:50.852504Z",
+      "onboarding_completed_at": null,
+      "updated_at": "2026-11-11T03:32:54.990614Z"
+    },
+    {
+      "product_type": "mcp_analytics",
+      "created_at": "2026-11-06T11:19:47.345924Z",
+      "onboarding_completed_at": null,
+      "updated_at": "2026-11-11T03:32:55.000349Z"
+    },
+    {
+      "product_type": "pipeline_destinations",
+      "created_at": "2026-02-13T14:06:01.120979Z",
+      "onboarding_completed_at": null,
+      "updated_at": "2026-11-11T03:32:55.025318Z"
+    },
+    {
+      "product_type": "session_replay",
+      "created_at": "2026-02-10T02:50:30.788030Z",
+      "onboarding_completed_at": null,
+      "updated_at": "2026-09-04T11:00:21.437196Z"
+    },
+    {
+      "product_type": "feature_flags",
+      "created_at": "2026-02-13T13:59:44.922888Z",
+      "onboarding_completed_at": null,
+      "updated_at": "2026-11-11T03:32:55.033932Z"
+    },
+    {
+      "product_type": "web_analytics",
+      "created_at": "2026-02-10T02:50:30.835878Z",
+      "onboarding_completed_at": null,
+      "updated_at": "2026-11-11T03:32:55.014868Z"
+    }
+  ],
+  "week_start_day": null
+}

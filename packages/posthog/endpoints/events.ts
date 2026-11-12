@@ -1,14 +1,23 @@
 import { logEventFromContext } from 'corsair/core';
-import { makePostHogRequest } from '../client';
+import {
+	makePostHogRequest,
+	resolveCaptureTarget,
+	unpackPostHogCredentials,
+} from '../client';
 import type { PostHogEndpoints } from '../index';
 import type { PostHogEndpointOutputs } from './types';
+
+async function captureTarget(ctxKey: string) {
+	return resolveCaptureTarget(unpackPostHogCredentials(ctxKey));
+}
 
 export const aliasCreate: PostHogEndpoints['aliasCreate'] = async (
 	ctx,
 	input,
 ) => {
+	const { token, base } = await captureTarget(ctx.key);
 	const payload = {
-		api_key: ctx.key,
+		api_key: token,
 		event: '$create_alias',
 		properties: {
 			distinct_id: input.distinct_id,
@@ -19,9 +28,10 @@ export const aliasCreate: PostHogEndpoints['aliasCreate'] = async (
 
 	const response = await makePostHogRequest<
 		PostHogEndpointOutputs['aliasCreate']
-	>('/capture/', ctx.key, {
+	>('/capture/', token, {
 		method: 'POST',
 		body: payload,
+		base,
 	});
 
 	await logEventFromContext(
@@ -37,8 +47,9 @@ export const eventCreate: PostHogEndpoints['eventCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const payload: any = {
-		api_key: ctx.key,
+	const { token, base } = await captureTarget(ctx.key);
+	const payload: Record<string, unknown> = {
+		api_key: token,
 		event: input.event,
 		properties: {
 			...input.properties,
@@ -57,9 +68,10 @@ export const eventCreate: PostHogEndpoints['eventCreate'] = async (
 
 	const response = await makePostHogRequest<
 		PostHogEndpointOutputs['eventCreate']
-	>('/capture/', ctx.key, {
+	>('/capture/', token, {
 		method: 'POST',
 		body: payload,
+		base,
 	});
 
 	if (response && ctx.db.events) {
@@ -88,8 +100,9 @@ export const identityCreate: PostHogEndpoints['identityCreate'] = async (
 	ctx,
 	input,
 ) => {
+	const { token, base } = await captureTarget(ctx.key);
 	const payload = {
-		api_key: ctx.key,
+		api_key: token,
 		event: '$identify',
 		properties: {
 			...input.properties,
@@ -100,9 +113,10 @@ export const identityCreate: PostHogEndpoints['identityCreate'] = async (
 
 	const response = await makePostHogRequest<
 		PostHogEndpointOutputs['identityCreate']
-	>('/capture/', ctx.key, {
+	>('/capture/', token, {
 		method: 'POST',
 		body: payload,
+		base,
 	});
 
 	await logEventFromContext(
@@ -115,8 +129,9 @@ export const identityCreate: PostHogEndpoints['identityCreate'] = async (
 };
 
 export const trackPage: PostHogEndpoints['trackPage'] = async (ctx, input) => {
-	const payload: any = {
-		api_key: ctx.key,
+	const { token, base } = await captureTarget(ctx.key);
+	const payload: Record<string, unknown> = {
+		api_key: token,
 		event: '$pageview',
 		properties: {
 			...input.properties,
@@ -136,9 +151,10 @@ export const trackPage: PostHogEndpoints['trackPage'] = async (ctx, input) => {
 
 	const response = await makePostHogRequest<
 		PostHogEndpointOutputs['trackPage']
-	>('/capture/', ctx.key, {
+	>('/capture/', token, {
 		method: 'POST',
 		body: payload,
+		base,
 	});
 
 	await logEventFromContext(
@@ -154,8 +170,9 @@ export const trackScreen: PostHogEndpoints['trackScreen'] = async (
 	ctx,
 	input,
 ) => {
-	const payload: any = {
-		api_key: ctx.key,
+	const { token, base } = await captureTarget(ctx.key);
+	const payload: Record<string, unknown> = {
+		api_key: token,
 		event: '$screen',
 		properties: {
 			...input.properties,
@@ -175,9 +192,10 @@ export const trackScreen: PostHogEndpoints['trackScreen'] = async (
 
 	const response = await makePostHogRequest<
 		PostHogEndpointOutputs['trackScreen']
-	>('/capture/', ctx.key, {
+	>('/capture/', token, {
 		method: 'POST',
 		body: payload,
+		base,
 	});
 
 	await logEventFromContext(

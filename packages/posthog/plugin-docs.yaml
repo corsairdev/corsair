@@ -1,6 +1,31 @@
 displayName: PostHog
 description: Product analytics platform for event tracking, feature flags, session replay, and experiments.
+domain: posthog.com
+recommendedAuth: api_key
+overviewNote: |
+  The key you connect decides what the plugin can do:
+
+  - **Personal API key (`phx_...`)**: every action. Read actions call PostHog's private API (`/api/projects/{project_id}/...`), and the capture actions look up the project token from the project once and cache it. Create one under Settings → Personal API keys and tick the read scopes you need (see [Get Credentials](/plugins/posthog/get-credentials)).
+  - **Project token (`phc_...`)**: the five capture actions only (`events.*`). Read actions throw an error asking for a personal key.
+
+  Things to know before you call:
+
+  - **`project_id` is required for read actions.** It is the number in your PostHog URL (`/project/12345`).
+  - **Region is detected.** Without a `host` option, the first call goes to the US cloud; a 401 there retries once on the EU cloud and the plugin remembers which one answered. Set `host` for self-hosted PostHog.
+  - **`query.run` is the general tool.** Pass a HogQL string (`select event, count() from events group by event`) or any PostHog query object with a `kind` (`TrendsQuery`, `FunnelsQuery`, `RetentionQuery`...). List event and property names first with `eventDefinitions.list` and `propertyDefinitions.list`.
+  - **Error tracking issues come from an `ErrorTrackingQuery`**, so each issue carries occurrence, user and session counts for the date range (last 7 days by default).
+  - **`featureFlags.update` replaces `filters` whole.** Read the flag with `featureFlags.get` first and send back the full release conditions with your change.
+references:
+  - title: PostHog API overview
+    url: https://posthog.com/docs/api
+  - title: Query API
+    url: https://posthog.com/docs/api/queries
 examples:
+  read:
+    path: query.run
+    title: Count yesterday's events with HogQL
+    args:
+      query: select event, count() from events where timestamp > now() - interval 1 day group by event order by count() desc limit 10
   write:
     path: events.eventCreate
     title: Capture an event

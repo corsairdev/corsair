@@ -1,0 +1,171 @@
+{
+  "id": 2010750,
+  "name": "Analytics basics (wizard)",
+  "description": "Key views for the events instrumented by the PostHog wizard.",
+  "pinned": true,
+  "created_at": "2026-08-19T09:34:17.367400Z",
+  "created_by": {
+    "id": 636283,
+    "uuid": "019f5aed-1469-0000-9e4e-e282cc6ee87f",
+    "distinct_id": "distinct-id-1",
+    "first_name": "Test",
+    "last_name": "Test",
+    "email": "user@example.com",
+    "is_email_verified": true,
+    "hedgehog_config": null,
+    "role_at_organization": "engineering"
+  },
+  "last_accessed_at": "2026-11-12T12:55:27.966868Z",
+  "last_viewed_at": null,
+  "folder": "Unfiled/Dashboards",
+  "file_system_id": "01a0195f-171f-7e30-a447-f4651c5ac0c4",
+  "file_system_path": "Unfiled/Dashboards/Analytics basics (wizard)",
+  "is_shared": false,
+  "deleted": false,
+  "creation_mode": "default",
+  "filters": {},
+  "variables": {},
+  "breakdown_colors": [],
+  "data_color_theme_id": null,
+  "user_access_level": "editor",
+  "last_refresh": null,
+  "persisted_filters": null,
+  "persisted_variables": null,
+  "team_id": 309833,
+  "quick_filter_ids": [],
+  "customization": {},
+  "tiles": [
+    {
+      "id": 11058215,
+      "insight": {
+        "id": 11154766,
+        "short_id": "WuqiQBE5",
+        "name": "Integration ownership changes (wizard)",
+        "derived_name": null,
+        "query": {
+          "kind": "InsightVizNode",
+          "source": {
+            "kind": "TrendsQuery",
+            "series": [
+              {
+                "kind": "EventsNode",
+                "math": "total",
+                "event": "integration_claimed"
+              },
+              {
+                "kind": "EventsNode",
+                "math": "total",
+                "event": "integration_unclaimed"
+              }
+            ],
+            "version": 4,
+            "interval": "day",
+            "dateRange": {
+              "date_from": "-30d",
+              "explicitDate": false,
+              "excludeIncompletePeriods": false
+            },
+            "properties": [],
+            "trendsFilter": {
+              "display": "ActionsBar",
+              "showLegend": false,
+              "hideWeekends": false,
+              "metricSummary": "total",
+              "legendPosition": "bottom",
+              "yAxisScaleType": "linear",
+              "showAnnotations": true,
+              "metricShowChange": true,
+              "yAxisStartAtZero": true,
+              "showMultipleYAxes": false,
+              "showValuesOnSeries": false,
+              "smoothingIntervals": 1,
+              "showPercentStackView": false,
+              "stackBreakdownValues": false,
+              "aggregationAxisFormat": "numeric",
+              "resultCustomizationBy": "value",
+              "excludeBoxPlotOutliers": true,
+              "metricColorByDirection": false,
+              "showAlertThresholdLines": false
+            },
+            "filterTestAccounts": false
+          }
+        },
+        "order": null,
+        "deleted": false,
+        "dashboards": [2010750],
+        "dashboard_tiles": [
+          {
+            "id": 11058215,
+            "dashboard_id": 2010750,
+            "deleted": null
+          }
+        ],
+        "last_refresh": null,
+        "cache_target_age": null,
+        "next_allowed_client_refresh": null,
+        "result": null,
+        "hasMore": null,
+        "columns": null,
+        "created_at": "2026-08-19T09:34:24.944584Z",
+        "created_by": {
+          "id": 636283,
+          "uuid": "019f5aed-1469-0000-9e4e-e282cc6ee87f",
+          "distinct_id": "distinct-id-1",
+          "first_name": "Test",
+          "last_name": "Test",
+          "email": "user@example.com",
+          "is_email_verified": true,
+          "hedgehog_config": null,
+          "role_at_organization": "engineering"
+        },
+        "description": "Daily claims and releases to monitor contributor ownership and potential churn.",
+        "updated_at": "2026-08-19T09:34:24.944614Z",
+        "favorited": false,
+        "saved": true,
+        "last_modified_at": "2026-08-19T09:34:24.940398Z",
+        "last_modified_by": {
+          "id": 636283,
+          "uuid": "019f5aed-1469-0000-9e4e-e282cc6ee87f",
+          "distinct_id": "distinct-id-1",
+          "first_name": "Test",
+          "last_name": "Test",
+          "email": "user@example.com",
+          "is_email_verified": true,
+          "hedgehog_config": null,
+          "role_at_organization": "engineering"
+        },
+        "is_sample": false,
+        "user_access_level": "editor",
+        "timezone": null,
+        "is_cached": false,
+        "query_status": null,
+        "hogql": null,
+        "types": null,
+        "resolved_date_range": null,
+        "resolved_compare_date_range": null,
+        "action_names": null,
+        "query_scan": null,
+        "warnings": null,
+        "alerts": [],
+        "filter_override_context": null,
+        "last_viewed_at": null,
+        "tags": ["wizard"],
+        "filters_hash": "cache_309833_6f1839058e541c4d1eaf69bffa9447ee3a18f2048df76403bf588e5186c192be"
+      },
+      "text": null,
+      "button_tile": null,
+      "widget": null,
+      "layouts": {},
+      "color": null,
+      "filters_overrides": {},
+      "show_description": null,
+      "transparent_background": null,
+      "group_key": null,
+      "badge": null,
+      "order": 0,
+      "last_refresh": null,
+      "is_cached": false
+    }
+  ],
+  "tags": ["wizard"]
+}

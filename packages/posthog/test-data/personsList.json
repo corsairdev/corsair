@@ -1,0 +1,21 @@
+{
+  "results": [
+    {
+      "type": "person",
+      "id": "3da62123-c1ec-5c43-8d20-ce24609296e2",
+      "uuid": "3da62123-c1ec-5c43-8d20-ce24609296e2",
+      "created_at": "2026-11-12T12:44:20.556000Z",
+      "last_seen_at": "2026-11-12T12:00:00Z",
+      "properties": {
+        "$geoip_country_code": "IN"
+      },
+      "is_identified": true,
+      "name": "distinct-id-1",
+      "distinct_ids": ["distinct-id-1"],
+      "matched_recordings": [],
+      "value_at_data_point": null
+    }
+  ],
+  "next": "https://us.posthog.com/api/projects/309833/persons/?limit=2&offset=2",
+  "previous": null
+}

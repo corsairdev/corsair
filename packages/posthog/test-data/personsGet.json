@@ -1,0 +1,11 @@
+{
+  "id": 37100954745,
+  "name": "distinct-id-1",
+  "distinct_ids": ["distinct-id-1"],
+  "properties": {
+    "$geoip_country_code": "IN"
+  },
+  "created_at": "2026-11-12T12:44:20.556000Z",
+  "uuid": "3da62123-c1ec-5c43-8d20-ce24609296e2",
+  "last_seen_at": "2026-11-12T12:00:00Z"
+}
