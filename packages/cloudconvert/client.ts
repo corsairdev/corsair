@@ -128,7 +128,9 @@ export async function makeCloudConvertRequest<T>(
 
 const SENSITIVE_REQUEST_FIELDS = new Set([
 	'accesskeyid',
+	'authorization',
 	'clientemail',
+	'password',
 	'privatekey',
 	'projectid',
 	'secretaccesskey',
@@ -139,10 +141,13 @@ function normalizedFieldName(field: string): string {
 	return field.replace(/[_-]/g, '').toLowerCase();
 }
 
+// `unknown` because provider/request JSON is untrusted until runtime-checked.
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+// `unknown` because request bodies contain arbitrary nested JSON; this helper
+// walks and narrows values recursively without assuming a concrete shape.
 function redactCredentialFields(value: unknown): {
 	value: unknown;
 	changed: boolean;

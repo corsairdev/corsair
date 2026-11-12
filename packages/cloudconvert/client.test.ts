@@ -198,6 +198,8 @@ describe('makeCloudConvertRequest', () => {
 		);
 		mockedRequest.mockRejectedValue(error);
 
+		// `unknown` because a rejected value is only narrowed by the assertions
+		// below; typing it as Error would hide a wrong error class.
 		let propagated: unknown;
 		try {
 			await makeCloudConvertRequest('fixture-api-key', {
