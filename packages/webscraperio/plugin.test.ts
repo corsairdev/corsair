@@ -37,12 +37,12 @@ describe('webscraperio plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the four catalog operations the API serves', () => {
+	it('exposes exactly the four catalog operations this plugin wraps', () => {
 		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
-		// The Cloud API's public v1 surface is deliberately small: scraping jobs
-		// and their data live behind the web app, not these routes.
+		// The plugin wraps sitemaps and the account. The Cloud API's scraping-job
+		// and scheduler routes are not wrapped yet.
 		expect(nested.sort()).toEqual(operations);
 	});
 
