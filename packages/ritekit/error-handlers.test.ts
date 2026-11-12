@@ -19,8 +19,10 @@ const context = {
 	originalError: new Error('failure'),
 } satisfies ErrorContext;
 
+// unknown: each handler returns its own retry shape; the tests compare it with toEqual.
 function run(name: keyof typeof errorHandlers, error: Error): Promise<unknown> {
 	const handler = errorHandlers[name].handler;
+	// unknown: the handlers' return types differ, so the cast widens them to one.
 	return (handler as (e: Error, c: ErrorContext) => Promise<unknown>)(
 		error,
 		context,
