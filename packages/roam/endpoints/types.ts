@@ -578,7 +578,12 @@ export type ReactionListResponse = z.infer<typeof ReactionListResponseSchema>;
 
 const GroupListInputSchema = z.object({
 	query: z.string().optional().describe('A search phrase.'),
-	type: z.string().optional().describe('The group type.'),
+	type: z
+		.string()
+		.optional()
+		.describe(
+			'Comma-separated group types: `standard`, `magicast`, `meeting`, `roam` or `onair`.',
+		),
 	limit: limitSchema(100),
 	cursor: CursorSchema,
 });

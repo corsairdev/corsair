@@ -46,7 +46,7 @@ apiExamples:
   reactions.list:
     call: "{ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', timestamp: 1765602474760032 }"
   groups.list:
-    call: "{ limit: 20, type: 'public' }"
+    call: "{ limit: 20, type: 'standard' }"
   meetings.list:
     call: "{ after: '2026-11-01T00:00:00.000Z', limit: 10 }"
   meetings.transcript:

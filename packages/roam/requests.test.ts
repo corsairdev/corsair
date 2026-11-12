@@ -58,12 +58,12 @@ describe('users', () => {
 
 		const result = (await invoke(Endpoints.userInfo, {
 			email: 'sam@example.com',
-			expand: ['status', 'willReturn'],
+			expand: ['status', 'available'],
 		})) as Awaited<ReturnType<typeof Endpoints.userInfo>>;
 
 		expect(lastRequest(fetchMock).query).toEqual({
 			email: 'sam@example.com',
-			expand: 'status,willReturn',
+			expand: 'status,available',
 		});
 		expect(result.user.name).toBe('Sam Rivera');
 	});
@@ -330,12 +330,12 @@ describe('groups and meetings', () => {
 		respond(fetchMock, GROUP_PAGE);
 
 		const result = (await invoke(Endpoints.groupList, {
-			type: 'public',
+			type: 'standard',
 			query: 'water',
 		})) as Awaited<ReturnType<typeof Endpoints.groupList>>;
 
 		expect(lastRequest(fetchMock).query).toEqual({
-			type: 'public',
+			type: 'standard',
 			query: 'water',
 		});
 		expect(result.groups[0]?.name).toBe('Water Runners');
