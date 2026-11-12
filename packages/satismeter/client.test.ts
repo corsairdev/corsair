@@ -1,4 +1,3 @@
-import { readEnvelope } from './endpoints/call';
 import {
 	makeSatisMeterRequest,
 	parseJsonBody,
@@ -6,6 +5,7 @@ import {
 	SATISMETER_API_WRITE,
 	SatisMeterAPIError,
 } from './client';
+import { readEnvelope } from './endpoints/call';
 import {
 	NO_WRITE_KEY_BODY,
 	NOT_AUTHORIZED_BODY,
@@ -358,9 +358,11 @@ describe('parseJsonBody', () => {
 	it('keeps the body out of the error message', () => {
 		expect(() =>
 			parseJsonBody('{"users":[{"email":"ada@example.com","traits":'),
-		).toThrow(expect.objectContaining({
-			message: expect.not.stringContaining('ada@example.com'),
-		}));
+		).toThrow(
+			expect.objectContaining({
+				message: expect.not.stringContaining('ada@example.com'),
+			}),
+		);
 	});
 });
 
