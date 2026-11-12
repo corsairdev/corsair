@@ -129,6 +129,30 @@ describe('links.create', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it.each([
+		['an empty array', []],
+		[
+			'an item that carries error',
+			[{ error: 'INVALID_URL', message: 'The url is not valid' }],
+		],
+		['an item with no link in it', [{}]],
+	])(
+		'rejects a 200 answer with %s and does not log it as completed',
+		async (_label, body) => {
+			respond(fetchMock, body);
+
+			await expect(
+				invoke(Api.create, { url: 'https://example.com' }),
+			).rejects.toThrow();
+			expect(mockLog).not.toHaveBeenCalledWith(
+				expect.anything(),
+				'u301.links.create',
+				expect.anything(),
+				'completed',
+			);
+		},
+	);
+
 	it('surfaces the link quota rather than retrying it', async () => {
 		respond(fetchMock, QUOTA, 429);
 

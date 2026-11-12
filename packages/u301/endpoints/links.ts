@@ -56,6 +56,18 @@ export const create: U301Endpoints['linkCreate'] = (ctx, input) =>
 						replayable: false,
 					});
 				}
+				// Every field of a created link is optional in the schema, so an item
+				// with no slug and no short link would otherwise pass as a success.
+				const hasLink = ['slug', 'shortLink'].some((key) => {
+					const value = first?.[key];
+					return typeof value === 'string' && value.length > 0;
+				});
+				if (!hasLink) {
+					throw new U301APIError(
+						'U301 accepted the bulk request but returned no slug or short link.',
+						{ replayable: false },
+					);
+				}
 				return raw[0];
 			},
 			log: (_, result) => ({
