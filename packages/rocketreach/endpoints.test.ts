@@ -606,14 +606,15 @@ const invalidIdentifiers: [string, AnyEndpoint, unknown][] = [
 	['empty company filter', Company.search, { query: { domain: [] } }],
 ];
 
-it.each(
-	invalidIdentifiers,
-)('rejects %s before fetching', async (_, endpoint, input) => {
-	await expect(invoke(endpoint, input)).rejects.toMatchObject({
-		name: 'ZodError',
-	});
-	expect(fetchMock).not.toHaveBeenCalled();
-});
+it.each(invalidIdentifiers)(
+	'rejects %s before fetching',
+	async (_, endpoint, input) => {
+		await expect(invoke(endpoint, input)).rejects.toMatchObject({
+			name: 'ZodError',
+		});
+		expect(fetchMock).not.toHaveBeenCalled();
+	},
+);
 
 it('accepts an unlimited account allocation', async () => {
 	respond(fetchMock, {
@@ -624,14 +625,14 @@ it('accepts an unlimited account allocation', async () => {
 	});
 });
 
-it.each([
-	'phone',
-	'enrich',
-])('accepts documented %s lookup types', async (lookup_type) => {
-	respond(fetchMock, COMPLETE_PROFILE);
-	await invoke(Person.lookup, { id: 123456, lookup_type });
-	expect(lastRequest(fetchMock).query.lookup_type).toBe(lookup_type);
-});
+it.each(['phone', 'enrich'])(
+	'accepts documented %s lookup types',
+	async (lookup_type) => {
+		respond(fetchMock, COMPLETE_PROFILE);
+		await invoke(Person.lookup, { id: 123456, lookup_type });
+		expect(lastRequest(fetchMock).query.lookup_type).toBe(lookup_type);
+	},
+);
 
 it('accepts a numeric NPI identifier', async () => {
 	respond(fetchMock, COMPLETE_PROFILE);

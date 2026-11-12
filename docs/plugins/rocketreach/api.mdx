@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for RocketReach: every `rocketreach.api.*` operation with input and output types."
+title: "RocketReach API reference"
+sidebarTitle: "API"
+description: "API reference for the RocketReach plugin in Corsair: every `rocketreach.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `rocketreach.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -44,9 +43,9 @@ await corsair.rocketreach.api.account.get({});
 ```ts
 {
   credit_type?: string | null,
-  allocated?: number | null,
+  allocated?: number | inf | null,
   used?: number | null,
-  remaining?: number | null
+  remaining?: number | inf | null
 }[] | null
 ```
 </Accordion>
@@ -213,7 +212,7 @@ await corsair.rocketreach.api.company.lookup({ domain: 'google.com' });
 
 Search companies by name, domain, industry, size, revenue and other filters
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.rocketreach.api.company.search({ query: { industry: ['Internet'], employees: ['1001-5000'] }, page_size: 20 });
@@ -368,7 +367,8 @@ await corsair.rocketreach.api.person.bulkLookup({ queries: [{ email: 'john.doe@e
   current_employer?: string,
   title?: string,
   phone?: string,
-  npi_number?: string,
+  npi_number?: number | string,
+  lookup_type?: standard | premium | premium (feeds disabled) | bulk | phone | enrich,
   return_cached_emails?: boolean
 }[]
 ```
@@ -530,8 +530,8 @@ await corsair.rocketreach.api.person.lookup({ email: 'john.doe@example.com', ret
 | `current_employer` | `string` | No | Requires name as well. |
 | `title` | `string` | No | — |
 | `phone` | `string` | No | E.164 or international format. |
-| `npi_number` | `string` | No | For a US healthcare professional. |
-| `lookup_type` | `standard \| premium \| premium (feeds disabled) \| bulk` | No | standard is the default. |
+| `npi_number` | `number \| string` | No | For a US healthcare professional. |
+| `lookup_type` | `standard \| premium \| premium (feeds disabled) \| bulk \| phone \| enrich` | No | standard is the default. |
 | `return_cached_emails` | `boolean` | No | Include cached emails in a progress answer. False nulls every email field until the lookup finishes. |
 | `webhook_id` | `number` | No | Post the finished result to this webhook instead of polling. |
 
@@ -680,7 +680,7 @@ await corsair.rocketreach.api.person.lookup({ email: 'john.doe@example.com', ret
 
 Search people by title, employer, skills, school and other filters, returning summaries without contact details
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.rocketreach.api.person.search({ query: { current_title: ['CTO'], company_domain: ['stripe.com'] }, page_size: 20 });
@@ -692,7 +692,7 @@ await corsair.rocketreach.api.person.search({ query: { current_title: ['CTO'], c
 |------|------|----------|-------------|
 | `query` | `object` | Yes | At least one filter. |
 | `start` | `number` | No | 1-based result to start at. |
-| `page_size` | `number` | No | Defaults to 100, maximum 100. |
+| `page_size` | `number` | No | Defaults to 10, maximum 100. |
 | `order_by` | `relevance \| popularity \| score` | No | Defaults to relevance. |
 
 <AccordionGroup>
