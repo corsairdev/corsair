@@ -270,12 +270,15 @@ describe('DigiCert endpoint schemas', () => {
 			{ lang: 'en-US', methods: [], authType: [] },
 			{ methods: 'not-an-array' },
 		],
-	] as const)('parses documented %s responses and rejects invalid responses', (name, valid, invalid) => {
-		expect(DigicertEndpointOutputSchemas[name].safeParse(valid).success).toBe(
-			true,
-		);
-		expect(DigicertEndpointOutputSchemas[name].safeParse(invalid).success).toBe(
-			false,
-		);
-	});
+	] as const)(
+		'parses documented %s responses and rejects invalid responses',
+		(name, valid, invalid) => {
+			expect(DigicertEndpointOutputSchemas[name].safeParse(valid).success).toBe(
+				true,
+			);
+			expect(
+				DigicertEndpointOutputSchemas[name].safeParse(invalid).success,
+			).toBe(false);
+		},
+	);
 });
