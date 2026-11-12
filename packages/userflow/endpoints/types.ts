@@ -737,8 +737,8 @@ export type EventDefinitionsListResponse = z.infer<
 // ── webhook subscriptions ─────────────────────────────────────────────────
 
 /**
- * A subscription carries its own `whsec_` signing secret, which is returned on
- * create and on a PATCH — the only two places Userflow ever shows it.
+ * A subscription carries its own `whsec_` signing secret. Userflow documents it as
+ * returned only at creation, so it has to be saved from that response.
  */
 const WebhookSubscriptionSchema = z
 	.object({
@@ -750,7 +750,7 @@ const WebhookSubscriptionSchema = z
 		secret: z
 			.string()
 			.nullish()
-			.describe('Returned on create and update only, to verify signatures.'),
+			.describe('Returned only by create; save it then to verify signatures.'),
 		topics: z.array(z.string()).nullish(),
 		url: z.string().nullish(),
 	})

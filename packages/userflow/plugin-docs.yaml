@@ -14,7 +14,7 @@ overviewNote: |
   - **Paging is `has_more`, not the link.** Every list answers `next_page_url`, and it is set even on the last page, so the plugin reports `has_more` and passes `starting_after` through rather than following the link blindly.
   - **Sessions are the record of what was seen.** A flow or checklist run is a content session; `contentSessions.list` filtered by `user_id` and `content_id` answers whether that person has seen it, and `progress` is a decimal string from `0` to `1`.
   - **Definitions are created by Userflow.** Attribute and event definitions appear the first time an unseen name arrives, and the API can only list them — which makes `attributes.list` the way to discover what a workspace already tracks.
-  - **Webhook subscriptions are managed here; delivery is not.** Each subscription has its own `whsec_…` secret, returned only on create and update, and notifications are signed as `Userflow-Signature: t=<timestamp>,v1=<hmac>`. The plugin manages subscriptions, but does not receive them, since there is no single workspace-wide signing key to verify against.
+  - **Webhook subscriptions are managed here; delivery is not.** Each subscription has its own `whsec_…` secret, returned only when the subscription is created (save it from that response), and notifications are signed as `Userflow-Signature: t=<timestamp>,v1=<hmac>`. The plugin manages subscriptions, but does not receive them, since there is no single workspace-wide signing key to verify against.
   - **EU environments use a different host.** An EU environment lives on `api.eu.userflow.com`, and the key gives no hint of its region, so pass `region: 'eu'` to the plugin.
 examples:
   read:

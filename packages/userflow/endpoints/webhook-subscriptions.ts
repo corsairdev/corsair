@@ -9,7 +9,7 @@ import {
 /**
  * Subscriptions are how Userflow delivers `user.created`, `group.updated` and
  * `event.tracked.*`. The `secret` needed to verify the signature is returned
- * on create and on update only, so it is worth capturing at that point.
+ * only by create, so save it from that response.
  */
 export const create: UserflowEndpoints['webhookSubscriptionsCreate'] = (
 	ctx,
@@ -26,8 +26,8 @@ export const create: UserflowEndpoints['webhookSubscriptionsCreate'] = (
 		(body) => ({ method: 'POST', path: '/webhook_subscriptions', body }),
 		{
 			log: (parsed, result) => ({
+				// Not the url: a receiver URL often carries its own token.
 				id: result.id ?? undefined,
-				url: parsed.url,
 				topics: parsed.topics.length,
 				// Whether a secret came back, never the secret itself.
 				hasSecret: result.secret != null,
@@ -51,7 +51,6 @@ export const get: UserflowEndpoints['webhookSubscriptionsGet'] = (ctx, input) =>
 		{ log: (_, result) => ({ id: result.id ?? undefined }) },
 	);
 
-/** PATCH is the other place the `secret` is returned. */
 export const update: UserflowEndpoints['webhookSubscriptionsUpdate'] = (
 	ctx,
 	input,
