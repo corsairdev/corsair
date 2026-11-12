@@ -1,0 +1,305 @@
+import { asRecord } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
+
+export const GENDERAPIIO_API_BASE = 'https://api.genderapi.io';
+
+/**
+ * GenderAPI.io v2 takes the account's 24-character key as a bearer token:
+ *
+ * ```
+ * Authorization: Bearer <key>
+ * ```
+ *
+ * A missing or unknown key does **not** fail. The API falls back to an
+ * IP-scoped trial of 10 credits per 24 hours, and says so in
+ * `meta.access.mode` (`ip_trial`) with a reason. A live probe with no key
+ * answered 200 and charged the trial, so the key is optional here by design.
+ *
+ * A disabled, expired or restricted key is different: those do **not** fall
+ * back, and answer 403.
+ * Reference: https://genderapi.io/api-documentation
+ */
+export type GenderApiIoCredentials = {
+	/** The 24-character API key. Absent means the IP-scoped trial is used. */
+	apiKey?: string;
+};
+
+/** The codes the `/api/v2/errors` catalog documents. */
+export const GENDERAPIIO_ERROR_CODES = {
+	INVALID_JSON: 'invalid_json',
+	QUERY_NOT_SUPPORTED: 'query_not_supported',
+	VALIDATION_ERROR: 'validation_error',
+	TRIAL_BATCH_LIMIT: 'trial_batch_limit',
+	INVALID_API_KEY: 'invalid_api_key',
+	ACCESS_DENIED: 'access_denied',
+	KEY_DISABLED: 'key_disabled',
+	KEY_EXPIRED: 'key_expired',
+	INSUFFICIENT_CREDITS: 'insufficient_credits',
+	NOT_FOUND: 'not_found',
+	METHOD_NOT_ALLOWED: 'method_not_allowed',
+	PAYLOAD_TOO_LARGE: 'payload_too_large',
+	UNSUPPORTED_MEDIA_TYPE: 'unsupported_media_type',
+	RATE_LIMIT_EXCEEDED: 'rate_limit_exceeded',
+	CONCURRENCY_LIMIT: 'concurrency_limit',
+	AI_UNAVAILABLE: 'ai_unavailable',
+	PREDICTION_TIMEOUT: 'prediction_timeout',
+	INTERNAL_ERROR: 'internal_error',
+} as const;
+
+/**
+ * Every failure is an RFC 7807 problem document, not a bare message:
+ *
+ * ```json
+ * {
+ *   "type": "urn:genderapi:problem:validation_error",
+ *   "title": "validation error",
+ *   "status": 422,
+ *   "detail": "The request does not match the schema.",
+ *   "code": "validation_error",
+ *   "action": "correct_request",
+ *   "errors": [{ "pointer": "/type", "message": "must be equal to one of the allowed values" }]
+ * }
+ * ```
+ */
+// unknown: the body is an untyped problem document until asRecord narrows it.
+export function readProblem(body: unknown): {
+	code?: string;
+	title?: string;
+	detail?: string;
+	action?: string;
+	fieldErrors?: Array<{ pointer?: string; message?: string }>;
+} {
+	const record = asRecord(body);
+	const code = record?.code;
+	const title = record?.title;
+	const detail = record?.detail;
+	const action = record?.action;
+	const rawErrors = record?.errors;
+	const fieldErrors = Array.isArray(rawErrors)
+		? rawErrors.map((entry) => {
+				const field = asRecord(entry);
+				return {
+					pointer:
+						typeof field?.pointer === 'string' ? field.pointer : undefined,
+					message:
+						typeof field?.message === 'string' ? field.message : undefined,
+				};
+			})
+		: undefined;
+	return {
+		code: typeof code === 'string' ? code : undefined,
+		title: typeof title === 'string' ? title : undefined,
+		detail:
+			typeof detail === 'string' && detail.length > 0 ? detail : undefined,
+		action: typeof action === 'string' ? action : undefined,
+		fieldErrors,
+	};
+}
+
+export class GenderApiIoAPIError extends Error {
+	readonly status?: number;
+	/** The catalog code, such as `insufficient_credits`. */
+	readonly code?: string;
+	/** What the catalog says a caller should do, such as `add_credits_or_wait_for_reset`. */
+	readonly action?: string;
+	/** Per-field validation failures, when the request did not match the schema. */
+	readonly fieldErrors?: Array<{ pointer?: string; message?: string }>;
+	/** Milliseconds from `Retry-After`, when the API sent one. */
+	readonly retryAfter?: number;
+	/** The request ID, which support asks for on a billing problem. */
+	readonly requestId?: string;
+	readonly method?: string;
+	readonly transport: boolean;
+	readonly timedOut: boolean;
+
+	constructor(
+		message: string,
+		options: {
+			cause?: Error;
+			status?: number;
+			code?: string;
+			action?: string;
+			fieldErrors?: Array<{ pointer?: string; message?: string }>;
+			retryAfter?: number;
+			requestId?: string;
+			method?: string;
+			transport?: boolean;
+			timedOut?: boolean;
+		} = {},
+	) {
+		super(message, options.cause ? { cause: options.cause } : undefined);
+		this.name = 'GenderApiIoAPIError';
+		this.status = options.status;
+		this.code = options.code;
+		this.action = options.action;
+		this.fieldErrors = options.fieldErrors;
+		this.retryAfter = options.retryAfter;
+		this.requestId = options.requestId;
+		this.method = options.method;
+		this.transport = options.transport ?? false;
+		this.timedOut = options.timedOut ?? false;
+	}
+
+	/**
+	 * 429 covers both the rate limit and the concurrency limit. The catalog says
+	 * to respect Retry-After, and that a retry is a new billed operation.
+	 */
+	get isRateLimit(): boolean {
+		return this.status === 429;
+	}
+
+	/** A key the API recognized but refused, or the header was missing. */
+	get isAuthError(): boolean {
+		return this.status === 401;
+	}
+
+	/**
+	 * A key that exists but cannot be used: disabled, expired, restricted, or an
+	 * account with no credits. These never fall back to the trial.
+	 */
+	get isPermissionError(): boolean {
+		return this.status === 403;
+	}
+
+	/** The balance cannot cover even one credit. */
+	get isCreditError(): boolean {
+		return this.code === GENDERAPIIO_ERROR_CODES.INSUFFICIENT_CREDITS;
+	}
+
+	/** A body or query the schema refused. */
+	get isValidationError(): boolean {
+		return this.status === 422 || this.status === 400;
+	}
+
+	/** The route does not exist. */
+	get isNotFound(): boolean {
+		return this.status === 404;
+	}
+
+	/**
+	 * A prediction that failed after a charge may have been recorded. The
+	 * catalog says to inspect billing before retrying, because a retry is a new
+	 * billed operation.
+	 */
+	get needsBillingCheck(): boolean {
+		return (
+			this.status === 502 ||
+			(this.status === 503 &&
+				(this.code === 'billing_reconciliation_required' ||
+					this.code === 'prediction_unavailable' ||
+					this.code === 'billing_unavailable' ||
+					this.code === 'dependency_timeout' ||
+					this.code === 'dataset_timeout' ||
+					this.code === 'billing_timeout'))
+		);
+	}
+}
+
+/** A readable message from the problem document. */
+// unknown: an error body is untyped: a problem document, or text from a proxy
+// that never reached GenderAPI.io.
+export function describeGenderApiIoError(
+	status: number | undefined,
+	body: unknown,
+	fallback: string,
+): string {
+	const problem = readProblem(body);
+	const text = problem.detail ?? problem.title ?? fallback;
+	const label = [status, problem.code].filter(Boolean).join(' ');
+	return label ? `GenderAPI.io ${label}: ${text}` : text;
+}
+
+export type GenderApiIoRequest = {
+	method: 'GET' | 'POST';
+	path: string;
+	// unknown: the endpoint's input schema has already validated the body, and
+	// each route has its own shape.
+	body?: unknown;
+	query?: Record<string, string | number | boolean | undefined>;
+};
+
+/**
+ * The catalog documents 429 for both `rate_limit_exceeded` and
+ * `concurrency_limit` and says to respect Retry-After. Because a retry is a new
+ * billed operation, the client does not retry on its own; the handlers decide.
+ */
+const GENDERAPIIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
+
+// unknown: callers parse the body with the endpoint's zod output schema.
+export async function makeGenderApiIoRequest(
+	credentials: GenderApiIoCredentials,
+	{ method, path, body, query }: GenderApiIoRequest,
+): Promise<unknown> {
+	const config: OpenAPIConfig = {
+		BASE: GENDERAPIIO_API_BASE,
+		VERSION: '2.0.0',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		TIMEOUT: 30_000,
+		HEADERS: {
+			Accept: 'application/json',
+			// Omitting the header entirely is what asks for the IP trial; sending an
+			// empty `Bearer ` would be a different, invalid key.
+			...(credentials.apiKey
+				? { Authorization: `Bearer ${credentials.apiKey}` }
+				: {}),
+		},
+	};
+
+	const requestOptions: ApiRequestOptions = {
+		method,
+		url: path,
+		query: method === 'GET' ? query : undefined,
+		body,
+		mediaType: body === undefined ? undefined : 'application/json',
+	};
+
+	try {
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: GENDERAPIIO_RATE_LIMIT_CONFIG,
+		});
+	} catch (error) {
+		if (error instanceof ApiError) {
+			const problem = readProblem(error.body);
+			const record = asRecord(error.body);
+			const requestId =
+				typeof record?.request_id === 'string' ? record.request_id : undefined;
+			throw new GenderApiIoAPIError(
+				describeGenderApiIoError(error.status, error.body, error.message),
+				{
+					status: error.status,
+					code: problem.code,
+					action: problem.action,
+					fieldErrors: problem.fieldErrors,
+					retryAfter: error.retryAfter,
+					requestId,
+					method,
+				},
+			);
+		}
+		// DOMException (fetch timeouts) can fail instanceof Error across realms.
+		if (error instanceof Error || error instanceof DOMException) {
+			throw new GenderApiIoAPIError(error.message, {
+				cause: error,
+				method,
+				transport: true,
+				timedOut: error.name === 'TimeoutError',
+			});
+		}
+		throw new GenderApiIoAPIError('Unknown GenderAPI.io error', {
+			method,
+			transport: true,
+		});
+	}
+}
