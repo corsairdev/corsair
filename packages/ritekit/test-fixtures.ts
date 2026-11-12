@@ -253,10 +253,13 @@ export const COMPANY_LOGO = {
 
 // The name-to-domain sample is not published in the collection; the docs say the
 // route returns "an array of most probable domains".
+// Live 11-12, trimmed: the domains come back under `data`, beside the name as
+// RiteKit normalised it.
 export const NAME_TO_DOMAIN = {
 	result: true,
 	message: 'OK',
-	domains: ['google.com', 'google.co.uk'],
+	name: 'google',
+	data: ['drive.google.com', 'cloud.google.com', 'google.com'],
 };
 
 export const BRAND_COLORS = {

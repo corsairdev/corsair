@@ -550,9 +550,13 @@ const CompanyNameInputSchema = z.object({
 
 export type CompanyNameInput = z.infer<typeof CompanyNameInputSchema>;
 
-/** The docs say this returns "an array of most probable domains". */
+/**
+ * The docs say this returns "an array of most probable domains"; live, they come
+ * back under `data`, beside the name as RiteKit normalised it.
+ */
 const CompanyNameToDomainResponseSchema = EnvelopeSchema.extend({
-	domains: z
+	name: z.string().nullish().describe('The name as RiteKit read it.'),
+	data: z
 		.array(z.string())
 		.nullish()
 		.describe('The most probable domains, best first.'),

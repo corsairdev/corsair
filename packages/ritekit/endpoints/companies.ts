@@ -60,9 +60,11 @@ export const nameToDomain: RiteKitEndpoints['companiesNameToDomain'] = (
 			path: '/v2/company-insights/name-to-domain',
 			query: { name },
 			replayable: true,
+			// Live answers took 18 s, close to the default 20 s timeout.
+			timeoutMs: 60_000,
 		}),
 		{
-			log: (_, result) => ({ count: result.domains?.length ?? 0 }),
+			log: (_, result) => ({ count: result.data?.length ?? 0 }),
 		},
 	);
 

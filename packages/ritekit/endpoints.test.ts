@@ -537,13 +537,21 @@ describe('companies', () => {
 		const result = (await invoke(Companies.nameToDomain, {
 			name: 'Google',
 		})) as {
-			domains?: string[];
+			name?: string;
+			data?: string[];
 		};
 
 		expect(lastRequest(fetchMock).path).toBe(
 			'/v2/company-insights/name-to-domain',
 		);
-		expect(result.domains?.[0]).toBe('google.com');
+		expect(result.name).toBe('google');
+		expect(result.data).toContain('google.com');
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'ritekit.companies.nameToDomain',
+			{ count: 3 },
+			'completed',
+		);
 	});
 
 	it('reads a brand palette', async () => {

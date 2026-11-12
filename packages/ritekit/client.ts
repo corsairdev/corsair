@@ -155,6 +155,8 @@ export type RiteKitRequest = {
 	replayable: boolean;
 	/** Overrides the JSON accept header, for an endpoint that answers with a URL. */
 	accept?: string;
+	/** Overrides corsair/http's 20 s default, for a route RiteKit answers slowly. */
+	timeoutMs?: number;
 };
 
 /**
@@ -190,10 +192,11 @@ function configWith(apiKey: string): OpenAPIConfig {
 // unknown: callers parse the body with the endpoint's zod output schema.
 export async function makeRiteKitRequest(
 	apiKey: string,
-	{ method, path, query, body, replayable, accept }: RiteKitRequest,
+	{ method, path, query, body, replayable, accept, timeoutMs }: RiteKitRequest,
 ): Promise<unknown> {
 	const config = configWith(apiKey);
 	if (accept) config.HEADERS = { Accept: accept };
+	if (timeoutMs) config.TIMEOUT = timeoutMs;
 
 	const requestOptions: ApiRequestOptions = {
 		method,
