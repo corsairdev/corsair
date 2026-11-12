@@ -198,8 +198,8 @@ await corsair.uptimerobot.api.incidents.get({ id: 'inc_778001' });
   url?: string | null,
   httpResponseCode?: number | null,
   responseDownloadUrl?: string | null,
-  requestHeaders?: Record<string, string> | null,
-  responseHeaders?: Record<string, string> | null
+  requestHeaders?: Record<string, any> | null,
+  responseHeaders?: Record<string, any> | null
 } | null
 ```
 </Accordion>
@@ -571,7 +571,7 @@ Create a monitor of any type; the body is checked against the type, so a PORT mo
 **Risk:** `write`
 
 ```ts
-await corsair.uptimerobot.api.monitors.create({ friendlyName: 'Acme storefront', type: 'HTTP', interval: 300, url: 'https://shop.acme.example' });
+await corsair.uptimerobot.api.monitors.create({ friendlyName: 'Acme storefront', type: 'HTTP', interval: 300, url: 'https://shop.acme.example', timeout: 30 });
 ```
 
 **Input**
@@ -592,7 +592,7 @@ await corsair.uptimerobot.api.monitors.create({ friendlyName: 'Acme storefront',
 | `groupId` | `number` | No | — |
 | `tagNames` | `string[]` | No | — |
 | `maintenanceWindowsIds` | `number[]` | No | — |
-| `assignedAlertContacts` | `object[]` | No | Who is alerted. Threshold and recurrence are required; values above 0 need a paid plan. |
+| `assignedAlertContacts` | `object[]` | No | Who is alerted; an empty list alerts nobody. Threshold and recurrence are required; values above 0 need a paid plan. |
 | `customFields` | `Record<string, string>` | No | Up to 20 key/value pairs. Paid plans only. |
 | `responseTimeThreshold` | `number` | No | — |
 | `config` | `Record<string, any>` | No | Type-specific configuration. API monitors need `apiAssertions`; THIRD_PARTY_SERVICE needs `thirdPartyService.providerId`. |
