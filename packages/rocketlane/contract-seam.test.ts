@@ -1,0 +1,1686 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { request } from 'corsair/http';
+import * as Handlers from './endpoints/handlers';
+import {
+	RocketlaneEndpointInputSchemas,
+	RocketlaneEndpointOutputSchemas,
+} from './endpoints/types';
+
+jest.mock('corsair/http', () => {
+	const actual = jest.requireActual('corsair/http');
+	return { ...actual, request: jest.fn() };
+});
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual('corsair/core');
+	return { ...actual, logEventFromContext: jest.fn() };
+});
+
+const mockRequest = request as jest.MockedFunction<typeof request>;
+// Fixtures use Rocketlane's declared schemas, preferring valid examples and
+// constructing values where its examples contradict their declared types.
+// Each operation has a different provider-defined request and response shape.
+const populatedFixtures: Array<{
+	name: string;
+	input: unknown;
+	response: unknown;
+}> = JSON.parse(
+	readFileSync(join(__dirname, 'populated-fixtures.json'), 'utf8'),
+);
+const operations = [
+	{
+		name: 'getInvoicePayments',
+		method: 'GET',
+		path: '1.0/invoices/{invoiceId}/payments',
+		input: {
+			invoiceId: 0,
+		},
+		query: ['pageSize', 'pageToken'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'getInvoiceLineItems',
+		method: 'GET',
+		path: '1.0/invoices/{invoiceId}/lines',
+		input: {
+			invoiceId: 0,
+		},
+		query: ['pageSize', 'pageToken'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'getInvoice',
+		method: 'GET',
+		path: '1.0/invoices/{invoiceId}',
+		input: {
+			invoiceId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'searchInvoices',
+		method: 'GET',
+		path: '1.0/invoices',
+		input: {},
+		query: [
+			'dateOfIssue.eq',
+			'dateOfIssue.gt',
+			'dateOfIssue.ge',
+			'dateOfIssue.lt',
+			'dateOfIssue.le',
+			'dueDate.eq',
+			'dueDate.gt',
+			'dueDate.ge',
+			'dueDate.lt',
+			'dueDate.le',
+			'amount.eq',
+			'amount.gt',
+			'amount.ge',
+			'amount.lt',
+			'amount.le',
+			'amountOutstanding.eq',
+			'amountOutstanding.gt',
+			'amountOutstanding.ge',
+			'amountOutstanding.lt',
+			'amountOutstanding.le',
+			'amountPaid.eq',
+			'amountPaid.gt',
+			'amountPaid.ge',
+			'amountPaid.lt',
+			'amountPaid.le',
+			'amountWrittenOff.eq',
+			'amountWrittenOff.gt',
+			'amountWrittenOff.ge',
+			'amountWrittenOff.lt',
+			'amountWrittenOff.le',
+			'createdAt.gt',
+			'createdAt.eq',
+			'createdAt.lt',
+			'createdAt.ge',
+			'createdAt.le',
+			'companyId.eq',
+			'companyId.oneOf',
+			'companyId.noneOf',
+			'invoiceNumber.eq',
+			'invoiceNumber.cn',
+			'invoiceNumber.nc',
+			'status.eq',
+			'status.oneOf',
+			'status.noneOf',
+			'pageSize',
+			'pageToken',
+			'includeFields',
+			'includeAllFields',
+			'sortBy',
+			'sortOrder',
+			'match',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'getCompany',
+		method: 'GET',
+		path: '1.0/companies/{companyId}',
+		input: {
+			companyId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'updateCompany',
+		method: 'PUT',
+		path: '1.0/companies/{companyId}',
+		input: {
+			companyId: 0,
+			body: {},
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'deleteCompany',
+		method: 'DELETE',
+		path: '1.0/companies/{companyId}',
+		input: {
+			companyId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: true,
+	},
+	{
+		name: 'createCompanyNote',
+		method: 'POST',
+		path: '1.0/companies/{companyId}/add-notes',
+		input: {
+			companyId: 0,
+			body: {
+				fieldId: 1,
+				noteText: 'fixture',
+			},
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'getAllCompanies',
+		method: 'GET',
+		path: '1.0/companies',
+		input: {},
+		query: [
+			'pageSize',
+			'pageToken',
+			'includeFields',
+			'includeAllFields',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'companyName.eq',
+			'companyName.cn',
+			'companyName.nc',
+			'companyUrl.eq',
+			'companyUrl.cn',
+			'companyUrl.nc',
+			'accountOwner.eq',
+			'accountOwner.oneOf',
+			'accountOwner.noneOf',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'createCompany',
+		method: 'POST',
+		path: '1.0/companies',
+		input: {
+			body: {
+				companyName: 'fixture',
+				accountOwner: {},
+			},
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'getAllResourceAllocations',
+		method: 'GET',
+		path: '1.0/resource-allocations',
+		input: {
+			startDate: 'fixture',
+			endDate: 'fixture',
+		},
+		query: [
+			'startDate',
+			'endDate',
+			'pageSize',
+			'pageToken',
+			'includeFields',
+			'includeAllFields',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'memberId.eq',
+			'memberId.oneOf',
+			'memberId.noneOf',
+			'projectId.eq',
+			'projectId.oneOf',
+			'projectId.noneOf',
+			'placeholderId.eq',
+			'placeholderId.oneOf',
+			'placeholderId.noneOf',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'getAllTimeoffs',
+		method: 'GET',
+		path: '1.0/time-offs',
+		input: {},
+		query: [
+			'pageSize',
+			'pageToken',
+			'includeFields',
+			'includeAllFields',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'startDate.gt',
+			'startDate.eq',
+			'startDate.lt',
+			'startDate.ge',
+			'startDate.le',
+			'endDate.gt',
+			'endDate.eq',
+			'endDate.lt',
+			'endDate.ge',
+			'endDate.le',
+			'type.eq',
+			'type.oneOf',
+			'type.noneOf',
+			'userId.eq',
+			'userId.oneOf',
+			'userId.noneOf',
+			'emailId.eq',
+			'emailId.oneOf',
+			'emailId.noneOf',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'createTimeoff',
+		method: 'POST',
+		path: '1.0/time-offs',
+		input: {},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'getTimeoff',
+		method: 'GET',
+		path: '1.0/time-offs/{timeOffId}',
+		input: {
+			timeOffId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'deleteTimeoff',
+		method: 'DELETE',
+		path: '1.0/time-offs/{timeOffId}',
+		input: {
+			timeOffId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: true,
+	},
+	{
+		name: 'getField',
+		method: 'GET',
+		path: '1.0/fields/{fieldId}',
+		input: {
+			fieldId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'updateField',
+		method: 'PUT',
+		path: '1.0/fields/{fieldId}',
+		input: {
+			fieldId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'deleteField',
+		method: 'DELETE',
+		path: '1.0/fields/{fieldId}',
+		input: {
+			fieldId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: true,
+	},
+	{
+		name: 'updateFieldOption',
+		method: 'POST',
+		path: '1.0/fields/{fieldId}/update-option',
+		input: {
+			fieldId: 0,
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'addFieldOption',
+		method: 'POST',
+		path: '1.0/fields/{fieldId}/add-option',
+		input: {
+			fieldId: 0,
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'getAllFields',
+		method: 'GET',
+		path: '1.0/fields',
+		input: {},
+		query: [
+			'pageSize',
+			'pageToken',
+			'includeFields',
+			'includeAllFields',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'createdAt.gt',
+			'createdAt.eq',
+			'createdAt.lt',
+			'createdAt.ge',
+			'createdAt.le',
+			'updatedAt.gt',
+			'updatedAt.eq',
+			'updatedAt.lt',
+			'updatedAt.ge',
+			'updatedAt.le',
+			'objectType.eq',
+			'fieldType.eq',
+			'enabled.eq',
+			'private.eq',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'createField',
+		method: 'POST',
+		path: '1.0/fields',
+		input: {},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'getTimeEntry',
+		method: 'GET',
+		path: '1.0/time-entries/{timeEntryId}',
+		input: {
+			timeEntryId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'updateTimeEntry',
+		method: 'PUT',
+		path: '1.0/time-entries/{timeEntryId}',
+		input: {
+			timeEntryId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'deleteTimeEntry',
+		method: 'DELETE',
+		path: '1.0/time-entries/{timeEntryId}',
+		input: {
+			timeEntryId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: true,
+	},
+	{
+		name: 'getAllTimeEntries',
+		method: 'GET',
+		path: '1.0/time-entries',
+		input: {},
+		query: [
+			'pageSize',
+			'pageToken',
+			'includeFields',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'date.gt',
+			'date.eq',
+			'date.lt',
+			'date.ge',
+			'date.le',
+			'project.eq',
+			'projectId.eq',
+			'task.eq',
+			'taskId.eq',
+			'taskId.oneOf',
+			'taskId.noneOf',
+			'projectPhase.eq',
+			'category.eq',
+			'user.eq',
+			'emailId.eq',
+			'emailId.cn',
+			'emailId.nc',
+			'sourceType.eq',
+			'activityName.eq',
+			'activityName.cn',
+			'activityName.nc',
+			'approvalStatus.eq',
+			'submittedBy.eq',
+			'submittedAt.eq',
+			'submittedAt.gt',
+			'submittedAt.ge',
+			'submittedAt.lt',
+			'submittedAt.le',
+			'approvedBy.eq',
+			'approvedAt.eq',
+			'approvedAt.gt',
+			'approvedAt.ge',
+			'approvedAt.lt',
+			'approvedAt.le',
+			'rejectedBy.eq',
+			'rejectedAt.eq',
+			'rejectedAt.gt',
+			'rejectedAt.ge',
+			'rejectedAt.lt',
+			'rejectedAt.le',
+			'billable.eq',
+			'includeDeleted.eq',
+			'createdAt.gt',
+			'createdAt.eq',
+			'createdAt.lt',
+			'createdAt.ge',
+			'createdAt.le',
+			'updatedAt.gt',
+			'updatedAt.eq',
+			'updatedAt.lt',
+			'updatedAt.ge',
+			'updatedAt.le',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'createTimeEntry',
+		method: 'POST',
+		path: '1.0/time-entries',
+		input: {},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'searchTimeEntries',
+		method: 'GET',
+		path: '1.0/time-entries/search',
+		input: {},
+		query: [
+			'pageSize',
+			'pageToken',
+			'includeFields',
+			'includeAllFields',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'date.gt',
+			'date.eq',
+			'date.lt',
+			'date.ge',
+			'date.le',
+			'project.eq',
+			'task.eq',
+			'projectPhase.eq',
+			'category.eq',
+			'user.eq',
+			'sourceType.eq',
+			'activityName.eq',
+			'activityName.cn',
+			'activityName.nc',
+			'approvalStatus.eq',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'getTimeEntryCategories',
+		method: 'GET',
+		path: '1.0/time-entries/categories',
+		input: {},
+		query: ['pageSize', 'pageToken'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'getSpaceDocument',
+		method: 'GET',
+		path: '1.0/space-documents/{spaceDocumentId}',
+		input: {
+			spaceDocumentId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'updateSpaceDocument',
+		method: 'PUT',
+		path: '1.0/space-documents/{spaceDocumentId}',
+		input: {
+			spaceDocumentId: 0,
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'deleteSpaceDocument',
+		method: 'DELETE',
+		path: '1.0/space-documents/{spaceDocumentId}',
+		input: {
+			spaceDocumentId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: true,
+	},
+	{
+		name: 'getAllSpaceDocuments',
+		method: 'GET',
+		path: '1.0/space-documents',
+		input: {
+			projectId: 0,
+		},
+		query: [
+			'projectId',
+			'pageSize',
+			'pageToken',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'spaceDocumentName.eq',
+			'spaceDocumentName.cn',
+			'spaceDocumentName.nc',
+			'createdAt.gt',
+			'createdAt.eq',
+			'createdAt.lt',
+			'createdAt.ge',
+			'createdAt.le',
+			'updatedAt.gt',
+			'updatedAt.eq',
+			'updatedAt.lt',
+			'updatedAt.ge',
+			'updatedAt.le',
+			'spaceId.eq',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'createSpaceDocument',
+		method: 'POST',
+		path: '1.0/space-documents',
+		input: {},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'updateBudgetMilestoneRevenueRecognitionConfigs',
+		method: 'PUT',
+		path: '1.0/budgets/{budgetId}/milestone-revenue-recognition-configs',
+		input: {
+			budgetId: 1,
+			body: {},
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'updateBudgetManualRevenueRecognitionConfigs',
+		method: 'PUT',
+		path: '1.0/budgets/{budgetId}/manual-revenue-recognition-configs',
+		input: {
+			budgetId: 1,
+			body: {},
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'getBudget',
+		method: 'GET',
+		path: '1.0/budgets/{budgetId}',
+		input: {
+			budgetId: 1,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'updateBudget',
+		method: 'PUT',
+		path: '1.0/budgets/{budgetId}',
+		input: {
+			budgetId: 1,
+			body: {},
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'deleteBudget',
+		method: 'DELETE',
+		path: '1.0/budgets/{budgetId}',
+		input: {
+			budgetId: 1,
+		},
+		query: [],
+		hasBody: false,
+		void: true,
+	},
+	{
+		name: 'searchBudgets',
+		method: 'GET',
+		path: '1.0/budgets',
+		input: {},
+		query: [
+			'budgetId.eq',
+			'budgetId.oneOf',
+			'budgetId.noneOf',
+			'projectId.eq',
+			'projectId.oneOf',
+			'projectId.noneOf',
+			'status.eq',
+			'status.oneOf',
+			'status.noneOf',
+			'billingType.eq',
+			'billingType.oneOf',
+			'billingType.noneOf',
+			'revenueRecognitionType.eq',
+			'revenueRecognitionType.oneOf',
+			'revenueRecognitionType.noneOf',
+			'budgetAmount.eq',
+			'budgetAmount.gt',
+			'budgetAmount.ge',
+			'budgetAmount.lt',
+			'budgetAmount.le',
+			'budgetHours.eq',
+			'budgetHours.gt',
+			'budgetHours.ge',
+			'budgetHours.lt',
+			'budgetHours.le',
+			'budgetName.eq',
+			'budgetName.cn',
+			'budgetName.nc',
+			'startDate.eq',
+			'startDate.gt',
+			'startDate.ge',
+			'startDate.lt',
+			'startDate.le',
+			'endDate.eq',
+			'endDate.gt',
+			'endDate.ge',
+			'endDate.lt',
+			'endDate.le',
+			'createdAt.gt',
+			'createdAt.eq',
+			'createdAt.lt',
+			'createdAt.ge',
+			'createdAt.le',
+			'companyId.eq',
+			'companyId.oneOf',
+			'companyId.noneOf',
+			'isDefault.eq',
+			'pageSize',
+			'pageToken',
+			'includeFields',
+			'includeAllFields',
+			'sortBy',
+			'sortOrder',
+			'match',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'createBudget',
+		method: 'POST',
+		path: '1.0/budgets',
+		input: {
+			body: {
+				projectId: 1,
+				budgetName: 'fixture',
+				startDate: 'fixture',
+				endDate: 'fixture',
+				billingType: 'FIXED_FEE',
+			},
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'getTask',
+		method: 'GET',
+		path: '1.0/tasks/{taskId}',
+		input: {
+			taskId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'updateTask',
+		method: 'PUT',
+		path: '1.0/tasks/{taskId}',
+		input: {
+			taskId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'deleteTask',
+		method: 'DELETE',
+		path: '1.0/tasks/{taskId}',
+		input: {
+			taskId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: true,
+	},
+	{
+		name: 'removeFollowersFromTask',
+		method: 'POST',
+		path: '1.0/tasks/{taskId}/remove-followers',
+		input: {
+			taskId: 0,
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'removeDependenciesFromTask',
+		method: 'POST',
+		path: '1.0/tasks/{taskId}/remove-dependencies',
+		input: {
+			taskId: 0,
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'removeAssigneesFromTask',
+		method: 'POST',
+		path: '1.0/tasks/{taskId}/remove-assignees',
+		input: {
+			taskId: 0,
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'moveTaskToGivenPhase',
+		method: 'POST',
+		path: '1.0/tasks/{taskId}/move-phase',
+		input: {
+			taskId: 0,
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'addFollowersToTask',
+		method: 'POST',
+		path: '1.0/tasks/{taskId}/add-followers',
+		input: {
+			taskId: 0,
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'addDependenciesToTask',
+		method: 'POST',
+		path: '1.0/tasks/{taskId}/add-dependencies',
+		input: {
+			taskId: 0,
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'addAssigneeToTask',
+		method: 'POST',
+		path: '1.0/tasks/{taskId}/add-assignees',
+		input: {
+			taskId: 0,
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'getAllTasks',
+		method: 'GET',
+		path: '1.0/tasks',
+		input: {},
+		query: [
+			'pageSize',
+			'pageToken',
+			'includeFields',
+			'includeAllFields',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'startDate.gt',
+			'startDate.eq',
+			'startDate.lt',
+			'startDate.ge',
+			'startDate.le',
+			'dueDate.gt',
+			'dueDate.eq',
+			'dueDate.lt',
+			'dueDate.ge',
+			'dueDate.le',
+			'startDateActual.gt',
+			'startDateActual.eq',
+			'startDateActual.lt',
+			'startDateActual.ge',
+			'startDateActual.le',
+			'dueDateActual.gt',
+			'dueDateActual.eq',
+			'dueDateActual.lt',
+			'dueDateActual.ge',
+			'dueDateActual.le',
+			'createdAt.gt',
+			'createdAt.eq',
+			'createdAt.lt',
+			'createdAt.ge',
+			'createdAt.le',
+			'updatedAt.gt',
+			'updatedAt.eq',
+			'updatedAt.lt',
+			'updatedAt.ge',
+			'updatedAt.le',
+			'projectId.eq',
+			'phaseId.eq',
+			'taskName.eq',
+			'taskName.cn',
+			'taskName.nc',
+			'effortInMinutes.eq',
+			'effortInMinutes.gt',
+			'effortInMinutes.lt',
+			'progress.eq',
+			'progress.gt',
+			'progress.lt',
+			'includeArchive.eq',
+			'task.status.eq',
+			'task.status.oneOf',
+			'task.status.noneOf',
+			'project.status.eq',
+			'project.status.oneOf',
+			'project.status.noneOf',
+			'externalReferenceId.eq',
+			'assignee.userId.eq',
+			'assignee.userId.oneOf',
+			'assignee.userId.noneOf',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'createTask',
+		method: 'POST',
+		path: '1.0/tasks',
+		input: {},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'getCustomRevenueRecognitionConfig',
+		method: 'GET',
+		path: '1.0/custom-revenue-recognition-configs/{customRevenueRecognitionConfigId}',
+		input: {
+			customRevenueRecognitionConfigId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'getAllCustomRevenueRecognitionConfigs',
+		method: 'GET',
+		path: '1.0/custom-revenue-recognition-configs',
+		input: {},
+		query: [
+			'pageSize',
+			'pageToken',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'customRevenueRecognitionConfigName.eq',
+			'customRevenueRecognitionConfigName.cn',
+			'customRevenueRecognitionConfigName.nc',
+			'billingType.eq',
+			'billingType.oneOf',
+			'billingType.noneOf',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'getProject',
+		method: 'GET',
+		path: '1.0/projects/{projectId}',
+		input: {
+			projectId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'updateProject',
+		method: 'PUT',
+		path: '1.0/projects/{projectId}',
+		input: {
+			projectId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'deleteProject',
+		method: 'DELETE',
+		path: '1.0/projects/{projectId}',
+		input: {
+			projectId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: true,
+	},
+	{
+		name: 'unassignPlaceholders',
+		method: 'POST',
+		path: '1.0/projects/{projectId}/unassign-placeholders',
+		input: {
+			projectId: 0,
+			body: [],
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'removeMembers',
+		method: 'POST',
+		path: '1.0/projects/{projectId}/remove-members',
+		input: {
+			projectId: 0,
+			body: {
+				members: [],
+			},
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'importTemplate',
+		method: 'POST',
+		path: '1.0/projects/{projectId}/import-template',
+		input: {
+			projectId: 0,
+			body: [],
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'assignPlaceholders',
+		method: 'POST',
+		path: '1.0/projects/{projectId}/assign-placeholders',
+		input: {
+			projectId: 0,
+			body: [],
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'archiveProject',
+		method: 'POST',
+		path: '1.0/projects/{projectId}/archive',
+		input: {
+			projectId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: true,
+	},
+	{
+		name: 'addMembers',
+		method: 'POST',
+		path: '1.0/projects/{projectId}/add-members',
+		input: {
+			projectId: 0,
+			body: {},
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'getAllProjects',
+		method: 'GET',
+		path: '1.0/projects',
+		input: {},
+		query: [
+			'pageSize',
+			'pageToken',
+			'includeFields',
+			'includeAllFields',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'startDate.gt',
+			'startDate.eq',
+			'startDate.lt',
+			'startDate.ge',
+			'startDate.le',
+			'dueDate.gt',
+			'dueDate.eq',
+			'dueDate.lt',
+			'dueDate.ge',
+			'dueDate.le',
+			'startDateActual.gt',
+			'startDateActual.eq',
+			'startDateActual.lt',
+			'startDateActual.ge',
+			'startDateActual.le',
+			'dueDateActual.gt',
+			'dueDateActual.eq',
+			'dueDateActual.lt',
+			'dueDateActual.ge',
+			'dueDateActual.le',
+			'createdAt.gt',
+			'createdAt.eq',
+			'createdAt.lt',
+			'createdAt.ge',
+			'createdAt.le',
+			'updatedAt.gt',
+			'updatedAt.eq',
+			'updatedAt.lt',
+			'updatedAt.ge',
+			'updatedAt.le',
+			'annualizedRecurringRevenue.eq',
+			'annualizedRecurringRevenue.gt',
+			'annualizedRecurringRevenue.lt',
+			'projectFee.eq',
+			'projectFee.gt',
+			'projectFee.lt',
+			'customerId.eq',
+			'customerId.oneOf',
+			'customerId.noneOf',
+			'teamMemberId.eq',
+			'teamMemberId.oneOf',
+			'teamMemberId.noneOf',
+			'companyId.eq',
+			'companyId.oneOf',
+			'companyId.noneOf',
+			'projectName.eq',
+			'projectName.cn',
+			'projectName.nc',
+			'inferredProgress.eq',
+			'contractType.eq',
+			'contractType.oneOf',
+			'contractType.noneOf',
+			'budgetedHours.gt',
+			'budgetedHours.eq',
+			'budgetedHours.lt',
+			'budgetedHours.ge',
+			'allocatedHours.le',
+			'allocatedHours.gt',
+			'allocatedHours.eq',
+			'allocatedHours.lt',
+			'allocatedHours.ge',
+			'customersInvited.gt',
+			'customersInvited.eq',
+			'customersInvited.lt',
+			'customersInvited.ge',
+			'customersInvited.le',
+			'customersJoined.gt',
+			'customersJoined.eq',
+			'customersJoined.lt',
+			'customersJoined.ge',
+			'customersJoined.le',
+			'includeArchive.eq',
+			'status.eq',
+			'status.oneOf',
+			'status.noneOf',
+			'externalReferenceId.eq',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'createProject',
+		method: 'POST',
+		path: '1.0/projects',
+		input: {},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'getPlaceholders',
+		method: 'POST',
+		path: '1.0/projects/{projectId}/get-placeholders',
+		input: {
+			projectId: 1,
+		},
+		query: ['limit', 'pageToken'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'getPhase',
+		method: 'GET',
+		path: '1.0/phases/{phaseId}',
+		input: {
+			phaseId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'updatePhase',
+		method: 'PUT',
+		path: '1.0/phases/{phaseId}',
+		input: {
+			phaseId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'deletePhase',
+		method: 'DELETE',
+		path: '1.0/phases/{phaseId}',
+		input: {
+			phaseId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: true,
+	},
+	{
+		name: 'getAllPhases',
+		method: 'GET',
+		path: '1.0/phases',
+		input: {
+			projectId: 0,
+		},
+		query: [
+			'projectId',
+			'pageSize',
+			'pageToken',
+			'includeFields',
+			'includeAllFields',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'startDate.gt',
+			'startDate.eq',
+			'startDate.lt',
+			'startDate.ge',
+			'startDate.le',
+			'dueDate.gt',
+			'dueDate.eq',
+			'dueDate.lt',
+			'dueDate.ge',
+			'dueDate.le',
+			'startDateActual.gt',
+			'startDateActual.eq',
+			'startDateActual.lt',
+			'startDateActual.ge',
+			'startDateActual.le',
+			'dueDateActual.gt',
+			'dueDateActual.eq',
+			'dueDateActual.lt',
+			'dueDateActual.ge',
+			'dueDateActual.le',
+			'createdAt.gt',
+			'createdAt.eq',
+			'createdAt.lt',
+			'createdAt.ge',
+			'createdAt.le',
+			'updatedAt.gt',
+			'updatedAt.eq',
+			'updatedAt.lt',
+			'updatedAt.ge',
+			'updatedAt.le',
+			'phaseName.eq',
+			'phaseName.cn',
+			'phaseName.nc',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'createPhase',
+		method: 'POST',
+		path: '1.0/phases',
+		input: {},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'getUser',
+		method: 'GET',
+		path: '1.0/users/{userId}',
+		input: {
+			userId: 0,
+		},
+		query: ['includeFields', 'includeAllFields'],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'getAllUsers',
+		method: 'GET',
+		path: '1.0/users',
+		input: {},
+		query: [
+			'pageSize',
+			'pageToken',
+			'includeFields',
+			'includeAllFields',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'firstName.eq',
+			'firstName.cn',
+			'firstName.nc',
+			'lastName.eq',
+			'lastName.cn',
+			'lastName.nc',
+			'email.eq',
+			'email.cn',
+			'email.nc',
+			'status.eq',
+			'status.oneOf',
+			'status.noneOf',
+			'type.eq',
+			'type.oneOf',
+			'roleId.eq',
+			'roleId.oneOf',
+			'roleId.noneOf',
+			'permissionId.eq',
+			'permissionId.oneOf',
+			'permissionId.noneOf',
+			'capacityInMinutes.eq',
+			'capacityInMinutes.gt',
+			'capacityInMinutes.ge',
+			'capacityInMinutes.lt',
+			'capacityInMinutes.le',
+			'createdAt.gt',
+			'createdAt.eq',
+			'createdAt.lt',
+			'createdAt.ge',
+			'createdAt.le',
+			'updatedAt.gt',
+			'updatedAt.eq',
+			'updatedAt.lt',
+			'updatedAt.ge',
+			'updatedAt.le',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'getSpace',
+		method: 'GET',
+		path: '1.0/spaces/{spaceId}',
+		input: {
+			spaceId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'updateSpace',
+		method: 'PUT',
+		path: '1.0/spaces/{spaceId}',
+		input: {
+			spaceId: 0,
+		},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+	{
+		name: 'deleteSpace',
+		method: 'DELETE',
+		path: '1.0/spaces/{spaceId}',
+		input: {
+			spaceId: 0,
+		},
+		query: [],
+		hasBody: false,
+		void: true,
+	},
+	{
+		name: 'getAllSpaces',
+		method: 'GET',
+		path: '1.0/spaces',
+		input: {
+			projectId: 0,
+		},
+		query: [
+			'projectId',
+			'pageSize',
+			'pageToken',
+			'sortBy',
+			'sortOrder',
+			'match',
+			'spaceName.eq',
+			'spaceName.cn',
+			'spaceName.nc',
+			'createdAt.gt',
+			'createdAt.eq',
+			'createdAt.lt',
+			'createdAt.ge',
+			'createdAt.le',
+			'updatedAt.gt',
+			'updatedAt.eq',
+			'updatedAt.lt',
+			'updatedAt.ge',
+			'updatedAt.le',
+		],
+		hasBody: false,
+		void: false,
+	},
+	{
+		name: 'createSpace',
+		method: 'POST',
+		path: '1.0/spaces',
+		input: {},
+		query: [],
+		hasBody: true,
+		void: false,
+	},
+] as const;
+
+function pathFor(
+	operation: (typeof operations)[number],
+	// Operations have different input shapes; only their path keys are read here.
+	input: Record<string, unknown>,
+) {
+	return operation.path.replace(/\{([^}]+)\}/g, (_, name: string) =>
+		encodeURIComponent(String(input[name])),
+	);
+}
+
+describe('Rocketlane public request seams', () => {
+	beforeEach(() => mockRequest.mockReset());
+
+	it.each(operations)(
+		'$name forwards its official request contract',
+		async (operation) => {
+			const input = RocketlaneEndpointInputSchemas[operation.name].parse(
+				operation.input,
+			);
+			mockRequest.mockResolvedValue(operation.void ? undefined : {});
+
+			const result = await Handlers[operation.name](
+				{ key: 'test-api-key' } as never,
+				input as never,
+			);
+
+			const call = mockRequest.mock.calls.at(-1);
+			expect(call).toBeDefined();
+			// Jest cannot preserve the generic request function's concrete call tuple.
+			const [config, options] = call as unknown as [
+				OpenAPIConfig,
+				ApiRequestOptions,
+			];
+			expect(config.HEADERS).toMatchObject({ 'api-key': 'test-api-key' });
+			expect(options.method).toBe(operation.method);
+			expect(options.url).toBe(pathFor(operation, input));
+			// The operation table combines heterogeneous schemas and query names.
+			const rawInput = input as Record<string, unknown>;
+			expect(options.query).toEqual(
+				Object.fromEntries(
+					operation.query.map((name) => [
+						name,
+						name === 'includeFields' && Array.isArray(rawInput[name])
+							? rawInput[name].join(',')
+							: rawInput[name],
+					]),
+				),
+			);
+			expect(options.body).toEqual(
+				operation.hasBody ? rawInput.body : undefined,
+			);
+			if (operation.void) expect(result).toBeUndefined();
+			else
+				expect(
+					RocketlaneEndpointOutputSchemas[operation.name].safeParse(result)
+						.success,
+				).toBe(true);
+		},
+	);
+
+	it.each(operations)(
+		'$name preserves populated contract fixtures',
+		async (operation) => {
+			const fixture = populatedFixtures.find(
+				(item) => item.name === operation.name,
+			);
+			if (!fixture) throw new Error(`Missing fixture for ${operation.name}`);
+			const input = RocketlaneEndpointInputSchemas[operation.name].parse(
+				fixture.input,
+			);
+			expect(input).toEqual(fixture.input);
+			mockRequest.mockResolvedValue(
+				operation.void ? undefined : fixture.response,
+			);
+			const result = await Handlers[operation.name](
+				{ key: 'test-api-key' } as never,
+				input as never,
+			);
+			expect(result).toEqual(operation.void ? undefined : fixture.response);
+			// The schemas differ by operation, so keys are checked through the shared table.
+			const values = input as Record<string, unknown>;
+			expect(mockRequest.mock.calls.at(-1)?.[1]).toMatchObject({
+				method: operation.method,
+				url: pathFor(operation, values),
+				query: Object.fromEntries(
+					operation.query.map((key) => [
+						key,
+						key === 'includeFields' && Array.isArray(values[key])
+							? values[key].join(',')
+							: values[key],
+					]),
+				),
+				body: operation.hasBody ? values.body : undefined,
+			});
+		},
+	);
+
+	it.each(operations)(
+		'$name rejects invalid input before transport',
+		async (operation) => {
+			await expect(
+				Handlers[operation.name](
+					{ key: 'test-api-key' } as never,
+					null as never,
+				),
+			).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
+		},
+	);
+
+	it('rejects missing required identifiers and bodies without sending a request', async () => {
+		await expect(
+			Handlers.getBudget({ key: 'test-api-key' } as never, {} as never),
+		).rejects.toThrow();
+		await expect(
+			Handlers.createBudget({ key: 'test-api-key' } as never, {} as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it.each(['', '..', '1/other', '1\\other', '"1"'])(
+		'rejects unsafe path identifier %s before transport',
+		async (budgetId) => {
+			await expect(
+				Handlers.getBudget(
+					{ key: 'test-api-key' } as never,
+					{ budgetId } as never,
+				),
+			).rejects.toThrow();
+			expect(mockRequest).not.toHaveBeenCalled();
+		},
+	);
+
+	it('preserves documented custom field values in a populated project response', async () => {
+		const response = {
+			projectId: 201,
+			projectName: 'Acme onboarding',
+			startDateActual: null,
+			dueDateActual: null,
+			projectAgeInDays: null,
+			fields: [
+				{ fieldId: 215, fieldValue: 'Rocketlane APIs' },
+				{ fieldId: 217, fieldValue: 10000 },
+				{ fieldId: 218, fieldValue: true },
+				{ fieldId: 221, fieldValue: [1, 2] },
+			],
+		};
+		mockRequest.mockResolvedValue(response);
+		await expect(
+			Handlers.getProject({ key: 'test-api-key' } as never, { projectId: 201 }),
+		).resolves.toEqual(response);
+		mockRequest.mockResolvedValue({ data: [response] });
+		await expect(
+			Handlers.getAllProjects({ key: 'test-api-key' } as never, {}),
+		).resolves.toEqual({ data: [response] });
+	});
+
+	it('forwards a populated budget request and returns its populated response', async () => {
+		const body = {
+			projectId: 201,
+			budgetName: 'Implementation',
+			startDate: '2026-01-01',
+			endDate: '2026-12-31',
+			billingType: 'FIXED_FEE' as const,
+		};
+		const response = { budgetId: 123, budgetName: 'Implementation' };
+		mockRequest.mockResolvedValue(response);
+		await expect(
+			Handlers.createBudget({ key: 'test-api-key' } as never, {
+				body,
+				includeAllFields: true,
+			}),
+		).resolves.toEqual(response);
+		expect(mockRequest.mock.calls.at(-1)?.[1]).toMatchObject({
+			method: 'POST',
+			url: '1.0/budgets',
+			body,
+			query: { includeAllFields: true },
+		});
+	});
+
+	it('forwards documented boolean and multi-choice custom field values', async () => {
+		const fields = [
+			{ fieldId: 218, fieldValue: true },
+			{ fieldId: 221, fieldValue: [1, 2] },
+		];
+		mockRequest.mockResolvedValue({ projectId: 201 });
+		await Handlers.updateProject({ key: 'test-api-key' } as never, {
+			projectId: 201,
+			body: { fields },
+		});
+		expect(mockRequest.mock.calls.at(-1)?.[1].body).toEqual({ fields });
+	});
+
+	it('forwards a populated dotted filter and retains paginated results', async () => {
+		const response = {
+			data: [{ invoiceId: 201, invoiceNumber: 'INV-201' }],
+			pagination: { pageSize: 25, hasMore: true, nextPageToken: 'page-two' },
+		};
+		mockRequest.mockResolvedValue(response);
+		await expect(
+			Handlers.searchInvoices({ key: 'test-api-key' } as never, {
+				'companyId.eq': '42',
+				pageSize: 25,
+				pageToken: 'page-one',
+			}),
+		).resolves.toEqual(response);
+		expect(mockRequest.mock.calls.at(-1)?.[1].query).toMatchObject({
+			'companyId.eq': '42',
+			pageSize: 25,
+			pageToken: 'page-one',
+		});
+	});
+
+	it('forwards a documented second-page token at the public endpoint seam', async () => {
+		mockRequest.mockResolvedValue({});
+		const input = RocketlaneEndpointInputSchemas.getAllProjects.parse({
+			pageSize: 25,
+			pageToken: 'page-two',
+		});
+		await Handlers.getAllProjects({ key: 'test-api-key' } as never, input);
+		expect(
+			(mockRequest.mock.calls.at(-1)?.[1] as ApiRequestOptions).query,
+		).toMatchObject({
+			pageSize: 25,
+			pageToken: 'page-two',
+		});
+	});
+
+	it('forwards placeholder pagination to the search request', async () => {
+		mockRequest.mockResolvedValue({ data: [], pagination: { hasMore: false } });
+		await Handlers.getPlaceholders({ key: 'test-api-key' } as never, {
+			projectId: 42,
+			limit: 25,
+			pageToken: 'page-two',
+		});
+		expect(mockRequest.mock.calls.at(-1)?.[1]).toMatchObject({
+			method: 'POST',
+			url: '1.0/projects/42/get-placeholders',
+			query: { limit: 25, pageToken: 'page-two' },
+		});
+	});
+});

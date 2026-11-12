@@ -1,0 +1,6444 @@
+[
+  {
+    "name": "getInvoicePayments",
+    "input": {
+      "invoiceId": 1,
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002"
+    },
+    "response": {
+      "data": [
+        {
+          "paymentId": 201,
+          "paymentRecordType": "PAID",
+          "currency": "USD",
+          "paymentDate": "2023-03-28",
+          "amount": 1000,
+          "notes": "fixture"
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/invoices/123/payments?pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "getInvoiceLineItems",
+    "input": {
+      "invoiceId": 1,
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002"
+    },
+    "response": {
+      "data": [
+        {
+          "invoiceLineItemId": 123,
+          "description": "Development services for Q1",
+          "quantity": 10,
+          "unitPrice": 100,
+          "amount": 1000,
+          "sourceId": 456,
+          "sourceType": "PROJECT",
+          "taxCode": {
+            "taxCodeId": 456,
+            "taxCodeName": "GST 18%",
+            "taxCodeRate": 18,
+            "taxCodeAmount": 180
+          },
+          "taxComponents": [
+            {
+              "taxComponentId": 123,
+              "taxComponentName": "GST",
+              "taxComponentRate": 18,
+              "taxComponentAmount": 180,
+              "taxComponentType": "GST"
+            }
+          ],
+          "budget": {
+            "budgetId": 201,
+            "budgetName": "Pre-sales"
+          }
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/invoices/123/lines?pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "getInvoice",
+    "input": {
+      "invoiceId": 1,
+      "includeFields": ["notes"],
+      "includeAllFields": true
+    },
+    "response": {
+      "invoiceId": 201,
+      "invoiceNumber": "INV-2024-001",
+      "dateOfIssue": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "currency": "USD",
+      "status": "DRAFT",
+      "amount": 1000.25,
+      "tax": 100.25,
+      "subTotal": 1000.25,
+      "amountOutstanding": 500.25,
+      "amountPaid": 500.25,
+      "amountWrittenOff": 500.25,
+      "notes": "This is the default address",
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "company": {
+        "companyId": 201,
+        "companyName": "Acme Inc",
+        "companyUrl": "https://www.acme.com"
+      },
+      "projects": [
+        {
+          "projectId": 201,
+          "projectName": "Acme onboarding"
+        }
+      ],
+      "budgets": [
+        {
+          "budgetId": 201,
+          "budgetName": "Pre-sales"
+        }
+      ],
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "attachments": [
+        {
+          "attachmentId": 201,
+          "attachmentName": "test_upload.png",
+          "createdAt": 1680616174929,
+          "location": "https://rocketlane.com/attachments/0/db83eb19-0bbf-4a37-b4e2-cd1b96708c73/test_upload.png",
+          "thumbLocation": "https://rocketlane.com/attachments/0/db83eb19-0bbf-4a37-b4e2-cd1b96708c73/thumb_test_upload.png",
+          "visibility": false
+        }
+      ]
+    }
+  },
+  {
+    "name": "searchInvoices",
+    "input": {
+      "dateOfIssue.eq": "2023-03-28",
+      "dateOfIssue.gt": "2023-03-28",
+      "dateOfIssue.ge": "2023-03-28",
+      "dateOfIssue.lt": "2023-03-28",
+      "dateOfIssue.le": "2023-03-28",
+      "dueDate.eq": "2023-03-28",
+      "dueDate.gt": "2023-03-28",
+      "dueDate.ge": "2023-03-28",
+      "dueDate.lt": "2023-03-28",
+      "dueDate.le": "2023-03-28",
+      "amount.eq": 1000,
+      "amount.gt": 1000,
+      "amount.ge": 1000,
+      "amount.lt": 1000,
+      "amount.le": 1000,
+      "amountOutstanding.eq": 500,
+      "amountOutstanding.gt": 500,
+      "amountOutstanding.ge": 500,
+      "amountOutstanding.lt": 500,
+      "amountOutstanding.le": 500,
+      "amountPaid.eq": 500,
+      "amountPaid.gt": 500,
+      "amountPaid.ge": 500,
+      "amountPaid.lt": 500,
+      "amountPaid.le": 500,
+      "amountWrittenOff.eq": 500,
+      "amountWrittenOff.gt": 500,
+      "amountWrittenOff.ge": 500,
+      "amountWrittenOff.lt": 500,
+      "amountWrittenOff.le": 500,
+      "createdAt.gt": 1625164800000,
+      "createdAt.eq": 1625164800000,
+      "createdAt.lt": 1625164800000,
+      "createdAt.ge": 1625164800000,
+      "createdAt.le": 1625164800000,
+      "companyId.eq": "1",
+      "companyId.oneOf": "1,2,3",
+      "companyId.noneOf": "1,2,3",
+      "invoiceNumber.eq": "INV-2024-001",
+      "invoiceNumber.cn": "INV",
+      "invoiceNumber.nc": "US-21",
+      "status.eq": "DRAFT",
+      "status.oneOf": "DRAFT,PAID",
+      "status.noneOf": "DRAFT,PAID",
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "includeFields": ["notes"],
+      "includeAllFields": true,
+      "sortBy": "createdAt",
+      "sortOrder": "ASC",
+      "match": "all"
+    },
+    "response": {
+      "data": [
+        {
+          "invoiceId": 201,
+          "invoiceNumber": "INV-2024-001",
+          "dateOfIssue": "2023-03-28",
+          "dueDate": "2023-03-28",
+          "currency": "USD",
+          "status": "DRAFT",
+          "amount": 1000.25,
+          "tax": 100.25,
+          "subTotal": 1000.25,
+          "amountOutstanding": 500.25,
+          "amountPaid": 500.25,
+          "amountWrittenOff": 500.25,
+          "notes": "This is the default address",
+          "createdAt": 1681319726000,
+          "updatedAt": 1681319726000,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "company": {
+            "companyId": 201,
+            "companyName": "Acme Inc",
+            "companyUrl": "https://www.acme.com"
+          },
+          "projects": [
+            {
+              "projectId": 201,
+              "projectName": "Acme onboarding"
+            }
+          ],
+          "budgets": [
+            {
+              "budgetId": 201,
+              "budgetName": "Pre-sales"
+            }
+          ],
+          "fields": [
+            {
+              "fieldId": 201,
+              "fieldLabel": "MRR",
+              "fieldValue": {},
+              "fieldValueLabel": "1000"
+            }
+          ],
+          "attachments": [
+            {
+              "attachmentId": 201,
+              "attachmentName": "test_upload.png",
+              "createdAt": 1680616174929,
+              "location": "https://rocketlane.com/attachments/0/db83eb19-0bbf-4a37-b4e2-cd1b96708c73/test_upload.png",
+              "thumbLocation": "https://rocketlane.com/attachments/0/db83eb19-0bbf-4a37-b4e2-cd1b96708c73/thumb_test_upload.png",
+              "visibility": false
+            }
+          ]
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/invoices?pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "getCompany",
+    "input": {
+      "companyId": 1,
+      "includeFields": ["companyUrl"],
+      "includeAllFields": true
+    },
+    "response": {
+      "companyId": 201,
+      "companyName": "Acme Inc",
+      "companyUrl": "https://www.acme.com",
+      "visibility": "EVERYONE",
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "description": "Leading software development partner for enterprise solutions",
+      "accountOwner": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": "1000",
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "notes": [
+        {
+          "noteId": 1,
+          "fieldId": 44,
+          "fieldLabel": "Account Notes",
+          "noteTitle": "Q1 Planning Discussion",
+          "noteText": "Initial contact: discussed Q1 roadmap and pricing",
+          "tags": [
+            {
+              "tagId": 1,
+              "label": "sales",
+              "color": "blue"
+            }
+          ],
+          "createdAt": 1750343334605,
+          "updatedAt": 1750343334570
+        }
+      ]
+    }
+  },
+  {
+    "name": "updateCompany",
+    "input": {
+      "companyId": 1,
+      "includeFields": ["companyUrl"],
+      "includeAllFields": true,
+      "body": {
+        "companyName": "Acme Inc",
+        "companyUrl": "https://www.acme.com",
+        "visibility": "EVERYONE",
+        "description": "Leading software development partner for enterprise solutions",
+        "accountOwner": {
+          "emailId": "john.doe@rocketlane.com",
+          "userId": 201,
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        "fields": [
+          {
+            "fieldId": 201,
+            "fieldValue": "fixture"
+          }
+        ],
+        "notes": [
+          {
+            "noteId": 1,
+            "noteTitle": "Q1 Planning Discussion",
+            "noteText": "Updated note text",
+            "tagIds": [1]
+          }
+        ]
+      }
+    },
+    "response": {
+      "companyId": 201,
+      "companyName": "Acme Inc",
+      "companyUrl": "https://www.acme.com",
+      "visibility": "EVERYONE",
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "description": "Leading software development partner for enterprise solutions",
+      "accountOwner": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": "1000",
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "notes": [
+        {
+          "noteId": 1,
+          "fieldId": 44,
+          "fieldLabel": "Account Notes",
+          "noteTitle": "Q1 Planning Discussion",
+          "noteText": "Initial contact: discussed Q1 roadmap and pricing",
+          "tags": [
+            {
+              "tagId": 1,
+              "label": "sales",
+              "color": "blue"
+            }
+          ],
+          "createdAt": 1750343334605,
+          "updatedAt": 1750343334570
+        }
+      ]
+    }
+  },
+  {
+    "name": "deleteCompany",
+    "input": {
+      "companyId": 1
+    },
+    "response": null
+  },
+  {
+    "name": "createCompanyNote",
+    "input": {
+      "companyId": 1,
+      "body": {
+        "fieldId": 44,
+        "noteTitle": "Q1 Planning Discussion",
+        "noteText": "This is a note",
+        "tagIds": [1]
+      }
+    },
+    "response": {
+      "noteId": 1,
+      "fieldId": 44,
+      "fieldLabel": "Account Notes",
+      "noteTitle": "Q1 Planning Discussion",
+      "noteText": "Initial contact: discussed Q1 roadmap and pricing",
+      "tags": [
+        {
+          "tagId": 1,
+          "label": "sales",
+          "color": "blue"
+        }
+      ],
+      "createdAt": 1750343334605,
+      "updatedAt": 1750343334570
+    }
+  },
+  {
+    "name": "getAllCompanies",
+    "input": {
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "includeFields": ["companyUrl"],
+      "includeAllFields": true,
+      "sortBy": "companyName",
+      "sortOrder": "ASC",
+      "match": "all",
+      "companyName.eq": "Acme Inc",
+      "companyName.cn": "Acme Inc",
+      "companyName.nc": "Acme Inc",
+      "companyUrl.eq": "https://www.acme.com",
+      "companyUrl.cn": "acme.com",
+      "companyUrl.nc": "example.com",
+      "accountOwner.eq": "1",
+      "accountOwner.oneOf": "1,2",
+      "accountOwner.noneOf": "1,2"
+    },
+    "response": {
+      "data": [
+        {
+          "companyId": 201,
+          "companyName": "Acme Inc",
+          "companyUrl": "https://www.acme.com",
+          "visibility": "EVERYONE",
+          "createdAt": 1681319726000,
+          "updatedAt": 1681319726000,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "description": "Leading software development partner for enterprise solutions",
+          "accountOwner": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "fields": [
+            {
+              "fieldId": 201,
+              "fieldLabel": "MRR",
+              "fieldValue": "1000",
+              "fieldValueLabel": "1000"
+            }
+          ],
+          "notes": [
+            {
+              "noteId": 1,
+              "fieldId": 44,
+              "fieldLabel": "Account Notes",
+              "noteTitle": "Q1 Planning Discussion",
+              "noteText": "Initial contact: discussed Q1 roadmap and pricing",
+              "tags": [{}],
+              "createdAt": 1750343334605,
+              "updatedAt": 1750343334570
+            }
+          ]
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/companies?includeFields=category,minutes&billable.eq=false&sortBy=startDate&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100&assignee.any=1&startDate.gt=2022-01-02",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "createCompany",
+    "input": {
+      "includeFields": ["companyUrl"],
+      "includeAllFields": true,
+      "body": {
+        "companyName": "Acme Inc",
+        "companyUrl": "https://www.acme.com",
+        "visibility": "EVERYONE",
+        "description": "Leading software development partner for enterprise solutions",
+        "accountOwner": {
+          "emailId": "john.doe@rocketlane.com",
+          "userId": 201,
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        "fields": [
+          {
+            "fieldId": 201,
+            "fieldValue": "fixture"
+          }
+        ],
+        "notes": [
+          {
+            "fieldId": 44,
+            "noteTitle": "Q1 Planning Discussion",
+            "noteText": "This is a note",
+            "tagIds": [1]
+          }
+        ]
+      }
+    },
+    "response": {
+      "companyId": 201,
+      "companyName": "Acme Inc",
+      "companyUrl": "https://www.acme.com",
+      "visibility": "EVERYONE",
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "description": "Leading software development partner for enterprise solutions",
+      "accountOwner": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": "1000",
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "notes": [
+        {
+          "noteId": 1,
+          "fieldId": 44,
+          "fieldLabel": "Account Notes",
+          "noteTitle": "Q1 Planning Discussion",
+          "noteText": "Initial contact: discussed Q1 roadmap and pricing",
+          "tags": [
+            {
+              "tagId": 1,
+              "label": "sales",
+              "color": "blue"
+            }
+          ],
+          "createdAt": 1750343334605,
+          "updatedAt": 1750343334570
+        }
+      ]
+    }
+  },
+  {
+    "name": "getAllResourceAllocations",
+    "input": {
+      "startDate": "2023-03-28",
+      "endDate": "2023-03-28",
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "includeFields": ["member"],
+      "includeAllFields": true,
+      "sortBy": "startDate",
+      "sortOrder": "ASC",
+      "match": "all",
+      "memberId.eq": "1",
+      "memberId.oneOf": "1,2,3",
+      "memberId.noneOf": "1,2,3",
+      "projectId.eq": "1",
+      "projectId.oneOf": "1,2,3",
+      "projectId.noneOf": "1,2,3",
+      "placeholderId.eq": "1",
+      "placeholderId.oneOf": "1,2,3",
+      "placeholderId.noneOf": "1,2,3"
+    },
+    "response": {
+      "data": [
+        {
+          "allocationId": 201,
+          "startDate": "2023-03-28",
+          "endDate": "2023-03-28",
+          "secondsPerDay": 45000,
+          "minutesPerDay": 750,
+          "hoursPerDay": 12,
+          "duration": {
+            "daysConsider": 1,
+            "seconds": 45000,
+            "minutes": 750,
+            "hours": 12
+          },
+          "allocationType": "SOFT",
+          "allocationFor": "TEAM_MEMBER",
+          "project": {
+            "projectId": 201,
+            "projectName": "Acme onboarding"
+          },
+          "tasks": [
+            {
+              "taskName": "Kickoff meeting",
+              "taskId": 201
+            }
+          ],
+          "member": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          },
+          "placeholder": {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          },
+          "createdAt": 1681319726000,
+          "updatedAt": 1681319726000,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "workId": 1,
+          "workType": "TASK",
+          "includeSaturday": true,
+          "includeSunday": true,
+          "fields": [
+            {
+              "fieldId": 201,
+              "fieldLabel": "Cost Center",
+              "fieldValue": {},
+              "fieldValueLabel": "1000"
+            }
+          ],
+          "budget": {
+            "budgetId": 201,
+            "budgetName": "Pre-sales"
+          }
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/resource-allocations?includeFields=role&sortBy=startDate&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "getAllTimeoffs",
+    "input": {
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "includeFields": ["note"],
+      "includeAllFields": true,
+      "sortBy": "startDate",
+      "sortOrder": "ASC",
+      "match": "all",
+      "startDate.gt": "2023-03-28",
+      "startDate.eq": "2023-03-28",
+      "startDate.lt": "2023-03-28",
+      "startDate.ge": "2023-03-28",
+      "startDate.le": "2023-03-28",
+      "endDate.gt": "2023-03-28",
+      "endDate.eq": "2023-03-28",
+      "endDate.lt": "2023-03-28",
+      "endDate.ge": "2023-03-28",
+      "endDate.le": "2023-03-28",
+      "type.eq": ["FULL_DAY"],
+      "type.oneOf": ["FULL_DAY"],
+      "type.noneOf": ["FULL_DAY"],
+      "userId.eq": "1",
+      "userId.oneOf": "1,2,3",
+      "userId.noneOf": "1,2",
+      "emailId.eq": "dev@rocketlane.com",
+      "emailId.oneOf": "dev@rocketlane.com,support@rocketlane.com",
+      "emailId.noneOf": "test@rocketlane.com,support@rocketlane.com"
+    },
+    "response": {
+      "data": [
+        {
+          "timeOffId": 201,
+          "user": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "note": "Sick leave.",
+          "startDate": "2023-03-28",
+          "endDate": "2023-03-28",
+          "durationInMinutes": 50,
+          "type": "FULL_DAY",
+          "notifyUsers": {
+            "projectOwners": false,
+            "others": [
+              {
+                "emailId": "john.doe@rocketlane.com",
+                "userId": 201,
+                "firstName": "John",
+                "lastName": "Doe"
+              }
+            ]
+          },
+          "createdAt": 1681319726000,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/time-offs?includeFields=note&sortBy=start&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "createTimeoff",
+    "input": {
+      "includeFields": ["note"],
+      "includeAllFields": true,
+      "body": {
+        "timeOffId": 201,
+        "user": {
+          "emailId": "john.doe@rocketlane.com",
+          "userId": 201,
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        "note": "Sick leave.",
+        "startDate": "2023-03-28",
+        "endDate": "2023-03-28",
+        "type": "FULL_DAY",
+        "notifyUsers": {
+          "projectOwners": false,
+          "others": [
+            {
+              "userId": 201,
+              "emailId": "john.doe@rocketlane.com"
+            }
+          ]
+        },
+        "durationInMinutes": 50
+      }
+    },
+    "response": {
+      "timeOffId": 201,
+      "user": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "note": "Sick leave.",
+      "startDate": "2023-03-28",
+      "endDate": "2023-03-28",
+      "durationInMinutes": 50,
+      "type": "FULL_DAY",
+      "notifyUsers": {
+        "projectOwners": false,
+        "others": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ]
+      },
+      "createdAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      }
+    }
+  },
+  {
+    "name": "getTimeoff",
+    "input": {
+      "timeOffId": 1,
+      "includeFields": ["note"],
+      "includeAllFields": true
+    },
+    "response": {
+      "timeOffId": 201,
+      "user": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "note": "Sick leave.",
+      "startDate": "2023-03-28",
+      "endDate": "2023-03-28",
+      "durationInMinutes": 50,
+      "type": "FULL_DAY",
+      "notifyUsers": {
+        "projectOwners": false,
+        "others": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ]
+      },
+      "createdAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      }
+    }
+  },
+  {
+    "name": "deleteTimeoff",
+    "input": {
+      "timeOffId": 1
+    },
+    "response": null
+  },
+  {
+    "name": "getField",
+    "input": {
+      "fieldId": 1,
+      "includeFields": ["options"],
+      "includeAllFields": true
+    },
+    "response": {
+      "fieldId": 201,
+      "fieldLabel": "MRR",
+      "fieldDescription": "Priority of the bug.",
+      "fieldType": "MULTI_LINE_TEXT",
+      "objectType": "TASK",
+      "fieldOptions": [
+        {
+          "optionValue": 2,
+          "optionLabel": "Todo",
+          "optionColor": "RED"
+        }
+      ],
+      "ratingScale": "THREE",
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "enabled": false,
+      "private": false
+    }
+  },
+  {
+    "name": "updateField",
+    "input": {
+      "fieldId": 1,
+      "includeFields": ["options"],
+      "includeAllFields": true,
+      "body": {
+        "fieldLabel": "Priority",
+        "fieldDescription": "Priority of the bug.",
+        "enabled": false,
+        "private": false
+      }
+    },
+    "response": {
+      "fieldId": 201,
+      "fieldLabel": "MRR",
+      "fieldDescription": "Priority of the bug.",
+      "fieldType": "MULTI_LINE_TEXT",
+      "objectType": "TASK",
+      "fieldOptions": [
+        {
+          "optionValue": 2,
+          "optionLabel": "Todo",
+          "optionColor": "RED"
+        }
+      ],
+      "ratingScale": "THREE",
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "enabled": false,
+      "private": false
+    }
+  },
+  {
+    "name": "deleteField",
+    "input": {
+      "fieldId": 1
+    },
+    "response": null
+  },
+  {
+    "name": "updateFieldOption",
+    "input": {
+      "fieldId": 1,
+      "body": {
+        "optionValue": 3,
+        "optionColor": "RED",
+        "optionLabel": "High"
+      }
+    },
+    "response": {
+      "optionValue": 2,
+      "optionLabel": "Todo",
+      "optionColor": "RED"
+    }
+  },
+  {
+    "name": "addFieldOption",
+    "input": {
+      "fieldId": 1,
+      "body": {
+        "optionColor": "RED",
+        "optionLabel": "High"
+      }
+    },
+    "response": {
+      "optionValue": 2,
+      "optionLabel": "Todo",
+      "optionColor": "RED"
+    }
+  },
+  {
+    "name": "getAllFields",
+    "input": {
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "includeFields": ["options"],
+      "includeAllFields": true,
+      "sortBy": "fieldLabel",
+      "sortOrder": "ASC",
+      "match": "all",
+      "createdAt.gt": 1625164800000,
+      "createdAt.eq": 1625164800000,
+      "createdAt.lt": 1625164800000,
+      "createdAt.ge": 1625164800000,
+      "createdAt.le": 1625164800000,
+      "updatedAt.gt": 1625164800000,
+      "updatedAt.eq": 1625164800000,
+      "updatedAt.lt": 1625164800000,
+      "updatedAt.ge": 1625164800000,
+      "updatedAt.le": 1625164800000,
+      "objectType.eq": "PROJECT",
+      "fieldType.eq": "TEXT",
+      "enabled.eq": true,
+      "private.eq": true
+    },
+    "response": {
+      "data": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldDescription": "Priority of the bug.",
+          "fieldType": "MULTI_LINE_TEXT",
+          "objectType": "TASK",
+          "fieldOptions": [
+            {
+              "optionValue": 2,
+              "optionLabel": "Todo",
+              "optionColor": "RED"
+            }
+          ],
+          "ratingScale": "THREE",
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "createdAt": 1681319726000,
+          "updatedAt": 1681319726000,
+          "enabled": false,
+          "private": false
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/fields?includeFields=category,minutes&billable.eq=false&sortBy=startDate&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100&assignee.any=1&startDate.gt=2022-01-02",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "createField",
+    "input": {
+      "includeFields": ["options"],
+      "includeAllFields": true,
+      "body": {
+        "fieldId": 201,
+        "fieldLabel": "Priority",
+        "fieldDescription": "Priority of the bug.",
+        "fieldType": "MULTI_LINE_TEXT",
+        "objectType": "PROJECT",
+        "fieldOptions": [
+          {
+            "optionColor": "RED",
+            "optionLabel": "High"
+          }
+        ],
+        "ratingScale": "THREE",
+        "enabled": false,
+        "private": false
+      }
+    },
+    "response": {
+      "fieldId": 201,
+      "fieldLabel": "MRR",
+      "fieldDescription": "Priority of the bug.",
+      "fieldType": "MULTI_LINE_TEXT",
+      "objectType": "TASK",
+      "fieldOptions": [
+        {
+          "optionValue": 2,
+          "optionLabel": "Todo",
+          "optionColor": "RED"
+        }
+      ],
+      "ratingScale": "THREE",
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "enabled": false,
+      "private": false
+    }
+  },
+  {
+    "name": "getTimeEntry",
+    "input": {
+      "timeEntryId": 1,
+      "includeFields": ["notes"],
+      "includeAllFields": true
+    },
+    "response": {
+      "timeEntryId": 201,
+      "date": "2023-03-28",
+      "minutes": 250,
+      "activityName": "Pre-Sales campaign",
+      "project": {
+        "projectName": "Acme Onboarding",
+        "projectId": 204
+      },
+      "task": {
+        "taskName": "Kickoff meeting",
+        "taskId": 201
+      },
+      "projectPhase": {
+        "phaseId": 201,
+        "phaseName": "Go live"
+      },
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "billable": true,
+      "user": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "notes": "Working on API integration",
+      "category": {
+        "categoryName": "Pre-sales",
+        "categoryId": 8
+      },
+      "sourceType": "GOOGLE_CALENDAR",
+      "status": "NOT_SUBMITTED",
+      "submittedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "submittedAt": 1681319726000,
+      "approvedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "approvedAt": 1681319726000,
+      "rejectedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "rejectedAt": 1681319726000,
+      "deleted": true,
+      "costRate": {
+        "rate": 40,
+        "currency": "USD"
+      },
+      "billRate": {
+        "rate": 40,
+        "currency": "EUR"
+      },
+      "budget": {
+        "budgetId": 201,
+        "budgetName": "Pre-sales"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ]
+    }
+  },
+  {
+    "name": "updateTimeEntry",
+    "input": {
+      "timeEntryId": 1,
+      "includeFields": ["notes"],
+      "includeAllFields": true,
+      "body": {
+        "timeEntryId": 201,
+        "date": "2023-03-28",
+        "minutes": 250,
+        "activityName": "Pre-Sales campaign",
+        "notes": "Working on API integration",
+        "category": {
+          "categoryName": "Pre-sales",
+          "categoryId": 8
+        },
+        "fields": [
+          {
+            "fieldId": 201,
+            "fieldLabel": "MRR",
+            "fieldValue": "fixture"
+          }
+        ],
+        "billable": true
+      }
+    },
+    "response": {
+      "timeEntryId": 201,
+      "date": "2023-03-28",
+      "minutes": 250,
+      "activityName": "Pre-Sales campaign",
+      "project": {
+        "projectName": "Acme Onboarding",
+        "projectId": 204
+      },
+      "task": {
+        "taskName": "Kickoff meeting",
+        "taskId": 201
+      },
+      "projectPhase": {
+        "phaseId": 201,
+        "phaseName": "Go live"
+      },
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "billable": true,
+      "user": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "notes": "Working on API integration",
+      "category": {
+        "categoryName": "Pre-sales",
+        "categoryId": 8
+      },
+      "sourceType": "GOOGLE_CALENDAR",
+      "status": "NOT_SUBMITTED",
+      "submittedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "submittedAt": 1681319726000,
+      "approvedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "approvedAt": 1681319726000,
+      "rejectedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "rejectedAt": 1681319726000,
+      "deleted": true,
+      "costRate": {
+        "rate": 40,
+        "currency": "USD"
+      },
+      "billRate": {
+        "rate": 40,
+        "currency": "EUR"
+      },
+      "budget": {
+        "budgetId": 201,
+        "budgetName": "Pre-sales"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ]
+    }
+  },
+  {
+    "name": "deleteTimeEntry",
+    "input": {
+      "timeEntryId": 1
+    },
+    "response": null
+  },
+  {
+    "name": "getAllTimeEntries",
+    "input": {
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "includeFields": ["notes"],
+      "sortBy": "minutes",
+      "sortOrder": "ASC",
+      "match": "all",
+      "date.gt": "2023-03-28",
+      "date.eq": "2023-03-28",
+      "date.lt": "2023-03-28",
+      "date.ge": "2023-03-28",
+      "date.le": "2023-03-28",
+      "project.eq": 201,
+      "projectId.eq": 201,
+      "task.eq": 202,
+      "taskId.eq": 202,
+      "taskId.oneOf": 202,
+      "taskId.noneOf": 202,
+      "projectPhase.eq": 210,
+      "category.eq": 5,
+      "user.eq": 5,
+      "emailId.eq": "john.doe@rocketlane.com",
+      "emailId.cn": "john.doe",
+      "emailId.nc": "john.doe",
+      "sourceType.eq": "GOOGLE_CALENDAR",
+      "activityName.eq": "Pre-Sales Campaign",
+      "activityName.cn": "Sales",
+      "activityName.nc": "Sales",
+      "approvalStatus.eq": "NOT_SUBMITTED",
+      "submittedBy.eq": 5,
+      "submittedAt.eq": 1625164800000,
+      "submittedAt.gt": 1625164800000,
+      "submittedAt.ge": 1625164800000,
+      "submittedAt.lt": 1625164800000,
+      "submittedAt.le": 1625164800000,
+      "approvedBy.eq": 5,
+      "approvedAt.eq": 1625164800000,
+      "approvedAt.gt": 1625164800000,
+      "approvedAt.ge": 1625164800000,
+      "approvedAt.lt": 1625164800000,
+      "approvedAt.le": 1625164800000,
+      "rejectedBy.eq": 5,
+      "rejectedAt.eq": 1625164800000,
+      "rejectedAt.gt": 1625164800000,
+      "rejectedAt.ge": 1625164800000,
+      "rejectedAt.lt": 1625164800000,
+      "rejectedAt.le": 1625164800000,
+      "billable.eq": true,
+      "includeDeleted.eq": false,
+      "createdAt.gt": 1625164800000,
+      "createdAt.eq": 1625164800000,
+      "createdAt.lt": 1625164800000,
+      "createdAt.ge": 1625164800000,
+      "createdAt.le": 1625164800000,
+      "updatedAt.gt": 1625164800000,
+      "updatedAt.eq": 1625164800000,
+      "updatedAt.lt": 1625164800000,
+      "updatedAt.ge": 1625164800000,
+      "updatedAt.le": 1625164800000
+    },
+    "response": {
+      "data": [
+        {
+          "timeEntryId": 201,
+          "date": "2023-03-28",
+          "minutes": 250,
+          "activityName": "Pre-Sales campaign",
+          "project": {
+            "projectName": "Acme Onboarding",
+            "projectId": 204
+          },
+          "task": {
+            "taskName": "Kickoff meeting",
+            "taskId": 201
+          },
+          "projectPhase": {
+            "phaseId": 201,
+            "phaseName": "Go live"
+          },
+          "createdAt": 1681319726000,
+          "updatedAt": 1681319726000,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "billable": true,
+          "user": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "notes": "Working on API integration",
+          "category": {
+            "categoryName": "Pre-sales",
+            "categoryId": 8
+          },
+          "sourceType": "GOOGLE_CALENDAR",
+          "status": "NOT_SUBMITTED",
+          "submittedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "submittedAt": 1681319726000,
+          "approvedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "approvedAt": 1681319726000,
+          "rejectedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "rejectedAt": 1681319726000,
+          "deleted": true,
+          "costRate": {
+            "rate": 40,
+            "currency": "USD"
+          },
+          "billRate": {
+            "rate": 40,
+            "currency": "EUR"
+          },
+          "budget": {
+            "budgetId": 201,
+            "budgetName": "Pre-sales"
+          },
+          "fields": [
+            {
+              "fieldId": 201,
+              "fieldLabel": "MRR",
+              "fieldValue": {},
+              "fieldValueLabel": "1000"
+            }
+          ]
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/time-entries?includeFields=category,minutes&billable.eq=false&sortBy=startDate&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100&assignee.any=1&startDate.gt=2022-01-02",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "createTimeEntry",
+    "input": {
+      "includeFields": ["notes"],
+      "includeAllFields": true,
+      "body": {
+        "timeEntryId": 201,
+        "date": "2023-03-28",
+        "minutes": 250,
+        "activityName": "Pre-Sales campaign",
+        "project": {
+          "projectName": "Acme Onboarding",
+          "projectId": 204
+        },
+        "task": {
+          "taskName": "Kickoff meeting",
+          "taskId": 201
+        },
+        "projectPhase": {
+          "phaseId": 201,
+          "phaseName": "Go live"
+        },
+        "billable": true,
+        "user": {
+          "emailId": "john.doe@rocketlane.com",
+          "userId": 201,
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        "notes": "Working on API integration",
+        "category": {
+          "categoryName": "Pre-sales",
+          "categoryId": 8
+        },
+        "budget": {
+          "budgetId": 201
+        },
+        "fields": [
+          {
+            "fieldId": 201,
+            "fieldLabel": "MRR",
+            "fieldValue": "fixture"
+          }
+        ]
+      }
+    },
+    "response": {
+      "timeEntryId": 201,
+      "date": "2023-03-28",
+      "minutes": 250,
+      "activityName": "Pre-Sales campaign",
+      "project": {
+        "projectName": "Acme Onboarding",
+        "projectId": 204
+      },
+      "task": {
+        "taskName": "Kickoff meeting",
+        "taskId": 201
+      },
+      "projectPhase": {
+        "phaseId": 201,
+        "phaseName": "Go live"
+      },
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "billable": true,
+      "user": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "notes": "Working on API integration",
+      "category": {
+        "categoryName": "Pre-sales",
+        "categoryId": 8
+      },
+      "sourceType": "GOOGLE_CALENDAR",
+      "status": "NOT_SUBMITTED",
+      "submittedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "submittedAt": 1681319726000,
+      "approvedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "approvedAt": 1681319726000,
+      "rejectedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "rejectedAt": 1681319726000,
+      "deleted": true,
+      "costRate": {
+        "rate": 40,
+        "currency": "USD"
+      },
+      "billRate": {
+        "rate": 40,
+        "currency": "EUR"
+      },
+      "budget": {
+        "budgetId": 201,
+        "budgetName": "Pre-sales"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ]
+    }
+  },
+  {
+    "name": "searchTimeEntries",
+    "input": {
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "includeFields": "notes,user",
+      "includeAllFields": true,
+      "sortBy": "minutes",
+      "sortOrder": "ASC",
+      "match": "all",
+      "date.gt": "2023-03-28",
+      "date.eq": "2023-03-28",
+      "date.lt": "2023-03-28",
+      "date.ge": "2023-03-28",
+      "date.le": "2023-03-28",
+      "project.eq": 201,
+      "task.eq": 202,
+      "projectPhase.eq": 210,
+      "category.eq": 5,
+      "user.eq": 5,
+      "sourceType.eq": "GOOGLE_CALENDAR",
+      "activityName.eq": "Pre-Sales Campaign",
+      "activityName.cn": "Sales",
+      "activityName.nc": "Sales",
+      "approvalStatus.eq": "NOT_SUBMITTED"
+    },
+    "response": {
+      "data": [
+        {
+          "timeEntryId": 201,
+          "date": "2023-03-28",
+          "minutes": 250,
+          "activityName": "Pre-Sales campaign",
+          "project": {
+            "projectName": "Acme Onboarding",
+            "projectId": 204
+          },
+          "task": {
+            "taskName": "Kickoff meeting",
+            "taskId": 201
+          },
+          "projectPhase": {
+            "phaseId": 201,
+            "phaseName": "Go live"
+          },
+          "createdAt": 1681319726000,
+          "updatedAt": 1681319726000,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "billable": true,
+          "user": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "notes": "Working on API integration",
+          "category": {
+            "categoryName": "Pre-sales",
+            "categoryId": 8
+          },
+          "sourceType": "GOOGLE_CALENDAR",
+          "status": "NOT_SUBMITTED",
+          "submittedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "submittedAt": 1681319726000,
+          "approvedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "approvedAt": 1681319726000,
+          "rejectedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "rejectedAt": 1681319726000,
+          "deleted": true,
+          "costRate": {
+            "rate": 40,
+            "currency": "USD"
+          },
+          "billRate": {
+            "rate": 40,
+            "currency": "EUR"
+          },
+          "budget": {
+            "budgetId": 201,
+            "budgetName": "Pre-sales"
+          },
+          "fields": [
+            {
+              "fieldId": 201,
+              "fieldLabel": "MRR",
+              "fieldValue": {},
+              "fieldValueLabel": "1000"
+            }
+          ]
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/time-entries?includeFields=category,minutes&billable.eq=false&sortBy=startDate&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100&assignee.any=1&startDate.gt=2022-01-02",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "getTimeEntryCategories",
+    "input": {
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002"
+    },
+    "response": {
+      "data": [
+        {
+          "categoryName": "Pre-sales",
+          "categoryId": 8
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/time-entries/categories?includeFields=category,minutes&billable.eq=false&sortBy=startDate&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100&assignee.any=1&startDate.gt=2022-01-02",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "getSpaceDocument",
+    "input": {
+      "spaceDocumentId": 1
+    },
+    "response": {
+      "spaceDocumentId": 201,
+      "spaceDocumentName": "Sample file",
+      "space": {
+        "spaceId": 201,
+        "spaceName": "General space"
+      },
+      "spaceDocumentType": "ROCKETLANE_DOCUMENT",
+      "url": "https://www.google.com",
+      "source": {
+        "templateId": 201,
+        "templateName": "Meeting Notes"
+      },
+      "createdAt": 1680616174929,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedAt": 1680616174929,
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "private": true
+    }
+  },
+  {
+    "name": "updateSpaceDocument",
+    "input": {
+      "spaceDocumentId": 1,
+      "body": {
+        "spaceDocumentId": 201,
+        "spaceDocumentName": "Sample file",
+        "url": "https://www.google.com"
+      }
+    },
+    "response": {
+      "spaceDocumentId": 201,
+      "spaceDocumentName": "Sample file",
+      "space": {
+        "spaceId": 201,
+        "spaceName": "General space"
+      },
+      "spaceDocumentType": "ROCKETLANE_DOCUMENT",
+      "url": "https://www.google.com",
+      "source": {
+        "templateId": 201,
+        "templateName": "Meeting Notes"
+      },
+      "createdAt": 1680616174929,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedAt": 1680616174929,
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "private": true
+    }
+  },
+  {
+    "name": "deleteSpaceDocument",
+    "input": {
+      "spaceDocumentId": 1
+    },
+    "response": null
+  },
+  {
+    "name": "getAllSpaceDocuments",
+    "input": {
+      "projectId": 1,
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "sortBy": "spaceTabName",
+      "sortOrder": "ASC",
+      "match": "all",
+      "spaceDocumentName.eq": "Stark Onboarding",
+      "spaceDocumentName.cn": "Stark Onboarding",
+      "spaceDocumentName.nc": "Stark Onboarding",
+      "createdAt.gt": 1625164800000,
+      "createdAt.eq": 1625164800000,
+      "createdAt.lt": 1625164800000,
+      "createdAt.ge": 1625164800000,
+      "createdAt.le": 1625164800000,
+      "updatedAt.gt": 1625164800000,
+      "updatedAt.eq": 1625164800000,
+      "updatedAt.lt": 1625164800000,
+      "updatedAt.ge": 1625164800000,
+      "updatedAt.le": 1625164800000,
+      "spaceId.eq": 10000
+    },
+    "response": {
+      "data": [
+        {
+          "spaceDocumentId": 201,
+          "spaceDocumentName": "Sample file",
+          "space": {
+            "spaceId": 201,
+            "spaceName": "General space"
+          },
+          "spaceDocumentType": "ROCKETLANE_DOCUMENT",
+          "url": "https://www.google.com",
+          "source": {
+            "templateId": 201,
+            "templateName": "Meeting Notes"
+          },
+          "createdAt": 1680616174929,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "updatedAt": 1680616174929,
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "private": true
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/space-documents?includeFields=category,minutes&billable.eq=false&sortBy=startDate&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100&assignee.any=1&startDate.gt=2022-01-02",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "createSpaceDocument",
+    "input": {
+      "body": {
+        "spaceDocumentId": 201,
+        "spaceDocumentName": "Sample file",
+        "space": {
+          "spaceId": 201,
+          "spaceName": "General space"
+        },
+        "spaceDocumentType": "ROCKETLANE_DOCUMENT",
+        "url": "https://www.google.com",
+        "source": {
+          "templateId": 201,
+          "templateName": "Meeting Notes"
+        }
+      }
+    },
+    "response": {
+      "spaceDocumentId": 201,
+      "spaceDocumentName": "Sample file",
+      "space": {
+        "spaceId": 201,
+        "spaceName": "General space"
+      },
+      "spaceDocumentType": "ROCKETLANE_DOCUMENT",
+      "url": "https://www.google.com",
+      "source": {
+        "templateId": 201,
+        "templateName": "Meeting Notes"
+      },
+      "createdAt": 1680616174929,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedAt": 1680616174929,
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "private": true
+    }
+  },
+  {
+    "name": "updateBudgetMilestoneRevenueRecognitionConfigs",
+    "input": {
+      "budgetId": 101,
+      "includeFields": ["manualRevenueRecognitionConfigs"],
+      "includeAllFields": true,
+      "body": {
+        "milestoneRevenueRecognitionConfigs": [
+          {
+            "sourceType": "TASK",
+            "sourceId": 1001,
+            "recognisedRevenue": 1000,
+            "recognisedPercentage": 10
+          }
+        ]
+      }
+    },
+    "response": {
+      "budgetId": 101,
+      "projectId": 42,
+      "projectName": "Acme Implementation",
+      "budgetName": "FY 2024 Services",
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "currency": "USD",
+      "billingType": "FIXED_FEE",
+      "revenueRecognitionType": "TRACKED_HOURS_BY_PERIOD_HOURS",
+      "customRevenueRecognitionConfigId": 101,
+      "budgetAmount": 1,
+      "budgetHours": 1.65,
+      "timeAndMaterialContract": {
+        "rateCard": {
+          "rateCardId": 21,
+          "rateCardName": "US Project rate"
+        }
+      },
+      "subscriptionContract": {
+        "subscriptionFrequency": "MONTHLY",
+        "subscriptionStartDate": "2023-03-28",
+        "periodMinutes": 60,
+        "periodBudget": 10000,
+        "noOfPeriods": 10
+      },
+      "budgetFinancialsMetrics": {
+        "actualRevenue": 10000,
+        "estimatedRevenue": 200000,
+        "actualRevenueInAccountCurrency": 10000,
+        "estimatedRevenueInAccountCurrency": 200000,
+        "actualTimeCost": 200,
+        "estimatedTimeCost": 200,
+        "actualTimeCostInAccountCurrency": 200,
+        "estimatedTimeCostInAccountCurrency": 200,
+        "actualExpenseCost": 200,
+        "estimatedExpenseCost": 200,
+        "actualExpenseCostInAccountCurrency": 200,
+        "estimatedExpenseCostInAccountCurrency": 200,
+        "actualCost": 200,
+        "estimatedCost": 200,
+        "actualCostInAccountCurrency": 200,
+        "estimatedCostInAccountCurrency": 200,
+        "trackedMinutes": 200,
+        "remainingMinutes": 200,
+        "allocatedMinutes": 200,
+        "billableAllocatedMinutes": 200,
+        "nonBillableAllocatedMinutes": 200,
+        "billableTrackedMinutes": 200,
+        "nonBillableTrackedMinutes": 200,
+        "actualProfit": 200,
+        "estimatedProfit": 200,
+        "actualProfitInAccountCurrency": 200,
+        "estimatedProfitInAccountCurrency": 200,
+        "actualProfitMargin": 200,
+        "estimatedProfitMargin": 200,
+        "actualProfitMarginInAccountCurrency": 200,
+        "estimatedProfitMarginInAccountCurrency": 200,
+        "percentageBudgetedHoursConsumed": 200,
+        "percentageBudgetConsumed": 200,
+        "estimateAtCompletion": 200,
+        "estimationToCompletionInHours": 200
+      },
+      "manualRevenueRecognitionConfigs": [
+        {
+          "manualRevenueRecognitionConfigId": 1001,
+          "recognitionDate": "2026-04-01",
+          "recognisedRevenue": 1000,
+          "recognisedPercentage": 10
+        }
+      ],
+      "milestoneRevenueRecognitionConfigs": [
+        {
+          "milestoneRevenueRecognitionConfigId": 1001,
+          "sourceType": "TASK",
+          "sourceId": 2001,
+          "recognisedRevenue": 1000,
+          "recognisedPercentage": 10
+        }
+      ],
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "isDefault": false
+    }
+  },
+  {
+    "name": "updateBudgetManualRevenueRecognitionConfigs",
+    "input": {
+      "budgetId": 101,
+      "includeFields": ["manualRevenueRecognitionConfigs"],
+      "includeAllFields": true,
+      "body": {
+        "manualRevenueRecognitionConfigs": [
+          {
+            "recognitionDate": "2026-04-01",
+            "recognisedRevenue": 1000,
+            "recognisedPercentage": 10
+          }
+        ]
+      }
+    },
+    "response": {
+      "budgetId": 101,
+      "projectId": 42,
+      "projectName": "Acme Implementation",
+      "budgetName": "FY 2024 Services",
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "currency": "USD",
+      "billingType": "FIXED_FEE",
+      "revenueRecognitionType": "TRACKED_HOURS_BY_PERIOD_HOURS",
+      "customRevenueRecognitionConfigId": 101,
+      "budgetAmount": 1,
+      "budgetHours": 1.65,
+      "timeAndMaterialContract": {
+        "rateCard": {
+          "rateCardId": 21,
+          "rateCardName": "US Project rate"
+        }
+      },
+      "subscriptionContract": {
+        "subscriptionFrequency": "MONTHLY",
+        "subscriptionStartDate": "2023-03-28",
+        "periodMinutes": 60,
+        "periodBudget": 10000,
+        "noOfPeriods": 10
+      },
+      "budgetFinancialsMetrics": {
+        "actualRevenue": 10000,
+        "estimatedRevenue": 200000,
+        "actualRevenueInAccountCurrency": 10000,
+        "estimatedRevenueInAccountCurrency": 200000,
+        "actualTimeCost": 200,
+        "estimatedTimeCost": 200,
+        "actualTimeCostInAccountCurrency": 200,
+        "estimatedTimeCostInAccountCurrency": 200,
+        "actualExpenseCost": 200,
+        "estimatedExpenseCost": 200,
+        "actualExpenseCostInAccountCurrency": 200,
+        "estimatedExpenseCostInAccountCurrency": 200,
+        "actualCost": 200,
+        "estimatedCost": 200,
+        "actualCostInAccountCurrency": 200,
+        "estimatedCostInAccountCurrency": 200,
+        "trackedMinutes": 200,
+        "remainingMinutes": 200,
+        "allocatedMinutes": 200,
+        "billableAllocatedMinutes": 200,
+        "nonBillableAllocatedMinutes": 200,
+        "billableTrackedMinutes": 200,
+        "nonBillableTrackedMinutes": 200,
+        "actualProfit": 200,
+        "estimatedProfit": 200,
+        "actualProfitInAccountCurrency": 200,
+        "estimatedProfitInAccountCurrency": 200,
+        "actualProfitMargin": 200,
+        "estimatedProfitMargin": 200,
+        "actualProfitMarginInAccountCurrency": 200,
+        "estimatedProfitMarginInAccountCurrency": 200,
+        "percentageBudgetedHoursConsumed": 200,
+        "percentageBudgetConsumed": 200,
+        "estimateAtCompletion": 200,
+        "estimationToCompletionInHours": 200
+      },
+      "manualRevenueRecognitionConfigs": [
+        {
+          "manualRevenueRecognitionConfigId": 1001,
+          "recognitionDate": "2026-04-01",
+          "recognisedRevenue": 1000,
+          "recognisedPercentage": 10
+        }
+      ],
+      "milestoneRevenueRecognitionConfigs": [
+        {
+          "milestoneRevenueRecognitionConfigId": 1001,
+          "sourceType": "TASK",
+          "sourceId": 2001,
+          "recognisedRevenue": 1000,
+          "recognisedPercentage": 10
+        }
+      ],
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "isDefault": false
+    }
+  },
+  {
+    "name": "getBudget",
+    "input": {
+      "budgetId": 101,
+      "includeFields": ["manualRevenueRecognitionConfigs"],
+      "includeAllFields": true
+    },
+    "response": {
+      "budgetId": 101,
+      "projectId": 42,
+      "projectName": "Acme Implementation",
+      "budgetName": "FY 2024 Services",
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "currency": "USD",
+      "billingType": "FIXED_FEE",
+      "revenueRecognitionType": "TRACKED_HOURS_BY_PERIOD_HOURS",
+      "customRevenueRecognitionConfigId": 101,
+      "budgetAmount": 1,
+      "budgetHours": 1.65,
+      "timeAndMaterialContract": {
+        "rateCard": {
+          "rateCardId": 21,
+          "rateCardName": "US Project rate"
+        }
+      },
+      "subscriptionContract": {
+        "subscriptionFrequency": "MONTHLY",
+        "subscriptionStartDate": "2023-03-28",
+        "periodMinutes": 60,
+        "periodBudget": 10000,
+        "noOfPeriods": 10
+      },
+      "budgetFinancialsMetrics": {
+        "actualRevenue": 10000,
+        "estimatedRevenue": 200000,
+        "actualRevenueInAccountCurrency": 10000,
+        "estimatedRevenueInAccountCurrency": 200000,
+        "actualTimeCost": 200,
+        "estimatedTimeCost": 200,
+        "actualTimeCostInAccountCurrency": 200,
+        "estimatedTimeCostInAccountCurrency": 200,
+        "actualExpenseCost": 200,
+        "estimatedExpenseCost": 200,
+        "actualExpenseCostInAccountCurrency": 200,
+        "estimatedExpenseCostInAccountCurrency": 200,
+        "actualCost": 200,
+        "estimatedCost": 200,
+        "actualCostInAccountCurrency": 200,
+        "estimatedCostInAccountCurrency": 200,
+        "trackedMinutes": 200,
+        "remainingMinutes": 200,
+        "allocatedMinutes": 200,
+        "billableAllocatedMinutes": 200,
+        "nonBillableAllocatedMinutes": 200,
+        "billableTrackedMinutes": 200,
+        "nonBillableTrackedMinutes": 200,
+        "actualProfit": 200,
+        "estimatedProfit": 200,
+        "actualProfitInAccountCurrency": 200,
+        "estimatedProfitInAccountCurrency": 200,
+        "actualProfitMargin": 200,
+        "estimatedProfitMargin": 200,
+        "actualProfitMarginInAccountCurrency": 200,
+        "estimatedProfitMarginInAccountCurrency": 200,
+        "percentageBudgetedHoursConsumed": 200,
+        "percentageBudgetConsumed": 200,
+        "estimateAtCompletion": 200,
+        "estimationToCompletionInHours": 200
+      },
+      "manualRevenueRecognitionConfigs": [
+        {
+          "manualRevenueRecognitionConfigId": 1001,
+          "recognitionDate": "2026-04-01",
+          "recognisedRevenue": 1000,
+          "recognisedPercentage": 10
+        }
+      ],
+      "milestoneRevenueRecognitionConfigs": [
+        {
+          "milestoneRevenueRecognitionConfigId": 1001,
+          "sourceType": "TASK",
+          "sourceId": 2001,
+          "recognisedRevenue": 1000,
+          "recognisedPercentage": 10
+        }
+      ],
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "isDefault": false
+    }
+  },
+  {
+    "name": "updateBudget",
+    "input": {
+      "budgetId": 101,
+      "includeFields": ["manualRevenueRecognitionConfigs"],
+      "includeAllFields": true,
+      "body": {
+        "budgetId": 101,
+        "budgetName": "FY 2024 Services",
+        "startDate": "2024-01-01",
+        "endDate": "2024-12-31",
+        "status": {
+          "value": 2
+        },
+        "billingType": "TIME_AND_MATERIAL",
+        "revenueRecognitionType": "TRACKED_HOURS_BY_PERIOD_HOURS",
+        "customRevenueRecognitionConfigId": 101,
+        "budgetAmount": 100000,
+        "budgetHours": 1.65,
+        "timeAndMaterialContract": {
+          "rateCard": {
+            "rateCardId": 21
+          }
+        },
+        "subscriptionContract": {
+          "subscriptionFrequency": "MONTHLY",
+          "subscriptionStartDate": "2023-03-28",
+          "periodMinutes": 60,
+          "periodBudget": 10000,
+          "noOfPeriods": 10
+        },
+        "fields": [
+          {
+            "fieldId": 201,
+            "fieldValue": "fixture"
+          }
+        ]
+      }
+    },
+    "response": {
+      "budgetId": 101,
+      "projectId": 42,
+      "projectName": "Acme Implementation",
+      "budgetName": "FY 2024 Services",
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "currency": "USD",
+      "billingType": "FIXED_FEE",
+      "revenueRecognitionType": "TRACKED_HOURS_BY_PERIOD_HOURS",
+      "customRevenueRecognitionConfigId": 101,
+      "budgetAmount": 1,
+      "budgetHours": 1.65,
+      "timeAndMaterialContract": {
+        "rateCard": {
+          "rateCardId": 21,
+          "rateCardName": "US Project rate"
+        }
+      },
+      "subscriptionContract": {
+        "subscriptionFrequency": "MONTHLY",
+        "subscriptionStartDate": "2023-03-28",
+        "periodMinutes": 60,
+        "periodBudget": 10000,
+        "noOfPeriods": 10
+      },
+      "budgetFinancialsMetrics": {
+        "actualRevenue": 10000,
+        "estimatedRevenue": 200000,
+        "actualRevenueInAccountCurrency": 10000,
+        "estimatedRevenueInAccountCurrency": 200000,
+        "actualTimeCost": 200,
+        "estimatedTimeCost": 200,
+        "actualTimeCostInAccountCurrency": 200,
+        "estimatedTimeCostInAccountCurrency": 200,
+        "actualExpenseCost": 200,
+        "estimatedExpenseCost": 200,
+        "actualExpenseCostInAccountCurrency": 200,
+        "estimatedExpenseCostInAccountCurrency": 200,
+        "actualCost": 200,
+        "estimatedCost": 200,
+        "actualCostInAccountCurrency": 200,
+        "estimatedCostInAccountCurrency": 200,
+        "trackedMinutes": 200,
+        "remainingMinutes": 200,
+        "allocatedMinutes": 200,
+        "billableAllocatedMinutes": 200,
+        "nonBillableAllocatedMinutes": 200,
+        "billableTrackedMinutes": 200,
+        "nonBillableTrackedMinutes": 200,
+        "actualProfit": 200,
+        "estimatedProfit": 200,
+        "actualProfitInAccountCurrency": 200,
+        "estimatedProfitInAccountCurrency": 200,
+        "actualProfitMargin": 200,
+        "estimatedProfitMargin": 200,
+        "actualProfitMarginInAccountCurrency": 200,
+        "estimatedProfitMarginInAccountCurrency": 200,
+        "percentageBudgetedHoursConsumed": 200,
+        "percentageBudgetConsumed": 200,
+        "estimateAtCompletion": 200,
+        "estimationToCompletionInHours": 200
+      },
+      "manualRevenueRecognitionConfigs": [
+        {
+          "manualRevenueRecognitionConfigId": 1001,
+          "recognitionDate": "2026-04-01",
+          "recognisedRevenue": 1000,
+          "recognisedPercentage": 10
+        }
+      ],
+      "milestoneRevenueRecognitionConfigs": [
+        {
+          "milestoneRevenueRecognitionConfigId": 1001,
+          "sourceType": "TASK",
+          "sourceId": 2001,
+          "recognisedRevenue": 1000,
+          "recognisedPercentage": 10
+        }
+      ],
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "isDefault": false
+    }
+  },
+  {
+    "name": "deleteBudget",
+    "input": {
+      "budgetId": 101
+    },
+    "response": null
+  },
+  {
+    "name": "searchBudgets",
+    "input": {
+      "budgetId.eq": "101",
+      "budgetId.oneOf": "101,102",
+      "budgetId.noneOf": "101,102",
+      "projectId.eq": "42",
+      "projectId.oneOf": "42,43",
+      "projectId.noneOf": "42,43",
+      "status.eq": "1",
+      "status.oneOf": "1,2",
+      "status.noneOf": "3",
+      "billingType.eq": "TIME_AND_MATERIAL",
+      "billingType.oneOf": "TIME_AND_MATERIAL,FIXED_FEE",
+      "billingType.noneOf": "NON_BILLABLE",
+      "revenueRecognitionType.eq": "TRACKED_HOURS_BY_PROJECT_HOURS",
+      "revenueRecognitionType.oneOf": "TRACKED_HOURS_BY_PROJECT_HOURS,MILESTONE_BASED",
+      "revenueRecognitionType.noneOf": "MANUAL",
+      "budgetAmount.eq": "100000",
+      "budgetAmount.gt": "50000",
+      "budgetAmount.ge": "50000",
+      "budgetAmount.lt": "200000",
+      "budgetAmount.le": "200000",
+      "budgetHours.eq": "80",
+      "budgetHours.gt": "40",
+      "budgetHours.ge": "40",
+      "budgetHours.lt": "160",
+      "budgetHours.le": "160",
+      "budgetName.eq": "FY 2024",
+      "budgetName.cn": "FY",
+      "budgetName.nc": "Draft",
+      "startDate.eq": "2023-03-28",
+      "startDate.gt": "2023-03-28",
+      "startDate.ge": "2023-03-28",
+      "startDate.lt": "2023-03-28",
+      "startDate.le": "2023-03-28",
+      "endDate.eq": "2023-03-28",
+      "endDate.gt": "2023-03-28",
+      "endDate.ge": "2023-03-28",
+      "endDate.lt": "2023-03-28",
+      "endDate.le": "2023-03-28",
+      "createdAt.gt": 1625164800000,
+      "createdAt.eq": 1625164800000,
+      "createdAt.lt": 1625164800000,
+      "createdAt.ge": 1625164800000,
+      "createdAt.le": 1625164800000,
+      "companyId.eq": "1",
+      "companyId.oneOf": "1,2,3",
+      "companyId.noneOf": "1,2,3",
+      "isDefault.eq": "True",
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "includeFields": ["manualRevenueRecognitionConfigs"],
+      "includeAllFields": true,
+      "sortBy": "createdAt",
+      "sortOrder": "ASC",
+      "match": "all"
+    },
+    "response": {
+      "data": [
+        {
+          "budgetId": 101,
+          "projectId": 42,
+          "projectName": "Acme Implementation",
+          "budgetName": "FY 2024 Services",
+          "startDate": "2024-01-01",
+          "endDate": "2024-12-31",
+          "status": {
+            "value": 2,
+            "label": "In progress"
+          },
+          "currency": "USD",
+          "billingType": "FIXED_FEE",
+          "revenueRecognitionType": "TRACKED_HOURS_BY_PERIOD_HOURS",
+          "customRevenueRecognitionConfigId": 101,
+          "budgetAmount": 1,
+          "budgetHours": 1.65,
+          "timeAndMaterialContract": {
+            "rateCard": {
+              "rateCardId": 21,
+              "rateCardName": "US Project rate"
+            }
+          },
+          "subscriptionContract": {
+            "subscriptionFrequency": "MONTHLY",
+            "subscriptionStartDate": "2023-03-28",
+            "periodMinutes": 60,
+            "periodBudget": 10000,
+            "noOfPeriods": 10
+          },
+          "budgetFinancialsMetrics": {
+            "actualRevenue": 10000,
+            "estimatedRevenue": 200000,
+            "actualRevenueInAccountCurrency": 10000,
+            "estimatedRevenueInAccountCurrency": 200000,
+            "actualTimeCost": 200,
+            "estimatedTimeCost": 200,
+            "actualTimeCostInAccountCurrency": 200,
+            "estimatedTimeCostInAccountCurrency": 200,
+            "actualExpenseCost": 200,
+            "estimatedExpenseCost": 200,
+            "actualExpenseCostInAccountCurrency": 200,
+            "estimatedExpenseCostInAccountCurrency": 200,
+            "actualCost": 200,
+            "estimatedCost": 200,
+            "actualCostInAccountCurrency": 200,
+            "estimatedCostInAccountCurrency": 200,
+            "trackedMinutes": 200,
+            "remainingMinutes": 200,
+            "allocatedMinutes": 200,
+            "billableAllocatedMinutes": 200,
+            "nonBillableAllocatedMinutes": 200,
+            "billableTrackedMinutes": 200,
+            "nonBillableTrackedMinutes": 200,
+            "actualProfit": 200,
+            "estimatedProfit": 200,
+            "actualProfitInAccountCurrency": 200,
+            "estimatedProfitInAccountCurrency": 200,
+            "actualProfitMargin": 200,
+            "estimatedProfitMargin": 200,
+            "actualProfitMarginInAccountCurrency": 200,
+            "estimatedProfitMarginInAccountCurrency": 200,
+            "percentageBudgetedHoursConsumed": 200,
+            "percentageBudgetConsumed": 200,
+            "estimateAtCompletion": 200,
+            "estimationToCompletionInHours": 200
+          },
+          "manualRevenueRecognitionConfigs": [
+            {
+              "manualRevenueRecognitionConfigId": 1001,
+              "recognitionDate": "2026-04-01",
+              "recognisedRevenue": 1000,
+              "recognisedPercentage": 10
+            }
+          ],
+          "milestoneRevenueRecognitionConfigs": [
+            {
+              "milestoneRevenueRecognitionConfigId": 1001,
+              "sourceType": "TASK",
+              "sourceId": 2001,
+              "recognisedRevenue": 1000,
+              "recognisedPercentage": 10
+            }
+          ],
+          "createdAt": 1681319726000,
+          "updatedAt": 1681319726000,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "fields": [
+            {
+              "fieldId": 201,
+              "fieldLabel": "MRR",
+              "fieldValue": {},
+              "fieldValueLabel": "1000"
+            }
+          ],
+          "isDefault": false
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 250,
+        "nextPage": "https://api.rocketlane.com/api/1.0/budgets?pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&pageSize=100",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "createBudget",
+    "input": {
+      "includeFields": ["manualRevenueRecognitionConfigs"],
+      "includeAllFields": true,
+      "body": {
+        "projectId": 42,
+        "budgetName": "FY 2024 Services",
+        "startDate": "2024-01-01",
+        "endDate": "2024-12-31",
+        "status": {
+          "value": 2
+        },
+        "billingType": "TIME_AND_MATERIAL",
+        "revenueRecognitionType": "TRACKED_HOURS_BY_PERIOD_HOURS",
+        "customRevenueRecognitionConfigId": 101,
+        "budgetAmount": 100000,
+        "budgetHours": 1.65,
+        "timeAndMaterialContract": {
+          "rateCard": {
+            "rateCardId": 21
+          }
+        },
+        "subscriptionContract": {
+          "subscriptionFrequency": "MONTHLY",
+          "subscriptionStartDate": "2023-03-28",
+          "periodMinutes": 60,
+          "periodBudget": 10000,
+          "noOfPeriods": 10
+        },
+        "fields": [
+          {
+            "fieldId": 201,
+            "fieldValue": "fixture"
+          }
+        ]
+      }
+    },
+    "response": {
+      "budgetId": 101,
+      "projectId": 42,
+      "projectName": "Acme Implementation",
+      "budgetName": "FY 2024 Services",
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "currency": "USD",
+      "billingType": "FIXED_FEE",
+      "revenueRecognitionType": "TRACKED_HOURS_BY_PERIOD_HOURS",
+      "customRevenueRecognitionConfigId": 101,
+      "budgetAmount": 1,
+      "budgetHours": 1.65,
+      "timeAndMaterialContract": {
+        "rateCard": {
+          "rateCardId": 21,
+          "rateCardName": "US Project rate"
+        }
+      },
+      "subscriptionContract": {
+        "subscriptionFrequency": "MONTHLY",
+        "subscriptionStartDate": "2023-03-28",
+        "periodMinutes": 60,
+        "periodBudget": 10000,
+        "noOfPeriods": 10
+      },
+      "budgetFinancialsMetrics": {
+        "actualRevenue": 10000,
+        "estimatedRevenue": 200000,
+        "actualRevenueInAccountCurrency": 10000,
+        "estimatedRevenueInAccountCurrency": 200000,
+        "actualTimeCost": 200,
+        "estimatedTimeCost": 200,
+        "actualTimeCostInAccountCurrency": 200,
+        "estimatedTimeCostInAccountCurrency": 200,
+        "actualExpenseCost": 200,
+        "estimatedExpenseCost": 200,
+        "actualExpenseCostInAccountCurrency": 200,
+        "estimatedExpenseCostInAccountCurrency": 200,
+        "actualCost": 200,
+        "estimatedCost": 200,
+        "actualCostInAccountCurrency": 200,
+        "estimatedCostInAccountCurrency": 200,
+        "trackedMinutes": 200,
+        "remainingMinutes": 200,
+        "allocatedMinutes": 200,
+        "billableAllocatedMinutes": 200,
+        "nonBillableAllocatedMinutes": 200,
+        "billableTrackedMinutes": 200,
+        "nonBillableTrackedMinutes": 200,
+        "actualProfit": 200,
+        "estimatedProfit": 200,
+        "actualProfitInAccountCurrency": 200,
+        "estimatedProfitInAccountCurrency": 200,
+        "actualProfitMargin": 200,
+        "estimatedProfitMargin": 200,
+        "actualProfitMarginInAccountCurrency": 200,
+        "estimatedProfitMarginInAccountCurrency": 200,
+        "percentageBudgetedHoursConsumed": 200,
+        "percentageBudgetConsumed": 200,
+        "estimateAtCompletion": 200,
+        "estimationToCompletionInHours": 200
+      },
+      "manualRevenueRecognitionConfigs": [
+        {
+          "manualRevenueRecognitionConfigId": 1001,
+          "recognitionDate": "2026-04-01",
+          "recognisedRevenue": 1000,
+          "recognisedPercentage": 10
+        }
+      ],
+      "milestoneRevenueRecognitionConfigs": [
+        {
+          "milestoneRevenueRecognitionConfigId": 1001,
+          "sourceType": "TASK",
+          "sourceId": 2001,
+          "recognisedRevenue": 1000,
+          "recognisedPercentage": 10
+        }
+      ],
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "isDefault": false
+    }
+  },
+  {
+    "name": "getTask",
+    "input": {
+      "taskId": 1,
+      "includeFields": ["startDateActual"],
+      "includeAllFields": true
+    },
+    "response": {
+      "taskId": 201,
+      "taskName": "Kick off",
+      "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "archived": false,
+      "effortInMinutes": 3000,
+      "progress": 50,
+      "atRisk": true,
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "revenueRecognitionTask": true,
+      "revenueRecognitionDetails": [
+        {
+          "budgetId": 101,
+          "budgetName": "Budget A",
+          "recognisedPercentage": 50,
+          "recognisedAmount": 5000
+        }
+      ],
+      "revRecRecognisedPercentage": 50,
+      "revRecRecognisedAmount": 5000,
+      "totalAllocatedMins": 2430,
+      "startDateActual": "2023-03-28",
+      "dueDateActual": "2023-03-28",
+      "type": "MILESTONE",
+      "phase": {
+        "phaseId": 201,
+        "phaseName": "Go live"
+      },
+      "assignees": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ]
+      },
+      "followers": {
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ],
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ]
+      },
+      "dependencies": [
+        {
+          "taskId": 201,
+          "taskName": "Kick off"
+        }
+      ],
+      "parent": {
+        "taskId": 201,
+        "taskName": "Kick off"
+      },
+      "externalReferenceId": "task_8171",
+      "billable": true,
+      "timeEntryCategory": {
+        "categoryId": 201,
+        "categoryName": "Pre-sales"
+      },
+      "budgets": [
+        {
+          "budgetId": 201,
+          "budgetName": "Pre-sales"
+        }
+      ],
+      "csatEnabled": true,
+      "priority": {
+        "value": 2,
+        "label": "High"
+      },
+      "taskPrivateNote": "fixture",
+      "private": false
+    }
+  },
+  {
+    "name": "updateTask",
+    "input": {
+      "taskId": 1,
+      "includeFields": ["startDateActual"],
+      "includeAllFields": true,
+      "body": {
+        "taskId": 201,
+        "taskName": "Kick off",
+        "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+        "taskPrivateNote": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+        "startDate": "2023-03-28",
+        "dueDate": "2023-03-28",
+        "effortInMinutes": 3000,
+        "progress": 50,
+        "atRisk": true,
+        "type": "MILESTONE",
+        "fields": [
+          {
+            "fieldId": 201,
+            "fieldLabel": "MRR",
+            "fieldValue": "fixture"
+          }
+        ],
+        "status": {
+          "value": 2
+        },
+        "externalReferenceId": "task_8171",
+        "private": false
+      }
+    },
+    "response": {
+      "taskId": 201,
+      "taskName": "Kick off",
+      "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "archived": false,
+      "effortInMinutes": 3000,
+      "progress": 50,
+      "atRisk": true,
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "revenueRecognitionTask": true,
+      "revenueRecognitionDetails": [
+        {
+          "budgetId": 101,
+          "budgetName": "Budget A",
+          "recognisedPercentage": 50,
+          "recognisedAmount": 5000
+        }
+      ],
+      "revRecRecognisedPercentage": 50,
+      "revRecRecognisedAmount": 5000,
+      "totalAllocatedMins": 2430,
+      "startDateActual": "2023-03-28",
+      "dueDateActual": "2023-03-28",
+      "type": "MILESTONE",
+      "phase": {
+        "phaseId": 201,
+        "phaseName": "Go live"
+      },
+      "assignees": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ]
+      },
+      "followers": {
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ],
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ]
+      },
+      "dependencies": [
+        {
+          "taskId": 201,
+          "taskName": "Kick off"
+        }
+      ],
+      "parent": {
+        "taskId": 201,
+        "taskName": "Kick off"
+      },
+      "externalReferenceId": "task_8171",
+      "billable": true,
+      "timeEntryCategory": {
+        "categoryId": 201,
+        "categoryName": "Pre-sales"
+      },
+      "budgets": [
+        {
+          "budgetId": 201,
+          "budgetName": "Pre-sales"
+        }
+      ],
+      "csatEnabled": true,
+      "priority": {
+        "value": 2,
+        "label": "High"
+      },
+      "taskPrivateNote": "fixture",
+      "private": false
+    }
+  },
+  {
+    "name": "deleteTask",
+    "input": {
+      "taskId": 1
+    },
+    "response": null
+  },
+  {
+    "name": "removeFollowersFromTask",
+    "input": {
+      "taskId": 1,
+      "body": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ]
+      }
+    },
+    "response": {
+      "taskId": 201,
+      "taskName": "Kick off",
+      "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "archived": false,
+      "effortInMinutes": 3000,
+      "progress": 50,
+      "atRisk": true,
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "revenueRecognitionTask": true,
+      "revenueRecognitionDetails": [
+        {
+          "budgetId": 101,
+          "budgetName": "Budget A",
+          "recognisedPercentage": 50,
+          "recognisedAmount": 5000
+        }
+      ],
+      "revRecRecognisedPercentage": 50,
+      "revRecRecognisedAmount": 5000,
+      "totalAllocatedMins": 2430,
+      "assignees": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ]
+      },
+      "followers": {
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ],
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ]
+      },
+      "private": false
+    }
+  },
+  {
+    "name": "removeDependenciesFromTask",
+    "input": {
+      "taskId": 1,
+      "body": {
+        "dependencies": [
+          {
+            "taskId": 201,
+            "dependencyType": "FINISH_TO_START",
+            "lag": 2
+          }
+        ]
+      }
+    },
+    "response": {
+      "taskId": 201,
+      "taskName": "Kick off",
+      "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "archived": false,
+      "effortInMinutes": 3000,
+      "progress": 50,
+      "atRisk": true,
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "revenueRecognitionTask": true,
+      "revenueRecognitionDetails": [
+        {
+          "budgetId": 101,
+          "budgetName": "Budget A",
+          "recognisedPercentage": 50,
+          "recognisedAmount": 5000
+        }
+      ],
+      "revRecRecognisedPercentage": 50,
+      "revRecRecognisedAmount": 5000,
+      "totalAllocatedMins": 2430,
+      "dependencies": [
+        {
+          "taskId": 201,
+          "taskName": "Kick off"
+        }
+      ],
+      "private": false
+    }
+  },
+  {
+    "name": "removeAssigneesFromTask",
+    "input": {
+      "taskId": 1,
+      "body": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ]
+      }
+    },
+    "response": {
+      "taskId": 201,
+      "taskName": "Kick off",
+      "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "archived": false,
+      "effortInMinutes": 3000,
+      "progress": 50,
+      "atRisk": true,
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "revenueRecognitionTask": true,
+      "revenueRecognitionDetails": [
+        {
+          "budgetId": 101,
+          "budgetName": "Budget A",
+          "recognisedPercentage": 50,
+          "recognisedAmount": 5000
+        }
+      ],
+      "revRecRecognisedPercentage": 50,
+      "revRecRecognisedAmount": 5000,
+      "totalAllocatedMins": 2430,
+      "assignees": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ]
+      },
+      "followers": {
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ],
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ]
+      },
+      "private": false
+    }
+  },
+  {
+    "name": "moveTaskToGivenPhase",
+    "input": {
+      "taskId": 1,
+      "body": {
+        "phase": {
+          "phaseId": 201,
+          "phaseName": "Go live"
+        }
+      }
+    },
+    "response": {
+      "taskId": 201,
+      "taskName": "Kick off",
+      "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "archived": false,
+      "effortInMinutes": 3000,
+      "progress": 50,
+      "atRisk": true,
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "revenueRecognitionTask": true,
+      "revenueRecognitionDetails": [
+        {
+          "budgetId": 101,
+          "budgetName": "Budget A",
+          "recognisedPercentage": 50,
+          "recognisedAmount": 5000
+        }
+      ],
+      "revRecRecognisedPercentage": 50,
+      "revRecRecognisedAmount": 5000,
+      "totalAllocatedMins": 2430,
+      "phase": {
+        "phaseId": 201,
+        "phaseName": "Go live"
+      },
+      "private": false
+    }
+  },
+  {
+    "name": "addFollowersToTask",
+    "input": {
+      "taskId": 1,
+      "body": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ]
+      }
+    },
+    "response": {
+      "taskId": 201,
+      "taskName": "Kick off",
+      "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "archived": false,
+      "effortInMinutes": 3000,
+      "progress": 50,
+      "atRisk": true,
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "revenueRecognitionTask": true,
+      "revenueRecognitionDetails": [
+        {
+          "budgetId": 101,
+          "budgetName": "Budget A",
+          "recognisedPercentage": 50,
+          "recognisedAmount": 5000
+        }
+      ],
+      "revRecRecognisedPercentage": 50,
+      "revRecRecognisedAmount": 5000,
+      "totalAllocatedMins": 2430,
+      "assignees": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ]
+      },
+      "followers": {
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ],
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ]
+      },
+      "private": false
+    }
+  },
+  {
+    "name": "addDependenciesToTask",
+    "input": {
+      "taskId": 1,
+      "body": {
+        "dependencies": [
+          {
+            "taskId": 201,
+            "dependencyType": "FINISH_TO_START",
+            "lag": 2
+          }
+        ]
+      }
+    },
+    "response": {
+      "taskId": 201,
+      "taskName": "Kick off",
+      "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "archived": false,
+      "effortInMinutes": 3000,
+      "progress": 50,
+      "atRisk": true,
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "revenueRecognitionTask": true,
+      "revenueRecognitionDetails": [
+        {
+          "budgetId": 101,
+          "budgetName": "Budget A",
+          "recognisedPercentage": 50,
+          "recognisedAmount": 5000
+        }
+      ],
+      "revRecRecognisedPercentage": 50,
+      "revRecRecognisedAmount": 5000,
+      "totalAllocatedMins": 2430,
+      "dependencies": [
+        {
+          "taskId": 201,
+          "taskName": "Kick off"
+        }
+      ],
+      "private": false
+    }
+  },
+  {
+    "name": "addAssigneeToTask",
+    "input": {
+      "taskId": 1,
+      "body": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ]
+      }
+    },
+    "response": {
+      "taskId": 201,
+      "taskName": "Kick off",
+      "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "archived": false,
+      "effortInMinutes": 3000,
+      "progress": 50,
+      "atRisk": true,
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "revenueRecognitionTask": true,
+      "revenueRecognitionDetails": [
+        {
+          "budgetId": 101,
+          "budgetName": "Budget A",
+          "recognisedPercentage": 50,
+          "recognisedAmount": 5000
+        }
+      ],
+      "revRecRecognisedPercentage": 50,
+      "revRecRecognisedAmount": 5000,
+      "totalAllocatedMins": 2430,
+      "assignees": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ]
+      },
+      "followers": {
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ],
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ]
+      },
+      "private": false
+    }
+  },
+  {
+    "name": "getAllTasks",
+    "input": {
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "includeFields": ["startDateActual"],
+      "includeAllFields": true,
+      "sortBy": "taskName",
+      "sortOrder": "ASC",
+      "match": "all",
+      "startDate.gt": "2023-03-28",
+      "startDate.eq": "2023-03-28",
+      "startDate.lt": "2023-03-28",
+      "startDate.ge": "2023-03-28",
+      "startDate.le": "2023-03-28",
+      "dueDate.gt": "2023-03-28",
+      "dueDate.eq": "2023-03-28",
+      "dueDate.lt": "2023-03-28",
+      "dueDate.ge": "2023-03-28",
+      "dueDate.le": "2023-03-28",
+      "startDateActual.gt": "2023-03-28",
+      "startDateActual.eq": "2023-03-28",
+      "startDateActual.lt": "2023-03-28",
+      "startDateActual.ge": "2023-03-28",
+      "startDateActual.le": "2023-03-28",
+      "dueDateActual.gt": "2023-03-28",
+      "dueDateActual.eq": "2023-03-28",
+      "dueDateActual.lt": "2023-03-28",
+      "dueDateActual.ge": "2023-03-28",
+      "dueDateActual.le": "2023-03-28",
+      "createdAt.gt": 1625164800000,
+      "createdAt.eq": 1625164800000,
+      "createdAt.lt": 1625164800000,
+      "createdAt.ge": 1625164800000,
+      "createdAt.le": 1625164800000,
+      "updatedAt.gt": 1625164800000,
+      "updatedAt.eq": 1625164800000,
+      "updatedAt.lt": 1625164800000,
+      "updatedAt.ge": 1625164800000,
+      "updatedAt.le": 1625164800000,
+      "projectId.eq": 10000,
+      "phaseId.eq": 10000,
+      "taskName.eq": "Stark Onboarding",
+      "taskName.cn": "Stark Onboarding",
+      "taskName.nc": "Stark Onboarding",
+      "effortInMinutes.eq": 10000,
+      "effortInMinutes.gt": 10000,
+      "effortInMinutes.lt": 10000,
+      "progress.eq": 55,
+      "progress.gt": 55,
+      "progress.lt": 55,
+      "includeArchive.eq": false,
+      "task.status.eq": "1",
+      "task.status.oneOf": "1,2",
+      "task.status.noneOf": "1,2",
+      "project.status.eq": "1",
+      "project.status.oneOf": "1,2",
+      "project.status.noneOf": "1,2",
+      "externalReferenceId.eq": "task_1818910101",
+      "assignee.userId.eq": "1,2,3",
+      "assignee.userId.oneOf": "1,2,3",
+      "assignee.userId.noneOf": "1,2,3"
+    },
+    "response": {
+      "data": [
+        {
+          "taskId": 201,
+          "taskName": "Kick off",
+          "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+          "startDate": "2023-03-28",
+          "dueDate": "2023-03-28",
+          "archived": false,
+          "effortInMinutes": 3000,
+          "progress": 50,
+          "atRisk": true,
+          "createdAt": 1681319726000,
+          "updatedAt": 1681319726000,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "project": {
+            "projectId": 201,
+            "projectName": "Acme onboarding"
+          },
+          "status": {
+            "value": 2,
+            "label": "In progress"
+          },
+          "fields": [
+            {
+              "fieldId": 201,
+              "fieldLabel": "MRR",
+              "fieldValue": {},
+              "fieldValueLabel": "1000"
+            }
+          ],
+          "revenueRecognitionTask": true,
+          "revenueRecognitionDetails": [
+            {
+              "budgetId": 101,
+              "budgetName": "Budget A",
+              "recognisedPercentage": 50,
+              "recognisedAmount": 5000
+            }
+          ],
+          "revRecRecognisedPercentage": 50,
+          "revRecRecognisedAmount": 5000,
+          "totalAllocatedMins": 2430,
+          "startDateActual": "2023-03-28",
+          "dueDateActual": "2023-03-28",
+          "type": "MILESTONE",
+          "phase": {
+            "phaseId": 201,
+            "phaseName": "Go live"
+          },
+          "assignees": {
+            "members": [
+              {
+                "emailId": "john.doe@rocketlane.com",
+                "userId": 201,
+                "firstName": "John",
+                "lastName": "Doe"
+              }
+            ],
+            "placeholders": [
+              {
+                "placeholderId": 201,
+                "placeholderName": "Customer Success"
+              }
+            ]
+          },
+          "followers": {
+            "placeholders": [
+              {
+                "placeholderId": 201,
+                "placeholderName": "Customer Success"
+              }
+            ],
+            "members": [
+              {
+                "emailId": "john.doe@rocketlane.com",
+                "userId": 201,
+                "firstName": "John",
+                "lastName": "Doe"
+              }
+            ]
+          },
+          "dependencies": [
+            {
+              "taskId": 201,
+              "taskName": "Kick off"
+            }
+          ],
+          "parent": {
+            "taskId": 201,
+            "taskName": "Kick off"
+          },
+          "externalReferenceId": "task_8171",
+          "billable": true,
+          "timeEntryCategory": {
+            "categoryId": 201,
+            "categoryName": "Pre-sales"
+          },
+          "budgets": [
+            {
+              "budgetId": 201,
+              "budgetName": "Pre-sales"
+            }
+          ],
+          "csatEnabled": true,
+          "priority": {
+            "value": 2,
+            "label": "High"
+          },
+          "taskPrivateNote": "fixture",
+          "private": false
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/tasks?includeFields=category,minutes&billable.eq=false&sortBy=startDate&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100&assignee.any=1&startDate.gt=2022-01-02",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "createTask",
+    "input": {
+      "includeFields": ["startDateActual"],
+      "includeAllFields": true,
+      "body": {
+        "taskId": 201,
+        "taskName": "Kick off",
+        "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+        "taskPrivateNote": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+        "startDate": "2023-03-28",
+        "dueDate": "2023-03-28",
+        "effortInMinutes": 3000,
+        "progress": 50,
+        "atRisk": true,
+        "type": "MILESTONE",
+        "project": {
+          "projectId": 201
+        },
+        "phase": {
+          "phaseId": 201,
+          "phaseName": "Go live"
+        },
+        "status": {
+          "value": 2
+        },
+        "fields": [
+          {
+            "fieldId": 201,
+            "fieldLabel": "MRR",
+            "fieldValue": "fixture"
+          }
+        ],
+        "assignees": {
+          "members": [
+            {
+              "emailId": "john.doe@rocketlane.com",
+              "userId": 201,
+              "firstName": "John",
+              "lastName": "Doe"
+            }
+          ],
+          "placeholders": [
+            {
+              "placeholderId": 201,
+              "placeholderName": "Customer Success",
+              "role": {
+                "roleId": 101,
+                "roleName": "Designer"
+              }
+            }
+          ]
+        },
+        "followers": {
+          "members": [
+            {
+              "emailId": "john.doe@rocketlane.com",
+              "userId": 201,
+              "firstName": "John",
+              "lastName": "Doe"
+            }
+          ]
+        },
+        "parent": {
+          "taskId": 201
+        },
+        "externalReferenceId": "task_8171",
+        "source": {
+          "templateId": 151532,
+          "startDate": "2025-05-14"
+        },
+        "private": false
+      }
+    },
+    "response": {
+      "taskId": 201,
+      "taskName": "Kick off",
+      "taskDescription": "<p>Schedule Kick off meeting with the stakeholders involved.</p>",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "archived": false,
+      "effortInMinutes": 3000,
+      "progress": 50,
+      "atRisk": true,
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": {},
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "revenueRecognitionTask": true,
+      "revenueRecognitionDetails": [
+        {
+          "budgetId": 101,
+          "budgetName": "Budget A",
+          "recognisedPercentage": 50,
+          "recognisedAmount": 5000
+        }
+      ],
+      "revRecRecognisedPercentage": 50,
+      "revRecRecognisedAmount": 5000,
+      "totalAllocatedMins": 2430,
+      "startDateActual": "2023-03-28",
+      "dueDateActual": "2023-03-28",
+      "type": "MILESTONE",
+      "phase": {
+        "phaseId": 201,
+        "phaseName": "Go live"
+      },
+      "assignees": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ]
+      },
+      "followers": {
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success",
+            "role": {
+              "roleId": 101,
+              "roleName": "Designer"
+            }
+          }
+        ],
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ]
+      },
+      "dependencies": [
+        {
+          "taskId": 201,
+          "taskName": "Kick off"
+        }
+      ],
+      "parent": {
+        "taskId": 201,
+        "taskName": "Kick off"
+      },
+      "externalReferenceId": "task_8171",
+      "billable": true,
+      "timeEntryCategory": {
+        "categoryId": 201,
+        "categoryName": "Pre-sales"
+      },
+      "budgets": [
+        {
+          "budgetId": 201,
+          "budgetName": "Pre-sales"
+        }
+      ],
+      "csatEnabled": true,
+      "priority": {
+        "value": 2,
+        "label": "High"
+      },
+      "taskPrivateNote": "fixture",
+      "private": false
+    }
+  },
+  {
+    "name": "getCustomRevenueRecognitionConfig",
+    "input": {
+      "customRevenueRecognitionConfigId": 1
+    },
+    "response": {
+      "customRevenueRecognitionConfigId": 101,
+      "customRevenueRecognitionConfigName": "Tracked hours by custom measure",
+      "billingType": "FIXED_FEE"
+    }
+  },
+  {
+    "name": "getAllCustomRevenueRecognitionConfigs",
+    "input": {
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "sortBy": "customRevenueRecognitionConfigName",
+      "sortOrder": "ASC",
+      "match": "all",
+      "customRevenueRecognitionConfigName.eq": "Tracked hours by custom measure",
+      "customRevenueRecognitionConfigName.cn": "Tracked",
+      "customRevenueRecognitionConfigName.nc": "Draft",
+      "billingType.eq": "FIXED_FEE",
+      "billingType.oneOf": "FIXED_FEE,TIME_AND_MATERIAL",
+      "billingType.noneOf": "TIME_AND_MATERIAL"
+    },
+    "response": {
+      "data": [
+        {
+          "customRevenueRecognitionConfigId": 101,
+          "customRevenueRecognitionConfigName": "Tracked hours by custom measure",
+          "billingType": "FIXED_FEE"
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 3,
+        "nextPage": "https://api.rocketlane.com/api/1.0/custom-revenue-recognition-configs?pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&pageSize=100",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "getProject",
+    "input": {
+      "projectId": 1,
+      "includeFields": ["annualizedRecurringRevenue"],
+      "includeAllFields": true
+    },
+    "response": {
+      "sources": [
+        {
+          "prefix": "APAC",
+          "startDate": "2023-03-28",
+          "templateId": 201,
+          "templateName": "Simple Onboarding"
+        }
+      ],
+      "dueDate": "2023-03-28",
+      "autoAllocation": false,
+      "dueDateActual": "2023-03-28",
+      "teamMembers": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "customers": [
+          {
+            "emailId": "rachel.green@acme.com",
+            "userId": 301,
+            "firstName": "Rachel",
+            "lastName": "Green"
+          }
+        ],
+        "customerChampion": {
+          "emailId": "ruth.bell@acme.com",
+          "userId": 302,
+          "firstName": "Ruth",
+          "lastName": "Bell"
+        }
+      },
+      "createdAt": 1681319726000,
+      "archived": false,
+      "inferredProgress": "RUNNING_LATE",
+      "plannedDurationInDays": 24,
+      "currentPhases": [
+        {
+          "phaseId": 201,
+          "phaseName": "Go live"
+        }
+      ],
+      "customersInvited": 5,
+      "currency": "USD",
+      "updatedAt": 1681319726000,
+      "owner": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "budgetedHours": 10.5,
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "partnerCompanies": [
+        {
+          "companyId": 301,
+          "companyName": "Modert Inc",
+          "companyUrl": "https://www.modert.com"
+        }
+      ],
+      "visibility": "EVERYONE",
+      "annualizedRecurringRevenue": 10000,
+      "allocatedHours": 500,
+      "trackedHours": 530,
+      "projectAgeInDays": 38,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "projectFee": 100000,
+      "customersJoined": 12,
+      "progressPercentage": 42,
+      "projectName": "Acme onboarding",
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": "1000",
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "projectId": 201,
+      "startDate": "2023-03-28",
+      "customer": {
+        "companyId": 201,
+        "companyName": "Acme Inc",
+        "companyUrl": "https://www.acme.com"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "startDateActual": "2023-03-28",
+      "percentageBudgetedHoursConsumed": 42,
+      "percentageBudgetConsumed": 42,
+      "trackedMinutes": 530,
+      "allocatedMinutes": 500,
+      "billableHours": 500,
+      "billableMinutes": 500,
+      "nonBillableHours": 500,
+      "nonBillableMinutes": 500,
+      "remainingHours": 530,
+      "remainingMinutes": 530,
+      "externalReferenceId": "pr_8171",
+      "financials": {
+        "contractType": "FIXED_FEE",
+        "revenueRecognitionType": "fixture",
+        "fixedFeeContract": {
+          "fixedFee": 100
+        },
+        "timeAndMaterialContract": {
+          "rateCard": {
+            "rateCardId": 21,
+            "rateCardName": "US Project rate"
+          },
+          "projectBudget": 100
+        },
+        "subscriptionContract": {
+          "subscriptionFrequency": "MONTHLY",
+          "subscriptionStartDate": "2023-03-28",
+          "periodMinutes": 60,
+          "periodBudget": 10000,
+          "noOfPeriods": 10
+        },
+        "metrics": {
+          "actualRevenue": 10000,
+          "estimatedRevenue": 200000,
+          "actualCost": 200,
+          "estimatedCost": 200,
+          "actualProfit": 200,
+          "estimatedProfit": 200,
+          "actualProfitMargin": 200,
+          "estimatedProfitMargin": 200,
+          "estimateAtCompletion": 200,
+          "estimationToCompletionInHours": 200
+        }
+      }
+    }
+  },
+  {
+    "name": "updateProject",
+    "input": {
+      "projectId": 1,
+      "includeFields": ["annualizedRecurringRevenue"],
+      "includeAllFields": true,
+      "body": {
+        "projectName": "Acme onboarding",
+        "startDate": "2023-03-28",
+        "dueDate": "2023-03-28",
+        "visibility": "EVERYONE",
+        "owner": {
+          "emailId": "john.doe@rocketlane.com",
+          "userId": 201,
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        "status": {
+          "value": 2
+        },
+        "fields": [
+          {
+            "fieldId": 201,
+            "fieldValue": "fixture"
+          }
+        ],
+        "annualizedRecurringRevenue": 10000,
+        "projectFee": 100000,
+        "autoAllocation": false,
+        "budgetedHours": 10.5,
+        "externalReferenceId": "pr_8171"
+      }
+    },
+    "response": {
+      "sources": [
+        {
+          "prefix": "APAC",
+          "startDate": "2023-03-28",
+          "templateId": 201,
+          "templateName": "Simple Onboarding"
+        }
+      ],
+      "dueDate": "2023-03-28",
+      "autoAllocation": false,
+      "dueDateActual": "2023-03-28",
+      "teamMembers": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "customers": [
+          {
+            "emailId": "rachel.green@acme.com",
+            "userId": 301,
+            "firstName": "Rachel",
+            "lastName": "Green"
+          }
+        ],
+        "customerChampion": {
+          "emailId": "ruth.bell@acme.com",
+          "userId": 302,
+          "firstName": "Ruth",
+          "lastName": "Bell"
+        }
+      },
+      "createdAt": 1681319726000,
+      "archived": false,
+      "inferredProgress": "RUNNING_LATE",
+      "plannedDurationInDays": 24,
+      "currentPhases": [
+        {
+          "phaseId": 201,
+          "phaseName": "Go live"
+        }
+      ],
+      "customersInvited": 5,
+      "currency": "USD",
+      "updatedAt": 1681319726000,
+      "owner": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "budgetedHours": 10.5,
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "partnerCompanies": [
+        {
+          "companyId": 301,
+          "companyName": "Modert Inc",
+          "companyUrl": "https://www.modert.com"
+        }
+      ],
+      "visibility": "EVERYONE",
+      "annualizedRecurringRevenue": 10000,
+      "allocatedHours": 500,
+      "trackedHours": 530,
+      "projectAgeInDays": 38,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "projectFee": 100000,
+      "customersJoined": 12,
+      "progressPercentage": 42,
+      "projectName": "Acme onboarding",
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": "1000",
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "projectId": 201,
+      "startDate": "2023-03-28",
+      "customer": {
+        "companyId": 201,
+        "companyName": "Acme Inc",
+        "companyUrl": "https://www.acme.com"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "startDateActual": "2023-03-28",
+      "percentageBudgetedHoursConsumed": 42,
+      "percentageBudgetConsumed": 42,
+      "trackedMinutes": 530,
+      "allocatedMinutes": 500,
+      "billableHours": 500,
+      "billableMinutes": 500,
+      "nonBillableHours": 500,
+      "nonBillableMinutes": 500,
+      "remainingHours": 530,
+      "remainingMinutes": 530,
+      "externalReferenceId": "pr_8171",
+      "financials": {
+        "contractType": "FIXED_FEE",
+        "revenueRecognitionType": "fixture",
+        "fixedFeeContract": {
+          "fixedFee": 100
+        },
+        "timeAndMaterialContract": {
+          "rateCard": {
+            "rateCardId": 21,
+            "rateCardName": "US Project rate"
+          },
+          "projectBudget": 100
+        },
+        "subscriptionContract": {
+          "subscriptionFrequency": "MONTHLY",
+          "subscriptionStartDate": "2023-03-28",
+          "periodMinutes": 60,
+          "periodBudget": 10000,
+          "noOfPeriods": 10
+        },
+        "metrics": {
+          "actualRevenue": 10000,
+          "estimatedRevenue": 200000,
+          "actualCost": 200,
+          "estimatedCost": 200,
+          "actualProfit": 200,
+          "estimatedProfit": 200,
+          "actualProfitMargin": 200,
+          "estimatedProfitMargin": 200,
+          "estimateAtCompletion": 200,
+          "estimationToCompletionInHours": 200
+        }
+      }
+    }
+  },
+  {
+    "name": "deleteProject",
+    "input": {
+      "projectId": 1
+    },
+    "response": null
+  },
+  {
+    "name": "unassignPlaceholders",
+    "input": {
+      "projectId": 1,
+      "body": [
+        {
+          "placeholderId": 201
+        }
+      ]
+    },
+    "response": {
+      "projectId": 201,
+      "projectName": "Acme onboarding",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "owner": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "teamMembers": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "customers": [
+          {
+            "emailId": "rachel.green@acme.com",
+            "userId": 301,
+            "firstName": "Rachel",
+            "lastName": "Green"
+          }
+        ],
+        "customerChampion": {
+          "emailId": "ruth.bell@acme.com",
+          "userId": 302,
+          "firstName": "Ruth",
+          "lastName": "Bell"
+        }
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": "1000",
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "customer": {
+        "companyId": 201,
+        "companyName": "Acme Inc",
+        "companyUrl": "https://www.acme.com"
+      },
+      "partnerCompanies": [
+        {
+          "companyId": 301,
+          "companyName": "Modert Inc",
+          "companyUrl": "https://www.modert.com"
+        }
+      ],
+      "archived": false,
+      "visibility": "EVERYONE",
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "currency": "USD",
+      "financials": {
+        "contractType": "FIXED_FEE",
+        "revenueRecognitionType": "fixture",
+        "fixedFeeContract": {
+          "fixedFee": 100
+        },
+        "timeAndMaterialContract": {
+          "rateCard": {
+            "rateCardId": 21,
+            "rateCardName": "US Project rate"
+          },
+          "projectBudget": 100
+        },
+        "subscriptionContract": {
+          "subscriptionFrequency": "MONTHLY",
+          "subscriptionStartDate": "2023-03-28",
+          "periodMinutes": 60,
+          "periodBudget": 10000,
+          "noOfPeriods": 10
+        },
+        "metrics": {
+          "actualRevenue": 10000,
+          "estimatedRevenue": 200000,
+          "actualCost": 200,
+          "estimatedCost": 200,
+          "actualProfit": 200,
+          "estimatedProfit": 200,
+          "actualProfitMargin": 200,
+          "estimatedProfitMargin": 200,
+          "estimateAtCompletion": 200,
+          "estimationToCompletionInHours": 200
+        }
+      },
+      "placeholders": [
+        {
+          "placeholder": {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success"
+          },
+          "placeholderStatus": "ASSIGNED",
+          "user": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe",
+            "role": "Project Manager"
+          },
+          "hourlyCostRate": 100,
+          "costRateCurrency": "USD",
+          "hourlyBillRate": 200,
+          "billRateCurrency": "USD"
+        }
+      ]
+    }
+  },
+  {
+    "name": "removeMembers",
+    "input": {
+      "projectId": 1,
+      "body": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ]
+      }
+    },
+    "response": {
+      "projectId": 201,
+      "projectName": "Acme onboarding",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "owner": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "teamMembers": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "customers": [
+          {
+            "emailId": "rachel.green@acme.com",
+            "userId": 301,
+            "firstName": "Rachel",
+            "lastName": "Green"
+          }
+        ],
+        "customerChampion": {
+          "emailId": "ruth.bell@acme.com",
+          "userId": 302,
+          "firstName": "Ruth",
+          "lastName": "Bell"
+        }
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": "1000",
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "customer": {
+        "companyId": 201,
+        "companyName": "Acme Inc",
+        "companyUrl": "https://www.acme.com"
+      },
+      "partnerCompanies": [
+        {
+          "companyId": 301,
+          "companyName": "Modert Inc",
+          "companyUrl": "https://www.modert.com"
+        }
+      ],
+      "archived": false,
+      "visibility": "EVERYONE",
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "currency": "USD",
+      "financials": {
+        "contractType": "FIXED_FEE",
+        "revenueRecognitionType": "fixture",
+        "fixedFeeContract": {
+          "fixedFee": 100
+        },
+        "timeAndMaterialContract": {
+          "rateCard": {
+            "rateCardId": 21,
+            "rateCardName": "US Project rate"
+          },
+          "projectBudget": 100
+        },
+        "subscriptionContract": {
+          "subscriptionFrequency": "MONTHLY",
+          "subscriptionStartDate": "2023-03-28",
+          "periodMinutes": 60,
+          "periodBudget": 10000,
+          "noOfPeriods": 10
+        },
+        "metrics": {
+          "actualRevenue": 10000,
+          "estimatedRevenue": 200000,
+          "actualCost": 200,
+          "estimatedCost": 200,
+          "actualProfit": 200,
+          "estimatedProfit": 200,
+          "actualProfitMargin": 200,
+          "estimatedProfitMargin": 200,
+          "estimateAtCompletion": 200,
+          "estimationToCompletionInHours": 200
+        }
+      }
+    }
+  },
+  {
+    "name": "importTemplate",
+    "input": {
+      "projectId": 1,
+      "body": [
+        {
+          "prefix": "APAC",
+          "startDate": "2023-03-28",
+          "templateId": 201
+        }
+      ]
+    },
+    "response": {
+      "projectId": 201,
+      "projectName": "Acme onboarding",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "owner": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "teamMembers": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "customers": [
+          {
+            "emailId": "rachel.green@acme.com",
+            "userId": 301,
+            "firstName": "Rachel",
+            "lastName": "Green"
+          }
+        ],
+        "customerChampion": {
+          "emailId": "ruth.bell@acme.com",
+          "userId": 302,
+          "firstName": "Ruth",
+          "lastName": "Bell"
+        }
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": "1000",
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "customer": {
+        "companyId": 201,
+        "companyName": "Acme Inc",
+        "companyUrl": "https://www.acme.com"
+      },
+      "partnerCompanies": [
+        {
+          "companyId": 301,
+          "companyName": "Modert Inc",
+          "companyUrl": "https://www.modert.com"
+        }
+      ],
+      "archived": false,
+      "visibility": "EVERYONE",
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "currency": "USD",
+      "financials": {
+        "contractType": "FIXED_FEE",
+        "revenueRecognitionType": "fixture",
+        "fixedFeeContract": {
+          "fixedFee": 100
+        },
+        "timeAndMaterialContract": {
+          "rateCard": {
+            "rateCardId": 21,
+            "rateCardName": "US Project rate"
+          },
+          "projectBudget": 100
+        },
+        "subscriptionContract": {
+          "subscriptionFrequency": "MONTHLY",
+          "subscriptionStartDate": "2023-03-28",
+          "periodMinutes": 60,
+          "periodBudget": 10000,
+          "noOfPeriods": 10
+        },
+        "metrics": {
+          "actualRevenue": 10000,
+          "estimatedRevenue": 200000,
+          "actualCost": 200,
+          "estimatedCost": 200,
+          "actualProfit": 200,
+          "estimatedProfit": 200,
+          "actualProfitMargin": 200,
+          "estimatedProfitMargin": 200,
+          "estimateAtCompletion": 200,
+          "estimationToCompletionInHours": 200
+        }
+      },
+      "sources": [
+        {
+          "prefix": "APAC",
+          "startDate": "2023-03-28",
+          "templateId": 201,
+          "templateName": "Simple Onboarding"
+        }
+      ]
+    }
+  },
+  {
+    "name": "assignPlaceholders",
+    "input": {
+      "projectId": 1,
+      "body": [
+        {
+          "placeholderId": 201,
+          "user": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201
+          }
+        }
+      ]
+    },
+    "response": {
+      "projectId": 201,
+      "projectName": "Acme onboarding",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "owner": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "teamMembers": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "customers": [
+          {
+            "emailId": "rachel.green@acme.com",
+            "userId": 301,
+            "firstName": "Rachel",
+            "lastName": "Green"
+          }
+        ],
+        "customerChampion": {
+          "emailId": "ruth.bell@acme.com",
+          "userId": 302,
+          "firstName": "Ruth",
+          "lastName": "Bell"
+        }
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": "1000",
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "customer": {
+        "companyId": 201,
+        "companyName": "Acme Inc",
+        "companyUrl": "https://www.acme.com"
+      },
+      "partnerCompanies": [
+        {
+          "companyId": 301,
+          "companyName": "Modert Inc",
+          "companyUrl": "https://www.modert.com"
+        }
+      ],
+      "archived": false,
+      "visibility": "EVERYONE",
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "currency": "USD",
+      "financials": {
+        "contractType": "FIXED_FEE",
+        "revenueRecognitionType": "fixture",
+        "fixedFeeContract": {
+          "fixedFee": 100
+        },
+        "timeAndMaterialContract": {
+          "rateCard": {
+            "rateCardId": 21,
+            "rateCardName": "US Project rate"
+          },
+          "projectBudget": 100
+        },
+        "subscriptionContract": {
+          "subscriptionFrequency": "MONTHLY",
+          "subscriptionStartDate": "2023-03-28",
+          "periodMinutes": 60,
+          "periodBudget": 10000,
+          "noOfPeriods": 10
+        },
+        "metrics": {
+          "actualRevenue": 10000,
+          "estimatedRevenue": 200000,
+          "actualCost": 200,
+          "estimatedCost": 200,
+          "actualProfit": 200,
+          "estimatedProfit": 200,
+          "actualProfitMargin": 200,
+          "estimatedProfitMargin": 200,
+          "estimateAtCompletion": 200,
+          "estimationToCompletionInHours": 200
+        }
+      },
+      "placeholders": [
+        {
+          "placeholder": {
+            "placeholderId": 201,
+            "placeholderName": "Customer Success"
+          },
+          "placeholderStatus": "ASSIGNED",
+          "user": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe",
+            "role": "Project Manager"
+          },
+          "hourlyCostRate": 100,
+          "costRateCurrency": "USD",
+          "hourlyBillRate": 200,
+          "billRateCurrency": "USD"
+        }
+      ]
+    }
+  },
+  {
+    "name": "archiveProject",
+    "input": {
+      "projectId": 1
+    },
+    "response": null
+  },
+  {
+    "name": "addMembers",
+    "input": {
+      "projectId": 1,
+      "body": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "customers": [
+          {
+            "emailId": "rachel.green@acme.com",
+            "userId": 301,
+            "firstName": "Rachel",
+            "lastName": "Green"
+          }
+        ]
+      }
+    },
+    "response": {
+      "projectId": 201,
+      "projectName": "Acme onboarding",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "owner": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "teamMembers": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "customers": [
+          {
+            "emailId": "rachel.green@acme.com",
+            "userId": 301,
+            "firstName": "Rachel",
+            "lastName": "Green"
+          }
+        ],
+        "customerChampion": {
+          "emailId": "ruth.bell@acme.com",
+          "userId": 302,
+          "firstName": "Ruth",
+          "lastName": "Bell"
+        }
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": "1000",
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "customer": {
+        "companyId": 201,
+        "companyName": "Acme Inc",
+        "companyUrl": "https://www.acme.com"
+      },
+      "partnerCompanies": [
+        {
+          "companyId": 301,
+          "companyName": "Modert Inc",
+          "companyUrl": "https://www.modert.com"
+        }
+      ],
+      "archived": false,
+      "visibility": "EVERYONE",
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "currency": "USD",
+      "financials": {
+        "contractType": "FIXED_FEE",
+        "revenueRecognitionType": "fixture",
+        "fixedFeeContract": {
+          "fixedFee": 100
+        },
+        "timeAndMaterialContract": {
+          "rateCard": {
+            "rateCardId": 21,
+            "rateCardName": "US Project rate"
+          },
+          "projectBudget": 100
+        },
+        "subscriptionContract": {
+          "subscriptionFrequency": "MONTHLY",
+          "subscriptionStartDate": "2023-03-28",
+          "periodMinutes": 60,
+          "periodBudget": 10000,
+          "noOfPeriods": 10
+        },
+        "metrics": {
+          "actualRevenue": 10000,
+          "estimatedRevenue": 200000,
+          "actualCost": 200,
+          "estimatedCost": 200,
+          "actualProfit": 200,
+          "estimatedProfit": 200,
+          "actualProfitMargin": 200,
+          "estimatedProfitMargin": 200,
+          "estimateAtCompletion": 200,
+          "estimationToCompletionInHours": 200
+        }
+      }
+    }
+  },
+  {
+    "name": "getAllProjects",
+    "input": {
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "includeFields": ["annualizedRecurringRevenue"],
+      "includeAllFields": true,
+      "sortBy": "projectName",
+      "sortOrder": "ASC",
+      "match": "all",
+      "startDate.gt": "2023-03-28",
+      "startDate.eq": "2023-03-28",
+      "startDate.lt": "2023-03-28",
+      "startDate.ge": "2023-03-28",
+      "startDate.le": "2023-03-28",
+      "dueDate.gt": "2023-03-28",
+      "dueDate.eq": "2023-03-28",
+      "dueDate.lt": "2023-03-28",
+      "dueDate.ge": "2023-03-28",
+      "dueDate.le": "2023-03-28",
+      "startDateActual.gt": "2023-03-28",
+      "startDateActual.eq": "2023-03-28",
+      "startDateActual.lt": "2023-03-28",
+      "startDateActual.ge": "2023-03-28",
+      "startDateActual.le": "2023-03-28",
+      "dueDateActual.gt": "2023-03-28",
+      "dueDateActual.eq": "2023-03-28",
+      "dueDateActual.lt": "2023-03-28",
+      "dueDateActual.ge": "2023-03-28",
+      "dueDateActual.le": "2023-03-28",
+      "createdAt.gt": 1625164800000,
+      "createdAt.eq": 1625164800000,
+      "createdAt.lt": 1625164800000,
+      "createdAt.ge": 1625164800000,
+      "createdAt.le": 1625164800000,
+      "updatedAt.gt": 1625164800000,
+      "updatedAt.eq": 1625164800000,
+      "updatedAt.lt": 1625164800000,
+      "updatedAt.ge": 1625164800000,
+      "updatedAt.le": 1625164800000,
+      "annualizedRecurringRevenue.eq": 10000,
+      "annualizedRecurringRevenue.gt": 10000,
+      "annualizedRecurringRevenue.lt": 10000,
+      "projectFee.eq": 10000,
+      "projectFee.gt": 10000,
+      "projectFee.lt": 10000,
+      "customerId.eq": "1",
+      "customerId.oneOf": "1,2,3",
+      "customerId.noneOf": "1,2,3",
+      "teamMemberId.eq": "1",
+      "teamMemberId.oneOf": "1,2,3",
+      "teamMemberId.noneOf": "1,2,3",
+      "companyId.eq": "1",
+      "companyId.oneOf": "1,2,3",
+      "companyId.noneOf": "1,2,3",
+      "projectName.eq": "Stark Onboarding",
+      "projectName.cn": "Stark Onboarding",
+      "projectName.nc": "Stark Onboarding",
+      "inferredProgress.eq": ["ON_TRACK"],
+      "contractType.eq": ["FIXED_FEE"],
+      "contractType.oneOf": ["FIXED_FEE"],
+      "contractType.noneOf": ["FIXED_FEE"],
+      "budgetedHours.gt": "1",
+      "budgetedHours.eq": "2",
+      "budgetedHours.lt": "1",
+      "budgetedHours.ge": "2",
+      "allocatedHours.le": "1",
+      "allocatedHours.gt": "1",
+      "allocatedHours.eq": "2",
+      "allocatedHours.lt": "1",
+      "allocatedHours.ge": "2",
+      "customersInvited.gt": "1",
+      "customersInvited.eq": "2",
+      "customersInvited.lt": "1",
+      "customersInvited.ge": "2",
+      "customersInvited.le": "1",
+      "customersJoined.gt": "1",
+      "customersJoined.eq": "2",
+      "customersJoined.lt": "1",
+      "customersJoined.ge": "2",
+      "customersJoined.le": "1",
+      "includeArchive.eq": false,
+      "status.eq": "1",
+      "status.oneOf": "1,2",
+      "status.noneOf": "1,2",
+      "externalReferenceId.eq": "project_181866171876"
+    },
+    "response": {
+      "data": [
+        {
+          "sources": [
+            {
+              "prefix": "APAC",
+              "startDate": "2023-03-28",
+              "templateId": 201,
+              "templateName": "Simple Onboarding"
+            }
+          ],
+          "dueDate": "2023-03-28",
+          "autoAllocation": false,
+          "dueDateActual": "2023-03-28",
+          "teamMembers": {
+            "members": [
+              {
+                "emailId": "john.doe@rocketlane.com",
+                "userId": 201,
+                "firstName": "John",
+                "lastName": "Doe"
+              }
+            ],
+            "customers": [
+              {
+                "emailId": "rachel.green@acme.com",
+                "userId": 301,
+                "firstName": "Rachel",
+                "lastName": "Green"
+              }
+            ],
+            "customerChampion": {
+              "emailId": "ruth.bell@acme.com",
+              "userId": 302,
+              "firstName": "Ruth",
+              "lastName": "Bell"
+            }
+          },
+          "createdAt": 1681319726000,
+          "archived": false,
+          "inferredProgress": "RUNNING_LATE",
+          "plannedDurationInDays": 24,
+          "currentPhases": [
+            {
+              "phaseId": 201,
+              "phaseName": "Go live"
+            }
+          ],
+          "customersInvited": 5,
+          "currency": "USD",
+          "updatedAt": 1681319726000,
+          "owner": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "budgetedHours": 10.5,
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "partnerCompanies": [
+            {
+              "companyId": 301,
+              "companyName": "Modert Inc",
+              "companyUrl": "https://www.modert.com"
+            }
+          ],
+          "visibility": "EVERYONE",
+          "annualizedRecurringRevenue": 10000,
+          "allocatedHours": 500,
+          "trackedHours": 530,
+          "projectAgeInDays": 38,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "projectFee": 100000,
+          "customersJoined": 12,
+          "progressPercentage": 42,
+          "projectName": "Acme onboarding",
+          "fields": [
+            {
+              "fieldId": 201,
+              "fieldLabel": "MRR",
+              "fieldValue": "1000",
+              "fieldValueLabel": "1000"
+            }
+          ],
+          "projectId": 201,
+          "startDate": "2023-03-28",
+          "customer": {
+            "companyId": 201,
+            "companyName": "Acme Inc",
+            "companyUrl": "https://www.acme.com"
+          },
+          "status": {
+            "value": 2,
+            "label": "In progress"
+          },
+          "startDateActual": "2023-03-28",
+          "percentageBudgetedHoursConsumed": 42,
+          "percentageBudgetConsumed": 42,
+          "trackedMinutes": 530,
+          "allocatedMinutes": 500,
+          "billableHours": 500,
+          "billableMinutes": 500,
+          "nonBillableHours": 500,
+          "nonBillableMinutes": 500,
+          "remainingHours": 530,
+          "remainingMinutes": 530,
+          "externalReferenceId": "pr_8171",
+          "financials": {
+            "contractType": "FIXED_FEE",
+            "revenueRecognitionType": "fixture",
+            "fixedFeeContract": {
+              "fixedFee": 100
+            },
+            "timeAndMaterialContract": {
+              "rateCard": {},
+              "projectBudget": 100
+            },
+            "subscriptionContract": {
+              "subscriptionFrequency": "MONTHLY",
+              "subscriptionStartDate": "2023-03-28",
+              "periodMinutes": 60,
+              "periodBudget": 10000,
+              "noOfPeriods": 10
+            },
+            "metrics": {
+              "actualRevenue": 10000,
+              "estimatedRevenue": 200000,
+              "actualCost": 200,
+              "estimatedCost": 200,
+              "actualProfit": 200,
+              "estimatedProfit": 200,
+              "actualProfitMargin": 200,
+              "estimatedProfitMargin": 200,
+              "estimateAtCompletion": 200,
+              "estimationToCompletionInHours": 200
+            }
+          }
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/projects?includeFields=category,minutes&billable.eq=false&sortBy=startDate&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100&assignee.any=1&startDate.gt=2022-01-02",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "createProject",
+    "input": {
+      "includeFields": ["annualizedRecurringRevenue"],
+      "includeAllFields": true,
+      "body": {
+        "projectId": 201,
+        "projectName": "Acme onboarding",
+        "startDate": "2023-03-28",
+        "dueDate": "2023-03-28",
+        "visibility": "EVERYONE",
+        "owner": {
+          "emailId": "john.doe@rocketlane.com",
+          "userId": 201,
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        "teamMembers": {
+          "members": [
+            {
+              "emailId": "john.doe@rocketlane.com",
+              "userId": 201,
+              "firstName": "John",
+              "lastName": "Doe"
+            }
+          ],
+          "customers": [
+            {
+              "emailId": "rachel.green@acme.com",
+              "userId": 301,
+              "firstName": "Rachel",
+              "lastName": "Green"
+            }
+          ],
+          "customerChampion": {
+            "emailId": "ruth.bell@acme.com",
+            "userId": 302,
+            "firstName": "Ruth",
+            "lastName": "Bell"
+          }
+        },
+        "status": {
+          "value": 2
+        },
+        "fields": [
+          {
+            "fieldId": 201,
+            "fieldValue": "fixture"
+          }
+        ],
+        "customer": {
+          "companyName": "Acme Inc",
+          "companyId": 201
+        },
+        "partners": [
+          {
+            "companyName": "Modert Inc",
+            "companyId": 201
+          }
+        ],
+        "sources": [
+          {
+            "prefix": "APAC",
+            "startDate": "2023-03-28",
+            "templateId": 201
+          }
+        ],
+        "assignProjectOwner": false,
+        "placeholders": [
+          {
+            "placeholderId": 201,
+            "user": {
+              "emailId": "john.doe@rocketlane.com",
+              "userId": 201
+            }
+          }
+        ],
+        "annualizedRecurringRevenue": 10000,
+        "projectFee": 100000,
+        "autoAllocation": false,
+        "autoCreateCompany": false,
+        "budgetedHours": 10.5,
+        "financials": {
+          "contractType": "FIXED_FEE",
+          "fixedFeeContract": {
+            "fixedFee": 100.25
+          },
+          "timeAndMaterialContract": {
+            "rateCard": {
+              "rateCardId": 21
+            }
+          },
+          "subscriptionContract": {
+            "subscriptionFrequency": "MONTHLY",
+            "subscriptionStartDate": "2023-03-28",
+            "periodMinutes": 60,
+            "periodBudget": 10000,
+            "noOfPeriods": 10
+          }
+        },
+        "currency": "USD",
+        "externalReferenceId": "pr_8171"
+      }
+    },
+    "response": {
+      "sources": [
+        {
+          "prefix": "APAC",
+          "startDate": "2023-03-28",
+          "templateId": 201,
+          "templateName": "Simple Onboarding"
+        }
+      ],
+      "dueDate": "2023-03-28",
+      "autoAllocation": false,
+      "dueDateActual": "2023-03-28",
+      "teamMembers": {
+        "members": [
+          {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        ],
+        "customers": [
+          {
+            "emailId": "rachel.green@acme.com",
+            "userId": 301,
+            "firstName": "Rachel",
+            "lastName": "Green"
+          }
+        ],
+        "customerChampion": {
+          "emailId": "ruth.bell@acme.com",
+          "userId": 302,
+          "firstName": "Ruth",
+          "lastName": "Bell"
+        }
+      },
+      "createdAt": 1681319726000,
+      "archived": false,
+      "inferredProgress": "RUNNING_LATE",
+      "plannedDurationInDays": 24,
+      "currentPhases": [
+        {
+          "phaseId": 201,
+          "phaseName": "Go live"
+        }
+      ],
+      "customersInvited": 5,
+      "currency": "USD",
+      "updatedAt": 1681319726000,
+      "owner": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "budgetedHours": 10.5,
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "partnerCompanies": [
+        {
+          "companyId": 301,
+          "companyName": "Modert Inc",
+          "companyUrl": "https://www.modert.com"
+        }
+      ],
+      "visibility": "EVERYONE",
+      "annualizedRecurringRevenue": 10000,
+      "allocatedHours": 500,
+      "trackedHours": 530,
+      "projectAgeInDays": 38,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "projectFee": 100000,
+      "customersJoined": 12,
+      "progressPercentage": 42,
+      "projectName": "Acme onboarding",
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": "1000",
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "projectId": 201,
+      "startDate": "2023-03-28",
+      "customer": {
+        "companyId": 201,
+        "companyName": "Acme Inc",
+        "companyUrl": "https://www.acme.com"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "startDateActual": "2023-03-28",
+      "percentageBudgetedHoursConsumed": 42,
+      "percentageBudgetConsumed": 42,
+      "trackedMinutes": 530,
+      "allocatedMinutes": 500,
+      "billableHours": 500,
+      "billableMinutes": 500,
+      "nonBillableHours": 500,
+      "nonBillableMinutes": 500,
+      "remainingHours": 530,
+      "remainingMinutes": 530,
+      "externalReferenceId": "pr_8171",
+      "financials": {
+        "contractType": "FIXED_FEE",
+        "revenueRecognitionType": "fixture",
+        "fixedFeeContract": {
+          "fixedFee": 100
+        },
+        "timeAndMaterialContract": {
+          "rateCard": {
+            "rateCardId": 21,
+            "rateCardName": "US Project rate"
+          },
+          "projectBudget": 100
+        },
+        "subscriptionContract": {
+          "subscriptionFrequency": "MONTHLY",
+          "subscriptionStartDate": "2023-03-28",
+          "periodMinutes": 60,
+          "periodBudget": 10000,
+          "noOfPeriods": 10
+        },
+        "metrics": {
+          "actualRevenue": 10000,
+          "estimatedRevenue": 200000,
+          "actualCost": 200,
+          "estimatedCost": 200,
+          "actualProfit": 200,
+          "estimatedProfit": 200,
+          "actualProfitMargin": 200,
+          "estimatedProfitMargin": 200,
+          "estimateAtCompletion": 200,
+          "estimationToCompletionInHours": 200
+        }
+      }
+    }
+  },
+  {
+    "name": "getPlaceholders",
+    "input": {
+      "projectId": 1
+    },
+    "response": {
+      "data": [
+        {
+          "placeholderId": 201,
+          "placeholderName": "Customer Success",
+          "project": {
+            "projectId": 201,
+            "projectName": "Acme onboarding"
+          },
+          "role": {
+            "roleId": 201,
+            "roleName": "Customer Success"
+          },
+          "placeholderType": "NATIVE",
+          "createdAt": 1681319726000,
+          "updatedAt": 1681319726000
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/placeholders?includeFields=category,minutes&billable.eq=false&sortBy=startDate&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100&assignee.any=1&startDate.gt=2022-01-02",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "getPhase",
+    "input": {
+      "phaseId": 1,
+      "includeFields": ["startDateActual"],
+      "includeAllFields": true
+    },
+    "response": {
+      "phaseId": 201,
+      "phaseName": "Kick off",
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "phaseDescription": "Initial discovery and alignment with the customer.",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "startDateActual": "2023-03-28",
+      "dueDateActual": "2023-03-28",
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "budgets": [
+        {
+          "budgetId": 201,
+          "budgetName": "Pre-sales"
+        }
+      ],
+      "private": true
+    }
+  },
+  {
+    "name": "updatePhase",
+    "input": {
+      "phaseId": 1,
+      "includeFields": ["startDateActual"],
+      "includeAllFields": true,
+      "body": {
+        "phaseName": "Go live",
+        "phaseDescription": "Initial discovery and alignment with the customer.",
+        "startDate": "2023-03-28",
+        "dueDate": "2023-03-28",
+        "status": {
+          "value": 2
+        },
+        "private": true
+      }
+    },
+    "response": {
+      "phaseId": 201,
+      "phaseName": "Kick off",
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "phaseDescription": "Initial discovery and alignment with the customer.",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "startDateActual": "2023-03-28",
+      "dueDateActual": "2023-03-28",
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "budgets": [
+        {
+          "budgetId": 201,
+          "budgetName": "Pre-sales"
+        }
+      ],
+      "private": true
+    }
+  },
+  {
+    "name": "deletePhase",
+    "input": {
+      "phaseId": 1
+    },
+    "response": null
+  },
+  {
+    "name": "getAllPhases",
+    "input": {
+      "projectId": 1,
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "includeFields": ["startDateActual"],
+      "includeAllFields": true,
+      "sortBy": "phaseName",
+      "sortOrder": "ASC",
+      "match": "all",
+      "startDate.gt": "2023-03-28",
+      "startDate.eq": "2023-03-28",
+      "startDate.lt": "2023-03-28",
+      "startDate.ge": "2023-03-28",
+      "startDate.le": "2023-03-28",
+      "dueDate.gt": "2023-03-28",
+      "dueDate.eq": "2023-03-28",
+      "dueDate.lt": "2023-03-28",
+      "dueDate.ge": "2023-03-28",
+      "dueDate.le": "2023-03-28",
+      "startDateActual.gt": "2023-03-28",
+      "startDateActual.eq": "2023-03-28",
+      "startDateActual.lt": "2023-03-28",
+      "startDateActual.ge": "2023-03-28",
+      "startDateActual.le": "2023-03-28",
+      "dueDateActual.gt": "2023-03-28",
+      "dueDateActual.eq": "2023-03-28",
+      "dueDateActual.lt": "2023-03-28",
+      "dueDateActual.ge": "2023-03-28",
+      "dueDateActual.le": "2023-03-28",
+      "createdAt.gt": 1625164800000,
+      "createdAt.eq": 1625164800000,
+      "createdAt.lt": 1625164800000,
+      "createdAt.ge": 1625164800000,
+      "createdAt.le": 1625164800000,
+      "updatedAt.gt": 1625164800000,
+      "updatedAt.eq": 1625164800000,
+      "updatedAt.lt": 1625164800000,
+      "updatedAt.ge": 1625164800000,
+      "updatedAt.le": 1625164800000,
+      "phaseName.eq": "Stark Onboarding",
+      "phaseName.cn": "Stark Onboarding",
+      "phaseName.nc": "Stark Onboarding"
+    },
+    "response": {
+      "data": [
+        {
+          "phaseId": 201,
+          "phaseName": "Kick off",
+          "project": {
+            "projectId": 201,
+            "projectName": "Acme onboarding"
+          },
+          "phaseDescription": "Initial discovery and alignment with the customer.",
+          "startDate": "2023-03-28",
+          "dueDate": "2023-03-28",
+          "startDateActual": "2023-03-28",
+          "dueDateActual": "2023-03-28",
+          "createdAt": 1681319726000,
+          "updatedAt": 1681319726000,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "status": {
+            "value": 2,
+            "label": "In progress"
+          },
+          "budgets": [
+            {
+              "budgetId": 201,
+              "budgetName": "Pre-sales"
+            }
+          ],
+          "private": true
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/phases?includeFields=category,minutes&billable.eq=false&sortBy=startDate&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100&assignee.any=1&startDate.gt=2022-01-02",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "createPhase",
+    "input": {
+      "includeFields": ["startDateActual"],
+      "includeAllFields": true,
+      "body": {
+        "phaseId": 201,
+        "phaseName": "Kick off",
+        "project": {
+          "projectId": 201
+        },
+        "phaseDescription": "Initial discovery and alignment with the customer.",
+        "startDate": "2023-03-28",
+        "dueDate": "2023-03-28",
+        "status": {
+          "value": 2
+        },
+        "private": true
+      }
+    },
+    "response": {
+      "phaseId": 201,
+      "phaseName": "Kick off",
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "phaseDescription": "Initial discovery and alignment with the customer.",
+      "startDate": "2023-03-28",
+      "dueDate": "2023-03-28",
+      "startDateActual": "2023-03-28",
+      "dueDateActual": "2023-03-28",
+      "createdAt": 1681319726000,
+      "updatedAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "status": {
+        "value": 2,
+        "label": "In progress"
+      },
+      "budgets": [
+        {
+          "budgetId": 201,
+          "budgetName": "Pre-sales"
+        }
+      ],
+      "private": true
+    }
+  },
+  {
+    "name": "getUser",
+    "input": {
+      "userId": 1,
+      "includeFields": ["role"],
+      "includeAllFields": true
+    },
+    "response": {
+      "userId": 201,
+      "email": "johndoe@rocketlane.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "type": "TEAM_MEMBER",
+      "status": "ACTIVE",
+      "role": {
+        "roleId": 136,
+        "roleName": "Customer Success"
+      },
+      "company": {
+        "companyId": 116,
+        "companyName": "Modert"
+      },
+      "permission": {
+        "permissionId": 933,
+        "permissionName": "Account Admin"
+      },
+      "fields": [
+        {
+          "fieldId": 201,
+          "fieldLabel": "MRR",
+          "fieldValue": "1000",
+          "fieldValueLabel": "1000"
+        }
+      ],
+      "capacityInMinutes": 2400,
+      "holidayCalendar": {
+        "calenderId": 93,
+        "calenderName": "India Holiday Calendar"
+      },
+      "profilePictureUrl": "https://s3.amazonaws.com/rocketlane-profile-pic-public/_default/ftue/John.jpg",
+      "createdAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedAt": 1681319726000,
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      }
+    }
+  },
+  {
+    "name": "getAllUsers",
+    "input": {
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "includeFields": ["role"],
+      "includeAllFields": true,
+      "sortBy": "email",
+      "sortOrder": "ASC",
+      "match": "all",
+      "firstName.eq": "John",
+      "firstName.cn": "John",
+      "firstName.nc": "John",
+      "lastName.eq": "Doe",
+      "lastName.cn": "Doe",
+      "lastName.nc": "Doe",
+      "email.eq": "johndoe@rocketlane.com",
+      "email.cn": "johndoe@rocketlane.com",
+      "email.nc": "johndoe@rocketlane.com",
+      "status.eq": ["INACTIVE"],
+      "status.oneOf": ["INACTIVE"],
+      "status.noneOf": ["INACTIVE"],
+      "type.eq": ["TEAM_MEMBER"],
+      "type.oneOf": ["TEAM_MEMBER"],
+      "roleId.eq": "1",
+      "roleId.oneOf": "1,2,3",
+      "roleId.noneOf": "1,2,3",
+      "permissionId.eq": "1",
+      "permissionId.oneOf": "1,2,3",
+      "permissionId.noneOf": "1,2,3",
+      "capacityInMinutes.eq": 2400,
+      "capacityInMinutes.gt": 2400,
+      "capacityInMinutes.ge": 2400,
+      "capacityInMinutes.lt": 2400,
+      "capacityInMinutes.le": 2400,
+      "createdAt.gt": 1625164800000,
+      "createdAt.eq": 1625164800000,
+      "createdAt.lt": 1625164800000,
+      "createdAt.ge": 1625164800000,
+      "createdAt.le": 1625164800000,
+      "updatedAt.gt": 1625164800000,
+      "updatedAt.eq": 1625164800000,
+      "updatedAt.lt": 1625164800000,
+      "updatedAt.ge": 1625164800000,
+      "updatedAt.le": 1625164800000
+    },
+    "response": {
+      "data": [
+        {
+          "userId": 201,
+          "email": "johndoe@rocketlane.com",
+          "firstName": "John",
+          "lastName": "Doe",
+          "type": "TEAM_MEMBER",
+          "status": "ACTIVE",
+          "role": {
+            "roleId": 136,
+            "roleName": "Customer Success"
+          },
+          "company": {
+            "companyId": 116,
+            "companyName": "Modert"
+          },
+          "permission": {
+            "permissionId": 933,
+            "permissionName": "Account Admin"
+          },
+          "fields": [
+            {
+              "fieldId": 201,
+              "fieldLabel": "MRR",
+              "fieldValue": "1000",
+              "fieldValueLabel": "1000"
+            }
+          ],
+          "capacityInMinutes": 2400,
+          "holidayCalendar": {
+            "calenderId": 93,
+            "calenderName": "India Holiday Calendar"
+          },
+          "profilePictureUrl": "https://s3.amazonaws.com/rocketlane-profile-pic-public/_default/ftue/John.jpg",
+          "createdAt": 1681319726000,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "updatedAt": 1681319726000,
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/users?includeFields=capacityInMinutes&status.eq=ACTIVE&sortBy=status&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "getSpace",
+    "input": {
+      "spaceId": 1
+    },
+    "response": {
+      "spaceId": 201,
+      "spaceName": "Shared space",
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "createdAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedAt": 1681319726000,
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "private": true
+    }
+  },
+  {
+    "name": "updateSpace",
+    "input": {
+      "spaceId": 1,
+      "body": {
+        "spaceName": "Shared space"
+      }
+    },
+    "response": {
+      "spaceId": 201,
+      "spaceName": "Shared space",
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "createdAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedAt": 1681319726000,
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "private": true
+    }
+  },
+  {
+    "name": "deleteSpace",
+    "input": {
+      "spaceId": 1
+    },
+    "response": null
+  },
+  {
+    "name": "getAllSpaces",
+    "input": {
+      "projectId": 1,
+      "pageSize": 100,
+      "pageToken": "59c12a42-dd10-11ed-afa1-0242ac120002",
+      "sortBy": "spaceName",
+      "sortOrder": "ASC",
+      "match": "all",
+      "spaceName.eq": "Stark Onboarding",
+      "spaceName.cn": "Stark Onboarding",
+      "spaceName.nc": "Stark Onboarding",
+      "createdAt.gt": 1625164800000,
+      "createdAt.eq": 1625164800000,
+      "createdAt.lt": 1625164800000,
+      "createdAt.ge": 1625164800000,
+      "createdAt.le": 1625164800000,
+      "updatedAt.gt": 1625164800000,
+      "updatedAt.eq": 1625164800000,
+      "updatedAt.lt": 1625164800000,
+      "updatedAt.ge": 1625164800000,
+      "updatedAt.le": 1625164800000
+    },
+    "response": {
+      "data": [
+        {
+          "spaceId": 201,
+          "spaceName": "Shared space",
+          "project": {
+            "projectId": 201,
+            "projectName": "Acme onboarding"
+          },
+          "createdAt": 1681319726000,
+          "createdBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "updatedAt": 1681319726000,
+          "updatedBy": {
+            "emailId": "john.doe@rocketlane.com",
+            "userId": 201,
+            "firstName": "John",
+            "lastName": "Doe"
+          },
+          "private": true
+        }
+      ],
+      "pagination": {
+        "pageSize": 100,
+        "hasMore": true,
+        "totalRecordCount": 10398,
+        "nextPage": "https://api.rocketlane.com/api/1.0/spaces?includeFields=category,minutes&billable.eq=false&sortBy=startDate&sortOrder=desc&pageToken=e4a3dd8e-e338-11ed-b5ea-0242ac120002&limit=100&assignee.any=1&startDate.gt=2022-01-02",
+        "nextPageToken": "e4a3dd8e-e338-11ed-b5ea-0242ac120002"
+      }
+    }
+  },
+  {
+    "name": "createSpace",
+    "input": {
+      "body": {
+        "spaceId": 201,
+        "spaceName": "Shared space",
+        "project": {
+          "projectId": 201
+        },
+        "private": true
+      }
+    },
+    "response": {
+      "spaceId": 201,
+      "spaceName": "Shared space",
+      "project": {
+        "projectId": 201,
+        "projectName": "Acme onboarding"
+      },
+      "createdAt": 1681319726000,
+      "createdBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "updatedAt": 1681319726000,
+      "updatedBy": {
+        "emailId": "john.doe@rocketlane.com",
+        "userId": 201,
+        "firstName": "John",
+        "lastName": "Doe"
+      },
+      "private": true
+    }
+  }
+]
