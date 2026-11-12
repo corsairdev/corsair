@@ -672,7 +672,7 @@ const EventsManagersInputSchema = z.object({
 		.boolean()
 		.optional()
 		.describe(
-			'Invite only: skip the email for people who already have an account.',
+			'Invite only: skip the email for people who already have an account. Defaults to false, so everyone listed is emailed.',
 		),
 });
 

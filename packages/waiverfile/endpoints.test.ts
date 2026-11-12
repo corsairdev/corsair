@@ -587,6 +587,20 @@ describe('events', () => {
 		expect(lastLog()).toEqual({ event: eventID, addresses: 2, managers: 1 });
 	});
 
+	it('always sends managerEmailMessage and skipSendingEmailIfAccountExists, which the route needs', async () => {
+		// Live: without both parameters WaiverFile's router answers 404.
+		respond(fetchMock, eventResponse);
+
+		await invoke(Events.inviteManagers, {
+			eventID,
+			emailAddresses: 'a@example.com',
+		});
+
+		const sent = lastRequest(fetchMock);
+		expect(sent.query.managerEmailMessage).toBe('');
+		expect(sent.query.skipSendingEmailIfAccountExists).toBe('false');
+	});
+
 	it('removes managers and returns the event', async () => {
 		respond(fetchMock, { ...eventResponse, _managerIDs: [] });
 

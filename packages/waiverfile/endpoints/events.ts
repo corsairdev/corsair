@@ -249,11 +249,14 @@ export const inviteManagers: WaiverFileEndpoints['eventsInviteManagers'] = (
 		}) => ({
 			method: 'POST',
 			path: '/api/v1/InviteEventManagers',
+			// WaiverFile's router matches on every declared parameter, so leaving
+			// either of these out is a 404 rather than a default.
 			query: {
 				eventID,
 				emailAddresses,
-				managerEmailMessage,
-				skipSendingEmailIfAccountExists,
+				managerEmailMessage: managerEmailMessage ?? '',
+				skipSendingEmailIfAccountExists:
+					skipSendingEmailIfAccountExists ?? false,
 			},
 		}),
 		{
