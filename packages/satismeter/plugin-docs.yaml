@@ -50,7 +50,7 @@ apiExamples:
   users.list:
     call: "{ projectId: '61fce0adea447e24ec27d606', userId: '007' }"
   users.remove:
-    call: "{ userId: '5808e7031a943c7e564cdb17' }"
+    call: "{ id: '5808e7031a943c7e564cdb17' }"
 apiNotes:
   'projects.get': 'The project ID comes from Settings > Integrations > API. No endpoint lists projects, so this is the only way to read one.'
   'surveys.list': 'The API calls these campaigns internally; this operation is the surveys in a project with their template (`nps`, `ces`, `csat`, `pmf`, `custom`) and state (`live`, `paused`, `draft`).'

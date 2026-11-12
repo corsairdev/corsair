@@ -369,7 +369,7 @@ describe('users.remove', () => {
 		respond('', 204);
 
 		const result = await endpoints().users.remove(makeCtx(), {
-			userId: '5808e7031a943c7e564cdb17',
+			id: '5808e7031a943c7e564cdb17',
 		});
 
 		expect(sentUrl().origin + sentUrl().pathname).toBe(
@@ -377,7 +377,7 @@ describe('users.remove', () => {
 		);
 		expect(sentMethod()).toBe('DELETE');
 		expect(result).toEqual({
-			userId: '5808e7031a943c7e564cdb17',
+			id: '5808e7031a943c7e564cdb17',
 			removed: true,
 		});
 	});
@@ -385,7 +385,7 @@ describe('users.remove', () => {
 	it('sends no body', async () => {
 		respond('', 204);
 
-		await endpoints().users.remove(makeCtx(), { userId: 'abc' });
+		await endpoints().users.remove(makeCtx(), { id: 'abc' });
 
 		expect(sentBody()).toBeUndefined();
 	});
@@ -394,7 +394,7 @@ describe('users.remove', () => {
 		respond({ errors: [{ title: 'User not found' }] }, 404);
 
 		await expect(
-			endpoints().users.remove(makeCtx(), { userId: 'nope' }),
+			endpoints().users.remove(makeCtx(), { id: 'nope' }),
 		).rejects.toMatchObject({ status: 404, title: 'User not found' });
 	});
 });
@@ -437,8 +437,8 @@ describe('the write status the live API answers', () => {
 		respond('', 204);
 
 		await expect(
-			endpoints().users.remove(makeCtx(), { userId: 'abc' }),
-		).resolves.toEqual({ userId: 'abc', removed: true });
+			endpoints().users.remove(makeCtx(), { id: 'abc' }),
+		).resolves.toEqual({ id: 'abc', removed: true });
 	});
 
 	it('fails a write the API refused', async () => {

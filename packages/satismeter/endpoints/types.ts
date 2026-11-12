@@ -510,8 +510,11 @@ export type UsersListResponse = z.infer<typeof UsersListResponseSchema>;
 // ── users.remove ──────────────────────────────────────────────────────────
 
 const UsersRemoveInputSchema = z.object({
-	/** The internal `id`, not the `userId`: the provider says so explicitly. */
-	userId: z
+	/**
+	 * The internal `id`, not the `userId`: the provider says so explicitly, and
+	 * naming the field `id` keeps an upsert's `userId` from being passed here.
+	 */
+	id: z
 		.string()
 		.min(1)
 		.describe(
@@ -522,7 +525,7 @@ const UsersRemoveInputSchema = z.object({
 export type UsersRemoveInput = z.input<typeof UsersRemoveInputSchema>;
 
 const UsersRemoveResponseSchema = z.object({
-	userId: z.string(),
+	id: z.string().describe('The internal id of the user that was deleted.'),
 	removed: z.literal(true),
 });
 

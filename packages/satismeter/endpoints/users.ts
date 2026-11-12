@@ -120,19 +120,19 @@ export const remove: SatisMeterEndpoints['usersRemove'] = async (
 	const text = await makeSatisMeterRequest(ctx.key, {
 		base: SATISMETER_API_WRITE,
 		method: 'DELETE',
-		path: `/users/${encode(input.userId)}`,
+		path: `/users/${encode(input.id)}`,
 	});
 	// A delete that somehow answers a body means the route changed shape; parse
 	// it rather than discard it, so a future response cannot pass unnoticed.
 	if (!isEmptyBody(text)) parseJsonBody(text);
 	const result = Outputs.usersRemove.parse({
-		userId: input.userId,
+		id: input.id,
 		removed: true,
 	});
 	await logEventFromContext(
 		ctx,
 		'satismeter.users.remove',
-		{ userId: input.userId },
+		{ id: input.id },
 		'completed',
 	);
 	return result;

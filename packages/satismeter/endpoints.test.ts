@@ -220,9 +220,10 @@ describe('users', () => {
 				accepted: true,
 			}),
 		).toMatchObject({ accepted: true });
-		expect(Outputs.usersRemove.parse({ userId: 'abc', removed: true })).toEqual(
-			{ userId: 'abc', removed: true },
-		);
+		expect(Outputs.usersRemove.parse({ id: 'abc', removed: true })).toEqual({
+			id: 'abc',
+			removed: true,
+		});
 	});
 });
 
@@ -291,8 +292,14 @@ describe('input validation', () => {
 		).toThrow();
 	});
 
+	// users.upsert hands back the caller's own userId; remove takes the
+	// internal id, so the field is named for what it takes.
+	it('refuses a userId on delete, which is not the id remove takes', () => {
+		expect(() => Inputs.usersRemove.parse({ userId: 'abc' })).toThrow();
+	});
+
 	it('rejects an empty user id on delete', () => {
-		expect(() => Inputs.usersRemove.parse({ userId: '' })).toThrow();
+		expect(() => Inputs.usersRemove.parse({ id: '' })).toThrow();
 	});
 
 	it('accepts traits of any shape, since the caller defines them', () => {
