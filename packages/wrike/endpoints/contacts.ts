@@ -69,7 +69,6 @@ export const account: WrikeEndpoints['accountGet'] = (ctx, input) =>
 		{
 			log: (_, result) => ({
 				id: result.data?.[0]?.id ?? undefined,
-				name: result.data?.[0]?.name ?? undefined,
 				rootFolder: result.data?.[0]?.rootFolderId ?? undefined,
 			}),
 		},

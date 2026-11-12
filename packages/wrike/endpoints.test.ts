@@ -40,6 +40,37 @@ beforeEach(() => {
 	mockLog.mockClear();
 });
 
+describe('event privacy', () => {
+	it.each([
+		['folders.get', Folders.get, { id: folderId }, foldersEnvelope],
+		[
+			'folders.create',
+			Folders.create,
+			{ parentId: folderId, title: 'Confidential client' },
+			foldersEnvelope,
+		],
+		[
+			'folders.update',
+			Folders.update,
+			{ id: folderId, title: 'Confidential client' },
+			foldersEnvelope,
+		],
+		['account.get', Contacts.account, {}, accountEnvelope],
+	] as const)(
+		'omits names and titles from %s events',
+		async (event, endpoint, input, response) => {
+			respond(fetchMock, response);
+			const result = await invoke(endpoint, input);
+			expect(result).toEqual(response);
+			expect(mockLog.mock.calls.at(-1)?.[1]).toBe(`wrike.${event}`);
+			const fields = mockLog.mock.calls.at(-1)?.[2];
+			expect(fields).toHaveProperty('id', response.data[0]?.id);
+			expect(fields).not.toHaveProperty('title');
+			expect(fields).not.toHaveProperty('name');
+		},
+	);
+});
+
 describe('tasks', () => {
 	it('searches tasks with list filters as JSON arrays', async () => {
 		respond(fetchMock, tasksEnvelope);

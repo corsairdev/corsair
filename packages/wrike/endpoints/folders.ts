@@ -46,7 +46,6 @@ export const get: WrikeEndpoints['foldersGet'] = (ctx, input) =>
 		{
 			log: (_, result) => ({
 				id: result.data?.[0]?.id ?? undefined,
-				title: result.data?.[0]?.title ?? undefined,
 				space: result.data?.[0]?.space ?? undefined,
 			}),
 		},
@@ -74,7 +73,6 @@ export const create: WrikeEndpoints['foldersCreate'] = (ctx, input) =>
 			log: (parsed, result) => ({
 				id: result.data?.[0]?.id ?? undefined,
 				parent: parsed.parentId,
-				title: parsed.title,
 			}),
 		},
 	);
@@ -131,7 +129,6 @@ export const update: WrikeEndpoints['foldersUpdate'] = (ctx, input) =>
 		{
 			log: (parsed, result) => ({
 				id: result.data?.[0]?.id ?? parsed.id,
-				title: result.data?.[0]?.title ?? undefined,
 			}),
 		},
 	);
