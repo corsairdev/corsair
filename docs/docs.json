@@ -3250,6 +3250,14 @@
                 ]
               },
               {
+                "group": "Refiner",
+                "pages": [
+                  "plugins/refiner/overview",
+                  "plugins/refiner/api",
+                  "plugins/refiner/database"
+                ]
+              },
+              {
                 "group": "Remoet",
                 "pages": [
                   "plugins/remoet/overview",
