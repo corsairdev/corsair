@@ -2548,6 +2548,14 @@
                 ]
               },
               {
+                "group": "Keen",
+                "pages": [
+                  "plugins/keen/overview",
+                  "plugins/keen/api",
+                  "plugins/keen/database"
+                ]
+              },
+              {
                 "group": "Keenable",
                 "pages": [
                   "plugins/keenable/overview",

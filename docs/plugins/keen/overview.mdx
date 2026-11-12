@@ -1,0 +1,150 @@
+---
+title: "Keen plugin"
+sidebarTitle: "Overview"
+description: "Event analytics with Keen - record single events and batches, inspect the collections and property types Keen inferred, run count, sum, average and the rest of its analyses, and manage saved queries and cached datasets."
+---
+
+Use **Keen** through Corsair: one client, typed API calls.
+
+Create a key in Keen under your project's Access Keys. Each project has a master, write and read key; which one you connect with decides what the plugin can do.
+
+Two credentials are needed before the first call:
+
+- **The project ID**, which is part of every request path. Connect delivers it beside the key; the `projectId` plugin option overrides it.
+- **The key itself**, sent bare in the `Authorization` header. Keen adds no `Bearer` scheme, and a key with one is rejected.
+
+Things to know before you call:
+
+- **A read key cannot write, and a write key cannot read.** Keen answers 403 when the key's kind does not permit the call. The plugin cannot tell which kind arrived, so a 403 usually means the key is the wrong kind rather than the wrong key.
+- **Events take a moment to be queryable.** Keen acknowledges `events.record` at once but says it can take up to 10 seconds before the event appears in a query.
+- **`events.recordMany` partly succeeds.** It answers one result per event, keyed by collection, and an entry with `success: false` was not stored. Keen recommends batches of 5,000 or less.
+- **Queries are POSTs but read nothing back into Keen.** `queries.run` and `queries.multiAnalysis` send the analysis as a body. Because the method is POST, they are not replayed after a 5xx; a count that failed mid-way is safe to send again, and the caller can.
+- **A query has five minutes.** Past that Keen stops it and answers 504 `QueryIncompleteError`. The plugin raises `isQueryIncomplete` and does not retry, because the same query would take as long again; narrow the timeframe instead.
+- **Every analysis but `count` and `funnel` needs a `target_property`**, and `percentile` also needs its `percentile` value. Both are checked before the request, so a malformed analysis costs no call.
+- **Cached results.** A saved query with a `refresh_rate` above 0 must be at least four hours; `0` caches nothing. `savedQueries.result` reads the cached answer, which is what makes a dashboard load instantly.
+- **Datasets page by cursor.** `datasets.list` returns `next_after_name`, read out of Keen's `next_page_url`; pass it back as `after_name`.
+- **Rate limits are per project, not per key.** A 429 blocks that endpoint category for the next minute, and Keen sends no `Retry-After`, so the plugin waits a minute before its next attempt.
+- **Webhooks.** The plugin does not receive Keen webhooks; none are configured here.
+
+**What you get:**
+
+- 16 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/keen better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/keen better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/keen better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/keen better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { keen } from '@corsair-dev/keen';
+
+export const corsair = createCorsair({
+	plugins: [
+		keen(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+This plugin saves no credentials of its own. A call made without a stored key for the tenant throws `AuthMissingError`, which may carry a `connectUrl` to the page that collects one. A Keen project also needs its project ID, delivered as the `project_id` credential beside the key.
+
+```ts
+keen()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'keen',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Count purchases in the last week**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.keen.api.queries.run({ event_collection: 'purchases', timeframe: 'this_7_days' });
+```
+
+
+**Record a purchase**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.keen.api.events.record({
+	collection: 'purchases',
+	event: { item: 'Avocado', number_of_items: 10 },
+});
+```
+
+
+See the full list on the [API](/plugins/keen/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/keen/api">
+    Every `keen.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
