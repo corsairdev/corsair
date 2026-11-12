@@ -80,6 +80,7 @@ describe('makeWatiRequest', () => {
 		const error = (await makeWatiRequest(API_KEY, {
 			method: 'GET',
 			path: '/contacts',
+			// unknown: a rejection can carry any value; the cast below narrows it.
 		}).catch((thrown: unknown) => thrown)) as WatiAPIError;
 
 		expect(error).toBeInstanceOf(WatiAPIError);
@@ -97,6 +98,7 @@ describe('makeWatiRequest', () => {
 		const error = (await makeWatiRequest(API_KEY, {
 			method: 'POST',
 			path: '/messages/template',
+			// unknown: a rejection can carry any value; the cast below narrows it.
 		}).catch((thrown: unknown) => thrown)) as WatiAPIError;
 
 		expect(error.message).toBe('fetch failed');
