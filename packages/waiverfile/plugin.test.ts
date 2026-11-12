@@ -19,7 +19,7 @@ function buildKey(
 	return plugin.keyBuilder?.(ctx as never, 'endpoint');
 }
 
-const operations = [
+const operations: (keyof typeof waiverFileEndpointSchemas)[] = [
 	'eventCategories.create',
 	'eventCategories.delete',
 	'eventCategories.list',
@@ -78,7 +78,7 @@ describe('waiverfile plugin definition', () => {
 		const schemas = plugin.endpointSchemas ?? {};
 		expect(Object.keys(schemas).sort()).toEqual(operations);
 		for (const operation of operations) {
-			const schema = schemas[operation as keyof typeof schemas];
+			const schema = schemas[operation];
 			expect(schema?.input).toBeDefined();
 			expect(schema?.output).toBeDefined();
 		}
@@ -88,7 +88,7 @@ describe('waiverfile plugin definition', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(Object.keys(meta).sort()).toEqual(operations);
 		for (const operation of operations) {
-			const entry = meta[operation as keyof typeof meta];
+			const entry = meta[operation];
 			expect(['read', 'write', 'destructive']).toContain(entry?.riskLevel);
 			expect((entry?.description ?? '').length).toBeGreaterThan(10);
 		}
@@ -97,8 +97,7 @@ describe('waiverfile plugin definition', () => {
 	it('marks the two deletes as destructive', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const destructive = operations.filter(
-			(operation) =>
-				meta[operation as keyof typeof meta]?.riskLevel === 'destructive',
+			(operation) => meta[operation]?.riskLevel === 'destructive',
 		);
 
 		expect(destructive.sort()).toEqual([
@@ -109,17 +108,13 @@ describe('waiverfile plugin definition', () => {
 
 	it('marks a PDF read as a read, despite the byte volume', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(meta['waivers.pdf' as keyof typeof meta]?.riskLevel).toBe('read');
+		expect(meta['waivers.pdf']?.riskLevel).toBe('read');
 	});
 
 	it('marks subscribing as a write, since it changes where data is sent', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(meta['webhooks.subscribe' as keyof typeof meta]?.riskLevel).toBe(
-			'write',
-		);
-		expect(meta['webhooks.unsubscribe' as keyof typeof meta]?.riskLevel).toBe(
-			'write',
-		);
+		expect(meta['webhooks.subscribe']?.riskLevel).toBe('write');
+		expect(meta['webhooks.unsubscribe']?.riskLevel).toBe('write');
 	});
 
 	it('lists twelve webhook triggers, each with a subscribe route', () => {

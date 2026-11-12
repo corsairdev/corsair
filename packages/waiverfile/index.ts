@@ -443,6 +443,8 @@ export type ExternalWaiverFilePlugin<T extends WaiverFilePluginOptions> =
 	BaseWaiverFilePlugin<T>;
 
 export function waiverfile<const T extends WaiverFilePluginOptions>(
+	// {} fits WaiverFilePluginOptions (every field is optional); T only adds
+	// literal types the caller chose, so an empty default is safe.
 	incomingOptions: WaiverFilePluginOptions & T = {} as WaiverFilePluginOptions &
 		T,
 ): ExternalWaiverFilePlugin<T> {

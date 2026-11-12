@@ -202,6 +202,8 @@ export async function makeWaiverFileRequest(
 	};
 
 	try {
+		// unknown: the body is provider JSON until the caller's output schema
+		// parses it.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: WAIVERFILE_RATE_LIMIT_CONFIG,
 		});
@@ -228,11 +230,7 @@ export async function makeWaiverFileRequest(
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new WaiverFileAPIError(
-				scrubWaiverFileSecret(
-					error.message,
-					credentials.apiKey,
-					redact,
-				) as string,
+				scrubWaiverFileSecret(error.message, credentials.apiKey, redact),
 				{ method, path },
 			);
 		}
@@ -246,7 +244,18 @@ export async function makeWaiverFileRequest(
  * in plain text, and the shared transport's redaction only covers its own
  * request fields.
  */
+export function scrubWaiverFileSecret(
+	value: string,
+	apiKey: string,
+	extra?: string[],
+): string;
 // unknown: the error body is whatever WaiverFile or a proxy sent.
+export function scrubWaiverFileSecret(
+	value: unknown,
+	apiKey: string,
+	extra?: string[],
+): unknown;
+// unknown: same as the overload above; a string comes back as a string.
 export function scrubWaiverFileSecret(
 	value: unknown,
 	apiKey: string,
@@ -303,7 +312,7 @@ export async function makeWaiverFileDownload(
 		// A transport failure never reached WaiverFile, so a read is safe to replay.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new WaiverFileAPIError(
-				scrubWaiverFileSecret(error.message, credentials.apiKey) as string,
+				scrubWaiverFileSecret(error.message, credentials.apiKey),
 				{ method: 'GET', path },
 			);
 		}

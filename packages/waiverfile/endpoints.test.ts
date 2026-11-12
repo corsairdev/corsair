@@ -9,16 +9,6 @@ import {
 	Waivers,
 	Webhooks,
 } from './endpoints';
-import type {
-	CategoriesResponse,
-	EventResponse,
-	EventsResponse,
-	EventsWaiversResponse,
-	FormsResponse,
-	SiteGetResponse,
-	WaiverResponse,
-	WaiversListResponse,
-} from './endpoints/types';
 import {
 	categoriesResponse,
 	categoryID,
@@ -49,6 +39,7 @@ import {
 	installFetchMock,
 	invoke,
 	lastRequest,
+	rejection,
 	respond,
 	respondText,
 	SITE_ID,
@@ -67,6 +58,8 @@ beforeEach(() => {
 });
 
 function lastLog() {
+	// unknown: logged fields are typed loosely by core; every endpoint here logs
+	// an object, so it is read as a record.
 	return mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 }
 
@@ -96,7 +89,7 @@ describe('site and ping', () => {
 	it('flattens the site and drops its megabyte of labels', async () => {
 		respond(fetchMock, siteResponse);
 
-		const result = (await invoke(Site.get, {})) as SiteGetResponse;
+		const result = await invoke(Site.get, {});
 
 		expect(result).toMatchObject({
 			ID: siteID,
@@ -114,9 +107,7 @@ describe('site and ping', () => {
 	it('surfaces a bad key on Ping, which is a 400 rather than a 401', async () => {
 		respond(fetchMock, invalidKey, 400);
 
-		const error = (await invoke(Site.ping, {}).catch(
-			(thrown: unknown) => thrown,
-		)) as WaiverFileAPIError;
+		const error = await rejection(invoke(Site.ping, {}));
 
 		expect(error).toBeInstanceOf(WaiverFileAPIError);
 		expect(error.status).toBe(400);
@@ -126,15 +117,14 @@ describe('site and ping', () => {
 	it('treats the bare Invalid every other route sends as an auth failure', async () => {
 		respond(fetchMock, invalidKeyOnRoute, 400);
 
-		const error = (await invoke(Forms.active, {}).catch(
-			(thrown: unknown) => thrown,
-		)) as WaiverFileAPIError;
+		const error = await rejection(invoke(Forms.active, {}));
 
 		expect(error.isAuthError).toBe(true);
 	});
 
 	it('refuses a key that is not the documented pair, before any request', async () => {
 		await expect(
+			// never: a context with only an unpacked key is the case under test.
 			Site.ping({ key: API_KEY } as never, {} as never),
 		).rejects.toThrow('must hold the API key and the site ID');
 	});
@@ -144,7 +134,7 @@ describe('waivers', () => {
 	it('unwraps one waiver from its top-level Waiver property', async () => {
 		respond(fetchMock, waiverResponse);
 
-		const result = (await invoke(Waivers.get, { waiverID })) as WaiverResponse;
+		const result = await invoke(Waivers.get, { waiverID });
 
 		expect(result.WaiverID).toBe(waiverID);
 		expect(result.SignedNameFirst).toBe('Jordan');
@@ -163,7 +153,7 @@ describe('waivers', () => {
 		// One participant converts from XML as an object, not an array.
 		respond(fetchMock, waiverResponse);
 
-		const result = (await invoke(Waivers.get, { waiverID })) as WaiverResponse;
+		const result = await invoke(Waivers.get, { waiverID });
 
 		expect(result.Particpants).toHaveLength(1);
 		expect(result.Particpants?.[0]?.ParticipantNameFirst).toBe('Jordan');
@@ -184,9 +174,9 @@ describe('waivers', () => {
 	it('reads the lite form from GetWaiverLite', async () => {
 		respond(fetchMock, waiverResponse);
 
-		const result = (await invoke(Waivers.getLite, {
+		const result = await invoke(Waivers.getLite, {
 			waiverID,
-		})) as WaiverResponse;
+		});
 
 		expect(result.WaiverID).toBe(waiverID);
 		expect(lastRequest(fetchMock).path).toBe('/api/v1/GetWaiverLite');
@@ -195,9 +185,9 @@ describe('waivers', () => {
 	it('turns a single search match, sent as an object, into a one-item list', async () => {
 		respond(fetchMock, oneWaiverList);
 
-		const result = (await invoke(Waivers.search, {
+		const result = await invoke(Waivers.search, {
 			terms: 'Ruiz',
-		})) as WaiversListResponse;
+		});
 
 		expect(result.Waivers?.map((waiver) => waiver.WaiverID)).toEqual([
 			waiverID,
@@ -237,11 +227,11 @@ describe('waivers', () => {
 	it('pages the full waivers with a zero-based page index, as an array', async () => {
 		respond(fetchMock, twoWaiverList);
 
-		const result = (await invoke(Waivers.list, {
+		const result = await invoke(Waivers.list, {
 			...range,
 			pageIndex: 0,
 			pageSize: 50,
-		})) as WaiversListResponse;
+		});
 
 		expect(result.Waivers?.map((waiver) => waiver.WaiverID)).toEqual([
 			waiverID,
@@ -263,11 +253,11 @@ describe('waivers', () => {
 	it('pages the lite waivers', async () => {
 		respond(fetchMock, oneWaiverList);
 
-		const result = (await invoke(Waivers.listLite, {
+		const result = await invoke(Waivers.listLite, {
 			...range,
 			pageIndex: 0,
 			pageSize: 50,
-		})) as WaiversListResponse;
+		});
 
 		expect(result.Waivers).toHaveLength(1);
 		expect(lastRequest(fetchMock).path).toBe(
@@ -289,13 +279,13 @@ describe('waivers', () => {
 	it('reads report rows from Table with a one-based page index', async () => {
 		respond(fetchMock, dataRows);
 
-		const result = (await invoke(Waivers.data, {
+		const result = await invoke(Waivers.data, {
 			...range,
 			includeCustomColumns: true,
 			consolidateParticipants: false,
 			pageIndex: 1,
 			pageSize: 100,
-		})) as { Table?: Record<string, unknown>[] };
+		});
 
 		expect(result.Table?.[0]).toMatchObject({ RowNum: 1, WaiverID: waiverID });
 		const sent = lastRequest(fetchMock);
@@ -330,12 +320,7 @@ describe('waivers', () => {
 		const pdf = '%PDF-1.4 fake waiver bytes';
 		respondText(fetchMock, pdf, 'application/pdf');
 
-		const result = (await invoke(Waivers.pdf, { waiverID })) as {
-			waiverID: string;
-			contentType: string;
-			bytes: number;
-			content: string;
-		};
+		const result = await invoke(Waivers.pdf, { waiverID });
 
 		const sent = lastRequest(fetchMock);
 		expect(sent.path).toBe('/api/v1/GetWaiverPDF');
@@ -356,10 +341,7 @@ describe('waivers', () => {
 			}),
 		);
 
-		const result = (await invoke(Waivers.pdf, { waiverID })) as {
-			bytes: number;
-			content: string;
-		};
+		const result = await invoke(Waivers.pdf, { waiverID });
 
 		expect(result.bytes).toBe(binary.byteLength);
 		expect(Buffer.from(result.content, 'base64').equals(binary)).toBe(true);
@@ -375,6 +357,7 @@ describe('waivers', () => {
 
 		await invoke(Waivers.pdf, { waiverID });
 
+		// The spy records fetch's arguments untyped; the second one is the init.
 		const init = fetchMock.mock.calls.at(-1)?.[1] as RequestInit;
 		expect(init.signal).toBeInstanceOf(AbortSignal);
 	});
@@ -387,9 +370,7 @@ describe('waivers', () => {
 			}),
 		);
 
-		const error = (await invoke(Waivers.pdf, { waiverID }).catch(
-			(thrown: unknown) => thrown,
-		)) as WaiverFileAPIError;
+		const error = await rejection(invoke(Waivers.pdf, { waiverID }));
 
 		expect(error).toBeInstanceOf(WaiverFileAPIError);
 		expect(error.body).toEqual(invalidKeyOnRoute);
@@ -401,7 +382,7 @@ describe('forms', () => {
 	it('flattens each form out of its .NET me block', async () => {
 		respond(fetchMock, formsResponse);
 
-		const result = (await invoke(Forms.active, {})) as FormsResponse;
+		const result = await invoke(Forms.active, {});
 
 		expect(result.WaiverForms?.[0]).toMatchObject({
 			ID: formID,
@@ -417,7 +398,7 @@ describe('forms', () => {
 	it('lists every form, including disabled ones', async () => {
 		respond(fetchMock, formsResponse);
 
-		const result = (await invoke(Forms.all, {})) as FormsResponse;
+		const result = await invoke(Forms.all, {});
 
 		expect(result.WaiverForms).toHaveLength(1);
 		expect(lastRequest(fetchMock).path).toBe('/api/v1/GetAllWaiverForms');
@@ -428,10 +409,7 @@ describe('events', () => {
 	it('flattens events from a bare array of .NET objects', async () => {
 		respond(fetchMock, eventsResponse);
 
-		const result = (await invoke(
-			Events.byDateRange,
-			utcRange,
-		)) as EventsResponse;
+		const result = await invoke(Events.byDateRange, utcRange);
 
 		expect(result.Events?.[0]).toMatchObject({
 			WaiverEventID: eventID,
@@ -451,10 +429,10 @@ describe('events', () => {
 	it('lists events in one category', async () => {
 		respond(fetchMock, eventsResponse);
 
-		const result = (await invoke(Events.byCategory, {
+		const result = await invoke(Events.byCategory, {
 			eventCategoryID: categoryID,
 			...utcRange,
-		})) as EventsResponse;
+		});
 
 		expect(result.Events).toHaveLength(1);
 		expect(lastRequest(fetchMock).query.eventCategoryID).toBe(categoryID);
@@ -464,7 +442,7 @@ describe('events', () => {
 		// The body is a JSON string whose value is the JSON array.
 		respond(fetchMock, upcomingResponse);
 
-		const result = (await invoke(Events.upcoming, utcRange)) as EventsResponse;
+		const result = await invoke(Events.upcoming, utcRange);
 
 		expect(result.Events?.[0]).toMatchObject({
 			WaiverEventID: eventID,
@@ -476,9 +454,9 @@ describe('events', () => {
 	it('lists the waivers signed for an event, with typed values', async () => {
 		respond(fetchMock, eventWaiversResponse);
 
-		const result = (await invoke(Events.waivers, {
+		const result = await invoke(Events.waivers, {
 			waiverEventID: eventID,
-		})) as EventsWaiversResponse;
+		});
 
 		expect(result.Waivers?.[0]).toMatchObject({
 			WaiverID: waiverID,
@@ -498,13 +476,13 @@ describe('events', () => {
 	it('creates an event with the credentials in the body and returns it flattened', async () => {
 		respond(fetchMock, eventResponse);
 
-		const result = (await invoke(Events.create, {
+		const result = await invoke(Events.create, {
 			eventName: 'Saturday open jump',
 			dateStart: '2026-12-01T14:00:00Z',
 			dateEnd: '2026-12-01T17:00:00Z',
 			isAllDay: false,
 			eventCategoryID: categoryID,
-		})) as EventResponse;
+		});
 
 		expect(result.WaiverEventID).toBe(eventID);
 		const sent = lastRequest(fetchMock);
@@ -561,7 +539,7 @@ describe('events', () => {
 			me: { ...eventResponse.me, isDeleted: true },
 		});
 
-		const result = (await invoke(Events.remove, { eventID })) as EventResponse;
+		const result = await invoke(Events.remove, { eventID });
 
 		expect(result).toMatchObject({ WaiverEventID: eventID, IsDeleted: true });
 		const sent = lastRequest(fetchMock);
@@ -573,11 +551,11 @@ describe('events', () => {
 	it('invites managers, logging how many addresses and none of them', async () => {
 		respond(fetchMock, eventResponse);
 
-		const result = (await invoke(Events.inviteManagers, {
+		const result = await invoke(Events.inviteManagers, {
 			eventID,
 			emailAddresses: 'a@example.com, b@example.com',
 			skipSendingEmailIfAccountExists: true,
-		})) as EventResponse;
+		});
 
 		expect(result.ManagerIDs).toHaveLength(1);
 		const sent = lastRequest(fetchMock);
@@ -604,10 +582,10 @@ describe('events', () => {
 	it('removes managers and returns the event', async () => {
 		respond(fetchMock, { ...eventResponse, _managerIDs: [] });
 
-		const result = (await invoke(Events.removeManagers, {
+		const result = await invoke(Events.removeManagers, {
 			eventID,
 			emailAddresses: 'a@example.com',
-		})) as EventResponse;
+		});
 
 		expect(result.ManagerIDs).toEqual([]);
 		expect(lastRequest(fetchMock).path).toBe('/api/v1/RemoveEventManagers');
@@ -618,9 +596,9 @@ describe('event categories', () => {
 	it('lists categories from a bare array', async () => {
 		respond(fetchMock, categoriesResponse);
 
-		const result = (await invoke(EventCategories.list, {
+		const result = await invoke(EventCategories.list, {
 			includeDisabledCategories: true,
-		})) as CategoriesResponse;
+		});
 
 		expect(result.EventCategories?.[0]).toEqual({
 			ID: categoryID,
@@ -773,9 +751,7 @@ describe('errors', () => {
 	it('removes the API key WaiverFile echoes in a 404 body', async () => {
 		respond(fetchMock, routeNotFound, 404);
 
-		const error = (await invoke(Forms.active, {}).catch(
-			(thrown: unknown) => thrown,
-		)) as WaiverFileAPIError;
+		const error = await rejection(invoke(Forms.active, {}));
 
 		expect(error.status).toBe(404);
 		expect(error.message).not.toContain(API_KEY);
@@ -869,10 +845,12 @@ describe('webhook errors', () => {
 				404,
 			);
 
-			const error = (await invoke(endpoint, {
-				trigger: 'newevent',
-				targetUrl,
-			}).catch((thrown: unknown) => thrown)) as WaiverFileAPIError;
+			const error = await rejection(
+				invoke(endpoint, {
+					trigger: 'newevent',
+					targetUrl,
+				}),
+			);
 
 			expect(error).toBeInstanceOf(WaiverFileAPIError);
 			const text = `${error.message} ${JSON.stringify(error.body)}`;

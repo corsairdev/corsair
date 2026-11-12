@@ -40,6 +40,7 @@ export const get: WaiverFileEndpoints['siteGet'] = (ctx, input) =>
 				) {
 					missingContainer(raw, '/api/v1/GetSiteDetails', 'the site ID');
 				}
+				// The check above narrowed flat to a non-null object.
 				const {
 					Labels: _labels,
 					LabelData: _labelData,

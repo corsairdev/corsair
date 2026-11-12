@@ -21,6 +21,7 @@ import {
 	installFetchMock,
 	lastRequest,
 	PACKED_KEY,
+	rejection,
 	respond,
 	respondText,
 	SITE_ID,
@@ -91,10 +92,12 @@ describe('makeWaiverFileRequest', () => {
 	it('throws a WaiverFileAPIError carrying the status and message', async () => {
 		respond(fetchMock, routeNotFound, 404);
 
-		const error = (await makeWaiverFileRequest(credentials, {
-			method: 'GET',
-			path: '/api/v1/Nope',
-		}).catch((thrown: unknown) => thrown)) as WaiverFileAPIError;
+		const error = await rejection(
+			makeWaiverFileRequest(credentials, {
+				method: 'GET',
+				path: '/api/v1/Nope',
+			}),
+		);
 
 		expect(error).toBeInstanceOf(WaiverFileAPIError);
 		expect(error.status).toBe(404);
@@ -110,10 +113,12 @@ describe('makeWaiverFileRequest', () => {
 	it('wraps a transport failure', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
-		const error = (await makeWaiverFileRequest(credentials, {
-			method: 'GET',
-			path: '/api/v1/Ping',
-		}).catch((thrown: unknown) => thrown)) as WaiverFileAPIError;
+		const error = await rejection(
+			makeWaiverFileRequest(credentials, {
+				method: 'GET',
+				path: '/api/v1/Ping',
+			}),
+		);
 
 		expect(error.message).toBe('fetch failed');
 		expect(error.method).toBe('GET');

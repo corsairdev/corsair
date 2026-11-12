@@ -47,12 +47,15 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 }
 
 /** Reads a list field that the API may name either way. */
+// unknown: raw is the response body and each entry is untyped until `parse`
+// validates it.
 export function listFrom<T>(
 	raw: unknown,
 	keys: readonly string[],
 	parse: (entry: unknown) => T,
 ): T[] {
 	if (typeof raw !== 'object' || raw === null) return [];
+	// A non-null object; its fields are read by name below.
 	const record = raw as Record<string, unknown>;
 	for (const key of keys) {
 		const value = record[key];
@@ -82,6 +85,7 @@ export async function download<
 		query?: Record<string, string | number | boolean | undefined>;
 	},
 	options: {
+		// unknown: the output schema validates whatever shape returns.
 		shape: (
 			file: { bytes: Buffer; contentType: string },
 			parsed: z.output<Input>,

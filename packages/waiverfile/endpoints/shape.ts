@@ -39,6 +39,7 @@ function pascalKey(key: string): string {
 export function fromDotNet(value: unknown): unknown {
 	if (Array.isArray(value)) return value.map(fromDotNet);
 	if (!isRecord(value)) return value;
+	// unknown: each field keeps whatever JSON it held.
 	const out: Record<string, unknown> = {};
 	for (const [key, entry] of Object.entries(value)) {
 		if (key === 'me') continue;
@@ -154,6 +155,7 @@ export function dotNetList<K extends string>(
 ): Record<K, unknown[]> {
 	failIfText(raw, path);
 	if (!Array.isArray(raw)) missingContainer(raw, path, 'an array');
+	// A computed key widens to string; K is that key, so the record has it.
 	return { [key]: raw.map(fromDotNet) } as Record<K, unknown[]>;
 }
 
