@@ -882,7 +882,9 @@ describe('error propagation', () => {
 		respond(fetchMock, BAD_REQUEST, 400);
 
 		await expect(
-			invoke(Responses.store, { id: 'u', nps: 9 }),
-		).rejects.toThrow();
+			invoke(Responses.store, { id: 'u', form_uuid: 'FORM_UUID', nps: 9 }),
+		).rejects.toThrow('The form_uuid field is required.');
+		// The input is valid, so the failure is Refiner's 400, not the schema's.
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 });
