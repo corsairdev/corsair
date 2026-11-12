@@ -3248,5 +3248,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/googleslides",
+    "dir": "packages/googleslides",
+    "name": "Google Slides",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
