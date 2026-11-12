@@ -1,0 +1,989 @@
+---
+title: "GageList API reference"
+sidebarTitle: "API"
+description: "API reference for the GageList plugin in Corsair: every `gagelist.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### status
+
+`account.status`
+
+The site’s plan limits and usage: gage and user counts, gages due and past due, and what the client may change
+
+**Risk:** `read`
+
+```ts
+await corsair.gagelist.api.account.status({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  MaxUsers?: number | null,
+  MaxGages?: number | null,
+  MaxRecords?: number | null,
+  AssignedUsers?: number | null,
+  TotalGages?: number | null,
+  ActiveGages?: number | null,
+  InactiveGages?: number | null,
+  GagesDueThisMonth?: number | null,
+  GagesDue30Days?: number | null,
+  GagesPastDue?: number | null,
+  AllowAttachments?: boolean | null,
+  AllowCustomFields?: boolean | null,
+  CanAdd?: boolean | null,
+  CanEdit?: boolean | null,
+  CurrentSiteId?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Calibrations
+
+### certificate
+
+`calibrations.certificate`
+
+Render a calibration certificate for a record, returned as the document GageList produces
+
+**Risk:** `read`
+
+```ts
+await corsair.gagelist.api.calibrations.certificate({ id: 500 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The GageList record ID. |
+
+Returns the rendered document as a string rather than JSON.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `certificate` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`calibrations.create`
+
+Record a calibration against a gage, with the readings, standard used and next due date
+
+**Risk:** `write`
+
+```ts
+await corsair.gagelist.api.calibrations.create({ EquipmentRefId: 12, EquipmentAsFound: '0.01', EquipmentAsLeft: '0.00', CalibrationDueDate: '2027-04-24T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | No | — |
+| `RecordNumber` | `string` | No | — |
+| `EquipmentRefId` | `number` | No | The gage this calibration records. |
+| `EquipmentAsFound` | `string` | No | — |
+| `EquipmentAsLeft` | `string` | No | — |
+| `LastCalibrationDate` | `string` | No | — |
+| `CalibrationDueDate` | `string` | No | — |
+| `MasterStandard` | `string` | No | — |
+| `Type` | `string` | No | — |
+| `Manufacturer` | `string` | No | — |
+| `Website` | `string` | No | — |
+| `Model` | `string` | No | — |
+| `SerialNumber` | `string` | No | — |
+| `TypesMeasurement` | `string` | No | — |
+| `UnitOfMeasure` | `string` | No | — |
+| `RangeOrSize` | `string` | No | — |
+| `Tolerance` | `string` | No | — |
+| `Location` | `string` | No | — |
+| `ResponsibleUser` | `string` | No | — |
+| `Interval` | `string` | No | — |
+| `Years` | `number` | No | — |
+| `Months` | `number` | No | — |
+| `Days` | `number` | No | — |
+| `Uncertainty` | `string` | No | — |
+| `CalibrationTest` | `string` | No | — |
+| `OtherInformation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `number` | Yes | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`calibrations.delete`
+
+Delete a calibration record
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gagelist.api.calibrations.delete({ id: 500 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The GageList record ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `boolean \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`calibrations.get`
+
+One calibration record with its as-found and as-left readings
+
+**Risk:** `read`
+
+```ts
+await corsair.gagelist.api.calibrations.get({ id: 500 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The GageList record ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  Id: number,
+  RecordNumber?: string | null,
+  EquipmentRefId?: number | null,
+  SerialNumber?: string | null,
+  ControlNumber?: string | null,
+  AssetNo?: string | null,
+  EquipmentAsFound?: string | null,
+  EquipmentAsLeft?: string | null,
+  LastCalibrationDate?: string | null,
+  CalibrationDueDate?: string | null,
+  MasterStandard?: string | null,
+  Type?: string | null,
+  Manufacturer?: string | null,
+  Website?: string | null,
+  Model?: string | null,
+  TypesMeasurement?: string | null,
+  UnitOfMeasure?: string | null,
+  RangeOrSize?: string | null,
+  Tolerance?: string | null,
+  Location?: string | null,
+  ResponsibleUser?: string | null,
+  Interval?: string | null,
+  Years?: number | null,
+  Months?: number | null,
+  Days?: number | null,
+  Uncertainty?: string | null,
+  CalibrationTest?: string | null,
+  OtherInformation?: string | null,
+  CreatedBy?: string | null,
+  UpdatedBy?: string | null,
+  IsDeleted?: boolean | null,
+  UpdatedDate?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`calibrations.list`
+
+Calibration records, paged; each names the gage it was run on through `EquipmentRefId`
+
+**Risk:** `read`
+
+```ts
+await corsair.gagelist.api.calibrations.list({ start: 0, record_number: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `number` | No | — |
+| `record_number` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number \| null` | No | — |
+| `count` | `number \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `next_start` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  Id: number,
+  RecordNumber?: string | null,
+  EquipmentRefId?: number | null,
+  SerialNumber?: string | null,
+  ControlNumber?: string | null,
+  AssetNo?: string | null,
+  EquipmentAsFound?: string | null,
+  EquipmentAsLeft?: string | null,
+  LastCalibrationDate?: string | null,
+  CalibrationDueDate?: string | null,
+  MasterStandard?: string | null,
+  Type?: string | null,
+  Manufacturer?: string | null,
+  Website?: string | null,
+  Model?: string | null,
+  TypesMeasurement?: string | null,
+  UnitOfMeasure?: string | null,
+  RangeOrSize?: string | null,
+  Tolerance?: string | null,
+  Location?: string | null,
+  ResponsibleUser?: string | null,
+  Interval?: string | null,
+  Years?: number | null,
+  Months?: number | null,
+  Days?: number | null,
+  Uncertainty?: string | null,
+  CalibrationTest?: string | null,
+  OtherInformation?: string | null,
+  CreatedBy?: string | null,
+  UpdatedBy?: string | null,
+  IsDeleted?: boolean | null,
+  UpdatedDate?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`calibrations.update`
+
+Update a calibration record
+
+**Risk:** `write`
+
+```ts
+await corsair.gagelist.api.calibrations.update({ Id: 500, Uncertainty: '0.003' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `nonoptional` | Yes | — |
+| `RecordNumber` | `string` | No | — |
+| `EquipmentRefId` | `number` | No | The gage this calibration records. |
+| `EquipmentAsFound` | `string` | No | — |
+| `EquipmentAsLeft` | `string` | No | — |
+| `LastCalibrationDate` | `string` | No | — |
+| `CalibrationDueDate` | `string` | No | — |
+| `MasterStandard` | `string` | No | — |
+| `Type` | `string` | No | — |
+| `Manufacturer` | `string` | No | — |
+| `Website` | `string` | No | — |
+| `Model` | `string` | No | — |
+| `SerialNumber` | `string` | No | — |
+| `TypesMeasurement` | `string` | No | — |
+| `UnitOfMeasure` | `string` | No | — |
+| `RangeOrSize` | `string` | No | — |
+| `Tolerance` | `string` | No | — |
+| `Location` | `string` | No | — |
+| `ResponsibleUser` | `string` | No | — |
+| `Interval` | `string` | No | — |
+| `Years` | `number` | No | — |
+| `Months` | `number` | No | — |
+| `Days` | `number` | No | — |
+| `Uncertainty` | `string` | No | — |
+| `CalibrationTest` | `string` | No | — |
+| `OtherInformation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `boolean \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+## Custom Fields
+
+### list
+
+`customFields.list`
+
+The account’s custom fields, with the `Id` and `RefType` a value needs
+
+**Risk:** `read`
+
+```ts
+await corsair.gagelist.api.customFields.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  Id?: number | null,
+  Name?: string | null,
+  FieldName?: string | null,
+  FieldType?: string | null,
+  RefType?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateValues
+
+`customFields.updateValues`
+
+Create or update custom field values on a gage or a calibration. `RefType` is `1` for a gage and `2` for a calibration
+
+**Risk:** `write`
+
+```ts
+await corsair.gagelist.api.customFields.updateValues({ values: [{ Id: 0, FieldId: 3, RefID: 12, RefType: 1, FieldValue: 'CC-1' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `values` | `object[]` | Yes | Sent as a bare JSON array, which is what this route takes rather than the usual object. |
+
+Posts a bare JSON array. `RefType` is `1` for a gage and `2` for a calibration.
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  Id: number,
+  FieldId: number,
+  RefID: number,
+  RefType: 1 | 2,
+  FieldValue: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `number[] \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+## Gages
+
+### create
+
+`gages.create`
+
+Add a gage, with its serial and control numbers, calibration interval and responsible user
+
+**Risk:** `write`
+
+```ts
+await corsair.gagelist.api.gages.create({ SerialNumber: 'SN-1001', Type: 'Caliper', Manufacturer: 'Mitutoyo', Years: 1, Location: 'Bench 3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | No | `0` on a create. |
+| `SerialNumber` | `string` | No | — |
+| `ControlNumber` | `string` | No | — |
+| `AssetNo` | `string` | No | — |
+| `PurchasePrice` | `number` | No | — |
+| `Status` | `string` | No | — |
+| `LastCalibrationDate` | `string` | No | ISO 8601. |
+| `CalibrationDueDate` | `string` | No | ISO 8601. |
+| `MasterStandard` | `string` | No | — |
+| `Type` | `string` | No | — |
+| `Manufacturer` | `string` | No | — |
+| `Website` | `string` | No | — |
+| `Model` | `string` | No | — |
+| `TypesMeasurement` | `string` | No | — |
+| `UnitOfMeasure` | `string` | No | — |
+| `RangeOrSize` | `string` | No | — |
+| `Tolerance` | `string` | No | — |
+| `DateAquired` | `string` | No | ISO 8601. |
+| `SourceOrVendor` | `string` | No | — |
+| `ConditionAquired` | `string` | No | — |
+| `Location` | `string` | No | — |
+| `ResponsibleUser` | `string` | No | — |
+| `NotificationList` | `string` | No | — |
+| `Interval` | `string` | No | — |
+| `Years` | `number` | No | — |
+| `Months` | `number` | No | — |
+| `Days` | `number` | No | — |
+| `CalibrationEnvironment` | `string` | No | — |
+| `CalibrationInstructions` | `string` | No | — |
+| `OtherInformation` | `string` | No | — |
+| `CalibrationTestMode` | `string` | No | — |
+| `Area` | `string` | No | — |
+| `NISTNumber` | `string` | No | — |
+
+Field names are PascalCase and bind case-sensitively. GageList spells the acquisition date `DateAquired`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `number` | Yes | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`gages.delete`
+
+Delete a gage. GageList marks it deleted rather than erasing it, but it stops appearing in the active list
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gagelist.api.gages.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The GageList record ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `boolean \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`gages.get`
+
+One gage with its calibration dates, interval and assigned user
+
+**Risk:** `read`
+
+```ts
+await corsair.gagelist.api.gages.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The GageList record ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  Id: number,
+  SerialNumber?: string | null,
+  ControlNumber?: string | null,
+  AssetNo?: string | null,
+  PurchasePrice?: number | null,
+  Status?: string | null,
+  LastCalibrationDate?: string | null,
+  CalibrationDueDate?: string | null,
+  MasterStandard?: string | null,
+  Type?: string | null,
+  Manufacturer?: string | null,
+  Website?: string | null,
+  Model?: string | null,
+  TypesMeasurement?: string | null,
+  UnitOfMeasure?: string | null,
+  RangeOrSize?: string | null,
+  Tolerance?: string | null,
+  DateAquired?: string | null,
+  SourceOrVendor?: string | null,
+  ConditionAquired?: string | null,
+  Location?: string | null,
+  ResponsibleUser?: string | null,
+  NotificationList?: string | null,
+  Interval?: string | null,
+  Years?: number | null,
+  Months?: number | null,
+  Days?: number | null,
+  CalibrationEnvironment?: string | null,
+  CalibrationInstructions?: string | null,
+  OtherInformation?: string | null,
+  CalibrationTestMode?: string | null,
+  CreatedBy?: string | null,
+  UpdatedBy?: string | null,
+  IsDeleted?: boolean | null,
+  Area?: string | null,
+  NISTNumber?: string | null,
+  UpdatedDate?: string | null,
+  IntervalCategory?: string | null,
+  LastCalibrationDateStr?: string | null,
+  CalibrationCount?: number | null,
+  CreatedDate?: string | null,
+  ImageName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`gages.list`
+
+Gages on the site, paged by `start` and `record_number` in the request body; `next_start` gives the next page
+
+**Risk:** `read`
+
+```ts
+await corsair.gagelist.api.gages.list({ start: 0, record_number: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `number` | No | Records to skip. Defaults to 0. |
+| `record_number` | `number` | No | Records to return in this page. |
+
+Pages by `start` and `record_number` in the request body. `next_start` is null on the last page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number \| null` | No | Every gage on the site. |
+| `count` | `number \| null` | No | Gages in this page. |
+| `data` | `object[]` | Yes | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `next_start` | `number \| null` | Yes | The `start` for the next page; null on the last one. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  Id: number,
+  SerialNumber?: string | null,
+  ControlNumber?: string | null,
+  AssetNo?: string | null,
+  PurchasePrice?: number | null,
+  Status?: string | null,
+  LastCalibrationDate?: string | null,
+  CalibrationDueDate?: string | null,
+  MasterStandard?: string | null,
+  Type?: string | null,
+  Manufacturer?: string | null,
+  Website?: string | null,
+  Model?: string | null,
+  TypesMeasurement?: string | null,
+  UnitOfMeasure?: string | null,
+  RangeOrSize?: string | null,
+  Tolerance?: string | null,
+  DateAquired?: string | null,
+  SourceOrVendor?: string | null,
+  ConditionAquired?: string | null,
+  Location?: string | null,
+  ResponsibleUser?: string | null,
+  NotificationList?: string | null,
+  Interval?: string | null,
+  Years?: number | null,
+  Months?: number | null,
+  Days?: number | null,
+  CalibrationEnvironment?: string | null,
+  CalibrationInstructions?: string | null,
+  OtherInformation?: string | null,
+  CalibrationTestMode?: string | null,
+  CreatedBy?: string | null,
+  UpdatedBy?: string | null,
+  IsDeleted?: boolean | null,
+  Area?: string | null,
+  NISTNumber?: string | null,
+  UpdatedDate?: string | null,
+  IntervalCategory?: string | null,
+  LastCalibrationDateStr?: string | null,
+  CalibrationCount?: number | null,
+  CreatedDate?: string | null,
+  ImageName?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`gages.update`
+
+Update a gage. The body is the whole record with its `Id`, not a partial patch
+
+**Risk:** `write`
+
+```ts
+await corsair.gagelist.api.gages.update({ Id: 12, Location: 'Bench 4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `nonoptional` | Yes | — |
+| `SerialNumber` | `string` | No | — |
+| `ControlNumber` | `string` | No | — |
+| `AssetNo` | `string` | No | — |
+| `PurchasePrice` | `number` | No | — |
+| `Status` | `string` | No | — |
+| `LastCalibrationDate` | `string` | No | ISO 8601. |
+| `CalibrationDueDate` | `string` | No | ISO 8601. |
+| `MasterStandard` | `string` | No | — |
+| `Type` | `string` | No | — |
+| `Manufacturer` | `string` | No | — |
+| `Website` | `string` | No | — |
+| `Model` | `string` | No | — |
+| `TypesMeasurement` | `string` | No | — |
+| `UnitOfMeasure` | `string` | No | — |
+| `RangeOrSize` | `string` | No | — |
+| `Tolerance` | `string` | No | — |
+| `DateAquired` | `string` | No | ISO 8601. |
+| `SourceOrVendor` | `string` | No | — |
+| `ConditionAquired` | `string` | No | — |
+| `Location` | `string` | No | — |
+| `ResponsibleUser` | `string` | No | — |
+| `NotificationList` | `string` | No | — |
+| `Interval` | `string` | No | — |
+| `Years` | `number` | No | — |
+| `Months` | `number` | No | — |
+| `Days` | `number` | No | — |
+| `CalibrationEnvironment` | `string` | No | — |
+| `CalibrationInstructions` | `string` | No | — |
+| `OtherInformation` | `string` | No | — |
+| `CalibrationTestMode` | `string` | No | — |
+| `Area` | `string` | No | — |
+| `NISTNumber` | `string` | No | — |
+
+The body is the whole record with its `Id`, not a partial patch.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `boolean \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+## Manufacturers
+
+### create
+
+`manufacturers.create`
+
+Add a manufacturer with its address and contact details
+
+**Risk:** `write`
+
+```ts
+await corsair.gagelist.api.manufacturers.create({ Name: 'Starrett', Website: 'https://starrett.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `number` | No | — |
+| `Name` | `string` | Yes | — |
+| `Address` | `string` | No | — |
+| `Phone` | `string` | No | — |
+| `Fax` | `string` | No | — |
+| `Website` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `number` | Yes | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`manufacturers.delete`
+
+Delete a manufacturer
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gagelist.api.manufacturers.delete({ id: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The GageList record ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `boolean \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`manufacturers.list`
+
+Instrument manufacturers, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.gagelist.api.manufacturers.list({ start: 0, record_number: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `number` | No | — |
+| `record_number` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number \| null` | No | — |
+| `count` | `number \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `next_start` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  Id: number,
+  Name?: string | null,
+  Address?: string | null,
+  Phone?: string | null,
+  Fax?: string | null,
+  Website?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`manufacturers.update`
+
+Update a manufacturer
+
+**Risk:** `write`
+
+```ts
+await corsair.gagelist.api.manufacturers.update({ Id: 7, Name: 'Mitutoyo Corp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Id` | `nonoptional` | Yes | — |
+| `Name` | `string` | Yes | — |
+| `Address` | `string` | No | — |
+| `Phone` | `string` | No | — |
+| `Fax` | `string` | No | — |
+| `Website` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `boolean \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
