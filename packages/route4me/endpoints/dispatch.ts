@@ -27,14 +27,16 @@ export const ordersList: Route4meEndpoints['ordersList'] = (ctx, input) =>
 				order_by: parsed.order_by
 					? [[parsed.order_by.field, parsed.order_by.direction]]
 					: undefined,
+				// The day and status filters live inside `filters` in the
+				// reference; at the top level Route4Me ignores them.
 				filters: queryOf({
 					search_query: parsed.search_query,
 					group: parsed.group,
 					barcode: parsed.barcode,
+					day_scheduled_for_YYMMDD: parsed.day_scheduled_for,
+					day_added_YYMMDD: parsed.day_added,
+					statuses: parsed.statuses,
 				}),
-				day_scheduled_for_YYMMDD: parsed.day_scheduled_for,
-				day_added_YYMMDD: parsed.day_added,
-				statuses: parsed.statuses,
 			},
 		}),
 		{

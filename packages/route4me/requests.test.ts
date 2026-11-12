@@ -140,16 +140,23 @@ describe('orders.list', () => {
 			per_page: 50,
 			search_query: 'jordan',
 			statuses: ['0', '1'],
+			day_scheduled_for: ['20261112'],
+			day_added: ['20261110'],
 		})) as Awaited<ReturnType<typeof Dispatch.ordersList>>;
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/modules/api/v5.0/orders/list');
+		// The day and status filters belong inside `filters`, per the reference.
 		expect(request.json()).toEqual({
 			page: 0,
 			per_page: 50,
 			search_query: 'jordan',
-			filters: { search_query: 'jordan' },
-			statuses: ['0', '1'],
+			filters: {
+				search_query: 'jordan',
+				statuses: ['0', '1'],
+				day_scheduled_for_YYMMDD: ['20261112'],
+				day_added_YYMMDD: ['20261110'],
+			},
 		});
 		expect(result.orders[0]?.address_alias).toBe('Canal stop');
 	});
