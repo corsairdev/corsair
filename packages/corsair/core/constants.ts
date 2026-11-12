@@ -21,6 +21,7 @@ export const BaseProviders = [
 	'activecampaign',
 	'activetrail',
 	'addresszen',
+	'adyntel',
 	'aeroleads',
 	'affinda',
 	'agencyzoom',
@@ -171,6 +172,7 @@ export const BaseProviders = [
 	'coinmarketcal',
 	'coinmarketcap',
 	'collegefootballdata',
+	'commcare',
 	'composio',
 	'confluence',
 	'connecteam',
@@ -182,6 +184,7 @@ export const BaseProviders = [
 	'convoloai',
 	'cosmic',
 	'countdownapi',
+	'craftmypdf',
 	'crowterminal',
 	'currentsapi',
 	'cursor',
@@ -190,6 +193,7 @@ export const BaseProviders = [
 	'cuttly',
 	'dadataru',
 	'daffy',
+	'databox',
 	'databricks',
 	'datadog',
 	'dataforseo',
@@ -213,6 +217,7 @@ export const BaseProviders = [
 	'dripcel',
 	'dropbox',
 	'dropboxsign',
+	'dropcontact',
 	'dynapictures',
 	'elevenlabs',
 	'emailoctopus',
@@ -255,6 +260,7 @@ export const BaseProviders = [
 	'gladia',
 	'gmail',
 	'gmicloud',
+	'gong',
 	'googleaddressvalidation',
 	'googleanalytics',
 	'googlebigquery',
@@ -272,10 +278,12 @@ export const BaseProviders = [
 	'gumroad',
 	'habitica',
 	'hackernews',
+	'happyscribe',
 	'harvest',
 	'hashnode',
 	'here',
 	'heygen',
+	'heyy',
 	'higgsfield',
 	'hookdeck',
 	'htmltoimage',
@@ -283,6 +291,7 @@ export const BaseProviders = [
 	'huggingface',
 	'humanitix',
 	'hunterio',
+	'imagekit',
 	'imagior',
 	'imejisio',
 	'imgbb',
@@ -311,9 +320,13 @@ export const BaseProviders = [
 	'mailboxlayer',
 	'mailcheck',
 	'mailchimp',
+	'mailsso',
 	'mailtrap',
+	'mapbox',
 	'marketstack',
+	'melo',
 	'mem0',
+	'memberspot',
 	'merriamwebsterdict',
 	'minimax',
 	'miro',
@@ -332,9 +345,11 @@ export const BaseProviders = [
 	'ocrwebservice',
 	'octen',
 	'ollama',
+	'onedesk',
 	'onedrive',
 	'onepassword',
 	'openai',
+	'opengraph',
 	'openrouter',
 	'opensea',
 	'openweathermap',
@@ -349,6 +364,7 @@ export const BaseProviders = [
 	'perplexityai',
 	'phantombuster',
 	'pinecone',
+	'placid',
 	'plain',
 	'ploid',
 	'posthog',
@@ -492,6 +508,7 @@ export const ProviderDisplayNames = {
 	activecampaign: 'ActiveCampaign',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
+	adyntel: 'Adyntel',
 	aeroleads: 'Aeroleads',
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
@@ -642,6 +659,7 @@ export const ProviderDisplayNames = {
 	coinmarketcal: 'Coinmarketcal',
 	coinmarketcap: 'CoinMarketCap',
 	collegefootballdata: 'College Football Data',
+	commcare: 'CommCare',
 	composio: 'Composio',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
@@ -653,6 +671,7 @@ export const ProviderDisplayNames = {
 	convoloai: 'ConvoloAi',
 	cosmic: 'Cosmic',
 	countdownapi: 'Countdown API',
+	craftmypdf: 'CraftMyPDF',
 	crowterminal: 'CrowTerminal',
 	currentsapi: 'CurrentsApi',
 	cursor: 'Cursor',
@@ -661,6 +680,7 @@ export const ProviderDisplayNames = {
 	cuttly: 'Cutt.ly',
 	dadataru: 'Dadataru',
 	daffy: 'Daffy',
+	databox: 'Databox',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
 	dataforseo: 'DataForSEO',
@@ -684,6 +704,7 @@ export const ProviderDisplayNames = {
 	dripcel: 'Dripcel',
 	dropbox: 'Dropbox',
 	dropboxsign: 'Dropbox Sign',
+	dropcontact: 'Dropcontact',
 	dynapictures: 'Dynapictures',
 	elevenlabs: 'ElevenLabs',
 	emailoctopus: 'EmailOctopus',
@@ -726,6 +747,7 @@ export const ProviderDisplayNames = {
 	gladia: 'Gladia',
 	gmail: 'Gmail',
 	gmicloud: 'GMI Cloud',
+	gong: 'Gong',
 	googleaddressvalidation: 'Google Address Validation',
 	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
@@ -743,10 +765,12 @@ export const ProviderDisplayNames = {
 	gumroad: 'Gumroad',
 	habitica: 'Habitica',
 	hackernews: 'Hacker News',
+	happyscribe: 'Happy Scribe',
 	harvest: 'Harvest',
 	hashnode: 'Hashnode',
 	here: 'HERE',
 	heygen: 'HeyGen',
+	heyy: 'Heyy',
 	higgsfield: 'Higgsfield',
 	hookdeck: 'Hookdeck',
 	htmltoimage: 'HtmlToImage',
@@ -754,6 +778,7 @@ export const ProviderDisplayNames = {
 	huggingface: 'Hugging Face',
 	humanitix: 'Humanitix',
 	hunterio: 'Hunter.io',
+	imagekit: 'ImageKit',
 	imagior: 'Imagior',
 	imejisio: 'Imejis.io',
 	imgbb: 'ImgBB',
@@ -782,9 +807,13 @@ export const ProviderDisplayNames = {
 	mailboxlayer: 'MailboxLayer',
 	mailcheck: 'Mailcheck',
 	mailchimp: 'Mailchimp',
+	mailsso: 'Mails.so',
 	mailtrap: 'Mailtrap',
+	mapbox: 'Mapbox',
 	marketstack: 'Marketstack',
+	melo: 'Melo',
 	mem0: 'Mem0',
+	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	minimax: 'MiniMax',
 	miro: 'Miro',
@@ -803,9 +832,11 @@ export const ProviderDisplayNames = {
 	ocrwebservice: 'OcrWebService',
 	octen: 'Octen',
 	ollama: 'Ollama',
+	onedesk: 'OneDesk',
 	onedrive: 'OneDrive',
 	onepassword: '1Password',
 	openai: 'OpenAI',
+	opengraph: 'OpenGraph.io',
 	openrouter: 'OpenRouter',
 	opensea: 'OpenSea',
 	openweathermap: 'OpenWeatherMap',
@@ -820,6 +851,7 @@ export const ProviderDisplayNames = {
 	perplexityai: 'Perplexity AI',
 	phantombuster: 'PhantomBuster',
 	pinecone: 'Pinecone',
+	placid: 'Placid',
 	plain: 'Plain',
 	ploid: 'Ploid',
 	posthog: 'PostHog',
@@ -970,6 +1002,7 @@ export type AllProviders =
 	| 'activecampaign'
 	| 'activetrail'
 	| 'addresszen'
+	| 'adyntel'
 	| 'aeroleads'
 	| 'affinda'
 	| 'agencyzoom'
@@ -1120,6 +1153,7 @@ export type AllProviders =
 	| 'coinmarketcal'
 	| 'coinmarketcap'
 	| 'collegefootballdata'
+	| 'commcare'
 	| 'composio'
 	| 'confluence'
 	| 'connecteam'
@@ -1131,6 +1165,7 @@ export type AllProviders =
 	| 'convoloai'
 	| 'cosmic'
 	| 'countdownapi'
+	| 'craftmypdf'
 	| 'crowterminal'
 	| 'currentsapi'
 	| 'cursor'
@@ -1139,6 +1174,7 @@ export type AllProviders =
 	| 'cuttly'
 	| 'dadataru'
 	| 'daffy'
+	| 'databox'
 	| 'databricks'
 	| 'datadog'
 	| 'dataforseo'
@@ -1162,6 +1198,7 @@ export type AllProviders =
 	| 'dripcel'
 	| 'dropbox'
 	| 'dropboxsign'
+	| 'dropcontact'
 	| 'dynapictures'
 	| 'elevenlabs'
 	| 'emailoctopus'
@@ -1204,6 +1241,7 @@ export type AllProviders =
 	| 'gladia'
 	| 'gmail'
 	| 'gmicloud'
+	| 'gong'
 	| 'googleaddressvalidation'
 	| 'googleanalytics'
 	| 'googlebigquery'
@@ -1221,10 +1259,12 @@ export type AllProviders =
 	| 'gumroad'
 	| 'habitica'
 	| 'hackernews'
+	| 'happyscribe'
 	| 'harvest'
 	| 'hashnode'
 	| 'here'
 	| 'heygen'
+	| 'heyy'
 	| 'higgsfield'
 	| 'hookdeck'
 	| 'htmltoimage'
@@ -1232,6 +1272,7 @@ export type AllProviders =
 	| 'huggingface'
 	| 'humanitix'
 	| 'hunterio'
+	| 'imagekit'
 	| 'imagior'
 	| 'imejisio'
 	| 'imgbb'
@@ -1260,9 +1301,13 @@ export type AllProviders =
 	| 'mailboxlayer'
 	| 'mailcheck'
 	| 'mailchimp'
+	| 'mailsso'
 	| 'mailtrap'
+	| 'mapbox'
 	| 'marketstack'
+	| 'melo'
 	| 'mem0'
+	| 'memberspot'
 	| 'merriamwebsterdict'
 	| 'minimax'
 	| 'miro'
@@ -1281,9 +1326,11 @@ export type AllProviders =
 	| 'ocrwebservice'
 	| 'octen'
 	| 'ollama'
+	| 'onedesk'
 	| 'onedrive'
 	| 'onepassword'
 	| 'openai'
+	| 'opengraph'
 	| 'openrouter'
 	| 'opensea'
 	| 'openweathermap'
@@ -1298,6 +1345,7 @@ export type AllProviders =
 	| 'perplexityai'
 	| 'phantombuster'
 	| 'pinecone'
+	| 'placid'
 	| 'plain'
 	| 'ploid'
 	| 'posthog'
