@@ -147,7 +147,7 @@ const referralrockEndpointMeta = {
 	'rewards.create': {
 		riskLevel: 'write',
 		description:
-			'Issue a reward to a member for an optional referral, with its amount and payout type',
+			'Create a pending reward for a member or for a referred person, with its amount and payout',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof referralrockEndpointsNested

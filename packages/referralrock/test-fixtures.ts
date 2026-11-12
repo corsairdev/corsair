@@ -210,8 +210,31 @@ export const REWARD_SET = {
 	message: '',
 };
 
-/** A 200 whose `message` explains a refusal, which is how this API reports one. */
+/**
+ * `POST /api/rewards` answers an array of results, one per reward info sent,
+ * each echoing the queries beside the reward and a `resultInfo`.
+ */
+export const REWARD_CREATED = [
+	{
+		memberQuery: { primaryInfo: { memberId: MEMBER_ID } },
+		referralQuery: null,
+		reward: REWARD,
+		resultInfo: { Status: 'Success', Message: 'Reward created' },
+	},
+];
+
+/** The live 400 for a member whose email is already in use. */
 export const MEMBER_REJECTED = {
+	message: 'Email address is already being used by existing member',
 	member: null,
-	message: 'A member with this email already exists in the program',
 };
+
+/** The live 200 for a reward create Referral Rock refused. */
+export const REWARD_REFUSED = [
+	{
+		memberQuery: { primaryInfo: { memberId: MEMBER_ID } },
+		referralQuery: null,
+		reward: null,
+		resultInfo: { Status: 'Failed', Message: 'No match found' },
+	},
+];

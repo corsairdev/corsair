@@ -17,7 +17,7 @@ pnpm add @corsair-dev/referralrock
 | `programs.list` | `referralrock.api.programs.list` | `read` | List the referral programs on the account, optionally narrowed to one program id |
 | `referrals.create` | `referralrock.api.referrals.create` | `write` | Record a referral against the code of the member who introduced it, with the order amount that reward rules key on |
 | `referrals.list` | `referralrock.api.referrals.list` | `read` | List referrals with program, member, status and date filters, plus offset paging |
-| `rewards.create` | `referralrock.api.rewards.create` | `write` | Issue a reward to a member for an optional referral, with its amount and payout type |
+| `rewards.create` | `referralrock.api.rewards.create` | `write` | Create a pending reward for a member or for a referred person, with its amount and payout |
 | `rewards.list` | `referralrock.api.rewards.list` | `read` | List rewards with program, member, status and date filters, plus offset paging |
 
 ## Auth

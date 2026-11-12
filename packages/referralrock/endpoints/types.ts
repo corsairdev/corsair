@@ -249,16 +249,18 @@ export type MembersCreateResponse = z.infer<typeof MembersCreateResponseSchema>;
 const ReferralSortSchema = z.enum([
 	'Create_Dt_Desc',
 	'Create_Dt_Asc',
-	'Referral_Status_Desc',
-	'Referral_Status_Asc',
-	'Referral_Amount_Desc',
-	'Referral_Amount_Asc',
+	'Amount_Desc',
+	'Amount_Asc',
+	'Qualified_Dt_Desc',
+	'Qualified_Dt_Asc',
+	'Closed_Dt_Desc',
+	'Closed_Dt_Asc',
 ]);
 
 const ReferralStatusSchema = z
 	.string()
 	.describe(
-		'The referral status, such as `Pending`, `Approved`, `Qualified` or `Denied`.',
+		'The referral status: `pending`, `qualified`, `approved` or `denied`.',
 	);
 
 const ReferralsListInputSchema = z.object({
@@ -394,7 +396,7 @@ const RewardsListInputSchema = z.object({
 	status: z
 		.string()
 		.optional()
-		.describe('The reward status, such as `Pending`, `Issued` or `Paid`.'),
+		.describe('The reward status: `Pending`, `Processing` or `Issued`.'),
 	sort: z.string().optional(),
 });
 
@@ -444,26 +446,60 @@ const RewardsListResponseSchema = z.object({
 
 export type RewardsListResponse = z.infer<typeof RewardsListResponseSchema>;
 
-const RewardsCreateInputSchema = z.object({
-	member_id: z.string().min(1).describe('The member the reward is for.'),
-	amount: z.number().min(0).describe('The reward amount.'),
-	payout_id: z.string().optional().describe('The payout type to issue.'),
-	description: z.string().optional(),
-	eligibility_date: z
-		.string()
-		.optional()
-		.describe('When the reward becomes eligible, as ISO 8601.'),
-	referral_id: z
-		.string()
-		.optional()
-		.describe('The referral the reward is attributed to.'),
-});
+/**
+ * Referral Rock identifies the reward's recipient by **one** query: a
+ * `memberQuery` for a member, or a `referralQuery` for a referred person. A body
+ * with both answers `Failed: include a memberQuery or referralQuery element, not
+ * both`, so exactly one id is accepted.
+ */
+const RewardsCreateInputSchema = z
+	.object({
+		member_id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('A member to reward. Give this or `referral_id`, not both.'),
+		referral_id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'A referral (the referred person) to reward. Give this or `member_id`, not both.',
+			),
+		amount: z.number().min(0).describe('The reward amount.'),
+		payout_id: z
+			.string()
+			.min(1)
+			.describe(
+				'The payout the reward is paid through. Referral Rock requires it; payouts exist once a reward rule uses them.',
+			),
+		description: z.string().optional(),
+		eligibility_date: z
+			.string()
+			.optional()
+			.describe('When the reward becomes eligible, as ISO 8601.'),
+	})
+	.refine(
+		(v) => (v.member_id === undefined) !== (v.referral_id === undefined),
+		{
+			message: 'Give exactly one of member_id or referral_id.',
+		},
+	);
 
 export type RewardsCreateInput = z.input<typeof RewardsCreateInputSchema>;
 
 const RewardsCreateResponseSchema = z.object({
 	reward: RewardSchema.nullish(),
-	message: z.string().nullish(),
+	status: z
+		.string()
+		.nullish()
+		.describe('The `resultInfo.Status` Referral Rock reported for the reward.'),
+	message: z
+		.string()
+		.nullish()
+		.describe(
+			'The `resultInfo.Message`; when `reward` is null it says why nothing was created.',
+		),
 });
 
 export type RewardsCreateResponse = z.infer<typeof RewardsCreateResponseSchema>;

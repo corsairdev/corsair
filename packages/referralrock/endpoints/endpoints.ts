@@ -1,6 +1,6 @@
 import type { ReferralrockEndpoints } from '..';
 import { call, queryOf } from './call';
-import { setShape, singleShape } from './shape';
+import { rewardResultShape, setShape, singleShape } from './shape';
 import {
 	ReferralrockEndpointInputSchemas as Inputs,
 	ReferralrockEndpointOutputSchemas as Outputs,
@@ -244,15 +244,16 @@ export const rewardsCreate: ReferralrockEndpoints['rewardsCreate'] = (
 			path: '/api/rewards',
 			replayable: false,
 			// This route takes an **array** of reward infos, each with a
-			// `newReward` and the queries that identify its member and referral.
+			// `newReward` and ONE query naming its recipient.
 			body: [
 				{
-					memberQuery: {
-						primaryInfo: { memberId: parsed.member_id },
-					},
-					referralQuery: parsed.referral_id
-						? { primaryInfo: { referralId: parsed.referral_id } }
-						: undefined,
+					...(parsed.member_id !== undefined
+						? { memberQuery: { primaryInfo: { memberId: parsed.member_id } } }
+						: {
+								referralQuery: {
+									primaryInfo: { referralId: parsed.referral_id },
+								},
+							}),
 					newReward: queryOf({
 						amount: parsed.amount,
 						payoutId: parsed.payout_id,
@@ -263,7 +264,7 @@ export const rewardsCreate: ReferralrockEndpoints['rewardsCreate'] = (
 			],
 		}),
 		{
-			shape: singleShape('reward'),
+			shape: rewardResultShape,
 			log: (_, result) => ({
 				rewardId: result.reward?.id ?? '',
 				amount: result.reward?.amount ?? 0,

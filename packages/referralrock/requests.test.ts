@@ -11,6 +11,8 @@ import {
 	REFERRAL_ID,
 	REFERRAL_SET,
 	REWARD,
+	REWARD_CREATED,
+	REWARD_REFUSED,
 	REWARD_SET,
 } from './test-fixtures';
 import { invoke, lastRequest, respond, spyOnFetch } from './test-support';
@@ -146,19 +148,38 @@ describe('members.create', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('returns the message when the API refuses with a 200', async () => {
-		respond(fetchMock, MEMBER_REJECTED);
+	it('throws the reason when the API refuses with a 400', async () => {
+		respond(fetchMock, MEMBER_REJECTED, 400);
 
-		const result = (await invoke(Endpoints.membersCreate, {
-			program_id: PROGRAM_ID,
-			first_name: 'Sam',
-			email: 'sam@example.com',
-		})) as Awaited<ReturnType<typeof Endpoints.membersCreate>>;
+		await expect(
+			invoke(Endpoints.membersCreate, {
+				program_id: PROGRAM_ID,
+				first_name: 'Sam',
+				email: 'sam@example.com',
+			}),
+		).rejects.toThrow('Email address is already being used');
+	});
+});
 
-		// A refusal arrives as a 200 with the reason in `message`, so the caller
-		// sees both the absence of a member and the reason.
-		expect(result.member).toBeNull();
-		expect(result.message).toContain('already exists');
+describe('create answers', () => {
+	it('fails on a member answer that is an array', async () => {
+		respond(fetchMock, [MEMBER]);
+
+		await expect(
+			invoke(Endpoints.membersCreate, {
+				program_id: PROGRAM_ID,
+				first_name: 'Sam',
+				email: 'sam@example.com',
+			}),
+		).rejects.toThrow('not the documented shape');
+	});
+
+	it('fails on a referral answer with neither the referral nor a message', async () => {
+		respond(fetchMock, { id: REFERRAL_ID });
+
+		await expect(
+			invoke(Endpoints.referralsCreate, { referral_code: 'SAM123' }),
+		).rejects.toThrow('not the documented shape');
 	});
 });
 
@@ -201,6 +222,17 @@ describe('referrals', () => {
 		});
 	});
 
+	it('accepts the documented referral sort values and rejects others', async () => {
+		respond(fetchMock, REFERRAL_SET);
+
+		await invoke(Endpoints.referralsList, { sort: 'Amount_Desc' });
+		expect(lastRequest(fetchMock).query.sort).toBe('Amount_Desc');
+
+		await expect(
+			invoke(Endpoints.referralsList, { sort: 'Referral_Amount_Desc' }),
+		).rejects.toThrow();
+	});
+
 	it('rejects a referral with no code', async () => {
 		await expect(
 			invoke(Endpoints.referralsCreate, { email: 'jordan@example.com' }),
@@ -237,11 +269,10 @@ describe('rewards', () => {
 	});
 
 	it('creates a reward in the array body the API takes', async () => {
-		respond(fetchMock, { reward: REWARD, message: '' });
+		respond(fetchMock, REWARD_CREATED);
 
 		await invoke(Endpoints.rewardsCreate, {
 			member_id: MEMBER_ID,
-			referral_id: REFERRAL_ID,
 			amount: 10,
 			payout_id: 'paypal',
 			description: 'Referral bonus',
@@ -254,7 +285,6 @@ describe('rewards', () => {
 		expect(request.jsonArray()).toEqual([
 			{
 				memberQuery: { primaryInfo: { memberId: MEMBER_ID } },
-				referralQuery: { primaryInfo: { referralId: REFERRAL_ID } },
 				newReward: {
 					amount: 10,
 					payoutId: 'paypal',
@@ -264,28 +294,95 @@ describe('rewards', () => {
 		]);
 	});
 
-	it('omits the referral query when no referral is given', async () => {
-		respond(fetchMock, { reward: REWARD, message: '' });
+	it('sends only a referral query for a referral reward', async () => {
+		respond(fetchMock, REWARD_CREATED);
 
 		await invoke(Endpoints.rewardsCreate, {
-			member_id: MEMBER_ID,
+			referral_id: REFERRAL_ID,
 			amount: 5,
+			payout_id: 'paypal',
 		});
 
 		const body = lastRequest(fetchMock).jsonArray()[0];
-		expect(body).not.toHaveProperty('referralQuery');
+		// Referral Rock fails a body that carries both queries.
+		expect(body).not.toHaveProperty('memberQuery');
+		expect(body).toHaveProperty('referralQuery', {
+			primaryInfo: { referralId: REFERRAL_ID },
+		});
+	});
+
+	it('rejects both a member and a referral, which the API refuses', async () => {
+		await expect(
+			invoke(Endpoints.rewardsCreate, {
+				member_id: MEMBER_ID,
+				referral_id: REFERRAL_ID,
+				amount: 5,
+				payout_id: 'paypal',
+			}),
+		).rejects.toThrow('exactly one');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a reward with no payout, which the API requires', async () => {
+		await expect(
+			invoke(Endpoints.rewardsCreate, { member_id: MEMBER_ID, amount: 5 }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('throws the reason when the API answers a Failed result', async () => {
+		respond(fetchMock, REWARD_REFUSED);
+
+		await expect(
+			invoke(Endpoints.rewardsCreate, {
+				member_id: MEMBER_ID,
+				amount: 5,
+				payout_id: 'paypal',
+			}),
+		).rejects.toThrow('No match found');
+	});
+
+	it('lifts the reward and result out of the array the API answers', async () => {
+		respond(fetchMock, REWARD_CREATED);
+
+		const result = (await invoke(Endpoints.rewardsCreate, {
+			member_id: MEMBER_ID,
+			amount: 10,
+			payout_id: 'paypal',
+		})) as Awaited<ReturnType<typeof Endpoints.rewardsCreate>>;
+
+		expect(result.reward?.id).toBe(REWARD.id);
+		expect(result.reward?.amount).toBe(10);
+		expect(result.status).toBe('Success');
+		expect(result.message).toBe('Reward created');
+	});
+
+	it('fails on a reward answer that is not the documented array', async () => {
+		respond(fetchMock, { reward: REWARD, message: '' });
+
+		await expect(
+			invoke(Endpoints.rewardsCreate, {
+				member_id: MEMBER_ID,
+				amount: 10,
+				payout_id: 'paypal',
+			}),
+		).rejects.toThrow('not the documented shape');
 	});
 
 	it('rejects a reward with no member', async () => {
 		await expect(
-			invoke(Endpoints.rewardsCreate, { amount: 10 }),
+			invoke(Endpoints.rewardsCreate, { amount: 10, payout_id: 'paypal' }),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects a negative amount', async () => {
 		await expect(
-			invoke(Endpoints.rewardsCreate, { member_id: MEMBER_ID, amount: -5 }),
+			invoke(Endpoints.rewardsCreate, {
+				member_id: MEMBER_ID,
+				amount: -5,
+				payout_id: 'paypal',
+			}),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
