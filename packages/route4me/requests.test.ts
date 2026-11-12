@@ -563,7 +563,8 @@ describe('optimizations.create', () => {
 			],
 			parameters: {
 				route_max_duration: 1800,
-				algorithm_type: 'TSP',
+				// Route4Me takes the algorithm as its integer code: 1 = TSP.
+				algorithm_type: 1,
 				optimize: 'Distance',
 				travel_mode: 'Driving',
 			},
@@ -604,6 +605,24 @@ describe('optimizations.create', () => {
 			invoke(Optimizations.create, { addresses: [] }),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		['TSP', 1],
+		['VRP', 2],
+		['CVRP', 3],
+		['MDVRP', 4],
+	] as const)('sends %s as algorithm code %d', async (name, code) => {
+		respond(fetchMock, CREATED_OPTIMIZATION);
+
+		await invoke(Optimizations.create, {
+			addresses: [{ lat: 1, lng: 1 }],
+			algorithm_type: name,
+		});
+
+		expect(
+			(lastRequest(fetchMock).json() as { parameters: object }).parameters,
+		).toEqual({ algorithm_type: code });
 	});
 
 	it('rejects an algorithm the API does not define', async () => {

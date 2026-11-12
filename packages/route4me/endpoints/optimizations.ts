@@ -112,6 +112,13 @@ export const get: Route4meEndpoints['optimizationsGet'] = (ctx, input) =>
 		},
 	);
 
+/**
+ * Route4Me's v4 optimizer takes the algorithm as an integer code. The public
+ * names map to 1 = TSP, 2 = VRP, 3 = CVRP_TW_SD (one depot) and
+ * 4 = CVRP_TW_MD (several depots).
+ */
+const ALGORITHM_CODES = { TSP: 1, VRP: 2, CVRP: 3, MDVRP: 4 } as const;
+
 export const create: Route4meEndpoints['optimizationsCreate'] = (ctx, input) =>
 	call(
 		ctx,
@@ -133,7 +140,9 @@ export const create: Route4meEndpoints['optimizationsCreate'] = (ctx, input) =>
 					route_max_distance: parsed.route_max_distance,
 					vehicle_capacity: parsed.vehicle_capacity,
 					route_name: parsed.route_name,
-					algorithm_type: parsed.algorithm_type,
+					algorithm_type: parsed.algorithm_type
+						? ALGORITHM_CODES[parsed.algorithm_type]
+						: undefined,
 					distance_unit: parsed.distance_unit,
 					optimize: parsed.optimize,
 					travel_mode: parsed.travel_mode,
