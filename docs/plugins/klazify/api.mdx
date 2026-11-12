@@ -173,7 +173,8 @@ The widest call: categories, logo, social profiles, company data and tech stack 
     youtube_url?: string | null,
     linkedin_url?: string | null,
     github_url?: string | null,
-    pinterest_url?: string | null
+    pinterest_url?: string | null,
+    medium_url?: string | null
   } | null
 }
 ```
@@ -333,7 +334,7 @@ await corsair.klazify.api.discovery.search({ filters: { category: 'Shopping', co
 | `top_n` | `number` | No | Only domains with a global rank at or below this are searched. Unranked domains are excluded when it is set. |
 | `filters` | `object` | No | — |
 | `q` | `string` | No | Free-text search across domain, company and category. |
-| `sort` | `global_rank \| domain \| company_name \| monthly_visits_latest` | No | — |
+| `sort` | `global_rank \| domain \| company_name \| monthly_visits_latest \| popularity_score` | No | — |
 | `sort_dir` | `asc \| desc` | No | — |
 | `page` | `number` | No | Page number. Each page holds 100 results. |
 
@@ -362,6 +363,7 @@ Searches the whole Klazify database. `page` runs 1 to 1000 with 100 results each
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `total` | `number` | Yes | — |
+| `page` | `number \| null` | No | The page this answer holds. |
 | `total_pages` | `number` | Yes | — |
 | `total_is_lower_bound` | `boolean` | No | — |
 | `results` | `object[]` | Yes | — |
@@ -377,9 +379,11 @@ Searches the whole Klazify database. `page` runs 1 to 1000 with 100 results each
   company_employees?: string | null,
   company_revenue?: string | null,
   primary_category?: string | null,
-  primary_iab?: string | null,
+  primary_iab_name?: string | null,
+  tech_stack?: string[] | null,
   global_rank?: number | null,
-  monthly_visits_latest?: number | null
+  monthly_visits?: number | null,
+  logo_url?: string | null
 }[]
 ```
 </Accordion>

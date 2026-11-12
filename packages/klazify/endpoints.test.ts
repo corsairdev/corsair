@@ -6,6 +6,7 @@ import {
 	Company,
 	Discovery,
 	Domain,
+	KlazifyDiscoveryResponseSchema,
 	Logo,
 	SimilarDomains,
 	Tech,
@@ -383,6 +384,46 @@ describe('discovery.search', () => {
 			},
 		});
 		expect(result.total_pages).toBe(43);
+	});
+
+	// The documented result fields, not guesses at them: a loose schema would
+	// pass an unknown name through, so the declared keys are what is checked.
+	it('declares the documented result fields', () => {
+		const resultShape =
+			KlazifyDiscoveryResponseSchema.shape.results.element.shape;
+
+		expect(Object.keys(resultShape)).toEqual(
+			expect.arrayContaining([
+				'primary_iab_name',
+				'tech_stack',
+				'monthly_visits',
+				'logo_url',
+			]),
+		);
+		expect(Object.keys(KlazifyDiscoveryResponseSchema.shape)).toContain('page');
+	});
+
+	it('types the documented result fields', async () => {
+		respond({
+			...discovery,
+			results: [{ ...discovery.results[0], tech_stack: 'shopify' }],
+		});
+
+		await expect(invoke(Discovery.search, {})).rejects.toThrow();
+	});
+
+	it('accepts every documented sort field', async () => {
+		respond(discovery);
+
+		await invoke(Discovery.search, {
+			sort: 'popularity_score',
+			sort_dir: 'desc',
+		});
+
+		expect(lastRequest().body).toEqual({
+			sort: 'popularity_score',
+			sort_dir: 'desc',
+		});
 	});
 
 	it('sends an empty body when nothing is given', async () => {

@@ -193,9 +193,10 @@ export const categoryListV1 = {
 	categories: ['/News', '/Technology & Computing'],
 };
 
-/** `POST /api/discovery`. */
+/** `POST /api/discovery`, in the shape of the documented example. */
 export const discovery = {
 	total: 4210,
+	page: 1,
 	total_pages: 43,
 	results: [
 		{
@@ -204,10 +205,12 @@ export const discovery = {
 			company_country: 'CA',
 			company_employees: '5K-10K',
 			company_revenue: '$1B+',
-			primary_category: 'Shopping',
-			primary_iab: 'IAB-599',
+			primary_category: '/Shopping',
+			primary_iab_name: 'Shopping',
+			tech_stack: ['shopify', 'google_analytics'],
 			global_rank: 412,
-			monthly_visits_latest: 120000000,
+			monthly_visits: 120000000,
+			logo_url: 'https://klazify.s3.amazonaws.com/logo.png',
 		},
 	],
 };

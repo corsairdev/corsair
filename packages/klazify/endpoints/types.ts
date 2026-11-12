@@ -72,6 +72,7 @@ const KlazifySocialMediaSchema = z
 		linkedin_url: z.string().nullish(),
 		github_url: z.string().nullish(),
 		pinterest_url: z.string().nullish(),
+		medium_url: z.string().nullish(),
 	})
 	.loose();
 
@@ -375,6 +376,7 @@ export const KLAZIFY_DISCOVERY_SORTS = [
 	'domain',
 	'company_name',
 	'monthly_visits_latest',
+	'popularity_score',
 ] as const;
 
 export const KlazifyDiscoveryInputSchema = z.object({
@@ -434,15 +436,21 @@ const KlazifyDiscoveryResultSchema = z
 		company_employees: z.string().nullish(),
 		company_revenue: z.string().nullish(),
 		primary_category: z.string().nullish(),
-		primary_iab: z.string().nullish(),
+		primary_iab_name: z.string().nullish(),
+		tech_stack: z
+			.array(z.string())
+			.nullish()
+			.describe('Snake_case technology identifiers, e.g. `shopify`.'),
 		global_rank: z.number().nullish(),
-		monthly_visits_latest: z.number().nullish(),
+		monthly_visits: z.number().nullish(),
+		logo_url: z.string().nullish(),
 	})
 	.loose();
 
 export const KlazifyDiscoveryResponseSchema = z
 	.object({
 		total: z.number(),
+		page: z.number().nullish().describe('The page this answer holds.'),
 		total_pages: z.number(),
 		// Present and true only when a `tld` filter exhausted its candidate scan.
 		total_is_lower_bound: z.boolean().optional(),
