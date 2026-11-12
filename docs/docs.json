@@ -24,15 +24,13 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Docs",
+        "tab": "SDK",
         "groups": [
           {
             "group": "Get Started",
             "pages": [
               "introduction",
               "quick-start",
-              "cloud/overview",
-              "cloud/mcp",
               {
                 "group": "Use cases",
                 "pages": [
@@ -136,6 +134,15 @@
               "concepts/permissions",
               "concepts/webhooks"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "Cloud & MCP",
+        "groups": [
+          {
+            "group": "Hosted by Corsair",
+            "pages": ["cloud/overview", "cloud/mcp"]
           }
         ]
       },
