@@ -791,7 +791,7 @@ await corsair.virustotal.api.urls.addComment({ id: 'aHR0cHM6Ly9hY21lLmV4YW1wbGUv
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | The URL identifier: the URL as unpadded base64url, which `urlId()` produces from a raw URL. |
+| `id` | `string` | Yes | The URL identifier: the URL as unpadded base64url, which `urlId()` produces from a raw URL, or the SHA-256 `id` a URL report returns. |
 | `text` | `string` | Yes | — |
 
 
@@ -846,7 +846,7 @@ await corsair.virustotal.api.urls.comments({ id: 'aHR0cHM6Ly9hY21lLmV4YW1wbGUvbG
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | The URL identifier: the URL as unpadded base64url, which `urlId()` produces from a raw URL. |
+| `id` | `string` | Yes | The URL identifier: the URL as unpadded base64url, which `urlId()` produces from a raw URL, or the SHA-256 `id` a URL report returns. |
 | `limit` | `number` | No | Items per page. VirusTotal caps this at 40. |
 | `cursor` | `string` | No | The `meta.cursor` from the previous page. |
 
@@ -900,7 +900,7 @@ await corsair.virustotal.api.urls.comments({ id: 'aHR0cHM6Ly9hY21lLmV4YW1wbGUvbG
 
 `urls.get`
 
-Read a URL report by its base64url identifier, which `urlId()` builds from a raw URL
+Read a URL report by the base64url identifier `urlId()` builds or the SHA-256 id a report returns; the base64url form carries the full URL to VirusTotal
 
 **Risk:** `read`
 
@@ -912,7 +912,7 @@ await corsair.virustotal.api.urls.get({ id: 'aHR0cHM6Ly9hY21lLmV4YW1wbGUvbG9naW4
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | The URL identifier, as base64url. Pass `urls.get` a raw URL and it will not resolve — use `urlId()`. |
+| `id` | `string` | Yes | The URL identifier: the URL as unpadded base64url, which `urlId()` builds from a raw URL, or the SHA-256 `id` a URL report returns. A raw URL will not resolve. |
 
 
 
@@ -976,7 +976,7 @@ await corsair.virustotal.api.urls.rescan({ id: 'aHR0cHM6Ly9hY21lLmV4YW1wbGUvbG9n
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | The URL identifier: the URL as unpadded base64url, which `urlId()` produces from a raw URL. |
+| `id` | `string` | Yes | The URL identifier: the URL as unpadded base64url, which `urlId()` produces from a raw URL, or the SHA-256 `id` a URL report returns. |
 
 
 
