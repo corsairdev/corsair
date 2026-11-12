@@ -4033,6 +4033,14 @@
                 ]
               },
               {
+                "group": "Wachete",
+                "pages": [
+                  "plugins/wachete/overview",
+                  "plugins/wachete/api",
+                  "plugins/wachete/database"
+                ]
+              },
+              {
                 "group": "WakaTime",
                 "pages": [
                   "plugins/wakatime/overview",
