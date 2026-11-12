@@ -148,7 +148,7 @@ describe('records.list', () => {
 		]);
 	});
 
-	it('omits the value to filter an empty field', async () => {
+	it('sends an empty third part to filter an empty field', async () => {
 		respond(fetchMock, RECORDS);
 
 		await invoke(Records.list, {
@@ -156,7 +156,7 @@ describe('records.list', () => {
 			where: [{ fieldId: 2000127, op: 'eq' }],
 		});
 
-		expect(lastRequest(fetchMock).queryAll('where')).toEqual(['2000127,eq']);
+		expect(lastRequest(fetchMock).queryAll('where')).toEqual(['2000127,eq,']);
 	});
 
 	it('passes paging and sorting', async () => {

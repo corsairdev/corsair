@@ -267,8 +267,8 @@ describe('whereFilter', () => {
 		);
 	});
 
-	it('omits the value, which is how Ragic asks for an empty field', () => {
-		expect(whereFilter(2000127, 'eq')).toBe('2000127,eq');
+	it('leaves the third part empty, which is how Ragic asks for an empty field', () => {
+		expect(whereFilter(2000127, 'eq')).toBe('2000127,eq,');
 	});
 
 	it('encodes a comma inside the value so it cannot split the filter', () => {

@@ -327,8 +327,8 @@ export function whereFilter(
 	value?: string | number,
 ): string {
 	const head = `${fieldId},${operand}`;
-	// No value at all is how Ragic asks for an empty field.
-	if (value === undefined) return head;
+	// An empty third part is how Ragic asks for an empty field: `2000127,eq,`.
+	if (value === undefined) return `${head},`;
 	const escaped = String(value).replace(/%/g, '%25').replace(/,/g, '%2C');
 	return `${head},${escaped}`;
 }
