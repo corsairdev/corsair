@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for UptimeRobot: every `uptimerobot.api.*` operation with input and output types."
+title: "UptimeRobot API reference"
+sidebarTitle: "API"
+description: "API reference for the UptimeRobot plugin in Corsair: every `uptimerobot.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `uptimerobot.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -183,7 +182,7 @@ await corsair.uptimerobot.api.incidents.get({ id: 'inc_778001' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| null` | No | — |
-| `status` | `object \| null` | No | — |
+| `status` | `string \| null` | No | — |
 | `cause` | `number \| null` | No | — |
 | `reason` | `string \| null` | No | — |
 | `duration` | `number \| null` | No | — |
@@ -192,15 +191,6 @@ await corsair.uptimerobot.api.incidents.get({ id: 'inc_778001' });
 | `rootCause` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="status full type">
-
-```ts
-{
-  code?: string | null
-} | null
-```
-</Accordion>
-
 <Accordion title="rootCause full type">
 
 ```ts
@@ -260,9 +250,7 @@ await corsair.uptimerobot.api.incidents.list({ status: 'open', type: 'Downtime',
 ```ts
 {
   id?: string | null,
-  status?: {
-    code?: string | null
-  } | null,
+  status?: string | null,
   cause?: number | null,
   reason?: string | null,
   duration?: number | null,
@@ -312,14 +300,14 @@ await corsair.uptimerobot.api.maintenanceWindows.create({ name: 'Sunday release 
 |------|------|----------|-------------|
 | `id` | `number \| null` | No | — |
 | `name` | `string \| null` | No | — |
-| `interval` | `once \| daily \| weekly \| monthly \| null` | No | — |
+| `interval` | `string \| null` | No | — |
 | `date` | `string \| null` | No | — |
 | `time` | `string \| null` | No | — |
 | `duration` | `number \| null` | No | — |
 | `days` | `number[] \| null` | No | — |
 | `monitorIds` | `number[] \| null` | No | — |
 | `autoAddMonitors` | `boolean \| null` | No | — |
-| `status` | `active \| paused \| null` | No | — |
+| `status` | `string \| null` | No | — |
 | `created` | `string \| null` | No | — |
 
 
@@ -392,14 +380,14 @@ await corsair.uptimerobot.api.maintenanceWindows.list({});
 {
   id?: number | null,
   name?: string | null,
-  interval?: once | daily | weekly | monthly | null,
+  interval?: string | null,
   date?: string | null,
   time?: string | null,
   duration?: number | null,
   days?: number[] | null,
   monitorIds?: number[] | null,
   autoAddMonitors?: boolean | null,
-  status?: active | paused | null,
+  status?: string | null,
   created?: string | null
 }[] | null
 ```
@@ -444,14 +432,14 @@ await corsair.uptimerobot.api.maintenanceWindows.update({ id: 3317, status: 'pau
 |------|------|----------|-------------|
 | `id` | `number \| null` | No | — |
 | `name` | `string \| null` | No | — |
-| `interval` | `once \| daily \| weekly \| monthly \| null` | No | — |
+| `interval` | `string \| null` | No | — |
 | `date` | `string \| null` | No | — |
 | `time` | `string \| null` | No | — |
 | `duration` | `number \| null` | No | — |
 | `days` | `number[] \| null` | No | — |
 | `monitorIds` | `number[] \| null` | No | — |
 | `autoAddMonitors` | `boolean \| null` | No | — |
-| `status` | `active \| paused \| null` | No | — |
+| `status` | `string \| null` | No | — |
 | `created` | `string \| null` | No | — |
 
 
@@ -599,12 +587,12 @@ await corsair.uptimerobot.api.monitors.create({ friendlyName: 'Acme storefront',
 | `keywordType` | `ALERT_EXISTS \| ALERT_NOT_EXISTS` | No | KEYWORD only. Alert when the keyword is present or absent. |
 | `keywordCaseType` | `CaseSensitive \| CaseInsensitive` | No | KEYWORD only. |
 | `keywordValue` | `string` | No | KEYWORD only. Text to look for in the response body. |
-| `timeout` | `number` | No | Seconds to wait. Required for KEYWORD monitors. |
+| `timeout` | `number` | No | Seconds to wait, at most 60. Required for HTTP, KEYWORD, PING, PORT, API and UDP monitors. |
 | `gracePeriod` | `number` | No | HEARTBEAT only. Seconds of lateness allowed before alerting. |
 | `groupId` | `number` | No | — |
 | `tagNames` | `string[]` | No | — |
 | `maintenanceWindowsIds` | `number[]` | No | — |
-| `assignedAlertContacts` | `object[]` | No | Who is alerted. Threshold and recurrence are paid-plan only. |
+| `assignedAlertContacts` | `object[]` | No | Who is alerted. Threshold and recurrence are required; values above 0 need a paid plan. |
 | `customFields` | `Record<string, string>` | No | Up to 20 key/value pairs. Paid plans only. |
 | `responseTimeThreshold` | `number` | No | — |
 | `config` | `Record<string, any>` | No | Type-specific configuration. API monitors need `apiAssertions`; THIRD_PARTY_SERVICE needs `thirdPartyService.providerId`. |
@@ -618,8 +606,8 @@ await corsair.uptimerobot.api.monitors.create({ friendlyName: 'Acme storefront',
 ```ts
 {
   alertContactId: number,
-  threshold?: number,
-  recurrence?: number
+  threshold: number,
+  recurrence: number
 }[]
 ```
 </Accordion>
@@ -679,9 +667,7 @@ await corsair.uptimerobot.api.monitors.create({ friendlyName: 'Acme storefront',
 ```ts
 {
   id?: string | null,
-  status?: {
-    code?: string | null
-  } | null,
+  status?: string | null,
   cause?: number | null,
   reason?: string | null,
   startedAt?: string | null,
@@ -798,9 +784,7 @@ await corsair.uptimerobot.api.monitors.get({ id: 778001 });
 ```ts
 {
   id?: string | null,
-  status?: {
-    code?: string | null
-  } | null,
+  status?: string | null,
   cause?: number | null,
   reason?: string | null,
   startedAt?: string | null,
@@ -881,9 +865,7 @@ await corsair.uptimerobot.api.monitors.list({ status: ['UP', 'DOWN'], tags: ['pr
   }[] | null,
   lastIncident?: {
     id?: string | null,
-    status?: {
-      code?: string | null
-    } | null,
+    status?: string | null,
     cause?: number | null,
     reason?: string | null,
     startedAt?: string | null,
@@ -970,9 +952,7 @@ await corsair.uptimerobot.api.monitors.pause({ id: 778001 });
 ```ts
 {
   id?: string | null,
-  status?: {
-    code?: string | null
-  } | null,
+  status?: string | null,
   cause?: number | null,
   reason?: string | null,
   startedAt?: string | null,
@@ -1089,9 +1069,7 @@ await corsair.uptimerobot.api.monitors.start({ id: 778001 });
 ```ts
 {
   id?: string | null,
-  status?: {
-    code?: string | null
-  } | null,
+  status?: string | null,
   cause?: number | null,
   reason?: string | null,
   startedAt?: string | null,
@@ -1193,9 +1171,7 @@ await corsair.uptimerobot.api.monitors.update({ id: 778001, friendlyName: 'Store
 ```ts
 {
   id?: string | null,
-  status?: {
-    code?: string | null
-  } | null,
+  status?: string | null,
   cause?: number | null,
   reason?: string | null,
   startedAt?: string | null,
@@ -1347,7 +1323,7 @@ await corsair.uptimerobot.api.stats.uptime({ timeFrame: 'DAYS_30', logLimit: 100
 
 ```ts
 {
-  type?: DOWNTIME | SLOW_RESPONSE | null,
+  type?: string | null,
   datetime?: string | null,
   duration?: number | null
 }[] | null
@@ -1458,18 +1434,7 @@ await corsair.uptimerobot.api.statusPages.create({ friendlyName: 'Acme status', 
 | `tagIds` | `number[] \| null` | No | — |
 | `monitorsCount` | `number \| null` | No | — |
 | `pinnedAnnouncementId` | `number \| null` | No | — |
-| `status` | `object \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="status full type">
-
-```ts
-{
-  code?: string | null
-} | null
-```
-</Accordion>
-</AccordionGroup>
+| `status` | `string \| null` | No | — |
 
 
 
@@ -1586,18 +1551,7 @@ await corsair.uptimerobot.api.statusPages.get({ id: 2214 });
 | `tagIds` | `number[] \| null` | No | — |
 | `monitorsCount` | `number \| null` | No | — |
 | `pinnedAnnouncementId` | `number \| null` | No | — |
-| `status` | `object \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="status full type">
-
-```ts
-{
-  code?: string | null
-} | null
-```
-</Accordion>
-</AccordionGroup>
+| `status` | `string \| null` | No | — |
 
 
 
@@ -1645,9 +1599,7 @@ await corsair.uptimerobot.api.statusPages.list({});
   tagIds?: number[] | null,
   monitorsCount?: number | null,
   pinnedAnnouncementId?: number | null,
-  status?: {
-    code?: string | null
-  } | null
+  status?: string | null
 }[] | null
 ```
 </Accordion>
