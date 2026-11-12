@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/endorsal",
   "version": "0.1.0",
-  "description": "Endorsal plugin for Corsair",
+  "description": "Manage Endorsal contacts, testimonials, tags, widgets, Wall of Love, and AutoRequest campaigns.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -16,7 +16,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest --testPathIgnorePatterns=api\\.test\\.ts",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
@@ -36,7 +37,13 @@
     "endorsal",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/corsairdev/corsair.git",
+    "directory": "packages/endorsal"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/endorsal",
   "license": "Apache-2.0",
   "files": [
     "dist"

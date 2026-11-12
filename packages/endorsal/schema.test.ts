@@ -1,20 +1,110 @@
+import {
+	ContactSchema,
+	EndorsalEndpointInputSchemas,
+	EndorsalEndpointOutputSchemas,
+	MatchSchema,
+	NewContactSchema,
+	NewTagSchema,
+	NewTestimonialSchema,
+	TagSchema,
+	TestimonialSchema,
+} from './endpoints/types';
 import { EndorsalSchema } from './schema';
+import { endorsalEntities } from './schema/database';
 
-describe('Endorsal schema', () => {
-	it('declares a semver version', () => {
-		expect(EndorsalSchema.version).toBeDefined();
+describe('Endorsal database schema', () => {
+	it('declares a semver version and no local entities', () => {
 		expect(EndorsalSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
-	});
-
-	it('declares an entities map', () => {
-		expect(typeof EndorsalSchema.entities).toBe('object');
-		expect(EndorsalSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(EndorsalSchema.entities))).toBe(true);
-		for (const entity of Object.values(EndorsalSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		expect(EndorsalSchema.entities).toBe(endorsalEntities);
+		expect(EndorsalSchema.entities).toEqual({});
 	});
 });
 
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
+describe('Endorsal request schemas', () => {
+	it('validates required testimonial fields and provider enum bounds', () => {
+		expect(
+			NewTestimonialSchema.safeParse({
+				name: 'Jane Doe',
+				propertyID: 'property_123',
+				comments: 'Great service',
+				rating: 5,
+				approved: 2,
+				featured: 1,
+			}).success,
+		).toBe(true);
+		expect(
+			NewTestimonialSchema.safeParse({
+				name: 'Jane Doe',
+				propertyID: 'property_123',
+				comments: 'Great service',
+				rating: 6,
+			}).success,
+		).toBe(false);
+		expect(
+			NewTestimonialSchema.safeParse({
+				name: 'Jane Doe',
+				propertyID: 'property_123',
+				comments: 'Great service',
+				callback_url: 'https://example.com',
+			}).success,
+		).toBe(false);
+	});
+
+	it('requires either contact email or phone and rejects undocumented properties', () => {
+		expect(
+			NewContactSchema.safeParse({ email: 'jane@example.com' }).success,
+		).toBe(true);
+		expect(NewContactSchema.safeParse({ phone: '+14172618261' }).success).toBe(
+			true,
+		);
+		expect(NewContactSchema.safeParse({ name: 'Jane Doe' }).success).toBe(
+			false,
+		);
+		expect(
+			NewContactSchema.safeParse({
+				email: 'jane@example.com',
+				webhook_url: 'https://example.com',
+			}).success,
+		).toBe(false);
+	});
+
+	it('validates tag types and allows provider-nullable response values', () => {
+		expect(
+			NewTagSchema.safeParse({ name: 'Product', type: 'product' }).success,
+		).toBe(true);
+		expect(
+			TagSchema.safeParse({ _id: 'tag_123', image: null, edited: 123 }).success,
+		).toBe(true);
+		expect(
+			ContactSchema.safeParse({ _id: 'contact_123', activity: { added: 123 } })
+				.success,
+		).toBe(true);
+		expect(TestimonialSchema.safeParse({ rating: 0 }).success).toBe(false);
+	});
+
+	it('enforces comparison operators and the array-only in operator', () => {
+		expect(
+			MatchSchema.safeParse({ field: 'rating', operator: '=', value: 5 })
+				.success,
+		).toBe(true);
+		expect(
+			MatchSchema.safeParse({ field: 'rating', operator: 'in', value: [4, 5] })
+				.success,
+		).toBe(true);
+		expect(
+			MatchSchema.safeParse({ field: 'rating', operator: 'in', value: 5 })
+				.success,
+		).toBe(false);
+		expect(
+			MatchSchema.safeParse({ field: 'rating', operator: 'regex', value: '5' })
+				.success,
+		).toBe(false);
+	});
+
+	it('registers input and output schemas for all 25 documented operations', () => {
+		expect(Object.keys(EndorsalEndpointInputSchemas)).toHaveLength(25);
+		expect(Object.keys(EndorsalEndpointOutputSchemas).sort()).toEqual(
+			Object.keys(EndorsalEndpointInputSchemas).sort(),
+		);
+	});
+});

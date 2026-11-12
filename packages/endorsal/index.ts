@@ -1,40 +1,41 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { EndorsalEndpointInputs, EndorsalEndpointOutputs } from './endpoints/types';
-import { EndorsalEndpointInputSchemas, EndorsalEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
+import {
+	Campaigns,
+	Contacts,
+	Tags,
+	Testimonials,
+	WallOfLove,
+	Widgets,
+} from './endpoints';
 import type {
-	EndorsalWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { EndorsalSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	EndorsalEndpointInputs,
+	EndorsalEndpointOutputs,
+} from './endpoints/types';
+import {
+	EndorsalEndpointInputSchemas,
+	EndorsalEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchEndorsalTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveEndorsalOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { EndorsalSchema } from './schema';
 
 export type EndorsalPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalEndorsalPlugin['hooks'];
-	webhookHooks?: InternalEndorsalPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof endorsalEndpointsNested>;
 };
@@ -44,91 +45,325 @@ export type EndorsalContext = CorsairPluginContext<
 	EndorsalPluginOptions
 >;
 
-export type EndorsalKeyBuilderContext = KeyBuilderContext<EndorsalPluginOptions>;
+export type EndorsalKeyBuilderContext =
+	KeyBuilderContext<EndorsalPluginOptions>;
+export type EndorsalBoundEndpoints = BindEndpoints<
+	typeof endorsalEndpointsNested
+>;
 
-export type EndorsalBoundEndpoints = BindEndpoints<typeof endorsalEndpointsNested>;
-
-type EndorsalEndpoint<
-	K extends keyof EndorsalEndpointOutputs,
-> = CorsairEndpoint<
+type Endpoint<K extends keyof EndorsalEndpointOutputs> = CorsairEndpoint<
 	EndorsalContext,
 	EndorsalEndpointInputs[K],
 	EndorsalEndpointOutputs[K]
 >;
 
 export type EndorsalEndpoints = {
-	exampleGet: EndorsalEndpoint<'exampleGet'>;
+	testimonialsList: Endpoint<'testimonialsList'>;
+	testimonialsGet: Endpoint<'testimonialsGet'>;
+	testimonialsCreate: Endpoint<'testimonialsCreate'>;
+	testimonialsUpdate: Endpoint<'testimonialsUpdate'>;
+	testimonialsDelete: Endpoint<'testimonialsDelete'>;
+	testimonialsAddTags: Endpoint<'testimonialsAddTags'>;
+	testimonialsSearch: Endpoint<'testimonialsSearch'>;
+	testimonialsByTag: Endpoint<'testimonialsByTag'>;
+	testimonialsByContact: Endpoint<'testimonialsByContact'>;
+	contactsList: Endpoint<'contactsList'>;
+	contactsCreate: Endpoint<'contactsCreate'>;
+	contactsGet: Endpoint<'contactsGet'>;
+	contactsUpdate: Endpoint<'contactsUpdate'>;
+	contactsArchive: Endpoint<'contactsArchive'>;
+	contactsSearch: Endpoint<'contactsSearch'>;
+	tagsList: Endpoint<'tagsList'>;
+	tagsCreate: Endpoint<'tagsCreate'>;
+	tagsGet: Endpoint<'tagsGet'>;
+	tagsUpdate: Endpoint<'tagsUpdate'>;
+	tagsDelete: Endpoint<'tagsDelete'>;
+	widgetsList: Endpoint<'widgetsList'>;
+	widgetsGet: Endpoint<'widgetsGet'>;
+	wallOfLoveGet: Endpoint<'wallOfLoveGet'>;
+	campaignsList: Endpoint<'campaignsList'>;
+	campaignsGet: Endpoint<'campaignsGet'>;
 };
-
-type EndorsalWebhook<
-	K extends keyof EndorsalWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<EndorsalContext, TEvent, EndorsalWebhookOutputs[K]>;
-
-export type EndorsalWebhooks = {
-	example: EndorsalWebhook<'example', ExampleEvent>;
-};
-
-export type EndorsalBoundWebhooks = BindWebhooks<EndorsalWebhooks>;
 
 const endorsalEndpointsNested = {
-	example: {
-		get: Example.get,
+	testimonials: {
+		get: Testimonials.list,
+		byId: {
+			get: Testimonials.get,
+			patch: Testimonials.update,
+			delete: Testimonials.remove,
+			tag: { post: Testimonials.addTags },
+		},
+		post: Testimonials.create,
+		search: { post: Testimonials.search },
 	},
-} as const;
-
-const endorsalWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	contacts: {
+		get: Contacts.list,
+		post: Contacts.create,
+		byId: {
+			get: Contacts.get,
+			patch: Contacts.update,
+			delete: Contacts.archive,
+		},
+		search: { post: Contacts.search },
+		testimonials: { get: Testimonials.byContact },
+	},
+	tags: {
+		get: Tags.list,
+		post: Tags.create,
+		byId: {
+			get: Tags.get,
+			patch: Tags.update,
+			delete: Tags.remove,
+		},
+		testimonials: { get: Testimonials.byTag },
+	},
+	widgets: {
+		get: Widgets.list,
+		byId: { get: Widgets.get },
+	},
+	wallOfLove: { get: WallOfLove.get },
+	autorequests: {
+		campaigns: {
+			get: Campaigns.list,
+			byId: { get: Campaigns.get },
+		},
 	},
 } as const;
 
 export const endorsalEndpointSchemas = {
-	'example.get': {
-		input: EndorsalEndpointInputSchemas.exampleGet,
-		output: EndorsalEndpointOutputSchemas.exampleGet,
+	'testimonials.get': {
+		input: EndorsalEndpointInputSchemas.testimonialsList,
+		output: EndorsalEndpointOutputSchemas.testimonialsList,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof endorsalEndpointsNested>;
-
-const endorsalWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'testimonials.byId.get': {
+		input: EndorsalEndpointInputSchemas.testimonialsGet,
+		output: EndorsalEndpointOutputSchemas.testimonialsGet,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof endorsalWebhooksNested>;
+	'testimonials.post': {
+		input: EndorsalEndpointInputSchemas.testimonialsCreate,
+		output: EndorsalEndpointOutputSchemas.testimonialsCreate,
+	},
+	'testimonials.byId.patch': {
+		input: EndorsalEndpointInputSchemas.testimonialsUpdate,
+		output: EndorsalEndpointOutputSchemas.testimonialsUpdate,
+	},
+	'testimonials.byId.delete': {
+		input: EndorsalEndpointInputSchemas.testimonialsDelete,
+		output: EndorsalEndpointOutputSchemas.testimonialsDelete,
+	},
+	'testimonials.byId.tag.post': {
+		input: EndorsalEndpointInputSchemas.testimonialsAddTags,
+		output: EndorsalEndpointOutputSchemas.testimonialsAddTags,
+	},
+	'testimonials.search.post': {
+		input: EndorsalEndpointInputSchemas.testimonialsSearch,
+		output: EndorsalEndpointOutputSchemas.testimonialsSearch,
+	},
+	'contacts.get': {
+		input: EndorsalEndpointInputSchemas.contactsList,
+		output: EndorsalEndpointOutputSchemas.contactsList,
+	},
+	'contacts.post': {
+		input: EndorsalEndpointInputSchemas.contactsCreate,
+		output: EndorsalEndpointOutputSchemas.contactsCreate,
+	},
+	'contacts.byId.get': {
+		input: EndorsalEndpointInputSchemas.contactsGet,
+		output: EndorsalEndpointOutputSchemas.contactsGet,
+	},
+	'contacts.byId.patch': {
+		input: EndorsalEndpointInputSchemas.contactsUpdate,
+		output: EndorsalEndpointOutputSchemas.contactsUpdate,
+	},
+	'contacts.byId.delete': {
+		input: EndorsalEndpointInputSchemas.contactsArchive,
+		output: EndorsalEndpointOutputSchemas.contactsArchive,
+	},
+	'contacts.search.post': {
+		input: EndorsalEndpointInputSchemas.contactsSearch,
+		output: EndorsalEndpointOutputSchemas.contactsSearch,
+	},
+	'contacts.testimonials.get': {
+		input: EndorsalEndpointInputSchemas.testimonialsByContact,
+		output: EndorsalEndpointOutputSchemas.testimonialsByContact,
+	},
+	'tags.get': {
+		input: EndorsalEndpointInputSchemas.tagsList,
+		output: EndorsalEndpointOutputSchemas.tagsList,
+	},
+	'tags.post': {
+		input: EndorsalEndpointInputSchemas.tagsCreate,
+		output: EndorsalEndpointOutputSchemas.tagsCreate,
+	},
+	'tags.byId.get': {
+		input: EndorsalEndpointInputSchemas.tagsGet,
+		output: EndorsalEndpointOutputSchemas.tagsGet,
+	},
+	'tags.byId.patch': {
+		input: EndorsalEndpointInputSchemas.tagsUpdate,
+		output: EndorsalEndpointOutputSchemas.tagsUpdate,
+	},
+	'tags.byId.delete': {
+		input: EndorsalEndpointInputSchemas.tagsDelete,
+		output: EndorsalEndpointOutputSchemas.tagsDelete,
+	},
+	'tags.testimonials.get': {
+		input: EndorsalEndpointInputSchemas.testimonialsByTag,
+		output: EndorsalEndpointOutputSchemas.testimonialsByTag,
+	},
+	'widgets.get': {
+		input: EndorsalEndpointInputSchemas.widgetsList,
+		output: EndorsalEndpointOutputSchemas.widgetsList,
+	},
+	'widgets.byId.get': {
+		input: EndorsalEndpointInputSchemas.widgetsGet,
+		output: EndorsalEndpointOutputSchemas.widgetsGet,
+	},
+	'wallOfLove.get': {
+		input: EndorsalEndpointInputSchemas.wallOfLoveGet,
+		output: EndorsalEndpointOutputSchemas.wallOfLoveGet,
+	},
+	'autorequests.campaigns.get': {
+		input: EndorsalEndpointInputSchemas.campaignsList,
+		output: EndorsalEndpointOutputSchemas.campaignsList,
+	},
+	'autorequests.campaigns.byId.get': {
+		input: EndorsalEndpointInputSchemas.campaignsGet,
+		output: EndorsalEndpointOutputSchemas.campaignsGet,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof endorsalEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const endorsalEndpointMeta = {
-	'example.get': {
+	'testimonials.get': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'List testimonials for the configured property',
+	},
+	'testimonials.byId.get': {
+		riskLevel: 'read',
+		description: 'Retrieve a testimonial by ID',
+	},
+	'testimonials.post': {
+		riskLevel: 'write',
+		description: 'Create a testimonial',
+	},
+	'testimonials.byId.patch': {
+		riskLevel: 'write',
+		description: 'Update testimonial fields',
+	},
+	'testimonials.byId.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a testimonial',
+	},
+	'testimonials.byId.tag.post': {
+		riskLevel: 'write',
+		description: 'Add tags to a testimonial',
+	},
+	'testimonials.search.post': {
+		riskLevel: 'read',
+		description: 'Search testimonials with AND-combined match conditions',
+	},
+	'contacts.get': {
+		riskLevel: 'read',
+		description: 'List contacts for the configured property',
+	},
+	'contacts.post': {
+		riskLevel: 'write',
+		description: 'Create a contact and optionally enroll it in a campaign',
+	},
+	'contacts.byId.get': {
+		riskLevel: 'read',
+		description: 'Retrieve a contact by ID',
+	},
+	'contacts.byId.patch': {
+		riskLevel: 'write',
+		description: 'Update contact fields',
+	},
+	'contacts.byId.delete': {
+		riskLevel: 'destructive',
+		description: 'Archive a contact',
+	},
+	'contacts.search.post': {
+		riskLevel: 'read',
+		description: 'Search contacts with AND-combined match conditions',
+	},
+	'contacts.testimonials.get': {
+		riskLevel: 'read',
+		description: 'List testimonials for a contact',
+	},
+	'tags.get': {
+		riskLevel: 'read',
+		description: 'List tags for the configured property',
+	},
+	'tags.post': {
+		riskLevel: 'write',
+		description: 'Create a tag or product tag',
+	},
+	'tags.byId.get': { riskLevel: 'read', description: 'Retrieve a tag by ID' },
+	'tags.byId.patch': { riskLevel: 'write', description: 'Update tag fields' },
+	'tags.byId.delete': { riskLevel: 'destructive', description: 'Delete a tag' },
+	'tags.testimonials.get': {
+		riskLevel: 'read',
+		description: 'List testimonials associated with a tag',
+	},
+	'widgets.get': {
+		riskLevel: 'read',
+		description: 'List widgets for the configured property',
+	},
+	'widgets.byId.get': {
+		riskLevel: 'read',
+		description: 'Retrieve a widget and its testimonials, optionally rendered',
+	},
+	'wallOfLove.get': {
+		riskLevel: 'read',
+		description:
+			'Retrieve a Wall of Love and its testimonials, optionally rendered',
+	},
+	'autorequests.campaigns.get': {
+		riskLevel: 'read',
+		description: 'List AutoRequest campaigns',
+	},
+	'autorequests.campaigns.byId.get': {
+		riskLevel: 'read',
+		description: 'Retrieve an AutoRequest campaign by ID',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof endorsalEndpointsNested>;
 
 export const endorsalAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseEndorsalPlugin<T extends EndorsalPluginOptions> = CorsairPlugin<
 	'endorsal',
 	typeof EndorsalSchema,
 	typeof endorsalEndpointsNested,
-	typeof endorsalWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
-
 export type InternalEndorsalPlugin = BaseEndorsalPlugin<EndorsalPluginOptions>;
-
 export type ExternalEndorsalPlugin<T extends EndorsalPluginOptions> =
 	BaseEndorsalPlugin<T>;
+
+const PUBLIC_OPERATIONS = new Set([
+	'testimonials.get',
+	'testimonials.byId.get',
+	'contacts.get',
+	'contacts.byId.get',
+	'contacts.testimonials.get',
+	'tags.get',
+	'tags.byId.get',
+	'tags.testimonials.get',
+	'widgets.get',
+	'widgets.byId.get',
+	'wallOfLove.get',
+	'autorequests.campaigns.get',
+	'autorequests.campaigns.byId.get',
+]);
 
 export function endorsal<const T extends EndorsalPluginOptions>(
 	incomingOptions: EndorsalPluginOptions & T = {} as EndorsalPluginOptions & T,
@@ -137,66 +372,38 @@ export function endorsal<const T extends EndorsalPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	const { DEFAULT: builtInDefault, ...builtIns } = errorHandlers;
+	const { DEFAULT: callerDefault, ...callers } = options.errorHandlers ?? {};
 	return {
 		id: 'endorsal',
 		authConfig: endorsalAuthConfig,
 		schema: EndorsalSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: endorsalEndpointsNested,
-		webhooks: endorsalWebhooksNested,
+		webhooks: {},
 		endpointMeta: endorsalEndpointMeta,
 		endpointSchemas: endorsalEndpointSchemas,
-		webhookSchemas: endorsalWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-endorsal-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchEndorsalTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveEndorsalOAuthWebhookTenantLink,
 		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
+			...callers,
+			...builtIns,
+			...callers,
+			DEFAULT: callerDefault ?? builtInDefault,
 		},
 		keyBuilder: async (ctx: EndorsalKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			if (source !== 'endpoint') return '';
+			if (options.key !== undefined) return options.key;
+			if (PUBLIC_OPERATIONS.has(ctx.meteredOperationId ?? '')) return '';
+			if (!ctx.keys) throw new AuthMissingError('endorsal', 'api_key');
+			const apiKey = await ctx.keys.get_api_key();
+			if (!apiKey) throw new AuthMissingError('endorsal', 'api_key');
+			return apiKey;
 		},
 	} satisfies InternalEndorsalPlugin;
 }
 
 export type {
-	ExampleEvent,
-	EndorsalWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	EndorsalEndpointInputs,
+	EndorsalEndpointName,
 	EndorsalEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
 } from './endpoints/types';
