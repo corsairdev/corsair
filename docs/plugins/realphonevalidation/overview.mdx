@@ -1,0 +1,141 @@
+---
+title: "RealPhoneValidation plugin"
+sidebarTitle: "Overview"
+description: "Phone connectivity, line type, Do-Not-Call, fraud risk, reassigned-number and email verification lookups from RealPhoneValidation."
+---
+
+Use **RealPhoneValidation** through Corsair: one client, typed API calls.
+
+Your token is on the [RealPhoneValidation account page](https://my.realvalidation.com/rvback/rv_login.php) and is issued by RealValidation, Inc. It travels as the `token` query parameter, because that is the only transport these services support: the plugin cannot keep it out of the URL, so keep request logs off the proxy.
+
+**All twelve services take a US number as ten digits only.** No `+1`, no punctuation, no extensions. The plugin rejects anything else rather than reformatting it, because silently repairing a number would hide a bad one you should see rejected.
+
+Things to know before you rely on an answer:
+
+- **A refusal can arrive inside a `200`.** These services predate HTTP error conventions: an unrecognised token answers `{"status":"unauthorized"}`, a missing one `{"status":"ERROR","error_text":"missing token"}`, and a bad number `{"status":"invalid phone"}`, all with a `200`. The plugin checks the body and throws, so a caller never mistakes a refusal for a disposition. In front of the scripts, the load balancer answers a token it does not recognise with an empty `401` and a malformed one with an empty `403`, the same status as the documented throttle for more than 10 calls a second; a `5xx` means the service is down.
+- **`?` is not "no".** On `dncLookup` and `dncPlus`, `national_dnc`, `state_dnc`, `dma` and `litigator` answer `Y`, `N` or `?`, where `?` means the list timed out or could not be checked. Treat `?` as unknown; reading it as cleared is exactly the mistake that creates a TCPA problem.
+- **`reassigned: "no_data"` is not `"no"`.** `no_data` means the carriers recorded no change since 27 January 2021, which is not evidence about a particular number. Only `yes` and `no` answer the question you asked.
+- **`active` and `connected` are different questions.** `active` says the number sits on a provider still in business; it deliberately does not say anyone answers. Use `turboV3`, `turboStandard`, `turbo` or `scrub` for connectivity and `active` only for existence.
+- **Five services overlap.** `turboV3` gives the most (connection, phone type, caller name, carrier, caller type); `turboStandard` gives connection and phone type; the legacy `turbo` gives connection, `iscell` and carrier; `scrub` and `scrubPlus` are the cheap list-processing options and may answer `unknown` for up to 5% of US numbers. Pick one per workflow rather than chaining them.
+- **`error_text` is `{}` when there is nothing to report.** It is an empty object rather than an empty string or absent, and the same holds for `RESPONSEMSG` on the `RESPONSECODE` routes. The response models accept either shape. Other text fields come from the same XML conversion, so an empty one (a `caller_name` the carrier does not expose, say) is returned as `null`.
+- **`fraudCheck` returns numeric strings.** `score` is a string from 0 to 1000 and `phn_type` is a code explained by `phn_desc`. They are not parsed here, so a caller comparing them should convert them and see a non-numeric value rather than have it silently coerced.
+- **`reassigned` needs your consent date.** `contact_date` is the date you received permission to contact, in `YYYY-MM-DD`; a reassignment only means anything relative to that date.
+- **`dncLookup` needs a SAN number** from the national registry before the service will answer.
+- **Rate limit.** The docs recommend 10 calls a second and refuse a burst with a `403` and an empty body. The plugin retries that three times with exponential backoff, waiting for a `Retry-After` header if one arrives. A malformed token gets the same `403`, so a typo in the token shows up as a throttle after those retries.
+
+**What you get:**
+
+- 12 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/realphonevalidation better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/realphonevalidation better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/realphonevalidation better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/realphonevalidation better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { realphonevalidation } from '@corsair-dev/realphonevalidation';
+
+export const corsair = createCorsair({
+	plugins: [
+		realphonevalidation(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+realphonevalidation()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'realphonevalidation',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Validate a US phone number**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.realphonevalidation.api.turboV3({ phone: '7275555555' });
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/realphonevalidation/api) reference._
+
+
+See the full list on the [API](/plugins/realphonevalidation/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/realphonevalidation/api">
+    Every `realphonevalidation.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

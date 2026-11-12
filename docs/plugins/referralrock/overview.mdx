@@ -1,0 +1,144 @@
+---
+title: "Referral Rock plugin"
+sidebarTitle: "Overview"
+description: "Referral program management with Referral Rock - read programs, advocates, referrals and rewards, and create an advocate, a referral or a reward through the Referral Rock API."
+---
+
+Use **Referral Rock** through Corsair: one client, typed API calls.
+
+Create a key under **Settings > API Keys** in the Referral Rock dashboard. Referral Rock shows a **public** key, a **private** key (once only) and a **Basic Auth Key**. Store either `publicKey:privateKey` or the Basic Auth Key as the plugin's API key. Things to know before you call:
+
+- **The credential is Basic with both keys.** The public key is the username and the private key the password; a single key with an empty password answers 401. The plugin builds the `Authorization` header from the stored value.
+- **Two different 401 bodies.** A request with no credential answers a JSON wrapper, `{ response: { status_code, status_message, body } }`. A credential the host rejects answers **HTML** before the request reaches the API, so the status is all there is. The plugin reads both.
+- **Refused creates throw.** A duplicate member email or an unknown referral code answers `400` with the reason in `message`, which the plugin raises as a `ReferralrockAPIError`. A refused reward answers `200` with `resultInfo.Status: "Failed"`; the plugin raises that too.
+- **Paging is offset and count.** A collection answers `offset`, `total` and the rows; `next_offset` is null once the rows reach the total. Omitting `count` returns everything, because that is the documented default.
+- **Member sort values.** `sort` takes one of `Member_Views_Desc`, `Member_Views_Asc`, `Page_Views_Desc`, `Page_Views_Asc`, `Lead_Count_Desc`, `Lead_Count_Asc`, `Reward_Issued_Total_Desc`, `Reward_Issued_Total_Asc`, `Member_Full_Name_Desc`, `Member_Full_Name_Asc`, `Create_Dt_Desc` or `Create_Dt_Asc`, and it defaults to `Create_Dt_Desc`.
+- **An unrecognised `sort` is silently ignored.** Referral Rock says so explicitly and falls back to the default, so a typo would return correctly-shaped data in the wrong order. `members.list` pins the accepted values.
+- **A member needs a program, a first name and an email.** Referral Rock validates all three, so the schema requires them.
+- **A reward is sent as an array.** `POST /api/rewards` takes a list of reward infos, each with ONE of `memberQuery` or `referralQuery` and a `newReward`, and answers a list of results; the plugin wraps your input and unwraps the first result. Give `member_id` or `referral_id`, not both, and a `payout_id`: Referral Rock requires one, and a payout only exists once a reward rule in the program uses it.
+- **Retries.** Referral Rock documents no throughput window and no `Retry-After`, so a 429 is retried three times with exponential backoff. A `5xx` is retried only for a read.
+
+**What you get:**
+
+- 7 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/referralrock better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/referralrock better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/referralrock better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/referralrock better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { referralrock } from '@corsair-dev/referralrock';
+
+export const corsair = createCorsair({
+	plugins: [
+		referralrock(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+referralrock()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'referralrock',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List advocates in program order**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.referralrock.api.members.list({ count: 50 });
+```
+
+
+**Record a referral against a member's code**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.referralrock.api.referrals.create({
+	referral_code: 'SAM123',
+	first_name: 'Jordan',
+	email: 'jordan@example.com',
+	amount: 250,
+});
+```
+
+
+See the full list on the [API](/plugins/referralrock/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/referralrock/api">
+    Every `referralrock.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

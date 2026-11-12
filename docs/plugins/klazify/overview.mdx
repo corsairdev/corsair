@@ -1,0 +1,138 @@
+---
+title: "Klazify plugin"
+sidebarTitle: "Overview"
+description: "Website classification from any URL or email - IAB and Klazify categories, company data, tech stack, logos, traffic, domain age and similar domains."
+---
+
+Use **Klazify** through Corsair: one client, typed API calls.
+
+Klazify classifies a website from its URL, or from an email's domain. `categorize.all` returns the categories, company data, tech stack, logo and social profiles in one answer, and the narrower endpoints return one block each. Traffic comes only from `traffic.get`.
+
+- **A paid plan is required.** Klazify advertises a free key, but an account on the free plan cannot call any endpoint: every route answers `401` with `error: "Plan free no available"` and a message asking you to upgrade. The plugin reports that as `PLAN_REQUIRED_ERROR` so it is not mistaken for a bad key.
+- **Two targets.** Every classification endpoint takes a `url` or an `email`; give one. `refresh: true` forces a live crawl instead of the cached result, on every paid plan including Starter.
+- **The widest call first.** `categorize.all` returns categories, logo, social profiles, company data and tech in one response. The narrower endpoints cost the same call, so reach for this one unless you need a single block.
+- **Nothing is stored.** Klazify is a lookup service and the plugin keeps no local copy; `refresh` already decides whether the provider re-crawls.
+- **Discovery is the only database search.** `discovery.search` queries Klazify's whole indexed domain database rather than one URL, filters by category, country, technology, employee bucket and TLD, and pages 100 results at a time.
+- **Two unbilled error categories.** `/Unreachable` and `/No indexable content` are reported inside a `success: false` answer, and Klazify does not bill for either.
+- **Category taxonomies.** `categories.listV1` returns 620 paths and `categories.listV2` returns 1,091. Both count as an API call.
+- **Webhooks.** The plugin does not receive webhooks; Klazify's API is pull-only.
+
+**What you get:**
+
+- 12 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/klazify better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/klazify better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/klazify better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/klazify better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { klazify } from '@corsair-dev/klazify';
+
+export const corsair = createCorsair({
+	plugins: [
+		klazify(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+klazify()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'klazify',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the v1 category taxonomy**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.klazify.api.categories.listV1({});
+```
+
+
+**Classify a site, returning categories, company data and tech**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.klazify.api.categorize.all({ url: 'https://cbsnews.com' });
+```
+
+
+See the full list on the [API](/plugins/klazify/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/klazify/api">
+    Every `klazify.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
