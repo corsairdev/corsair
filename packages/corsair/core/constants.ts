@@ -390,6 +390,7 @@ export const BaseProviders = [
 	'reducto',
 	'referralrock',
 	'refiner',
+	'remarkety',
 	'remoet',
 	'remoteretrieval',
 	'removebg',
@@ -915,6 +916,7 @@ export const ProviderDisplayNames = {
 	reducto: 'Reducto',
 	referralrock: 'Referral Rock',
 	refiner: 'Refiner',
+	remarkety: 'Remarkety',
 	remoet: 'Remoet',
 	remoteretrieval: 'Remote Retrieval',
 	removebg: 'remove.bg',
@@ -1447,6 +1449,7 @@ export type AllProviders =
 	| 'reducto'
 	| 'referralrock'
 	| 'refiner'
+	| 'remarkety'
 	| 'remoet'
 	| 'remoteretrieval'
 	| 'removebg'

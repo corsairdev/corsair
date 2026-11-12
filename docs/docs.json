@@ -3266,6 +3266,14 @@
                 ]
               },
               {
+                "group": "Remarkety",
+                "pages": [
+                  "plugins/remarkety/overview",
+                  "plugins/remarkety/api",
+                  "plugins/remarkety/database"
+                ]
+              },
+              {
                 "group": "Remoet",
                 "pages": [
                   "plugins/remoet/overview",
