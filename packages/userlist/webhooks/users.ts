@@ -23,8 +23,10 @@ import {
 async function handle<Payload extends z.ZodType>(
 	ctx: { key: string },
 	request: {
+		// unknown: the host's parsed body; the topic's schema narrows it.
 		payload: unknown;
 		rawBody?: string;
+		// unknown: header values arrive as a string or a string array.
 		headers: Record<string, unknown>;
 	},
 	schema: Payload,

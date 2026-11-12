@@ -11,12 +11,16 @@ import { z } from 'zod';
  * schema passes the shape through unchanged.
  */
 const PropertiesSchema = z
+	// unknown: Userlist accepts any JSON value per key.
 	.record(z.string(), z.unknown())
 	.describe(
 		'Custom properties. Nested objects become dotted keys, and ISO 8601 strings are stored as timestamps.',
 	);
 
-/** A resource may be referenced by identifier or embedded whole. */
+/**
+ * A resource may be referenced by identifier or embedded whole. unknown: an
+ * embedded object takes the same open fields as its own upsert.
+ */
 const UserRefSchema = z
 	.union([z.string(), z.number(), z.record(z.string(), z.unknown())])
 	.describe('A user identifier, or an embedded user object.');

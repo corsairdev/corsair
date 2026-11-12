@@ -16,6 +16,7 @@ const UserSchema = z
 		id: z.string().nullish(),
 		identifier: z.string().nullish(),
 		email: z.string().nullish(),
+		// unknown: custom properties are whatever the account pushed.
 		properties: z.record(z.string(), z.unknown()).nullish(),
 		signed_up_at: z.string().nullish(),
 		last_seen_at: z.string().nullish(),
@@ -31,6 +32,7 @@ const CompanySchema = z
 		id: z.string().nullish(),
 		identifier: z.string().nullish(),
 		name: z.string().nullish(),
+		// unknown: custom properties are whatever the account pushed.
 		properties: z.record(z.string(), z.unknown()).nullish(),
 		signed_up_at: z.string().nullish(),
 		created_at: z.string().nullish(),
@@ -41,6 +43,7 @@ const CompanySchema = z
 const RelationshipSchema = z
 	.object({
 		id: z.string().nullish(),
+		// unknown: relationship properties are whatever the account pushed.
 		properties: z.record(z.string(), z.unknown()).nullish(),
 		created_at: z.string().nullish(),
 		updated_at: z.string().nullish(),
@@ -238,6 +241,7 @@ export function createUserlistMatch(eventName: string): CorsairWebhookMatcher {
 }
 
 function firstHeader(
+	// unknown: header values arrive as a string or a string array.
 	headers: Record<string, unknown>,
 	name: string,
 ): string | undefined {
@@ -257,6 +261,7 @@ const SIGNATURE_TOLERANCE_SECONDS = 5 * 60;
  * request cannot be replayed.
  */
 export function verifyUserlistWebhookSignature(
+	// unknown: only the raw body and headers are read, never the payload.
 	request: WebhookRequest<unknown>,
 	webhookSecret?: string,
 ): { valid: boolean; error?: string } {
