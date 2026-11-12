@@ -124,9 +124,7 @@ describe('tasks.list', () => {
 	});
 
 	it('rejects a lowercase sort order and a free-text match', async () => {
-		await expect(
-			invoke(Tasks.list, { sort_order: 'asc' }),
-		).rejects.toThrow();
+		await expect(invoke(Tasks.list, { sort_order: 'asc' })).rejects.toThrow();
 		await expect(invoke(Tasks.list, { match: 'kickoff' })).rejects.toThrow();
 		await expect(
 			invoke(Tasks.list, { created_at: { ge: '2026-11-01' } }),

@@ -328,7 +328,9 @@ const TaskStatusSchema = z
 			.number()
 			.int()
 			.positive()
-			.describe("The status's numeric value, as a task's `status.value` shows."),
+			.describe(
+				"The status's numeric value, as a task's `status.value` shows.",
+			),
 	})
 	.optional()
 	.describe('The task status, by its numeric value.');
