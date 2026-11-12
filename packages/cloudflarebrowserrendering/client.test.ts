@@ -300,6 +300,28 @@ describe('makeCloudflareBrowserRenderingBinaryRequest', () => {
 		).resolves.toEqual({ maxRetries: 0, headersRetryAfterMs: 3000 });
 	});
 
+	it('keeps HTTP status and Retry-After when body cleanup rejects', async () => {
+		const failedBody = new ReadableStream<Uint8Array>({
+			start(controller) {
+				controller.error(new Error('connection dropped'));
+			},
+		});
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(failedBody, {
+				status: 429,
+				headers: { 'retry-after': '3' },
+			}),
+		);
+
+		await expect(
+			makeCloudflareBrowserRenderingBinaryRequest(
+				'/accounts/account-123/browser-run/screenshot',
+				'test-token',
+				{ url: 'https://example.com' },
+			),
+		).rejects.toMatchObject({ status: 429, retryAfter: 3000 });
+	});
+
 	it('sanitizes network failures rather than including request details', async () => {
 		jest
 			.spyOn(globalThis, 'fetch')

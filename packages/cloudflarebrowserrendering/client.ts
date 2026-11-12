@@ -121,7 +121,9 @@ export async function makeCloudflareBrowserRenderingBinaryRequest(
 			const retryAfter = status === 429 ? parseRetryAfter(response) : undefined;
 			// Release the unread body before throwing so a failed transfer cannot
 			// outlive the request deadline and retain connection resources.
-			await response.body?.cancel();
+			// Best-effort: cancelling an already-failed stream rejects too, and that
+			// must not replace the HTTP status and Retry-After thrown below.
+			await response.body?.cancel().catch(() => undefined);
 			throw new CloudflareBrowserRenderingHTTPError(
 				`Cloudflare Browser Run binary request failed with HTTP ${status}`,
 				status,
