@@ -75,12 +75,12 @@ export const BlockSchema = z
 	})
 	.loose();
 
-/** A voice note attached to a message: its length and its audio file. */
+/** A voice note attached to a message: its audio file, length and transcript. */
 export const VoiceNoteSchema = z
 	.object({
+		audioUrl: z.string().nullish(),
 		duration: z.number().nullish(),
-		url: z.string().nullish(),
-		waveform: z.array(z.number()).nullish(),
+		transcript: z.string().nullish(),
 	})
 	.loose();
 
@@ -94,6 +94,34 @@ export const PollSchema = z.object({
 	allowMultipleAnswers: z.boolean().optional(),
 	closesAt: z.string().optional().describe('An RFC 3339 datetime.'),
 });
+
+/**
+ * A poll as `chat.history` returns it. Unlike the input, each option comes back
+ * as an object with the id that `reactions.list` reports votes against.
+ */
+const PollResponseSchema = z
+	.object({
+		question: z.string().nullish(),
+		options: z
+			.array(
+				z
+					.object({ id: z.string().nullish(), text: z.string().nullish() })
+					.loose(),
+			)
+			.nullish(),
+		allowMultipleAnswers: z.boolean().nullish(),
+		closesAt: z.string().nullish(),
+	})
+	.loose();
+
+/**
+ * A block as `chat.history` returns it. The spec types these as plain objects,
+ * so the output keeps every field and does not pin `type` to the five block
+ * types a post may send.
+ */
+const BlockResponseSchema = z
+	.object({ type: z.string().nullish() })
+	.catchall(BlockNodeSchema);
 
 /** A user reference as a message, group or reaction carries it. */
 export const UserRefSchema = z
@@ -227,7 +255,9 @@ const ChatHistoryInputSchema = z
 		user_ids: z
 			.array(z.string())
 			.optional()
-			.describe('Only messages from these users.'),
+			.describe(
+				'Read the direct or multi-person chat with these users instead of a chat or group.',
+			),
 		thread_timestamp: z
 			.number()
 			.int()
@@ -247,12 +277,17 @@ const ChatHistoryInputSchema = z
 		expand: ExpandSchema,
 	})
 	.superRefine((value, ctx) => {
-		// Roam reads the target from one of these; sending neither returns an
-		// unscoped history, and sending both is ambiguous.
-		if (value.chat_id === undefined && value.group_id === undefined) {
+		// Roam reads the target from exactly one of these and answers 400 to
+		// none or to more than one.
+		const destinations = [
+			value.chat_id !== undefined,
+			value.group_id !== undefined,
+			value.user_ids !== undefined,
+		].filter(Boolean).length;
+		if (destinations !== 1) {
 			ctx.addIssue({
 				code: 'custom',
-				message: 'Provide `chat_id` or `group_id`.',
+				message: 'Provide exactly one of `chat_id`, `group_id` or `user_ids`.',
 				path: ['chat_id'],
 			});
 		}
@@ -294,8 +329,8 @@ const ChatMessageSchema = z
 		items: z.array(ChatItemSchema).nullish(),
 		mentions: z.array(z.string()).nullish(),
 		sender: UserRefSchema.nullish(),
-		poll: PollSchema.nullish(),
-		blocks: z.array(BlockSchema).nullish(),
+		poll: PollResponseSchema.nullish(),
+		blocks: z.array(BlockResponseSchema).nullish(),
 		voice: VoiceNoteSchema.nullish(),
 	})
 	.loose();

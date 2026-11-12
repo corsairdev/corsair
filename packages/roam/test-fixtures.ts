@@ -114,6 +114,50 @@ export const MESSAGE = {
 	blocks: [],
 };
 
+/** A poll message as the spec returns it: options are `{ id, text }` objects. */
+export const POLL_MESSAGE = {
+	type: 'message',
+	userId: USER_ID,
+	userType: 'user',
+	chatId: CHAT_ID,
+	timestamp: TIMESTAMP + 1,
+	contentType: 'poll',
+	poll: {
+		question: 'Lunch?',
+		options: [
+			{ id: 'opt-1', text: 'Pizza' },
+			{ id: 'opt-2', text: 'Salad' },
+		],
+		allowMultipleAnswers: false,
+	},
+};
+
+/** A block message whose block type is not one a post may send. */
+export const BLOCK_MESSAGE = {
+	type: 'message',
+	userId: USER_ID,
+	userType: 'bot',
+	chatId: CHAT_ID,
+	timestamp: TIMESTAMP + 2,
+	contentType: 'block',
+	blocks: [{ type: 'image', image_url: 'https://cdn.ro.am/x.png', alt_text: 'x' }],
+};
+
+/** A voice message as the spec returns it. */
+export const VOICE_MESSAGE = {
+	type: 'message',
+	userId: USER_ID,
+	userType: 'user',
+	chatId: CHAT_ID,
+	timestamp: TIMESTAMP + 3,
+	contentType: 'voice',
+	voice: {
+		audioUrl: 'https://cdn.ro.am/voice.m4a',
+		duration: 4,
+		transcript: 'On my way',
+	},
+};
+
 export const MESSAGE_PAGE = {
 	ok: true,
 	messages: [MESSAGE],

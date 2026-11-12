@@ -11,7 +11,7 @@ overviewNote: |
   - **`chat.post` takes exactly one content type.** `text`, `items`, `asset_ids`, `blocks` or `poll` — a body with two of them is refused, and so is a body with none, so the schema rejects either before the request.
   - **A post needs a destination.** One of `chat_id`, `group_id` or `user_ids`: the last one opens a direct conversation.
   - **Scheduling a post returns a different shape.** Passing `send_at` returns `scheduledMessageId` instead of a live `timestamp`.
-  - **`chat.history` needs a target.** It reads one chat or one group, so `chat_id` or `group_id` is required; without one Roam returns an unscoped history.
+  - **`chat.history` needs one target.** Exactly one of `chat_id`, `group_id` or `user_ids` (the direct chat with those people); Roam refuses none or more than one.
   - **Messages are edited, not replaced.** `chat.update` takes the chat and the message `timestamp`, and needs exactly one new content type.
   - **Paging is a cursor.** `users.list`, `chat.list`, `chat.history`, `groups.list` and `meetings.list` answer Roam's `nextCursor`, which the plugin returns as `next_cursor` with `has_more`. Pass it back as `cursor` for the next page; `next_cursor: null` is the last page, and a call without a cursor starts at the first. `reactions.list` is not paged, and `users.list` with `ids` returns every match in one answer.
 examples:
@@ -53,7 +53,7 @@ apiExamples:
     call: "{ meeting_id: '11111111-2222-3333-4444-555555555555' }"
 apiNotes:
   'token.info': 'Also reports the API version the response was rendered with, and the token''s granted scopes.'
-  'chat.history': 'Needs `chat_id` or `group_id`; without one Roam reads an unscoped history.'
+  'chat.history': 'Needs exactly one of `chat_id`, `group_id` or `user_ids`. Poll options come back as `{ id, text }` objects.'
   'chat.post': 'Exactly one of `text`, `items`, `asset_ids`, `blocks` or `poll`; `send_at` schedules instead of sending.'
   'chat.update': 'Needs exactly one new content type, and identifies the message by chat and timestamp.'
   'reactions.add': 'The `name` is an emoji name such as `thumbsup`, not the emoji character.'

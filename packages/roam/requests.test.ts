@@ -1,5 +1,6 @@
 import * as Endpoints from './endpoints/endpoints';
 import {
+	BLOCK_MESSAGE,
 	CHAT_ID,
 	CHAT_PAGE,
 	CHAT_POST,
@@ -10,13 +11,16 @@ import {
 	MEETING_ID,
 	MEETING_PAGE,
 	MESSAGE_PAGE,
+	POLL_MESSAGE,
 	REACTION_ADD,
 	REACTION_LIST,
 	TIMESTAMP,
 	TOKEN_INFO,
 	TRANSCRIPT,
 	USER,
+	USER_ID,
 	USER_PAGE,
+	VOICE_MESSAGE,
 } from './test-fixtures';
 import { invoke, lastRequest, respond, spyOnFetch } from './test-support';
 
@@ -120,6 +124,37 @@ describe('chat.list and chat.history', () => {
 		await invoke(Endpoints.chatHistory, { group_id: GROUP_ID });
 
 		expect(lastRequest(fetchMock).query).toEqual({ groupId: GROUP_ID });
+	});
+
+	it('reads poll, block and voice messages in the shapes Roam returns', async () => {
+		respond(fetchMock, {
+			ok: true,
+			chatId: CHAT_ID,
+			messages: [POLL_MESSAGE, BLOCK_MESSAGE, VOICE_MESSAGE],
+		});
+
+		const result = (await invoke(Endpoints.chatHistory, {
+			chat_id: CHAT_ID,
+		})) as Awaited<ReturnType<typeof Endpoints.chatHistory>>;
+
+		expect(result.messages[0]?.poll?.options?.[1]?.text).toBe('Salad');
+		expect(result.messages[1]?.blocks?.[0]?.type).toBe('image');
+		expect(result.messages[2]?.voice?.transcript).toBe('On my way');
+	});
+
+	it('reads the direct chat with a set of users', async () => {
+		respond(fetchMock, MESSAGE_PAGE);
+
+		await invoke(Endpoints.chatHistory, { user_ids: [USER_ID] });
+
+		expect(lastRequest(fetchMock).query).toEqual({ userIds: USER_ID });
+	});
+
+	it('rejects a history request with two destinations', async () => {
+		await expect(
+			invoke(Endpoints.chatHistory, { chat_id: CHAT_ID, group_id: GROUP_ID }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects a history request with no chat and no group', async () => {
