@@ -2564,6 +2564,14 @@
                 ]
               },
               {
+                "group": "Kit",
+                "pages": [
+                  "plugins/kit/overview",
+                  "plugins/kit/api",
+                  "plugins/kit/database"
+                ]
+              },
+              {
                 "group": "Klaviyo",
                 "pages": [
                   "plugins/klaviyo/overview",
