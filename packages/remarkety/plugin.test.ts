@@ -90,6 +90,13 @@ describe('remarkety plugin definition', () => {
 		expect(destructive.sort()).toEqual(['campaigns.delete', 'stores.delete']);
 	});
 
+	it('flags both deletes as irreversible for the approval text', () => {
+		const meta = plugin.endpointMeta ?? {};
+		for (const operation of ['stores.delete', 'campaigns.delete']) {
+			expect(meta[operation as keyof typeof meta]?.irreversible).toBe(true);
+		}
+	});
+
 	it('marks stores.update as a write, since it carries the store sync key', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(meta['stores.update' as keyof typeof meta]?.riskLevel).toBe('write');

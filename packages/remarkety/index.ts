@@ -215,6 +215,7 @@ const remarketyEndpointMeta = {
 	},
 	'stores.delete': {
 		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Delete a store',
 	},
 	'stores.status': {
@@ -247,6 +248,7 @@ const remarketyEndpointMeta = {
 	},
 	'campaigns.delete': {
 		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Delete a campaign',
 	},
 	'campaigns.types': {
