@@ -1,15 +1,43 @@
+import { WebscraperioAPIError } from './client';
+
 export const API_KEY = 'ws-test-token';
 
-/** A fake context carrying only what the endpoints read. */
+/**
+ * A fake context carrying only what the endpoints read. It is cast to never
+ * because it is not a full WebscraperioContext, and every endpoint accepts it.
+ */
 export const testContext = { key: API_KEY } as never;
 
 // never parameters: every concrete endpoint is assignable to this because
-// parameters are contravariant.
-type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
-
+// parameters are contravariant. Output is inferred from the endpoint, so each
+// result keeps its real type.
 // unknown: negative cases pass values no schema accepts.
-export async function invoke(endpoint: AnyEndpoint, input: unknown) {
+export async function invoke<Output>(
+	endpoint: (ctx: never, input: never) => Promise<Output>,
+	input: unknown,
+): Promise<Output> {
+	// never: the input schema parses whatever the test passes.
 	return endpoint(testContext, input as never);
+}
+
+/**
+ * Awaits a call that must fail with a WebscraperioAPIError and returns the
+ * error. The instanceof check replaces a cast, and a call that succeeds or
+ * throws anything else fails the test.
+ */
+export async function rejection(
+	// unknown: only the rejection is read, never the resolved value.
+	promise: Promise<unknown>,
+): Promise<WebscraperioAPIError> {
+	const thrown = await promise.then(
+		() => new Error('expected the call to fail, but it succeeded'),
+		// unknown: a rejection can be any value until the instanceof check.
+		(error: unknown) => error,
+	);
+	if (!(thrown instanceof WebscraperioAPIError)) {
+		throw new Error(`expected a WebscraperioAPIError, got ${String(thrown)}`);
+	}
+	return thrown;
 }
 
 // A unit test must never reach the network: any fetch without a queued
@@ -56,6 +84,8 @@ export type RecordedRequest = {
 };
 
 export function lastRequest(fetchMock: jest.SpyInstance): RecordedRequest {
+	// The spy records fetch's arguments untyped; the client always calls
+	// fetch(url string, init).
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
 	const parsed = new URL(url);
 	const pairs = [...parsed.searchParams.entries()];
@@ -67,6 +97,7 @@ export function lastRequest(fetchMock: jest.SpyInstance): RecordedRequest {
 		queryPairs: pairs,
 		method: init.method,
 		headers: Object.fromEntries(headers.entries()),
+		// unknown: JSON.parse returns any; widening it to unknown keeps it checked.
 		body: init.body ? (JSON.parse(String(init.body)) as unknown) : undefined,
 	};
 }

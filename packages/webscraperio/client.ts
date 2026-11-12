@@ -163,6 +163,8 @@ export async function makeWebscraperioRequest(
 	};
 
 	try {
+		// unknown: the body is provider JSON until the caller's output schema
+		// parses it.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: WEBSCRAPERIO_RATE_LIMIT_CONFIG,
 		});
@@ -210,6 +212,7 @@ function redactBody(body: unknown, apiKey: string): unknown {
 		if (typeof value === 'string') return redactToken(value, apiKey);
 		if (Array.isArray(value)) return value.map(walk);
 		if (typeof value === 'object' && value !== null) {
+			// A non-null, non-array object; its entries are walked below.
 			return Object.fromEntries(
 				Object.entries(value as Record<string, unknown>).map(([k, v]) => [
 					k,

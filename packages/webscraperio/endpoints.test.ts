@@ -13,6 +13,7 @@ import {
 	installFetchMock,
 	invoke,
 	lastRequest,
+	rejection,
 	respond,
 } from './test-support';
 
@@ -35,8 +36,7 @@ describe('sitemaps', () => {
 		const result = await invoke(Sitemaps.list, {});
 
 		expect(result).toEqual(sitemapsListResponse);
-		const typed = result as { last_page?: number | null };
-		expect(typed.last_page).toBe(3);
+		expect(result.last_page).toBe(3);
 		expectAuthenticated(fetchMock);
 		const sent = lastRequest(fetchMock);
 		expect(sent.method).toBe('GET');
@@ -64,11 +64,11 @@ describe('sitemaps', () => {
 	it('reads one sitemap with its definition as a JSON string', async () => {
 		respond(fetchMock, sitemapResponse);
 
-		const result = (await invoke(Sitemaps.get, { id: 42 })) as {
-			data?: { sitemap?: string | null; name?: string | null };
-		};
+		const result = await invoke(Sitemaps.get, { id: 42 });
 
 		expect(result.data?.name).toBe('product_catalogue');
+		// The definition is a JSON string the schema does not parse; the test
+		// reads only the selector ids out of it.
 		const definition = JSON.parse(result.data?.sitemap ?? '{}') as {
 			selectors?: { id: string }[];
 		};
@@ -122,9 +122,7 @@ describe('sitemaps', () => {
 	it('reads the account user and page credits', async () => {
 		respond(fetchMock, accountResponse);
 
-		const result = (await invoke(Sitemaps.account, {})) as {
-			data?: { firstname?: string | null; page_credits?: number | null };
-		};
+		const result = await invoke(Sitemaps.account, {});
 
 		expect(result.data?.page_credits).toBe(4_850);
 		expect(result.data?.firstname).toBe('Ada');
@@ -147,9 +145,7 @@ describe('sitemaps', () => {
 	it('surfaces a bad token as a WebscraperioAPIError', async () => {
 		respond(fetchMock, invalidToken, 401);
 
-		const error = (await invoke(Sitemaps.list, {}).catch(
-			(thrown: unknown) => thrown,
-		)) as WebscraperioAPIError;
+		const error = await rejection(invoke(Sitemaps.list, {}));
 
 		expect(error).toBeInstanceOf(WebscraperioAPIError);
 		expect(error.isAuthError).toBe(true);

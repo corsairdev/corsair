@@ -133,6 +133,8 @@ export type ExternalWebscraperioPlugin<T extends WebscraperioPluginOptions> =
 	BaseWebscraperioPlugin<T>;
 
 export function webscraperio<const T extends WebscraperioPluginOptions>(
+	// {} fits WebscraperioPluginOptions (every field is optional); T only adds
+	// literal types the caller chose, so an empty default is safe.
 	incomingOptions: WebscraperioPluginOptions &
 		T = {} as WebscraperioPluginOptions & T,
 ): ExternalWebscraperioPlugin<T> {

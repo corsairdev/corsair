@@ -26,49 +26,52 @@ function liveContext(): WebscraperioContext {
 	return { key: apiKey } as unknown as WebscraperioContext;
 }
 
+// never parameters: every concrete endpoint is assignable to this because
+// parameters are contravariant, and Output is inferred from the endpoint. The
+// endpoints read only `key` off the context, and each input below fits its
+// operation's schema, which parses it again.
+function live<Output>(
+	endpoint: (ctx: never, input: never) => Promise<Output>,
+	input: object,
+): Promise<Output> {
+	return endpoint(liveContext() as never, input as never);
+}
+
 describeIfKey('live Web Scraper Cloud API', () => {
 	it('lists sitemaps through the output schema', async () => {
-		const result = await Sitemaps.list(
-			liveContext() as never,
-			{
-				page: 1,
-			} as never,
-		);
+		const result = await live(Sitemaps.list, {
+			page: 1,
+		});
 
 		expect(result).toBeDefined();
 	});
 
 	it('reads the account user and page credits', async () => {
-		const result = await Sitemaps.account(liveContext() as never, {} as never);
+		const result = await live(Sitemaps.account, {});
 
 		expect(typeof result.data?.page_credits).toBe('number');
 	});
 
 	it('reads one sitemap by id when the account has any', async () => {
-		const list = await Sitemaps.list(
-			liveContext() as never,
-			{
-				page: 1,
-			} as never,
-		);
+		const list = await live(Sitemaps.list, {
+			page: 1,
+		});
 		expect(Array.isArray(list.data)).toBe(true);
 		expect(typeof list.last_page).toBe('number');
 		const id = list.data?.[0]?.id;
 		if (id === undefined || id === null) return;
 
-		const one = await Sitemaps.get(liveContext() as never, { id } as never);
+		const one = await live(Sitemaps.get, { id });
 
 		expect(typeof one.data?.sitemap).toBe('string');
 	});
 
 	it('never exposes the API token in a returned object', async () => {
-		const result = await Sitemaps.list(
-			liveContext() as never,
-			{
-				page: 1,
-			} as never,
-		);
+		const result = await live(Sitemaps.list, {
+			page: 1,
+		});
 
+		// describeIfKey runs this only when WEBSCRAPERIO_API_KEY is set.
 		expect(JSON.stringify(result)).not.toContain(apiKey as string);
 	});
 });

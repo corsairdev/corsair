@@ -17,6 +17,7 @@ import {
 	API_KEY,
 	installFetchMock,
 	lastRequest,
+	rejection,
 	respond,
 } from './test-support';
 
@@ -75,10 +76,12 @@ describe('makeWebscraperioRequest', () => {
 	it('throws a WebscraperioAPIError carrying the handled flag', async () => {
 		respond(fetchMock, invalidToken, 401);
 
-		const error = (await makeWebscraperioRequest(API_KEY, {
-			method: 'GET',
-			path: '/sitemaps',
-		}).catch((thrown: unknown) => thrown)) as WebscraperioAPIError;
+		const error = await rejection(
+			makeWebscraperioRequest(API_KEY, {
+				method: 'GET',
+				path: '/sitemaps',
+			}),
+		);
 
 		expect(error).toBeInstanceOf(WebscraperioAPIError);
 		expect(error.status).toBe(401);
@@ -90,10 +93,12 @@ describe('makeWebscraperioRequest', () => {
 	it('marks an unrouted path as not handled', async () => {
 		respond(fetchMock, routeNotFound, 404);
 
-		const error = (await makeWebscraperioRequest(API_KEY, {
-			method: 'GET',
-			path: '/nope',
-		}).catch((thrown: unknown) => thrown)) as WebscraperioAPIError;
+		const error = await rejection(
+			makeWebscraperioRequest(API_KEY, {
+				method: 'GET',
+				path: '/nope',
+			}),
+		);
 
 		expect(error.handled).toBe(false);
 		expect(error.isRouteNotFound).toBe(true);
@@ -117,10 +122,12 @@ describe('makeWebscraperioRequest', () => {
 			),
 		);
 
-		const error = (await makeWebscraperioRequest(API_KEY, {
-			method: 'GET',
-			path: '/sitemaps',
-		}).catch((thrown: unknown) => thrown)) as WebscraperioAPIError;
+		const error = await rejection(
+			makeWebscraperioRequest(API_KEY, {
+				method: 'GET',
+				path: '/sitemaps',
+			}),
+		);
 
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBeGreaterThan(25_000);
@@ -130,10 +137,12 @@ describe('makeWebscraperioRequest', () => {
 	it('wraps a transport failure', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
-		const error = (await makeWebscraperioRequest(API_KEY, {
-			method: 'POST',
-			path: '/sitemap',
-		}).catch((thrown: unknown) => thrown)) as WebscraperioAPIError;
+		const error = await rejection(
+			makeWebscraperioRequest(API_KEY, {
+				method: 'POST',
+				path: '/sitemap',
+			}),
+		);
 
 		expect(error.message).toBe('fetch failed');
 		expect(error.method).toBe('POST');
@@ -147,10 +156,12 @@ describe('makeWebscraperioRequest', () => {
 			401,
 		);
 
-		const error = (await makeWebscraperioRequest('BADTOKEN', {
-			method: 'GET',
-			path: '/sitemaps',
-		}).catch((thrown: unknown) => thrown)) as WebscraperioAPIError;
+		const error = await rejection(
+			makeWebscraperioRequest('BADTOKEN', {
+				method: 'GET',
+				path: '/sitemaps',
+			}),
+		);
 
 		expect(error.message).not.toContain('BADTOKEN');
 		expect(error.message).toContain('[redacted]');

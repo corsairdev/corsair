@@ -18,7 +18,7 @@ function buildKey(
 	return plugin.keyBuilder?.(ctx as never, 'endpoint');
 }
 
-const operations = [
+const operations: (keyof typeof webscraperioEndpointSchemas)[] = [
 	'account.get',
 	'sitemaps.create',
 	'sitemaps.get',
@@ -32,6 +32,8 @@ describe('webscraperio plugin definition', () => {
 		expect(plugin.id).toBe('webscraperio');
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.webhooks).toEqual({});
+		// never: the matcher takes a full webhook request and returns false
+		// before reading any field.
 		expect(
 			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
 		).toBe(false);
@@ -50,7 +52,7 @@ describe('webscraperio plugin definition', () => {
 		const schemas = plugin.endpointSchemas ?? {};
 		expect(Object.keys(schemas).sort()).toEqual(operations);
 		for (const operation of operations) {
-			const schema = schemas[operation as keyof typeof schemas];
+			const schema = schemas[operation];
 			expect(schema?.input).toBeDefined();
 			expect(schema?.output).toBeDefined();
 		}
@@ -60,7 +62,7 @@ describe('webscraperio plugin definition', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(Object.keys(meta).sort()).toEqual(operations);
 		for (const operation of operations) {
-			const entry = meta[operation as keyof typeof meta];
+			const entry = meta[operation];
 			expect(['read', 'write', 'destructive']).toContain(entry?.riskLevel);
 			expect((entry?.description ?? '').length).toBeGreaterThan(10);
 		}
@@ -69,8 +71,7 @@ describe('webscraperio plugin definition', () => {
 	it('marks only creating a sitemap as a write', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const writes = operations.filter(
-			(operation) =>
-				meta[operation as keyof typeof meta]?.riskLevel === 'write',
+			(operation) => meta[operation]?.riskLevel === 'write',
 		);
 
 		expect(writes).toEqual(['sitemaps.create']);
@@ -79,8 +80,7 @@ describe('webscraperio plugin definition', () => {
 	it('marks nothing destructive, since the API has no delete route', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const destructive = operations.filter(
-			(operation) =>
-				meta[operation as keyof typeof meta]?.riskLevel === 'destructive',
+			(operation) => meta[operation]?.riskLevel === 'destructive',
 		);
 
 		expect(destructive).toEqual([]);
