@@ -7,6 +7,11 @@ import {
 	Segments,
 	Users,
 } from './endpoints';
+import type {
+	ContactsListResponse,
+	FormsHistoryResponse,
+	ResponsesListResponse,
+} from './endpoints/types';
 import {
 	ACCOUNT,
 	BAD_REQUEST,
@@ -206,10 +211,7 @@ describe('responses.list', () => {
 	it('lists responses with their answers and contact', async () => {
 		respond(fetchMock, RESPONSES);
 
-		const result = (await invoke(Responses.list, {})) as {
-			items?: { uuid?: string; data?: Record<string, unknown> }[];
-			pagination?: { next_page_cursor?: string };
-		};
+		const result = (await invoke(Responses.list, {})) as ResponsesListResponse;
 
 		expect(lastRequest(fetchMock).path).toBe('/v1/responses');
 		expect(result.items).toHaveLength(2);
@@ -220,12 +222,7 @@ describe('responses.list', () => {
 	it('keeps a survey view whose answers are all null', async () => {
 		respond(fetchMock, RESPONSES);
 
-		const result = (await invoke(Responses.list, {})) as {
-			items?: {
-				data?: Record<string, unknown>;
-				completed_at?: string | null;
-			}[];
-		};
+		const result = (await invoke(Responses.list, {})) as ResponsesListResponse;
 
 		// A view with no answers has null data values and a null completed_at.
 		expect(result.items?.[1]?.data?.first_question).toBeNull();
@@ -529,14 +526,7 @@ describe('contacts.list', () => {
 	it('lists contacts with their traits, segments and account', async () => {
 		respond(fetchMock, CONTACTS);
 
-		const result = (await invoke(Contacts.list, {})) as {
-			items?: {
-				remote_id?: string;
-				attributes?: Record<string, unknown>;
-				segments?: { name?: string }[];
-				account?: { display_name?: string };
-			}[];
-		};
+		const result = (await invoke(Contacts.list, {})) as ContactsListResponse;
 
 		expect(lastRequest(fetchMock).path).toBe('/v1/contacts');
 		expect(result.items?.[0]?.remote_id).toBe('Your-Contact-ID');
@@ -547,9 +537,7 @@ describe('contacts.list', () => {
 	it('merges a survey answer into the attributes map as a string', async () => {
 		respond(fetchMock, CONTACTS);
 
-		const result = (await invoke(Contacts.list, {})) as {
-			items?: { attributes?: Record<string, unknown> }[];
-		};
+		const result = (await invoke(Contacts.list, {})) as ContactsListResponse;
 
 		expect(result.items?.[0]?.attributes?.a_survey_answer).toBe('9');
 	});
@@ -746,10 +734,7 @@ describe('forms.history', () => {
 
 		const result = (await invoke(Forms.history, {
 			form_uuid: 'FORM_UUID',
-		})) as {
-			items?: { action?: string; snapshot?: Record<string, unknown> }[];
-			pagination?: { items_count?: number };
-		};
+		})) as FormsHistoryResponse;
 
 		expect(lastRequest(fetchMock).path).toBe('/v1/forms/history');
 		expect(lastRequest(fetchMock).query.form_uuid).toBe('FORM_UUID');

@@ -57,6 +57,7 @@ describe('Refiner client', () => {
 			replayable: true,
 		});
 
+		// The spy records fetch's arguments untyped; fetch was called as (url, init).
 		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 		expect(url).toBe('https://api.refiner.io/v1/account');
 		const headers = new Headers(init.headers);
@@ -77,6 +78,7 @@ describe('Refiner client', () => {
 			replayable: true,
 		});
 
+		// The spy records fetch's arguments untyped; the second one is the init.
 		const init = fetchMock.mock.calls[0][1] as RequestInit;
 		expect(new Headers(init.headers).get('content-type')).toContain(
 			'application/json',
