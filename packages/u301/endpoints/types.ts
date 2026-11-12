@@ -58,6 +58,10 @@ const SlugSchema = z
 const DomainSchema = z
 	.string()
 	.min(1)
+	// `.` and `..` would be resolved out of the /domains/<domain> path by fetch.
+	.refine((domain) => domain !== '.' && domain !== '..', {
+		message: 'A domain may not be a dot segment.',
+	})
 	.describe(
 		`The domain for the link, such as ${U301_DEFAULT_DOMAIN} or one of your own.`,
 	);

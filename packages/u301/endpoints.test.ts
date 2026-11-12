@@ -245,6 +245,24 @@ describe('links.get', () => {
 });
 
 describe('links.delete', () => {
+	it('never sends a delete for a short link that names the domain route', async () => {
+		await expect(
+			invoke(Api.remove, { shortlink: 'domains/go.example.com' }),
+		).rejects.toThrow(/reserved route/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('refuses dot segments, which fetch would resolve into another route', async () => {
+		// `./domains` would become DELETE /v3/shorten/domains once the URL is
+		// normalised, a domain route reached through links.delete.
+		for (const shortlink of ['./domains', '../domains', 'u301.co/..']) {
+			await expect(invoke(Api.remove, { shortlink })).rejects.toThrow(
+				/dot segment/,
+			);
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('deletes by short link and reads the bare success message', async () => {
 		respond(fetchMock, LINK_DELETED);
 
@@ -355,6 +373,13 @@ describe('domains', () => {
 
 		expect(result.actived).toBe(false);
 		expect(result.message).toBe('Challenge not ready');
+	});
+
+	it('refuses a dot segment as a domain, so the path stays on that domain', async () => {
+		for (const domain of ['.', '..']) {
+			await expect(invoke(Api.domainDelete, { domain })).rejects.toThrow();
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('deletes a domain', async () => {

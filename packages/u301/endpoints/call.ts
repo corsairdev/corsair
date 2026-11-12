@@ -79,6 +79,11 @@ export function shortLinkSegment(shortlink: string): string {
 			'A short link must be one host and one slug, such as u301.co/abc123.',
 		);
 	}
+	if ([host, slug].some((part) => part === '.' || part === '..')) {
+		// fetch resolves these before sending, so `./domains` would leave the link
+		// route for the domain route.
+		throw new U301InputError('A short link may not contain a dot segment.');
+	}
 	if (U301_RESERVED_SEGMENTS.has(host.toLowerCase())) {
 		throw new U301InputError(
 			`"${host}" is a reserved route, not a short link host.`,
