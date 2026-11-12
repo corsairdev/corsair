@@ -1,0 +1,2208 @@
+{
+  "id": "commcare",
+  "displayName": "CommCare",
+  "description": "Global health data collection platform with CommCare HQ - list and read submitted forms and cases, manage mobile workers and groups, pull report data and lookup tables, submit XForms and run bulk form actions.",
+  "npmPackageName": "@corsair-dev/commcare",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 32,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "commcare.api.cases.bulkFetch",
+      "shortPath": "cases.bulkFetch",
+      "description": "Fetch many cases by ID in one call, optionally limited to specific fields and properties",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "caseIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Case IDs to fetch in one call; an id that is not found comes back as a stub with `error: \"not found\"`."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string[]",
+            "description": "Top-level case fields to include, e.g. `case_id`."
+          },
+          {
+            "key": "fieldsProperties",
+            "optional": true,
+            "type": "string[]",
+            "description": "Case properties to include, e.g. `dob`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matching_records",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "missing_records",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "cases",
+            "optional": false,
+            "type": "{ case_id?: string | null, domain?: string | null, case_type?: string | null, case_name?: string | null, external_id?: string | null, owner_id?: string | null, date_opened?: string | null, last_modified?: string | null, server_last_modified?: string | null, closed?: boolean | null, date_closed?: string | null, properties?: Record<string, any> | null, indices?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.cases.get",
+      "shortPath": "cases.get",
+      "description": "Read one case with its properties and indices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "caseId",
+            "optional": false,
+            "type": "string",
+            "description": "Case ID (UUID)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "case_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "case_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "case_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_opened",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "server_last_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "date_closed",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "indices",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.cases.getByExternalId",
+      "shortPath": "cases.getByExternalId",
+      "description": "Look up a case by the external id the application assigned it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "externalId",
+            "optional": false,
+            "type": "string",
+            "description": "External id the application assigned to the case. The lookup takes no case type; if several cases share the id, CommCare answers 400 and lists them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "case_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "case_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "case_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_opened",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "server_last_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "date_closed",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "indices",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.cases.list",
+      "shortPath": "cases.list",
+      "description": "List cases (Case Data API v2) with cursor paging and filters for case type, owner, name, closed state and indices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "`nextCursor` from the previous page; omit for the oldest page. The cursor carries the first page's filters, so filters sent with it are ignored."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, up to 5000; the default is 20."
+          },
+          {
+            "key": "caseType",
+            "optional": true,
+            "type": "string",
+            "description": "Only cases of this case type."
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string",
+            "description": "Only cases owned by this user or group id."
+          },
+          {
+            "key": "caseName",
+            "optional": true,
+            "type": "string",
+            "description": "Only cases with this name."
+          },
+          {
+            "key": "closed",
+            "optional": true,
+            "type": "boolean",
+            "description": "true lists closed cases, false open ones."
+          },
+          {
+            "key": "externalId",
+            "optional": true,
+            "type": "string",
+            "description": "Only the case with this external id."
+          },
+          {
+            "key": "indicesParent",
+            "optional": true,
+            "type": "string",
+            "description": "Only child cases whose parent index points to this case id."
+          },
+          {
+            "key": "indicesHost",
+            "optional": true,
+            "type": "string",
+            "description": "Only cases whose host index points to this case id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "matching_records",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "missing_records",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "cases",
+            "optional": false,
+            "type": "{ case_id?: string | null, domain?: string | null, case_type?: string | null, case_name?: string | null, external_id?: string | null, owner_id?: string | null, date_opened?: string | null, last_modified?: string | null, server_last_modified?: string | null, closed?: boolean | null, date_closed?: string | null, properties?: Record<string, any> | null, indices?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.detExports.list",
+      "shortPath": "detExports.list",
+      "description": "List the Data Export Tool export instances in the project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size; the default is 20."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip before this page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "detExports",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, export_format?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.fixtures.getItem",
+      "shortPath": "fixtures.getItem",
+      "description": "Read one fixture item by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "itemId",
+            "optional": false,
+            "type": "string",
+            "description": "Fixture item ID to retrieve."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fixture_type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.fixtures.list",
+      "shortPath": "fixtures.list",
+      "description": "List lookup-table fixture items, optionally filtered by fixture type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size; the default is 20."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip before this page."
+          },
+          {
+            "key": "fixtureType",
+            "optional": true,
+            "type": "string",
+            "description": "Only rows of the lookup table with this tag (the `tag` from lookupTables.list)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ id?: string | null, fixture_type?: string | null, fields?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ limit?: number | null, next?: string | null, offset?: number | null, previous?: string | null, total_count?: number | null } | null"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.forms.bulkAction",
+      "shortPath": "forms.bulkAction",
+      "description": "Archive, unarchive, or permanently delete up to 5000 forms in one background job (delete needs the forms archived first); follow with forms.bulkActionStatus until status is complete or failed",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "job": {
+        "idPath": "id",
+        "status": {
+          "op": "forms.bulkActionStatus",
+          "idArg": "actionId",
+          "statusPath": "status",
+          "done": ["complete"],
+          "failed": ["failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "action",
+            "optional": false,
+            "type": "archive | unarchive | delete",
+            "description": "What to do to the listed forms; delete is permanent."
+          },
+          {
+            "key": "formIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 5000 form IDs per request; duplicate ids are collapsed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requested_by",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requested",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "processed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "succeeded",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "skipped",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.forms.bulkActionStatus",
+      "shortPath": "forms.bulkActionStatus",
+      "description": "Where a bulk form action stands: pending, complete, or failed, with processed and succeeded counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "actionId",
+            "optional": false,
+            "type": "string",
+            "description": "Bulk action ID from a bulk action creation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "action",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requested_by",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requested",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "processed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "succeeded",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "skipped",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.forms.get",
+      "shortPath": "forms.get",
+      "description": "Read one submitted form, including its XForm content and metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "formId",
+            "optional": false,
+            "type": "string",
+            "description": "Form ID (UUID) of the submitted form."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "form",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.forms.list",
+      "shortPath": "forms.list",
+      "description": "List submitted forms with paging and time-window or xmlns filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1-1000; the default is 20."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip before this page."
+          },
+          {
+            "key": "indexedOnStart",
+            "optional": true,
+            "type": "string",
+            "description": "Only forms with data modified at or after this ISO date, e.g. `2021-01-01T06:05:42`."
+          },
+          {
+            "key": "indexedOnEnd",
+            "optional": true,
+            "type": "string",
+            "description": "Only forms with data modified at or before this ISO date."
+          },
+          {
+            "key": "xmlns",
+            "optional": true,
+            "type": "string",
+            "description": "Only forms submitted against this XML namespace."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ id?: string | null, form?: Record<string, any> | null, metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ limit?: number | null, next?: string | null, offset?: number | null, previous?: string | null, total_count?: number | null } | null"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a group, optionally with an initial member list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the new group."
+          },
+          {
+            "key": "reporting",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the group in reporting."
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "string[]",
+            "description": "Mobile worker IDs to put in the group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "reporting",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Read one group: name, reporting flag and member user ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string",
+            "description": "Group ID (UUID)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "reporting",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List the reporting and case-sharing groups in the project with their members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size; the default is 20."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip before this page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, path?: string[] | null, reporting?: boolean | null, users?: string[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ limit?: number | null, next?: string | null, offset?: number | null, previous?: string | null, total_count?: number | null } | null"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.groups.update",
+      "shortPath": "groups.update",
+      "description": "Rename a group, toggle reporting, or replace its member list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "groupId",
+            "optional": false,
+            "type": "string",
+            "description": "Group ID to update."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New name for the group."
+          },
+          {
+            "key": "reporting",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the group in reporting."
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "string[]",
+            "description": "Full replacement list of member user IDs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "reporting",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.locations.get",
+      "shortPath": "locations.get",
+      "description": "Read one location with its type and parent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string",
+            "description": "Location ID to retrieve."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "site_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "location_type_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "location_type_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parent_location_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.locations.list",
+      "shortPath": "locations.list",
+      "description": "List project locations with site code, name and location type filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size; the default is 20."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip before this page."
+          },
+          {
+            "key": "siteCode",
+            "optional": true,
+            "type": "string",
+            "description": "Only the location with this site code."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Only locations with this name."
+          },
+          {
+            "key": "locationTypeCode",
+            "optional": true,
+            "type": "string",
+            "description": "Only locations of this location type."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ location_id?: string | null, name?: string | null, site_code?: string | null, location_type_code?: string | null, location_type_name?: string | null, parent_location_id?: string | null, longitude?: string | null, latitude?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ limit?: number | null, next?: string | null, offset?: number | null, previous?: string | null, total_count?: number | null } | null"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.locationTypes.get",
+      "shortPath": "locationTypes.get",
+      "description": "Read one location type by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "typeId",
+            "optional": false,
+            "type": "number",
+            "description": "Location type ID to retrieve."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "administrative",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parent",
+            "optional": true,
+            "type": "any | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.locationTypes.list",
+      "shortPath": "locationTypes.list",
+      "description": "List the location types defined in the project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size; the default is 20."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip before this page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ id?: number | null, code?: string | null, name?: string | null, administrative?: boolean | null, domain?: string | null, parent?: any | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ limit?: number | null, next?: string | null, offset?: number | null, previous?: string | null, total_count?: number | null } | null"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.lookupTables.get",
+      "shortPath": "lookupTables.get",
+      "description": "Read one lookup table with its field definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "Lookup table ID to retrieve."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_global",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ field_name: string, properties?: string[] | null }[] | null"
+          },
+          {
+            "key": "item_attributes",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.lookupTables.list",
+      "shortPath": "lookupTables.list",
+      "description": "List the lookup tables defined in the project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size; the default is 20."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip before this page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ id?: string | null, tag?: string | null, is_global?: boolean | null, fields?: { field_name: string, properties?: string[] | null }[] | null, item_attributes?: string[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ limit?: number | null, next?: string | null, offset?: number | null, previous?: string | null, total_count?: number | null } | null"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.ota.restore",
+      "shortPath": "ota.restore",
+      "description": "Pull the OTA restore XML (user registration plus case blocks) for the API key owner in the domain; large payloads. HQ accepts the ApiKey header here and restores the account that owns the key. The password hash in the registration block is replaced with [removed]",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "raw",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.reports.getData",
+      "shortPath": "reports.getData",
+      "description": "Run a configurable report and read its rows, with offset, limit (max 50) and the report filter parameters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "string",
+            "description": "Report ID from `reports.list` (the configurable report configuration id)."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip before this page."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, maximum 50."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Report filter parameters the report defines, e.g. `state` or `gender`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "columns",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total_records",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.reports.list",
+      "shortPath": "reports.list",
+      "description": "List the configurable reports defined in the project, with their ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reports",
+            "optional": false,
+            "type": "{ id: string, title?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.submissions.submit",
+      "shortPath": "submissions.submit",
+      "description": "Submit a complete XForm XML document to the OpenRosa receiver. Fails when HQ received the form but did not process it (nature submit_error or processing_failure); otherwise answers the message and its nature",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "appId",
+            "optional": false,
+            "type": "string",
+            "description": "Application ID the form belongs to."
+          },
+          {
+            "key": "xml",
+            "optional": false,
+            "type": "string",
+            "description": "The complete XForm XML document to submit, as `xml_submission_file`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "raw",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nature",
+            "optional": true,
+            "type": "string | null",
+            "description": "OpenRosa response nature, e.g. `submit_success` or `post_processing_failure` (the form was saved but a later step failed)."
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a mobile worker account with an initial password",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "workerUsername",
+            "optional": false,
+            "type": "string",
+            "description": "Login name for the new worker, including the domain suffix, e.g. `jdoe@my-project.commcarehq.org`."
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string",
+            "description": "Initial password for the worker."
+          },
+          {
+            "key": "firstName",
+            "optional": false,
+            "type": "string",
+            "description": "First name of the worker."
+          },
+          {
+            "key": "lastName",
+            "optional": false,
+            "type": "string",
+            "description": "Last name of the worker."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Email address of the worker."
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string",
+            "description": "Phone number to make the worker's default; sent as `default_phone_number` and added to their numbers."
+          },
+          {
+            "key": "userData",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom user data fields the application defines."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "default_phone_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone_numbers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "user_data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Permanently delete a mobile worker account",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string",
+            "description": "Mobile worker ID (UUID)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "commcare.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read one mobile worker: username, names, email, phones and user data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string",
+            "description": "Mobile worker ID (UUID)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "default_phone_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone_numbers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "user_data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.users.list",
+      "shortPath": "users.list",
+      "description": "List the mobile workers in the project with paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size; the default is 20."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip before this page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ type?: string | null, id?: string | null, username?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, default_phone_number?: string | null, phone_numbers?: string[] | null, user_data?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ limit?: number | null, next?: string | null, offset?: number | null, previous?: string | null, total_count?: number | null } | null"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.users.sendPasswordReset",
+      "shortPath": "users.sendPasswordReset",
+      "description": "Email a password reset link to the mobile worker",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string",
+            "description": "Mobile worker ID (UUID)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "commcare.api.users.update",
+      "shortPath": "users.update",
+      "description": "Change a mobile worker: names, email, phone number or custom user data",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string",
+            "description": "Mobile worker ID (UUID)."
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string",
+            "description": "First name of the worker."
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string",
+            "description": "Last name of the worker."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Email address of the worker."
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string",
+            "description": "Phone number to make the worker's default; sent as `default_phone_number` and added to their numbers."
+          },
+          {
+            "key": "userData",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom user data. Replaces all of the worker's existing user data, including system fields, so read the worker first and send the merged object."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "default_phone_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone_numbers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "user_data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "commcare.api.webUsers.list",
+      "shortPath": "webUsers.list",
+      "description": "List the web users (dashboard accounts) in the project with their roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare username the API key belongs to, e.g. `me@my-project.commcarehq.org`."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "CommCare project domain (HQ domain), e.g. `my-project`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size; the default is 20."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip before this page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ id?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, default_phone_number?: string | null, role?: string | null, is_admin?: boolean | null, permissions?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ limit?: number | null, next?: string | null, offset?: number | null, previous?: string | null, total_count?: number | null } | null"
+          },
+          {
+            "key": "nextPageUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
