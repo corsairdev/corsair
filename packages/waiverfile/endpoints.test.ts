@@ -785,3 +785,68 @@ describe('errors', () => {
 		expect(error.cause).toBeUndefined();
 	});
 });
+
+describe('a 200 without the container the route promises', () => {
+	// The shared transport hands back undefined when a 200 body cannot be read
+	// (no Content-Type, or JSON that will not parse).
+	const listInput = { ...range, pageIndex: 0, pageSize: 10 };
+
+	function respondUnreadable() {
+		fetchMock.mockResolvedValueOnce(new Response(null, { status: 200 }));
+	}
+
+	it.each([
+		['waivers.list', () => invoke(Waivers.list, listInput)],
+		['waivers.get', () => invoke(Waivers.get, { waiverID })],
+		['forms.active', () => invoke(Forms.active, {})],
+		['site.get', () => invoke(Site.get, {})],
+	])('rejects %s with an unreadable body', async (_name, run) => {
+		respondUnreadable();
+
+		await expect(run()).rejects.toThrow(WaiverFileAPIError);
+	});
+
+	it.each([
+		['waivers.list', () => invoke(Waivers.list, listInput)],
+		['waivers.get', () => invoke(Waivers.get, { waiverID })],
+		['forms.active', () => invoke(Forms.active, {})],
+		['site.get', () => invoke(Site.get, {})],
+		[
+			'waivers.data',
+			() =>
+				invoke(Waivers.data, {
+					...range,
+					includeCustomColumns: false,
+					consolidateParticipants: false,
+					pageIndex: 1,
+					pageSize: 10,
+				}),
+		],
+	])('rejects %s answered with an empty object', async (_name, run) => {
+		respond(fetchMock, {});
+
+		await expect(run()).rejects.toThrow();
+	});
+
+	it('still reads an empty report page as an empty Table', async () => {
+		respond(fetchMock, { Table: [] });
+
+		await expect(
+			invoke(Waivers.data, {
+				...range,
+				includeCustomColumns: false,
+				consolidateParticipants: false,
+				pageIndex: 1,
+				pageSize: 10,
+			}),
+		).resolves.toMatchObject({ Table: [] });
+	});
+
+	it('still reads an empty event list as an empty list', async () => {
+		respond(fetchMock, []);
+
+		await expect(invoke(Forms.active, {})).resolves.toEqual({
+			WaiverForms: [],
+		});
+	});
+});

@@ -1,6 +1,6 @@
 import type { WaiverFileEndpoints } from '..';
 import { call } from './call';
-import { fromDotNet } from './shape';
+import { fromDotNet, missingContainer } from './shape';
 import {
 	WaiverFileEndpointInputSchemas as Inputs,
 	WaiverFileEndpointOutputSchemas as Outputs,
@@ -31,11 +31,20 @@ export const get: WaiverFileEndpoints['siteGet'] = (ctx, input) =>
 			// The labels and their raw data are over a megabyte of UI text that
 			// says nothing about the site, so they are dropped.
 			shape: (raw) => {
+				const flat = fromDotNet(raw);
+				if (
+					typeof flat !== 'object' ||
+					flat === null ||
+					!('ID' in flat) ||
+					!flat.ID
+				) {
+					missingContainer(raw, '/api/v1/GetSiteDetails', 'the site ID');
+				}
 				const {
 					Labels: _labels,
 					LabelData: _labelData,
 					...site
-				} = (fromDotNet(raw) ?? {}) as Record<string, unknown>;
+				} = flat as Record<string, unknown>;
 				return site;
 			},
 			log: (_, result) => ({

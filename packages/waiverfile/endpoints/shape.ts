@@ -76,6 +76,29 @@ function failIfText(raw: unknown, path: string): void {
 	}
 }
 
+/**
+ * Raises when a 200 lacks the container its route always sends. The shared
+ * transport returns undefined for a body it cannot read, and turning that into
+ * an empty list or an empty object would report a failed read as a real answer.
+ * Live, an empty list is still `[]` or `{ ArrayOfWaiver: {…} }`, and an unknown
+ * waiver is a 400, so a missing container is never a valid answer.
+ */
+export function missingContainer(
+	raw: unknown,
+	path: string,
+	expected: string,
+): never {
+	throw new WaiverFileAPIError(
+		`WaiverFile 200 from ${path} without ${expected}`,
+		{
+			status: 200,
+			body: raw === undefined ? undefined : typeof raw,
+			method: 'GET',
+			path,
+		},
+	);
+}
+
 /** One XML-converted waiver: drops the `@xmlns` attributes, lists participants. */
 // unknown: an XML-converted waiver node.
 export function xmlWaiver(value: unknown): Record<string, unknown> {
@@ -99,7 +122,8 @@ export function xmlWaivers(
 ): { Waivers: Record<string, unknown>[] } {
 	failIfText(raw, path);
 	const list = isRecord(raw) ? raw.ArrayOfWaiver : undefined;
-	const waivers = isRecord(list) ? oneOrMany(list.Waiver) : [];
+	if (!isRecord(list)) missingContainer(raw, path, 'ArrayOfWaiver');
+	const waivers = oneOrMany(list.Waiver);
 	return { Waivers: waivers.map(xmlWaiver) };
 }
 
@@ -110,7 +134,9 @@ export function xmlSingleWaiver(
 	path: string,
 ): Record<string, unknown> {
 	failIfText(raw, path);
-	if (!isRecord(raw)) return {};
+	if (!isRecord(raw) || !isRecord(raw.Waiver)) {
+		missingContainer(raw, path, 'a Waiver');
+	}
 	return {
 		...xmlWaiver(raw.Waiver),
 		...(raw.CustomFields === undefined
@@ -127,8 +153,8 @@ export function dotNetList<K extends string>(
 	path: string,
 ): Record<K, unknown[]> {
 	failIfText(raw, path);
-	const list = Array.isArray(raw) ? raw.map(fromDotNet) : [];
-	return { [key]: list } as Record<K, unknown[]>;
+	if (!Array.isArray(raw)) missingContainer(raw, path, 'an array');
+	return { [key]: raw.map(fromDotNet) } as Record<K, unknown[]>;
 }
 
 /** `GetUpcomingEvents` serialises its array twice: a JSON string of JSON. */

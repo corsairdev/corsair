@@ -210,7 +210,7 @@ export const data: WaiverFileEndpoints['waiversData'] = (ctx, input) =>
 		}),
 		{
 			log: (parsed, result) => ({
-				rows: result.Table?.length ?? 0,
+				rows: result.Table.length,
 				page: parsed.pageIndex,
 				customColumns: parsed.includeCustomColumns,
 			}),

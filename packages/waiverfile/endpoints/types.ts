@@ -491,7 +491,8 @@ export type WaiversDataInput = z.infer<typeof WaiversDataInputSchema>;
 
 const WaiversDataResponseSchema = z
 	.object({
-		Table: z.array(WaiverDataRowSchema).nullish(),
+		// Always present: an empty page is `{ "Table": [] }` (checked live).
+		Table: z.array(WaiverDataRowSchema),
 	})
 	.loose();
 
