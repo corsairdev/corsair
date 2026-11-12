@@ -165,9 +165,10 @@ const RENDER_ONLY_OPTIONS = [
 ] as const;
 
 /**
- * The provider accepts these with `render: false` and silently ignores them,
- * which reads as a success while the setting never applied. Both scrape
- * operations run this so the request fails here instead.
+ * The provider accepts these without the browser and silently ignores them,
+ * which reads as a success while the setting never applied. `render` defaults
+ * to false on the API, so anything but `render: true` triggers the check. The
+ * scrape operations run this so the request fails here instead.
  */
 // unknown: the checked fields hold a string, a number and a boolean depending
 // on the key, so the map only needs to know whether one was supplied at all.
@@ -177,7 +178,7 @@ function checkRenderOnlyOptions(
 	>,
 	ctx: z.RefinementCtx,
 ): void {
-	if (input.render !== false) return;
+	if (input.render === true) return;
 	for (const key of RENDER_ONLY_OPTIONS) {
 		if (input[key] !== undefined) {
 			ctx.addIssue({
