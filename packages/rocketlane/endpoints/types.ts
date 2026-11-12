@@ -11,7 +11,7 @@ const PageSizeSchema = z
 	.max(ROCKETLANE_MAX_PAGE_SIZE)
 	.optional()
 	.describe(
-		`Records per page, 1 to ${ROCKETLANE_MAX_PAGE_SIZE}. Rocketlane uses ${ROCKETLANE_DEFAULT_PAGE_SIZE} when this is omitted or larger.`,
+		`Records per page, 1 to ${ROCKETLANE_MAX_PAGE_SIZE}. Rocketlane uses ${ROCKETLANE_DEFAULT_PAGE_SIZE} when this is omitted.`,
 	);
 
 /**
@@ -25,7 +25,19 @@ const PageTokenSchema = z
 		'The `next_page_token` from the previous page. It is valid for 15 minutes, so paging must keep moving.',
 	);
 
-const SortOrderSchema = z.enum(['asc', 'desc']).optional();
+/** The API spells the sort order in capitals and defaults to `DESC`. */
+const SortOrderSchema = z.enum(['ASC', 'DESC']).optional();
+
+/**
+ * `match` decides how several filters combine: `all` (AND, the default) or
+ * `any` (OR). It is not a text search.
+ */
+const MatchSchema = z
+	.enum(['all', 'any'])
+	.optional()
+	.describe(
+		'How several filters combine: `all` (every filter, the default) or `any` (at least one).',
+	);
 
 /**
  * Rocketlane filters are `field.operator` query keys. The operators used here
@@ -33,7 +45,7 @@ const SortOrderSchema = z.enum(['asc', 'desc']).optional();
  * cannot send `taskName.nope` and get a silent no-op.
  */
 const OperatorFilterSchema = z
-	.object({
+	.strictObject({
 		eq: z.string().optional().describe('Exact match.'),
 		cn: z.string().optional().describe('Contains.'),
 		nc: z.string().optional().describe('Does not contain.'),
@@ -48,7 +60,7 @@ const OperatorFilterSchema = z
 const StatusValueSchema = z.union([z.string(), z.number().int()]);
 
 const EnumFilterSchema = z
-	.object({
+	.strictObject({
 		eq: StatusValueSchema.optional(),
 		oneOf: z.array(StatusValueSchema).optional(),
 		noneOf: z.array(StatusValueSchema).optional(),
@@ -56,24 +68,72 @@ const EnumFilterSchema = z
 	.optional();
 
 const IdFilterSchema = z
-	.object({
+	.strictObject({
 		eq: z.number().int().optional(),
 		oneOf: z.array(z.number().int()).optional(),
 		noneOf: z.array(z.number().int()).optional(),
 	})
 	.optional();
 
+/**
+ * The numeric filters that only take `eq`, `gt` and `lt`: task effort and
+ * progress, project revenue and fee. The reference lists no `ge` or `le` for
+ * them.
+ */
 const IntegerRangeSchema = z
-	.object({
+	.strictObject({
+		eq: z.number().int().optional(),
+		gt: z.number().int().optional(),
+		lt: z.number().int().optional(),
+	})
+	.optional();
+
+/** A filter that only takes `eq`, for an id or a reference. */
+const IdEqFilterSchema = z
+	.strictObject({ eq: z.number().int().optional() })
+	.optional();
+
+const StringEqFilterSchema = z
+	.strictObject({ eq: z.string().optional() })
+	.optional();
+
+const BooleanFilterSchema = z
+	.strictObject({ eq: z.boolean().optional() })
+	.optional();
+
+/** A date filter: an ISO date (`2026-11-10`) with the five comparisons. */
+const DateRangeSchema = z
+	.strictObject({
+		eq: z.string().optional(),
+		gt: z.string().optional(),
+		ge: z.string().optional(),
+		lt: z.string().optional(),
+		le: z.string().optional(),
+	})
+	.optional();
+
+/** A timestamp filter: epoch milliseconds with the five comparisons. */
+const EpochRangeSchema = z
+	.strictObject({
 		eq: z.number().int().optional(),
 		gt: z.number().int().optional(),
 		ge: z.number().int().optional(),
 		lt: z.number().int().optional(),
 		le: z.number().int().optional(),
 	})
-	.optional();
+	.optional()
+	.describe('Epoch milliseconds.');
 
-const BooleanFilterSchema = z.object({ eq: z.boolean().optional() }).optional();
+/** A number filter with all five comparisons, for hours. */
+const NumberRangeSchema = z
+	.strictObject({
+		eq: z.number().optional(),
+		gt: z.number().optional(),
+		ge: z.number().optional(),
+		lt: z.number().optional(),
+		le: z.number().optional(),
+	})
+	.optional();
 
 /** The pagination object Rocketlane returns on every list. */
 export const PaginationSchema = z
@@ -293,57 +353,21 @@ const TasksListInputSchema = z.object({
 		.describe('Return every custom field as well as the defaults.'),
 	sort_by: z.string().optional(),
 	sort_order: SortOrderSchema,
-	match: z
-		.string()
-		.optional()
-		.describe('A free-text search across the record.'),
-	project_id: IdFilterSchema,
-	phase_id: IdFilterSchema,
+	match: MatchSchema,
+	project_id: IdEqFilterSchema,
+	phase_id: IdEqFilterSchema,
 	task_name: OperatorFilterSchema,
 	task_status: EnumFilterSchema,
 	project_status: EnumFilterSchema,
 	include_archive: BooleanFilterSchema,
-	external_reference_id: z.object({ eq: z.string().optional() }).optional(),
+	external_reference_id: StringEqFilterSchema,
 	assignee_user_id: IdFilterSchema,
 	effort_in_minutes: IntegerRangeSchema,
 	progress: IntegerRangeSchema,
-	/** Date filters, each an ISO date or timestamp. */
-	start_date: z
-		.object({
-			eq: z.string().optional(),
-			gt: z.string().optional(),
-			ge: z.string().optional(),
-			lt: z.string().optional(),
-			le: z.string().optional(),
-		})
-		.optional(),
-	due_date: z
-		.object({
-			eq: z.string().optional(),
-			gt: z.string().optional(),
-			ge: z.string().optional(),
-			lt: z.string().optional(),
-			le: z.string().optional(),
-		})
-		.optional(),
-	created_at: z
-		.object({
-			eq: z.string().optional(),
-			gt: z.string().optional(),
-			ge: z.string().optional(),
-			lt: z.string().optional(),
-			le: z.string().optional(),
-		})
-		.optional(),
-	updated_at: z
-		.object({
-			eq: z.string().optional(),
-			gt: z.string().optional(),
-			ge: z.string().optional(),
-			lt: z.string().optional(),
-			le: z.string().optional(),
-		})
-		.optional(),
+	start_date: DateRangeSchema,
+	due_date: DateRangeSchema,
+	created_at: EpochRangeSchema,
+	updated_at: EpochRangeSchema,
 });
 
 export type TasksListInput = z.input<typeof TasksListInputSchema>;
@@ -514,7 +538,7 @@ const ProjectsListInputSchema = z.object({
 	include_all_fields: z.boolean().optional(),
 	sort_by: z.string().optional(),
 	sort_order: SortOrderSchema,
-	match: z.string().optional(),
+	match: MatchSchema,
 	project_name: OperatorFilterSchema,
 	status: EnumFilterSchema,
 	company_id: IdFilterSchema,
@@ -522,27 +546,11 @@ const ProjectsListInputSchema = z.object({
 	team_member_id: IdFilterSchema,
 	contract_type: EnumFilterSchema,
 	include_archive: BooleanFilterSchema,
-	external_reference_id: z.object({ eq: z.string().optional() }).optional(),
+	external_reference_id: StringEqFilterSchema,
 	annualized_recurring_revenue: IntegerRangeSchema,
 	project_fee: IntegerRangeSchema,
-	budgeted_hours: z
-		.object({
-			eq: z.number().optional(),
-			gt: z.number().optional(),
-			ge: z.number().optional(),
-			lt: z.number().optional(),
-			le: z.number().optional(),
-		})
-		.optional(),
-	allocated_hours: z
-		.object({
-			eq: z.number().optional(),
-			gt: z.number().optional(),
-			ge: z.number().optional(),
-			lt: z.number().optional(),
-			le: z.number().optional(),
-		})
-		.optional(),
+	budgeted_hours: NumberRangeSchema,
+	allocated_hours: NumberRangeSchema,
 });
 
 export type ProjectsListInput = z.input<typeof ProjectsListInputSchema>;
@@ -744,7 +752,10 @@ const CompaniesListInputSchema = z.object({
 	include_all_fields: z.boolean().optional(),
 	sort_by: z.string().optional(),
 	sort_order: SortOrderSchema,
-	match: z.string().optional(),
+	match: MatchSchema,
+	company_name: OperatorFilterSchema.describe(
+		'Search by company name, e.g. `{ cn: "acme" }`.',
+	),
 });
 
 export type CompaniesListInput = z.input<typeof CompaniesListInputSchema>;
@@ -834,7 +845,7 @@ const UsersListInputSchema = z.object({
 	page_size: PageSizeSchema,
 	page_token: PageTokenSchema,
 	include_fields: z.array(z.string()).optional(),
-	match: z.string().optional(),
+	match: MatchSchema,
 	sort_by: z.string().optional(),
 	sort_order: SortOrderSchema,
 });
@@ -900,22 +911,13 @@ const TimeEntriesListInputSchema = z.object({
 	include_fields: z.array(z.string()).optional(),
 	sort_by: z.string().optional(),
 	sort_order: SortOrderSchema,
-	match: z.string().optional(),
-	date: z
-		.object({
-			eq: z.string().optional(),
-			gt: z.string().optional(),
-			ge: z.string().optional(),
-			lt: z.string().optional(),
-			le: z.string().optional(),
-		})
-		.optional()
-		.describe('Filter on the entry date, as an ISO date.'),
-	project_id: z.object({ eq: z.number().int().optional() }).optional(),
+	match: MatchSchema,
+	date: DateRangeSchema.describe('Filter on the entry date, as an ISO date.'),
+	project_id: IdEqFilterSchema,
 	task_id: IdFilterSchema,
 	user_email: OperatorFilterSchema,
 	billable: BooleanFilterSchema,
-	approval_status: z.object({ eq: z.string().optional() }).optional(),
+	approval_status: StringEqFilterSchema,
 	include_deleted: BooleanFilterSchema,
 });
 

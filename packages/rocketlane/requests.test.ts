@@ -49,7 +49,7 @@ describe('tasks.list', () => {
 			task_status: { oneOf: [1, 2] },
 			assignee_user_id: { eq: USER_ID },
 			include_archive: { eq: false },
-			progress: { ge: 10, le: 90 },
+			progress: { gt: 10, lt: 90 },
 		})) as Awaited<ReturnType<typeof Tasks.list>>;
 
 		const request = lastRequest(fetchMock);
@@ -61,8 +61,8 @@ describe('tasks.list', () => {
 			'task.status.oneOf': '1,2',
 			'assignee.userId.eq': String(USER_ID),
 			'includeArchive.eq': 'false',
-			'progress.ge': '10',
-			'progress.le': '90',
+			'progress.gt': '10',
+			'progress.lt': '90',
 		});
 		expect(result.tasks).toHaveLength(1);
 		expect(result.tasks[0]?.taskName).toBe('Kickoff workshop');
@@ -86,12 +86,52 @@ describe('tasks.list', () => {
 		respond(fetchMock, TASK_PAGE);
 
 		await invoke(Tasks.list, {
-			project_id: { oneOf: [PROJECT_ID, PROJECT_ID + 1] },
+			assignee_user_id: { oneOf: [USER_ID, USER_ID + 1] },
 		});
 
-		expect(lastRequest(fetchMock).query['projectId.oneOf']).toBe(
-			`${PROJECT_ID},${PROJECT_ID + 1}`,
+		expect(lastRequest(fetchMock).query['assignee.userId.oneOf']).toBe(
+			`${USER_ID},${USER_ID + 1}`,
 		);
+	});
+
+	it('rejects an operator the filter does not define before fetch', async () => {
+		await expect(
+			invoke(Tasks.list, { task_name: { contains: 'kickoff' } }),
+		).rejects.toThrow();
+		// projectId only documents `eq`.
+		await expect(
+			invoke(Tasks.list, { project_id: { oneOf: [PROJECT_ID] } }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('sends the documented sort order, match mode and epoch filters', async () => {
+		respond(fetchMock, TASK_PAGE);
+
+		await invoke(Tasks.list, {
+			sort_by: 'dueDate',
+			sort_order: 'ASC',
+			match: 'any',
+			created_at: { ge: 1794300000000 },
+		});
+
+		expect(lastRequest(fetchMock).query).toEqual({
+			sortBy: 'dueDate',
+			sortOrder: 'ASC',
+			match: 'any',
+			'createdAt.ge': '1794300000000',
+		});
+	});
+
+	it('rejects a lowercase sort order and a free-text match', async () => {
+		await expect(
+			invoke(Tasks.list, { sort_order: 'asc' }),
+		).rejects.toThrow();
+		await expect(invoke(Tasks.list, { match: 'kickoff' })).rejects.toThrow();
+		await expect(
+			invoke(Tasks.list, { created_at: { ge: '2026-11-01' } }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('reads the next page token while more remain', async () => {
@@ -409,9 +449,14 @@ describe('companies', () => {
 
 		const result = (await invoke(Directory.companiesList, {
 			page_size: 50,
+			company_name: { cn: 'acme' },
 		})) as Awaited<ReturnType<typeof Directory.companiesList>>;
 
 		expect(lastRequest(fetchMock).path).toBe('/api/1.0/companies');
+		expect(lastRequest(fetchMock).query).toEqual({
+			pageSize: '50',
+			'companyName.cn': 'acme',
+		});
 		expect(result.companies[0]?.companyName).toBe('Acme Inc');
 	});
 
@@ -478,7 +523,7 @@ describe('users', () => {
 		respond(fetchMock, USER_PAGE);
 
 		const result = (await invoke(Directory.usersList, {
-			match: 'sam',
+			page_size: 50,
 		})) as Awaited<ReturnType<typeof Directory.usersList>>;
 
 		expect(lastRequest(fetchMock).path).toBe('/api/1.0/users');

@@ -2,6 +2,7 @@ import type { z } from 'zod';
 import type { RocketlaneEndpoints } from '..';
 import { segment } from '../client';
 import { call, queryOf } from './call';
+import { filterOf } from './filters';
 import { deletedShape, pagedShape, singleShape } from './shape';
 import {
 	RocketlaneEndpointInputSchemas as Inputs,
@@ -41,6 +42,7 @@ export const companiesList: RocketlaneEndpoints['companiesList'] = (
 					match: parsed.match,
 				}),
 				includeFields: parsed.include_fields,
+				...filterOf('companyName', parsed.company_name),
 			},
 		}),
 		{
