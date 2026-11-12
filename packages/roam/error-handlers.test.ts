@@ -179,6 +179,26 @@ describe('server handling', () => {
 		expect(result?.maxRetries).toBe(2);
 	});
 
+	it('replays a read that failed before any response arrived', () => {
+		const error = roamError({
+			message: 'fetch failed',
+			method: 'GET',
+			replayable: true,
+		});
+
+		expect(firstMatch(handlers, error)).toBe('SERVER_ERROR');
+	});
+
+	it('never replays a write that failed before any response arrived', () => {
+		const error = roamError({
+			message: 'fetch failed',
+			method: 'POST',
+			replayable: false,
+		});
+
+		expect(firstMatch(handlers, error)).toBe('DEFAULT');
+	});
+
 	it('never replays a 5xx write', () => {
 		const error = roamError({
 			status: 500,

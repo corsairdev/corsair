@@ -16,7 +16,8 @@ function statusOf(error: Error): number | undefined {
  * - `missing_scope` is a 403 that names the scopes needed. Retrying cannot add
  *   a scope, so it is a permission error rather than a rate-limit-shaped one.
  * - `not_found` is an unknown method, chat, user or meeting.
- * - `5xx` is only replayed for a call the endpoint declared replayable.
+ * - `5xx` and network failures are only replayed for a call the endpoint
+ *   declared replayable.
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
@@ -58,11 +59,13 @@ export const errorHandlers = {
 		match: (error: Error) => error instanceof RoamAPIError && error.isNotFound,
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	// A missing status is a network failure or timeout. A replayable read is
+	// safe to send again; a write is not, since it may already have landed.
 	SERVER_ERROR: {
 		match: (error: Error) =>
 			error instanceof RoamAPIError &&
 			error.replayable &&
-			(error.status ?? 0) >= 500,
+			(error.status === undefined || error.status >= 500),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
