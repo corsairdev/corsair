@@ -285,6 +285,8 @@ export type ExternalRefinerPlugin<T extends RefinerPluginOptions> =
 	BaseRefinerPlugin<T>;
 
 export function refiner<const T extends RefinerPluginOptions>(
+	// {} fits RefinerPluginOptions (every field is optional); T only adds
+	// literal types the caller chose, so an empty default is safe.
 	incomingOptions: RefinerPluginOptions & T = {} as RefinerPluginOptions & T,
 ): ExternalRefinerPlugin<T> {
 	const options = {

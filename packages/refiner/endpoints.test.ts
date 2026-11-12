@@ -7,12 +7,6 @@ import {
 	Segments,
 	Users,
 } from './endpoints';
-import type {
-	ContactsListResponse,
-	FormsHistoryResponse,
-	ReportingResponse,
-	ResponsesListResponse,
-} from './endpoints/types';
 import {
 	ACCOUNT,
 	BAD_REQUEST,
@@ -65,10 +59,7 @@ describe('account.get', () => {
 	it('reads the subscription usage and environments', async () => {
 		respond(fetchMock, ACCOUNT);
 
-		const result = (await invoke(Account.get, {})) as {
-			subscription?: { plan?: string; msr_count?: number; msr_limit?: number };
-			environments?: { name?: string }[];
-		};
+		const result = await invoke(Account.get, {});
 
 		expect(lastRequest(fetchMock).path).toBe('/v1/account');
 		expect(result.subscription?.plan).toBe('Friends & Family');
@@ -95,10 +86,10 @@ describe('users.identify', () => {
 	it('identifies a user by ID', async () => {
 		respond(fetchMock, IDENTIFIED, 201);
 
-		const result = (await invoke(Users.identify, {
+		const result = await invoke(Users.identify, {
 			id: 'user-1',
 			email: 'jane@awesome.com',
-		})) as { contact_uuid?: string };
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v1/identify-user');
@@ -192,10 +183,10 @@ describe('users.track', () => {
 	it('tracks an event for a user', async () => {
 		respond(fetchMock, OK);
 
-		const result = (await invoke(Users.track, {
+		const result = await invoke(Users.track, {
 			id: 'user-1',
 			event: 'completed_onboarding',
-		})) as { message?: string };
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v1/track-event');
@@ -232,7 +223,7 @@ describe('responses.list', () => {
 	it('lists responses with their answers and contact', async () => {
 		respond(fetchMock, RESPONSES);
 
-		const result = (await invoke(Responses.list, {})) as ResponsesListResponse;
+		const result = await invoke(Responses.list, {});
 
 		expect(lastRequest(fetchMock).path).toBe('/v1/responses');
 		expect(result.items).toHaveLength(2);
@@ -243,7 +234,7 @@ describe('responses.list', () => {
 	it('keeps a survey view whose answers are all null', async () => {
 		respond(fetchMock, RESPONSES);
 
-		const result = (await invoke(Responses.list, {})) as ResponsesListResponse;
+		const result = await invoke(Responses.list, {});
 
 		// A view with no answers has null data values and a null completed_at.
 		expect(result.items?.[1]?.data?.first_question).toBeNull();
@@ -336,12 +327,12 @@ describe('responses.store', () => {
 	it('stores a response with its answers', async () => {
 		respond(fetchMock, RESPONSE_STORED);
 
-		const result = (await invoke(Responses.store, {
+		const result = await invoke(Responses.store, {
 			id: 'user-1',
 			form_uuid: 'FORM_UUID',
 			nps_question: 9,
 			a_question_identifier: 'Some value',
-		})) as { uuid?: string };
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v1/responses');
@@ -455,12 +446,12 @@ describe('reporting.get', () => {
 	it('reads an NPS report', async () => {
 		respond(fetchMock, REPORT_NPS);
 
-		const result = (await invoke(Responses.report, {
+		const result = await invoke(Responses.report, {
 			type: 'nps',
 			form_uuids: ['FORM_UUID'],
 			date_range_start: '2024-12-12',
 			date_range_end: '2025-04-18',
-		})) as { nps?: number; count?: number; data?: Record<string, number> };
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v1/reporting');
@@ -475,10 +466,7 @@ describe('reporting.get', () => {
 	it('reads a CSAT report', async () => {
 		respond(fetchMock, REPORT_CSAT);
 
-		const result = (await invoke(Responses.report, { type: 'csat' })) as {
-			csat?: number;
-			data?: Record<string, number>;
-		};
+		const result = await invoke(Responses.report, { type: 'csat' });
 
 		expect(result.csat).toBe(83);
 		expect(result.data?.verysatisfied).toBe(23);
@@ -487,10 +475,7 @@ describe('reporting.get', () => {
 	it('reads a ratings report with its average', async () => {
 		respond(fetchMock, REPORT_RATINGS);
 
-		const result = (await invoke(Responses.report, { type: 'ratings' })) as {
-			average?: number;
-			sum?: number;
-		};
+		const result = await invoke(Responses.report, { type: 'ratings' });
 
 		expect(result.average).toBe(5);
 		expect(result.sum).toBe(5);
@@ -499,9 +484,9 @@ describe('reporting.get', () => {
 	it('reads a live ratings report whose buckets arrive as an array', async () => {
 		respond(fetchMock, REPORT_RATINGS_LIVE);
 
-		const result = (await invoke(Responses.report, {
+		const result = await invoke(Responses.report, {
 			type: 'ratings',
-		})) as ReportingResponse;
+		});
 
 		// Index n of the array is the count for rating n.
 		expect(result.data?.['9']).toBe(2);
@@ -513,9 +498,9 @@ describe('reporting.get', () => {
 	it('reads an empty distribution report, whose data is []', async () => {
 		respond(fetchMock, REPORT_DISTRIBUTION_EMPTY_LIVE);
 
-		const result = (await invoke(Responses.report, {
+		const result = await invoke(Responses.report, {
 			type: 'distribution',
-		})) as ReportingResponse;
+		});
 
 		expect(result.data).toEqual({});
 		expect(result.responses).toBe(0);
@@ -524,13 +509,9 @@ describe('reporting.get', () => {
 	it('reads a distribution report', async () => {
 		respond(fetchMock, REPORT_DISTRIBUTION);
 
-		const result = (await invoke(Responses.report, {
+		const result = await invoke(Responses.report, {
 			type: 'distribution',
-		})) as {
-			responses?: number;
-			datapoints?: number;
-			data?: Record<string, number>;
-		};
+		});
 
 		expect(result.responses).toBe(66);
 		expect(result.datapoints).toBe(67);
@@ -539,10 +520,7 @@ describe('reporting.get', () => {
 	it('reads a count report', async () => {
 		respond(fetchMock, REPORT_COUNT);
 
-		const result = (await invoke(Responses.report, { type: 'count' })) as {
-			views?: number;
-			responses?: number;
-		};
+		const result = await invoke(Responses.report, { type: 'count' });
 
 		expect(result.views).toBe(148);
 		expect(result.responses).toBe(130);
@@ -579,7 +557,7 @@ describe('contacts.list', () => {
 	it('lists contacts with their traits, segments and account', async () => {
 		respond(fetchMock, CONTACTS);
 
-		const result = (await invoke(Contacts.list, {})) as ContactsListResponse;
+		const result = await invoke(Contacts.list, {});
 
 		expect(lastRequest(fetchMock).path).toBe('/v1/contacts');
 		expect(result.items?.[0]?.remote_id).toBe('Your-Contact-ID');
@@ -590,7 +568,7 @@ describe('contacts.list', () => {
 	it('merges a survey answer into the attributes map as a string', async () => {
 		respond(fetchMock, CONTACTS);
 
-		const result = (await invoke(Contacts.list, {})) as ContactsListResponse;
+		const result = await invoke(Contacts.list, {});
 
 		expect(result.items?.[0]?.attributes?.a_survey_answer).toBe('9');
 	});
@@ -622,9 +600,7 @@ describe('contacts.get', () => {
 	it('reads one contact by ID', async () => {
 		respond(fetchMock, CONTACT);
 
-		const result = (await invoke(Contacts.get, { id: 'user-1' })) as {
-			email?: string;
-		};
+		const result = await invoke(Contacts.get, { id: 'user-1' });
 
 		expect(lastRequest(fetchMock).path).toBe('/v1/contact');
 		expect(lastRequest(fetchMock).query.id).toBe('user-1');
@@ -665,10 +641,7 @@ describe('forms.list', () => {
 	it('lists the surveys', async () => {
 		respond(fetchMock, FORMS);
 
-		const result = (await invoke(Forms.list, {})) as {
-			items?: { name?: string }[];
-			pagination?: { items_count?: number };
-		};
+		const result = await invoke(Forms.list, {});
 
 		expect(lastRequest(fetchMock).path).toBe('/v1/forms');
 		expect(result.items).toHaveLength(2);
@@ -678,13 +651,7 @@ describe('forms.list', () => {
 	it('reads the info fields when include_info is set', async () => {
 		respond(fetchMock, FORMS_WITH_INFO);
 
-		const result = (await invoke(Forms.list, { include_info: true })) as {
-			items?: {
-				responses_count?: number;
-				page_url?: string;
-				channels?: string[];
-			}[];
-		};
+		const result = await invoke(Forms.list, { include_info: true });
 
 		expect(lastRequest(fetchMock).query.include_info).toBe('1');
 		expect(result.items?.[0]?.responses_count).toBe(0);
@@ -712,11 +679,9 @@ describe('forms.publish', () => {
 	it('publishes a survey', async () => {
 		respond(fetchMock, FORM_PUBLISHED);
 
-		const result = (await invoke(Forms.publish, {
+		const result = await invoke(Forms.publish, {
 			form_uuid: 'FORM_UUID',
-		})) as {
-			message?: string;
-		};
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v1/forms/publish');
@@ -772,10 +737,10 @@ describe('forms.duplicate', () => {
 	it('duplicates a survey into a new draft', async () => {
 		respond(fetchMock, FORM_DUPLICATED);
 
-		const result = (await invoke(Forms.duplicate, {
+		const result = await invoke(Forms.duplicate, {
 			form_uuid: 'FORM_UUID',
 			name: 'NEW_FORM_NAME',
-		})) as { source_form_uuid?: string; new_form_uuid?: string };
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v1/forms/duplicate');
@@ -797,9 +762,9 @@ describe('forms.history', () => {
 	it('lists the survey versions', async () => {
 		respond(fetchMock, FORM_HISTORY);
 
-		const result = (await invoke(Forms.history, {
+		const result = await invoke(Forms.history, {
 			form_uuid: 'FORM_UUID',
-		})) as FormsHistoryResponse;
+		});
 
 		expect(lastRequest(fetchMock).path).toBe('/v1/forms/history');
 		expect(lastRequest(fetchMock).query.form_uuid).toBe('FORM_UUID');
@@ -826,9 +791,7 @@ describe('segments.list', () => {
 	it('lists segments and their manual flag', async () => {
 		respond(fetchMock, SEGMENTS);
 
-		const result = (await invoke(Segments.list, {})) as {
-			items?: { name?: string; is_manual?: boolean }[];
-		};
+		const result = await invoke(Segments.list, {});
 
 		expect(lastRequest(fetchMock).path).toBe('/v1/segments');
 		expect(result.items?.[0]?.is_manual).toBe(true);
@@ -840,10 +803,10 @@ describe('segments.sync', () => {
 	it('adds a user to a manual segment with POST', async () => {
 		respond(fetchMock, SEGMENT_SYNCED);
 
-		const result = (await invoke(Segments.sync, {
+		const result = await invoke(Segments.sync, {
 			id: 'user-1',
 			segment_uuid: 'SEGMENT_UUID',
-		})) as { contact_uuid?: string; segment_uuid?: string };
+		});
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('POST');

@@ -22,6 +22,7 @@ const context = {
 // unknown: each handler returns its own retry shape; the tests read fields off it.
 function run(name: keyof typeof errorHandlers, error: Error): Promise<unknown> {
 	const handler = errorHandlers[name].handler;
+	// Handlers are typed for any plugin's context; this one only reads the error.
 	return (handler as (e: Error, c: ErrorContext) => Promise<unknown>)(
 		error,
 		context,
@@ -37,6 +38,7 @@ async function matches(error: Error): Promise<string | undefined> {
 			return name;
 		}
 	}
+	// DEFAULT's matcher ignores the context, so it is called with the error alone.
 	return (errorHandlers.DEFAULT.match as (e: Error) => boolean)(error)
 		? 'DEFAULT'
 		: undefined;
@@ -93,6 +95,7 @@ describe('Refiner error handlers', () => {
 
 	it('treats a ZodError as a validation failure without a status', async () => {
 		const { z } = require('zod');
+		// require() gives an untyped zod; a failed safeParse always has a ZodError.
 		const error = z.object({ id: z.string() }).safeParse({}).error as Error;
 
 		expect(await matches(error)).toBe('VALIDATION_ERROR');
