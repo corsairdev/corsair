@@ -132,15 +132,15 @@ describe('messages', () => {
 	it('lists the replies in a thread', async () => {
 		respond(fetchMock, messages);
 
-		await invoke(Messages.list, { parentId: message.id });
+		await invoke(Messages.list, { roomId: room.id, parentId: message.id });
 
-		expect(lastRequest(fetchMock).query.parentId).toBe(message.id);
+		const sent = lastRequest(fetchMock);
+		expect(sent.query.roomId).toBe(room.id);
+		expect(sent.query.parentId).toBe(message.id);
 	});
 
-	it('rejects a list with neither a room nor a thread', async () => {
-		await expect(invoke(Messages.list, {})).rejects.toThrow(
-			'A message list needs a roomId or a parentId.',
-		);
+	it('rejects a list without a room', async () => {
+		await expect(invoke(Messages.list, {})).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
@@ -189,7 +189,7 @@ describe('messages', () => {
 
 	it('rejects a message with no content', async () => {
 		await expect(invoke(Messages.create, { roomId: room.id })).rejects.toThrow(
-			'A message needs non-empty text, markdown, html, or files.',
+			'A message needs non-empty text, markdown, or files.',
 		);
 	});
 
@@ -243,12 +243,16 @@ describe('messages', () => {
 	it('edits a message', async () => {
 		respond(fetchMock, message);
 
-		await invoke(Messages.update, { id: message.id, text: 'Corrected' });
+		await invoke(Messages.update, {
+			id: message.id,
+			roomId: room.id,
+			text: 'Corrected',
+		});
 
 		const sent = lastRequest(fetchMock);
 		expect(sent.method).toBe('PUT');
 		expect(sent.path).toBe(`/v1/messages/${message.id}`);
-		expect(sent.body).toEqual({ text: 'Corrected' });
+		expect(sent.body).toEqual({ roomId: room.id, text: 'Corrected' });
 	});
 
 	it('deletes a message', async () => {
@@ -461,11 +465,20 @@ describe('webhooks', () => {
 	it('updates a webhook status', async () => {
 		respond(fetchMock, { ...webhook, status: 'inactive' });
 
-		await invoke(Webhooks.update, { id: webhook.id, status: 'inactive' });
+		await invoke(Webhooks.update, {
+			id: webhook.id,
+			name: 'Message hook',
+			targetUrl: 'https://acme.example/hooks/webex',
+			status: 'inactive',
+		});
 
 		const sent = lastRequest(fetchMock);
 		expect(sent.method).toBe('PUT');
-		expect(sent.body).toEqual({ status: 'inactive' });
+		expect(sent.body).toEqual({
+			name: 'Message hook',
+			targetUrl: 'https://acme.example/hooks/webex',
+			status: 'inactive',
+		});
 	});
 
 	it('deletes a webhook', async () => {
@@ -535,6 +548,95 @@ describe('review fixes', () => {
 
 		const [url] = fetchMock.mock.calls.at(-1) as [string];
 		expect(url).toBe('https://webexapis.com/v1/rooms?max=2&page=4');
+	});
+});
+
+// Checked against Webex's published OpenAPI spec (webex/webex-openapi-specs,
+// webex-messaging.json): fields Webex requires, and filters it does not have.
+describe('spec fixes', () => {
+	it('refuses a thread list without its room, which Webex requires', async () => {
+		await expect(
+			invoke(Messages.list, { parentId: message.id }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('refuses a message edit without the roomId Webex requires', async () => {
+		await expect(
+			invoke(Messages.update, { id: message.id, text: 'Corrected' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('refuses an empty message edit', async () => {
+		await expect(
+			invoke(Messages.update, { id: message.id, roomId: room.id }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('refuses an html-only message, since Webex does not accept html on create', async () => {
+		await expect(
+			invoke(Messages.create, { roomId: room.id, html: '<b>hi</b>' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('refuses a second file, since Webex takes one per message', async () => {
+		await expect(
+			invoke(Messages.create, {
+				roomId: room.id,
+				files: ['https://acme.example/a.png', 'https://acme.example/b.png'],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('refuses a room update without the title Webex requires', async () => {
+		await expect(
+			invoke(Rooms.update, { id: room.id, description: 'New' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('does not send lock or org filters, which the room list does not have', async () => {
+		respond(fetchMock, rooms);
+
+		await invoke(Rooms.list, { isLocked: true, orgId: 'org-1' });
+
+		const sent = lastRequest(fetchMock);
+		expect(sent.query).not.toHaveProperty('isLocked');
+		expect(sent.query).not.toHaveProperty('orgId');
+	});
+
+	it('refuses a webhook update without the name and target Webex requires', async () => {
+		await expect(
+			invoke(Webhooks.update, { id: webhook.id, status: 'active' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts card actions and meeting start events on a webhook', async () => {
+		respond(fetchMock, webhook);
+		respond(fetchMock, webhook);
+
+		await invoke(Webhooks.create, {
+			name: 'Cards',
+			targetUrl: 'https://acme.example/hook',
+			resource: 'attachmentActions',
+			event: 'created',
+		});
+		await invoke(Webhooks.create, {
+			name: 'Meetings',
+			targetUrl: 'https://acme.example/hook',
+			resource: 'meetings',
+			event: 'started',
+		});
+
+		expect(lastRequest(fetchMock).body).toMatchObject({
+			resource: 'meetings',
+			event: 'started',
+		});
 	});
 });
 

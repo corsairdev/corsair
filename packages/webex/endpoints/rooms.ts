@@ -11,10 +11,10 @@ export const list: WebexEndpoints['roomsList'] = (ctx, input) =>
 		ctx,
 		{ event: 'rooms.list', input: Inputs.roomsList, output: Outputs.roomsList },
 		input,
-		({ max, type, isLocked, orgId, teamId, sortBy }) => ({
+		({ max, type, teamId, sortBy }) => ({
 			method: 'GET',
 			path: '/rooms',
-			query: { max, type, isLocked, orgId, teamId, sortBy },
+			query: { max, type, teamId, sortBy },
 		}),
 		{ log: (_, result) => ({ count: result.items?.length ?? 0 }) },
 	);

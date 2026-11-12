@@ -189,8 +189,6 @@ const RoomsListInputSchema = z.object({
 	max: MaxSchema,
 	nextLink: NextLinkSchema,
 	type: z.enum(['group', 'direct']).optional(),
-	isLocked: z.boolean().optional(),
-	orgId: z.string().optional(),
 	teamId: z
 		.string()
 		.optional()
@@ -231,7 +229,10 @@ export type RoomsCreateInput = z.infer<typeof RoomsCreateInputSchema>;
 
 const RoomsUpdateInputSchema = z.object({
 	id: z.string().min(1),
-	title: z.string().min(1).optional(),
+	title: z
+		.string()
+		.min(1)
+		.describe('Webex requires the title on every update, even when unchanged.'),
 	description: z.string().optional(),
 	isLocked: z.boolean().optional(),
 	isReadOnly: z.boolean().optional(),
@@ -253,34 +254,25 @@ export type DeleteResponse = z.infer<typeof DeleteResponseSchema>;
 
 // ── messages ──────────────────────────────────────────────────────────────
 
-const MessagesListInputSchema = z
-	.object({
-		roomId: z.string().optional().describe('Only messages in this room.'),
-		parentId: z
-			.string()
-			.optional()
-			.describe('Only the replies in this thread.'),
-		mentionedPeople: z
-			.string()
-			.optional()
-			.describe('Only messages mentioning this person.'),
-		before: z.string().optional().describe('ISO 8601: only earlier messages.'),
-		beforeMessage: z
-			.string()
-			.optional()
-			.describe('Only messages before this id.'),
-		max: MaxSchema,
-		nextLink: NextLinkSchema,
-	})
-	.superRefine((value, ctx) => {
-		if (value.roomId === undefined && value.parentId === undefined) {
-			ctx.addIssue({
-				code: 'custom',
-				path: ['roomId'],
-				message: 'A message list needs a roomId or a parentId.',
-			});
-		}
-	});
+const MessagesListInputSchema = z.object({
+	roomId: z.string().min(1).describe('The room to list messages from.'),
+	parentId: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Only the replies in this thread of the room.'),
+	mentionedPeople: z
+		.string()
+		.optional()
+		.describe('Only messages mentioning this person.'),
+	before: z.string().optional().describe('ISO 8601: only earlier messages.'),
+	beforeMessage: z
+		.string()
+		.optional()
+		.describe('Only messages before this id.'),
+	max: MaxSchema,
+	nextLink: NextLinkSchema,
+});
 
 export type MessagesListInput = z.infer<typeof MessagesListInputSchema>;
 
@@ -299,6 +291,7 @@ export type MessageResponse = z.infer<typeof MessageResponseSchema>;
 /**
  * Sends a message. At least one of `text`, `markdown` or `files` is needed, and
  * the schema enforces that rather than letting Webex reject an empty message.
+ * Webex renders `html` on messages it returns but does not accept it here.
  */
 const MessagesCreateInputSchema = z
 	.object({
@@ -313,12 +306,14 @@ const MessagesCreateInputSchema = z
 			.describe('A one-to-one message to this address.'),
 		text: z.string().optional(),
 		markdown: z.string().optional(),
-		html: z.string().optional(),
 		files: z
 			.array(z.string())
 			.min(1)
+			.max(1)
 			.optional()
-			.describe('Public URLs of files to attach.'),
+			.describe(
+				'The public URL of one file to attach; Webex takes one per message.',
+			),
 		parentId: z.string().optional().describe('Post as a reply in this thread.'),
 	})
 	.superRefine((value, ctx) => {
@@ -341,28 +336,34 @@ const MessagesCreateInputSchema = z
 		if (
 			!filled(value.text) &&
 			!filled(value.markdown) &&
-			!filled(value.html) &&
 			value.files === undefined
 		) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['text'],
-				message: 'A message needs non-empty text, markdown, html, or files.',
+				message: 'A message needs non-empty text, markdown, or files.',
 			});
 		}
 	});
 
 export type MessagesCreateInput = z.infer<typeof MessagesCreateInputSchema>;
 
-const MessagesUpdateInputSchema = z.object({
-	id: z.string().min(1),
-	roomId: z
-		.string()
-		.optional()
-		.describe('Move the message to another room you are in.'),
-	text: z.string().optional(),
-	markdown: z.string().optional(),
-});
+const MessagesUpdateInputSchema = z
+	.object({
+		id: z.string().min(1),
+		roomId: z
+			.string()
+			.min(1)
+			.describe('The room the message is in; Webex requires it on an edit.'),
+		text: z.string().optional(),
+		markdown: z.string().optional(),
+	})
+	.refine(
+		(value) =>
+			(value.text?.trim().length ?? 0) > 0 ||
+			(value.markdown?.trim().length ?? 0) > 0,
+		{ path: ['text'], message: 'An edit needs non-empty text or markdown.' },
+	);
 
 export type MessagesUpdateInput = z.infer<typeof MessagesUpdateInputSchema>;
 
@@ -536,11 +537,43 @@ const WebhooksCreateInputSchema = z.object({
 	name: z.string().min(1),
 	targetUrl: z.string().min(1),
 	resource: z
-		.enum(['messages', 'memberships', 'rooms', 'meetings', 'recordings'])
+		.enum([
+			'attachmentActions',
+			'dataSources',
+			'memberships',
+			'messages',
+			'rooms',
+			'meetings',
+			'recordings',
+			'convergedRecordings',
+			'meetingParticipants',
+			'meetingTranscripts',
+			'telephony_calls',
+			'telephony_conference',
+			'telephony_mwi',
+			'uc_counters',
+			'serviceApp',
+			'adminBatchJobs',
+		])
 		.describe('The resource whose events to send.'),
 	event: z
-		.enum(['created', 'updated', 'deleted', 'all'])
-		.describe('Which event on that resource.'),
+		.enum([
+			'created',
+			'updated',
+			'deleted',
+			'started',
+			'ended',
+			'joined',
+			'left',
+			'migrated',
+			'authorized',
+			'deauthorized',
+			'statusChanged',
+			'all',
+		])
+		.describe(
+			'Which event on that resource, e.g. started or ended for meetings, joined or left for meetingParticipants.',
+		),
 	filter: z
 		.string()
 		.optional()
@@ -555,8 +588,16 @@ export type WebhooksCreateInput = z.infer<typeof WebhooksCreateInputSchema>;
 
 const WebhooksUpdateInputSchema = z.object({
 	id: z.string().min(1),
-	name: z.string().min(1).optional(),
-	targetUrl: z.string().min(1).optional(),
+	name: z
+		.string()
+		.min(1)
+		.describe('Webex requires the name on every update, even when unchanged.'),
+	targetUrl: z
+		.string()
+		.min(1)
+		.describe(
+			'Webex requires the target URL on every update, even when unchanged.',
+		),
 	secret: z.string().optional(),
 	status: z
 		.enum(['active', 'inactive'])

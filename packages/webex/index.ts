@@ -243,7 +243,7 @@ const webexEndpointMeta = {
 	'rooms.list': {
 		riskLevel: 'read',
 		description:
-			'List spaces, filtered by type, lock state, organization or team',
+			'List spaces, filtered by type or team and sorted by id, last activity or creation',
 	},
 	'rooms.get': {
 		riskLevel: 'read',
@@ -257,7 +257,7 @@ const webexEndpointMeta = {
 	'rooms.update': {
 		riskLevel: 'write',
 		description:
-			'Change a space title, description or lock and read-only settings',
+			'Change a space title, description or lock and read-only settings; the title is always sent',
 	},
 	'rooms.delete': {
 		riskLevel: 'destructive',
@@ -267,7 +267,7 @@ const webexEndpointMeta = {
 	'messages.list': {
 		riskLevel: 'read',
 		description:
-			'List messages in a room or a thread, optionally before a time or message id',
+			'List messages in a room, or the replies in one of its threads, optionally before a time or message id',
 	},
 	'messages.get': {
 		riskLevel: 'read',
@@ -276,11 +276,12 @@ const webexEndpointMeta = {
 	'messages.create': {
 		riskLevel: 'write',
 		description:
-			'Post a message to a room or directly to a person, with text, markdown, html or file attachments',
+			'Post a message to a room or directly to a person, with text, markdown or one file attachment',
 	},
 	'messages.update': {
 		riskLevel: 'write',
-		description: 'Edit a message you sent, or move it to another room',
+		description:
+			'Edit the text or markdown of a message you sent, up to 10 times per message',
 	},
 	'messages.delete': {
 		riskLevel: 'destructive',
