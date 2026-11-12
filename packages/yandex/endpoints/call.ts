@@ -21,11 +21,6 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	toRequest: (parsed: z.output<Input>) => YandexRequest,
 	options: {
 		/**
-		 * `folderId` is pulled off the parsed input and sent as a header, since
-		 * the API scopes a cloud resource to a folder that way.
-		 */
-		folderId?: (parsed: z.output<Input>) => string | undefined;
-		/**
 		 * Set when the operation is one request per `texts` entry: the request is
 		 * sent once per passage and the answers are collected into one detection
 		 * list, in the order they were sent.
@@ -44,11 +39,11 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		const detections: { languageCode: string }[] = [];
 		for (const text of texts) {
 			// A single passage per request, which is what the route documents.
-			const raw = await makeYandexRequest(
-				ctx.key,
-				{ ...toRequest(parsed), body: { text } },
-				options.folderId?.(parsed),
-			);
+			const base = toRequest(parsed);
+			const raw = await makeYandexRequest(ctx.key, {
+				...base,
+				body: { ...(base.body as object), text },
+			});
 			const shaped = options.shape?.(raw, parsed) as
 				| { detections?: { languageCode: string }[] }
 				| undefined;
@@ -65,11 +60,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		return collected;
 	}
 
-	const raw = await makeYandexRequest(
-		ctx.key,
-		toRequest(parsed),
-		options.folderId?.(parsed),
-	);
+	const raw = await makeYandexRequest(ctx.key, toRequest(parsed));
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);

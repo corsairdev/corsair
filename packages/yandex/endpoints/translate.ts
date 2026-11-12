@@ -19,7 +19,7 @@ export const translate: YandexEndpoints['translate'] = (ctx, input) =>
 			output: Outputs.translate,
 		},
 		input,
-		({ folderId: _folderId, ...body }) => ({
+		(body) => ({
 			method: 'POST',
 			path: '/translate/v2/translate',
 			body: {
@@ -28,10 +28,11 @@ export const translate: YandexEndpoints['translate'] = (ctx, input) =>
 				sourceLanguageCode: body.sourceLanguageCode,
 				format: body.format,
 				speller: body.speller,
+				// A body field in the API reference, needed for user-account auth.
+				folderId: body.folderId,
 			},
 		}),
 		{
-			folderId: (parsed) => parsed.folderId,
 			log: (parsed, result) => ({
 				// The character count and languages, never the text.
 				characters: parsed.texts.reduce((sum, text) => sum + text.length, 0),
@@ -59,9 +60,13 @@ export const detect: YandexEndpoints['detectLanguages'] = (ctx, input) =>
 			output: Outputs.detectLanguages,
 		},
 		input,
-		({ texts }) => ({ method: 'POST', path: '/translate/v2/detect', body: {} }),
+		// `call` adds each passage as `text`; folderId is a body field.
+		({ folderId }) => ({
+			method: 'POST',
+			path: '/translate/v2/detect',
+			body: { folderId },
+		}),
 		{
-			folderId: (parsed) => parsed.folderId,
 			// One request per passage; the shape callback collects the answers into
 			// the single ordered result the output schema describes.
 			detectEach: true,
@@ -95,10 +100,13 @@ export const languages: YandexEndpoints['listLanguages'] = (ctx, input) =>
 			output: Outputs.listLanguages,
 		},
 		input,
-		// The route takes only folderId, which travels as a header.
-		() => ({ method: 'POST', path: '/translate/v2/languages', body: {} }),
+		// The route's only field is folderId, sent in the body.
+		({ folderId }) => ({
+			method: 'POST',
+			path: '/translate/v2/languages',
+			body: { folderId },
+		}),
 		{
-			folderId: (parsed) => parsed.folderId,
 			log: (_, result) => ({ count: result.languages?.length ?? 0 }),
 		},
 	);

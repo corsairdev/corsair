@@ -159,7 +159,7 @@ describe('translate', () => {
 		).rejects.toThrow();
 	});
 
-	it('sends the folder header when one is given', async () => {
+	it('sends folderId in the body when one is given', async () => {
 		respond(fetchMock, translated);
 
 		await invoke(Translate.translate, {
@@ -168,10 +168,20 @@ describe('translate', () => {
 			folderId: 'b1gabcdef',
 		});
 
+		// TranslateRequest documents folder_id as a body field (JSON `folderId`).
 		const sent = lastRequest(fetchMock);
-		expect(sent.headers['x-folder-id']).toBe('b1gabcdef');
-		// The folder is a header, not a body field.
-		expect(sent.body).not.toHaveProperty('folderId');
+		expect(sent.body).toMatchObject({ folderId: 'b1gabcdef' });
+	});
+
+	it('leaves folderId out of the body when none is given', async () => {
+		respond(fetchMock, translated);
+
+		await invoke(Translate.translate, {
+			targetLanguageCode: 'ru',
+			texts: ['Hello'],
+		});
+
+		expect(lastRequest(fetchMock).body).not.toHaveProperty('folderId');
 	});
 });
 
@@ -192,6 +202,18 @@ describe('detect', () => {
 		const first = lastRequest(fetchMock);
 		expect(first.path).toBe('/translate/v2/detect');
 		expect(first.body).toEqual({ text: 'Guten Tag' });
+	});
+
+	it('sends folderId in each detect body when one is given', async () => {
+		respond(fetchMock, detected);
+
+		await invoke(Translate.detect, { texts: ['Hello'], folderId: 'b1g' });
+
+		// DetectLanguageRequest documents folder_id as a body field.
+		expect(lastRequest(fetchMock).body).toEqual({
+			text: 'Hello',
+			folderId: 'b1g',
+		});
 	});
 
 	it('never logs the passages', async () => {
@@ -227,10 +249,9 @@ describe('languages', () => {
 
 		await invoke(Translate.languages, { folderId: 'b1g' });
 
-		// folderId travels as a header, and the body is empty.
+		// ListLanguagesRequest's only field is folder_id, sent in the body.
 		const sent = lastRequest(fetchMock);
-		expect(sent.body).toEqual({});
-		expect(sent.headers['x-folder-id']).toBe('b1g');
+		expect(sent.body).toEqual({ folderId: 'b1g' });
 	});
 });
 
