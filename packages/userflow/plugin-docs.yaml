@@ -32,6 +32,10 @@ examples:
       attributes:
         name: Evelyn Reichert
         email: evelyn@example.com
+      groups:
+        - id: ab82c312-b3a4-4feb-870c-53dd336f955e
+          attributes:
+            name: Acme Inc.
 apiExamples:
   users.upsert:
     call: "{ id: '2a845972-4cde-4cb4-ba14-5cb2fc15ec4c', attributes: { name: 'Evelyn Reichert', email: 'evelyn@example.com' }, groups: [{ id: 'ab82c312-b3a4-4feb-870c-53dd336f955e' }] }"

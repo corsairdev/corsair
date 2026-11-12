@@ -90,6 +90,7 @@ describe('makeUserflowRequest', () => {
 	it('throws a UserflowAPIError carrying the code, doc url and request id', async () => {
 		respond(fetchMock, invalidEnvKey, 401);
 
+		// unknown: a rejection can be any value until it is cast below.
 		const error = (await makeUserflowRequest(API_KEY, {
 			method: 'GET',
 			path: '/users',
@@ -121,6 +122,7 @@ describe('makeUserflowRequest', () => {
 			401,
 		);
 
+		// unknown: a rejection can be any value until it is cast below.
 		const error = (await makeUserflowRequest(API_KEY, {
 			method: 'GET',
 			path: '/users',
@@ -144,6 +146,7 @@ describe('makeUserflowRequest', () => {
 	it('wraps a transport failure', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
+		// unknown: a rejection can be any value until it is cast below.
 		const error = (await makeUserflowRequest(API_KEY, {
 			method: 'POST',
 			path: '/events',

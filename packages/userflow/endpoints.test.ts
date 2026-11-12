@@ -596,6 +596,20 @@ describe('members', () => {
 		expect(sent.body).toEqual({ role: 'admin' });
 	});
 
+	it('refuses owner as a new role and an update with nothing to change', async () => {
+		await expect(
+			invoke(Accounts.updateMember, {
+				account_id: 'a_1',
+				id: 'm_1',
+				role: 'owner',
+			}),
+		).rejects.toThrow();
+		await expect(
+			invoke(Accounts.updateMember, { account_id: 'a_1', id: 'm_1' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('removes a member from the account', async () => {
 		respond(fetchMock, { id: member.id, object: 'member', deleted: true });
 
@@ -672,6 +686,7 @@ describe('error surface', () => {
 	it('surfaces a bad key as a UserflowAPIError with its code', async () => {
 		respond(fetchMock, invalidEnvKey, 401);
 
+		// unknown: a rejection can be any value until it is cast below.
 		const error = (await invoke(Users.get, { id: user.id }).catch(
 			(thrown: unknown) => thrown,
 		)) as UserflowAPIError;

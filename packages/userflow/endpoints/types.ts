@@ -18,6 +18,7 @@ const AttributeValueSchema = z.union([
 	z.string(),
 	z.number(),
 	z.boolean(),
+	// unknown: an operation object such as { add: 1 } has operation-specific values.
 	z.record(z.string(), z.unknown()),
 	z.array(z.string()),
 	z.null(),
@@ -26,10 +27,6 @@ const AttributeValueSchema = z.union([
 const AttributesSchema = z.record(z.string(), AttributeValueSchema);
 
 /**
- * Paging. Every list takes `limit` (1-100, default 10) and `starting_after`,
- * and answers `next_page_url` — which is always set, even on the last page, so
- * `has_more` is what says whether to continue.
- */
 /**
  * Userflow accepts `order_by` as a single field or an array, and a leading `-` on any
  * field means descending. Both forms and both directions are accepted here, then
@@ -59,6 +56,11 @@ function orderBySchema<const T extends readonly [string, ...string[]]>(
 		.describe(description);
 }
 
+/**
+ * Paging. Every list takes `limit` (1-100, default 10) and `starting_after`,
+ * and answers `next_page_url`, which is set even on the last page, so
+ * `has_more` is what says whether to continue.
+ */
 const PagingSchema = {
 	limit: z
 		.number()
@@ -71,7 +73,7 @@ const PagingSchema = {
 		.string()
 		.optional()
 		.describe(
-			'Return items after this id. The last item id of the previous page works, as does the `next_page_url`.',
+			'Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL.',
 		),
 };
 
@@ -114,12 +116,14 @@ const GroupMembershipSchema = z
 	.object({
 		id: z.string().nullish(),
 		object: z.literal('group_membership').nullish(),
+		// unknown: membership attributes are free-form caller data.
 		attributes: z.record(z.string(), z.unknown()).nullish(),
 		created_at: z.string().nullish(),
 		group_id: z.string().nullish(),
 		user_id: z.string().nullish(),
 		// null unless expanded with ?expand=group or ?expand=user.
 		group: GroupSchema.nullish(),
+		// unknown: an expanded user; typing it here would make the user and membership schemas recursive.
 		user: z.unknown().nullish(),
 	})
 	.loose();
@@ -130,6 +134,7 @@ const UserSchema = z
 	.object({
 		id: z.string().nullish(),
 		object: z.literal('user').nullish(),
+		// unknown: user attributes are free-form caller data.
 		attributes: z.record(z.string(), z.unknown()).nullish(),
 		created_at: z.string().nullish(),
 		// Both are null unless expanded.
@@ -418,6 +423,7 @@ const EventSchema = z
 	.object({
 		id: z.string().nullish(),
 		object: z.literal('event').nullish(),
+		// unknown: event attributes are free-form caller data.
 		attributes: z.record(z.string(), z.unknown()).nullish(),
 		created_at: z.string().nullish(),
 		group_id: z.string().nullish(),
@@ -460,6 +466,7 @@ const ContentSchema = z
 		name: z.string().nullish(),
 		type: z.string().nullish(),
 		// null unless expanded.
+		// unknown: an expanded content version; its questions and tasks vary by content type.
 		draft_version: z.unknown().nullish(),
 		published_version: z.unknown().nullish(),
 	})
@@ -510,6 +517,7 @@ const ContentVersionSchema = z
 		number: z.number().nullish(),
 		// null unless expanded; a version holds its flow questions or a
 		// checklist's tasks.
+		// unknown: question and task objects differ by content type and are passed through.
 		questions: z.array(z.unknown()).nullish(),
 		tasks: z.array(z.unknown()).nullish(),
 	})
@@ -576,10 +584,12 @@ const ContentSessionSchema = z
 			.describe('A decimal string from `0` to `1`, where `1` is complete.'),
 		user_id: z.string().nullish(),
 		version_id: z.string().nullish(),
+		// unknown: answer values are text, a number string or a list, by question type.
 		answers: z.array(z.unknown()).nullish(),
 		content: ContentSchema.nullish(),
 		group: GroupSchema.nullish(),
 		user: UserSchema.nullish(),
+		// unknown: an expanded content version, passed through as Userflow sends it.
 		version: z.unknown().nullish(),
 	})
 	.loose();
@@ -987,18 +997,30 @@ const MembersGetResponseSchema = MemberSchema;
 
 export type MembersGetResponse = z.infer<typeof MembersGetResponseSchema>;
 
-const MembersUpdateInputSchema = z.object({
-	account_id: IdSchema,
-	id: IdSchema,
-	role: z
-		.enum(USERFLOW_MEMBER_ROLES)
-		.optional()
-		.describe('The member new role in this account.'),
-	permissions: z
-		.array(PermissionSchema)
-		.optional()
-		.describe('Replaces the member permissions. Omit to leave them alone.'),
-});
+const MembersUpdateInputSchema = z
+	.object({
+		account_id: IdSchema,
+		id: IdSchema,
+		role: z
+			.enum(['admin', 'editor', 'viewer'])
+			.optional()
+			.describe(
+				'The member new role in this account. owner cannot be set here; ownership is transferred in the app.',
+			),
+		permissions: z
+			.array(PermissionSchema)
+			.optional()
+			.describe('Replaces the member permissions. Omit to leave them alone.'),
+	})
+	.superRefine((value, ctx) => {
+		if (value.role === undefined && value.permissions === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['role'],
+				message: 'Send a role, permissions, or both.',
+			});
+		}
+	});
 
 export type MembersUpdateInput = z.infer<typeof MembersUpdateInputSchema>;
 
