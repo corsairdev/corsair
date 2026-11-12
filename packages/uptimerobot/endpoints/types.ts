@@ -733,8 +733,10 @@ const IncidentsGetResponseSchema = IncidentSummarySchema.extend({
 			url: z.string().nullish(),
 			httpResponseCode: z.number().nullish(),
 			responseDownloadUrl: z.string().nullish(),
-			requestHeaders: z.record(z.string(), z.string()).nullish(),
-			responseHeaders: z.record(z.string(), z.string()).nullish(),
+			// unknown: the spec leaves header values untyped, and a repeated header
+			// such as set-cookie can arrive as an array.
+			requestHeaders: z.record(z.string(), z.unknown()).nullish(),
+			responseHeaders: z.record(z.string(), z.unknown()).nullish(),
 		})
 		.loose()
 		.nullish(),

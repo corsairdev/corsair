@@ -1005,4 +1005,23 @@ describe('fixes from the second 11-12 review', () => {
 		});
 	});
 
+	it('reads a root cause whose repeated header is an array', async () => {
+		const withRepeatedHeader = {
+			...incidentWithRootCause,
+			rootCause: {
+				...incidentWithRootCause.rootCause,
+				responseHeaders: {
+					'content-type': 'text/html',
+					'set-cookie': ['a=1; Path=/', 'b=2; Path=/'],
+				},
+			},
+		};
+		respond(fetchMock, withRepeatedHeader);
+
+		const result = await invoke(Incidents.get, { id: incident.id });
+
+		expect(result.rootCause?.responseHeaders).toEqual(
+			withRepeatedHeader.rootCause.responseHeaders,
+		);
+	});
 });
