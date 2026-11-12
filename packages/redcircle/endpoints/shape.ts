@@ -11,6 +11,7 @@ import { asRecord } from 'corsair/core';
  */
 export function envelopeShape(key: string) {
 	return (
+		// unknown: unchecked provider JSON; the endpoint output schema validates it.
 		raw: unknown,
 		// unknown: the operation input, unused by this shaper.
 		_parsed: unknown,
