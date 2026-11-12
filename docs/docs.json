@@ -3268,6 +3268,14 @@
                 ]
               },
               {
+                "group": "respond.io",
+                "pages": [
+                  "plugins/respondio/overview",
+                  "plugins/respondio/api",
+                  "plugins/respondio/database"
+                ]
+              },
+              {
                 "group": "Retailed",
                 "pages": [
                   "plugins/retailed/overview",

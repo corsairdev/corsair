@@ -390,6 +390,7 @@ export const BaseProviders = [
 	'replicate',
 	'replyio',
 	'resend',
+	'respondio',
 	'retailed',
 	'retellai',
 	'retently',
@@ -887,6 +888,7 @@ export const ProviderDisplayNames = {
 	replicate: 'Replicate',
 	replyio: 'Reply.io',
 	resend: 'Resend',
+	respondio: 'respond.io',
 	retailed: 'Retailed',
 	retellai: 'Retell AI',
 	retently: 'Retently',
@@ -1391,6 +1393,7 @@ export type AllProviders =
 	| 'replicate'
 	| 'replyio'
 	| 'resend'
+	| 'respondio'
 	| 'retailed'
 	| 'retellai'
 	| 'retently'
