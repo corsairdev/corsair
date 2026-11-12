@@ -12,6 +12,7 @@ import {
 import { resolveBase } from './endpoints/call';
 import {
 	badRequest,
+	invalidApiKey,
 	invalidToken,
 	missingToken,
 	rateLimited,
@@ -128,6 +129,13 @@ describe('WatiAPIError', () => {
 
 		expect(invalid.isInvalidToken).toBe(true);
 		expect(invalid.isMissingToken).toBe(false);
+	});
+
+	it('reads invalid_api_key, the live answer for a key from another region, as an invalid token', () => {
+		const error = new WatiAPIError('x', { status: 401, body: invalidApiKey });
+
+		expect(error.isInvalidToken).toBe(true);
+		expect(error.isMissingToken).toBe(false);
 	});
 
 	it('treats either token failure as an auth error', () => {

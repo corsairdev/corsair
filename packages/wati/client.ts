@@ -98,9 +98,12 @@ export class WatiAPIError extends Error {
 		return this.code === 'missing_token';
 	}
 
-	/** True when a token was sent but is wrong, malformed or expired. */
+	/**
+	 * True when a token was sent but is wrong, malformed or expired. An API key
+	 * from another region, or a revoked one, answers `invalid_api_key`.
+	 */
 	get isInvalidToken(): boolean {
-		return this.code === 'invalid_token';
+		return this.code === 'invalid_token' || this.code === 'invalid_api_key';
 	}
 
 	/**
