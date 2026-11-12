@@ -98,7 +98,8 @@ function infoOf(body: unknown): {
 } {
 	const record = asRecord(body);
 	const info = asRecord(record?.request_info);
-	const message = info?.message;
+	const message =
+		typeof info?.message === 'string' ? info.message : record?.message;
 	// The 503 body is the one that documents `retry_after`, and it is seconds.
 	const retry = record?.retry_after;
 	return {

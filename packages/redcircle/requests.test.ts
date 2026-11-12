@@ -82,7 +82,7 @@ describe('search.products', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('rejects a sort Radar does not define', async () => {
+	it('rejects a sort RedCircle does not define', async () => {
 		await expect(
 			invoke(Endpoints.searchProducts, {
 				search_term: 'pens',
@@ -104,6 +104,19 @@ describe('search.products', () => {
 });
 
 describe('products.get', () => {
+	it('preserves documented image and video objects', async () => {
+		const product = {
+			...PRODUCT,
+			main_image: { link: 'https://example.com/main.jpg' },
+			images: [{ link: 'https://example.com/other.jpg' }],
+			videos: [{ link: 'https://example.com/video.mp4', type: 'video/mp4' }],
+		};
+		respond(fetchMock, { ...PRODUCT_RESULT, product });
+		await expect(
+			invoke(Endpoints.productsGet, { tcin: TCIN }),
+		).resolves.toMatchObject({ product });
+	});
+
 	it('reads a product by tcin', async () => {
 		respond(fetchMock, PRODUCT_RESULT);
 
@@ -139,6 +152,19 @@ describe('products.get', () => {
 });
 
 describe('reviews.list', () => {
+	it('rejects a review request with no selector before sending it', async () => {
+		await expect(invoke(Endpoints.reviewsList, {})).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+	it.each(['high_to_low_rating', 'low_to_high_rating'])(
+		'sends the documented %s sort',
+		async (sort_by) => {
+			respond(fetchMock, REVIEWS_PAGE);
+			await invoke(Endpoints.reviewsList, { tcin: TCIN, sort_by });
+			expect(lastRequest(fetchMock).query.sort_by).toBe(sort_by);
+		},
+	);
+
 	it('lists a product’s reviews with paging', async () => {
 		respond(fetchMock, REVIEWS_PAGE);
 
@@ -157,7 +183,7 @@ describe('reviews.list', () => {
 		expect(result.next_page).toBe(2);
 	});
 
-	it('rejects a review sort Radar does not define', async () => {
+	it('rejects a review sort RedCircle does not define', async () => {
 		await expect(
 			invoke(Endpoints.reviewsList, { tcin: TCIN, sort_by: 'newest' }),
 		).rejects.toThrow();

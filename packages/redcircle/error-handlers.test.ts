@@ -90,18 +90,24 @@ describe('rate limit handling', () => {
 });
 
 describe('incident handling', () => {
+	it('surfaces long incident delays without waiting or retrying early', async () => {
+		const error = rcError({ status: 503, retryAfter: 3_600_000 });
+		const result = await decide(handlers, 'INCIDENT_ERROR', error);
+		expect(result?.maxRetries).toBe(0);
+		expect(error.retryAfter).toBe(3_600_000);
+	});
+
 	it('retries a 503, which RedCircle says was not charged', async () => {
 		const error = rcError({
 			status: 503,
-			retryAfter: 3_600_000,
+			retryAfter: 5_000,
 			replayable: false,
 		});
 
 		expect(claims(handlers, 'INCIDENT_ERROR', error)).toBe(true);
 		const result = await decide(handlers, 'INCIDENT_ERROR', error);
 		expect(result?.maxRetries).toBe(2);
-		// The body's own delay is what the retry waits for.
-		expect(result?.headersRetryAfterMs).toBe(3_600_000);
+		expect(result?.headersRetryAfterMs).toBe(5_000);
 	});
 
 	it('prefers the incident handler over the generic server one', () => {
@@ -144,6 +150,15 @@ describe('not-found handling', () => {
 });
 
 describe('server handling', () => {
+	it('retries transport failures only for replayable calls', () => {
+		expect(firstMatch(handlers, rcError({ replayable: true }))).toBe(
+			'SERVER_ERROR',
+		);
+		expect(firstMatch(handlers, rcError({ replayable: false }))).toBe(
+			'DEFAULT',
+		);
+	});
+
 	it('replays a 500 read', async () => {
 		const result = await decide(
 			handlers,

@@ -48,7 +48,8 @@ describeIfKey('live RedCircle API', () => {
 		);
 
 		const tcin = search.search_results[0]?.product?.tcin;
-		if (!tcin) return;
+		expect(tcin).toBeTruthy();
+		if (!tcin) throw new Error('Search returned no product TCIN');
 
 		const one = await Endpoints.productsGet(
 			liveContext() as never,

@@ -105,16 +105,15 @@ describe('retry behaviour', () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient({ key: 'rc-key' });
 		try {
-			respond(fetchMock, INCIDENT, 503);
+			respond(fetchMock, { ...INCIDENT, retry_after: 5 }, 503);
 			respond(fetchMock, SEARCH_PAGE);
 
 			const pending = corsair.redcircle.api.search.products({
 				search_term: 'pens',
 			});
 			pending.catch(() => undefined);
-			// The documented body delay is an hour, so the retry only fires once
-			// the clock is advanced past it.
-			await jest.advanceTimersByTimeAsync(3_600_000);
+			// A supported delay still retries after the provider asks.
+			await jest.advanceTimersByTimeAsync(5_000);
 			const result = await pending;
 
 			expect(result.search_results).toHaveLength(1);

@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for RedCircle API: every `redcircle.api.*` operation with input and output types."
+title: "RedCircle API API reference"
+sidebarTitle: "API"
+description: "API reference for the RedCircle API plugin in Corsair: every `redcircle.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `redcircle.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -241,9 +240,18 @@ await corsair.redcircle.api.products.get({ tcin: '94907686' });
   brand_link?: string | null,
   rating?: number | null,
   ratings_total?: number | null,
-  main_image?: string | null,
-  images?: string[] | null,
-  videos?: string[] | null,
+  main_image?: string | {
+    link?: string | null,
+    type?: string | null
+  } | null,
+  images?: (string | {
+    link?: string | null,
+    type?: string | null
+  })[] | null,
+  videos?: (string | {
+    link?: string | null,
+    type?: string | null
+  })[] | null,
   price?: {
     value?: number | null,
     currency?: string | null,
@@ -314,11 +322,11 @@ await corsair.redcircle.api.reviews.list({ tcin: '94907686', sort_by: 'most_rece
 | `dpci` | `string` | No | — |
 | `gtin` | `string` | No | — |
 | `url` | `string` | No | — |
-| `sort_by` | `most_recent \| most_helpful \| highest_rating \| lowest_rating` | No | — |
+| `sort_by` | `most_recent \| most_helpful \| high_to_low_rating \| low_to_high_rating` | No | — |
 | `page` | `number` | No | 1-based page of results. |
 | `max_page` | `number` | No | Retrieve and concatenate this many pages in one request. Each page costs a credit, so the cap is 10. |
 
-The sort values are `most_recent`, `most_helpful`, `highest_rating` and `lowest_rating`.
+The sort values are `most_recent`, `most_helpful`, `high_to_low_rating` and `low_to_high_rating`.
 
 
 
@@ -438,9 +446,18 @@ Each page costs a credit; `max_page` concatenates several and is capped.
     brand_link?: string | null,
     rating?: number | null,
     ratings_total?: number | null,
-    main_image?: string | null,
-    images?: string[] | null,
-    videos?: string[] | null,
+    main_image?: string | {
+      link?: string | null,
+      type?: string | null
+    } | null,
+    images?: (string | {
+      link?: string | null,
+      type?: string | null
+    })[] | null,
+    videos?: (string | {
+      link?: string | null,
+      type?: string | null
+    })[] | null,
     price?: {
       value?: number | null,
       currency?: string | null,

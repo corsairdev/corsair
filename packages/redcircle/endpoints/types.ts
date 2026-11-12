@@ -171,6 +171,12 @@ const PriceSchema = z
 	})
 	.loose();
 
+// Search responses use URL strings; product responses document media objects.
+const MediaSchema = z.union([
+	z.string(),
+	z.object({ link: z.string().nullish(), type: z.string().nullish() }).loose(),
+]);
+
 /** A product as the search and category routes return it, and `product` carries. */
 const ProductSchema = z
 	.object({
@@ -185,15 +191,14 @@ const ProductSchema = z
 		brand_link: z.string().nullish(),
 		rating: z.number().nullish(),
 		ratings_total: z.number().nullish(),
-		main_image: z.string().nullish(),
-		images: z.array(z.string()).nullish(),
-		videos: z.array(z.string()).nullish(),
+		main_image: MediaSchema.nullish(),
+		images: z.array(MediaSchema).nullish(),
+		videos: z.array(MediaSchema).nullish(),
 		price: PriceSchema.nullish(),
 		description: z.string().nullish(),
 		feature_bullets: z.array(z.string()).nullish(),
 		specifications: z.array(z.record(z.string(), z.string())).nullish(),
-		// unknown: the category breadcrumb and variant trees are provider-shaped
-		// and not read by any operation here.
+		// Category breadcrumbs contain string ids and names.
 		categories: z.array(z.record(z.string(), z.string())).nullish(),
 		variants: z.array(VariantSchema).nullish(),
 	})
@@ -283,17 +288,33 @@ export type SearchResponse = z.infer<typeof SearchResponseSchema>;
 
 // ── reviews ───────────────────────────────────────────────────────────────
 
-const ReviewsListInputSchema = z.object({
-	tcin: z.string().optional().describe('The Target TCIN (item id).'),
-	dpci: z.string().optional(),
-	gtin: z.string().optional(),
-	url: z.string().optional(),
-	sort_by: z
-		.enum(['most_recent', 'most_helpful', 'highest_rating', 'lowest_rating'])
-		.optional(),
-	page: PageSchema,
-	max_page: MaxPageSchema,
-});
+const ReviewsListInputSchema = z
+	.object({
+		tcin: z.string().optional().describe('The Target TCIN (item id).'),
+		dpci: z.string().optional(),
+		gtin: z.string().optional(),
+		url: z.string().optional(),
+		sort_by: z
+			.enum([
+				'most_recent',
+				'most_helpful',
+				'high_to_low_rating',
+				'low_to_high_rating',
+			])
+			.optional(),
+		page: PageSchema,
+		max_page: MaxPageSchema,
+	})
+	.refine(
+		(value) =>
+			[value.tcin, value.dpci, value.gtin, value.url].some(
+				(selector) => selector !== undefined,
+			),
+		{
+			message: 'Provide `tcin`, `dpci`, `gtin` or `url`.',
+			path: ['tcin'],
+		},
+	);
 
 export type ReviewsListInput = z.input<typeof ReviewsListInputSchema>;
 

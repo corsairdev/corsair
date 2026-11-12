@@ -133,6 +133,8 @@ describe('the incident retry_after', () => {
 
 		expect(error.status).toBe(503);
 		expect(error.isIncident).toBe(true);
+		expect(error.detail).toBe(INCIDENT.message);
+		expect(error.message).toContain(INCIDENT.message);
 		// The body says 3600 seconds; the plugin stores milliseconds, the unit the
 		// retry delay uses.
 		expect(error.retryAfter).toBe(3_600_000);

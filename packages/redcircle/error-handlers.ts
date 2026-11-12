@@ -1,6 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { RedcircleAPIError } from './client';
 
+const MAX_INCIDENT_RETRY_DELAY_MS = 30_000;
+
 function statusOf(error: Error): number | undefined {
 	return error instanceof RedcircleAPIError ? error.status : undefined;
 }
@@ -41,7 +43,14 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof RedcircleAPIError && error.isIncident,
 		handler: async (error: Error) => ({
-			maxRetries: 2,
+			// Surface long incidents instead of keeping a call open or retrying early.
+			maxRetries:
+				error instanceof RedcircleAPIError &&
+				error.retryAfter !== undefined &&
+				(!Number.isFinite(error.retryAfter) ||
+					error.retryAfter > MAX_INCIDENT_RETRY_DELAY_MS)
+					? 0
+					: 2,
 			headersRetryAfterMs:
 				error instanceof RedcircleAPIError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
@@ -72,7 +81,7 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof RedcircleAPIError &&
 			error.replayable &&
-			(error.status ?? 0) >= 500,
+			(error.status === undefined || error.status >= 500),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
