@@ -59,7 +59,7 @@ function readString(
  * `requestId` is what Yandex support asks for, so it is kept.
  */
 export class YandexAPIError extends Error {
-	/** The HTTP status, which is usually 400 whatever the gRPC code is. */
+	/** The HTTP status Yandex mapped from the gRPC code, e.g. 401 for 16. */
 	readonly status?: number;
 	/** The gRPC code, e.g. 16 for unauthenticated. */
 	readonly grpcCode?: number;
@@ -162,8 +162,8 @@ export type YandexRequest = {
 
 /**
  * A cloud resource is scoped to a folder, and the header identifies which one.
- * An API key already implies its folder, so this is only needed when the key is
- * an IAM token covering several.
+ * A service account's key already implies its folder; a user account's IAM
+ * token needs the folder named on every call.
  */
 export function folderHeader(
 	folderId: string | undefined,
