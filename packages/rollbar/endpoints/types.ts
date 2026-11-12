@@ -47,6 +47,34 @@ const LevelSchema = z.enum(['critical', 'error', 'warning', 'info', 'debug']);
 
 const StatusSchema = z.enum(['active', 'resolved', 'muted']);
 
+/** `items.list` also filters on `archived`, which an update cannot set. */
+const StatusFilterSchema = z.enum(['active', 'resolved', 'muted', 'archived']);
+
+/**
+ * An account or personal access token reaches several projects, so the item and
+ * occurrence routes need the project named. A project token ignores it.
+ */
+const ProjectIdSchema = z
+	.number()
+	.int()
+	.positive()
+	.optional()
+	.describe(
+		'Required with an account or personal access token, which Rollbar otherwise refuses with 403 "Requires project access". A project access token ignores it.',
+	);
+
+/**
+ * `GET /items` returns each `id` as a numeric string while `GET /item/{id}`
+ * returns a number, so both are read and a string is converted.
+ */
+const ItemIdSchema = z.union([
+	z.number(),
+	z
+		.string()
+		.regex(/^\d+$/)
+		.transform((value) => Number(value)),
+]);
+
 /**
  * `page` and `total_count` are declared rather than added by a transform,
  * because the docs generator reads a transform's input side and would omit them.
@@ -66,7 +94,7 @@ const pagingFields = {
 const ItemsListInputSchema = z.object({
 	page: PageSchema,
 	limit: LimitSchema,
-	status: StatusSchema.optional(),
+	status: StatusFilterSchema.optional(),
 	level: z
 		.array(LevelSchema)
 		.optional()
@@ -76,7 +104,6 @@ const ItemsListInputSchema = z.object({
 	environment: z.string().optional(),
 	framework: z.string().optional(),
 	query: z.string().optional().describe('A search string.'),
-	ids: z.array(z.number().int()).optional(),
 	project_ids: z
 		.array(z.number().int())
 		.optional()
@@ -90,7 +117,7 @@ export type ItemsListInput = z.input<typeof ItemsListInputSchema>;
 
 const ItemSchema = z
 	.object({
-		id: z.number().nullish(),
+		id: ItemIdSchema.nullish(),
 		public_item_id: z.number().nullish(),
 		group_item_id: z.number().nullish(),
 		project_id: z.number().nullish(),
@@ -119,9 +146,9 @@ const ItemSchema = z
 		level_lock: z.number().nullish(),
 		controlling_id: z.number().nullish(),
 		activating_occurrence_id: z.number().nullish(),
-		// unknown: a per-integration blob whose shape depends on which
-		// integrations the account has, so it is returned as sent.
-		integrations_data: z.string().nullish(),
+		// A per-integration blob whose shape depends on which integrations the
+		// account has: `null` in a list, an object on `GET /item/{id}`.
+		integrations_data: z.union([z.string(), JsonMapSchema]).nullish(),
 	})
 	.loose();
 
@@ -136,6 +163,7 @@ export type ItemsListResponse = z.infer<typeof ItemsListResponseSchema>;
 
 const ItemsGetInputSchema = z.object({
 	item_id: z.number().int().positive(),
+	project_id: ProjectIdSchema,
 });
 
 export type ItemsGetInput = z.input<typeof ItemsGetInputSchema>;
@@ -146,6 +174,7 @@ export type ItemsGetResponse = z.infer<typeof ItemsGetResponseSchema>;
 const ItemsUpdateInputSchema = z
 	.object({
 		item_id: z.number().int().positive(),
+		project_id: ProjectIdSchema,
 		status: StatusSchema.optional(),
 		level: LevelSchema.optional(),
 		title: z.string().optional().describe('A new title, up to 255 characters.'),
@@ -196,6 +225,7 @@ export type ItemsUpdateResponse = z.infer<typeof ItemsUpdateResponseSchema>;
 
 const ItemCommentsInputSchema = z.object({
 	item_id: z.number().int().positive(),
+	project_id: ProjectIdSchema,
 	page: PageSchema,
 });
 
@@ -204,11 +234,19 @@ export type ItemCommentsInput = z.input<typeof ItemCommentsInputSchema>;
 const CommentSchema = z
 	.object({
 		id: z.number().nullish(),
+		type: z.string().nullish(),
+		source: z
+			.string()
+			.nullish()
+			.describe(
+				'`comment` or `resolve_note`. Ids can repeat across sources, so (`source`, `id`) identifies a comment.',
+			),
 		item_id: z.number().nullish(),
-		project_id: z.number().nullish(),
 		user_id: z.number().nullish(),
-		body: z.string().nullish(),
+		username: z.string().nullish(),
+		text: z.string().nullish(),
 		timestamp: z.number().nullish(),
+		via_api: z.boolean().nullish(),
 	})
 	.loose();
 
@@ -223,7 +261,15 @@ export type ItemCommentsResponse = z.infer<typeof ItemCommentsResponseSchema>;
 
 const ItemCommentCreateInputSchema = z.object({
 	item_id: z.number().int().positive(),
-	body: z.string().min(1).describe('The comment text.'),
+	project_id: z
+		.number()
+		.int()
+		.positive()
+		.describe('The project that holds the item. Rollbar requires it here.'),
+	body: z
+		.string()
+		.min(1)
+		.describe('The comment text, sent to Rollbar as `comment`.'),
 });
 
 export type ItemCommentCreateInput = z.input<
@@ -232,10 +278,7 @@ export type ItemCommentCreateInput = z.input<
 
 const ItemCommentCreateResponseSchema = z.object({
 	comment_id: z.number().nullish(),
-	result: z
-		.object({ id: z.number().nullish(), body: z.string().nullish() })
-		.loose()
-		.nullish(),
+	result: CommentSchema.nullish(),
 });
 
 export type ItemCommentCreateResponse = z.infer<
@@ -244,6 +287,7 @@ export type ItemCommentCreateResponse = z.infer<
 
 const ItemEventsInputSchema = z.object({
 	item_id: z.number().int().positive(),
+	project_id: ProjectIdSchema,
 	page: PageSchema,
 });
 
@@ -252,12 +296,20 @@ export type ItemEventsInput = z.input<typeof ItemEventsInputSchema>;
 const ItemEventSchema = z
 	.object({
 		id: z.number().nullish(),
-		event_name: z.string().nullish(),
-		event: z.string().nullish(),
-		timestamp: z.number().nullish(),
+		type: z
+			.string()
+			.nullish()
+			.describe(
+				'Such as `item_comment`, `item_status_history` or `item_level_history`. The other fields depend on it and are kept as sent.',
+			),
+		item_id: z.number().nullish(),
 		user_id: z.number().nullish(),
-		// An event's `data` differs by `event_name`, so it is stored as sent.
-		data: JsonMapSchema.nullish(),
+		username: z.string().nullish(),
+		timestamp: z.number().nullish(),
+		text: z.string().nullish(),
+		status: z.string().nullish(),
+		level: z.string().nullish(),
+		comment: z.string().nullish(),
 	})
 	.loose();
 
@@ -294,18 +346,12 @@ const OccurrenceSchema = z
 		id: z.number().nullish(),
 		project_id: z.number().nullish(),
 		item_id: z.number().nullish(),
-		environment: z.string().nullish(),
-		level: z.string().nullish(),
 		timestamp: z.number().nullish(),
-		platform: z.string().nullish(),
-		framework: z.string().nullish(),
-		language: z.string().nullish(),
-		server: JsonMapSchema.nullish(),
-		client: JsonMapSchema.nullish(),
-		request: JsonMapSchema.nullish(),
-		person: JsonMapSchema.nullish(),
-		// The trace chain and context blocks are stored as Rollbar sent them.
-		body: JsonMapSchema.nullish(),
+		version: z.number().nullish(),
+		billable: z.number().nullish(),
+		// The payload the notifier sent (environment, level, body with the trace
+		// chain, request, person, server), kept as Rollbar stored it.
+		data: JsonMapSchema.nullish(),
 	})
 	.loose();
 
@@ -322,6 +368,7 @@ export type OccurrencesListResponse = z.infer<
 
 const OccurrencesGetInputSchema = z.object({
 	occurrence_id: z.number().int().positive(),
+	project_id: ProjectIdSchema,
 });
 
 export type OccurrencesGetInput = z.input<typeof OccurrencesGetInputSchema>;
@@ -349,8 +396,7 @@ const ProjectSchema = z
 		date_created: z.number().nullish(),
 		date_modified: z.number().nullish(),
 		// A project's settings are stored as sent; its tokens have their own route.
-		settings: JsonMapSchema.nullish(),
-		access_tokens: z.array(JsonMapSchema).nullish(),
+		settings_data: JsonMapSchema.nullish(),
 	})
 	.loose();
 
@@ -358,7 +404,6 @@ export type RollbarProject = z.infer<typeof ProjectSchema>;
 
 const ProjectsListResponseSchema = z.object({
 	projects: z.array(ProjectSchema),
-	...pagingFields,
 });
 
 export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
@@ -367,8 +412,7 @@ export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
 
 const DeploysListInputSchema = z.object({
 	page: PageSchema,
-	environment: z.string().optional(),
-	project_id: z.number().int().optional(),
+	project_id: ProjectIdSchema,
 });
 
 export type DeploysListInput = z.input<typeof DeploysListInputSchema>;
@@ -382,9 +426,10 @@ const DeploySchema = z
 		comment: z.string().nullish(),
 		status: z.string().nullish(),
 		local_username: z.string().nullish(),
-		rollbar_username: z.string().nullish(),
+		user_id: z.number().nullish(),
+		username: z.string().nullish(),
 		start_time: z.number().nullish(),
-		end_time: z.number().nullish(),
+		finish_time: z.number().nullish(),
 	})
 	.loose();
 
@@ -414,7 +459,6 @@ export type DeployCreateInput = z.input<typeof DeployCreateInputSchema>;
 
 const DeployCreateResponseSchema = z.object({
 	deploy_id: z.number().nullish(),
-	result: z.object({ id: z.number().nullish() }).loose().nullish(),
 });
 
 export type DeployCreateResponse = z.infer<typeof DeployCreateResponseSchema>;

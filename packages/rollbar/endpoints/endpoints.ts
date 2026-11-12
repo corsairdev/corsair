@@ -31,9 +31,8 @@ export const itemsList: RollbarEndpoints['itemsList'] = (ctx, input) =>
 				assigned_user: parsed.assigned_user,
 				assigned_team: parsed.assigned_team,
 				is_snoozed: parsed.is_snoozed,
-				// These three are repeatable filters, so the array repeats the key.
+				// These two are repeatable filters, so the array repeats the key.
 				level: parsed.level,
-				ids: parsed.ids,
 				project_ids: parsed.project_ids,
 			}),
 		}),
@@ -59,6 +58,7 @@ export const itemsGet: RollbarEndpoints['itemsGet'] = (ctx, input) =>
 			method: 'GET',
 			path: `/item/${segment(parsed.item_id)}`,
 			replayable: true,
+			query: queryOf({ project_id: parsed.project_id }),
 		}),
 		{
 			shape: resultShape('item'),
@@ -79,6 +79,7 @@ export const itemsUpdate: RollbarEndpoints['itemsUpdate'] = (ctx, input) =>
 			method: 'PATCH',
 			path: `/item/${segment(parsed.item_id)}`,
 			replayable: false,
+			query: queryOf({ project_id: parsed.project_id }),
 			body: queryOf({
 				status: parsed.status,
 				level: parsed.level,
@@ -112,7 +113,7 @@ export const itemComments: RollbarEndpoints['itemComments'] = (ctx, input) =>
 			method: 'GET',
 			path: `/item/${segment(parsed.item_id)}/comments`,
 			replayable: true,
-			query: queryOf({ page: parsed.page }),
+			query: queryOf({ page: parsed.page, project_id: parsed.project_id }),
 		}),
 		{
 			shape: listShape('comments'),
@@ -136,7 +137,10 @@ export const itemCommentCreate: RollbarEndpoints['itemCommentCreate'] = (
 			method: 'POST',
 			path: `/item/${segment(parsed.item_id)}/comments`,
 			replayable: false,
-			body: { body: parsed.body },
+			query: { project_id: parsed.project_id },
+			// Rollbar names the text `comment` and answers 422 "Invalid comment"
+			// to any other field.
+			body: { comment: parsed.body },
 		}),
 		{
 			shape: (raw) => {
@@ -161,7 +165,7 @@ export const itemEvents: RollbarEndpoints['itemEvents'] = (ctx, input) =>
 			method: 'GET',
 			path: `/item/${segment(parsed.item_id)}/events`,
 			replayable: true,
-			query: queryOf({ page: parsed.page }),
+			query: queryOf({ page: parsed.page, project_id: parsed.project_id }),
 		}),
 		{
 			shape: listShape('events'),
@@ -224,13 +228,11 @@ export const occurrencesGet: RollbarEndpoints['occurrencesGet'] = (
 			method: 'GET',
 			path: `/instance/${segment(parsed.occurrence_id)}`,
 			replayable: true,
+			query: queryOf({ project_id: parsed.project_id }),
 		}),
 		{
-			// This route names the record `instance`.
-			shape: (raw) => {
-				const result = asRecord(asRecord(raw)?.result);
-				return { occurrence: result?.instance };
-			},
+			// `result` is the occurrence itself.
+			shape: resultShape('occurrence'),
 			log: (_, result) => ({ occurrenceId: result.occurrence.id ?? 0 }),
 		},
 	);
@@ -246,7 +248,8 @@ export const projectsList: RollbarEndpoints['projectsList'] = (ctx, input) =>
 		input,
 		() => ({ method: 'GET', path: '/projects', replayable: true }),
 		{
-			shape: listShape('projects'),
+			// `result` is a bare array here, not a page object.
+			shape: (raw) => ({ projects: asRecord(raw)?.result }),
 			log: (_, result) => ({ count: result.projects.length }),
 		},
 	);
@@ -264,9 +267,10 @@ export const deploysList: RollbarEndpoints['deploysList'] = (ctx, input) =>
 			method: 'GET',
 			path: '/deploys',
 			replayable: true,
+			// Rollbar ignores an `environment` filter on this route (checked live),
+			// so the plugin does not offer one.
 			query: queryOf({
 				page: parsed.page,
-				environment: parsed.environment,
 				project_id: parsed.project_id,
 			}),
 		}),
@@ -300,10 +304,11 @@ export const deploysCreate: RollbarEndpoints['deploysCreate'] = (ctx, input) =>
 			}),
 		}),
 		{
-			shape: (raw) => {
-				const result = asRecord(asRecord(raw)?.result);
-				return { deploy_id: result?.id, result };
-			},
+			// This route alone answers `{ data: { deploy_id } }`, with no `err` or
+			// `result`.
+			shape: (raw) => ({
+				deploy_id: asRecord(asRecord(raw)?.data)?.deploy_id,
+			}),
 			log: (_, result) => ({ deployId: result.deploy_id ?? 0 }),
 		},
 	);

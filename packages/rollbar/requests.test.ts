@@ -53,6 +53,24 @@ describe('items.list', () => {
 		expect(result.total_count).toBe(1);
 	});
 
+	it('returns the string id the list sends as a number', async () => {
+		respond(fetchMock, ITEM_PAGE);
+
+		const result = (await invoke(Endpoints.itemsList, {})) as Awaited<
+			ReturnType<typeof Endpoints.itemsList>
+		>;
+
+		expect(result.items[0]?.id).toBe(ITEM_ID);
+	});
+
+	it('accepts the archived status filter', async () => {
+		respond(fetchMock, ITEM_PAGE);
+
+		await invoke(Endpoints.itemsList, { status: 'archived' });
+
+		expect(lastRequest(fetchMock).query.status).toBe('archived');
+	});
+
 	it('rejects a level Rollbar does not define', async () => {
 		await expect(
 			invoke(Endpoints.itemsList, { level: ['fatal'] }),
@@ -77,6 +95,15 @@ describe('items.get', () => {
 		expect(lastRequest(fetchMock).path).toBe(`/api/1/item/${ITEM_ID}`);
 		expect(result.item.level).toBe('error');
 		expect(result.item.total_occurrences).toBe(42);
+		expect(result.item.integrations_data).toEqual({});
+	});
+
+	it('names the project for an account or personal token', async () => {
+		respond(fetchMock, ITEM_RESULT);
+
+		await invoke(Endpoints.itemsGet, { item_id: ITEM_ID, project_id: 678 });
+
+		expect(lastRequest(fetchMock).query).toEqual({ project_id: '678' });
 	});
 });
 
@@ -139,7 +166,8 @@ describe('item comments', () => {
 		})) as Awaited<ReturnType<typeof Endpoints.itemComments>>;
 
 		expect(lastRequest(fetchMock).path).toBe(`/api/1/item/${ITEM_ID}/comments`);
-		expect(result.comments[0]?.body).toBe('Fixed in the next deploy.');
+		expect(result.comments[0]?.text).toBe('Fixed in the next deploy.');
+		expect(result.comments[0]?.source).toBe('comment');
 	});
 
 	it('adds a comment', async () => {
@@ -147,18 +175,34 @@ describe('item comments', () => {
 
 		const result = (await invoke(Endpoints.itemCommentCreate, {
 			item_id: ITEM_ID,
+			project_id: 678,
 			body: 'Thanks!',
 		})) as Awaited<ReturnType<typeof Endpoints.itemCommentCreate>>;
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('POST');
-		expect(request.json()).toEqual({ body: 'Thanks!' });
+		// Rollbar answers 422 "Invalid comment" to a `body` field, and 400
+		// "invalid or missing project id" without the query parameter.
+		expect(request.json()).toEqual({ comment: 'Thanks!' });
+		expect(request.query).toEqual({ project_id: '678' });
 		expect(result.comment_id).toBe(100);
+		expect(result.result?.text).toBe('Thanks!');
 	});
 
 	it('rejects an empty comment', async () => {
 		await expect(
-			invoke(Endpoints.itemCommentCreate, { item_id: ITEM_ID, body: '' }),
+			invoke(Endpoints.itemCommentCreate, {
+				item_id: ITEM_ID,
+				project_id: 678,
+				body: '',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('requires the project id Rollbar needs on this route', async () => {
+		await expect(
+			invoke(Endpoints.itemCommentCreate, { item_id: ITEM_ID, body: 'x' }),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
@@ -173,7 +217,8 @@ describe('item events', () => {
 		})) as Awaited<ReturnType<typeof Endpoints.itemEvents>>;
 
 		expect(lastRequest(fetchMock).path).toBe(`/api/1/item/${ITEM_ID}/events`);
-		expect(result.events[0]?.event_name).toBe('status_change');
+		expect(result.events[0]?.type).toBe('item_status_history');
+		expect(result.events[0]?.status).toBe('resolved');
 	});
 });
 
@@ -190,6 +235,7 @@ describe('occurrences', () => {
 		// The route's `instances` array is returned under the plugin's name.
 		expect(result.occurrences).toHaveLength(1);
 		expect(result.occurrences[0]?.id).toBe(OCCURRENCE_ID);
+		expect(result.total_count).toBeNull();
 	});
 
 	it('reads one occurrence', async () => {
@@ -202,7 +248,8 @@ describe('occurrences', () => {
 		expect(lastRequest(fetchMock).path).toBe(
 			`/api/1/instance/${OCCURRENCE_ID}`,
 		);
-		expect(result.occurrence.level).toBe('error');
+		expect(result.occurrence.id).toBe(OCCURRENCE_ID);
+		expect(result.occurrence.data?.level).toBe('error');
 	});
 });
 
@@ -214,20 +261,22 @@ describe('projects and deploys', () => {
 			ReturnType<typeof Endpoints.projectsList>
 		>;
 
+		expect(lastRequest(fetchMock).path).toBe('/api/1/projects');
+		expect(result.projects).toHaveLength(1);
 		expect(result.projects[0]?.name).toBe('Acme Web');
 	});
 
-	it('lists deploys for an environment', async () => {
+	it('lists deploys', async () => {
 		respond(fetchMock, DEPLOY_PAGE);
 
 		const result = (await invoke(Endpoints.deploysList, {
-			environment: 'production',
+			page: 2,
 		})) as Awaited<ReturnType<typeof Endpoints.deploysList>>;
 
-		expect(lastRequest(fetchMock).query).toEqual({
-			environment: 'production',
-		});
+		expect(lastRequest(fetchMock).path).toBe('/api/1/deploys');
+		expect(lastRequest(fetchMock).query).toEqual({ page: '2' });
 		expect(result.deploys[0]?.revision).toBe('abc1234');
+		expect(result.deploys[0]?.finish_time).toBe(1765602474);
 	});
 
 	it('creates a deploy', async () => {
@@ -244,6 +293,7 @@ describe('projects and deploys', () => {
 			revision: 'abc1234',
 			comment: 'Ship it',
 		});
+		// Rollbar answers `{ data: { deploy_id } }` here.
 		expect(result.deploy_id).toBe(555);
 	});
 

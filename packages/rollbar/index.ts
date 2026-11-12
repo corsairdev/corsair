@@ -157,11 +157,13 @@ const rollbarEndpointMeta = {
 	},
 	'itemComments.list': {
 		riskLevel: 'read',
-		description: 'List the comments on an item, newest first',
+		description:
+			'List the comments and resolve notes on an item, oldest first (Rollbar marks this route deprecated in favour of itemEvents.list)',
 	},
 	'itemComments.create': {
 		riskLevel: 'write',
-		description: 'Add a comment to an item',
+		description:
+			'Add a comment to an item, posted as the token owner; needs a personal access token with write scope and the project_id',
 	},
 	'itemEvents.list': {
 		riskLevel: 'read',
@@ -180,17 +182,17 @@ const rollbarEndpointMeta = {
 	},
 	'projects.list': {
 		riskLevel: 'read',
-		description: 'List the projects the token can see on the account',
+		description:
+			'List the projects the token can see; needs an account or personal access token',
 	},
 	'deploys.list': {
 		riskLevel: 'read',
-		description:
-			'List deploys with environment and project filters, newest first',
+		description: 'List deploys in a project, newest first, with page paging',
 	},
 	'deploys.create': {
 		riskLevel: 'write',
 		description:
-			'Record a deploy with its environment, revision and optional status and comment',
+			'Record a deploy with its environment, revision and optional status and comment; needs a project token with post_server_item scope',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof rollbarEndpointsNested>;
 
