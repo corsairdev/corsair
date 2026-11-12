@@ -204,6 +204,19 @@ describe('scrape.screenshot', () => {
 		).rejects.toThrow(/capture failed/);
 	});
 
+	it('fails when the answer holds no image and no per-shot error', async () => {
+		for (const screenShots of [undefined, [], [{ type: 'ScreenShot' }]]) {
+			respond({ ...SCREENSHOT_BODY, screenShots });
+
+			await expect(
+				endpoints().scrape.screenshot(makeCtx(), {
+					url: 'https://example.com/',
+					render: true,
+				}),
+			).rejects.toThrow(/no image/);
+		}
+	});
+
 	it('asks for the full page when fullPage is set', async () => {
 		respond(SCREENSHOT_BODY);
 

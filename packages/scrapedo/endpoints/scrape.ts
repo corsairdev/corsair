@@ -142,8 +142,12 @@ export const screenshot: ScrapeDoEndpoints['scrapeScreenshot'] = (ctx, input) =>
 				const images = shots.flatMap((shot) =>
 					shot.image ? [shot.image] : [],
 				);
-				const failure = shots.find((shot) => shot.error)?.error;
-				if (images.length === 0 && failure) {
+				// No image is a failed capture even when no entry names an error, so it
+				// never reads as a completed screenshot.
+				if (images.length === 0) {
+					const failure =
+						shots.find((shot) => shot.error)?.error ??
+						'the answer held no image';
 					throw new ScrapeDoAPIError(
 						`Scrape.do could not take the screenshot: ${failure}`,
 						{
