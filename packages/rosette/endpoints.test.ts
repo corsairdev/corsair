@@ -390,12 +390,12 @@ describe('semantics', () => {
 	});
 
 	it('requires at least one result language before calling', async () => {
-		await expect(
-			invoke(Api.similarTerms, { content: 'car' }),
-		).rejects.toThrow();
+		await expect(invoke(Api.similarTerms, { content: 'car' })).rejects.toThrow(
+			/resultLanguages/,
+		);
 		await expect(
 			invoke(Api.similarTerms, { content: 'car', resultLanguages: [] }),
-		).rejects.toThrow();
+		).rejects.toThrow(/resultLanguages/);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
@@ -478,13 +478,29 @@ describe('name similarity and translation', () => {
 				name1: { text: 'x', entityType: 'PRODUCT' },
 				name2: { text: 'y' },
 			}),
-		).rejects.toThrow();
+		).rejects.toThrow(/entityType/);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('rejects a name with no text', async () => {
 		await expect(
 			invoke(Api.nameSimilarity, { name1: {}, name2: { text: 'y' } }),
-		).rejects.toThrow();
+		).rejects.toThrow(/text/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('sends scoring parameters, which change the score (live: deletionScore 0 gave 0.0)', async () => {
+		respond(fetchMock, NAME_SIMILARITY);
+
+		await invoke(Api.nameSimilarity, {
+			name1: { text: 'John Smith' },
+			name2: { text: 'John Quincy Smith' },
+			parameters: { deletionScore: '0.0' },
+		});
+
+		expect(lastRequest(fetchMock).bodyRecord).toMatchObject({
+			parameters: { deletionScore: '0.0' },
+		});
 	});
 
 	it('translates a name', async () => {
@@ -510,7 +526,22 @@ describe('name similarity and translation', () => {
 	it('rejects a translation with no target language', async () => {
 		await expect(
 			invoke(Api.nameTranslation, { name: 'John Smith' }),
-		).rejects.toThrow();
+		).rejects.toThrow(/targetLanguage/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('sends a targetScheme (live: IC accepted, an unknown scheme refused with 400)', async () => {
+		respond(fetchMock, NAME_TRANSLATION);
+
+		await invoke(Api.nameTranslation, {
+			name: 'John Smith',
+			targetLanguage: 'eng',
+			targetScheme: 'IC',
+		});
+
+		expect(lastRequest(fetchMock).bodyRecord).toMatchObject({
+			targetScheme: 'IC',
+		});
 	});
 });
 
@@ -541,9 +572,37 @@ describe('transliteration', () => {
 	});
 
 	it('rejects empty content', async () => {
+		await expect(invoke(Api.transliteration, { content: '' })).rejects.toThrow(
+			/content/,
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('takes contentUri in place of content (live: 200)', async () => {
+		respond(fetchMock, TRANSLITERATION);
+
+		await invoke(Api.transliteration, {
+			contentUri: 'https://example.com',
+			language: 'ara',
+		});
+
+		expect(lastRequest(fetchMock).bodyRecord).toEqual({
+			contentUri: 'https://example.com',
+			language: 'ara',
+		});
+	});
+
+	it('needs exactly one of content or contentUri', async () => {
+		await expect(invoke(Api.transliteration, {})).rejects.toThrow(
+			/content or contentUri/,
+		);
 		await expect(
-			invoke(Api.transliteration, { content: '' }),
-		).rejects.toThrow();
+			invoke(Api.transliteration, {
+				content: 'x',
+				contentUri: 'https://example.com',
+			}),
+		).rejects.toThrow(/not both/);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 

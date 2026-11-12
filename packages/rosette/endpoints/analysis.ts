@@ -361,10 +361,10 @@ export const nameSimilarity: RosetteEndpoints['nameSimilarity'] = (
 			output: Outputs.nameSimilarity,
 		},
 		input,
-		({ name1, name2 }) => ({
+		({ name1, name2, parameters }) => ({
 			method: 'POST',
 			path: '/name-similarity',
-			body: { name1, name2 },
+			body: { name1, name2, parameters },
 			replayable: true,
 		}),
 		{
@@ -393,6 +393,7 @@ export const nameTranslation: RosetteEndpoints['nameTranslation'] = (
 			sourceLanguageOfUse,
 			sourceScript,
 			targetScript,
+			targetScheme,
 		}) => ({
 			method: 'POST',
 			path: '/name-translation',
@@ -404,6 +405,7 @@ export const nameTranslation: RosetteEndpoints['nameTranslation'] = (
 				sourceLanguageOfUse,
 				sourceScript,
 				targetScript,
+				targetScheme,
 			},
 			replayable: true,
 		}),
@@ -431,10 +433,10 @@ export const transliteration: RosetteEndpoints['transliteration'] = (
 			output: Outputs.transliteration,
 		},
 		input,
-		({ content, language }) => ({
+		({ content, contentUri, language }) => ({
 			method: 'POST',
 			path: '/transliteration',
-			body: { content, language },
+			body: { content, contentUri, language },
 			replayable: true,
 		}),
 		{

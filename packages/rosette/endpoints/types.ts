@@ -472,6 +472,12 @@ const NameSimilarityInputSchema = z
 	.object({
 		name1: NameSchema,
 		name2: NameSchema,
+		parameters: z
+			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+			.optional()
+			.describe(
+				'Scoring overrides by name, such as { deletionScore: "0.0" }. An unknown parameter name gets a 500 from the API.',
+			),
 	})
 	.describe(
 		'Compares two names and returns a similarity score; the order of the two matters to the score.',
@@ -504,6 +510,12 @@ const NameTranslationInputSchema = z.object({
 	sourceLanguageOfUse: z.string().optional(),
 	sourceScript: z.string().optional().describe('ISO 15924 code.'),
 	targetScript: z.string().optional().describe('ISO 15924 code.'),
+	targetScheme: z
+		.string()
+		.optional()
+		.describe(
+			'The transliteration scheme for the result, such as IC or BGN; an unknown scheme gets a 400.',
+		),
 });
 
 export type NameTranslationInput = z.infer<typeof NameTranslationInputSchema>;
@@ -534,15 +546,19 @@ export type NameTranslationResponse = z.infer<
 /**
  * The API takes only the document fields here: a `targetScript` is refused with a
  * 400 (live, 11-12), and the direction follows from `language` and the input's
- * script.
+ * script. `contentUri` works in place of `content` (live, 11-12).
  */
 const TransliterationInputSchema = z
 	.object({
-		content: z.string().min(1).describe('The text to transliterate.'),
+		content: DocumentShape.content.describe(
+			'The text to transliterate. Mutually exclusive with contentUri.',
+		),
+		contentUri: DocumentShape.contentUri,
 		language: LanguageSchema.optional().describe(
 			'The language of the text, such as ara; it sets which native script Latin text is moved into, or out of.',
 		),
 	})
+	.superRefine(requireOneSource)
 	.describe(
 		'Transcribes text between Latin and the native script of its language, so the result reads as the same words in the other script rather than a translation.',
 	);
