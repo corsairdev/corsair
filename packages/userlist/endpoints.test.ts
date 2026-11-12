@@ -57,6 +57,30 @@ describe('users', () => {
 		});
 	});
 
+	it('sends null to clear email and signed_up_at', async () => {
+		respondEmpty(fetchMock);
+
+		const result = await invoke(Users.upsert, {
+			identifier: 'user-123',
+			email: null,
+			signed_up_at: null,
+		});
+
+		expect(result).toMatchObject({ identifier: 'user-123' });
+		expect(lastRequest(fetchMock).body).toEqual({
+			identifier: 'user-123',
+			email: null,
+			signed_up_at: null,
+		});
+	});
+
+	it('treats a null email as no email when there is no identifier', async () => {
+		await expect(invoke(Users.upsert, { email: null })).rejects.toThrow(
+			'A user needs an identifier, an email, or both.',
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a user with neither identifier nor email', async () => {
 		await expect(
 			invoke(Users.upsert, { properties: { first_name: 'Nobody' } }),
@@ -137,6 +161,24 @@ describe('companies', () => {
 			name: 'Acme Inc.',
 			properties: { plan: 'plus' },
 		});
+	});
+
+	it('sends null to clear a company name and signed_up_at', async () => {
+		respondEmpty(fetchMock);
+
+		await invoke(Companies.upsert, {
+			identifier: 'company-42',
+			name: null,
+			signed_up_at: null,
+		});
+
+		expect(lastRequest(fetchMock).body).toEqual({
+			identifier: 'company-42',
+			name: null,
+			signed_up_at: null,
+		});
+		const fields = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
+		expect(fields.name).toBeUndefined();
 	});
 
 	it('sends the users a company is pushed with', async () => {

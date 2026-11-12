@@ -38,9 +38,10 @@ export const upsert: UserlistEndpoints['usersUpsert'] = (ctx, input) =>
 		input,
 		(body) => ({ method: 'POST', path: '/users', body }),
 		{
-			identifier: (parsed) => id(parsed.identifier ?? parsed.email),
+			identifier: (parsed) =>
+				id(parsed.identifier ?? parsed.email ?? undefined),
 			log: (parsed) => ({
-				id: id(parsed.identifier ?? parsed.email),
+				id: id(parsed.identifier ?? parsed.email ?? undefined),
 				properties: parsed.properties
 					? Object.keys(parsed.properties).length
 					: 0,
@@ -63,7 +64,10 @@ export const remove: UserlistEndpoints['usersDelete'] = (ctx, input) =>
 		input,
 		(body) => ({ method: 'DELETE', path: '/users', body }),
 		{
-			identifier: (parsed) => id(parsed.identifier ?? parsed.email),
-			log: (parsed) => ({ id: id(parsed.identifier ?? parsed.email) }),
+			identifier: (parsed) =>
+				id(parsed.identifier ?? parsed.email ?? undefined),
+			log: (parsed) => ({
+				id: id(parsed.identifier ?? parsed.email ?? undefined),
+			}),
 		},
 	);

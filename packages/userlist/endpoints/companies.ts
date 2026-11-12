@@ -21,7 +21,7 @@ export const upsert: UserlistEndpoints['companiesUpsert'] = (ctx, input) =>
 			identifier: (parsed) => String(parsed.identifier),
 			log: (parsed) => ({
 				id: String(parsed.identifier),
-				name: parsed.name,
+				name: parsed.name ?? undefined,
 				properties: parsed.properties
 					? Object.keys(parsed.properties).length
 					: 0,

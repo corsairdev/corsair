@@ -62,9 +62,14 @@ const UsersUpsertInputSchema = z
 		email: z
 			.string()
 			.min(1)
+			.nullable()
 			.optional()
-			.describe('The address. Required unless identifier is given.'),
-		signed_up_at: TimestampSchema.optional(),
+			.describe(
+				'The address. Required unless identifier is given. null clears it.',
+			),
+		signed_up_at: TimestampSchema.nullable()
+			.optional()
+			.describe('RFC 3339 / ISO 8601. null clears it.'),
 		properties: PropertiesSchema.optional(),
 		company: CompanyRefSchema.optional().describe(
 			'A single company, as a shortcut for one relationship.',
@@ -109,7 +114,8 @@ const UsersUpsertInputSchema = z
 			),
 	})
 	.superRefine((value, ctx) => {
-		if (value.identifier === undefined && value.email === undefined) {
+		// A null email clears it, so it cannot identify the user either.
+		if (value.identifier === undefined && value.email == null) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['identifier'],
@@ -142,8 +148,10 @@ export type UsersDeleteInput = z.infer<typeof UsersDeleteInputSchema>;
 
 const CompaniesUpsertInputSchema = z.object({
 	identifier: z.union([z.string().min(1), z.number()]),
-	name: z.string().optional(),
-	signed_up_at: TimestampSchema.optional(),
+	name: z.string().nullable().optional().describe('null clears it.'),
+	signed_up_at: TimestampSchema.nullable()
+		.optional()
+		.describe('RFC 3339 / ISO 8601. null clears it.'),
 	properties: PropertiesSchema.optional(),
 	user: UserRefSchema.optional().describe(
 		'A single user, as a shortcut for one relationship.',
