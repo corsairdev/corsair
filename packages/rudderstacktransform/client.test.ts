@@ -12,7 +12,9 @@ const API_KEY = 'rudderstack-secret-test-key';
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('Unexpected unmocked fetch');
+	});
 });
 
 afterEach(() => {

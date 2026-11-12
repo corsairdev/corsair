@@ -19,12 +19,9 @@ const context = {
 	originalError: new Error('failure'),
 } satisfies ErrorContext;
 
-function run(name: keyof typeof errorHandlers, error: Error): Promise<unknown> {
+function run(name: keyof typeof errorHandlers, error: Error) {
 	const handler = errorHandlers[name].handler;
-	return (handler as (e: Error, c: ErrorContext) => Promise<unknown>)(
-		error,
-		context,
-	);
+	return handler(error);
 }
 
 // unknown: a match function only inspects the error it is handed.

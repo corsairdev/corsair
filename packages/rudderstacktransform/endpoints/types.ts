@@ -26,9 +26,16 @@ const LanguageSchema = z
 		'javascript or pythonfaas. A resource cannot change language after it is created.',
 	);
 
-const JsonValueSchema: z.ZodType<
-	string | number | boolean | null | unknown[] | { [key: string]: unknown }
-> = z.lazy(() =>
+// Events may contain arbitrary nested JSON, but no functions or undefined values.
+type JsonValue =
+	| string
+	| number
+	| boolean
+	| null
+	| JsonValue[]
+	| { [key: string]: JsonValue };
+
+const JsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
 	z.union([
 		z.string(),
 		z.number(),
