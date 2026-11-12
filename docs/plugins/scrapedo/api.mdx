@@ -1,0 +1,554 @@
+---
+title: "Scrape.do API reference"
+sidebarTitle: "API"
+description: "API reference for the Scrape.do plugin in Corsair: every `scrapedo.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### asyncInfo
+
+`account.asyncInfo`
+
+Read the async pool concurrency, active jobs and credits left; costs nothing
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapedo.api.account.asyncInfo({});
+```
+
+**Input:** _empty object_
+
+Reads `/me` on the async host. The provider spells its credits field `AvaliableCredits`; this exposes it as `available_credits`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_concurrency` | `number` | Yes | The plan's concurrency limit. |
+| `free_concurrency` | `number` | Yes | Slots free in the async pool right now. |
+| `active_jobs` | `number` | Yes | Jobs running or queued. |
+| `available_credits` | `number` | Yes | Credits left. The provider spells this `AvaliableCredits` in its answer; the plugin uses the correct spelling. |
+
+
+
+---
+
+### info
+
+`account.info`
+
+Read the subscription state, concurrency limit and requests left this month; costs nothing but is limited to 10 calls a minute
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapedo.api.account.info({});
+```
+
+**Input:** _empty object_
+
+Reads `/info`. A bad token answers HTTP 200 with `IsActive: false`, which this turns into an error. Limited to 10 calls a minute.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_active` | `boolean` | Yes | Always true on a result: a rejected token makes `account.info` throw a 401 `ScrapeDoAPIError` instead. |
+| `concurrent_request` | `number` | Yes | The plan's concurrency limit. |
+| `max_monthly_request` | `number` | Yes | Requests the plan allows per month. |
+| `remaining_concurrent_request` | `number` | Yes | Concurrency slots free right now. |
+| `remaining_monthly_request` | `number` | Yes | Requests left this month. |
+
+
+
+---
+
+## Jobs
+
+### cancel
+
+`jobs.cancel`
+
+Cancel a queued or running job; a finished job cannot be cancelled
+
+**Risk:** `write`
+
+```ts
+await corsair.scrapedo.api.jobs.cancel({ jobId: 'a7730ad5-f40f-44a5-98ae-80f57620d240' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | The job to cancel. |
+
+Cancels a queued or running job. A job that already finished answers 406.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `status` | `string` | Yes | canceled |
+
+
+
+---
+
+### get
+
+`jobs.get`
+
+Read an async job with its status and one entry per target
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapedo.api.jobs.get({ jobId: 'a7730ad5-f40f-44a5-98ae-80f57620d240' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | The `job_id` from `jobs.start`. |
+
+A job can be `queuing`, `queued`, `pending` or `rotating` before it reaches `success`, `error` or `canceled`; keep polling until it reaches one of those three. Each task is `pending` before the pool picks it up, `rotating` while it runs, then `success` or `error`. Queueing latency is the provider's: a one-URL job can finish in about a second or wait over a minute when its pool is busy, so poll with a real deadline rather than a fixed attempt count.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | — |
+| `status` | `string` | Yes | Poll until the status is success, error or canceled; queuing, queued, pending and rotating all mean the job is still running. |
+| `tasks` | `object[]` | Yes | — |
+| `job` | `object` | Yes | The job as sent, with its timing and tasks. |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  task_id: string,
+  url?: string | null,
+  status: string
+}[]
+```
+</Accordion>
+
+<Accordion title="job full type">
+
+```ts
+{
+  job_id: string,
+  status: string,
+  start_time?: string | null,
+  end_time?: string | null,
+  canceled?: boolean | null,
+  tasks: {
+    task_id: string,
+    url?: string | null,
+    status: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`jobs.list`
+
+List async jobs with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapedo.api.jobs.list({ pageSize: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageNumber` | `number` | No | 1-based page. Defaults to 1. |
+| `pageSize` | `number` | No | Jobs per page. Defaults to 10. |
+
+Pages through the account's jobs, 10 per page by default.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobs` | `object[]` | Yes | — |
+| `total_count` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `page_number` | `number` | Yes | — |
+| `total_pages` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+  job_id: string,
+  status: string,
+  start_time?: string | null,
+  end_time?: string | null,
+  canceled?: boolean | null,
+  tasks: {
+    task_id: string,
+    url?: string | null,
+    status: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### result
+
+`jobs.result`
+
+Read one task result with the page content, its status and when it expires
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapedo.api.jobs.result({ jobId: 'a7730ad5-f40f-44a5-98ae-80f57620d240', taskId: 'c5e7eca1-5b18-44d8-8693-e4619c8c9b94' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | The job the task belongs to. |
+| `taskId` | `string` | Yes | The task id from `jobs.get`, one per target. |
+
+Returns the task content, its status, and `expires_at`. Read it before then, because Scrape.do drops the content afterwards.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+| `job_id` | `string` | Yes | — |
+| `url` | `string \| null` | No | — |
+| `status` | `string` | Yes | success or error. |
+| `status_code` | `number \| null` | No | The target's HTTP status. |
+| `content` | `string \| null` | No | The page body. Absent on a failed task, and base64-encoded when `base64_encoded` is true. |
+| `base64_encoded` | `boolean \| null` | No | True when `content` is base64 rather than text. |
+| `error_message` | `string \| null` | No | Why the task failed, when it did. |
+| `expires_at` | `string \| null` | No | When Scrape.do drops this result, so read it before then. |
+
+
+
+---
+
+### start
+
+`jobs.start`
+
+Start an async job for up to 100 URLs and return its job and task ids; results are held by Scrape.do until they expire
+
+**Risk:** `write`
+
+```ts
+await corsair.scrapedo.api.jobs.start({ targets: ['https://example.com/'], render: true, geoCode: 'us' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `targets` | `string[]` | Yes | The URLs to fetch. Scrape.do documents a batch per job; each becomes one task. |
+| `super` | `boolean` | No | Use the residential and mobile proxy pool for every target. |
+| `geoCode` | `string` | No | Two-letter proxy country code for every target. |
+| `render` | `boolean` | No | Render every target in the headless browser. |
+| `webhookUrl` | `string` | No | Where Scrape.do should POST the results when the job finishes, instead of polling. |
+
+Takes up to 100 URLs and returns a job id plus one task id per URL. Results are held by Scrape.do until they expire. Set `webhookUrl` to have them POSTed instead of polled.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | Pass this to `jobs.get` to read the job back. |
+| `task_ids` | `string[]` | Yes | One task per target, in request order. |
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+## Scrape
+
+### html
+
+`scrape.html`
+
+Fetch a page through the proxy with its status code; costs credits that vary by proxy and rendering
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapedo.api.scrape.html({ url: 'https://example.com/', super: true, geoCode: 'us' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to fetch. |
+| `super` | `boolean` | No | Use the residential and mobile proxy pool instead of datacenter. Defaults to false; costs more credits and raises the success rate on sites that block datacenter IPs. |
+| `geoCode` | `string` | No | Two-letter code of the proxy country, as the provider documents it: us, de and so on. Sent unchanged. |
+| `regionalGeoCode` | `string` | No | Continent to route through, for a country the provider does not offer: europe, asia, north-america and so on. |
+| `sessionId` | `number` | No | A number that pins every request carrying it to the same proxy IP, which is how a multi-step flow keeps one session. |
+| `setCookies` | `string` | No | Cookies for the target, in `name=value; name2=value2` form. |
+| `disableRedirection` | `boolean` | No | Return the redirect response itself instead of following it. Defaults to false. |
+| `timeout` | `number` | No | Milliseconds Scrape.do may spend on the request, from 5000 to 120000. Defaults to 60000. The API answers `400` naming the bounds for a value outside them. |
+| `disableRetry` | `boolean` | No | Turn off Scrape.do's own retry mechanism, which otherwise resends through a new IP before answering. Defaults to false. |
+| `render` | `boolean` | No | Use the managed headless browser to run JavaScript and wait for the page. Defaults to false; costs more credits. |
+| `device` | `desktop \| mobile \| tablet` | No | Emulated device. Defaults to desktop. |
+| `width` | `number` | No | Browser viewport width in pixels. Defaults to 1920. |
+| `height` | `number` | No | Browser viewport height in pixels. Defaults to 1080. |
+| `blockResources` | `boolean` | No | Skip CSS, images and fonts in the browser. Defaults to true; set false only when the page needs them. |
+| `transparentResponse` | `boolean` | No | Return the target's own status code and body untouched instead of Scrape.do's processed answer. With this on, a target 404 arrives as a 404 rather than as the page content. |
+| `waitUntil` | `load \| domcontentloaded \| networkidle \| networkidle0 \| networkidle2 \| commit` | No | When the browser stops waiting. Defaults to domcontentloaded. Needs `render`. |
+| `customWait` | `number` | No | Milliseconds to wait after the page loads. Defaults to 0. Needs `render`. |
+| `waitSelector` | `string` | No | CSS selector to wait for before answering. Needs `render`. |
+| `output` | `raw \| markdown` | No | Return the page as it is (`raw`, the default) or converted to Markdown (`markdown`). |
+
+Returns the body as it comes and the target status beside it. A target 404 or 410 returns its page and still costs a credit, which is why the status is reported rather than thrown.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string` | Yes | The fetched body: the page, usually HTML. |
+| `status_code` | `number` | Yes | The target's HTTP status. A 404 or 410 arrives here with the page body and still costs a credit, which is why it is reported rather than thrown. |
+| `content_type` | `string \| null` | No | The content type Scrape.do returned. |
+
+
+
+---
+
+### json
+
+`scrape.json`
+
+Fetch a page as a JSON report with its status, content and network requests
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapedo.api.scrape.json({ url: 'https://example.com/', render: true, showFrames: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to fetch as a JSON report. |
+| `super` | `boolean` | No | Use the residential and mobile proxy pool instead of datacenter. Defaults to false; costs more credits and raises the success rate on sites that block datacenter IPs. |
+| `geoCode` | `string` | No | Two-letter code of the proxy country, as the provider documents it: us, de and so on. Sent unchanged. |
+| `regionalGeoCode` | `string` | No | Continent to route through, for a country the provider does not offer: europe, asia, north-america and so on. |
+| `sessionId` | `number` | No | A number that pins every request carrying it to the same proxy IP, which is how a multi-step flow keeps one session. |
+| `setCookies` | `string` | No | Cookies for the target, in `name=value; name2=value2` form. |
+| `disableRedirection` | `boolean` | No | Return the redirect response itself instead of following it. Defaults to false. |
+| `timeout` | `number` | No | Milliseconds Scrape.do may spend on the request, from 5000 to 120000. Defaults to 60000. The API answers `400` naming the bounds for a value outside them. |
+| `disableRetry` | `boolean` | No | Turn off Scrape.do's own retry mechanism, which otherwise resends through a new IP before answering. Defaults to false. |
+| `render` | `boolean` | No | Use the managed headless browser to run JavaScript and wait for the page. Defaults to false; costs more credits. |
+| `device` | `desktop \| mobile \| tablet` | No | Emulated device. Defaults to desktop. |
+| `width` | `number` | No | Browser viewport width in pixels. Defaults to 1920. |
+| `height` | `number` | No | Browser viewport height in pixels. Defaults to 1080. |
+| `blockResources` | `boolean` | No | Skip CSS, images and fonts in the browser. Defaults to true; set false only when the page needs them. |
+| `transparentResponse` | `boolean` | No | Return the target's own status code and body untouched instead of Scrape.do's processed answer. With this on, a target 404 arrives as a 404 rather than as the page content. |
+| `waitUntil` | `load \| domcontentloaded \| networkidle \| networkidle0 \| networkidle2 \| commit` | No | When the browser stops waiting. Defaults to domcontentloaded. Needs `render`. |
+| `customWait` | `number` | No | Milliseconds to wait after the page loads. Defaults to 0. Needs `render`. |
+| `waitSelector` | `string` | No | CSS selector to wait for before answering. Needs `render`. |
+| `showFrames` | `boolean` | No | Include iframe content. Needs `render`. |
+| `showWebsocketRequests` | `boolean` | No | Include WebSocket traffic. Needs `render`. |
+
+Sets `returnJSON=true` and renames the answer to `status_code`, `content`, `network_requests` and `websocket_requests`. The network log is empty without `render`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status_code` | `number` | Yes | The target's HTTP status. |
+| `content` | `string` | Yes | The page body as a string. |
+| `network_requests` | `object[]` | Yes | The XHR and fetch calls the page made. Empty without the browser. |
+| `websocket_requests` | `object[] \| null` | No | WebSocket traffic, when `showWebsocketRequests` was set. |
+| `frames` | `object[] \| null` | No | Each iframe on the page, when `showFrames` was set. |
+
+<AccordionGroup>
+<Accordion title="network_requests full type">
+
+```ts
+{
+  url?: string | null,
+  status?: number | null,
+  method?: string | null,
+  headers?: Record<string, any> | null,
+  body?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="websocket_requests full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="frames full type">
+
+```ts
+{
+  url?: string | null,
+  content?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markdown
+
+`scrape.markdown`
+
+Fetch a page and return it converted to Markdown
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapedo.api.scrape.markdown({ url: 'https://example.com/', render: true, waitUntil: 'networkidle' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to convert. |
+| `super` | `boolean` | No | Use the residential and mobile proxy pool instead of datacenter. Defaults to false; costs more credits and raises the success rate on sites that block datacenter IPs. |
+| `geoCode` | `string` | No | Two-letter code of the proxy country, as the provider documents it: us, de and so on. Sent unchanged. |
+| `regionalGeoCode` | `string` | No | Continent to route through, for a country the provider does not offer: europe, asia, north-america and so on. |
+| `sessionId` | `number` | No | A number that pins every request carrying it to the same proxy IP, which is how a multi-step flow keeps one session. |
+| `setCookies` | `string` | No | Cookies for the target, in `name=value; name2=value2` form. |
+| `disableRedirection` | `boolean` | No | Return the redirect response itself instead of following it. Defaults to false. |
+| `timeout` | `number` | No | Milliseconds Scrape.do may spend on the request, from 5000 to 120000. Defaults to 60000. The API answers `400` naming the bounds for a value outside them. |
+| `disableRetry` | `boolean` | No | Turn off Scrape.do's own retry mechanism, which otherwise resends through a new IP before answering. Defaults to false. |
+| `render` | `boolean` | No | Use the managed headless browser to run JavaScript and wait for the page. Defaults to false; costs more credits. |
+| `device` | `desktop \| mobile \| tablet` | No | Emulated device. Defaults to desktop. |
+| `width` | `number` | No | Browser viewport width in pixels. Defaults to 1920. |
+| `height` | `number` | No | Browser viewport height in pixels. Defaults to 1080. |
+| `blockResources` | `boolean` | No | Skip CSS, images and fonts in the browser. Defaults to true; set false only when the page needs them. |
+| `transparentResponse` | `boolean` | No | Return the target's own status code and body untouched instead of Scrape.do's processed answer. With this on, a target 404 arrives as a 404 rather than as the page content. |
+| `waitUntil` | `load \| domcontentloaded \| networkidle \| networkidle0 \| networkidle2 \| commit` | No | When the browser stops waiting. Defaults to domcontentloaded. Needs `render`. |
+| `customWait` | `number` | No | Milliseconds to wait after the page loads. Defaults to 0. Needs `render`. |
+| `waitSelector` | `string` | No | CSS selector to wait for before answering. Needs `render`. |
+
+Sets `output=markdown`. The answer starts with `- Meta:` and `- Title:` lines for the page metadata, then the body.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `string` | Yes | The page as Markdown, with its metadata at the top as `- Meta:` and `- Title:` lines followed by the body. |
+| `status_code` | `number` | Yes | The target's HTTP status. |
+
+
+
+---
+
+### screenshot
+
+`scrape.screenshot`
+
+Render a page in the headless browser and return base64 PNG screenshots
+
+**Risk:** `read`
+
+```ts
+await corsair.scrapedo.api.scrape.screenshot({ url: 'https://example.com/', render: true, fullPage: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to capture. |
+| `super` | `boolean` | No | Use the residential and mobile proxy pool instead of datacenter. Defaults to false; costs more credits and raises the success rate on sites that block datacenter IPs. |
+| `geoCode` | `string` | No | Two-letter code of the proxy country, as the provider documents it: us, de and so on. Sent unchanged. |
+| `regionalGeoCode` | `string` | No | Continent to route through, for a country the provider does not offer: europe, asia, north-america and so on. |
+| `sessionId` | `number` | No | A number that pins every request carrying it to the same proxy IP, which is how a multi-step flow keeps one session. |
+| `setCookies` | `string` | No | Cookies for the target, in `name=value; name2=value2` form. |
+| `disableRedirection` | `boolean` | No | Return the redirect response itself instead of following it. Defaults to false. |
+| `timeout` | `number` | No | Milliseconds Scrape.do may spend on the request, from 5000 to 120000. Defaults to 60000. The API answers `400` naming the bounds for a value outside them. |
+| `disableRetry` | `boolean` | No | Turn off Scrape.do's own retry mechanism, which otherwise resends through a new IP before answering. Defaults to false. |
+| `render` | `true` | Yes | Required: the API refuses a screenshot without the headless browser. |
+| `device` | `desktop \| mobile \| tablet` | No | Emulated device. Defaults to desktop. |
+| `width` | `number` | No | Browser viewport width in pixels. Defaults to 1920. |
+| `height` | `number` | No | Browser viewport height in pixels. Defaults to 1080. |
+| `blockResources` | `boolean` | No | Skip CSS, images and fonts in the browser. Defaults to true; set false only when the page needs them. |
+| `transparentResponse` | `boolean` | No | Return the target's own status code and body untouched instead of Scrape.do's processed answer. With this on, a target 404 arrives as a 404 rather than as the page content. |
+| `waitUntil` | `load \| domcontentloaded \| networkidle \| networkidle0 \| networkidle2 \| commit` | No | When the browser stops waiting. Defaults to domcontentloaded. Needs `render`. |
+| `customWait` | `number` | No | Milliseconds to wait after the page loads. Defaults to 0. Needs `render`. |
+| `waitSelector` | `string` | No | CSS selector to wait for before answering. Needs `render`. |
+| `fullPage` | `boolean` | No | Capture the whole scrollable page instead of the viewport. Defaults to false. |
+| `selector` | `string` | No | CSS selector of one element to capture, such as `h1` or `#price-table`. Mutually exclusive with `fullPage`. |
+
+Requires `render: true` and always sets `returnJSON=true`, because the live API answers 400 for a screenshot without it. `fullPage` and `selector` (a CSS selector for one element) are mutually exclusive.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `screenshots` | `string[]` | Yes | Base64-encoded PNG images, one per element the request asked for. Usually a single entry. |
+| `status_code` | `number` | Yes | The target's HTTP status. |
+
+
+
+---
+
