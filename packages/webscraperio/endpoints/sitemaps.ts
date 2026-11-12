@@ -6,23 +6,6 @@ import {
 	WebscraperioEndpointOutputSchemas as Outputs,
 } from './types';
 
-/**
- * Counts the sitemaps in whichever of the two documented list shapes came back:
- * a bare `data` array, or a paginated object that nests another `data`.
- */
-type SitemapListBody = {
-	data?: unknown[] | { data?: unknown[] } | null;
-};
-
-function countOf(body: SitemapListBody): number {
-	const data = body.data;
-	if (Array.isArray(data)) return data.length;
-	if (data !== null && typeof data === 'object' && !Array.isArray(data)) {
-		return Array.isArray(data.data) ? data.data.length : 0;
-	}
-	return 0;
-}
-
 export const list: WebscraperioEndpoints['sitemapsList'] = (ctx, input) =>
 	call(
 		ctx,
@@ -32,16 +15,17 @@ export const list: WebscraperioEndpoints['sitemapsList'] = (ctx, input) =>
 			output: Outputs.sitemapsList,
 		},
 		input,
-		({ page }) => ({
+		({ page, tag }) => ({
 			method: 'GET',
 			path: '/sitemaps',
-			query: { page },
+			query: { page, tag },
 		}),
 		{
-			// unknown: the count is read off the raw body, since the list shape
-			// has two documented forms and the result is already validated.
-			shape: (raw) => raw,
-			log: (_, result) => ({ count: countOf(result as SitemapListBody) }),
+			log: (_, result) => ({
+				count: result.data?.length ?? 0,
+				page: result.current_page ?? undefined,
+				lastPage: result.last_page ?? undefined,
+			}),
 		},
 	);
 
@@ -59,7 +43,6 @@ export const get: WebscraperioEndpoints['sitemapsGet'] = (ctx, input) =>
 			log: (_, result) => ({
 				id: result.data?.id ?? undefined,
 				name: result.data?.name ?? undefined,
-				status: result.data?.status ?? undefined,
 			}),
 		},
 	);
@@ -80,14 +63,11 @@ export const create: WebscraperioEndpoints['sitemapsCreate'] = (ctx, input) =>
 		input,
 		({ sitemap }) => ({ method: 'POST', path: '/sitemap', body: sitemap }),
 		{
-			log: (_, result) => ({
-				id: result.data?.id ?? undefined,
-				name: result.data?.name ?? undefined,
-			}),
+			log: (_, result) => ({ id: result.data?.id ?? undefined }),
 		},
 	);
 
-/** The account behind the token, with its plan and page allowance. */
+/** The user behind the token and the page credits left on the account. */
 export const account: WebscraperioEndpoints['accountGet'] = (ctx, input) =>
 	call(
 		ctx,
@@ -99,10 +79,9 @@ export const account: WebscraperioEndpoints['accountGet'] = (ctx, input) =>
 		input,
 		() => ({ method: 'GET', path: '/account' }),
 		{
+			// The email and name stay out of the event log.
 			log: (_, result) => ({
-				plan: result.data?.plan ?? undefined,
-				pagesUsed: result.data?.pages_used ?? undefined,
-				pagesAllowed: result.data?.pages_allowed ?? undefined,
+				pageCredits: result.data?.page_credits ?? undefined,
 			}),
 		},
 	);

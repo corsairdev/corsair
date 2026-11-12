@@ -1,5 +1,5 @@
 displayName: Web Scraper Cloud
-description: Web scraping with Web Scraper Cloud - list and read sitemaps with their selectors and start URLs, create a sitemap from an exported definition, and read the account plan and page allowance.
+description: Web scraping with Web Scraper Cloud - list and read sitemaps with their selectors and start URLs, create a sitemap from an exported definition, and read the account's page credits.
 domain: webscraper.io
 recommendedAuth: api_key
 overviewNote: |
@@ -9,10 +9,10 @@ overviewNote: |
   - **The public v1 surface is small — and this plugin wraps exactly it.** The routes the API serves are `GET /sitemaps`, `GET /sitemap/{id}`, `POST /sitemap` and `GET /account`. Scraping jobs and their scraped data live behind the Cloud web app rather than these routes, so the plugin does not invent endpoints for them; if you need job data programmatically, that is not available through this API today.
   - **Two error shapes, and they mean different things.** A handled failure is `{ success: false, error }` — that is what a bad token produces. An unrouted request is Laravel's own 404 `{ message: "The route ... could not be found." }`, which means the *path* is wrong. The plugin keeps them apart, so a 404 from a mistyped path is not reported as a missing sitemap.
   - **A 403 is a plan problem, not a key problem.** A 401 means the token is wrong; a 403 means the token works but the plan does not include the call.
-  - **A sitemap is the scraping configuration.** Its `selectors` define what is extracted and its `start_urls` where the crawl begins, so reading one tells you what a scrape would do without running it.
-  - **`sitemaps.create` takes the export as-is.** The body is the JSON the browser extension exports — `_id`, name, `startUrl`, `selectors`, `startUrls` — and its shape belongs to the builder, so the plugin passes it through unchanged rather than pretending to model it.
-  - **Lists come in two shapes.** `sitemaps.list` accepts both a flat `data` array and a paginated `data.data` object, and counts either the same way.
-  - **`account.get` is the cheapest check.** It returns the plan and how many pages and jobs are used against the allowance, so it verifies a token and reports the quota in one call.
+  - **A sitemap is the scraping configuration.** `sitemaps.get` returns its definition in `data.sitemap` as a JSON string; parse it to read `startUrl` (where the crawl begins) and `selectors` (what is extracted).
+  - **`sitemaps.create` takes the export as-is.** The body is the JSON the browser extension exports (`_id`, `startUrl`, `selectors`), and its shape belongs to the builder, so the plugin passes it through unchanged. The answer is the new sitemap's `id`.
+  - **The list is paginated.** `sitemaps.list` returns `{ id, name }` rows in `data`, with `current_page`, `last_page`, `total` and `per_page` at the root; pass `page` until it reaches `last_page`, and `tag` to filter.
+  - **`account.get` is the cheapest check.** It returns the user's email and name and the `page_credits` left, so it verifies a token and reports the remaining credits in one call.
 examples:
   read:
     path: sitemaps.list
@@ -24,13 +24,13 @@ examples:
     args:
       sitemap:
         _id: product_catalogue
-        name: Product catalogue
-        startUrl: https://acme.example/products
+        startUrl:
+          - https://acme.example/products
         selectors: []
 apiExamples:
   sitemaps.list: {}
   sitemaps.get:
     call: "{ id: 42 }"
   sitemaps.create:
-    call: "{ sitemap: { _id: 'product_catalogue', name: 'Product catalogue', startUrl: 'https://acme.example/products', selectors: [{ id: 'name', selector: 'h1.title', type: 'text' }] } }"
+    call: "{ sitemap: { _id: 'product_catalogue', startUrl: ['https://acme.example/products'], selectors: [{ id: 'name', parentSelectors: ['_root'], type: 'SelectorText', selector: 'h1.title', multiple: false }] } }"
   account.get: {}

@@ -4,7 +4,7 @@
  * fails here rather than in a caller's code.
  *
  * Run with `WEBSCRAPERIO_API_KEY=... pnpm --filter @corsair-dev/webscraperio test:live`.
- * Read-only: nothing here creates a sitemap, which would start a scraping job.
+ * Read-only: nothing here creates a sitemap.
  */
 import { Sitemaps } from './endpoints';
 import type { WebscraperioContext } from './index';
@@ -38,10 +38,10 @@ describeIfKey('live Web Scraper Cloud API', () => {
 		expect(result).toBeDefined();
 	});
 
-	it('reads the account plan and page allowance', async () => {
+	it('reads the account user and page credits', async () => {
 		const result = await Sitemaps.account(liveContext() as never, {} as never);
 
-		expect(result).toBeDefined();
+		expect(typeof result.data?.page_credits).toBe('number');
 	});
 
 	it('reads one sitemap by id when the account has any', async () => {
@@ -51,17 +51,14 @@ describeIfKey('live Web Scraper Cloud API', () => {
 				page: 1,
 			} as never,
 		);
-		// The list nests its rows under `data`, either bare or paginated.
-		const body = list as {
-			data?: { id?: number }[] | { data?: { id?: number }[] };
-		};
-		const rows = Array.isArray(body.data) ? body.data : body.data?.data;
-		const id = rows?.[0]?.id;
-		if (id === undefined) return;
+		expect(Array.isArray(list.data)).toBe(true);
+		expect(typeof list.last_page).toBe('number');
+		const id = list.data?.[0]?.id;
+		if (id === undefined || id === null) return;
 
 		const one = await Sitemaps.get(liveContext() as never, { id } as never);
 
-		expect(one).toBeDefined();
+		expect(typeof one.data?.sitemap).toBe('string');
 	});
 
 	it('never exposes the API token in a returned object', async () => {

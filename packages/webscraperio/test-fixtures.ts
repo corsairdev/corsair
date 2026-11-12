@@ -1,50 +1,47 @@
 // Response bodies shaped like the Cloud API's, with made-up ids and names.
 // They were not captured from the live API.
 
+const definition = {
+	_id: 'product_catalogue',
+	startUrl: ['https://acme.example/products'],
+	selectors: [
+		{
+			id: 'name',
+			parentSelectors: ['_root'],
+			type: 'SelectorText',
+			selector: 'h1.title',
+			multiple: false,
+		},
+	],
+};
+
+/** One sitemap as `GET /sitemap/{id}` returns it: the definition is a string. */
 export const sitemap = {
 	id: 42,
-	name: 'Product catalogue',
-	url: 'https://acme.example/products',
-	status: 'idle',
-	created_at: '2024-01-01T00:00:00Z',
-	updated_at: '2024-02-01T00:00:00Z',
-	selectors: [
-		{ id: 'name', selector: 'h1.title', type: 'text' },
-		{ id: 'price', selector: '.price', type: 'text' },
-	],
-	start_urls: [{ url: 'https://acme.example/products?page=1' }],
-	jobs_count: 3,
+	name: 'product_catalogue',
+	sitemap: JSON.stringify(definition),
 };
 
 export const sitemapResponse = { success: true, data: sitemap };
 
-/** A list answer, which the API returns as a flat array of sitemaps. */
+/** `POST /sitemap` answers with the new id only. */
+export const sitemapCreatedResponse = { success: true, data: { id: 42 } };
+
+/** A list answer: `{ id, name }` items, with the page fields at the root. */
 export const sitemapsListResponse = {
 	success: true,
-	data: [sitemap],
-};
-
-/** The paginated variant, which nests the array one level deeper. */
-export const sitemapsPaginatedResponse = {
-	success: true,
-	data: {
-		data: [sitemap],
-		total: 1,
-		current_page: 1,
-		last_page: 1,
-	},
+	data: [{ id: 42, name: 'product_catalogue' }],
+	current_page: 1,
+	last_page: 3,
+	total: 201,
+	per_page: 100,
 };
 
 export const account = {
-	id: 7,
-	name: 'Acme',
 	email: 'ops@acme.example',
-	plan: 'professional',
-	pages_allowed: 500_000,
-	pages_used: 12_345,
-	scraping_jobs_allowed: 100,
-	scraping_jobs_used: 3,
-	created_at: '2024-01-01T00:00:00Z',
+	firstname: 'Ada',
+	lastname: 'Example',
+	page_credits: 4_850,
 };
 
 export const accountResponse = { success: true, data: account };

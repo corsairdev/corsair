@@ -4,9 +4,9 @@ import { Sitemaps } from './endpoints';
 import {
 	accountResponse,
 	invalidToken,
+	sitemapCreatedResponse,
 	sitemapResponse,
 	sitemapsListResponse,
-	sitemapsPaginatedResponse,
 } from './test-fixtures';
 import {
 	expectAuthenticated,
@@ -29,52 +29,54 @@ beforeEach(() => {
 });
 
 describe('sitemaps', () => {
-	it('lists sitemaps, counting a flat array', async () => {
+	it('lists sitemaps and reads the page fields at the root', async () => {
 		respond(fetchMock, sitemapsListResponse);
 
 		const result = await invoke(Sitemaps.list, {});
 
 		expect(result).toEqual(sitemapsListResponse);
+		const typed = result as { last_page?: number | null };
+		expect(typed.last_page).toBe(3);
 		expectAuthenticated(fetchMock);
 		const sent = lastRequest(fetchMock);
 		expect(sent.method).toBe('GET');
 		expect(sent.path).toBe('/api/v1/sitemaps');
+		expect(sent.queryPairs).toEqual([]);
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'webscraperio.sitemaps.list',
-			{ count: 1 },
+			{ count: 1, page: 1, lastPage: 3 },
 			'completed',
 		);
 	});
 
-	it('counts a paginated list too, which nests the array', async () => {
-		respond(fetchMock, sitemapsPaginatedResponse);
+	it('sends the tag filter', async () => {
+		respond(fetchMock, sitemapsListResponse);
 
-		const result = await invoke(Sitemaps.list, {});
+		await invoke(Sitemaps.list, { tag: 'ecommerce', page: 2 });
 
-		expect(result).toEqual(sitemapsPaginatedResponse);
-		// The response shape has two documented forms; both count the same.
-		expect(mockLog).toHaveBeenCalledWith(
-			expect.anything(),
-			'webscraperio.sitemaps.list',
-			{ count: 1 },
-			'completed',
-		);
+		expect(lastRequest(fetchMock).query).toEqual({
+			tag: 'ecommerce',
+			page: '2',
+		});
 	});
 
-	it('reads one sitemap with its selectors', async () => {
+	it('reads one sitemap with its definition as a JSON string', async () => {
 		respond(fetchMock, sitemapResponse);
 
 		const result = (await invoke(Sitemaps.get, { id: 42 })) as {
-			data?: { selectors?: unknown[]; name?: string };
+			data?: { sitemap?: string | null; name?: string | null };
 		};
 
-		expect(result.data?.name).toBe('Product catalogue');
-		expect(result.data?.selectors).toHaveLength(2);
+		expect(result.data?.name).toBe('product_catalogue');
+		const definition = JSON.parse(result.data?.sitemap ?? '{}') as {
+			selectors?: { id: string }[];
+		};
+		expect(definition.selectors?.[0]?.id).toBe('name');
 		expect(lastRequest(fetchMock).path).toBe('/api/v1/sitemap/42');
 	});
 
-	it('logs the id, name and status for one sitemap', async () => {
+	it('logs the id and name for one sitemap, not the definition', async () => {
 		respond(fetchMock, sitemapResponse);
 
 		await invoke(Sitemaps.get, { id: 42 });
@@ -82,7 +84,7 @@ describe('sitemaps', () => {
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'webscraperio.sitemaps.get',
-			{ id: 42, name: 'Product catalogue', status: 'idle' },
+			{ id: 42, name: 'product_catalogue' },
 			'completed',
 		);
 	});
@@ -93,7 +95,7 @@ describe('sitemaps', () => {
 	});
 
 	it('creates a sitemap from an exported definition', async () => {
-		respond(fetchMock, sitemapResponse);
+		respond(fetchMock, sitemapCreatedResponse);
 
 		const definition = {
 			_id: 'product_catalogue',
@@ -104,7 +106,7 @@ describe('sitemaps', () => {
 
 		const result = await invoke(Sitemaps.create, { sitemap: definition });
 
-		expect(result).toEqual(sitemapResponse);
+		expect(result).toEqual(sitemapCreatedResponse);
 		const sent = lastRequest(fetchMock);
 		expect(sent.method).toBe('POST');
 		expect(sent.path).toBe('/api/v1/sitemap');
@@ -117,18 +119,19 @@ describe('sitemaps', () => {
 		await expect(invoke(Sitemaps.create, {})).rejects.toThrow();
 	});
 
-	it('reads the account with its plan and allowance', async () => {
+	it('reads the account user and page credits', async () => {
 		respond(fetchMock, accountResponse);
 
 		const result = (await invoke(Sitemaps.account, {})) as {
-			data?: { plan?: string; pages_used?: number };
+			data?: { firstname?: string | null; page_credits?: number | null };
 		};
 
-		expect(result.data?.plan).toBe('professional');
+		expect(result.data?.page_credits).toBe(4_850);
+		expect(result.data?.firstname).toBe('Ada');
 		expect(lastRequest(fetchMock).path).toBe('/api/v1/account');
 	});
 
-	it('logs the plan and usage, which is what a quota check needs', async () => {
+	it('logs the page credits and keeps the email and name out of the log', async () => {
 		respond(fetchMock, accountResponse);
 
 		await invoke(Sitemaps.account, {});
@@ -136,7 +139,7 @@ describe('sitemaps', () => {
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'webscraperio.account.get',
-			{ plan: 'professional', pagesUsed: 12_345, pagesAllowed: 500_000 },
+			{ pageCredits: 4_850 },
 			'completed',
 		);
 	});
@@ -154,7 +157,7 @@ describe('sitemaps', () => {
 	});
 
 	it('sends the requested page on a sitemap list', async () => {
-		respond(fetchMock, sitemapsPaginatedResponse);
+		respond(fetchMock, sitemapsListResponse);
 
 		await invoke(Sitemaps.list, { page: 3 });
 

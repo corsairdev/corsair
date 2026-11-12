@@ -94,11 +94,13 @@ const defaultAuthType = 'api_key' as const;
 const webscraperioEndpointMeta = {
 	'sitemaps.list': {
 		riskLevel: 'read',
-		description: 'List the sitemaps on the account',
+		description:
+			'List the sitemaps on the account (id and name), a page at a time, optionally filtered by tag',
 	},
 	'sitemaps.get': {
 		riskLevel: 'read',
-		description: 'Read one sitemap with its selectors, start URLs and status',
+		description:
+			'Read one sitemap: its id, name and definition (start URLs and selectors) as a JSON string',
 	},
 	'sitemaps.create': {
 		riskLevel: 'write',
@@ -108,7 +110,7 @@ const webscraperioEndpointMeta = {
 	'account.get': {
 		riskLevel: 'read',
 		description:
-			'Read the account plan and how much of the page and job allowance is used; the cheapest way to check a token',
+			'Read the account user and the page credits left; the cheapest way to check a token',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof webscraperioEndpointsNested

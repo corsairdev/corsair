@@ -1,34 +1,28 @@
 import { z } from 'zod';
 
 // Inputs use the Cloud API's own parameter names. Outputs are `.loose()` and
-// their documented fields nullish.
+// their documented fields nullish. Field names follow the provider's OpenAPI
+// spec (https://webscraper.io/openapi.yaml).
 //
-// The Cloud API's public v1 surface is deliberately small: list sitemaps, read
-// one, create one, and read the account. The scraping jobs and their data live
-// behind the web app rather than these routes, so the plugin wraps what the API
-// actually serves instead of inventing endpoints.
+// This plugin wraps the sitemap list, read and import routes and the account
+// route. The API also serves sitemap update and delete, schedulers, tags and
+// the scraping-job routes; those are not wrapped here yet.
 
 /**
- * A sitemap, which is the Cloud product's scraping configuration: it holds the
- * selectors and the URL list, and its `status` says whether it is running.
+ * A sitemap, which is the Cloud product's scraping configuration. The list
+ * returns `id` and `name`; a single read adds `sitemap`, the definition itself
+ * as a JSON string (start URLs and selectors).
  */
 const SitemapSchema = z
 	.object({
 		id: z.number().nullish(),
 		name: z.string().nullish(),
-		url: z
+		sitemap: z
 			.string()
 			.nullish()
-			.describe('The starting page the scrape begins from.'),
-		status: z.string().nullish(),
-		created_at: z.string().nullish(),
-		updated_at: z.string().nullish(),
-		// The selector tree, which is what defines what gets scraped.
-		selectors: z.array(z.record(z.string(), z.unknown())).nullish(),
-		// The URL list a scrape will visit.
-		start_urls: z.array(z.record(z.string(), z.unknown())).nullish(),
-		jobs: z.array(z.record(z.string(), z.unknown())).nullish(),
-		jobs_count: z.number().nullish(),
+			.describe(
+				'The sitemap definition as a JSON string: `_id`, `startUrl` and `selectors`, in the form the browser extension exports.',
+			),
 	})
 	.loose();
 
@@ -55,31 +49,27 @@ const SitemapsListInputSchema = z.object({
 		.min(1)
 		.optional()
 		.describe('The page to return, 1-based. Defaults to 1.'),
+	tag: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Only return sitemaps carrying this tag.'),
 });
 
 export type SitemapsListInput = z.infer<typeof SitemapsListInputSchema>;
 
 /**
- * A list answer. The API may return `data` as an array or paginate it under a
- * `data.data` shape, so both are accepted.
+ * A list answer: `data` is a flat array of `{ id, name }`, and the page fields
+ * sit at the root beside it.
  */
 const SitemapsListResponseSchema = z
 	.object({
 		success: z.boolean().nullish(),
-		data: z
-			.union([
-				z.array(SitemapSchema),
-				z
-					.object({
-						data: z.array(SitemapSchema).nullish(),
-						total: z.number().nullish(),
-						current_page: z.number().nullish(),
-						last_page: z.number().nullish(),
-					})
-					.loose()
-					.nullish(),
-			])
-			.nullish(),
+		data: z.array(SitemapSchema).nullish(),
+		current_page: z.number().nullish(),
+		last_page: z.number().nullish(),
+		total: z.number().nullish(),
+		per_page: z.number().nullish(),
 	})
 	.loose();
 
@@ -104,28 +94,23 @@ const SitemapsCreateInputSchema = z.object({
 	sitemap: z
 		.record(z.string(), z.unknown())
 		.describe(
-			'The sitemap definition: `_id`, name, startUrl, selectors and startUrls, in the form the browser extension exports.',
+			'The sitemap definition in the form the browser extension exports: `_id`, `startUrl` (an array of URLs) and `selectors`.',
 		),
 });
 
 export type SitemapsCreateInput = z.infer<typeof SitemapsCreateInputSchema>;
 
 /**
- * The account behind the token: its plan and how much of the allowance is used.
- * This is also the cheapest way to check that a token works.
+ * The user behind the token and the page credits left on the account. This is
+ * also the cheapest way to check that a token works.
  */
 const AccountSchema = z
 	.object({
-		id: z.number().nullish(),
-		name: z.string().nullish(),
 		email: z.string().nullish(),
-		plan: z.string().nullish(),
-		// The monthly page allowance, which is what a scrape spends.
-		pages_allowed: z.number().nullish(),
-		pages_used: z.number().nullish(),
-		scraping_jobs_allowed: z.number().nullish(),
-		scraping_jobs_used: z.number().nullish(),
-		created_at: z.string().nullish(),
+		firstname: z.string().nullish(),
+		lastname: z.string().nullish(),
+		// Page credits are what a scrape spends, one per page loaded.
+		page_credits: z.number().nullish(),
 	})
 	.loose();
 
