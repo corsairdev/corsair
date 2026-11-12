@@ -341,6 +341,29 @@ describe('campaigns.create', () => {
 		).rejects.toThrow();
 	});
 
+	it('rejects two actions, since this API version takes exactly one', async () => {
+		const action = {
+			type: 'api',
+			webhook: 'https://hooks.example.com/cart',
+			rules: [{ type: 'CART_FOLLOWUP_TIME', operator: 'is', value: '60' }],
+		};
+		await expect(
+			invoke(Campaigns.create, {
+				storeId: STORE_ID,
+				type: 'TRIGGER_CART_RECOVERY',
+				actions: [action, action],
+			}),
+		).rejects.toThrow();
+		await expect(
+			invoke(Campaigns.update, {
+				storeId: STORE_ID,
+				id: 7,
+				actions: [action, action],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects an action type the spec does not allow', async () => {
 		await expect(
 			invoke(Campaigns.create, {

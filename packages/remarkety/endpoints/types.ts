@@ -267,9 +267,9 @@ const CampaignsCreateInputSchema = z.object({
 	type: z.string().min(1).describe('A campaign type from campaigns.types.'),
 	actions: z
 		.array(CampaignActionInputSchema)
-		.min(1)
+		.length(1)
 		.describe(
-			'The actions this campaign runs. This endpoint version expects exactly one.',
+			'The action this campaign runs. This API version takes exactly one.',
 		),
 	mode: z
 		.enum(['run', 'test', 'stop'])
@@ -314,7 +314,13 @@ const CampaignsUpdateInputSchema = z.object({
 	storeId: StoreIdSchema,
 	id: z.number().int().describe('The campaign to update.'),
 	type: z.string().min(1).optional(),
-	actions: z.array(CampaignActionInputSchema).min(1).optional(),
+	actions: z
+		.array(CampaignActionInputSchema)
+		.length(1)
+		.optional()
+		.describe(
+			'The action this campaign runs. This API version takes exactly one.',
+		),
 	mode: z.enum(['run', 'test', 'stop']).optional(),
 	testEmail: z.string().optional(),
 });
