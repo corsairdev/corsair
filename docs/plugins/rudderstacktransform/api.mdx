@@ -47,7 +47,7 @@ await corsair.rudderstacktransform.api.libraries.create({ name: 'cool library', 
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
 | `importName` | `string \| null` | No | The name a transformation imports this library by. It cannot be changed after creation. |
-| `isPublished` | `boolean \| null` | No | Present on revision rows. |
+| `isPublished` | `boolean \| null` | No | Documented on revision rows, but the live API left it out on 11-12. |
 
 
 
@@ -111,7 +111,7 @@ await corsair.rudderstacktransform.api.libraries.get({ id: '2DmDQHMNpAk1HvvWBK2S
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
 | `importName` | `string \| null` | No | The name a transformation imports this library by. It cannot be changed after creation. |
-| `isPublished` | `boolean \| null` | No | Present on revision rows. |
+| `isPublished` | `boolean \| null` | No | Documented on revision rows, but the live API left it out on 11-12. |
 
 
 
@@ -151,7 +151,7 @@ await corsair.rudderstacktransform.api.libraries.getVersion({ id: '1pT7933tHRBPl
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
 | `importName` | `string \| null` | No | The name a transformation imports this library by. It cannot be changed after creation. |
-| `isPublished` | `boolean \| null` | No | Present on revision rows. |
+| `isPublished` | `boolean \| null` | No | Documented on revision rows, but the live API left it out on 11-12. |
 
 
 
@@ -206,7 +206,7 @@ await corsair.rudderstacktransform.api.libraries.list({});
 
 `libraries.listVersions`
 
-List the revisions of a library and which of them is published
+List the revisions of a library, newest or oldest first
 
 **Risk:** `read`
 
@@ -228,7 +228,7 @@ await corsair.rudderstacktransform.api.libraries.listVersions({ id: '1pT7933tHRB
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `libraryVersions` | `object[] \| null` | No | — |
+| `libraryVersions` | `object[] \| null` | No | The revisions. The live API sends them under `libraries`; the plugin moves them here. |
 
 <AccordionGroup>
 <Accordion title="libraryVersions full type">
@@ -343,7 +343,7 @@ await corsair.rudderstacktransform.api.libraries.update({ id: '2MTEP4IhlKLXYtnbO
 | `createdAt` | `string \| null` | No | — |
 | `updatedAt` | `string \| null` | No | — |
 | `importName` | `string \| null` | No | The name a transformation imports this library by. It cannot be changed after creation. |
-| `isPublished` | `boolean \| null` | No | Present on revision rows. |
+| `isPublished` | `boolean \| null` | No | Documented on revision rows, but the live API left it out on 11-12. |
 
 
 
