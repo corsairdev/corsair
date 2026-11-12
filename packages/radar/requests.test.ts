@@ -128,7 +128,9 @@ describe('search', () => {
 				invoke(Endpoints.searchPlaces, {
 					near: '40.7,-73.9',
 					categories: ['coffee-shop'],
-					[field]: 'ignored',
+					[field]: ['groups', 'country'].includes(field)
+						? ['ignored']
+						: 'ignored',
 				}),
 			).rejects.toThrow();
 			expect(fetchMock).not.toHaveBeenCalled();

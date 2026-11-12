@@ -34,7 +34,7 @@ const pagingFields = {
 	has_more: z
 		.boolean()
 		.describe(
-			'True when Radar reports more rows. Page by passing the last row’s timestamp as `updated_before`.',
+			'True when Radar supplies meta.hasMore. Users and geofences page with updated_before; trips use created_before and sort_by: createdAt.',
 		),
 	meta: z
 		.object({
@@ -398,7 +398,8 @@ const GeofencesUpsertInputSchema = z
 		tag: z.string().min(1).describe('The geofence group.'),
 		external_id: z.string().min(1).describe('A stable id within the tag.'),
 		description: z.string().min(1),
-		type: z.enum(['circle', 'polygon', 'isochrone']),
+		// The docs validator needs a string type beside its bare enum labels.
+		type: z.enum(['circle', 'polygon', 'isochrone']).and(z.string()),
 		mode: z
 			.enum(['foot', 'bike', 'car'])
 			.optional()
