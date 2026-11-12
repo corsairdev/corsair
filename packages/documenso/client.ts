@@ -221,9 +221,12 @@ async function binaryResponse(response: Response): Promise<unknown> {
 	const chunks: Uint8Array[] = [];
 	let total = 0;
 	while (true) {
-		let next: ReadableStreamReadResult<Uint8Array>;
+		let done: boolean;
+		let value: Uint8Array | undefined;
 		try {
-			next = await reader.read();
+			const chunk = await reader.read();
+			done = chunk.done;
+			value = chunk.value;
 		} catch {
 			await reader.cancel().catch(() => undefined);
 			throw new DocumensoAPIError(
@@ -231,7 +234,6 @@ async function binaryResponse(response: Response): Promise<unknown> {
 				0,
 			);
 		}
-		const { done, value } = next;
 		if (done) break;
 		if (!value) continue;
 		total += value.byteLength;
