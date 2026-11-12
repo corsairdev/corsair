@@ -1,0 +1,1883 @@
+---
+title: "Melo API reference"
+sidebarTitle: "API"
+description: "API reference for the Melo plugin in Corsair: every `melo.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Indicators
+
+### cities
+
+`indicators.cities`
+
+List cities by INSEE code, zipcode, name, label, slug or polygon, with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.melo.api.indicators.cities({ insee: '75056' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `excludeGroupedCities` | `boolean` | No | Set to true to exclude cities that have grouped cities under them. The API defaults to false. |
+| `insee` | `string \| string[]` | No | Filter by INSEE code. A string is sent as `insee`, an array as `insee[]`. |
+| `polygon` | `object[]` | No | Filter by cities inside a polygon of GPS points. Sent as `polygon[0][lat]`, `polygon[0][lon]`, and so on. The spec types this as a string; its example uses this indexed form. |
+| `libelle` | `string` | No | Filter by city label. |
+| `name` | `string` | No | Filter by city name. |
+| `order` | `object` | No | — |
+| `page` | `number` | No | The collection page number. Defaults to 1. |
+| `slug` | `string` | No | Filter by city slug. |
+| `zipcode` | `string \| string[]` | No | Filter by zipcode. A string is sent as `zipcode`, an array as `zipcode[]`. |
+
+<AccordionGroup>
+<Accordion title="polygon full type">
+
+```ts
+{
+  lat: number,
+  lon: number
+}[]
+```
+</Accordion>
+
+<Accordion title="order full type">
+
+```ts
+{
+  name?: asc | desc
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@context` | `string \| null` | No | — |
+| `@id` | `string \| null` | No | — |
+| `@type` | `string \| null` | No | — |
+| `hydra:totalItems` | `number \| null` | No | — |
+| `hydra:view` | `object \| null` | No | — |
+| `hydra:search` | `object \| null` | No | — |
+| `hydra:member` | `object[]` | Yes | — |
+| `nextPage` | `number \| null` | Yes | The page number to request next, read from `hydra:view.hydra:next`; null on the last page. |
+
+<AccordionGroup>
+<Accordion title="hydra:view full type">
+
+```ts
+{
+  @id?: string | null,
+  @type?: string | null,
+  hydra:first?: string | null,
+  hydra:last?: string | null,
+  hydra:next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:search full type">
+
+```ts
+{
+  @type?: string | null,
+  hydra:template?: string | null,
+  hydra:variableRepresentation?: string | null,
+  hydra:mapping?: {
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:member full type">
+
+```ts
+{
+  @id?: string | null,
+  @type?: string | null,
+  zipcode?: string | null,
+  insee?: string | null,
+  article?: string | null,
+  name?: string | null,
+  libelle?: string | null,
+  department?: string | null,
+  cityParent?: {
+  } | null,
+  originalName?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations
+
+`indicators.locations`
+
+Search cities and departments by name and get the IRIs used in includedCities and includedDepartments filters; needs a key here although the API serves it publicly
+
+**Risk:** `read`
+
+```ts
+await corsair.melo.api.indicators.locations({ query: 'paris' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Query term to perform search. |
+| `excludedCitiesIds` | `string[]` | No | Exclude cities using their IRI, for example `/cities/37008`. |
+| `excludedDepartmentsIds` | `string[]` | No | Exclude departments using their IRI, for example `/departments/77`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@context` | `string \| null` | No | — |
+| `@id` | `string \| null` | No | — |
+| `@type` | `string \| null` | No | — |
+| `hydra:totalItems` | `number \| null` | No | — |
+| `hydra:view` | `object \| null` | No | — |
+| `hydra:search` | `object \| null` | No | — |
+| `hydra:member` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hydra:view full type">
+
+```ts
+{
+  @id?: string | null,
+  @type?: string | null,
+  hydra:first?: string | null,
+  hydra:last?: string | null,
+  hydra:next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:search full type">
+
+```ts
+{
+  @type?: string | null,
+  hydra:template?: string | null,
+  hydra:variableRepresentation?: string | null,
+  hydra:mapping?: {
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:member full type">
+
+```ts
+{
+  @id?: string | null,
+  @type?: string | null,
+  code?: string | null,
+  displayName?: string | null,
+  groupedCityNames?: string[] | null,
+  groupedCityZipcodes?: string[] | null,
+  id?: string | number | null,
+  insee?: string | null,
+  libelle?: string | null,
+  location?: {
+    lat?: number | null,
+    lon?: number | null
+  } | null,
+  name?: string | null,
+  zipcode?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pointsOfInterest
+
+`indicators.pointsOfInterest`
+
+List schools, kindergartens, restaurants, hospitals or parking within a radius of a coordinate
+
+**Risk:** `read`
+
+```ts
+await corsair.melo.api.indicators.pointsOfInterest({ facilities: ['school'], lat: 48.8803424, lon: 2.333215, radius: 0.5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `facilities` | `(kindergarten \| school \| restaurant \| hospital \| parking)[]` | Yes | Categories of points of interest to return. |
+| `lat` | `number` | Yes | Latitude. |
+| `lon` | `number` | Yes | Longitude. |
+| `radius` | `number` | Yes | Distance expressed in kilometers. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@context` | `string \| null` | No | — |
+| `@id` | `string \| null` | No | — |
+| `@type` | `string \| null` | No | — |
+| `hydra:totalItems` | `number \| null` | No | — |
+| `hydra:view` | `object \| null` | No | — |
+| `hydra:search` | `object \| null` | No | — |
+| `hydra:member` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hydra:view full type">
+
+```ts
+{
+  @id?: string | null,
+  @type?: string | null,
+  hydra:first?: string | null,
+  hydra:last?: string | null,
+  hydra:next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:search full type">
+
+```ts
+{
+  @type?: string | null,
+  hydra:template?: string | null,
+  hydra:variableRepresentation?: string | null,
+  hydra:mapping?: {
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:member full type">
+
+```ts
+{
+  lat?: number | null,
+  lon?: number | null,
+  name?: string | null,
+  type?: string | null,
+  attributes?: {
+  } | never[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pricePerMeter
+
+`indicators.pricePerMeter`
+
+Average, median and time series of the price per meter for properties matching the same filters as properties.list
+
+**Risk:** `read`
+
+```ts
+await corsair.melo.api.indicators.pricePerMeter({ includedDepartments: ['/departments/77'], propertyTypes: [0], transactionType: 0, aggregationInterval: 'year' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `advertPriceMin` | `number` | No | Minimum price of advert. Filters properties based on any non expired adverts prices. |
+| `advertPriceMax` | `number` | No | Maximum price of advert. Filters properties based on any non expired adverts prices. |
+| `bedroomMin` | `number` | No | Minimum number of bedrooms in the property. |
+| `bedroomMax` | `number` | No | Maximum number of bedrooms in the property. |
+| `budgetMin` | `number` | No | Minimum budget for the property. |
+| `budgetMax` | `number` | No | Maximum budget for the property. |
+| `condominiumFeesMin` | `number` | No | Minimum condominium fees for the property. |
+| `condominiumFeesMax` | `number` | No | Maximum condominium fees for the property. |
+| `constructionYearMin` | `number` | No | Minimum construction year of the property. |
+| `constructionYearMax` | `number` | No | Maximum construction year of the property. |
+| `energyCategories` | `(A \| B \| C \| D \| E \| F \| G)[]` | No | The energy efficiency categories of the property. |
+| `energyValueMin` | `number` | No | Minimum energy value of the property. |
+| `energyValueMax` | `number` | No | Maximum energy value of the property. |
+| `eventPriceVariationFromCreatedAt` | `string` | No | Date from which an event of type price is created — inclusive. |
+| `eventPriceVariationToCreatedAt` | `string` | No | Date before which an event of type price is created — inclusive. |
+| `eventPriceVariationMin` | `number` | No | Minimum percent variation of an event of type price. |
+| `eventPriceVariationMax` | `number` | No | Maximum percent variation of an event of type price. |
+| `eventSurfaceVariationFromCreatedAt` | `string` | No | Date from which an event of type surface is created — inclusive. |
+| `eventSurfaceVariationToCreatedAt` | `string` | No | Date before which an event of type surface is created — inclusive. |
+| `eventSurfaceVariationMin` | `number` | No | Minimum percent variation of an event of type surface. |
+| `eventSurfaceVariationMax` | `number` | No | Maximum percent variation of an event of type surface. |
+| `excludedCities` | `string[]` | No | Cities to be excluded. |
+| `excludedInseeCodes` | `string[]` | No | Insee codes to be excluded. |
+| `excludedProperties` | `string[]` | No | Properties to be excluded. |
+| `excludedZipcodes` | `string[]` | No | Zipcodes to be excluded. |
+| `expressions` | `object[]` | No | Full-text rules on the title or description of the property: an array of OR groups, each an array of AND terms `{ word, options: { includes, strict } }`. Sent as `expressions[group][term][word]` and `expressions[group][term][options][includes\|strict]`. |
+| `feesPercentageMin` | `number` | No | Minimum percentage of fees. |
+| `feesPercentageMax` | `number` | No | Maximum percentage of fees. |
+| `feesResponsibility` | `0 \| 1` | No | Responsibility for fees. `0` for seller, `1` for buyer. |
+| `floorQuantityMin` | `number` | No | Minimum number of floors in the property. |
+| `floorQuantityMax` | `number` | No | Maximum number of floors in the property. |
+| `fromDate` | `string` | No | Date from which the property is created — inclusive. |
+| `toDate` | `string` | No | Date until which the property is created — inclusive. |
+| `fromUpdatedAt` | `string` | No | Date from which the property is updated — inclusive. |
+| `toUpdatedAt` | `string` | No | Date until which the property is updated — inclusive. |
+| `furnished` | `boolean` | No | Filter for furnished properties. |
+| `geoAccuracy` | `(1 \| 2)[]` | No | Filters properties by geocoding confidence level: `1` (house-number level), `2` (neighborhood level). |
+| `geoShapes` | `[number, number][][]` | No | Geographic areas to filter on: an array of polygons, each an array of `[lon, lat]` points. Sent as `geoShapes[polygon][point][0\|1]`. |
+| `greenHouseGasCategories` | `(A \| B \| C \| D \| E \| F \| G)[]` | No | Green house gas performance letter array of the property. |
+| `greenHouseGasValueMin` | `number` | No | Minimum value of green house gas of the property. |
+| `greenHouseGasValueMax` | `number` | No | Maximum value of green house gas of the property. |
+| `includedCities` | `string[]` | No | Located in given cities. Use `indicators.locations` to get the city IRIs, for example `/cities/30953`. |
+| `includedDepartments` | `string[]` | No | Located in given departments. Use `indicators.locations` to get the department IRIs, for example `/departments/77`. |
+| `includedInseeCodes` | `string[]` | No | Located in given insee codes. |
+| `includedZipcodes` | `string[]` | No | Located in given zipcodes. |
+| `inventoryPriceMin` | `number` | No | Greater than or equal to given inventory price. |
+| `inventoryPriceMax` | `number` | No | Lower than or equal to given inventory price. |
+| `lat` | `number` | No | Latitude. Will work if latitude exists in the property. |
+| `lon` | `number` | No | Longitude. Will work if longitude exists in the property. |
+| `radius` | `number` | No | Distance expressed in kilometers. Will work if latitude & longitude parameters are also set. |
+| `lotCountMin` | `number` | No | Greater than or equal to given lot count. |
+| `lotCountMax` | `number` | No | Lower than or equal to given lot count. |
+| `priceExcludingFeesMin` | `number` | No | Greater than or equal to given price excluding fees. |
+| `priceExcludingFeesMax` | `number` | No | Lower than or equal to given price excluding fees. |
+| `pricePerMeterMin` | `number` | No | Greater than or equal to given price per meter. |
+| `pricePerMeterMax` | `number` | No | Lower than or equal to given price per meter. |
+| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6)[]` | No | Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`. |
+| `publisherTypes` | `(0 \| 1)[]` | No | Type of publisher. Individual `0`, Professional `1`. |
+| `rentalChargesMin` | `number` | No | Greater than or equal to given rental charges amount. |
+| `rentalChargesMax` | `number` | No | Lower than or equal to given rental charges amount. |
+| `rentalPledgeMin` | `number` | No | Greater than or equal to given rental pledge amount. |
+| `rentalPledgeMax` | `number` | No | Lower than or equal to given rental pledge amount. |
+| `renterFeesMin` | `number` | No | Greater than or equal to given renter fees. |
+| `renterFeesMax` | `number` | No | Lower than or equal to given renter fees. |
+| `roomMin` | `number` | No | Minimum rooms of the property. |
+| `roomMax` | `number` | No | Maximum rooms of the property. |
+| `sortMode` | `property \| advert` | No | Whether to sort results by properties or by adverts. If `property`, `fromDate`/`toDate` apply to the property root object; if `advert`, they apply to the nested adverts. |
+| `surfaceMin` | `number` | No | Greater than or equal to given surface. |
+| `surfaceMax` | `number` | No | Lower than or equal to given surface. |
+| `transactionType` | `0 \| 1` | No | Type of transaction. Sell `0`, Rent `1`. |
+| `withCoherentPrice` | `boolean \| null` | No | Price coherence filter. `true` returns properties whose price passes our coherence checks; `false` returns properties flagged as incoherent — both also include properties whose price has not been assessed. Set to `null` (or send an empty value) to disable filtering. If omitted, defaults to `true`. |
+| `withLocation` | `boolean` | No | Having a latitude and longitude. |
+| `withVirtualTour` | `boolean` | No | Having a virtual tour video link. |
+| `expired` | `boolean` | No | Whether to show properties that are expired. A property is considered expired when all its adverts are expired. Default is `null` which returns all properties no matter if they're expired or not. |
+| `aggregationInterval` | `month \| year` | No | Date histogram granularity for the time series. Defaults to `month`. |
+| `order` | `object` | No | — |
+| `page` | `number` | No | The collection page number. Defaults to 1. |
+| `itemsPerPage` | `number` | No | The number of items per page. Max is 30; defaults to 30. `0` returns only `hydra:totalItems` (capped at 10 000 on properties.list). |
+
+<AccordionGroup>
+<Accordion title="expressions full type">
+
+```ts
+{
+  word: string,
+  options?: {
+    includes?: boolean,
+    strict?: boolean
+  }
+}[][]
+```
+</Accordion>
+
+<Accordion title="order full type">
+
+```ts
+{
+  createdAt?: asc | desc,
+  updatedAt?: asc | desc
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@context` | `string \| null` | No | — |
+| `@id` | `string \| null` | No | — |
+| `@type` | `string \| null` | No | — |
+| `hydra:totalItems` | `number \| null` | No | — |
+| `hydra:view` | `object \| null` | No | — |
+| `hydra:search` | `object \| null` | No | — |
+| `hydra:member` | `object[]` | Yes | — |
+| `nextPage` | `number \| null` | Yes | The page number to request next, read from `hydra:view.hydra:next`; null on the last page. |
+
+<AccordionGroup>
+<Accordion title="hydra:view full type">
+
+```ts
+{
+  @id?: string | null,
+  @type?: string | null,
+  hydra:first?: string | null,
+  hydra:last?: string | null,
+  hydra:next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:search full type">
+
+```ts
+{
+  @type?: string | null,
+  hydra:template?: string | null,
+  hydra:variableRepresentation?: string | null,
+  hydra:mapping?: {
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:member full type">
+
+```ts
+{
+  average?: number | null,
+  average_min?: number | null,
+  average_max?: number | null,
+  median?: number | null,
+  series?: Record<string, number> | never[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Properties
+
+### get
+
+`properties.get`
+
+Get one property by UUID, with its adverts, city, stations and price events
+
+**Risk:** `read`
+
+```ts
+await corsair.melo.api.properties.get({ id: '38cb65b9-2965-4bd0-bc9b-2b8a8be7c457' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID of the property. Taken from the `uuid` field. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@context` | `string \| null` | No | — |
+| `@id` | `string \| null` | No | — |
+| `@type` | `string \| null` | No | — |
+| `adverts` | `object[] \| null` | No | — |
+| `bedroom` | `number \| null` | No | — |
+| `city` | `object \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `elevator` | `boolean \| null` | No | — |
+| `expired` | `boolean \| null` | No | A property is expired when all its adverts are expired. |
+| `expiredAt` | `string \| null` | No | — |
+| `floor` | `number \| null` | No | — |
+| `furnished` | `boolean \| null` | No | — |
+| `landSurface` | `number \| null` | No | — |
+| `lastCrawledAdvert` | `string \| null` | No | — |
+| `lastCrawledAt` | `string \| null` | No | — |
+| `locations` | `object \| null` | No | — |
+| `pictures` | `string[] \| null` | No | — |
+| `price` | `number \| null` | No | — |
+| `pricePerMeter` | `number \| null` | No | — |
+| `property` | `string \| null` | No | — |
+| `propertyType` | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| number \| null` | No | Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`. Other values may appear later. |
+| `publisherTypes` | `(0 \| 1 \| number)[] \| null` | No | — |
+| `room` | `number \| null` | No | — |
+| `stations` | `object[] \| null` | No | — |
+| `surface` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `transactionType` | `0 \| 1 \| number \| null` | No | Type of transaction. Sell `0`, Rent `1`. Other values may appear later. |
+| `updatedAt` | `string \| null` | No | — |
+| `uuid` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="adverts full type">
+
+```ts
+{
+  condominiumFees?: number | null,
+  constructionYear?: number | null,
+  contact?: {
+    agency?: string | null,
+    email?: string | null,
+    fax?: string | null,
+    name?: string | null,
+    phone?: string | null,
+    reference?: string | null
+  } | null,
+  createdAt?: string | null,
+  description?: string | null,
+  elevator?: boolean | null,
+  energy?: {
+    category?: string | null,
+    value?: number | null
+  } | null,
+  events?: {
+    createdAt?: string | null,
+    fieldName?: string | null,
+    fieldNewValue?: string | number | boolean | null,
+    fieldOldValue?: string | number | boolean | null,
+    percentVariation?: number | null
+  }[] | null,
+  features?: string[] | null,
+  feesPercentage?: number | null,
+  feesResponsibility?: 0 | 1 | number | null,
+  floor?: number | null,
+  floorQuantity?: number | null,
+  furnished?: boolean | null,
+  greenHouseGas?: {
+    category?: string | null,
+    value?: number | null
+  } | null,
+  inventoryPrice?: number | null,
+  landSurface?: number | null,
+  lastCrawledAt?: string | null,
+  lotCount?: number | null,
+  pictures?: string[] | null,
+  picturesRemote?: string[] | null,
+  price?: number | null,
+  priceExcludingFees?: number | null,
+  publisher?: {
+    category?: string | null,
+    name?: string | null,
+    type?: 0 | 1 | number | null
+  } | null,
+  rentalCharges?: number | null,
+  rentalPledge?: number | null,
+  renterFees?: number | null,
+  surface?: number | null,
+  title?: string | null,
+  updatedAt?: string | null,
+  url?: string | null,
+  uuid?: string | null,
+  virtualTour?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="city full type">
+
+```ts
+{
+  cityParentId?: number | null,
+  country?: {
+    code?: string | null,
+    id?: number | null,
+    name?: string | null
+  } | null,
+  department?: {
+    code?: string | null,
+    id?: number | null,
+    name?: string | null
+  } | null,
+  groupedCityNames?: string[] | null,
+  groupedCityZipcodes?: string[] | null,
+  hasGroupedByName?: boolean | null,
+  hasGroupedByZipcode?: boolean | null,
+  id?: number | null,
+  insee?: string | null,
+  location?: {
+    lat?: number | null,
+    lon?: number | null
+  } | null,
+  name?: string | null,
+  open?: boolean | null,
+  originalName?: string | null,
+  region?: {
+    code?: string | null,
+    id?: number | null,
+    name?: string | null
+  } | null,
+  zipcode?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="locations full type">
+
+```ts
+{
+  lat?: number | null,
+  lon?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="stations full type">
+
+```ts
+{
+  id?: number | null,
+  lines?: {
+    color?: string | null,
+    id?: number | null,
+    name?: string | null,
+    number?: string | null,
+    routeName?: string | null
+  }[] | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`properties.list`
+
+List French real-estate properties matching filters (location, price, surface, rooms, energy class and more), with paging via nextPage
+
+**Risk:** `read`
+
+```ts
+await corsair.melo.api.properties.list({ includedDepartments: ['/departments/77'], propertyTypes: [1], transactionType: 0, budgetMax: 450000, itemsPerPage: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `advertPriceMin` | `number` | No | Minimum price of advert. Filters properties based on any non expired adverts prices. |
+| `advertPriceMax` | `number` | No | Maximum price of advert. Filters properties based on any non expired adverts prices. |
+| `bedroomMin` | `number` | No | Minimum number of bedrooms in the property. |
+| `bedroomMax` | `number` | No | Maximum number of bedrooms in the property. |
+| `budgetMin` | `number` | No | Minimum budget for the property. |
+| `budgetMax` | `number` | No | Maximum budget for the property. |
+| `condominiumFeesMin` | `number` | No | Minimum condominium fees for the property. |
+| `condominiumFeesMax` | `number` | No | Maximum condominium fees for the property. |
+| `constructionYearMin` | `number` | No | Minimum construction year of the property. |
+| `constructionYearMax` | `number` | No | Maximum construction year of the property. |
+| `energyCategories` | `(A \| B \| C \| D \| E \| F \| G)[]` | No | The energy efficiency categories of the property. |
+| `energyValueMin` | `number` | No | Minimum energy value of the property. |
+| `energyValueMax` | `number` | No | Maximum energy value of the property. |
+| `eventPriceVariationFromCreatedAt` | `string` | No | Date from which an event of type price is created — inclusive. |
+| `eventPriceVariationToCreatedAt` | `string` | No | Date before which an event of type price is created — inclusive. |
+| `eventPriceVariationMin` | `number` | No | Minimum percent variation of an event of type price. |
+| `eventPriceVariationMax` | `number` | No | Maximum percent variation of an event of type price. |
+| `eventSurfaceVariationFromCreatedAt` | `string` | No | Date from which an event of type surface is created — inclusive. |
+| `eventSurfaceVariationToCreatedAt` | `string` | No | Date before which an event of type surface is created — inclusive. |
+| `eventSurfaceVariationMin` | `number` | No | Minimum percent variation of an event of type surface. |
+| `eventSurfaceVariationMax` | `number` | No | Maximum percent variation of an event of type surface. |
+| `excludedCities` | `string[]` | No | Cities to be excluded. |
+| `excludedInseeCodes` | `string[]` | No | Insee codes to be excluded. |
+| `excludedProperties` | `string[]` | No | Properties to be excluded. |
+| `excludedZipcodes` | `string[]` | No | Zipcodes to be excluded. |
+| `expressions` | `object[]` | No | Full-text rules on the title or description of the property: an array of OR groups, each an array of AND terms `{ word, options: { includes, strict } }`. Sent as `expressions[group][term][word]` and `expressions[group][term][options][includes\|strict]`. |
+| `feesPercentageMin` | `number` | No | Minimum percentage of fees. |
+| `feesPercentageMax` | `number` | No | Maximum percentage of fees. |
+| `feesResponsibility` | `0 \| 1` | No | Responsibility for fees. `0` for seller, `1` for buyer. |
+| `floorQuantityMin` | `number` | No | Minimum number of floors in the property. |
+| `floorQuantityMax` | `number` | No | Maximum number of floors in the property. |
+| `fromDate` | `string` | No | Date from which the property is created — inclusive. |
+| `toDate` | `string` | No | Date until which the property is created — inclusive. |
+| `fromUpdatedAt` | `string` | No | Date from which the property is updated — inclusive. |
+| `toUpdatedAt` | `string` | No | Date until which the property is updated — inclusive. |
+| `furnished` | `boolean` | No | Filter for furnished properties. |
+| `geoAccuracy` | `(1 \| 2)[]` | No | Filters properties by geocoding confidence level: `1` (house-number level), `2` (neighborhood level). |
+| `geoShapes` | `[number, number][][]` | No | Geographic areas to filter on: an array of polygons, each an array of `[lon, lat]` points. Sent as `geoShapes[polygon][point][0\|1]`. |
+| `greenHouseGasCategories` | `(A \| B \| C \| D \| E \| F \| G)[]` | No | Green house gas performance letter array of the property. |
+| `greenHouseGasValueMin` | `number` | No | Minimum value of green house gas of the property. |
+| `greenHouseGasValueMax` | `number` | No | Maximum value of green house gas of the property. |
+| `includedCities` | `string[]` | No | Located in given cities. Use `indicators.locations` to get the city IRIs, for example `/cities/30953`. |
+| `includedDepartments` | `string[]` | No | Located in given departments. Use `indicators.locations` to get the department IRIs, for example `/departments/77`. |
+| `includedInseeCodes` | `string[]` | No | Located in given insee codes. |
+| `includedZipcodes` | `string[]` | No | Located in given zipcodes. |
+| `inventoryPriceMin` | `number` | No | Greater than or equal to given inventory price. |
+| `inventoryPriceMax` | `number` | No | Lower than or equal to given inventory price. |
+| `lat` | `number` | No | Latitude. Will work if latitude exists in the property. |
+| `lon` | `number` | No | Longitude. Will work if longitude exists in the property. |
+| `radius` | `number` | No | Distance expressed in kilometers. Will work if latitude & longitude parameters are also set. |
+| `lotCountMin` | `number` | No | Greater than or equal to given lot count. |
+| `lotCountMax` | `number` | No | Lower than or equal to given lot count. |
+| `priceExcludingFeesMin` | `number` | No | Greater than or equal to given price excluding fees. |
+| `priceExcludingFeesMax` | `number` | No | Lower than or equal to given price excluding fees. |
+| `pricePerMeterMin` | `number` | No | Greater than or equal to given price per meter. |
+| `pricePerMeterMax` | `number` | No | Lower than or equal to given price per meter. |
+| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6)[]` | No | Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`. |
+| `publisherTypes` | `(0 \| 1)[]` | No | Type of publisher. Individual `0`, Professional `1`. |
+| `rentalChargesMin` | `number` | No | Greater than or equal to given rental charges amount. |
+| `rentalChargesMax` | `number` | No | Lower than or equal to given rental charges amount. |
+| `rentalPledgeMin` | `number` | No | Greater than or equal to given rental pledge amount. |
+| `rentalPledgeMax` | `number` | No | Lower than or equal to given rental pledge amount. |
+| `renterFeesMin` | `number` | No | Greater than or equal to given renter fees. |
+| `renterFeesMax` | `number` | No | Lower than or equal to given renter fees. |
+| `roomMin` | `number` | No | Minimum rooms of the property. |
+| `roomMax` | `number` | No | Maximum rooms of the property. |
+| `sortMode` | `property \| advert` | No | Whether to sort results by properties or by adverts. If `property`, `fromDate`/`toDate` apply to the property root object; if `advert`, they apply to the nested adverts. |
+| `surfaceMin` | `number` | No | Greater than or equal to given surface. |
+| `surfaceMax` | `number` | No | Lower than or equal to given surface. |
+| `transactionType` | `0 \| 1` | No | Type of transaction. Sell `0`, Rent `1`. |
+| `withCoherentPrice` | `boolean \| null` | No | Price coherence filter. `true` returns properties whose price passes our coherence checks; `false` returns properties flagged as incoherent — both also include properties whose price has not been assessed. Set to `null` (or send an empty value) to disable filtering. If omitted, defaults to `true`. |
+| `withLocation` | `boolean` | No | Having a latitude and longitude. |
+| `withVirtualTour` | `boolean` | No | Having a virtual tour video link. |
+| `expired` | `boolean` | No | Whether to show properties that are expired. A property is considered expired when all its adverts are expired. Default is `null` which returns all properties no matter if they're expired or not. |
+| `fromExpiredAt` | `string` | No | Date from which the advert is expired — inclusive. |
+| `toExpiredAt` | `string` | No | Date until which the advert is expired — inclusive. |
+| `excludedSites` | `string[]` | No | Source sites to be excluded. |
+| `includedSites` | `string[]` | No | Source sites to be included. |
+| `landSurfaceMin` | `number` | No | Minimum land surface. |
+| `landSurfaceMax` | `number` | No | Maximum land surface. |
+| `order` | `object` | No | Sent as `order[createdAt]`, `order[price]` and so on. |
+| `page` | `number` | No | The collection page number. Defaults to 1. |
+| `itemsPerPage` | `number` | No | The number of items per page. Max is 30; defaults to 10. `0` returns only `hydra:totalItems` (capped at 10 000 on properties.list). |
+
+<AccordionGroup>
+<Accordion title="expressions full type">
+
+```ts
+{
+  word: string,
+  options?: {
+    includes?: boolean,
+    strict?: boolean
+  }
+}[][]
+```
+</Accordion>
+
+<Accordion title="order full type">
+
+```ts
+{
+  createdAt?: asc | desc,
+  updatedAt?: asc | desc,
+  pricePerMeter?: asc | desc,
+  price?: asc | desc,
+  surface?: asc | desc
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@context` | `string \| null` | No | — |
+| `@id` | `string \| null` | No | — |
+| `@type` | `string \| null` | No | — |
+| `hydra:totalItems` | `number \| null` | No | — |
+| `hydra:view` | `object \| null` | No | — |
+| `hydra:search` | `object \| null` | No | — |
+| `hydra:member` | `object[]` | Yes | — |
+| `nextPage` | `number \| null` | Yes | The page number to request next, read from `hydra:view.hydra:next`; null on the last page. |
+
+<AccordionGroup>
+<Accordion title="hydra:view full type">
+
+```ts
+{
+  @id?: string | null,
+  @type?: string | null,
+  hydra:first?: string | null,
+  hydra:last?: string | null,
+  hydra:next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:search full type">
+
+```ts
+{
+  @type?: string | null,
+  hydra:template?: string | null,
+  hydra:variableRepresentation?: string | null,
+  hydra:mapping?: {
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:member full type">
+
+```ts
+{
+  @context?: string | null,
+  @id?: string | null,
+  @type?: string | null,
+  adverts?: {
+    condominiumFees?: number | null,
+    constructionYear?: number | null,
+    contact?: {
+      agency?: string | null,
+      email?: string | null,
+      fax?: string | null,
+      name?: string | null,
+      phone?: string | null,
+      reference?: string | null
+    } | null,
+    createdAt?: string | null,
+    description?: string | null,
+    elevator?: boolean | null,
+    energy?: {
+      category?: string | null,
+      value?: number | null
+    } | null,
+    events?: {
+      createdAt?: string | null,
+      fieldName?: string | null,
+      fieldNewValue?: string | number | boolean | null,
+      fieldOldValue?: string | number | boolean | null,
+      percentVariation?: number | null
+    }[] | null,
+    features?: string[] | null,
+    feesPercentage?: number | null,
+    feesResponsibility?: 0 | 1 | number | null,
+    floor?: number | null,
+    floorQuantity?: number | null,
+    furnished?: boolean | null,
+    greenHouseGas?: {
+      category?: string | null,
+      value?: number | null
+    } | null,
+    inventoryPrice?: number | null,
+    landSurface?: number | null,
+    lastCrawledAt?: string | null,
+    lotCount?: number | null,
+    pictures?: string[] | null,
+    picturesRemote?: string[] | null,
+    price?: number | null,
+    priceExcludingFees?: number | null,
+    publisher?: {
+      category?: string | null,
+      name?: string | null,
+      type?: 0 | 1 | number | null
+    } | null,
+    rentalCharges?: number | null,
+    rentalPledge?: number | null,
+    renterFees?: number | null,
+    surface?: number | null,
+    title?: string | null,
+    updatedAt?: string | null,
+    url?: string | null,
+    uuid?: string | null,
+    virtualTour?: string | null
+  }[] | null,
+  bedroom?: number | null,
+  city?: {
+    cityParentId?: number | null,
+    country?: {
+      code?: string | null,
+      id?: number | null,
+      name?: string | null
+    } | null,
+    department?: {
+      code?: string | null,
+      id?: number | null,
+      name?: string | null
+    } | null,
+    groupedCityNames?: string[] | null,
+    groupedCityZipcodes?: string[] | null,
+    hasGroupedByName?: boolean | null,
+    hasGroupedByZipcode?: boolean | null,
+    id?: number | null,
+    insee?: string | null,
+    location?: {
+      lat?: number | null,
+      lon?: number | null
+    } | null,
+    name?: string | null,
+    open?: boolean | null,
+    originalName?: string | null,
+    region?: {
+      code?: string | null,
+      id?: number | null,
+      name?: string | null
+    } | null,
+    zipcode?: string | null
+  } | null,
+  createdAt?: string | null,
+  description?: string | null,
+  elevator?: boolean | null,
+  expired?: boolean | null,
+  expiredAt?: string | null,
+  floor?: number | null,
+  furnished?: boolean | null,
+  landSurface?: number | null,
+  lastCrawledAdvert?: string | null,
+  lastCrawledAt?: string | null,
+  locations?: {
+    lat?: number | null,
+    lon?: number | null
+  } | null,
+  pictures?: string[] | null,
+  price?: number | null,
+  pricePerMeter?: number | null,
+  property?: string | null,
+  propertyType?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | number | null,
+  publisherTypes?: (0 | 1 | number)[] | null,
+  room?: number | null,
+  stations?: {
+    id?: number | null,
+    lines?: {
+      color?: string | null,
+      id?: number | null,
+      name?: string | null,
+      number?: string | null,
+      routeName?: string | null
+    }[] | null,
+    name?: string | null
+  }[] | null,
+  surface?: number | null,
+  title?: string | null,
+  transactionType?: 0 | 1 | number | null,
+  updatedAt?: string | null,
+  uuid?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSimilar
+
+`properties.listSimilar`
+
+List properties similar to a given property, with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.melo.api.properties.listSimilar({ id: '38cb65b9-2965-4bd0-bc9b-2b8a8be7c457', itemsPerPage: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID of the property to find similar ones for. Taken from the `uuid` field. |
+| `fromDate` | `string` | No | Date from which the property is created — inclusive. |
+| `order` | `object` | No | — |
+| `page` | `number` | No | The collection page number. Defaults to 1. |
+| `itemsPerPage` | `number` | No | The number of items per page. Max is 30; defaults to 10. `0` returns only `hydra:totalItems` (capped at 10 000 on properties.list). |
+
+<AccordionGroup>
+<Accordion title="order full type">
+
+```ts
+{
+  createdAt?: asc | desc,
+  updatedAt?: asc | desc,
+  pricePerMeter?: asc | desc,
+  price?: asc | desc,
+  surface?: asc | desc
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@context` | `string \| null` | No | — |
+| `@id` | `string \| null` | No | — |
+| `@type` | `string \| null` | No | — |
+| `hydra:totalItems` | `number \| null` | No | — |
+| `hydra:view` | `object \| null` | No | — |
+| `hydra:search` | `object \| null` | No | — |
+| `hydra:member` | `object[]` | Yes | — |
+| `nextPage` | `number \| null` | Yes | The page number to request next, read from `hydra:view.hydra:next`; null on the last page. |
+
+<AccordionGroup>
+<Accordion title="hydra:view full type">
+
+```ts
+{
+  @id?: string | null,
+  @type?: string | null,
+  hydra:first?: string | null,
+  hydra:last?: string | null,
+  hydra:next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:search full type">
+
+```ts
+{
+  @type?: string | null,
+  hydra:template?: string | null,
+  hydra:variableRepresentation?: string | null,
+  hydra:mapping?: {
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:member full type">
+
+```ts
+{
+  @context?: string | null,
+  @id?: string | null,
+  @type?: string | null,
+  adverts?: {
+    condominiumFees?: number | null,
+    constructionYear?: number | null,
+    contact?: {
+      agency?: string | null,
+      email?: string | null,
+      fax?: string | null,
+      name?: string | null,
+      phone?: string | null,
+      reference?: string | null
+    } | null,
+    createdAt?: string | null,
+    description?: string | null,
+    elevator?: boolean | null,
+    energy?: {
+      category?: string | null,
+      value?: number | null
+    } | null,
+    events?: {
+      createdAt?: string | null,
+      fieldName?: string | null,
+      fieldNewValue?: string | number | boolean | null,
+      fieldOldValue?: string | number | boolean | null,
+      percentVariation?: number | null
+    }[] | null,
+    features?: string[] | null,
+    feesPercentage?: number | null,
+    feesResponsibility?: 0 | 1 | number | null,
+    floor?: number | null,
+    floorQuantity?: number | null,
+    furnished?: boolean | null,
+    greenHouseGas?: {
+      category?: string | null,
+      value?: number | null
+    } | null,
+    inventoryPrice?: number | null,
+    landSurface?: number | null,
+    lastCrawledAt?: string | null,
+    lotCount?: number | null,
+    pictures?: string[] | null,
+    picturesRemote?: string[] | null,
+    price?: number | null,
+    priceExcludingFees?: number | null,
+    publisher?: {
+      category?: string | null,
+      name?: string | null,
+      type?: 0 | 1 | number | null
+    } | null,
+    rentalCharges?: number | null,
+    rentalPledge?: number | null,
+    renterFees?: number | null,
+    surface?: number | null,
+    title?: string | null,
+    updatedAt?: string | null,
+    url?: string | null,
+    uuid?: string | null,
+    virtualTour?: string | null
+  }[] | null,
+  bedroom?: number | null,
+  city?: {
+    cityParentId?: number | null,
+    country?: {
+      code?: string | null,
+      id?: number | null,
+      name?: string | null
+    } | null,
+    department?: {
+      code?: string | null,
+      id?: number | null,
+      name?: string | null
+    } | null,
+    groupedCityNames?: string[] | null,
+    groupedCityZipcodes?: string[] | null,
+    hasGroupedByName?: boolean | null,
+    hasGroupedByZipcode?: boolean | null,
+    id?: number | null,
+    insee?: string | null,
+    location?: {
+      lat?: number | null,
+      lon?: number | null
+    } | null,
+    name?: string | null,
+    open?: boolean | null,
+    originalName?: string | null,
+    region?: {
+      code?: string | null,
+      id?: number | null,
+      name?: string | null
+    } | null,
+    zipcode?: string | null
+  } | null,
+  createdAt?: string | null,
+  description?: string | null,
+  elevator?: boolean | null,
+  expired?: boolean | null,
+  expiredAt?: string | null,
+  floor?: number | null,
+  furnished?: boolean | null,
+  landSurface?: number | null,
+  lastCrawledAdvert?: string | null,
+  lastCrawledAt?: string | null,
+  locations?: {
+    lat?: number | null,
+    lon?: number | null
+  } | null,
+  pictures?: string[] | null,
+  price?: number | null,
+  pricePerMeter?: number | null,
+  property?: string | null,
+  propertyType?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | number | null,
+  publisherTypes?: (0 | 1 | number)[] | null,
+  room?: number | null,
+  stations?: {
+    id?: number | null,
+    lines?: {
+      color?: string | null,
+      id?: number | null,
+      name?: string | null,
+      number?: string | null,
+      routeName?: string | null
+    }[] | null,
+    name?: string | null
+  }[] | null,
+  surface?: number | null,
+  title?: string | null,
+  transactionType?: 0 | 1 | number | null,
+  updatedAt?: string | null,
+  uuid?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Searches
+
+### create
+
+`searches.create`
+
+Create a saved search; Melo also requires a location (includedCities, includedDepartments, includedZipcodes, lat/lon/radius or geoShapes) and a budget or price per meter bound. With notificationEnabled and a webhook or email recipient, Melo starts sending matches and events there
+
+**Risk:** `write`
+
+```ts
+await corsair.melo.api.searches.create({ title: 'Houses in Paris', transactionType: 0, propertyTypes: [1], includedDepartments: ['/departments/77'], budgetMax: 450000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bedroomMin` | `number` | No | Minimum number of bedrooms in the property. |
+| `bedroomMax` | `number` | No | Maximum number of bedrooms in the property. |
+| `budgetMax` | `number` | No | Maximum budget for the property. |
+| `budgetMin` | `number` | No | Minimum budget for the property. |
+| `endpointRecipient` | `string` | No | HTTPS webhook that receives `match` payloads whenever a property satisfies the search. Requires `notificationEnabled: true`. |
+| `eventEndpoint` | `string` | No | HTTPS webhook that receives advert `event` payloads (price changes, expirations, etc.). Requires `notificationEnabled: true` and at least one entry in `subscribedEvents`. |
+| `excludedCities` | `string[]` | No | Cities to be excluded. |
+| `excludedSites` | `string[]` | No | Source sites to be excluded. |
+| `excludedSiteCategories` | `string[]` | No | Site categories to be excluded. |
+| `expressions` | `object[]` | No | Full-text rules on the title or description: an array of OR groups, each an array of AND terms `{ word, options: { includes, strict } }`. |
+| `furnished` | `boolean` | No | Whether the property is furnished or not. |
+| `geoAccuracy` | `1 \| 2` | No | Geocoding confidence level. `1` keeps only house-number level matches and `2` includes neighborhood-level approximations. Leave empty to allow both. |
+| `geoShapes` | `[number, number][][]` | No | Geographic areas to filter on: an array of polygons, each an array of `[lon, lat]` points. |
+| `hidePropertyContact` | `boolean` | No | Whether to hide property contact information or not. |
+| `includedCities` | `string[]` | No | Included cities. Use `indicators.locations` to get the city IRIs, for example `/cities/30953`. |
+| `includedDepartments` | `string[]` | No | Included departments. Use `indicators.locations` to get the department IRIs, for example `/departments/77`. |
+| `includedSiteCategories` | `string[]` | No | Included site categories. |
+| `includedSites` | `string[]` | No | Source sites to be included. |
+| `includedZipcodes` | `string[]` | No | Included zipcodes. |
+| `includedZipcodesInsee` | `string[]` | No | Included INSEE codes (used to infer the cities associated with the search). |
+| `landSurfaceMax` | `number` | No | Maximum land surface. |
+| `landSurfaceMin` | `number` | No | Minimum land surface. |
+| `lat` | `number` | No | Latitude of the center point used for radial filtering. Provide together with `lon`. |
+| `lon` | `number` | No | Longitude of the center point used for radial filtering. Provide together with `lat`. |
+| `notificationEnabled` | `boolean` | No | Enables delivery of matches and events by webhook (`endpointRecipient`, `eventEndpoint`) or by email (`notificationRecipient`). The API defaults to false. |
+| `notificationRecipient` | `string` | No | Email address that receives alert summaries when `notificationEnabled` is true. |
+| `pricePerMeterMax` | `number` | No | Maximum price per meter. |
+| `pricePerMeterMin` | `number` | No | Minimum price per meter. |
+| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6)[]` | Yes | Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`. Required. |
+| `publisherTypes` | `(0 \| 1)[]` | No | — |
+| `radius` | `number` | No | Distance in kilometers around the provided `lat`/`lon`. |
+| `roomMin` | `number` | No | Minimum number of rooms. |
+| `roomMax` | `number` | No | Maximum number of rooms. |
+| `subscribedEvents` | `(ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update)[]` | No | Event codes you want to receive on the `eventEndpoint`. |
+| `surfaceMax` | `number` | No | Maximum property surface area. |
+| `surfaceMin` | `number` | No | Minimum property surface area. |
+| `title` | `string` | Yes | Title of the search. Required. |
+| `transactionType` | `0 \| 1` | Yes | Type of transaction. Sell `0`, Rent `1`. |
+| `withCoherentPrice` | `boolean \| null` | No | Price coherence filter. `true` keeps adverts whose price passes the coherence checks, `false` keeps adverts flagged as incoherent (both also include unassessed ones), `null` disables the filter. The API defaults to `true` when omitted. |
+| `withVirtualTour` | `boolean` | No | Whether the property includes a virtual tour. |
+
+<AccordionGroup>
+<Accordion title="expressions full type">
+
+```ts
+{
+  word: string,
+  options?: {
+    includes?: boolean,
+    strict?: boolean
+  }
+}[][]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@context` | `string \| null` | No | — |
+| `@id` | `string \| null` | No | — |
+| `@type` | `string \| null` | No | — |
+| `bedroomMin` | `number \| null` | No | — |
+| `bedroomMax` | `number \| null` | No | — |
+| `budgetMax` | `number \| null` | No | — |
+| `budgetMin` | `number \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `endpointRecipient` | `string \| null` | No | — |
+| `eventEndpoint` | `string \| null` | No | — |
+| `excludedCities` | `object[] \| null` | No | — |
+| `excludedSiteCategories` | `object[] \| null` | No | — |
+| `expressions` | `object[] \| null` | No | — |
+| `furnished` | `boolean \| null` | No | — |
+| `hidePropertyContact` | `boolean \| null` | No | — |
+| `includedCities` | `object[] \| null` | No | — |
+| `includedDepartments` | `object[] \| null` | No | — |
+| `includedSiteCategories` | `object[] \| null` | No | — |
+| `landSurfaceMax` | `number \| null` | No | — |
+| `landSurfaceMin` | `number \| null` | No | — |
+| `lastAlertAt` | `string \| null` | No | — |
+| `lat` | `number \| null` | No | — |
+| `lon` | `number \| null` | No | — |
+| `notificationEnabled` | `boolean \| null` | No | — |
+| `notificationRecipient` | `string \| null` | No | — |
+| `pricePerMeterMax` | `number \| null` | No | — |
+| `pricePerMeterMin` | `number \| null` | No | — |
+| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| number)[] \| null` | No | — |
+| `publisherTypes` | `(0 \| 1 \| number)[] \| null` | No | — |
+| `radius` | `number \| null` | No | — |
+| `roomMin` | `number \| null` | No | — |
+| `roomMax` | `number \| null` | No | — |
+| `subscribedEvents` | `(ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update \| string)[] \| null` | No | — |
+| `surfaceMax` | `number \| null` | No | — |
+| `surfaceMin` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `token` | `string \| null` | No | — |
+| `transactionType` | `0 \| 1 \| number \| null` | No | Type of transaction. Sell `0`, Rent `1`. Other values may appear later. |
+| `updatedAt` | `string \| null` | No | — |
+| `user` | `string \| null` | No | — |
+| `withCoherentPrice` | `boolean \| null` | No | — |
+| `withVirtualTour` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="excludedCities full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="excludedSiteCategories full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="expressions full type">
+
+```ts
+(string | {
+} | (string | {
+})[])[] | null
+```
+</Accordion>
+
+<Accordion title="includedCities full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="includedDepartments full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="includedSiteCategories full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`searches.delete`
+
+Permanently delete a saved search; its notifications stop and it cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.melo.api.searches.delete({ id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID of the search to delete. Taken from the `uuid` field. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of the search that was deleted. |
+| `deleted` | `true` | Yes | The API answers 204 with no body when the search is deleted. |
+
+
+
+---
+
+### get
+
+`searches.get`
+
+Get one saved search by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.melo.api.searches.get({ id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID of the search. Taken from the `uuid` field. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@context` | `string \| null` | No | — |
+| `@id` | `string \| null` | No | — |
+| `@type` | `string \| null` | No | — |
+| `bedroomMin` | `number \| null` | No | — |
+| `bedroomMax` | `number \| null` | No | — |
+| `budgetMax` | `number \| null` | No | — |
+| `budgetMin` | `number \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `endpointRecipient` | `string \| null` | No | — |
+| `eventEndpoint` | `string \| null` | No | — |
+| `excludedCities` | `object[] \| null` | No | — |
+| `excludedSiteCategories` | `object[] \| null` | No | — |
+| `expressions` | `object[] \| null` | No | — |
+| `furnished` | `boolean \| null` | No | — |
+| `hidePropertyContact` | `boolean \| null` | No | — |
+| `includedCities` | `object[] \| null` | No | — |
+| `includedDepartments` | `object[] \| null` | No | — |
+| `includedSiteCategories` | `object[] \| null` | No | — |
+| `landSurfaceMax` | `number \| null` | No | — |
+| `landSurfaceMin` | `number \| null` | No | — |
+| `lastAlertAt` | `string \| null` | No | — |
+| `lat` | `number \| null` | No | — |
+| `lon` | `number \| null` | No | — |
+| `notificationEnabled` | `boolean \| null` | No | — |
+| `notificationRecipient` | `string \| null` | No | — |
+| `pricePerMeterMax` | `number \| null` | No | — |
+| `pricePerMeterMin` | `number \| null` | No | — |
+| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| number)[] \| null` | No | — |
+| `publisherTypes` | `(0 \| 1 \| number)[] \| null` | No | — |
+| `radius` | `number \| null` | No | — |
+| `roomMin` | `number \| null` | No | — |
+| `roomMax` | `number \| null` | No | — |
+| `subscribedEvents` | `(ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update \| string)[] \| null` | No | — |
+| `surfaceMax` | `number \| null` | No | — |
+| `surfaceMin` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `token` | `string \| null` | No | — |
+| `transactionType` | `0 \| 1 \| number \| null` | No | Type of transaction. Sell `0`, Rent `1`. Other values may appear later. |
+| `updatedAt` | `string \| null` | No | — |
+| `user` | `string \| null` | No | — |
+| `withCoherentPrice` | `boolean \| null` | No | — |
+| `withVirtualTour` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="excludedCities full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="excludedSiteCategories full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="expressions full type">
+
+```ts
+(string | {
+} | (string | {
+})[])[] | null
+```
+</Accordion>
+
+<Accordion title="includedCities full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="includedDepartments full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="includedSiteCategories full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`searches.list`
+
+List your saved searches, with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.melo.api.searches.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notificationEnabled` | `boolean` | No | Filter searches that have notifications enabled or not. |
+| `order` | `object` | No | — |
+| `page` | `number` | No | The collection page number. Defaults to 1. |
+| `title` | `string` | No | Title of the search. |
+
+<AccordionGroup>
+<Accordion title="order full type">
+
+```ts
+{
+  title?: asc | desc
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@context` | `string \| null` | No | — |
+| `@id` | `string \| null` | No | — |
+| `@type` | `string \| null` | No | — |
+| `hydra:totalItems` | `number \| null` | No | — |
+| `hydra:view` | `object \| null` | No | — |
+| `hydra:search` | `object \| null` | No | — |
+| `hydra:member` | `object[]` | Yes | — |
+| `nextPage` | `number \| null` | Yes | The page number to request next, read from `hydra:view.hydra:next`; null on the last page. |
+
+<AccordionGroup>
+<Accordion title="hydra:view full type">
+
+```ts
+{
+  @id?: string | null,
+  @type?: string | null,
+  hydra:first?: string | null,
+  hydra:last?: string | null,
+  hydra:next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:search full type">
+
+```ts
+{
+  @type?: string | null,
+  hydra:template?: string | null,
+  hydra:variableRepresentation?: string | null,
+  hydra:mapping?: {
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="hydra:member full type">
+
+```ts
+{
+  @context?: string | null,
+  @id?: string | null,
+  @type?: string | null,
+  bedroomMin?: number | null,
+  bedroomMax?: number | null,
+  budgetMax?: number | null,
+  budgetMin?: number | null,
+  createdAt?: string | null,
+  endpointRecipient?: string | null,
+  eventEndpoint?: string | null,
+  excludedCities?: (string | {
+  })[] | null,
+  excludedSiteCategories?: (string | {
+  })[] | null,
+  expressions?: (string | {
+  } | (string | {
+  })[])[] | null,
+  furnished?: boolean | null,
+  hidePropertyContact?: boolean | null,
+  includedCities?: (string | {
+  })[] | null,
+  includedDepartments?: (string | {
+  })[] | null,
+  includedSiteCategories?: (string | {
+  })[] | null,
+  landSurfaceMax?: number | null,
+  landSurfaceMin?: number | null,
+  lastAlertAt?: string | null,
+  lat?: number | null,
+  lon?: number | null,
+  notificationEnabled?: boolean | null,
+  notificationRecipient?: string | null,
+  pricePerMeterMax?: number | null,
+  pricePerMeterMin?: number | null,
+  propertyTypes?: (0 | 1 | 2 | 3 | 4 | 5 | 6 | number)[] | null,
+  publisherTypes?: (0 | 1 | number)[] | null,
+  radius?: number | null,
+  roomMin?: number | null,
+  roomMax?: number | null,
+  subscribedEvents?: (ad.update.price | ad.update.surface | ad.update.pictures | ad.update.expired | property.ad.create | property.ad.update | string)[] | null,
+  surfaceMax?: number | null,
+  surfaceMin?: number | null,
+  title?: string | null,
+  token?: string | null,
+  transactionType?: 0 | 1 | number | null,
+  updatedAt?: string | null,
+  user?: string | null,
+  withCoherentPrice?: boolean | null,
+  withVirtualTour?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`searches.update`
+
+Update a saved search (PUT) with the required title, transactionType and propertyTypes; fields left out keep their saved values
+
+**Risk:** `write`
+
+```ts
+await corsair.melo.api.searches.update({ id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d', title: 'Houses and flats in Paris', transactionType: 0, propertyTypes: [1, 0], budgetMax: 500000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID of the search to update. Taken from the `uuid` field. |
+| `bedroomMin` | `number` | No | Minimum number of bedrooms in the property. |
+| `bedroomMax` | `number` | No | Maximum number of bedrooms in the property. |
+| `budgetMax` | `number` | No | Maximum budget for the property. |
+| `budgetMin` | `number` | No | Minimum budget for the property. |
+| `endpointRecipient` | `string` | No | HTTPS webhook that receives `match` payloads whenever a property satisfies the search. Requires `notificationEnabled: true`. |
+| `eventEndpoint` | `string` | No | HTTPS webhook that receives advert `event` payloads (price changes, expirations, etc.). Requires `notificationEnabled: true` and at least one entry in `subscribedEvents`. |
+| `excludedCities` | `string[]` | No | Cities to be excluded. |
+| `excludedSites` | `string[]` | No | Source sites to be excluded. |
+| `excludedSiteCategories` | `string[]` | No | Site categories to be excluded. |
+| `expressions` | `object[]` | No | Full-text rules on the title or description: an array of OR groups, each an array of AND terms `{ word, options: { includes, strict } }`. |
+| `furnished` | `boolean` | No | Whether the property is furnished or not. |
+| `geoAccuracy` | `1 \| 2` | No | Geocoding confidence level. `1` keeps only house-number level matches and `2` includes neighborhood-level approximations. Leave empty to allow both. |
+| `geoShapes` | `[number, number][][]` | No | Geographic areas to filter on: an array of polygons, each an array of `[lon, lat]` points. |
+| `hidePropertyContact` | `boolean` | No | Whether to hide property contact information or not. |
+| `includedCities` | `string[]` | No | Included cities. Use `indicators.locations` to get the city IRIs, for example `/cities/30953`. |
+| `includedDepartments` | `string[]` | No | Included departments. Use `indicators.locations` to get the department IRIs, for example `/departments/77`. |
+| `includedSiteCategories` | `string[]` | No | Included site categories. |
+| `includedSites` | `string[]` | No | Source sites to be included. |
+| `includedZipcodes` | `string[]` | No | Included zipcodes. |
+| `includedZipcodesInsee` | `string[]` | No | Included INSEE codes (used to infer the cities associated with the search). |
+| `landSurfaceMax` | `number` | No | Maximum land surface. |
+| `landSurfaceMin` | `number` | No | Minimum land surface. |
+| `lat` | `number` | No | Latitude of the center point used for radial filtering. Provide together with `lon`. |
+| `lon` | `number` | No | Longitude of the center point used for radial filtering. Provide together with `lat`. |
+| `notificationEnabled` | `boolean` | No | Enables delivery of matches and events by webhook (`endpointRecipient`, `eventEndpoint`) or by email (`notificationRecipient`). The API defaults to false. |
+| `notificationRecipient` | `string` | No | Email address that receives alert summaries when `notificationEnabled` is true. |
+| `pricePerMeterMax` | `number` | No | Maximum price per meter. |
+| `pricePerMeterMin` | `number` | No | Minimum price per meter. |
+| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6)[]` | Yes | Type of property. Apartment `0`, House `1`, Building `2`, Parking `3`, Office `4`, Land `5`, Shop `6`. Required. |
+| `publisherTypes` | `(0 \| 1)[]` | No | — |
+| `radius` | `number` | No | Distance in kilometers around the provided `lat`/`lon`. |
+| `roomMin` | `number` | No | Minimum number of rooms. |
+| `roomMax` | `number` | No | Maximum number of rooms. |
+| `subscribedEvents` | `(ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update)[]` | No | Event codes you want to receive on the `eventEndpoint`. |
+| `surfaceMax` | `number` | No | Maximum property surface area. |
+| `surfaceMin` | `number` | No | Minimum property surface area. |
+| `title` | `string` | Yes | Title of the search. Required. |
+| `transactionType` | `0 \| 1` | Yes | Type of transaction. Sell `0`, Rent `1`. |
+| `withCoherentPrice` | `boolean \| null` | No | Price coherence filter. `true` keeps adverts whose price passes the coherence checks, `false` keeps adverts flagged as incoherent (both also include unassessed ones), `null` disables the filter. The API defaults to `true` when omitted. |
+| `withVirtualTour` | `boolean` | No | Whether the property includes a virtual tour. |
+
+<AccordionGroup>
+<Accordion title="expressions full type">
+
+```ts
+{
+  word: string,
+  options?: {
+    includes?: boolean,
+    strict?: boolean
+  }
+}[][]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `@context` | `string \| null` | No | — |
+| `@id` | `string \| null` | No | — |
+| `@type` | `string \| null` | No | — |
+| `bedroomMin` | `number \| null` | No | — |
+| `bedroomMax` | `number \| null` | No | — |
+| `budgetMax` | `number \| null` | No | — |
+| `budgetMin` | `number \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `endpointRecipient` | `string \| null` | No | — |
+| `eventEndpoint` | `string \| null` | No | — |
+| `excludedCities` | `object[] \| null` | No | — |
+| `excludedSiteCategories` | `object[] \| null` | No | — |
+| `expressions` | `object[] \| null` | No | — |
+| `furnished` | `boolean \| null` | No | — |
+| `hidePropertyContact` | `boolean \| null` | No | — |
+| `includedCities` | `object[] \| null` | No | — |
+| `includedDepartments` | `object[] \| null` | No | — |
+| `includedSiteCategories` | `object[] \| null` | No | — |
+| `landSurfaceMax` | `number \| null` | No | — |
+| `landSurfaceMin` | `number \| null` | No | — |
+| `lastAlertAt` | `string \| null` | No | — |
+| `lat` | `number \| null` | No | — |
+| `lon` | `number \| null` | No | — |
+| `notificationEnabled` | `boolean \| null` | No | — |
+| `notificationRecipient` | `string \| null` | No | — |
+| `pricePerMeterMax` | `number \| null` | No | — |
+| `pricePerMeterMin` | `number \| null` | No | — |
+| `propertyTypes` | `(0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6 \| number)[] \| null` | No | — |
+| `publisherTypes` | `(0 \| 1 \| number)[] \| null` | No | — |
+| `radius` | `number \| null` | No | — |
+| `roomMin` | `number \| null` | No | — |
+| `roomMax` | `number \| null` | No | — |
+| `subscribedEvents` | `(ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update \| string)[] \| null` | No | — |
+| `surfaceMax` | `number \| null` | No | — |
+| `surfaceMin` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `token` | `string \| null` | No | — |
+| `transactionType` | `0 \| 1 \| number \| null` | No | Type of transaction. Sell `0`, Rent `1`. Other values may appear later. |
+| `updatedAt` | `string \| null` | No | — |
+| `user` | `string \| null` | No | — |
+| `withCoherentPrice` | `boolean \| null` | No | — |
+| `withVirtualTour` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="excludedCities full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="excludedSiteCategories full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="expressions full type">
+
+```ts
+(string | {
+} | (string | {
+})[])[] | null
+```
+</Accordion>
+
+<Accordion title="includedCities full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="includedDepartments full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+
+<Accordion title="includedSiteCategories full type">
+
+```ts
+(string | {
+})[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### simulate
+
+`webhooks.simulate`
+
+Ask Melo to send a test match or event payload to a URL you give; this is an API call that sends a request to that URL, not an inbound webhook handler
+
+**Risk:** `write`
+
+```ts
+await corsair.melo.api.webhooks.simulate({ endpoint: 'https://hooks.example.com/melo', eventType: 'ad.update.price' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `string` | Yes | Endpoint where the match or the event will be sent to. |
+| `eventType` | `ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update` | No | The type of event to trigger. Omit it to simulate a `match`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sent` | `true` | Yes | The API answered 2xx: the simulated payload was sent to the endpoint. Melo returns no delivery result. |
+| `endpoint` | `string` | Yes | The endpoint the payload was sent to. |
+| `simulated` | `match \| ad.update.price \| ad.update.surface \| ad.update.pictures \| ad.update.expired \| property.ad.create \| property.ad.update` | Yes | `match`, or the event type that was simulated. |
+
+
+
+---
+
