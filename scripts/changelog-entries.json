@@ -3068,5 +3068,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/satismeter",
+    "dir": "packages/satismeter",
+    "name": "SatisMeter",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/scrapingant",
+    "dir": "packages/scrapingant",
+    "name": "ScrapingAnt",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
