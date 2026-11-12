@@ -323,8 +323,13 @@ const FraudCheckResponseSchema = z
 		error_text: EmptyOrTextSchema.nullish(),
 		id: z.string().nullish(),
 		req_phone: z.string().nullish().describe('The number as submitted.'),
-		tstatus: z.string().nullish(),
-		tdesc: z.string().nullish(),
+		tstatus: z
+			.string()
+			.nullish()
+			.describe(
+				'The lookup outcome: 300 completed, 301 partly completed (some fields empty), 500 not attempted (no score or risk fields), 501 the number does not exist, 599 contact support.',
+			),
+		tdesc: z.string().nullish().describe('The tstatus in words.'),
 		phn_type: z.string().nullish().describe('A numeric code; see phn_desc.'),
 		phn_desc: z
 			.string()

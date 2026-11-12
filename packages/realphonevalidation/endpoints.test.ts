@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { RealPhoneValidationAPIError } from './client';
 import * as Phones from './endpoints';
+import { RealPhoneValidationEndpointOutputSchemas } from './endpoints/types';
 import {
 	ACTIVE_INACTIVE,
 	ACTIVE_LANDLINE,
@@ -293,6 +294,27 @@ describe('dncPlus', () => {
 });
 
 describe('fraudCheck', () => {
+	it('tells the caller what a tstatus of 500 means', async () => {
+		respond(fetchMock, {
+			...FRAUD_MEDIUM,
+			tstatus: '500',
+			tdesc: 'Transaction not attempted',
+			score: {},
+			risk_level: {},
+			recommendation: {},
+		});
+
+		const result = await invoke(Phones.fraudCheck, { phone: '7275555555' });
+
+		// The answer is returned as sent: tstatus and tdesc carry the outcome, and
+		// the schema says that 500 means no score was produced.
+		expect(result.tstatus).toBe('500');
+		expect(result.score).toBeNull();
+		const tstatus =
+			RealPhoneValidationEndpointOutputSchemas.fraudCheck.shape.tstatus;
+		expect(tstatus.description).toMatch(/500.*not attempted/);
+	});
+
 	it('returns the risk score and recommendation', async () => {
 		respond(fetchMock, FRAUD_MEDIUM);
 
