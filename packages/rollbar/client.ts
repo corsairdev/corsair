@@ -27,7 +27,7 @@ export class RollbarAPIError extends Error {
 	readonly status?: number;
 	/** The body's `err`, which is non-zero for every failure. */
 	readonly err?: number;
-	/** Milliseconds from a Retry-After header, when Rollbar sent one. */
+	/** Milliseconds until the rate-limit window resets, from Rollbar's headers. */
 	readonly retryAfter?: number;
 	/** The HTTP method of the failed request. */
 	readonly method?: string;
@@ -70,8 +70,8 @@ export class RollbarAPIError extends Error {
 	}
 
 	/**
-	 * The plan's rate limit is spent. Rollbar answers this as a 429, and the
-	 * message names the wait, which the handler reads.
+	 * The token's rate limit is spent. Rollbar answers this as a 429 and names
+	 * the wait in the `X-Rate-Limit-*` headers, which the client reads.
 	 */
 	get isRateLimit(): boolean {
 		return this.status === 429;
@@ -142,15 +142,22 @@ export function segment(value: string | number): string {
 }
 
 /**
- * Rollbar names the wait in the 429 message rather than a header, so this config
- * reads `Retry-After` when a gateway adds one; the handler owns the retry count.
+ * Rollbar sends no `Retry-After`. Every response, the 429 included, carries
+ * `X-Rate-Limit-Remaining-Seconds` (seconds left in the window) and
+ * `X-Rate-Limit-Reset` (the window's end as a Unix timestamp), so the wait is
+ * read from those. The handler owns the retry count.
  */
 const ROLLBAR_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 0, // retries belong to error-handlers.ts
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
+	headerNames: {
+		retryAfter: 'x-rate-limit-remaining-seconds',
+		resetTime: 'x-rate-limit-reset',
+		remaining: 'x-rate-limit-remaining',
+		limit: 'x-rate-limit-limit',
+	},
 };
 
 /** The token rides in its own header, not `Authorization`. */

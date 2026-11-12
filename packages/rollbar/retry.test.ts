@@ -5,6 +5,7 @@ import {
 	BODY_REJECTED,
 	ITEM_ID,
 	ITEM_PAGE,
+	RATE_LIMIT_HEADERS,
 	RATE_LIMITED,
 	TOKEN_REQUIRED,
 } from './test-fixtures';
@@ -59,6 +60,28 @@ describe('retry behaviour', () => {
 
 			expect(result.items).toHaveLength(1);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('waits out the window Rollbar names in its rate-limit headers', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient({ key: 'rb-token' });
+		try {
+			respond(fetchMock, RATE_LIMITED, 429, RATE_LIMIT_HEADERS);
+			respond(fetchMock, ITEM_PAGE);
+
+			const pending = corsair.rollbar.api.items.list({});
+			pending.catch(() => undefined);
+			// Exponential backoff alone would retry after 1 s.
+			await jest.advanceTimersByTimeAsync(5_000);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+
+			await jest.advanceTimersByTimeAsync(60_000);
+			const result = await pending;
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+			expect(result.items).toHaveLength(1);
 		} finally {
 			testDb.cleanup();
 		}

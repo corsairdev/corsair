@@ -1,5 +1,6 @@
-// Fixtures follow the schemas Rollbar embeds in each reference page
-// (https://docs.rollbar.com/llms.txt). The 401 body is the live response.
+// Fixtures are trimmed real responses from a free Rollbar account (11-12),
+// with ids and names replaced; the shapes and field types are as sent. The 401
+// body is the live keyless response.
 
 export const ITEM_ID = 12345;
 export const OCCURRENCE_ID = 98765;
@@ -24,10 +25,17 @@ export const NOT_FOUND = {
 	message: 'not found',
 };
 
-/** A rate limit, whose wait is named in the message rather than a header. */
+/** A rate-limited call. Rollbar names the wait in headers, not the body. */
 export const RATE_LIMITED = {
 	err: 1,
-	message: 'rate limit exceeded, retry after 60 seconds',
+	message: 'rate limit exceeded',
+};
+
+/** The rate-limit headers Rollbar sends on every response. */
+export const RATE_LIMIT_HEADERS = {
+	'X-Rate-Limit-Limit': '50000',
+	'X-Rate-Limit-Remaining': '0',
+	'X-Rate-Limit-Remaining-Seconds': '60',
 };
 
 export const ITEM = {
@@ -63,16 +71,26 @@ export const ITEM = {
 	integrations_data: null,
 };
 
+/** `GET /items` sends `id` as a numeric string and `integrations_data` null. */
 export const ITEM_PAGE = {
 	err: 0,
 	result: {
 		page: 1,
 		total_count: 1,
-		items: [ITEM],
+		precise_count: true,
+		items: [{ ...ITEM, id: String(ITEM_ID), project_slug: 'web' }],
 	},
 };
 
-export const ITEM_RESULT = { err: 0, result: ITEM };
+/** `GET /item/{id}` sends `id` as a number and `integrations_data` as a map. */
+export const ITEM_RESULT = {
+	err: 0,
+	result: {
+		...ITEM,
+		integrations_data: {},
+		url: 'https://example.test/item/3',
+	},
+};
 
 export const ITEM_UPDATE_RESULT = {
 	err: 0,
@@ -90,11 +108,14 @@ export const ITEM_UPDATE_RESULT = {
 
 export const COMMENT = {
 	id: 99,
+	type: 'comment',
+	source: 'comment',
 	item_id: ITEM_ID,
-	project_id: PROJECT_ID,
 	user_id: 7,
-	body: 'Fixed in the next deploy.',
+	username: 'sam',
 	timestamp: 1765602474,
+	text: 'Fixed in the next deploy.',
+	via_api: true,
 };
 
 export const COMMENT_PAGE = {
@@ -102,15 +123,20 @@ export const COMMENT_PAGE = {
 	result: { page: 1, total_count: 1, comments: [COMMENT] },
 };
 
-export const COMMENT_CREATED = { err: 0, result: { id: 100, body: 'Thanks!' } };
+export const COMMENT_CREATED = {
+	err: 0,
+	result: { ...COMMENT, id: 100, text: 'Thanks!' },
+};
 
 export const EVENT = {
 	id: 7,
-	event_name: 'status_change',
-	event: 'status_change',
-	timestamp: 1765602474,
+	type: 'item_status_history',
+	item_id: ITEM_ID,
 	user_id: 7,
-	data: { from: 'active', to: 'resolved' },
+	username: 'sam',
+	timestamp: 1765602474,
+	status: 'resolved',
+	comment: null,
 };
 
 export const EVENT_PAGE = {
@@ -118,32 +144,37 @@ export const EVENT_PAGE = {
 	result: { page: 1, total_count: 1, events: [EVENT] },
 };
 
-/** This route names occurrences `instances`. */
+/** The notifier's payload sits under `data`. */
 export const OCCURRENCE = {
 	id: OCCURRENCE_ID,
 	project_id: PROJECT_ID,
 	item_id: ITEM_ID,
-	environment: 'production',
-	level: 'error',
 	timestamp: 1765602474,
-	platform: 'javascript',
-	framework: 'react',
-	language: 'js',
-	server: {},
-	client: {},
-	request: {},
-	person: {},
-	body: {},
+	version: 2,
+	billable: 1,
+	data: {
+		environment: 'production',
+		level: 'error',
+		framework: 'unknown',
+		body: {
+			trace: {
+				frames: [{ filename: 'app.js', lineno: 1 }],
+				exception: { class: 'TypeError', message: 'x is undefined' },
+			},
+		},
+	},
 };
 
+/** This route names occurrences `instances` and sends no `total_count`. */
 export const OCCURRENCE_PAGE = {
 	err: 0,
-	result: { page: 1, total_count: 1, instances: [OCCURRENCE] },
+	result: { page: 1, instances: [OCCURRENCE] },
 };
 
+/** `result` is the occurrence itself. */
 export const OCCURRENCE_RESULT = {
 	err: 0,
-	result: { instance: OCCURRENCE },
+	result: OCCURRENCE,
 };
 
 export const PROJECT = {
@@ -153,13 +184,13 @@ export const PROJECT = {
 	status: 'enabled',
 	date_created: 1765000000,
 	date_modified: 1765602474,
-	settings: {},
-	access_tokens: [],
+	settings_data: { integrations: { email: { enabled: false } } },
 };
 
+/** `GET /projects` answers a bare array in `result`. */
 export const PROJECT_PAGE = {
 	err: 0,
-	result: { page: 1, total_count: 1, projects: [PROJECT] },
+	result: [PROJECT],
 };
 
 export const DEPLOY = {
@@ -170,14 +201,16 @@ export const DEPLOY = {
 	comment: 'Ship it',
 	status: 'succeeded',
 	local_username: 'sam',
-	rollbar_username: 'sam',
+	user_id: null,
+	username: null,
 	start_time: 1765602400,
-	end_time: 1765602474,
+	finish_time: 1765602474,
 };
 
 export const DEPLOY_PAGE = {
 	err: 0,
-	result: { page: 1, total_count: 1, deploys: [DEPLOY] },
+	result: { page: 1, deploys: [DEPLOY] },
 };
 
-export const DEPLOY_CREATED = { err: 0, result: { id: DEPLOY_ID } };
+/** The one route that answers `data` with no `err` or `result`. */
+export const DEPLOY_CREATED = { data: { deploy_id: DEPLOY_ID } };

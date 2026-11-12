@@ -13,8 +13,9 @@ function statusOf(error: Error): number | undefined {
  *   `403` is the same key used for a project or scope it does not cover.
  * - `400` is a rejected body or a bad filter.
  * - `404` is an unknown item, occurrence, project or deploy.
- * - `429` is the plan's rate limit. The message names the wait rather than a
- *   header, so the handler backs off on its own.
+ * - `429` is the token's rate limit. The client reads the wait from
+ *   `X-Rate-Limit-Remaining-Seconds` / `X-Rate-Limit-Reset` and the handler
+ *   passes it on, with exponential backoff when neither header came back.
  * - `5xx` is only replayed for a read.
  *
  * A failure can also arrive as a **200 with `err` non-zero**, which the client

@@ -7,6 +7,7 @@ import {
 import {
 	BODY_REJECTED,
 	NOT_FOUND,
+	RATE_LIMIT_HEADERS,
 	RATE_LIMITED,
 	TOKEN_REQUIRED,
 } from './test-fixtures';
@@ -134,7 +135,22 @@ describe('the err discriminator', () => {
 			}),
 		)) as RollbarAPIError;
 		expect(limited.isRateLimit).toBe(true);
-		expect(limited.message).toContain('retry after 60 seconds');
+		expect(limited.message).toContain('rate limit exceeded');
+	});
+
+	it("reads the wait from Rollbar's X-Rate-Limit-Remaining-Seconds header", async () => {
+		respond(fetchMock, RATE_LIMITED, 429, RATE_LIMIT_HEADERS);
+		const limited = (await captureError(
+			makeRollbarRequest('key', {
+				method: 'GET',
+				path: '/items',
+				replayable: true,
+				checkErr: true,
+			}),
+		)) as RollbarAPIError;
+
+		// Rollbar sends no Retry-After; the window's remaining seconds are the wait.
+		expect(limited.retryAfter).toBe(60_000);
 	});
 
 	it('describes a body with no message from the fallback', () => {
