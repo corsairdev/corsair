@@ -1,0 +1,41 @@
+displayName: Kraken.io
+description: Image and PDF optimization with Kraken.io - compress a file from a URL or a base64 upload, resize it, change its format, control the quality and keep chosen metadata, and read the account's plan and remaining quota.
+domain: kraken.io
+recommendedAuth: api_key
+overviewNote: |
+  Copy your API key and API secret from your Kraken.io account under API Credentials. Both are needed: Kraken authenticates with the pair, not with the key alone.
+
+  Things to know before you call:
+
+  - **The pair travels in the JSON body, not a header.** Every request carries `{"auth": {"api_key": ..., "api_secret": ...}}`. The plugin adds that block itself and never logs it, and it keeps no request body on an error, because the body holds the secret.
+  - **A call needs `wait` or a `callback_url`.** With `wait: true` the connection stays open and the answer carries the result. With a `callback_url` Kraken answers at once and posts the result later. A request with neither is refused, and the plugin rejects it before the call.
+  - **Quota is measured in bytes.** `account.status` returns `quota_total`, `quota_used` and `quota_remaining` in bytes, not in images, so divide by 1048576 for mebibytes.
+  - **An optimization that fails per file still answers 200.** The top-level `success` can be true while one entry in `results` says `success: false` with a `message`, for instance when the image could not be downloaded. Read the per-file entry, not only the top-level flag.
+  - **A 200 with `success: false` is a failure.** Kraken also refuses a whole request that way, such as an unsupported format, and the plugin throws rather than returning a result with every field missing.
+  - **`kraked_url` is temporary.** Kraken serves an optimized file from `dl.kraken.io` for a limited time, so a caller that needs to keep it should download it.
+  - **Nothing is replayed.** Every call is a POST that spends quota, so a 5xx, a dropped connection or a timeout is never retried: the image may already have been fetched and billed.
+  - **The upload route takes base64.** Kraken's other form is a multipart upload beside the JSON options, which is not wrapped here, so `upload.optimize` sends the file as a base64 string in the JSON body.
+  - **No webhooks are handled.** A `callback_url` is where Kraken posts a result, and it is your endpoint to run, not this plugin's.
+examples:
+  read:
+    path: account.status
+    title: Read the plan and remaining quota
+    args: {}
+  write:
+    path: url.optimize
+    title: Optimize an image from a URL
+    args:
+      url: https://acme.example/header.jpg
+      wait: true
+      lossy: true
+      quality: 80
+apiExamples:
+  url.optimize:
+    call: "{ url: 'https://acme.example/header.jpg', wait: true, lossy: true, quality: 80, resize: { width: 800, strategy: 'fit' } }"
+  upload.optimize:
+    call: "{ data: 'aGVsbG8=', filename: 'header.jpg', wait: true, convert: { format: 'webp' } }"
+  account.status: {}
+apiNotes:
+  url.optimize: 'Needs `wait: true` or a `callback_url`. Spends quota. A per-file failure appears in `results`, and a whole-request refusal arrives as a 200 with `success: false`, which the plugin throws on.'
+  upload.optimize: 'Sends the file as base64 in the JSON body, because Kraken’s multipart form is not wrapped here.'
+  account.status: 'Quota figures are in bytes.'

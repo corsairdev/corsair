@@ -1,0 +1,146 @@
+---
+title: "Kraken.io plugin"
+sidebarTitle: "Overview"
+description: "Image and PDF optimization with Kraken.io - compress a file from a URL or a base64 upload, resize it, change its format, control the quality and keep chosen metadata, and read the account's plan and remaining quota."
+---
+
+Use **Kraken.io** through Corsair: one client, typed API calls.
+
+Copy your API key and API secret from your Kraken.io account under API Credentials. Both are needed: Kraken authenticates with the pair, not with the key alone.
+
+Things to know before you call:
+
+- **The pair travels in the JSON body, not a header.** Every request carries `{"auth": {"api_key": ..., "api_secret": ...}}`. The plugin adds that block itself and never logs it, and it keeps no request body on an error, because the body holds the secret.
+- **A call needs `wait` or a `callback_url`.** With `wait: true` the connection stays open and the answer carries the result. With a `callback_url` Kraken answers at once and posts the result later. A request with neither is refused, and the plugin rejects it before the call.
+- **Quota is measured in bytes.** `account.status` returns `quota_total`, `quota_used` and `quota_remaining` in bytes, not in images, so divide by 1048576 for mebibytes.
+- **An optimization that fails per file still answers 200.** The top-level `success` can be true while one entry in `results` says `success: false` with a `message`, for instance when the image could not be downloaded. Read the per-file entry, not only the top-level flag.
+- **A 200 with `success: false` is a failure.** Kraken also refuses a whole request that way, such as an unsupported format, and the plugin throws rather than returning a result with every field missing.
+- **`kraked_url` is temporary.** Kraken serves an optimized file from `dl.kraken.io` for a limited time, so a caller that needs to keep it should download it.
+- **Nothing is replayed.** Every call is a POST that spends quota, so a 5xx, a dropped connection or a timeout is never retried: the image may already have been fetched and billed.
+- **The upload route takes base64.** Kraken's other form is a multipart upload beside the JSON options, which is not wrapped here, so `upload.optimize` sends the file as a base64 string in the JSON body.
+- **No webhooks are handled.** A `callback_url` is where Kraken posts a result, and it is your endpoint to run, not this plugin's.
+
+**What you get:**
+
+- 3 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/krakenio better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/krakenio better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/krakenio better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/krakenio better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { krakenio } from '@corsair-dev/krakenio';
+
+export const corsair = createCorsair({
+	plugins: [
+		krakenio(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+This plugin saves no credentials of its own. A call made without a stored key for the tenant throws `AuthMissingError`, which may carry a `connectUrl` to the page that collects one. Kraken.io also needs the API secret, delivered as the `api_secret` credential beside the key.
+
+```ts
+krakenio()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'krakenio',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the plan and remaining quota**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.krakenio.api.account.status({});
+```
+
+
+**Optimize an image from a URL**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.krakenio.api.url.optimize({
+	url: 'https://acme.example/header.jpg',
+	wait: true,
+	lossy: true,
+	quality: 80,
+});
+```
+
+
+See the full list on the [API](/plugins/krakenio/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/krakenio/api">
+    Every `krakenio.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
