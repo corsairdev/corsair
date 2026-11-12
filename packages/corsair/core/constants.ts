@@ -405,6 +405,7 @@ export const BaseProviders = [
 	'revolt',
 	'roam',
 	'rocketlane',
+	'rollbar',
 	'rootly',
 	'runpod',
 	'salesflare',
@@ -922,6 +923,7 @@ export const ProviderDisplayNames = {
 	revolt: 'Revolt (Stoat)',
 	roam: 'Roam HQ',
 	rocketlane: 'Rocketlane',
+	rollbar: 'Rollbar',
 	rootly: 'Rootly',
 	runpod: 'RunPod',
 	salesflare: 'Salesflare',
@@ -1446,6 +1448,7 @@ export type AllProviders =
 	| 'revolt'
 	| 'roam'
 	| 'rocketlane'
+	| 'rollbar'
 	| 'rootly'
 	| 'runpod'
 	| 'salesflare'

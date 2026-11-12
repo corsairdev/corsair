@@ -3388,6 +3388,14 @@
                 ]
               },
               {
+                "group": "Rollbar",
+                "pages": [
+                  "plugins/rollbar/overview",
+                  "plugins/rollbar/api",
+                  "plugins/rollbar/database"
+                ]
+              },
+              {
                 "group": "Rootly",
                 "pages": [
                   "plugins/rootly/overview",
