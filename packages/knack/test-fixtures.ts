@@ -165,3 +165,6 @@ export const invalidApiRequest = 'Invalid API Request';
 
 /** 429 is plain text too, unlike the JSON 400. */
 export const rateLimited = 'Rate limit exceeded';
+
+/** Knack's 429 text once the plan's daily API allowance is spent. */
+export const planLimitExceeded = 'Plan Limit Exceeded';

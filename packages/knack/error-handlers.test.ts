@@ -1,7 +1,12 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { KnackAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
-import { invalidApiKey, malformedRecordId, rateLimited } from './test-fixtures';
+import {
+	invalidApiKey,
+	malformedRecordId,
+	planLimitExceeded,
+	rateLimited,
+} from './test-fixtures';
 
 /** Builds the error the client would raise for a documented response. */
 function apiError(
@@ -61,6 +66,15 @@ describe('error handler classification', () => {
 		const { name, result } = await resolve(
 			apiError(429, [rateLimited], 'GET', 3_600_000),
 		);
+
+		expect(name).toBe('RATE_LIMIT_ERROR');
+		expect(result.maxRetries).toBe(0);
+	});
+
+	// Knack answers a spent daily plan with the same 429 and the text
+	// `Plan Limit Exceeded`, which no short retry restores.
+	it('does not retry a spent plan limit with no reset information', async () => {
+		const { name, result } = await resolve(apiError(429, [planLimitExceeded]));
 
 		expect(name).toBe('RATE_LIMIT_ERROR');
 		expect(result.maxRetries).toBe(0);

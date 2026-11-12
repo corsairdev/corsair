@@ -19,6 +19,14 @@ export const errorHandlers = {
 		handler: async (error: Error) => {
 			const retryAfter =
 				error instanceof KnackAPIError ? error.retryAfter : undefined;
+			// Knack's text for a spent daily plan, which can come with no reset
+			// header at all; a short retry only spends two more calls.
+			if (
+				error instanceof KnackAPIError &&
+				error.messages.some((m) => /plan limit exceeded/i.test(m))
+			) {
+				return { maxRetries: 0 };
+			}
 			// A reset more than a minute out is the daily allowance rather than
 			// the one-second window, and no retry inside this call restores it.
 			if (retryAfter !== undefined && retryAfter > 60_000) {
