@@ -33,6 +33,20 @@ const MonthSchema = z
 	)
 	.describe('A month as `yyyy-MM-01`.');
 
+/**
+ * A month in a request path. YNAB also takes `current` there for the current
+ * calendar month (UTC); responses always carry a real `yyyy-MM-01` month.
+ */
+const MonthPathSchema = z
+	.string()
+	.regex(
+		/^(current|\d{4}-(0[1-9]|1[0-2])-01)$/,
+		'Use `yyyy-MM-01` (month requests start on the 1st) or `current`.',
+	)
+	.describe(
+		'The month, as the first day: `yyyy-MM-01`, or `current` for the current calendar month (UTC).',
+	);
+
 /** YNAB wraps every answer in `{ data }`. */
 function envelope<T extends z.ZodType>(item: T) {
 	return z.object({ data: item }).loose();
@@ -443,7 +457,7 @@ export type CategoriesGetResponse = z.infer<typeof CategoriesGetResponseSchema>;
  */
 const CategoriesUpdateInputSchema = z.object({
 	budgetId: BudgetIdSchema,
-	month: MonthSchema.describe('The month, as the first day: `yyyy-MM-01`.'),
+	month: MonthPathSchema,
 	categoryId: IdSchema,
 	budgeted: MilliunitsSchema.describe(
 		'The new budgeted amount for the month, in milliunits. This replaces the value rather than adding to it.',
@@ -540,7 +554,7 @@ export type MonthsListResponse = z.infer<typeof MonthsListResponseSchema>;
 
 const MonthsGetInputSchema = z.object({
 	budgetId: BudgetIdSchema,
-	month: MonthSchema.describe('The month, as the first day: `yyyy-MM-01`.'),
+	month: MonthPathSchema,
 });
 
 export type MonthsGetInput = z.infer<typeof MonthsGetInputSchema>;

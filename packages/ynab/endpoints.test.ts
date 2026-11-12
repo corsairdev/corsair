@@ -666,4 +666,23 @@ describe('round 2 review fixes', () => {
 			YnabEndpointInputSchemas.transactionsList.shape.since_date.description;
 		expect(description).toMatch(/one year ago/);
 	});
+
+	it('accepts the current month alias on months.get and categories.update', async () => {
+		respond(fetchMock, { data: { month } });
+		await invoke(Months.get, { budgetId, month: 'current' });
+		expect(lastRequest(fetchMock).path).toBe(
+			`/v1/budgets/${budgetId}/months/current`,
+		);
+
+		respond(fetchMock, { data: { category } });
+		await invoke(Categories.update, {
+			budgetId,
+			categoryId,
+			month: 'current',
+			budgeted: 1_000,
+		});
+		expect(lastRequest(fetchMock).path).toBe(
+			`/v1/budgets/${budgetId}/months/current/categories/${categoryId}`,
+		);
+	});
 });
