@@ -16,9 +16,15 @@ import { z } from 'zod';
  * https://docs.scrapingant.com/request-response-format
  */
 
+// Zod runs this refinement even after `z.url()` has failed, so a malformed
+// value reaches `new URL()` here and has to fail as an issue, not a TypeError.
 const HttpUrl = z.url().refine((value) => {
-	const protocol = new URL(value).protocol;
-	return protocol === 'http:' || protocol === 'https:';
+	try {
+		const protocol = new URL(value).protocol;
+		return protocol === 'http:' || protocol === 'https:';
+	} catch {
+		return false;
+	}
 }, 'The URL scheme must be http:// or https://');
 
 /** Documented blockable resource types (https://docs.scrapingant.com/headless-browser). */

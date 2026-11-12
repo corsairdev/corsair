@@ -174,6 +174,14 @@ describe('input validation', () => {
 		).toThrow(/scheme/);
 	});
 
+	it('rejects a malformed URL with a ZodError, not a TypeError', () => {
+		const result = Inputs.scrapeHtml.safeParse({ url: 'not a url' });
+		expect(result.success).toBe(false);
+		expect(() => Inputs.extractData.parse({ url: 'not a url' })).toThrow(
+			expect.objectContaining({ name: 'ZodError' }),
+		);
+	});
+
 	it('rejects a timeout outside the documented 5-60 seconds', () => {
 		expect(() => Inputs.scrapeHtml.parse({ ...base, timeout: 4 })).toThrow();
 		expect(() => Inputs.scrapeHtml.parse({ ...base, timeout: 61 })).toThrow();
