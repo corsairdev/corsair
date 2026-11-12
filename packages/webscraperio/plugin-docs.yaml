@@ -3,9 +3,9 @@ description: Web scraping with Web Scraper Cloud - list and read sitemaps with t
 domain: webscraper.io
 recommendedAuth: api_key
 overviewNote: |
-  Create an API token in the Web Scraper Cloud app under **Account → API**. It travels as an `api_token` **query parameter**, not a header, and every call is against `https://api.webscraper.io/api/v1`.
+  Create an API token in the Web Scraper Cloud app under **Account → API**. The plugin sends it as `Authorization: Bearer <token>` on every call to `https://api.webscraper.io/api/v1`.
 
-  - **The token is a query parameter.** There is no bearer header; the plugin adds `api_token` to every request, so a bare request without it is refused with `401 Unauthorized, invalid api_token.`
+  - **The token goes in a Bearer header.** That is what the provider's API reference documents. The older `api_token` query parameter still works, but it would put the key in every request URL, so the plugin does not use it. A wrong token is refused with `401 Unauthorized, invalid Bearer token.`
   - **The public v1 surface is small — and this plugin wraps exactly it.** The routes the API serves are `GET /sitemaps`, `GET /sitemap/{id}`, `POST /sitemap` and `GET /account`. Scraping jobs and their scraped data live behind the Cloud web app rather than these routes, so the plugin does not invent endpoints for them; if you need job data programmatically, that is not available through this API today.
   - **Two error shapes, and they mean different things.** A handled failure is `{ success: false, error }` — that is what a bad token produces. An unrouted request is Laravel's own 404 `{ message: "The route ... could not be found." }`, which means the *path* is wrong. The plugin keeps them apart, so a 404 from a mistyped path is not reported as a missing sitemap.
   - **A 403 is a plan problem, not a key problem.** A 401 means the token is wrong; a 403 means the token works but the plan does not include the call.

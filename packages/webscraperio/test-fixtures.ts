@@ -49,10 +49,10 @@ export const account = {
 
 export const accountResponse = { success: true, data: account };
 
-/** A bad token: the handled shape, with a 401. */
+/** A bad token: the handled shape, with a 401 (as the live API answers). */
 export const invalidToken = {
 	success: false,
-	error: 'Unauthorized, invalid api_token.',
+	error: 'Unauthorized, invalid Bearer token.',
 };
 
 /** A mistyped path: Laravel's own answer, which is not a missing sitemap. */

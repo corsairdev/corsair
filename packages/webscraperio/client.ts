@@ -8,12 +8,6 @@ import { ApiError, request } from 'corsair/http';
 
 export const WEBSCRAPERIO_API_BASE = 'https://api.webscraper.io/api/v1';
 
-/**
- * The Cloud API takes the key as an `api_token` **query parameter**, not a
- * header. There is no bearer auth and no second credential.
- */
-export const WEBSCRAPERIO_TOKEN_PARAM = 'api_token';
-
 const WEBSCRAPERIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 0,
@@ -80,9 +74,8 @@ export class WebscraperioAPIError extends Error {
 
 	/** True when the token was rejected, for any credential reason. */
 	get isAuthError(): boolean {
-		if (this.status === 401 || this.status === 403) return true;
-		const error = readString(asRecord(this.body), 'error') ?? '';
-		return error.toLowerCase().includes('api_token');
+		if (this.status === 403) return true;
+		return this.isInvalidToken;
 	}
 
 	/**
@@ -91,8 +84,10 @@ export class WebscraperioAPIError extends Error {
 	 */
 	get isInvalidToken(): boolean {
 		if (this.status === 401) return true;
-		const error = readString(asRecord(this.body), 'error') ?? '';
-		return error.toLowerCase().includes('api_token');
+		const error = (
+			readString(asRecord(this.body), 'error') ?? ''
+		).toLowerCase();
+		return error.includes('api_token') || error.includes('bearer token');
 	}
 
 	/** True when the route does not exist, which is a mistyped path. */
@@ -152,13 +147,15 @@ export async function makeWebscraperioRequest(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: { Accept: 'application/json' },
+		// The spec documents Bearer auth. The legacy `api_token` query parameter
+		// still works but would put the key in every request URL.
+		TOKEN: apiKey,
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
-		// The token travels on the query string, beside the endpoint's own.
-		query: { ...query, [WEBSCRAPERIO_TOKEN_PARAM]: apiKey },
+		query,
 		body,
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
@@ -169,9 +166,8 @@ export async function makeWebscraperioRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// The token travels as `api_token`, which the shared redactor does not
-			// know, so it would stay readable in `cause.url` and in the cause's
-			// request query. Only the fields the handlers need are copied.
+			// Only the fields the handlers need are copied, so no request details
+			// ride along in a cause.
 			throw new WebscraperioAPIError(
 				describeWebscraperioError(
 					error.status,

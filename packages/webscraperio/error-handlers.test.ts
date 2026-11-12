@@ -46,7 +46,7 @@ describe('Web Scraper Cloud error handlers', () => {
 		});
 	});
 
-	it('does not retry the invalid api_token 401', async () => {
+	it('does not retry the invalid token 401', async () => {
 		const error = apiError(401, invalidToken);
 		expect(classify(error)).toBe('AUTH_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });

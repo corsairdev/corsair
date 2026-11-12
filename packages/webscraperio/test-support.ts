@@ -62,11 +62,11 @@ export function lastRequest(fetchMock: jest.SpyInstance): RecordedRequest {
 	};
 }
 
-/** The token travels on the query string, not in a header. */
+/** The token travels as a Bearer header, never on the query string. */
 export function expectAuthenticated(fetchMock: jest.SpyInstance) {
 	const sent = lastRequest(fetchMock);
 	expect(sent.origin).toBe('https://api.webscraper.io');
 	expect(sent.path.startsWith('/api/v1/')).toBe(true);
-	expect(sent.query.api_token).toBe(API_KEY);
-	expect(sent.headers['authorization']).toBeUndefined();
+	expect(sent.headers['authorization']).toBe(`Bearer ${API_KEY}`);
+	expect(sent.query.api_token).toBeUndefined();
 }

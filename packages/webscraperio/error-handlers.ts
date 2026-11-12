@@ -8,7 +8,7 @@ function statusOf(error: Error): number | undefined {
 /**
  * The Cloud API has no error codes. A handled failure is
  * `{ success: false, error }` and a bad token is a **401** carrying
- * `"Unauthorized, invalid api_token."`; an unrouted path is Laravel's own
+ * `"Unauthorized, invalid Bearer token."`; an unrouted path is Laravel's own
  * 404 `{ message: "The route ... could not be found." }`.
  */
 export const errorHandlers = {
@@ -22,7 +22,7 @@ export const errorHandlers = {
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// 401, or the api_token message: the key is wrong or missing. A 403 is
+	// 401, or the invalid-token message: the key is wrong or missing. A 403 is
 	// deliberately not matched here, because a working token without the plan
 	// is a permission problem rather than a credential one.
 	AUTH_ERROR: {

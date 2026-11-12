@@ -168,7 +168,6 @@ export {
 	isWebscraperioFailure,
 	segment,
 	WEBSCRAPERIO_API_BASE,
-	WEBSCRAPERIO_TOKEN_PARAM,
 	WebscraperioAPIError,
 } from './client';
 

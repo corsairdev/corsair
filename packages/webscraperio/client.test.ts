@@ -5,7 +5,6 @@ import {
 	makeWebscraperioRequest,
 	segment,
 	WEBSCRAPERIO_API_BASE,
-	WEBSCRAPERIO_TOKEN_PARAM,
 	WebscraperioAPIError,
 } from './client';
 import {
@@ -24,7 +23,7 @@ import {
 describe('makeWebscraperioRequest', () => {
 	const fetchMock = installFetchMock();
 
-	it('sends the token as a query parameter, with no auth header', async () => {
+	it('sends the token as a Bearer header, never in the URL', async () => {
 		respond(fetchMock, { success: true, data: [] });
 
 		await makeWebscraperioRequest(API_KEY, {
@@ -35,20 +34,22 @@ describe('makeWebscraperioRequest', () => {
 		const sent = lastRequest(fetchMock);
 		expect(sent.origin).toBe('https://api.webscraper.io');
 		expect(sent.path).toBe('/api/v1/sitemaps');
-		expect(sent.query.api_token).toBe(API_KEY);
-		expect(sent.headers['authorization']).toBeUndefined();
+		expect(sent.headers['authorization']).toBe(`Bearer ${API_KEY}`);
+		expect(sent.query.api_token).toBeUndefined();
+		expect(fetchMock.mock.calls.at(-1)?.[0]).not.toContain(API_KEY);
 	});
 
-	it('merges the endpoint query with the token', async () => {
-		respond(fetchMock, { success: true });
+	it('keeps the endpoint query and adds no token to it', async () => {
+		respond(fetchMock, { success: true, data: [] });
 
 		await makeWebscraperioRequest(API_KEY, {
 			method: 'GET',
-			path: '/sitemap/42',
+			path: '/sitemaps',
+			query: { page: 2 },
 		});
 
 		const sent = lastRequest(fetchMock);
-		expect(sent.query.api_token).toBe(API_KEY);
+		expect(sent.queryPairs).toEqual([['page', '2']]);
 	});
 
 	it('serializes a POST body as JSON', async () => {
@@ -141,9 +142,24 @@ describe('WebscraperioAPIError', () => {
 		);
 	});
 
-	it('recognises the api_token message without a status', () => {
-		const error = new WebscraperioAPIError('x', { body: invalidToken });
+	it('recognises the legacy api_token message without a status', () => {
+		const error = new WebscraperioAPIError('x', {
+			body: { success: false, error: 'Unauthorized, invalid api_token.' },
+		});
 		expect(error.isAuthError).toBe(true);
+	});
+
+	it('recognises the Bearer token messages without a status', () => {
+		for (const message of [
+			'Unauthorized, invalid Bearer token.',
+			'Unauthorized, Bearer token was not passed along with request.',
+		]) {
+			const error = new WebscraperioAPIError('x', {
+				body: { success: false, error: message },
+			});
+			expect(error.isAuthError).toBe(true);
+			expect(error.isInvalidToken).toBe(true);
+		}
 	});
 
 	it('treats a 403 as auth too, since the token lacks access', () => {
@@ -199,7 +215,7 @@ describe('WebscraperioAPIError', () => {
 describe('describeWebscraperioError', () => {
 	it('reads the handled error field', () => {
 		expect(describeWebscraperioError(401, invalidToken, 'fallback')).toBe(
-			'Web Scraper Cloud 401: Unauthorized, invalid api_token.',
+			'Web Scraper Cloud 401: Unauthorized, invalid Bearer token.',
 		);
 	});
 
@@ -225,10 +241,6 @@ describe('describeWebscraperioError', () => {
 describe('the exported constants', () => {
 	it('is the documented v1 base', () => {
 		expect(WEBSCRAPERIO_API_BASE).toBe('https://api.webscraper.io/api/v1');
-	});
-
-	it('names the query parameter the token goes in', () => {
-		expect(WEBSCRAPERIO_TOKEN_PARAM).toBe('api_token');
 	});
 });
 
