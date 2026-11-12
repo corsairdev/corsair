@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Rollbar: every `rollbar.api.*` operation with input and output types."
+title: "Rollbar API reference"
+sidebarTitle: "API"
+description: "API reference for the Rollbar plugin in Corsair: every `rollbar.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `rollbar.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -15,7 +14,7 @@ Every `rollbar.api.*` operation is listed below with parameter shapes and return
 
 `deploys.create`
 
-Record a deploy with its environment, revision and optional status and comment
+Record a deploy with its environment, revision and optional status and comment; needs a project token with post_server_item scope
 
 **Risk:** `write`
 
@@ -35,6 +34,8 @@ await corsair.rollbar.api.deploys.create({ environment: 'production', revision: 
 | `rollbar_username` | `string` | No | — |
 | `status` | `started \| succeeded \| failed \| timed_out` | No | — |
 
+Needs a project token with `post_server_item`. Rollbar answers `{ data: { deploy_id } }`.
+
 
 
 **Output**
@@ -42,18 +43,6 @@ await corsair.rollbar.api.deploys.create({ environment: 'production', revision: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `deploy_id` | `number \| null` | No | — |
-| `result` | `object \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="result full type">
-
-```ts
-{
-  id?: number | null
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -63,12 +52,12 @@ await corsair.rollbar.api.deploys.create({ environment: 'production', revision: 
 
 `deploys.list`
 
-List deploys with environment and project filters, newest first
+List deploys in a project, newest first, with page paging
 
 **Risk:** `read`
 
 ```ts
-await corsair.rollbar.api.deploys.list({ environment: 'production' });
+await corsair.rollbar.api.deploys.list({ page: 1 });
 ```
 
 **Input**
@@ -76,8 +65,7 @@ await corsair.rollbar.api.deploys.list({ environment: 'production' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | 1-based page. Rollbar returns 20 per page unless `limit` is set. |
-| `environment` | `string` | No | — |
-| `project_id` | `number` | No | — |
+| `project_id` | `number` | No | Required with an account or personal access token, which Rollbar otherwise refuses with 403 "Requires project access". A project access token ignores it. |
 
 
 
@@ -101,9 +89,10 @@ await corsair.rollbar.api.deploys.list({ environment: 'production' });
   comment?: string | null,
   status?: string | null,
   local_username?: string | null,
-  rollbar_username?: string | null,
+  user_id?: number | null,
+  username?: string | null,
   start_time?: number | null,
-  end_time?: number | null
+  finish_time?: number | null
 }[]
 ```
 </Accordion>
@@ -119,12 +108,12 @@ await corsair.rollbar.api.deploys.list({ environment: 'production' });
 
 `itemComments.create`
 
-Add a comment to an item
+Add a comment to an item, posted as the token owner; needs a personal access token with write scope and the project_id
 
 **Risk:** `write`
 
 ```ts
-await corsair.rollbar.api.itemComments.create({ item_id: 12345, body: 'Fixed in the next deploy.' });
+await corsair.rollbar.api.itemComments.create({ item_id: 12345, project_id: 678, body: 'Fixed in the next deploy.' });
 ```
 
 **Input**
@@ -132,7 +121,10 @@ await corsair.rollbar.api.itemComments.create({ item_id: 12345, body: 'Fixed in 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `item_id` | `number` | Yes | — |
-| `body` | `string` | Yes | The comment text. |
+| `project_id` | `number` | Yes | The project that holds the item. Rollbar requires it here. |
+| `body` | `string` | Yes | The comment text, sent to Rollbar as `comment`. |
+
+Needs a personal access token with write scope and `project_id`; project and service tokens are refused. The text is sent as `comment`.
 
 
 
@@ -149,7 +141,14 @@ await corsair.rollbar.api.itemComments.create({ item_id: 12345, body: 'Fixed in 
 ```ts
 {
   id?: number | null,
-  body?: string | null
+  type?: string | null,
+  source?: string | null,
+  item_id?: number | null,
+  user_id?: number | null,
+  username?: string | null,
+  text?: string | null,
+  timestamp?: number | null,
+  via_api?: boolean | null
 } | null
 ```
 </Accordion>
@@ -163,7 +162,7 @@ await corsair.rollbar.api.itemComments.create({ item_id: 12345, body: 'Fixed in 
 
 `itemComments.list`
 
-List the comments on an item, newest first
+List the comments and resolve notes on an item, oldest first (Rollbar marks this route deprecated in favour of itemEvents.list)
 
 **Risk:** `read`
 
@@ -176,6 +175,7 @@ await corsair.rollbar.api.itemComments.list({ item_id: 12345 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `item_id` | `number` | Yes | — |
+| `project_id` | `number` | No | Required with an account or personal access token, which Rollbar otherwise refuses with 403 "Requires project access". A project access token ignores it. |
 | `page` | `number` | No | 1-based page. Rollbar returns 20 per page unless `limit` is set. |
 
 
@@ -194,11 +194,14 @@ await corsair.rollbar.api.itemComments.list({ item_id: 12345 });
 ```ts
 {
   id?: number | null,
+  type?: string | null,
+  source?: string | null,
   item_id?: number | null,
-  project_id?: number | null,
   user_id?: number | null,
-  body?: string | null,
-  timestamp?: number | null
+  username?: string | null,
+  text?: string | null,
+  timestamp?: number | null,
+  via_api?: boolean | null
 }[]
 ```
 </Accordion>
@@ -227,6 +230,7 @@ await corsair.rollbar.api.itemEvents.list({ item_id: 12345 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `item_id` | `number` | Yes | — |
+| `project_id` | `number` | No | Required with an account or personal access token, which Rollbar otherwise refuses with 403 "Requires project access". A project access token ignores it. |
 | `page` | `number` | No | 1-based page. Rollbar returns 20 per page unless `limit` is set. |
 
 
@@ -245,11 +249,15 @@ await corsair.rollbar.api.itemEvents.list({ item_id: 12345 });
 ```ts
 {
   id?: number | null,
-  event_name?: string | null,
-  event?: string | null,
-  timestamp?: number | null,
+  type?: string | null,
+  item_id?: number | null,
   user_id?: number | null,
-  data?: Record<string, JsonValue> | null
+  username?: string | null,
+  timestamp?: number | null,
+  text?: string | null,
+  status?: string | null,
+  level?: string | null,
+  comment?: string | null
 }[]
 ```
 </Accordion>
@@ -278,8 +286,9 @@ await corsair.rollbar.api.items.get({ item_id: 12345 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `item_id` | `number` | Yes | — |
+| `project_id` | `number` | No | Required with an account or personal access token, which Rollbar otherwise refuses with 403 "Requires project access". A project access token ignores it. |
 
-`total_count` is null when a project has more than 100,000 unique items.
+With an account or personal access token, pass `project_id`; Rollbar answers 403 "Requires project access" without it.
 
 
 
@@ -294,7 +303,7 @@ await corsair.rollbar.api.items.get({ item_id: 12345 });
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
   public_item_id?: number | null,
   group_item_id?: number | null,
   project_id?: number | null,
@@ -323,7 +332,7 @@ await corsair.rollbar.api.items.get({ item_id: 12345 });
   level_lock?: number | null,
   controlling_id?: number | null,
   activating_occurrence_id?: number | null,
-  integrations_data?: string | null
+  integrations_data?: string | Record<string, JsonValue> | null
 }
 ```
 </Accordion>
@@ -351,18 +360,17 @@ await corsair.rollbar.api.items.list({ status: 'active', level: ['error', 'criti
 |------|------|----------|-------------|
 | `page` | `number` | No | 1-based page. Rollbar returns 20 per page unless `limit` is set. |
 | `limit` | `number` | No | Records per page, up to 100. |
-| `status` | `active \| resolved \| muted` | No | — |
+| `status` | `active \| resolved \| muted \| archived` | No | — |
 | `level` | `(critical \| error \| warning \| info \| debug)[]` | No | Sent as a repeated parameter, so several levels can be asked for. |
 | `environment` | `string` | No | — |
 | `framework` | `string` | No | — |
 | `query` | `string` | No | A search string. |
-| `ids` | `number[]` | No | — |
 | `project_ids` | `number[]` | No | Account tokens only: search these projects. |
 | `assigned_user` | `string` | No | A user id or email. |
 | `assigned_team` | `string` | No | — |
 | `is_snoozed` | `boolean` | No | — |
 
-`level`, `ids` and `project_ids` repeat the query parameter, so arrays send every value.
+`level` and `project_ids` repeat the query parameter, so arrays send every value. Item `id` comes back as a numeric string and is returned as a number.
 
 
 
@@ -379,7 +387,7 @@ await corsair.rollbar.api.items.list({ status: 'active', level: ['error', 'criti
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
   public_item_id?: number | null,
   group_item_id?: number | null,
   project_id?: number | null,
@@ -408,7 +416,7 @@ await corsair.rollbar.api.items.list({ status: 'active', level: ['error', 'criti
   level_lock?: number | null,
   controlling_id?: number | null,
   activating_occurrence_id?: number | null,
-  integrations_data?: string | null
+  integrations_data?: string | Record<string, JsonValue> | null
 }[]
 ```
 </Accordion>
@@ -435,6 +443,7 @@ await corsair.rollbar.api.items.update({ item_id: 12345, status: 'resolved', res
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `item_id` | `number` | Yes | — |
+| `project_id` | `number` | No | Required with an account or personal access token, which Rollbar otherwise refuses with 403 "Requires project access". A project access token ignores it. |
 | `status` | `active \| resolved \| muted` | No | — |
 | `level` | `critical \| error \| warning \| info \| debug` | No | — |
 | `title` | `string` | No | A new title, up to 255 characters. |
@@ -495,6 +504,7 @@ await corsair.rollbar.api.occurrences.get({ occurrence_id: 98765 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `occurrence_id` | `number` | Yes | — |
+| `project_id` | `number` | No | Required with an account or personal access token, which Rollbar otherwise refuses with 403 "Requires project access". A project access token ignores it. |
 
 
 
@@ -512,17 +522,10 @@ await corsair.rollbar.api.occurrences.get({ occurrence_id: 98765 });
   id?: number | null,
   project_id?: number | null,
   item_id?: number | null,
-  environment?: string | null,
-  level?: string | null,
   timestamp?: number | null,
-  platform?: string | null,
-  framework?: string | null,
-  language?: string | null,
-  server?: Record<string, JsonValue> | null,
-  client?: Record<string, JsonValue> | null,
-  request?: Record<string, JsonValue> | null,
-  person?: Record<string, JsonValue> | null,
-  body?: Record<string, JsonValue> | null
+  version?: number | null,
+  billable?: number | null,
+  data?: Record<string, JsonValue> | null
 }
 ```
 </Accordion>
@@ -573,17 +576,10 @@ This route names occurrences `instances`; the plugin returns them as `occurrence
   id?: number | null,
   project_id?: number | null,
   item_id?: number | null,
-  environment?: string | null,
-  level?: string | null,
   timestamp?: number | null,
-  platform?: string | null,
-  framework?: string | null,
-  language?: string | null,
-  server?: Record<string, JsonValue> | null,
-  client?: Record<string, JsonValue> | null,
-  request?: Record<string, JsonValue> | null,
-  person?: Record<string, JsonValue> | null,
-  body?: Record<string, JsonValue> | null
+  version?: number | null,
+  billable?: number | null,
+  data?: Record<string, JsonValue> | null
 }[]
 ```
 </Accordion>
@@ -599,7 +595,7 @@ This route names occurrences `instances`; the plugin returns them as `occurrence
 
 `projects.list`
 
-List the projects the token can see on the account
+List the projects the token can see; needs an account or personal access token
 
 **Risk:** `read`
 
@@ -615,8 +611,6 @@ await corsair.rollbar.api.projects.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projects` | `object[]` | Yes | — |
-| `page` | `number \| null` | Yes | — |
-| `total_count` | `number \| null` | Yes | Total matches, or null when the project has more than 100,000 items. |
 
 <AccordionGroup>
 <Accordion title="projects full type">
@@ -629,8 +623,7 @@ await corsair.rollbar.api.projects.list({});
   status?: string | null,
   date_created?: number | null,
   date_modified?: number | null,
-  settings?: Record<string, JsonValue> | null,
-  access_tokens?: Record<string, JsonValue>[] | null
+  settings_data?: Record<string, JsonValue> | null
 }[]
 ```
 </Accordion>
