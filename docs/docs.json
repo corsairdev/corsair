@@ -3348,6 +3348,14 @@
                 ]
               },
               {
+                "group": "Roam HQ",
+                "pages": [
+                  "plugins/roam/overview",
+                  "plugins/roam/api",
+                  "plugins/roam/database"
+                ]
+              },
+              {
                 "group": "Rocketlane",
                 "pages": [
                   "plugins/rocketlane/overview",
