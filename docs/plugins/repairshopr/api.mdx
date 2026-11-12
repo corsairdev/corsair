@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for RepairShopr: every `repairshopr.api.*` operation with input and output types."
+title: "RepairShopr API reference"
+sidebarTitle: "API"
+description: "API reference for the RepairShopr plugin in Corsair: every `repairshopr.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `repairshopr.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -159,8 +158,8 @@ await corsair.repairshopr.api.customers.create({ firstname: 'Walkin', lastname: 
   city?: string | null,
   state?: string | null,
   zip?: string | null,
-  latitude?: number | null,
-  longitude?: number | null,
+  latitude?: number | string | null,
+  longitude?: number | string | null,
   notes?: string | null,
   created_at?: string | null,
   updated_at?: string | null,
@@ -258,8 +257,8 @@ await corsair.repairshopr.api.customers.get({ customer_id: 1 });
   city?: string | null,
   state?: string | null,
   zip?: string | null,
-  latitude?: number | null,
-  longitude?: number | null,
+  latitude?: number | string | null,
+  longitude?: number | string | null,
   notes?: string | null,
   created_at?: string | null,
   updated_at?: string | null,
@@ -291,7 +290,7 @@ List customers with name, email and id filters, an optional sort, and page pagin
 **Risk:** `read`
 
 ```ts
-await corsair.repairshopr.api.customers.list({ page: 1, query: 'walkin', sort: '-created_at' });
+await corsair.repairshopr.api.customers.list({ page: 1, query: 'walkin', sort: 'created_at DESC' });
 ```
 
 **Input**
@@ -307,7 +306,7 @@ await corsair.repairshopr.api.customers.list({ page: 1, query: 'walkin', sort: '
 | `id` | `number` | No | Only this customer id. |
 | `id_not` | `number` | No | Every customer but this id. |
 | `include_disabled` | `boolean` | No | Include disabled customers. |
-| `sort` | `string` | No | A column to sort on; prefix with `-` for descending. |
+| `sort` | `string` | No | A column and direction, such as `firstname ASC` or `city DESC`. |
 
 Pages by number; `meta.total_pages` is what `next_page` is derived from.
 
@@ -341,8 +340,8 @@ Pages by number; `meta.total_pages` is what `next_page` is derived from.
   city?: string | null,
   state?: string | null,
   zip?: string | null,
-  latitude?: number | null,
-  longitude?: number | null,
+  latitude?: number | string | null,
+  longitude?: number | string | null,
   notes?: string | null,
   created_at?: string | null,
   updated_at?: string | null,
@@ -445,8 +444,8 @@ await corsair.repairshopr.api.customers.update({ customer_id: 1, business_name: 
   city?: string | null,
   state?: string | null,
   zip?: string | null,
-  latitude?: number | null,
-  longitude?: number | null,
+  latitude?: number | string | null,
+  longitude?: number | string | null,
   notes?: string | null,
   created_at?: string | null,
   updated_at?: string | null,
@@ -505,7 +504,7 @@ await corsair.repairshopr.api.invoices.get({ invoice_id: 6 });
   id?: number | null,
   name?: string | null,
   number?: string | null,
-  external_id?: string | null,
+  external_id?: number | string | null,
   schedule_id?: number | null,
   qbsdk_external_id?: string | null,
   xero_id?: string | null,
@@ -552,7 +551,7 @@ await corsair.repairshopr.api.invoices.list({ unpaid: true, per_page: 25 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | 1-based page number. |
-| `per_page` | `number` | No | Invoices per page; the one collection that accepts it. |
+| `per_page` | `number` | No | Invoices per page, at most 25; the one collection that accepts it. |
 | `ticket_id` | `number` | No | — |
 | `paid` | `boolean` | No | — |
 | `unpaid` | `boolean` | No | — |
@@ -580,7 +579,7 @@ Money fields come back as decimal strings on this resource.
   id?: number | null,
   name?: string | null,
   number?: string | null,
-  external_id?: string | null,
+  external_id?: number | string | null,
   schedule_id?: number | null,
   qbsdk_external_id?: string | null,
   xero_id?: string | null,
@@ -641,7 +640,7 @@ await corsair.repairshopr.api.products.create({ name: 'SSD 1TB', description: 'S
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `description` | `string` | Yes | Required by RepairShopr, so it is required here. |
+| `description` | `string` | Yes | Required when creating a product. |
 | `price_cost` | `number` | No | — |
 | `price_retail` | `number` | No | — |
 | `price_wholesale` | `number` | No | — |
@@ -798,7 +797,7 @@ await corsair.repairshopr.api.products.list({ sku: 'SSD-1TB' });
 | `category_id` | `number` | No | — |
 | `id` | `number` | No | — |
 | `id_not` | `number` | No | — |
-| `sort` | `string` | No | — |
+| `sort` | `string` | No | A column and direction, such as `name ASC`. |
 
 This collection has no `meta` block, so `next_page` is always null.
 
@@ -881,7 +880,7 @@ await corsair.repairshopr.api.products.update({ product_id: 7, price_retail: 165
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `description` | `string` | No | Required by RepairShopr, so it is required here. |
+| `description` | `string` | No | Required when creating a product. |
 | `price_cost` | `number` | No | — |
 | `price_retail` | `number` | No | — |
 | `price_wholesale` | `number` | No | — |
@@ -970,7 +969,7 @@ await corsair.repairshopr.api.tickets.create({ customer_id: 1, subject: 'Laptop 
 | `subject` | `string` | Yes | The ticket subject. |
 | `number` | `string` | No | — |
 | `ticket_type_id` | `number` | No | — |
-| `status` | `New \| In Progress \| Waiting on Customer \| Waiting on Parts \| Resolved` | No | — |
+| `status` | `string` | No | A status name from the account, such as `New`, `In Progress`, `Waiting for Parts` or `Resolved`. |
 | `priority` | `Urgent \| High \| Medium \| Low` | No | RepairShopr's four priority values. |
 | `problem_type` | `string` | No | — |
 | `due_date` | `string` | No | A date, as `YYYY-MM-DD`. |
@@ -984,7 +983,7 @@ await corsair.repairshopr.api.tickets.create({ customer_id: 1, subject: 'Laptop 
 | `asset_ids` | `number[]` | No | — |
 | `properties` | `Record<string, string \| number \| boolean \| null>` | No | — |
 
-The status and priority values are validated before the request, because RepairShopr rejects an unknown one.
+The status is a name from the account's own status list.
 
 
 
@@ -1244,7 +1243,7 @@ await corsair.repairshopr.api.tickets.update({ ticket_id: 3, status: 'Resolved' 
 | `subject` | `string` | No | The ticket subject. |
 | `number` | `string` | No | — |
 | `ticket_type_id` | `number` | No | — |
-| `status` | `New \| In Progress \| Waiting on Customer \| Waiting on Parts \| Resolved` | No | — |
+| `status` | `string` | No | A status name from the account, such as `New`, `In Progress`, `Waiting for Parts` or `Resolved`. |
 | `priority` | `Urgent \| High \| Medium \| Low` | No | RepairShopr's four priority values. |
 | `problem_type` | `string` | No | — |
 | `due_date` | `string` | No | A date, as `YYYY-MM-DD`. |
