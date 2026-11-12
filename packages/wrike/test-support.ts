@@ -24,9 +24,14 @@ export const euContext = {
 } as never;
 
 export function installFetchMock() {
-	const fetchMock = jest.spyOn(globalThis, 'fetch');
+	const unmockedFetch = () => {
+		throw new Error('unmocked fetch in a unit test');
+	};
+	const fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockImplementation(unmockedFetch);
 	afterEach(() => {
-		fetchMock.mockReset();
+		fetchMock.mockReset().mockImplementation(unmockedFetch);
 	});
 	return fetchMock;
 }
