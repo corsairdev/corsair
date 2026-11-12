@@ -179,6 +179,7 @@ describe('StackAI public endpoints', () => {
 	});
 	it('retains provider error details and never replays a failed write', async () => {
 		reply({ detail: ['busy'] }, 429, { 'retry-after': '2' });
+		// A thrown value is not necessarily an Error; the assertion narrows it.
 		let error: unknown;
 		try {
 			await plugin.endpoints!.runs.start(ctx, { project_id: 'p', input: {} });

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-// Workflow input/output and API metadata are provider-defined JSON objects.
+// Workflow input/output depend on each project's schema, and metadata permits
+// arbitrary values, so a narrower shared value type would reject valid data.
 const jsonObject = z.record(z.string(), z.unknown());
 const pathId = z
 	.string()

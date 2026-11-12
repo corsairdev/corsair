@@ -2,6 +2,7 @@ import type { StackAIContext } from './index';
 
 // Corsair reuses the endpoint context across retries. A fresh context is
 // created by our before hook for each public call, including concurrent calls.
+// JavaScript can throw any value, not just Error; preserve it unchanged on retry.
 const writeAttempts = new WeakMap<object, { error?: unknown }>();
 
 export function createWriteContext<T extends object>(ctx: T): T {

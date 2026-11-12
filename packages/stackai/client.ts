@@ -5,6 +5,8 @@ export const STACKAI_API_BASE = 'https://api.stack-ai.com';
 export class StackAIAPIError extends Error {
 	constructor(
 		public readonly status: number,
+		// Provider and intermediary error bodies can be JSON, text, or empty;
+		// callers must narrow the preserved value before using its contents.
 		public readonly body: unknown,
 		public readonly retryAfter: number | undefined,
 		public readonly method: 'GET' | 'POST',
@@ -24,6 +26,8 @@ function retryDelay(value: string | null): number | undefined {
 	return Number.isNaN(date) ? undefined : Math.max(0, date - Date.now());
 }
 
+// The raw response is untrusted and varies by endpoint (or may be text/empty),
+// so its body stays unknown until the endpoint-specific schema validates it.
 export async function stackAIRequest(
 	key: string,
 	baseURL: string | undefined,
@@ -59,6 +63,7 @@ export async function stackAIRequest(
 		redirect: 'manual',
 	});
 	const text = await response.text();
+	// JSON may contain any value; retain unknown until an endpoint parses it.
 	let data: unknown = text;
 	if (text) {
 		try {

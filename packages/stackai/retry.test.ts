@@ -103,6 +103,8 @@ describe('bound write retries', () => {
 			args,
 			passToAfter: 'marker',
 		}));
+		// Hooks accept context and result values supplied by Corsair; this test
+		// checks invocation only and does not assume their runtime shapes.
 		const after = jest.fn(
 			(_ctx: unknown, _result: unknown, _marker?: string) => undefined,
 		);

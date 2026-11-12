@@ -3,7 +3,7 @@ description: Inspect project input and output schemas and manage asynchronous St
 domain: stack-ai.com
 recommendedAuth: api_key
 overviewNote: |
-  Use a StackAI personal API key or supported user token. The hosted origin is https://api.stack-ai.com; configure `baseURL` for a private deployment. The key needs `projects.read`, `projects.run`, and `analytics.read` as appropriate. Start, cancel, and resume return the JSON body and the actual `Location` header; a successful response does not mean the run has completed. The plugin prevents Corsair retries from resending writes, though custom root handlers may delay and reprocess the failure. Reconcile ambiguous write failures before manually retrying. Never attach credentials to an untrusted Location URL.
+  Use a StackAI personal API key or supported user token. The hosted origin is https://api.stack-ai.com; configure `baseURL` for a private deployment. The key needs `projects.read`, `projects.run`, and `analytics.read` as appropriate. Replace `example_input` with a node ID from your project's I/O schema. Start, cancel, and resume return the JSON body and the actual `Location` header; a successful response does not mean the run has completed. The plugin prevents Corsair retries from resending writes, though custom root handlers may delay and reprocess the failure. Reconcile ambiguous write failures before manually retrying. Never attach credentials to an untrusted Location URL.
 examples:
   read:
     path: runs.list
@@ -16,7 +16,7 @@ examples:
     args:
       project_id: example-project
       input:
-        in-0: Hello
+        example_input: Hello
 apiExamples:
   projects.ioSchema:
     call: "{ project_id: 'example-project', version: 'latest' }"
