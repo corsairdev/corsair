@@ -2588,6 +2588,14 @@
                 ]
               },
               {
+                "group": "Klazify",
+                "pages": [
+                  "plugins/klazify/overview",
+                  "plugins/klazify/api",
+                  "plugins/klazify/database"
+                ]
+              },
+              {
                 "group": "Kling",
                 "pages": [
                   "plugins/kling/overview",
