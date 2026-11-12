@@ -187,3 +187,11 @@ describe('key hygiene', () => {
 		expect(error.replayable).toBe(true);
 	});
 });
+
+describe('captureError', () => {
+	it('fails when the operation resolves instead of rejecting', async () => {
+		await expect(captureError(Promise.resolve('ok'))).rejects.toThrow(
+			/the operation resolved/,
+		);
+	});
+});
