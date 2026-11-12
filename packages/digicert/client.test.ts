@@ -224,7 +224,7 @@ describe('makeDigicertRequest', () => {
 		}
 	});
 
-	it('keeps Retry-After when a binary download is rate limited', async () => {
+	it('does not retry a rate-limited binary write', async () => {
 		const originalFetch = global.fetch;
 		global.fetch = jest.fn(
 			async () =>
@@ -240,9 +240,66 @@ describe('makeDigicertRequest', () => {
 					'privateCA',
 					'/certificate-authority/api/v1/ca/{id}/download',
 					'one-token',
-					{ binary: true, path: { id: 'ca-1' } },
+					{ binary: true, method: 'POST', path: { id: 'ca-1' } },
 				),
 			).rejects.toMatchObject({ status: 429, retryAfter: 4000 });
+			expect(global.fetch).toHaveBeenCalledTimes(1);
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+
+	it('retries binary GETs after 429 and honors Retry-After', async () => {
+		const originalFetch = global.fetch;
+		const payload = Uint8Array.from([0x30, 0x82, 0xff]);
+		global.fetch = jest
+			.fn()
+			.mockResolvedValueOnce(
+				new Response('slow down', {
+					status: 429,
+					headers: { 'retry-after': '0' },
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response(payload, {
+					status: 200,
+					headers: { 'Content-Type': 'application/octet-stream' },
+				}),
+			) as typeof fetch;
+		try {
+			await expect(
+				makeDigicertRequest(
+					'privateCA',
+					'/certificate-authority/api/v1/ca/{id}/download',
+					'one-token',
+					{ binary: true, path: { id: 'ca-1' } },
+				),
+			).resolves.toEqual([0x30, 0x82, 0xff]);
+			expect(global.fetch).toHaveBeenCalledTimes(2);
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+
+	it('caps binary GET retries at three attempts after the initial request', async () => {
+		const originalFetch = global.fetch;
+		global.fetch = jest.fn(
+			async () =>
+				new Response('slow down', {
+					status: 429,
+					headers: { 'retry-after': '0' },
+				}),
+		) as typeof fetch;
+		try {
+			await expect(
+				makeDigicertRequest(
+					'privateCA',
+					'/certificate-authority/api/v1/ca/{id}/download',
+					'one-token',
+					{ binary: true, path: { id: 'ca-1' } },
+				),
+			).rejects.toMatchObject({ status: 429, retryAfter: 0 });
+			expect(global.fetch).toHaveBeenCalledTimes(4);
 		} finally {
 			global.fetch = originalFetch;
 		}

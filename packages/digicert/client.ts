@@ -142,6 +142,8 @@ export async function makeDigicertRequest<T>(
 }
 
 const MAX_BINARY_BYTES = 32 * 1024 * 1024;
+const MAX_BINARY_RATE_LIMIT_RETRIES = 3;
+const MAX_BINARY_RETRY_DELAY_MS = 30_000;
 
 function stringHeaders(
 	headers: ApiRequestOptions['headers'],
@@ -177,13 +179,29 @@ async function requestBinary<T>(options: {
 	const headers = new Headers(options.headers);
 	if (options.mediaType) headers.set('Content-Type', options.mediaType);
 	if (!headers.has('Accept')) headers.set('Accept', '*/*');
-	const signal = AbortSignal.timeout(20_000);
-	const response = await fetch(url, {
-		method: options.method,
-		headers,
-		body: requestBody(options.body, options.mediaType),
-		signal,
-	});
+	let response: Response;
+	for (let attempt = 0; ; attempt++) {
+		response = await fetch(url, {
+			method: options.method,
+			headers,
+			body: requestBody(options.body, options.mediaType),
+			signal: AbortSignal.timeout(20_000),
+		});
+		if (
+			options.method !== 'GET' ||
+			response.status !== 429 ||
+			attempt >= MAX_BINARY_RATE_LIMIT_RETRIES
+		) {
+			break;
+		}
+		const retryAfter = retryAfterMs(response);
+		// Best-effort cancellation releases the rate-limited response before retrying.
+		await response.body?.cancel().catch(() => undefined);
+		const backoff = 1000 * 2 ** attempt;
+		await sleep(
+			Math.min(Math.max(0, retryAfter ?? backoff), MAX_BINARY_RETRY_DELAY_MS),
+		);
+	}
 	if (!response.ok) {
 		const retryAfter = retryAfterMs(response);
 		const body = await readErrorBody(response);
@@ -232,6 +250,10 @@ function retryAfterMs(response: Response): number | undefined {
 	const date = Date.parse(header);
 	if (Number.isNaN(date)) return undefined;
 	return Math.max(0, date - Date.now());
+}
+
+function sleep(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function readErrorBody(response: Response): Promise<unknown> {
