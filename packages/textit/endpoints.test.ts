@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { textItEndpointsNested } from './endpoints';
+import type { TextItEndpointInputs } from './endpoints/types';
 import { textItEndpointSchemas, textit } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -7,17 +8,25 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(null),
 }));
 
+// The table dynamically selects endpoints with different validated return shapes.
 type Endpoint = (ctx: never, input: never) => Promise<unknown>;
 const ctx = { key: 'test-token' } as never;
 const page = { next: null, previous: null, results: [] };
 const file = new Blob(['image bytes'], { type: 'image/png' });
 
+// This compile-time assertion ensures the public create input cannot omit campaign.
+const campaignIsRequired: undefined extends TextItEndpointInputs['campaignEventsCreate']['campaign']
+	? false
+	: true = true;
+
 type Case = {
 	operation: string;
 	method: 'GET' | 'POST' | 'DELETE';
 	path: string;
+	// Each row exercises a different endpoint, whose input and response shapes differ.
 	input: unknown;
 	query?: Record<string, string>;
+	// JSON bodies and responses vary per operation; schemas validate them at the seam.
 	body?: unknown;
 	response?: unknown;
 	status?: number;
@@ -457,6 +466,7 @@ const cases: Case[] = [
 
 function endpoint(operation: string): Endpoint {
 	const [group, name] = operation.split('.');
+	// Dynamic lookup erases endpoint-specific signatures; the table supplies their inputs.
 	const tree = textItEndpointsNested as unknown as Record<
 		string,
 		Record<string, Endpoint>
@@ -466,6 +476,7 @@ function endpoint(operation: string): Endpoint {
 	return fn;
 }
 
+// Fixtures span different provider resource shapes, so the mock serializes untyped JSON.
 function response(
 	body: unknown,
 	status = 200,
@@ -487,6 +498,7 @@ describe('TextIt public request seam', () => {
 	});
 
 	it('covers every registered operation exactly once', () => {
+		expect(campaignIsRequired).toBe(true);
 		const operations = Object.entries(textItEndpointsNested).flatMap(
 			([group, methods]) =>
 				Object.keys(methods).map((name) => `${group}.${name}`),
@@ -554,6 +566,95 @@ describe('TextIt public request seam', () => {
 		expect(url.searchParams.get('cursor')).toBe('next+page/=');
 	});
 
+	it('parses populated nested provider response examples', async () => {
+		// Adapted from https://textit.com/api/v2/messages, /flows, /tickets and /campaign_events.
+		const fixtures = [
+			{
+				operation: 'messages.list',
+				result: {
+					uuid: '0199bb98-3637-778d-9dfc-0ab85c950d7c',
+					contact: {
+						uuid: 'd33e9ad5-5c35-414c-abd4-e7451c69ff1d',
+						name: 'Bob McFlow',
+					},
+					attachments: [
+						{
+							content_type: 'audio/wav',
+							url: 'http://domain.com/recording.wav',
+						},
+					],
+					quick_replies: [{ text: 'Great' }, { text: 'Improving' }],
+					labels: [
+						{ name: 'Important', uuid: '5a4eb79e-1b1f-4ae3-8700-09384cca385f' },
+					],
+					flow: {
+						uuid: '254fd2ff-4990-4621-9536-0a448d313692',
+						name: 'Registration',
+					},
+				},
+			},
+			{
+				operation: 'flows.list',
+				result: {
+					uuid: '5f05311e-8f81-4a67-a5b5-1501b6d6496a',
+					runs: { active: 47, completed: 123, interrupted: 2, expired: 34 },
+					results: [
+						{
+							key: 'has_water',
+							name: 'Has Water',
+							categories: ['Yes', 'No', 'Other'],
+							node_uuids: ['99afcda7-f928-4d4a-ae83-c90c96deb76d'],
+						},
+					],
+					parent_refs: [],
+				},
+			},
+			{
+				operation: 'tickets.list',
+				result: {
+					uuid: '9a8b001e-a913-486c-80f4-1356e23f582e',
+					contact: {
+						uuid: 'f1ea776e-c923-4c1a-b3a3-0c466932b2cc',
+						name: 'Jim',
+					},
+					topic: {
+						uuid: '040edbfe-be55-48f3-864d-a4a7147c447b',
+						name: 'Support',
+					},
+					assignee: { email: 'bob@flow.com', name: 'Bob McFlow' },
+					opened_by: null,
+					closed_on: null,
+				},
+			},
+			{
+				operation: 'campaignEvents.list',
+				result: {
+					uuid: 'f14e4ff0-724d-43fe-a953-1d16aefd1c00',
+					campaign: {
+						uuid: 'f14e4ff0-724d-43fe-a953-1d16aefd1c00',
+						name: 'Reminders',
+					},
+					relative_to: { key: 'registration', name: 'Registration Date' },
+					offset: 7,
+					unit: 'days',
+					delivery_hour: 9,
+					flow: {
+						uuid: '09d23a05-47fe-11e4-bfe9-b8f6b119e9ab',
+						name: 'Survey',
+					},
+					message: null,
+				},
+			},
+		];
+		for (const fixture of fixtures) {
+			const body = { next: null, previous: null, results: [fixture.result] };
+			fetchMock.mockResolvedValueOnce(response(body));
+			await expect(
+				endpoint(fixture.operation)(ctx, {} as never),
+			).resolves.toEqual(body);
+		}
+	});
+
 	it('returns undefined for a successful bulk message action', async () => {
 		fetchMock.mockResolvedValueOnce(response(undefined, 204));
 		await expect(
@@ -565,6 +666,15 @@ describe('TextIt public request seam', () => {
 	});
 
 	it('rejects invalid inputs before sending a request', async () => {
+		await expect(
+			textItEndpointsNested.campaignEvents.create(ctx, {
+				relative_to: 'date',
+				offset: 7,
+				unit: 'days',
+				delivery_hour: 9,
+				message: 'Hello',
+			} as never),
+		).rejects.toThrow();
 		await expect(
 			textItEndpointsNested.contacts.update(ctx, {
 				query: { urn: 'tel:+123' },

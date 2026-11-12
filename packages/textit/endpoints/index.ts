@@ -36,6 +36,7 @@ const list = (path: string, query: Query): TextItRequest => ({
 	path: `/${path}.json`,
 	query,
 });
+// Each endpoint supplies its own validated body shape; this shared builder cannot narrow it further.
 const post = (path: string, body: unknown, query?: Query): TextItRequest => ({
 	method: 'POST',
 	path: `/${path}.json`,

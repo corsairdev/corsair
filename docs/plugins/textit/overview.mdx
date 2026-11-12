@@ -115,7 +115,10 @@ await tenant.textit.api.archives.list({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.textit.api.broadcasts.send({});
+await tenant.textit.api.broadcasts.send({
+	contacts: ['09d23a05-47fe-11e4-bfe9-b8f6b119e9ab'],
+	text: { eng: 'Hello!' },
+});
 ```
 
 

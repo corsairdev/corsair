@@ -19,6 +19,7 @@ const rateLimitConfig: RateLimitConfig = {
 
 export class TextItAPIError extends Error {
 	readonly status?: number;
+	// Error bodies vary by status and provider response, so callers must narrow them.
 	readonly body?: unknown;
 	/** Retry-After in milliseconds, if TextIt provided it. */
 	readonly retryAfter?: number;
@@ -29,7 +30,7 @@ export class TextItAPIError extends Error {
 		this.name = 'TextItAPIError';
 		if (cause instanceof ApiError) {
 			this.status = cause.status;
-			this.body = cause.body as unknown;
+			this.body = cause.body;
 			this.retryAfter = cause.retryAfter;
 		}
 		this.method = method;
@@ -40,11 +41,12 @@ export type TextItRequest = {
 	method: 'GET' | 'POST' | 'DELETE';
 	path: string;
 	query?: Record<string, string | number | boolean | undefined>;
+	// Different endpoints submit different validated JSON bodies; no single shape fits.
 	body?: unknown;
 	formData?: { file: Blob };
 };
 
-/** The endpoint's output schema validates this raw JSON or 204 response. */
+/** The endpoint's output schema narrows this untrusted, endpoint-specific JSON or 204 response. */
 export async function makeTextItRequest(
 	key: string,
 	spec: TextItRequest,
@@ -66,6 +68,7 @@ export async function makeTextItRequest(
 		mediaType: spec.body === undefined ? undefined : 'application/json',
 	};
 	try {
+		// The generic transport sees all resource shapes; the endpoint validates the result.
 		return await request<unknown>(config, options, { rateLimitConfig });
 	} catch (error) {
 		if (error instanceof Error)

@@ -30,20 +30,19 @@ const contactSelector = z.union([
 	z.strictObject({ uuid: text }),
 	z.strictObject({ urn: text }),
 ]);
+const eventFields = {
+	relative_to: text,
+	offset: z.number().int(),
+	unit: z.enum(['minutes', 'hours', 'days', 'weeks']),
+	delivery_hour: z.number().int().min(-1).max(24),
+	message: z.string().optional(),
+	flow: text.optional(),
+};
+const hasExactlyOneEventTarget = (v: { message?: string; flow?: string }) =>
+	Boolean(v.message) !== Boolean(v.flow);
 const eventBody = z
-	.object({
-		campaign: text.optional(),
-		relative_to: text,
-		offset: z.number().int(),
-		unit: z.enum(['minutes', 'hours', 'days', 'weeks']),
-		delivery_hour: z.number().int().min(-1).max(24),
-		message: z.string().optional(),
-		flow: text.optional(),
-	})
-	.refine(
-		(v) => Boolean(v.message) !== Boolean(v.flow),
-		'Specify either message or flow',
-	);
+	.object({ campaign: text.optional(), ...eventFields })
+	.refine(hasExactlyOneEventTarget, 'Specify either message or flow');
 
 // Public schemas use the provider's wire names. No identifiers occur in a path
 // segment: TextIt selects individual records with query parameters instead.
@@ -76,10 +75,9 @@ export const TextItEndpointInputSchemas = {
 		uuid: text.optional(),
 		campaign: text.optional(),
 	}),
-	campaignEventsCreate: eventBody.refine(
-		(v) => !!v.campaign,
-		'campaign is required',
-	),
+	campaignEventsCreate: z
+		.object({ campaign: text, ...eventFields })
+		.refine(hasExactlyOneEventTarget, 'Specify either message or flow'),
 	campaignEventsUpdate: z.object({ ...uuid, body: eventBody }),
 	campaignEventsDelete: z.object(uuid),
 	channelsList: z.object({
@@ -139,6 +137,7 @@ export const TextItEndpointInputSchemas = {
 		urns: list100.optional(),
 		restart_participants: z.boolean().optional(),
 		exclude_active: z.boolean().optional(),
+		// Flow parameter values are user-defined JSON, so no fixed value schema applies.
 		params: z.record(z.string(), z.unknown()).optional(),
 	}),
 	flowsList: z.object({

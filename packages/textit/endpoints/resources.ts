@@ -102,7 +102,7 @@ export const Contact = z
 		email: z.string().nullish(),
 		email_verified_on: z.string().nullish(),
 		groups: z.array(named).nullish(),
-		// Contact custom-field values are defined by the workspace, not this API.
+		// Contact custom-field values are defined by the workspace, so no fixed value schema applies.
 		fields: z.record(z.string(), z.unknown()).nullish(),
 		flow: named.nullish(),
 		last_seen_on: z.string().nullish(),
@@ -123,7 +123,7 @@ export const FlowStart = z
 		contacts: z.array(named).nullish(),
 		groups: z.array(named).nullish(),
 		status: z.string().nullish(),
-		// Flow parameters are user-defined JSON.
+		// Flow parameters are user-defined JSON, so no fixed value schema applies.
 		params: z.record(z.string(), z.unknown()).nullish(),
 		...dates,
 	})
@@ -254,7 +254,7 @@ export const Resthook = z
 export const ResthookEvent = z
 	.object({
 		resthook: z.string().nullish(),
-		// Event data is determined by the workspace's flow and resthook.
+		// Event data is defined by the workspace's flow and resthook, not a fixed provider schema.
 		data: z.record(z.string(), z.unknown()).nullish(),
 		...dates,
 	})

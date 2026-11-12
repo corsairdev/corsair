@@ -29,6 +29,7 @@ describe('TextIt transport', () => {
 			method: 'POST',
 			path: '/messages.json',
 			body: { contact: 'contact', text: 'Hello' },
+			// A rejected promise can carry any value; the instanceof assertion narrows it below.
 		}).catch((e: unknown) => e);
 		expect(error).toBeInstanceOf(TextItAPIError);
 		if (!(error instanceof TextItAPIError))

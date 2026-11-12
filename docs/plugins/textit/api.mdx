@@ -142,7 +142,10 @@ Send a translated broadcast to contacts, groups or URNs.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.broadcasts.send({});
+await corsair.textit.api.broadcasts.send({
+	contacts: ['09d23a05-47fe-11e4-bfe9-b8f6b119e9ab'],
+	text: { eng: 'Hello!' },
+});
 ```
 
 **Input**
@@ -236,14 +239,14 @@ Create a scheduled campaign event.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.campaignEvents.create({});
+await corsair.textit.api.campaignEvents.create({ "campaign": "f14e4ff0-724d-43fe-a953-1d16aefd1c00", "relative_to": "registration", "offset": 7, "unit": "days", "delivery_hour": 9, "message": "Hello!" });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `campaign` | `string` | No | — |
+| `campaign` | `string` | Yes | — |
 | `relative_to` | `string` | Yes | — |
 | `offset` | `number` | Yes | — |
 | `unit` | `minutes \| hours \| days \| weeks` | Yes | — |
@@ -313,7 +316,7 @@ Delete a campaign event.
 **Risk:** `destructive`
 
 ```ts
-await corsair.textit.api.campaignEvents.delete({});
+await corsair.textit.api.campaignEvents.delete({ uuid: '6a6d7531-6b44-4c45-8c33-957ddd8dfabc' });
 ```
 
 **Input**
@@ -402,7 +405,16 @@ Update a scheduled campaign event.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.campaignEvents.update({});
+await corsair.textit.api.campaignEvents.update({
+	uuid: '6a6d7531-6b44-4c45-8c33-957ddd8dfabc',
+	body: {
+		relative_to: 'registration',
+		offset: 7,
+		unit: 'days',
+		delivery_hour: 9,
+		message: 'Hello!',
+	},
+});
 ```
 
 **Input**
@@ -493,7 +505,7 @@ Create a campaign for a contact group.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.campaigns.create({});
+await corsair.textit.api.campaigns.create({ name: 'Reminders', group: '09d23a05-47fe-11e4-bfe9-b8f6b119e9ab' });
 ```
 
 **Input**
@@ -596,7 +608,7 @@ Update a campaign by UUID.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.campaigns.update({});
+await corsair.textit.api.campaigns.update({ uuid: 'f14e4ff0-724d-43fe-a953-1d16aefd1c00', name: 'Reminders' });
 ```
 
 **Input**
@@ -709,7 +721,7 @@ Apply a bulk contact action, including permanent deletion.
 **Risk:** `destructive`
 
 ```ts
-await corsair.textit.api.contactActions.apply({});
+await corsair.textit.api.contactActions.apply({ "contacts": ["d33e9ad5-5c35-414c-abd4-e7451c69ff1d"], "action": "add", "group": "09d23a05-47fe-11e4-bfe9-b8f6b119e9ab" });
 ```
 
 **Input**
@@ -818,7 +830,7 @@ Permanently delete a contact by UUID or URN.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.textit.api.contacts.delete({});
+await corsair.textit.api.contacts.delete({ uuid: 'd33e9ad5-5c35-414c-abd4-e7451c69ff1d' });
 ```
 
 **Input:** `object`
@@ -918,7 +930,10 @@ Update a contact by UUID or URN; an unknown URN creates one.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.contacts.update({});
+await corsair.textit.api.contacts.update({
+	query: { uuid: 'd33e9ad5-5c35-414c-abd4-e7451c69ff1d' },
+	body: { name: 'Bob' },
+});
 ```
 
 **Input**
@@ -1014,7 +1029,7 @@ Create a custom contact field.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.fields.create({});
+await corsair.textit.api.fields.create({ "name": "Nickname", "type": "text" });
 ```
 
 **Input**
@@ -1094,7 +1109,7 @@ Update a custom contact field by key.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.fields.update({});
+await corsair.textit.api.fields.update({ key: 'nickname', name: 'Nickname' });
 ```
 
 **Input**
@@ -1204,7 +1219,10 @@ Start contacts, groups or URNs in a flow.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.flowStarts.create({});
+await corsair.textit.api.flowStarts.create({
+	flow: '5f05311e-8f81-4a67-a5b5-1501b6d6496a',
+	contacts: ['d33e9ad5-5c35-414c-abd4-e7451c69ff1d'],
+});
 ```
 
 **Input**
@@ -1342,7 +1360,7 @@ Create a workspace global.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.globals.create({});
+await corsair.textit.api.globals.create({ name: 'Greeting', value: 'Hello' });
 ```
 
 **Input**
@@ -1428,7 +1446,7 @@ Update a workspace global by key.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.globals.update({});
+await corsair.textit.api.globals.update({ key: 'greeting', value: 'Hello' });
 ```
 
 **Input**
@@ -1466,7 +1484,7 @@ Create a contact group.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.groups.create({});
+await corsair.textit.api.groups.create({ name: 'Volunteers' });
 ```
 
 **Input**
@@ -1501,7 +1519,7 @@ Delete a contact group.
 **Risk:** `destructive`
 
 ```ts
-await corsair.textit.api.groups.delete({});
+await corsair.textit.api.groups.delete({ uuid: '09d23a05-47fe-11e4-bfe9-b8f6b119e9ab' });
 ```
 
 **Input**
@@ -1578,7 +1596,7 @@ Update a contact group.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.groups.update({});
+await corsair.textit.api.groups.update({ uuid: '09d23a05-47fe-11e4-bfe9-b8f6b119e9ab', name: 'Volunteers' });
 ```
 
 **Input**
@@ -1616,7 +1634,7 @@ Create a message label.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.labels.create({});
+await corsair.textit.api.labels.create({ name: 'Important' });
 ```
 
 **Input**
@@ -1648,7 +1666,7 @@ Delete a message label.
 **Risk:** `destructive`
 
 ```ts
-await corsair.textit.api.labels.delete({});
+await corsair.textit.api.labels.delete({ uuid: '5a4eb79e-1b1f-4ae3-8700-09384cca385f' });
 ```
 
 **Input**
@@ -1721,7 +1739,7 @@ Update a message label.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.labels.update({});
+await corsair.textit.api.labels.update({ uuid: '5a4eb79e-1b1f-4ae3-8700-09384cca385f', name: 'Important' });
 ```
 
 **Input**
@@ -1792,7 +1810,7 @@ Apply a bulk message action, including permanent deletion; inspect failures.
 **Risk:** `destructive`
 
 ```ts
-await corsair.textit.api.messageActions.apply({});
+await corsair.textit.api.messageActions.apply({ "messages": [123], "action": "archive" });
 ```
 
 **Input**
@@ -1915,7 +1933,7 @@ Send a message to a contact.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.messages.send({});
+await corsair.textit.api.messages.send({ contact: 'd33e9ad5-5c35-414c-abd4-e7451c69ff1d', text: 'Hello!' });
 ```
 
 **Input**
@@ -2139,7 +2157,7 @@ Subscribe a target URL to a resthook.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.resthookSubscribers.create({});
+await corsair.textit.api.resthookSubscribers.create({ resthook: 'new-report', target_url: 'https://example.com/hook' });
 ```
 
 **Input**
@@ -2174,7 +2192,7 @@ Remove an outbound resthook subscription.
 **Risk:** `destructive`
 
 ```ts
-await corsair.textit.api.resthookSubscribers.delete({});
+await corsair.textit.api.resthookSubscribers.delete({ id: 10404016 });
 ```
 
 **Input**
@@ -2332,7 +2350,7 @@ Apply a bulk ticket action.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.ticketActions.apply({});
+await corsair.textit.api.ticketActions.apply({ "tickets": ["9a8b001e-a913-486c-80f4-1356e23f582e"], "action": "close" });
 ```
 
 **Input**
@@ -2434,7 +2452,7 @@ Create a ticket topic.
 **Risk:** `write`
 
 ```ts
-await corsair.textit.api.topics.create({});
+await corsair.textit.api.topics.create({ name: 'Support' });
 ```
 
 **Input**
