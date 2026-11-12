@@ -1,0 +1,597 @@
+{
+  "id": "mapbox",
+  "displayName": "Mapbox",
+  "description": "Geocode addresses and coordinates, get routes, travel-time matrices, isochrones and optimized trips, and query vector tilesets with Mapbox.",
+  "npmPackageName": "@corsair-dev/mapbox",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 7,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "mapbox.api.directions.route",
+      "shortPath": "directions.route",
+      "description": "Get a route between 2 to 25 waypoints for driving, driving with traffic, walking or cycling, with optional steps, annotations and alternatives; throws when Mapbox finds no route",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "mapbox/driving-traffic | mapbox/driving | mapbox/walking | mapbox/cycling",
+            "description": "Routing profile: mapbox/driving-traffic (live and historic traffic, falls back to driving where there is no traffic data), mapbox/driving, mapbox/walking or mapbox/cycling."
+          },
+          {
+            "key": "coordinates",
+            "optional": false,
+            "type": "{ longitude: number, latitude: number }[]",
+            "description": "Between 2 and 25 waypoints, visited in order. Each is { longitude, latitude }."
+          },
+          {
+            "key": "alternatives",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return up to two alternative routes."
+          },
+          {
+            "key": "annotations",
+            "optional": true,
+            "type": "(duration | distance | speed | congestion | congestion_numeric | maxspeed | closure)[]",
+            "description": "Extra per-segment data on each leg. Needs overview: \"full\". congestion, congestion_numeric and closure need mapbox/driving-traffic; maxspeed needs a driving profile."
+          },
+          {
+            "key": "continue_straight",
+            "optional": true,
+            "type": "boolean",
+            "description": "Keep the direction of travel when leaving intermediate waypoints. Mapbox defaults to true for the driving profiles and false for walking and cycling."
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "(motorway | toll | ferry | unpaved | cash_only_tolls)[]",
+            "description": "Road types to avoid. Driving profiles take all five; walking takes ferry and cash_only_tolls; cycling also takes unpaved."
+          },
+          {
+            "key": "geometries",
+            "optional": true,
+            "type": "geojson | polyline | polyline6",
+            "description": "Geometry encoding: polyline (default, precision 5), polyline6 (precision 6) or geojson (a LineString)."
+          },
+          {
+            "key": "overview",
+            "optional": true,
+            "type": "full | simplified | false",
+            "description": "Route overview geometry: simplified (default), full, or false for none."
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return turn-by-turn steps on each leg."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Language of step instructions, such as en or fr. Needs steps: true."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "waypoints",
+            "optional": true,
+            "type": "{ name: string, location: number[], distance?: number | null, waypoint_index?: number | null, trips_index?: number | null }[] | null"
+          },
+          {
+            "key": "routes",
+            "optional": false,
+            "type": "{ geometry?: string | { type: string, coordinates: number[][] | number[][][] | number[][][][] } | null, distance: number, duration: number, weight?: number | null, weight_name?: string | null, legs: { steps?: { distance: number, duration: number, name?: string | null, mode?: string | null, geometry?: string | { type: string, coordinates: number[][] | number[][][] | number[][][][] } | null, maneuver?: { location?: number[] | null, type?: string | null, instruction?: string | null } | null }[] | null, summary?: string | null, distance: number, duration: number, weight?: number | null, annotation?: { duration?: number[] | null, distance?: number[] | null, speed?: number[] | null, congestion?: string[] | null, congestion_numeric?: (number | null)[] | null } | null }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mapbox.api.geocoding.forward",
+      "shortPath": "geocoding.forward",
+      "description": "Turn an address or place name into coordinates and structured address context; a query with no match returns an empty features list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search text: an address, place name or similar. At most 256 characters and 20 words or numbers, no semicolons."
+          },
+          {
+            "key": "autocomplete",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return results that start with the text (true, the default) or only exact matches (false). Each autocomplete keystroke counts as a request."
+          },
+          {
+            "key": "bbox",
+            "optional": true,
+            "type": "[number, number, number, number]",
+            "description": "Limit results to this box, as [minLongitude, minLatitude, maxLongitude, maxLatitude]. It cannot cross the 180th meridian."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string[]",
+            "description": "Limit results to these ISO 3166 alpha-2 country codes."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the response text as an IETF tag such as en or fr-CA; comma-separate several."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum results, 1 to 10. Defaults to 5. Mapbox ignores a value outside that range without an error, so the plugin rejects it."
+          },
+          {
+            "key": "proximity",
+            "optional": true,
+            "type": "ip | { longitude: number, latitude: number }",
+            "description": "Bias results toward a location: { longitude, latitude }, or \"ip\" to bias by the caller's IP address."
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "(country | region | postcode | district | place | locality | neighborhood | street | address | secondary_address)[]",
+            "description": "Only return these feature types."
+          },
+          {
+            "key": "worldview",
+            "optional": true,
+            "type": "us | cl | cn | in | jp | ar | ma | rs | ru | tr | twc",
+            "description": "Which regional view of disputed boundaries to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": false,
+            "type": "{ type: string, id?: string | null, geometry: { type: string, coordinates: number[] }, properties: { mapbox_id: string, feature_type: string, name: string, name_preferred?: string | null, full_address?: string | null, place_formatted?: string | null, coordinates: { longitude: number, latitude: number, accuracy?: string | null }, bbox?: number[] | null, context?: Record<string, { mapbox_id?: string | null, name?: string | null, wikidata_id?: string | null }> | null } }[]"
+          },
+          {
+            "key": "attribution",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mapbox.api.geocoding.reverse",
+      "shortPath": "geocoding.reverse",
+      "description": "Turn a longitude and latitude into the address, place or other features at that point",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "longitude",
+            "optional": false,
+            "type": "number",
+            "description": "Longitude in decimal degrees, -180 to 180."
+          },
+          {
+            "key": "latitude",
+            "optional": false,
+            "type": "number",
+            "description": "Latitude in decimal degrees, -90 to 90."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string[]",
+            "description": "Limit results to these ISO 3166 alpha-2 country codes."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the response text as an IETF tag such as en or fr-CA; comma-separate several."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum results, 1 to 5. Defaults to 1. More than 1 needs exactly one entry in types. Mapbox ignores a value outside that range without an error, so the plugin rejects it."
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "(country | region | postcode | district | place | locality | neighborhood | street | address | secondary_address)[]",
+            "description": "Only return these feature types."
+          },
+          {
+            "key": "worldview",
+            "optional": true,
+            "type": "us | cl | cn | in | jp | ar | ma | rs | ru | tr | twc",
+            "description": "Which regional view of disputed boundaries to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": false,
+            "type": "{ type: string, id?: string | null, geometry: { type: string, coordinates: number[] }, properties: { mapbox_id: string, feature_type: string, name: string, name_preferred?: string | null, full_address?: string | null, place_formatted?: string | null, coordinates: { longitude: number, latitude: number, accuracy?: string | null }, bbox?: number[] | null, context?: Record<string, { mapbox_id?: string | null, name?: string | null, wikidata_id?: string | null }> | null } }[]"
+          },
+          {
+            "key": "attribution",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mapbox.api.isochrone.get",
+      "shortPath": "isochrone.get",
+      "description": "Get the area reachable from a point within up to four travel times or distances, as GeoJSON lines or polygons",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "mapbox/driving-traffic | mapbox/driving | mapbox/walking | mapbox/cycling",
+            "description": "Routing profile: mapbox/driving-traffic (live and historic traffic, falls back to driving where there is no traffic data), mapbox/driving, mapbox/walking or mapbox/cycling."
+          },
+          {
+            "key": "coordinate",
+            "optional": false,
+            "type": "{ longitude: number, latitude: number }",
+            "description": "The point the contours are centered on."
+          },
+          {
+            "key": "contours_minutes",
+            "optional": true,
+            "type": "number[]",
+            "description": "Travel times in minutes, 1 to 60, up to four, strictly increasing. Give this or contours_meters, not both."
+          },
+          {
+            "key": "contours_meters",
+            "optional": true,
+            "type": "number[]",
+            "description": "Travel distances in meters, 1 to 100000, up to four, strictly increasing. Give this or contours_minutes, not both."
+          },
+          {
+            "key": "contours_colors",
+            "optional": true,
+            "type": "string[]",
+            "description": "Hex colors without a leading #, one per contour, such as ff0000."
+          },
+          {
+            "key": "polygons",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return contours as polygons (true) or linestrings (false, the default)."
+          },
+          {
+            "key": "denoise",
+            "optional": true,
+            "type": "number",
+            "description": "0 to 1; removes contours smaller than this fraction of the largest. Defaults to 1."
+          },
+          {
+            "key": "generalize",
+            "optional": true,
+            "type": "number",
+            "description": "Douglas-Peucker tolerance in meters, 0 or more. Mapbox chooses one when omitted."
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "(motorway | toll | ferry | unpaved | cash_only_tolls)[]",
+            "description": "Road types to avoid. Driving profiles only."
+          },
+          {
+            "key": "depart_at",
+            "optional": true,
+            "type": "string",
+            "description": "Departure time, so contours reflect traffic then. Without a zone it is local to the coordinate."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "features",
+            "optional": false,
+            "type": "{ type?: string | null, properties: { contour: number, metric: string, color?: string | null }, geometry: { type: string, coordinates: number[][] | number[][][] | number[][][][] } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mapbox.api.matrix.calculate",
+      "shortPath": "matrix.calculate",
+      "description": "Get travel times, distances or both between up to 25 points (10 with traffic), as a sources by destinations table",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "mapbox/driving-traffic | mapbox/driving | mapbox/walking | mapbox/cycling",
+            "description": "Routing profile: mapbox/driving-traffic (live and historic traffic, falls back to driving where there is no traffic data), mapbox/driving, mapbox/walking or mapbox/cycling."
+          },
+          {
+            "key": "coordinates",
+            "optional": false,
+            "type": "{ longitude: number, latitude: number }[]",
+            "description": "Between 2 and 25 points, or at most 10 for mapbox/driving-traffic. Each is { longitude, latitude }."
+          },
+          {
+            "key": "annotations",
+            "optional": true,
+            "type": "(duration | distance)[]",
+            "description": "Which matrices to return: duration (default), distance, or both."
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "all | number[]",
+            "description": "Zero-based indexes into coordinates to use as sources, or \"all\" (default)."
+          },
+          {
+            "key": "destinations",
+            "optional": true,
+            "type": "all | number[]",
+            "description": "Zero-based indexes into coordinates to use as destinations, or \"all\" (default)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string | null",
+            "description": "Ok, or null when some pairs are unroutable (those cells are null)."
+          },
+          {
+            "key": "durations",
+            "optional": true,
+            "type": "(number | null)[][] | null",
+            "description": "Seconds from each source (row) to each destination (column); null where no route exists."
+          },
+          {
+            "key": "distances",
+            "optional": true,
+            "type": "(number | null)[][] | null",
+            "description": "Meters from each source (row) to each destination (column); null where no route exists. Only present when annotations includes distance."
+          },
+          {
+            "key": "sources",
+            "optional": false,
+            "type": "{ name: string, location: number[], distance?: number | null, waypoint_index?: number | null, trips_index?: number | null }[]"
+          },
+          {
+            "key": "destinations",
+            "optional": false,
+            "type": "{ name: string, location: number[], distance?: number | null, waypoint_index?: number | null, trips_index?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mapbox.api.tilequery.query",
+      "shortPath": "tilequery.query",
+      "description": "List the features of one or more vector tilesets at or near a point, nearest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tileset_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "One to 25 vector tileset IDs, such as mapbox.mapbox-streets-v8."
+          },
+          {
+            "key": "coordinate",
+            "optional": false,
+            "type": "{ longitude: number, latitude: number }",
+            "description": "The point to query."
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number",
+            "description": "Search distance in meters. 0 (the default) is a point-in-polygon query. Needed for point and line data."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum features, 1 to 50. Defaults to 5."
+          },
+          {
+            "key": "dedupe",
+            "optional": true,
+            "type": "boolean",
+            "description": "Remove duplicate features (true, the default) or keep them."
+          },
+          {
+            "key": "geometry",
+            "optional": true,
+            "type": "polygon | linestring | point",
+            "description": "Only return features of this original geometry type."
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only query these layers, such as poi_label and building."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "features",
+            "optional": false,
+            "type": "{ type: string, id?: number | string | null, geometry: { type: string, coordinates: number[] }, properties: { tilequery: { distance: number, geometry: string, layer: string } } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mapbox.api.trips.optimize",
+      "shortPath": "trips.optimize",
+      "description": "Find the fastest order to visit 2 to 12 stops (Optimization v1, answered immediately); throws on NoSegment or an unsupported roundtrip/source/destination combination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profile",
+            "optional": false,
+            "type": "mapbox/driving-traffic | mapbox/driving | mapbox/walking | mapbox/cycling",
+            "description": "Routing profile: mapbox/driving-traffic (live and historic traffic, falls back to driving where there is no traffic data), mapbox/driving, mapbox/walking or mapbox/cycling."
+          },
+          {
+            "key": "coordinates",
+            "optional": false,
+            "type": "{ longitude: number, latitude: number }[]",
+            "description": "Between 2 and 12 stops. Each is { longitude, latitude }. The first is the start unless source is \"any\"."
+          },
+          {
+            "key": "annotations",
+            "optional": true,
+            "type": "(duration | distance | speed)[]",
+            "description": "Extra per-segment data on each leg. Needs overview: \"full\"."
+          },
+          {
+            "key": "destination",
+            "optional": true,
+            "type": "any | last",
+            "description": "End at the last coordinate, or any (default)."
+          },
+          {
+            "key": "geometries",
+            "optional": true,
+            "type": "geojson | polyline | polyline6",
+            "description": "Geometry encoding: polyline (default, precision 5), polyline6 (precision 6) or geojson (a LineString)."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Language of step instructions, such as en or fr. Needs steps: true."
+          },
+          {
+            "key": "overview",
+            "optional": true,
+            "type": "full | simplified | false",
+            "description": "Route overview geometry: simplified (default), full, or false for none."
+          },
+          {
+            "key": "roundtrip",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return to the start (true, the default). With false, source must be \"first\" and destination \"last\"; Mapbox answers NotImplemented for any other pair."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "any | first",
+            "description": "Start at the first coordinate, or any (default)."
+          },
+          {
+            "key": "steps",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return turn-by-turn steps on each leg."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "waypoints",
+            "optional": false,
+            "type": "{ name: string, location: number[], distance?: number | null, waypoint_index?: number | null, trips_index?: number | null }[]"
+          },
+          {
+            "key": "trips",
+            "optional": false,
+            "type": "{ geometry?: string | { type: string, coordinates: number[][] | number[][][] | number[][][][] } | null, distance: number, duration: number, weight?: number | null, weight_name?: string | null, legs: { steps?: { distance: number, duration: number, name?: string | null, mode?: string | null, geometry?: string | { type: string, coordinates: number[][] | number[][][] | number[][][][] } | null, maneuver?: { location?: number[] | null, type?: string | null, instruction?: string | null } | null }[] | null, summary?: string | null, distance: number, duration: number, weight?: number | null, annotation?: { duration?: number[] | null, distance?: number[] | null, speed?: number[] | null, congestion?: string[] | null, congestion_numeric?: (number | null)[] | null } | null }[] }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

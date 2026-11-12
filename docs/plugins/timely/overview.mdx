@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Timely plugin"
+sidebarTitle: "Overview"
 description: "Log, edit and report time in Timely: time entries, timers, projects, clients, tags, people and signed webhooks."
 ---
 
@@ -21,16 +22,20 @@ Every call is scoped to a workspace. Operations take an optional `accountId`; wi
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/timely
+npm install corsair @corsair-dev/timely better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/timely
+yarn add corsair @corsair-dev/timely better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/timely
+pnpm install corsair @corsair-dev/timely better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/timely
+bun add corsair @corsair-dev/timely better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 

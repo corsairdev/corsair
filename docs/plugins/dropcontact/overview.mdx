@@ -1,0 +1,143 @@
+---
+title: "Dropcontact plugin"
+sidebarTitle: "Overview"
+description: "B2B email finding and contact enrichment from Dropcontact - submit contacts for enrichment, read qualified email results, check remaining credits, and manage the account default webhook callback URL."
+---
+
+Use **Dropcontact** through Corsair: one client, typed API calls.
+
+Create a key at https://app.dropcontact.com/api and send it in the `X-Access-Token` header. Sign in to the app once first, or the API answers 403 `Unknown account`.
+
+Things that shape how enrichment behaves:
+
+- **It is a batch job.** `enrichment.enrich` submits up to 250 contacts and returns a `request_id`, not results. `enrichment.results` reads them back, usually 30 to 60 seconds later.
+- **Polling is a normal state, not an error.** Before the batch is ready, `enrichment.results` answers HTTP 200 with `success: false` and a `reason`. This plugin returns that rather than throwing, so check the response before using `records`. Use `status` to decide whether the batch is done: it reads `in_progress` while Dropcontact is still working and `ready` once it has finished. `success` describes whether this read returned usable records, which is a different question: a forced partial read returns `success: true` with `status: in_progress`.
+- **`force_results` returns partial data.** Pass it to get whatever has already been enriched instead of a not-ready answer; each record then carries its own `status`.
+- **Credits.** One credit per contact for enrichment, refunded when no email is found; an email validation always spends one. `account.credits` costs nothing and reports the balance.
+- **Input and output differ on two names.** A record needs at least one company identifier (`company`, `website`, `company_linkedin`, `num_siren`, `siret`), an `email`, or a `linkedin` URL. `num_siren` comes back as `siren`, and `email` comes back as a list of objects with a `qualification` such as `nominatif@pro`.
+- **Unknown input keys are ignored, not rejected.** The record is still processed and the keys are listed under that record's `errors.unexpected_field`, so the plugin accepts extra keys.
+- **Record level problems do not fail the call.** Check `errors` and `warnings` per record: `only_contact_data` means nothing usable could be found, and `only_organization_data` means only the company was enriched.
+- **Limits.** 60 requests per second, 250 contacts per request, 15 kB per record.
+- **Webhooks.** Dropcontact POSTs results to a callback URL, but it signs nothing, so the plugin reads results through `enrichment.results` instead of exposing a webhook route. `webhook.set` and `webhook.remove` manage the account default that Dropcontact itself calls.
+
+**What you get:**
+
+- 6 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/dropcontact better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/dropcontact better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/dropcontact better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/dropcontact better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { dropcontact } from '@corsair-dev/dropcontact';
+
+export const corsair = createCorsair({
+	plugins: [
+		dropcontact(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+dropcontact()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'dropcontact',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Check the credits left**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.dropcontact.api.account.credits({});
+```
+
+
+**Enrich a contact by name and company**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.dropcontact.api.enrichment.enrich({
+	data: [{ first_name: 'Denis', last_name: 'Cohen', company: 'Dropcontact' }],
+});
+```
+
+
+See the full list on the [API](/plugins/dropcontact/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/dropcontact/api">
+    Every `dropcontact.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
