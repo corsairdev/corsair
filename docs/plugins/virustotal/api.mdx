@@ -41,7 +41,7 @@ await corsair.virustotal.api.analyses.get({ id: 'NjY0MjRlOTFjMDIyYTkyNWM0NjU2NWQ
 
 ```ts
 {
-  type?: analysis | null,
+  type?: string | null,
   id?: string | null,
   attributes?: {
     status?: string | null,
@@ -495,7 +495,8 @@ await corsair.virustotal.api.files.get({ id: '275a021bbfb6489e54d471899f7db9d166
     last_analysis_results?: Record<string, any> | null,
     last_analysis_stats?: {
       harmless?: number | null,
-      type_unsupported?: number | null,
+      type-unsupported?: number | null,
+      confirmed-timeout?: number | null,
       suspicious?: number | null,
       undetected?: number | null,
       timeout?: number | null,

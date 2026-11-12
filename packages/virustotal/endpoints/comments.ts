@@ -46,7 +46,7 @@ export const get: VirustotalEndpoints['commentsGet'] = (ctx, input) =>
 	);
 
 /**
- * Deletes one of your own comments. VirusTotal answers 204 with no body, so the
+ * Deletes one of your own comments. VirusTotal answers 200 with no data, so the
  * plugin states what it did.
  */
 export const remove: VirustotalEndpoints['commentsDelete'] = (ctx, input) =>

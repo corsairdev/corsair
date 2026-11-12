@@ -38,7 +38,9 @@ const FileObjectSchema = z
 				last_analysis_stats: z
 					.object({
 						harmless: z.number().nullish(),
-						type_unsupported: z.number().nullish(),
+						// Hyphenated on a file report (an analysis's stats use underscores).
+						'type-unsupported': z.number().nullish(),
+						'confirmed-timeout': z.number().nullish(),
 						suspicious: z.number().nullish(),
 						undetected: z.number().nullish(),
 						timeout: z.number().nullish(),
@@ -62,7 +64,12 @@ export type VirustotalFile = z.infer<typeof FileObjectSchema>;
 const UrlObjectSchema = z
 	.object({
 		type: z.literal('url').nullish(),
-		id: z.string().nullish().describe('The base64url identifier of the URL.'),
+		id: z
+			.string()
+			.nullish()
+			.describe(
+				'The SHA-256 of the canonical URL. `urls.get` also takes the base64url id from `urlId()`.',
+			),
 		attributes: z
 			.object({
 				url: z.string().nullish(),
@@ -181,7 +188,12 @@ export type VirustotalIpAddress = z.infer<typeof IpAddressObjectSchema>;
  */
 const AnalysisObjectSchema = z
 	.object({
-		type: z.literal('analysis').nullish(),
+		// `analysis` for a file, `url_analysis` for a URL, `netloc_analysis` for a
+		// domain or an IP (seen live 11-12), so it is not a single literal.
+		type: z
+			.string()
+			.nullish()
+			.describe('analysis, url_analysis or netloc_analysis.'),
 		id: z.string().nullish().describe('Pass this to analyses.get.'),
 		attributes: z
 			.object({
@@ -516,7 +528,7 @@ const CommentsDeleteInputSchema = z.object({
 
 export type CommentsDeleteInput = z.infer<typeof CommentsDeleteInputSchema>;
 
-/** A delete answers 204 with no body, so the plugin states what it did. */
+/** A delete answers with no useful body, so the plugin states what it did. */
 const CommentsDeleteResponseSchema = z.object({
 	id: z.string(),
 	deleted: z.literal(true),

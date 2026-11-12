@@ -24,7 +24,7 @@ export const file = {
 			last_analysis_date: 1_710_000_000,
 			last_analysis_stats: {
 				harmless: 0,
-				type_unsupported: 12,
+				'type-unsupported': 12,
 				suspicious: 3,
 				undetected: 20,
 				timeout: 0,
@@ -135,6 +135,67 @@ export const analysis = {
 			stats: { malicious: 4, harmless: 61, undetected: 20 },
 			results: {
 				Kaspersky: { category: 'malicious', result: 'Phishing.Generic' },
+			},
+		},
+	},
+};
+
+/**
+ * Real analyses read on 11-12 (trimmed): a URL scan answers `url_analysis` and a
+ * domain or IP rescan `netloc_analysis`; only a file analysis says `analysis`.
+ */
+export const urlAnalysisLive = {
+	data: {
+		id: 'u-0f115db062b7c0dd030b16878c99dea5c354b49dc37b38eb8846179c7783e9d7-1794461454',
+		type: 'url_analysis',
+		links: {
+			self: 'https://www.virustotal.com/api/v3/analyses/u-0f115db062b7c0dd030b16878c99dea5c354b49dc37b38eb8846179c7783e9d7-1794461454',
+		},
+		attributes: {
+			status: 'completed',
+			date: 1_794_461_454,
+			url: 'https://example.com/',
+			final_url: 'https://example.com/',
+			stats: {
+				undetected: 31,
+				harmless: 62,
+				malicious: 0,
+				suspicious: 0,
+				timeout: 0,
+				confirmed_timeout: 0,
+				failure: 0,
+				type_unsupported: 0,
+			},
+			results: {
+				'Dr.Web': {
+					category: 'harmless',
+					engine_name: 'Dr.Web',
+					method: 'blacklist',
+					result: 'clean',
+				},
+			},
+		},
+	},
+	meta: {
+		url_info: {
+			id: '0f115db062b7c0dd030b16878c99dea5c354b49dc37b38eb8846179c7783e9d7',
+			url: 'https://example.com/',
+		},
+	},
+};
+
+export const netlocAnalysisLive = {
+	data: {
+		id: 'd-97f4099c628fa154ddac9ddef304b8ef9807f8e0795767aabbd2bafbe075676c-1794462460',
+		type: 'netloc_analysis',
+		attributes: {
+			status: 'completed',
+			stats: {
+				malicious: 0,
+				suspicious: 0,
+				undetected: 31,
+				harmless: 61,
+				timeout: 0,
 			},
 		},
 	},

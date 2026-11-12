@@ -14,8 +14,10 @@ import {
 	fileId,
 	invalidKey,
 	ip,
+	netlocAnalysisLive,
 	notFound,
 	url,
+	urlAnalysisLive,
 	urlId as urlIdentifier,
 	vote,
 	votesPage,
@@ -382,6 +384,24 @@ describe('analyses', () => {
 		expect(lastRequest(fetchMock).path).toBe(
 			`/api/v3/analyses/${encodeURIComponent(analysisId)}`,
 		);
+	});
+
+	it('reads a URL analysis, whose type is url_analysis', async () => {
+		respond(fetchMock, urlAnalysisLive);
+
+		const result = await invoke(Analyses.get, { id: urlAnalysisLive.data.id });
+
+		expect(result).toEqual(urlAnalysisLive);
+	});
+
+	it('reads a domain or IP analysis, whose type is netloc_analysis', async () => {
+		respond(fetchMock, netlocAnalysisLive);
+
+		const result = await invoke(Analyses.get, {
+			id: netlocAnalysisLive.data.id,
+		});
+
+		expect(result).toEqual(netlocAnalysisLive);
 	});
 
 	it('reports a queued analysis as queued, not as a failure', async () => {
