@@ -3221,5 +3221,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/worksnaps",
+    "dir": "packages/worksnaps",
+    "name": "Worksnaps",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/wrike",
+    "dir": "packages/wrike",
+    "name": "Wrike",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/yandex",
+    "dir": "packages/yandex",
+    "name": "Yandex Translate",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
