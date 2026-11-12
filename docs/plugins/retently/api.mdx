@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Retently: every `retently.api.*` operation with input and output types."
+title: "Retently API reference"
+sidebarTitle: "API"
+description: "API reference for the Retently plugin in Corsair: every `retently.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `retently.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -338,77 +337,70 @@ await corsair.retently.api.customers.get({ customerId: '6827fb27bf618a02f1234567
 
 ```ts
 {
-  subscribers?: {
-    id?: string | null,
-    email?: string | null,
-    firstName?: string | null,
-    lastName?: string | null,
-    companyName?: string | null,
-    companyId?: string | null,
-    first_name?: string | null,
-    last_name?: string | null,
-    company?: string | null,
-    jobTitle?: string | null,
-    phoneNumber?: string | null,
-    tags?: string[] | null,
-    createdDate?: string | null,
-    updatedDate?: string | null,
-    properties?: {
-      label?: string | null,
-      name?: string | null,
-      type?: string | null,
-      value?: string | number | boolean | null | null
-    }[] | null,
-    location?: {
-      countryCode?: string | null,
-      region?: string | null,
-      country?: string | null,
-      city?: string | null,
-      state?: string | null,
-      zipCode?: string | null,
-      timezone?: string | null
-    } | null,
-    integrationsLists?: {
-      name?: string | null,
-      source?: string | null
-    }[] | null,
-    surveySubscriptionStatus?: {
-      isOptedOut?: boolean | null,
-      optOutDate?: string | null,
-      optOutMessage?: string | null,
-      optOutBy?: string | null,
-      isSuppressed?: boolean | null,
-      suppressedDate?: string | null,
-      suppressedReason?: string | null
-    } | null,
-    isInQueue?: boolean | null,
-    isInQueueSetAt?: string | null,
-    lastSurveySent?: {
-      openedDate?: string | null,
-      surveyId?: string | null,
-      metric?: string | null,
-      receivedDate?: string | null,
-      status?: string | null,
-      campaignId?: string | null,
-      resent?: boolean | null,
-      sentBy?: string | null,
-      channel?: string | null,
-      isNegative?: boolean | null,
-      isNeutral?: boolean | null,
-      isPositive?: boolean | null,
-      respondedDate?: string | null
-    } | null,
-    isEmailDeliverable?: boolean | null,
-    syncId?: string | null,
-    isAtRisk?: boolean | null,
-    source?: string | null,
-    isAnonymous?: boolean | null
+  id?: string | null,
+  email?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  companyName?: string | null,
+  companyId?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  company?: string | null,
+  jobTitle?: string | null,
+  phoneNumber?: string | null,
+  tags?: string[] | null,
+  createdDate?: string | null,
+  updatedDate?: string | null,
+  properties?: {
+    label?: string | null,
+    name?: string | null,
+    type?: string | null,
+    value?: string | number | boolean | null | null
   }[] | null,
-  page?: number | null,
-  pages?: number | null,
-  limit?: number | null,
-  sort?: string | null,
-  total?: number | null
+  location?: {
+    countryCode?: string | null,
+    region?: string | null,
+    country?: string | null,
+    city?: string | null,
+    state?: string | null,
+    zipCode?: string | null,
+    timezone?: string | null
+  } | null,
+  integrationsLists?: {
+    name?: string | null,
+    source?: string | null
+  }[] | null,
+  surveySubscriptionStatus?: {
+    isOptedOut?: boolean | null,
+    optOutDate?: string | null,
+    optOutMessage?: string | null,
+    optOutBy?: string | null,
+    isSuppressed?: boolean | null,
+    suppressedDate?: string | null,
+    suppressedReason?: string | null
+  } | null,
+  isInQueue?: boolean | null,
+  isInQueueSetAt?: string | null,
+  lastSurveySent?: {
+    openedDate?: string | null,
+    surveyId?: string | null,
+    metric?: string | null,
+    receivedDate?: string | null,
+    status?: string | null,
+    campaignId?: string | null,
+    resent?: boolean | null,
+    sentBy?: string | null,
+    channel?: string | null,
+    isNegative?: boolean | null,
+    isNeutral?: boolean | null,
+    isPositive?: boolean | null,
+    respondedDate?: string | null
+  } | null,
+  isEmailDeliverable?: boolean | null,
+  syncId?: string | null,
+  isAtRisk?: boolean | null,
+  source?: string | null,
+  isAnonymous?: boolean | null
 } | null
 ```
 </Accordion>
@@ -724,7 +716,22 @@ await corsair.retently.api.customers.upsert({ subscribers: [{ email: 'john.smith
 <Accordion title="data full type">
 
 ```ts
-{
+Record<string, {
+  id?: string | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  company?: string | null,
+  tags?: string[] | null,
+  properties?: {
+    label?: string | null,
+    name?: string | null,
+    dataType?: string | null,
+    value?: JsonValue | null
+  }[] | null,
+  status?: string | null,
+  reason?: string | null
+}> | {
   subscribers?: {
     id?: string | null,
     email?: string | null,
