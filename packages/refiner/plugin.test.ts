@@ -18,7 +18,7 @@ function buildKey(
 	return plugin.keyBuilder?.(ctx as never, 'endpoint');
 }
 
-const operations = [
+const operations: (keyof typeof refinerEndpointSchemas)[] = [
 	'account.get',
 	'contacts.delete',
 	'contacts.get',
@@ -58,40 +58,48 @@ describe('refiner plugin definition', () => {
 	});
 
 	it('declares a schema and an output schema for every operation', () => {
-		const schemas = plugin.endpointSchemas ?? {};
-		expect(Object.keys(schemas).sort()).toEqual(operations);
+		expect(Object.keys(plugin.endpointSchemas ?? {}).sort()).toEqual(
+			operations,
+		);
 		for (const operation of operations) {
-			const schema = schemas[operation as keyof typeof schemas];
+			const schema = plugin.endpointSchemas?.[operation];
 			expect(schema?.input).toBeDefined();
 			expect(schema?.output).toBeDefined();
 		}
 	});
 
 	it('declares metadata with a risk level and description for every operation', () => {
-		const meta = plugin.endpointMeta ?? {};
-		expect(Object.keys(meta).sort()).toEqual(operations);
+		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(operations);
 		for (const operation of operations) {
-			const entry = meta[operation as keyof typeof meta];
+			const entry = plugin.endpointMeta?.[operation];
 			expect(['read', 'write', 'destructive']).toContain(entry?.riskLevel);
 			expect((entry?.description ?? '').length).toBeGreaterThan(10);
 		}
 	});
 
+	it('tells an agent that identify traits and stored answers are top-level keys', () => {
+		// getSchema lists only the declared fields, so the description is the one
+		// place an agent learns that extra keys are traits or survey answers.
+		expect(plugin.endpointMeta?.['users.identify']?.description).toMatch(
+			/top-level key/,
+		);
+		expect(plugin.endpointMeta?.['responses.store']?.description).toMatch(
+			/top-level keys named by question identifier/,
+		);
+	});
+
 	it('marks contact deletion as the only destructive operation', () => {
-		const meta = plugin.endpointMeta ?? {};
 		const destructive = operations.filter(
 			(operation) =>
-				meta[operation as keyof typeof meta]?.riskLevel === 'destructive',
+				plugin.endpointMeta?.[operation]?.riskLevel === 'destructive',
 		);
 
 		expect(destructive).toEqual(['contacts.delete']);
 	});
 
 	it('marks the four that change data as writes', () => {
-		const meta = plugin.endpointMeta ?? {};
 		const writes = operations.filter(
-			(operation) =>
-				meta[operation as keyof typeof meta]?.riskLevel === 'write',
+			(operation) => plugin.endpointMeta?.[operation]?.riskLevel === 'write',
 		);
 
 		expect(writes.sort()).toEqual([

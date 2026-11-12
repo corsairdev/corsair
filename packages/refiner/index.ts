@@ -193,7 +193,7 @@ const refinerEndpointMeta = {
 	'users.identify': {
 		riskLevel: 'write',
 		description:
-			'Identify a user by ID or email, creating the contact on first sight and attaching any traits you send',
+			"Identify a user by ID or email, creating the contact on first sight. Every other top-level key is saved as a trait, such as { id: 'user-1', plan: 'pro', signed_up_at: '2024-01-15' }",
 	},
 	'users.track': {
 		riskLevel: 'write',
@@ -208,7 +208,7 @@ const refinerEndpointMeta = {
 	'responses.store': {
 		riskLevel: 'write',
 		description:
-			'Store a survey response for a user, attaching it to an existing survey; use it to import history or feed a custom survey UI',
+			"Store a survey response for a user on an existing survey, to import history or feed a custom survey UI. Answers go in as top-level keys named by question identifier, such as { id: 'user-1', form_uuid, nps: 9, feedback: 'Fast setup' }",
 	},
 	'responses.tag': {
 		riskLevel: 'write',
