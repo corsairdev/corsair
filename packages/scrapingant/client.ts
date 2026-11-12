@@ -105,8 +105,13 @@ export type ScrapingAntErrorOptions = {
 	status?: number;
 	detail?: string;
 	retryAfter?: number;
-	/** True when the request never reached ScrapingAnt. */
+	/** True when the request failed before any response arrived. */
 	transport?: boolean;
+	/**
+	 * True when the failure proves the request never left (DNS, refused or
+	 * unreachable connection, connect timeout), so a replay cannot pay twice.
+	 */
+	notSent?: boolean;
 	/** True when the transport gave up on its own deadline. */
 	timedOut?: boolean;
 	/**
@@ -132,8 +137,14 @@ export class ScrapingAntAPIError extends Error {
 	readonly detail?: string;
 	/** Milliseconds from a `Retry-After` header, when one came back. */
 	readonly retryAfter?: number;
-	/** True when the request never reached ScrapingAnt, so a replay is safe. */
+	/**
+	 * True when the request failed before any response arrived. It may still
+	 * have reached ScrapingAnt and run, so this alone does not make a replay
+	 * safe; `isNotSent` does.
+	 */
 	readonly isTransport: boolean;
+	/** True when the request provably never left, so a replay is safe. */
+	readonly isNotSent: boolean;
 	/** True when the transport hit its own deadline. */
 	readonly isTimeout: boolean;
 	/**
@@ -150,6 +161,7 @@ export class ScrapingAntAPIError extends Error {
 		this.detail = options.detail;
 		this.retryAfter = options.retryAfter;
 		this.isTransport = options.transport === true;
+		this.isNotSent = options.notSent === true;
 		this.isTimeout = options.timedOut === true;
 		this.isBodyReadFailure = options.bodyReadFailed === true;
 		this.pageStatus = options.pageStatus;
@@ -312,12 +324,38 @@ export async function makeScrapingAntRequest(
 			{
 				transport: true,
 				timedOut,
+				notSent: !timedOut && failedBeforeSending(error),
 				cause: error instanceof Error ? error : undefined,
 			},
 		);
 	}
 
 	return readRaw(response, 'ScrapingAnt response failed');
+}
+
+/**
+ * Connection errors that happen before a request is written: the name did not
+ * resolve, or the socket never opened. A reset or a closed socket is not in
+ * the list, because it can come after ScrapingAnt received the request and
+ * started a scrape it charges for.
+ */
+const NOT_SENT_CODES = new Set([
+	'ENOTFOUND',
+	'EAI_AGAIN',
+	'ECONNREFUSED',
+	'EHOSTUNREACH',
+	'ENETUNREACH',
+	'UND_ERR_CONNECT_TIMEOUT',
+]);
+
+function failedBeforeSending(error: unknown): boolean {
+	// fetch wraps the socket error as the cause of a TypeError('fetch failed').
+	const cause = error instanceof Error ? error.cause : undefined;
+	const code =
+		typeof cause === 'object' && cause !== null && 'code' in cause
+			? cause.code
+			: undefined;
+	return typeof code === 'string' && NOT_SENT_CODES.has(code);
 }
 
 /**

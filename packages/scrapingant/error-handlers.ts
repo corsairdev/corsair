@@ -19,7 +19,8 @@ function isApi(error: Error): error is ScrapingAntAPIError {
  * The cost of a wrong retry here is money, not just time: every scrape spends
  * credits, so a replay after an outcome the provider already charged for pays
  * twice. That is why the body-read failure and the client deadline both stop,
- * while a connection that never reached the provider may retry.
+ * while only a request that provably never left (DNS, refused connection) may
+ * retry.
  */
 export const errorHandlers = {
 	// 403 "Requests quota limit reached". No retry can restore credits, and the
@@ -86,11 +87,16 @@ export const errorHandlers = {
 		match: (error: Error) => isApi(error) && error.isTimeout,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A connection that never produced a response did not reach the provider,
-	// so replaying the GET cannot duplicate a charge for a scrape that ran.
+	// Only a request that provably never left is replayed (DNS, refused or
+	// unreachable connection, connect timeout). A connection that dropped after
+	// the request was written may have started a charged scrape, so it falls to
+	// DEFAULT with no retry.
 	NETWORK_ERROR: {
 		match: (error: Error) =>
-			isApi(error) && error.isTransport && !error.isBodyReadFailure,
+			isApi(error) &&
+			error.isTransport &&
+			error.isNotSent &&
+			!error.isBodyReadFailure,
 		handler: async () => ({
 			maxRetries: 1,
 			retryStrategy: 'linear_2s' as const,

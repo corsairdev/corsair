@@ -106,9 +106,10 @@ describe('error handler selection', () => {
 		});
 	});
 
-	it('retries a transport failure, which never reached the provider', async () => {
-		const error = new ScrapingAntAPIError('connection reset', {
+	it('retries a failure from before the request was sent', async () => {
+		const error = new ScrapingAntAPIError('connection refused', {
 			transport: true,
+			notSent: true,
 		});
 
 		expect(firstMatch(error)).toBe('NETWORK_ERROR');
@@ -116,6 +117,17 @@ describe('error handler selection', () => {
 			maxRetries: 1,
 			retryStrategy: 'linear_2s',
 		});
+	});
+
+	it('does not retry a dropped connection, which may follow a charged scrape', async () => {
+		const error = new ScrapingAntAPIError('other side closed', {
+			transport: true,
+		});
+
+		// The request may have reached ScrapingAnt and run; a replay could pay
+		// for the same page twice.
+		expect(firstMatch(error)).toBe('DEFAULT');
+		expect(await strategyFor(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry the client deadline, which may still be running', async () => {

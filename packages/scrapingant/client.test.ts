@@ -175,7 +175,7 @@ describe('makeScrapingAntRequest', () => {
 		expect(error.retryAfter).toBe(3000);
 	});
 
-	it('flags a transport failure as replayable and not a timeout', async () => {
+	it('flags a transport failure without a known cause as possibly sent', async () => {
 		(globalThis.fetch as jest.Mock).mockRejectedValueOnce(
 			new TypeError('fetch failed'),
 		);
@@ -184,7 +184,36 @@ describe('makeScrapingAntRequest', () => {
 
 		expect(error.isTransport).toBe(true);
 		expect(error.isTimeout).toBe(false);
+		expect(error.isNotSent).toBe(false);
 		expect(error.status).toBeUndefined();
+	});
+
+	it('flags a refused connection as never sent', async () => {
+		const cause = Object.assign(new Error('connect ECONNREFUSED'), {
+			code: 'ECONNREFUSED',
+		});
+		(globalThis.fetch as jest.Mock).mockRejectedValueOnce(
+			new TypeError('fetch failed', { cause }),
+		);
+
+		const error = await failure(makeScrapingAntRequest(API_KEY, '/v2/usage'));
+
+		expect(error.isTransport).toBe(true);
+		expect(error.isNotSent).toBe(true);
+	});
+
+	it('flags a socket closed mid-request as possibly sent', async () => {
+		const cause = Object.assign(new Error('other side closed'), {
+			code: 'UND_ERR_SOCKET',
+		});
+		(globalThis.fetch as jest.Mock).mockRejectedValueOnce(
+			new TypeError('fetch failed', { cause }),
+		);
+
+		const error = await failure(makeScrapingAntRequest(API_KEY, '/v2/usage'));
+
+		expect(error.isTransport).toBe(true);
+		expect(error.isNotSent).toBe(false);
 	});
 
 	it('flags the client deadline as a timeout', async () => {
