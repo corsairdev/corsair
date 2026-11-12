@@ -1,6 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CloudflareBrowserRenderingEndpoints } from '..';
-import { makeCloudflareBrowserRenderingRequest } from '../client';
+import {
+	getCloudflareBrowserRenderingRequestTimeoutOptions,
+	makeCloudflareBrowserRenderingRequest,
+} from '../client';
 import {
 	CloudflareBrowserRenderingEndpointInputSchemas,
 	CloudflareBrowserRenderingEndpointOutputSchemas,
@@ -17,7 +20,13 @@ export const contentFetch: CloudflareBrowserRenderingEndpoints['contentFetch'] =
 		const response = await makeCloudflareBrowserRenderingRequest(
 			accountPath(parsedInput.accountId, 'content'),
 			ctx.key,
-			{ method: 'POST', body: parsedInput.body },
+			{
+				method: 'POST',
+				body: parsedInput.body,
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
+			},
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.contentFetch.parse(
@@ -41,7 +50,13 @@ export const markdownConvert: CloudflareBrowserRenderingEndpoints['markdownConve
 		const response = await makeCloudflareBrowserRenderingRequest(
 			accountPath(parsedInput.accountId, 'markdown'),
 			ctx.key,
-			{ method: 'POST', body: parsedInput.body },
+			{
+				method: 'POST',
+				body: parsedInput.body,
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
+			},
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.markdownConvert.parse(
@@ -65,7 +80,13 @@ export const snapshotCapture: CloudflareBrowserRenderingEndpoints['snapshotCaptu
 		const response = await makeCloudflareBrowserRenderingRequest(
 			accountPath(parsedInput.accountId, 'snapshot'),
 			ctx.key,
-			{ method: 'POST', body: parsedInput.body },
+			{
+				method: 'POST',
+				body: parsedInput.body,
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
+			},
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.snapshotCapture.parse(
@@ -89,7 +110,13 @@ export const accessibilityTreeCapture: CloudflareBrowserRenderingEndpoints['acce
 		const response = await makeCloudflareBrowserRenderingRequest(
 			accountPath(parsedInput.accountId, 'accessibilityTree'),
 			ctx.key,
-			{ method: 'POST', body: parsedInput.body },
+			{
+				method: 'POST',
+				body: parsedInput.body,
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
+			},
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.accessibilityTreeCapture.parse(
@@ -111,7 +138,13 @@ export const scrapeExtract: CloudflareBrowserRenderingEndpoints['scrapeExtract']
 		const response = await makeCloudflareBrowserRenderingRequest(
 			accountPath(parsedInput.accountId, 'scrape'),
 			ctx.key,
-			{ method: 'POST', body: parsedInput.body },
+			{
+				method: 'POST',
+				body: parsedInput.body,
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
+			},
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.scrapeExtract.parse(
@@ -133,7 +166,13 @@ export const jsonExtract: CloudflareBrowserRenderingEndpoints['jsonExtract'] =
 		const response = await makeCloudflareBrowserRenderingRequest(
 			accountPath(parsedInput.accountId, 'json'),
 			ctx.key,
-			{ method: 'POST', body: parsedInput.body },
+			{
+				method: 'POST',
+				body: parsedInput.body,
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
+			},
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.jsonExtract.parse(
@@ -155,7 +194,13 @@ export const linksList: CloudflareBrowserRenderingEndpoints['linksList'] =
 		const response = await makeCloudflareBrowserRenderingRequest(
 			accountPath(parsedInput.accountId, 'links'),
 			ctx.key,
-			{ method: 'POST', body: parsedInput.body },
+			{
+				method: 'POST',
+				body: parsedInput.body,
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
+			},
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.linksList.parse(response);

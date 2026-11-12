@@ -170,8 +170,34 @@ const SnapshotFormatsSchema = z.array(
 	z.enum(['content', 'screenshot', 'markdown', 'accessibilityTree']),
 );
 
+const ScreenshotOptionsSchema = z
+	.object({
+		captureBeyondViewport: z.boolean().optional(),
+		clip: z
+			.object({
+				height: z.number(),
+				width: z.number(),
+				x: z.number(),
+				y: z.number(),
+				scale: z.number().optional(),
+			})
+			.strict()
+			.optional(),
+		encoding: z.enum(['binary', 'base64']).optional(),
+		fromSurface: z.boolean().optional(),
+		fullPage: z.boolean().optional(),
+		omitBackground: z.boolean().optional(),
+		optimizeForSpeed: z.boolean().optional(),
+		quality: z.number().optional(),
+		type: z.enum(['png', 'jpeg', 'webp']).optional(),
+	})
+	.strict();
+
 const SnapshotBodySchema = BrowserPageBodyFieldsSchema.extend({
 	formats: SnapshotFormatsSchema.min(2).optional(),
+	screenshotOptions: ScreenshotOptionsSchema.omit({
+		encoding: true,
+	}).optional(),
 }).refine(hasExactlyOneSource, 'Provide exactly one of url or html');
 
 const SnapshotCaptureInputSchema = z.object({
@@ -205,10 +231,21 @@ const ResponseFormatSchema = z
 	})
 	.strict();
 
-const CustomAiModelSchema = z.object({
-	authorization: z.string().min(1),
-	model: z.string().min(1),
-});
+const CustomAiModelSchema = z
+	.object({
+		authorization: z.string().min(1).optional(),
+		model: z.string().min(1),
+	})
+	.refine(
+		(model) =>
+			model.model.startsWith('workers-ai/') ||
+			model.authorization !== undefined,
+		{
+			message:
+				'Provide authorization for custom AI models other than Workers AI',
+			path: ['authorization'],
+		},
+	);
 
 const JsonExtractBodySchema = BrowserPageBodyFieldsSchema.extend({
 	custom_ai: z.array(CustomAiModelSchema).optional(),
@@ -230,29 +267,6 @@ const LinksListInputSchema = z.object({
 	...AccountInputShape,
 	body: BrowserPageBodySchema,
 });
-
-const ScreenshotOptionsSchema = z
-	.object({
-		captureBeyondViewport: z.boolean().optional(),
-		clip: z
-			.object({
-				height: z.number(),
-				width: z.number(),
-				x: z.number(),
-				y: z.number(),
-				scale: z.number().optional(),
-			})
-			.strict()
-			.optional(),
-		encoding: z.enum(['binary', 'base64']).optional(),
-		fromSurface: z.boolean().optional(),
-		fullPage: z.boolean().optional(),
-		omitBackground: z.boolean().optional(),
-		optimizeForSpeed: z.boolean().optional(),
-		quality: z.number().optional(),
-		type: z.enum(['png', 'jpeg', 'webp']).optional(),
-	})
-	.strict();
 
 const ScreenshotBodySchema = BrowserPageBodyFieldsSchema.extend({
 	screenshotOptions: ScreenshotOptionsSchema.optional(),
@@ -570,6 +584,7 @@ const TargetOutputSchema = z
 
 const TargetListOutputSchema = z.array(TargetOutputSchema);
 const TargetActivateOutputSchema = z.object({ message: z.string() }).strict();
+const TargetCloseOutputSchema = z.object({ message: z.string() }).strict();
 
 const AccessibilityTreeNodeSchema = z
 	.object({ role: z.string() })
@@ -708,7 +723,7 @@ export type CloudflareBrowserRenderingEndpointOutputs = {
 	targetsList: z.infer<typeof TargetListOutputSchema>;
 	targetsGet: z.infer<typeof TargetOutputSchema>;
 	targetsActivate: z.infer<typeof TargetActivateOutputSchema>;
-	targetsClose: z.infer<typeof TargetOutputSchema>;
+	targetsClose: z.infer<typeof TargetCloseOutputSchema>;
 };
 
 export const CloudflareBrowserRenderingEndpointInputSchemas = {
@@ -762,5 +777,5 @@ export const CloudflareBrowserRenderingEndpointOutputSchemas = {
 	targetsList: TargetListOutputSchema,
 	targetsGet: TargetOutputSchema,
 	targetsActivate: TargetActivateOutputSchema,
-	targetsClose: TargetOutputSchema,
+	targetsClose: TargetCloseOutputSchema,
 } as const;

@@ -3,6 +3,7 @@ import { ApiError, request } from 'corsair/http';
 import {
 	CLOUDFLARE_BROWSER_RUN_API_BASE,
 	CloudflareBrowserRenderingHTTPError,
+	DEFAULT_CLOUDFLARE_BROWSER_RUN_REQUEST_TIMEOUT_MS,
 	makeCloudflareBrowserRenderingBinaryRequest,
 	makeCloudflareBrowserRenderingRequest,
 } from './client';
@@ -15,9 +16,18 @@ jest.mock('corsair/http', () => {
 
 const mockedRequest = jest.mocked(request);
 
-function apiError(status: number, message: string, retryAfter?: number) {
+function apiError(
+	status: number,
+	message: string,
+	retryAfter?: number,
+	requestBody?: Record<string, unknown>,
+) {
 	return new ApiError(
-		{ method: 'POST', url: '/accounts/account-123/browser-run/content' },
+		{
+			method: 'POST',
+			url: '/accounts/account-123/browser-run/content',
+			...(requestBody === undefined ? {} : { body: requestBody }),
+		},
 		{
 			url: `${CLOUDFLARE_BROWSER_RUN_API_BASE}/accounts/account-123/browser-run/content`,
 			ok: false,
@@ -53,6 +63,7 @@ describe('makeCloudflareBrowserRenderingRequest', () => {
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		expect(mockedRequest.mock.calls[0]?.[0]).toMatchObject({
 			BASE: CLOUDFLARE_BROWSER_RUN_API_BASE,
+			TIMEOUT: DEFAULT_CLOUDFLARE_BROWSER_RUN_REQUEST_TIMEOUT_MS,
 			HEADERS: {
 				Authorization: 'Bearer test-token',
 			},
@@ -74,6 +85,40 @@ describe('makeCloudflareBrowserRenderingRequest', () => {
 		});
 	});
 
+	it('uses a configurable request timeout within the documented bound', async () => {
+		mockedRequest.mockResolvedValue('<html></html>');
+
+		await makeCloudflareBrowserRenderingRequest(
+			'/accounts/account-123/browser-run/content',
+			'test-token',
+			{
+				method: 'POST',
+				body: { url: 'https://example.com' },
+				timeoutMs: 30_000,
+			},
+		);
+
+		expect(mockedRequest.mock.calls[0]?.[0]).toMatchObject({ TIMEOUT: 30_000 });
+	});
+
+	it('caps configured request timeouts at the Browser Run lifecycle bound', async () => {
+		mockedRequest.mockResolvedValue('<html></html>');
+
+		await makeCloudflareBrowserRenderingRequest(
+			'/accounts/account-123/browser-run/content',
+			'test-token',
+			{
+				method: 'POST',
+				body: { url: 'https://example.com' },
+				timeoutMs: DEFAULT_CLOUDFLARE_BROWSER_RUN_REQUEST_TIMEOUT_MS + 1,
+			},
+		);
+
+		expect(mockedRequest.mock.calls[0]?.[0]).toMatchObject({
+			TIMEOUT: DEFAULT_CLOUDFLARE_BROWSER_RUN_REQUEST_TIMEOUT_MS,
+		});
+	});
+
 	it('rejects an empty API token before sending a request', async () => {
 		await expect(
 			makeCloudflareBrowserRenderingRequest(
@@ -84,19 +129,32 @@ describe('makeCloudflareBrowserRenderingRequest', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('preserves a 429 ApiError and its retryAfter value', async () => {
-		const limited = apiError(429, 'Rate limit exceeded', 2500);
+	it('redacts request credentials from ApiErrors while preserving retry metadata', async () => {
+		const secrets = {
+			authenticate: { username: 'private-user', password: 'private-password' },
+			cookies: [{ name: 'session', value: 'private-cookie' }],
+			custom_ai: [{ model: 'vendor/model', authorization: 'private-ai-token' }],
+		};
+		const limited = apiError(429, 'Rate limit exceeded', 2500, secrets);
 		mockedRequest.mockRejectedValue(limited);
 
+		const sanitized = await makeCloudflareBrowserRenderingRequest(
+			'/accounts/account-123/browser-run/content',
+			'test-token',
+		).catch((error: unknown) => error);
+		expect(sanitized).toBeInstanceOf(ApiError);
+		expect(sanitized).not.toBe(limited);
+		if (!(sanitized instanceof ApiError)) {
+			throw new Error('Expected the sanitized error to remain an ApiError');
+		}
+		expect(sanitized.request.body).toBeUndefined();
+		expect(JSON.stringify(sanitized)).not.toContain('private-password');
+		expect(JSON.stringify(sanitized)).not.toContain('private-cookie');
+		expect(JSON.stringify(sanitized)).not.toContain('private-ai-token');
+		expect(sanitized).toMatchObject({ status: 429, retryAfter: 2500 });
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(sanitized)).toBe(true);
 		await expect(
-			makeCloudflareBrowserRenderingRequest(
-				'/accounts/account-123/browser-run/content',
-				'test-token',
-			),
-		).rejects.toBe(limited);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(limited)).toBe(true);
-		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(limited),
+			errorHandlers.RATE_LIMIT_ERROR.handler(sanitized),
 		).resolves.toEqual({
 			maxRetries: 0,
 			headersRetryAfterMs: 2500,
@@ -127,15 +185,48 @@ describe('makeCloudflareBrowserRenderingBinaryRequest', () => {
 		expect(fetchSpy).toHaveBeenCalledTimes(1);
 		expect(fetchSpy).toHaveBeenCalledWith(
 			`${CLOUDFLARE_BROWSER_RUN_API_BASE}/accounts/account-123/browser-run/screenshot?browser=kitesurf&cacheTTL=0`,
-			{
+			expect.objectContaining({
 				method: 'POST',
 				headers: {
 					Authorization: 'Bearer test-token',
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify({ url: 'https://example.com' }),
-			},
+				signal: expect.any(AbortSignal),
+			}),
 		);
+	});
+
+	it('keeps the abort deadline active while reading a binary response body', async () => {
+		const fetchSpy = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(async (_input, init) => {
+				const signal = init?.signal;
+				return new Response(
+					new ReadableStream<Uint8Array>({
+						start(controller) {
+							signal?.addEventListener(
+								'abort',
+								() =>
+									controller.error(new DOMException('Aborted', 'AbortError')),
+								{ once: true },
+							);
+						},
+					}),
+				);
+			});
+
+		await expect(
+			makeCloudflareBrowserRenderingBinaryRequest(
+				'/accounts/account-123/browser-run/screenshot',
+				'test-token',
+				{ url: 'https://example.com' },
+				{ timeoutMs: 5 },
+			),
+		).rejects.toThrow(
+			'Cloudflare Browser Run binary request failed or timed out',
+		);
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
 	});
 
 	it('rejects a missing API token before fetch', async () => {
@@ -219,7 +310,7 @@ describe('makeCloudflareBrowserRenderingBinaryRequest', () => {
 				{ html: '<main>private</main>' },
 			),
 		).rejects.toThrow(
-			'Cloudflare Browser Run binary request failed before receiving a response',
+			'Cloudflare Browser Run binary request failed or timed out',
 		);
 	});
 });

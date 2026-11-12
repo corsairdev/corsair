@@ -18,7 +18,11 @@ const validInputs = [
 		CloudflareBrowserRenderingEndpointInputSchemas.snapshotCapture,
 		{
 			accountId: 'account-123',
-			body: { url: 'https://example.com', formats: ['content', 'screenshot'] },
+			body: {
+				url: 'https://example.com',
+				formats: ['content', 'screenshot'],
+				screenshotOptions: { fullPage: true },
+			},
 		},
 	],
 	[
@@ -346,7 +350,7 @@ const validOutputs = [
 	],
 	[
 		CloudflareBrowserRenderingEndpointOutputSchemas.targetsClose,
-		{ id: 'target-1', type: 'page', url: 'https://example.com' },
+		{ message: 'Target is closing' },
 	],
 ] as const;
 
@@ -393,6 +397,16 @@ describe('Cloudflare Browser Run schema', () => {
 			}).success,
 		).toBe(false);
 		expect(
+			CloudflareBrowserRenderingEndpointInputSchemas.snapshotCapture.safeParse({
+				accountId: 'account-123',
+				body: {
+					url: 'https://example.com',
+					formats: ['content', 'screenshot'],
+					screenshotOptions: { encoding: 'base64' },
+				},
+			}).success,
+		).toBe(false);
+		expect(
 			CloudflareBrowserRenderingEndpointInputSchemas.jsonExtract.safeParse({
 				accountId: 'account-123',
 				body: { url: 'https://example.com' },
@@ -414,6 +428,45 @@ describe('Cloudflare Browser Run schema', () => {
 			CloudflareBrowserRenderingEndpointInputSchemas.crawlStart.safeParse({
 				accountId: 'account-123',
 				body: { url: 'https://example.com', userAgent: 'unsupported-on-crawl' },
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts Workers AI models without an authorization token', () => {
+		const workersAiModel = {
+			model: 'workers-ai/@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+		};
+		expect(
+			CloudflareBrowserRenderingEndpointInputSchemas.jsonExtract.safeParse({
+				accountId: 'account-123',
+				body: {
+					url: 'https://example.com',
+					prompt: 'Extract the title',
+					custom_ai: [workersAiModel],
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			CloudflareBrowserRenderingEndpointInputSchemas.crawlStart.safeParse({
+				accountId: 'account-123',
+				body: {
+					url: 'https://example.com',
+					formats: ['json'],
+					jsonOptions: {
+						prompt: 'Extract the title',
+						custom_ai: [workersAiModel],
+					},
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			CloudflareBrowserRenderingEndpointInputSchemas.jsonExtract.safeParse({
+				accountId: 'account-123',
+				body: {
+					url: 'https://example.com',
+					prompt: 'Extract the title',
+					custom_ai: [{ model: 'vendor/model' }],
+				},
 			}).success,
 		).toBe(false);
 	});

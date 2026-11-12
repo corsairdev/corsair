@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import {
 	accessibilityTreeCapture,
@@ -141,7 +141,11 @@ describe('Browser Run Quick Actions', () => {
 		mockedRequest.mockResolvedValue(response);
 		const result = await snapshotCapture(ctx, {
 			accountId: 'acct-123',
-			body: { url: 'https://example.com', formats: ['content', 'screenshot'] },
+			body: {
+				url: 'https://example.com',
+				formats: ['content', 'screenshot'],
+				screenshotOptions: { fullPage: true },
+			},
 		});
 
 		expect(result).toEqual(response);
@@ -153,6 +157,7 @@ describe('Browser Run Quick Actions', () => {
 				body: {
 					url: 'https://example.com',
 					formats: ['content', 'screenshot'],
+					screenshotOptions: { fullPage: true },
 				},
 			},
 		);
@@ -160,6 +165,29 @@ describe('Browser Run Quick Actions', () => {
 			'https://example.com',
 			'base64-image',
 		]);
+	});
+
+	it('uses a configured request timeout for Quick Actions', async () => {
+		mockedRequest.mockResolvedValue('<html></html>');
+		const timeoutContext = {
+			...ctx,
+			options: { requestTimeoutMs: 30_000 },
+		};
+
+		await contentFetch(timeoutContext, {
+			accountId: 'acct-123',
+			body: { url: 'https://example.com' },
+		});
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/accounts/acct-123/browser-run/content',
+			'test-token',
+			{
+				method: 'POST',
+				body: { url: 'https://example.com' },
+				timeoutMs: 30_000,
+			},
+		);
 	});
 
 	it('accessibilityTree.capture parses the tree result', async () => {
@@ -412,7 +440,11 @@ describe('Browser Run binary Quick Actions', () => {
 		};
 		mockedBinaryRequest.mockResolvedValue(response);
 
-		const result = await pdfRender(ctx, {
+		const timeoutContext = {
+			...ctx,
+			options: { requestTimeoutMs: 30_000 },
+		};
+		const result = await pdfRender(timeoutContext, {
 			accountId: 'acct-123',
 			browser: 'kitesurf',
 			cacheTTL: 0,
@@ -424,7 +456,10 @@ describe('Browser Run binary Quick Actions', () => {
 			'/accounts/acct-123/browser-run/pdf',
 			'test-token',
 			{ html: privateHtml, pdfOptions: { format: 'a4' } },
-			{ query: { browser: 'kitesurf', cacheTTL: 0 } },
+			{
+				query: { browser: 'kitesurf', cacheTTL: 0 },
+				timeoutMs: 30_000,
+			},
 		);
 		expectRedactedLog('cloudflarebrowserrendering.pdf.render', [
 			privateHtml,
@@ -470,6 +505,7 @@ describe('Browser Rendering DevTools operations', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			`/accounts/acct-123/browser-rendering/devtools/session/${sessionId}`,
 			'test-token',
+			{},
 		);
 		expectRedactedLog('cloudflarebrowserrendering.sessions.get', [
 			sessionId,
@@ -551,6 +587,7 @@ describe('Browser Rendering DevTools operations', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			`/accounts/acct-123/browser-rendering/devtools/browser/${sessionId}/json/version`,
 			'test-token',
+			{},
 		);
 		expectRedactedLog('cloudflarebrowserrendering.browser.version', [
 			'wss://example.com/cdp',
@@ -584,6 +621,7 @@ describe('Browser Rendering DevTools operations', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			`/accounts/acct-123/browser-rendering/devtools/browser/${sessionId}/json/protocol`,
 			'test-token',
+			{},
 		);
 		expectRedactedLog('cloudflarebrowserrendering.browser.protocol', [
 			JSON.stringify(response),
@@ -688,6 +726,7 @@ describe('Browser Rendering DevTools operations', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			`/accounts/acct-123/browser-rendering/devtools/browser/${sessionId}/json/list/target-123`,
 			'test-token',
+			{},
 		);
 		expectRedactedLog('cloudflarebrowserrendering.targets.get', ['target-123']);
 	});
@@ -706,14 +745,16 @@ describe('Browser Rendering DevTools operations', () => {
 		expect(mockedRequest).toHaveBeenCalledWith(
 			`/accounts/acct-123/browser-rendering/devtools/browser/${sessionId}/json/activate/target-123`,
 			'test-token',
+			{},
 		);
 		expectRedactedLog('cloudflarebrowserrendering.targets.activate', [
 			'target-123',
 		]);
 	});
 
-	it('targets.close closes a target via the documented GET route', async () => {
-		mockedRequest.mockResolvedValue(target);
+	it('targets.close returns the documented message via the GET route', async () => {
+		const response = { message: 'Target is closing' };
+		mockedRequest.mockResolvedValue(response);
 
 		await expect(
 			targetsClose(ctx, {
@@ -721,10 +762,11 @@ describe('Browser Rendering DevTools operations', () => {
 				sessionId,
 				targetId: 'target-123',
 			}),
-		).resolves.toEqual(target);
+		).resolves.toEqual(response);
 		expect(mockedRequest).toHaveBeenCalledWith(
 			`/accounts/acct-123/browser-rendering/devtools/browser/${sessionId}/json/close/target-123`,
 			'test-token',
+			{},
 		);
 		expectRedactedLog('cloudflarebrowserrendering.targets.close', [
 			'target-123',
@@ -763,6 +805,27 @@ describe('cloudflarebrowserrendering plugin shape', () => {
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.authConfig).toEqual({ api_key: {} });
 		expect(plugin.webhooks).toEqual({});
+	});
+
+	it('throws a typed missing-auth error from keyBuilder for first-call linking', async () => {
+		const plugin = cloudflarebrowserrendering({ authType: 'api_key' });
+		const keyBuilder = plugin.keyBuilder;
+		if (!keyBuilder)
+			throw new Error('Expected the plugin to expose keyBuilder');
+		type KeyBuilderContext = Parameters<NonNullable<typeof keyBuilder>>[0];
+		const keyBuilderContext: KeyBuilderContext = {
+			authType: 'api_key',
+			options: { authType: 'api_key' },
+			tenantId: 'default',
+			keys: {
+				...ctx.keys,
+				get_api_key: () => Promise.resolve(null),
+			},
+		};
+
+		await expect(
+			keyBuilder(keyBuilderContext, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('registers input and output zod schemas for every endpoint', () => {

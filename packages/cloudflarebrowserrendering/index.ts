@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	accessibilityTreeCapture,
 	browserClose,
@@ -52,6 +53,8 @@ import { CloudflareBrowserRenderingSchema } from './schema';
 export type CloudflareBrowserRenderingPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/** Request deadline in milliseconds; defaults to 8 minutes and is capped there. */
+	requestTimeoutMs?: number;
 	hooks?: InternalCloudflareBrowserRenderingPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<
@@ -422,7 +425,14 @@ export function cloudflarebrowserrendering<
 		) => {
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				return (await ctx.keys.get_api_key()) ?? '';
+				const apiKey = await ctx.keys.get_api_key();
+				if (!apiKey) {
+					throw new AuthMissingError('cloudflarebrowserrendering', 'api_key');
+				}
+				return apiKey;
+			}
+			if (source === 'endpoint') {
+				throw new AuthMissingError('cloudflarebrowserrendering', 'api_key');
 			}
 			return '';
 		},

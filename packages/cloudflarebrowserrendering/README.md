@@ -23,6 +23,8 @@ import { cloudflarebrowserrendering } from '@corsair-dev/cloudflarebrowserrender
 const browserRun = cloudflarebrowserrendering({ authType: 'api_key' });
 ```
 
+Requests use a bounded 8-minute deadline by default to allow Browser Run's documented 5-minute action timeout plus navigation and wait time. Set `requestTimeoutMs` to a lower value to shorten calls; larger values are capped at 8 minutes.
+
 ## Operations
 
 | Corsair operation | HTTP method and path | Official documentation |

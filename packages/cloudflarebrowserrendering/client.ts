@@ -4,7 +4,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import { z } from 'zod';
 import type { JsonValue } from './endpoints/types';
 import { JsonValueSchema } from './endpoints/types';
@@ -32,6 +32,25 @@ export class CloudflareBrowserRenderingHTTPError extends Error {
 
 export const CLOUDFLARE_BROWSER_RUN_API_BASE =
 	'https://api.cloudflare.com/client/v4';
+
+/** Covers Browser Run's 5-minute action timeout plus navigation/wait time. */
+export const DEFAULT_CLOUDFLARE_BROWSER_RUN_REQUEST_TIMEOUT_MS = 8 * 60 * 1000;
+
+function resolveRequestTimeoutMs(timeoutMs?: number): number {
+	if (timeoutMs === undefined || !Number.isFinite(timeoutMs)) {
+		return DEFAULT_CLOUDFLARE_BROWSER_RUN_REQUEST_TIMEOUT_MS;
+	}
+	return Math.min(
+		DEFAULT_CLOUDFLARE_BROWSER_RUN_REQUEST_TIMEOUT_MS,
+		Math.max(1, Math.floor(timeoutMs)),
+	);
+}
+
+export function getCloudflareBrowserRenderingRequestTimeoutOptions(
+	timeoutMs?: number,
+): { timeoutMs?: number } {
+	return timeoutMs === undefined ? {} : { timeoutMs };
+}
 
 const BASE64_ALPHABET =
 	'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -70,48 +89,57 @@ export async function makeCloudflareBrowserRenderingBinaryRequest(
 	body: Record<string, JsonValue | undefined>,
 	options: {
 		query?: Record<string, string | number | boolean | undefined>;
+		timeoutMs?: number;
 	} = {},
 ): Promise<{ contentType: string; byteLength: number; data: string }> {
 	if (apiToken.length === 0) {
 		throw new AuthMissingError('cloudflarebrowserrendering', 'api_key');
 	}
 
-	let response: Response;
+	const controller = new AbortController();
+	const timeout = setTimeout(
+		() => controller.abort(),
+		resolveRequestTimeoutMs(options.timeoutMs),
+	);
 	try {
 		const url = new URL(`${CLOUDFLARE_BROWSER_RUN_API_BASE}${path}`);
 		for (const [key, value] of Object.entries(options.query ?? {})) {
 			if (value !== undefined) url.searchParams.set(key, String(value));
 		}
-		response = await fetch(url.toString(), {
+		const response = await fetch(url.toString(), {
 			method: 'POST',
 			headers: {
 				Authorization: `Bearer ${apiToken}`,
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify(body),
+			signal: controller.signal,
 		});
-	} catch {
-		throw new CloudflareBrowserRenderingHTTPError(
-			'Cloudflare Browser Run binary request failed before receiving a response',
-		);
-	}
 
-	if (!response.ok) {
-		const status = response.status;
-		throw new CloudflareBrowserRenderingHTTPError(
-			`Cloudflare Browser Run binary request failed with HTTP ${status}`,
-			status,
-			status === 429 ? parseRetryAfter(response) : undefined,
-		);
-	}
+		if (!response.ok) {
+			const status = response.status;
+			throw new CloudflareBrowserRenderingHTTPError(
+				`Cloudflare Browser Run binary request failed with HTTP ${status}`,
+				status,
+				status === 429 ? parseRetryAfter(response) : undefined,
+			);
+		}
 
-	const bytes = new Uint8Array(await response.arrayBuffer());
-	return {
-		contentType:
-			response.headers.get('content-type') ?? 'application/octet-stream',
-		byteLength: bytes.byteLength,
-		data: encodeBase64(bytes),
-	};
+		const bytes = new Uint8Array(await response.arrayBuffer());
+		return {
+			contentType:
+				response.headers.get('content-type') ?? 'application/octet-stream',
+			byteLength: bytes.byteLength,
+			data: encodeBase64(bytes),
+		};
+	} catch (error) {
+		if (error instanceof CloudflareBrowserRenderingHTTPError) throw error;
+		throw new CloudflareBrowserRenderingHTTPError(
+			'Cloudflare Browser Run binary request failed or timed out',
+		);
+	} finally {
+		clearTimeout(timeout);
+	}
 }
 
 const CloudflareErrorDetailSchema = z.object({
@@ -147,17 +175,19 @@ export async function makeCloudflareBrowserRenderingRequest(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
 		body?: Record<string, JsonValue | undefined>;
 		query?: Record<string, string | number | boolean | undefined>;
+		timeoutMs?: number;
 	} = {},
 ): Promise<JsonValue> {
 	if (apiToken.length === 0) {
 		throw new AuthMissingError('cloudflarebrowserrendering', 'api_key');
 	}
 
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, timeoutMs } = options;
 	const isWriteMethod = method === 'POST' || method === 'PUT';
 	const config: OpenAPIConfig = {
 		BASE: CLOUDFLARE_BROWSER_RUN_API_BASE,
 		VERSION: '1.0.0',
+		TIMEOUT: resolveRequestTimeoutMs(timeoutMs),
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
@@ -196,6 +226,26 @@ export async function makeCloudflareBrowserRenderingRequest(
 		}
 		return response;
 	} catch (error) {
+		if (error instanceof ApiError) {
+			const safeRequest = { ...error.request, body: undefined };
+			throw new ApiError(
+				safeRequest,
+				{
+					url: error.url,
+					ok: false,
+					status: error.status,
+					statusText: error.statusText,
+					body: error.body,
+				},
+				error.message,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
+		}
 		if (error instanceof Error) {
 			throw error;
 		}

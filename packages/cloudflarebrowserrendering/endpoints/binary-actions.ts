@@ -1,6 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CloudflareBrowserRenderingEndpoints } from '..';
-import { makeCloudflareBrowserRenderingBinaryRequest } from '../client';
+import {
+	getCloudflareBrowserRenderingRequestTimeoutOptions,
+	makeCloudflareBrowserRenderingBinaryRequest,
+} from '../client';
 import {
 	CloudflareBrowserRenderingEndpointInputSchemas,
 	CloudflareBrowserRenderingEndpointOutputSchemas,
@@ -25,6 +28,9 @@ export const screenshotCapture: CloudflareBrowserRenderingEndpoints['screenshotC
 					browser: parsedInput.browser,
 					cacheTTL: parsedInput.cacheTTL,
 				},
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
 			},
 		);
 		const parsed =
@@ -53,6 +59,9 @@ export const pdfRender: CloudflareBrowserRenderingEndpoints['pdfRender'] =
 					browser: parsedInput.browser,
 					cacheTTL: parsedInput.cacheTTL,
 				},
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
 			},
 		);
 		const parsed =

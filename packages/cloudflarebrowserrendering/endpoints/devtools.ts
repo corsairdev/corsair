@@ -1,6 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CloudflareBrowserRenderingEndpoints } from '..';
-import { makeCloudflareBrowserRenderingRequest } from '../client';
+import {
+	getCloudflareBrowserRenderingRequestTimeoutOptions,
+	makeCloudflareBrowserRenderingRequest,
+} from '../client';
 import {
 	CloudflareBrowserRenderingEndpointInputSchemas,
 	CloudflareBrowserRenderingEndpointOutputSchemas,
@@ -44,6 +47,9 @@ export const sessionsList: CloudflareBrowserRenderingEndpoints['sessionsList'] =
 			{
 				method: 'GET',
 				query: { limit: parsedInput.limit, offset: parsedInput.offset },
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
 			},
 		);
 		const parsed =
@@ -69,6 +75,9 @@ export const sessionsGet: CloudflareBrowserRenderingEndpoints['sessionsGet'] =
 				`session/${encodeURIComponent(parsedInput.sessionId)}`,
 			),
 			ctx.key,
+			getCloudflareBrowserRenderingRequestTimeoutOptions(
+				ctx.options.requestTimeoutMs,
+			),
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.sessionsGet.parse(
@@ -103,6 +112,9 @@ export const browserCreate: CloudflareBrowserRenderingEndpoints['browserCreate']
 					parsedInput.guardrails === undefined
 						? undefined
 						: { guardrails: parsedInput.guardrails },
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
 			},
 		);
 		const parsed =
@@ -125,7 +137,12 @@ export const browserClose: CloudflareBrowserRenderingEndpoints['browserClose'] =
 		const response = await makeCloudflareBrowserRenderingRequest(
 			browserPath(parsedInput.accountId, parsedInput.sessionId),
 			ctx.key,
-			{ method: 'DELETE' },
+			{
+				method: 'DELETE',
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
+			},
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.browserClose.parse(
@@ -153,6 +170,9 @@ export const browserVersion: CloudflareBrowserRenderingEndpoints['browserVersion
 				'/json/version',
 			),
 			ctx.key,
+			getCloudflareBrowserRenderingRequestTimeoutOptions(
+				ctx.options.requestTimeoutMs,
+			),
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.browserVersion.parse(
@@ -180,6 +200,9 @@ export const browserProtocol: CloudflareBrowserRenderingEndpoints['browserProtoc
 				'/json/protocol',
 			),
 			ctx.key,
+			getCloudflareBrowserRenderingRequestTimeoutOptions(
+				ctx.options.requestTimeoutMs,
+			),
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.browserProtocol.parse(
@@ -211,6 +234,9 @@ export const liveViewCreate: CloudflareBrowserRenderingEndpoints['liveViewCreate
 					mode: parsedInput.mode,
 					targetId: parsedInput.targetId,
 				},
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
 			},
 		);
 		const parsed =
@@ -239,6 +265,9 @@ export const targetsCreate: CloudflareBrowserRenderingEndpoints['targetsCreate']
 					liveViewUrlExpiresInMs: parsedInput.liveViewUrlExpiresInMs,
 					url: parsedInput.url,
 				},
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
 			},
 		);
 		const parsed =
@@ -266,6 +295,9 @@ export const targetsList: CloudflareBrowserRenderingEndpoints['targetsList'] =
 				query: {
 					liveViewUrlExpiresInMs: parsedInput.liveViewUrlExpiresInMs,
 				},
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
 			},
 		);
 		const parsed =
@@ -293,6 +325,9 @@ export const targetsGet: CloudflareBrowserRenderingEndpoints['targetsGet'] =
 				'list',
 			),
 			ctx.key,
+			getCloudflareBrowserRenderingRequestTimeoutOptions(
+				ctx.options.requestTimeoutMs,
+			),
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.targetsGet.parse(
@@ -321,6 +356,9 @@ export const targetsActivate: CloudflareBrowserRenderingEndpoints['targetsActiva
 				'activate',
 			),
 			ctx.key,
+			getCloudflareBrowserRenderingRequestTimeoutOptions(
+				ctx.options.requestTimeoutMs,
+			),
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.targetsActivate.parse(
@@ -347,6 +385,9 @@ export const targetsClose: CloudflareBrowserRenderingEndpoints['targetsClose'] =
 				'close',
 			),
 			ctx.key,
+			getCloudflareBrowserRenderingRequestTimeoutOptions(
+				ctx.options.requestTimeoutMs,
+			),
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.targetsClose.parse(

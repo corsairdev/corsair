@@ -1,6 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CloudflareBrowserRenderingEndpoints } from '..';
-import { makeCloudflareBrowserRenderingRequest } from '../client';
+import {
+	getCloudflareBrowserRenderingRequestTimeoutOptions,
+	makeCloudflareBrowserRenderingRequest,
+} from '../client';
 import {
 	CloudflareBrowserRenderingEndpointInputSchemas,
 	CloudflareBrowserRenderingEndpointOutputSchemas,
@@ -20,7 +23,13 @@ export const crawlStart: CloudflareBrowserRenderingEndpoints['crawlStart'] =
 		const response = await makeCloudflareBrowserRenderingRequest(
 			crawlPath(parsedInput.accountId),
 			ctx.key,
-			{ method: 'POST', body: parsedInput.body },
+			{
+				method: 'POST',
+				body: parsedInput.body,
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
+			},
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.crawlStart.parse(
@@ -51,6 +60,9 @@ export const crawlGet: CloudflareBrowserRenderingEndpoints['crawlGet'] = async (
 				limit: parsedInput.limit,
 				status: parsedInput.status,
 			},
+			...getCloudflareBrowserRenderingRequestTimeoutOptions(
+				ctx.options.requestTimeoutMs,
+			),
 		},
 	);
 	const parsed =
@@ -71,7 +83,12 @@ export const crawlCancel: CloudflareBrowserRenderingEndpoints['crawlCancel'] =
 		const response = await makeCloudflareBrowserRenderingRequest(
 			crawlPath(parsedInput.accountId, parsedInput.jobId),
 			ctx.key,
-			{ method: 'DELETE' },
+			{
+				method: 'DELETE',
+				...getCloudflareBrowserRenderingRequestTimeoutOptions(
+					ctx.options.requestTimeoutMs,
+				),
+			},
 		);
 		const parsed =
 			CloudflareBrowserRenderingEndpointOutputSchemas.crawlCancel.parse(
