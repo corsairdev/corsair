@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 import type { RiteKitEndpoints } from '..';
 import { call } from './call';
 import {
@@ -25,6 +26,15 @@ export const listCtas: RiteKitEndpoints['linksListCtas'] = (ctx, input) =>
 			replayable: true,
 		}),
 		{
+			// RiteKit sends `list` as an array or, when its keys are not 0..n, as an
+			// object keyed by position or id (seen both ways on one account).
+			shape: (raw) => {
+				const body = asRecord(raw);
+				const list = body?.list;
+				return list && typeof list === 'object' && !Array.isArray(list)
+					? { ...body, list: Object.values(list) }
+					: raw;
+			},
 			log: (_, result) => ({ count: result.list?.length ?? 0 }),
 		},
 	);

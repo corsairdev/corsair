@@ -19,6 +19,7 @@ import {
 	BRAND_COLORS,
 	COMPANY_LOGO,
 	CTA_LIST,
+	CTA_LIST_KEYED,
 	DISPOSABLE,
 	EMAIL_TYPO,
 	EMOJI_SUGGESTIONS,
@@ -431,6 +432,16 @@ describe('links.shorten', () => {
 		expect(request.query).toEqual({ client_id: 'ritekit-test-key' });
 		expect(result.list?.map((cta) => cta.id)).toEqual(['bit.ly', 123456]);
 		expect(result.list?.[1]?.default).toBe(1);
+	});
+
+	it('reads a Link Ad list that RiteKit sent as a keyed object', async () => {
+		respond(fetchMock, CTA_LIST_KEYED);
+
+		const result = (await invoke(Links.listCtas, {})) as {
+			list?: Array<{ id?: string | number }>;
+		};
+
+		expect(result.list?.map((cta) => cta.id)).toEqual([123456, 'bit.ly']);
 	});
 
 	it('marks a failed shorten as not replayable, so a 5xx is not retried', async () => {

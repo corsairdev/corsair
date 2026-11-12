@@ -188,6 +188,21 @@ export const CTA_LIST = {
 	],
 };
 
+// Live 11-12, a minute later on the same account: the same list as an object
+// keyed by position or id, which is how PHP encodes an array with gaps.
+export const CTA_LIST_KEYED = {
+	result: true,
+	list: {
+		'0': { id: 123456, name: 'Default Ad', code: 'DFLT', default: 1 },
+		'bit.ly': {
+			id: 'bit.ly',
+			name: 'Bit.ly - no ad',
+			code: 'Bit.ly',
+			default: 0,
+		},
+	},
+};
+
 export const SHORT_LINK = {
 	result: true,
 	url: 'http://rite.ly/jr6e',
