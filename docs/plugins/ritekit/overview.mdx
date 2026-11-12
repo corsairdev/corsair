@@ -16,13 +16,15 @@ Things to know before you call:
 - **The `color` number needs its legend.** A stats row's `color` is 0 unused, 1 overused, 2 good, 3 great, and `hashtags.stats` returns the labels in a `color` array beside the rows. `hashtags.trending`'s `green` filter is the same idea, and the API reads it as `1` rather than `true`.
 - **`images` / `links` / `mentions` are percentages, not counts.** A value of `0.35` means 0.35% of the hashtag's tweets carry an image, which is why the fields are fractional.
 - **`hashtags.stats` takes up to 100 tags in one call**, joined into a single comma-separated `tags` value. The plugin rejects a longer list rather than letting RiteKit truncate it.
-- **`links.listCtas` is not wrapped.** RiteKit's demo page says it needs each user to authenticate with RiteKit itself and "cannot be shown in the Demo", so its shape is unpublished and a single Client ID cannot call it. `links.shorten` still accepts a `cta` value from the Rite.ly dashboard.
-- **`images.quote` and `images.animate` return a URL.** The two samples are not published; the docs say each returns the image's URL, so `url` is the field and the rest of the envelope is the usual one.
+- **`links.shorten` needs a Link Ad.** RiteKit answers `500` when `cta` is missing, so the plugin requires it. `links.listCtas` lists the account's Link Ads (a new account has `bit.ly`, no ad, and its own default ad); pass one of those ids as `cta`. Each shorten creates a new link and spends a credit, so a `5xx` on it is not retried.
+- **`images.quote` and `images.animate` return the image itself.** The docs say each returns a URL, but the API answers with the PNG or GIF bytes. The plugin returns them as a data URL in `url`, with `contentType` and `bytes`. An animated GIF is a few hundred KB.
+- **`companies.nameToDomain` is slow and returns `data`.** Live answers took about 18 seconds, so the plugin waits up to 60. The domains come back under `data`, best first.
+- **`person.nameFromEmail` returns the name as one string**, such as `John Doe` in `info`, although the published sample shows `givenName` and `surname`. The schema accepts both.
 - **`companies.logo` gives you two URLs.** `url` expires; `permanentUrl` is stable, but every view of it costs a credit, so store the permanent one and let a CDN fetch it.
 
 **What you get:**
 
-- 22 typed API operations
+- 23 typed API operations
 
 ## Setup
 

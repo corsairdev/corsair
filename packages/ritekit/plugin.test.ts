@@ -34,6 +34,7 @@ const operations = [
 	'images.animate',
 	'images.extractTopImage',
 	'images.quote',
+	'links.listCtas',
 	'links.shorten',
 	'person.disposable',
 	'person.emailTypo',
@@ -55,7 +56,7 @@ describe('ritekit plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the twenty-two catalog operations', () => {
+	it('exposes exactly the twenty-three catalog operations', () => {
 		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);

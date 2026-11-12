@@ -18,6 +18,7 @@ import {
 	BANNED_HASHTAGS,
 	BRAND_COLORS,
 	COMPANY_LOGO,
+	CTA_LIST,
 	DISPOSABLE,
 	EMAIL_TYPO,
 	EMOJI_SUGGESTIONS,
@@ -411,12 +412,25 @@ describe('links.shorten', () => {
 		expect(result.limit?.remaining).toBe(5000);
 	});
 
-	it('omits the Link Ad when the caller does not set one', async () => {
-		respond(fetchMock, SHORT_LINK);
+	it('requires a Link Ad, since RiteKit answers 500 without one', async () => {
+		await expect(
+			invoke(Links.shorten, { url: 'https://ritekit.com' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 
-		await invoke(Links.shorten, { url: 'https://ritekit.com' });
+	it('lists the Link Ads a short link can carry', async () => {
+		respond(fetchMock, CTA_LIST);
 
-		expect(lastRequest(fetchMock).query.cta).toBeUndefined();
+		const result = (await invoke(Links.listCtas, {})) as {
+			list?: Array<{ id?: string | number; default?: number }>;
+		};
+
+		const request = lastRequest(fetchMock);
+		expect(request.path).toBe('/v1/link/cta');
+		expect(request.query).toEqual({ client_id: 'ritekit-test-key' });
+		expect(result.list?.map((cta) => cta.id)).toEqual(['bit.ly', 123456]);
+		expect(result.list?.[1]?.default).toBe(1);
 	});
 
 	it('marks a failed shorten as not replayable, so a 5xx is not retried', async () => {
@@ -424,6 +438,7 @@ describe('links.shorten', () => {
 
 		const error = await invoke(Links.shorten, {
 			url: 'https://ritekit.com',
+			cta: '6530',
 		}).catch((caught: Error) => caught);
 
 		expect(error).toBeInstanceOf(RiteKitAPIError);

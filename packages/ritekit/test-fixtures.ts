@@ -178,6 +178,16 @@ export const TOP_IMAGE = {
 		'https://fedoramagazine.org/wp-content/uploads/2020/10/secure-ntp-with-nts.jpg',
 };
 
+// Live 11-12 on a new free account: one ad-free option and the account's
+// default Link Ad. An id is a string or a number.
+export const CTA_LIST = {
+	result: true,
+	list: [
+		{ id: 'bit.ly', name: 'Bit.ly - no ad', code: 'Bit.ly', default: 0 },
+		{ id: 123456, name: 'Default Ad', code: 'DFLT', default: 1 },
+	],
+};
+
 export const SHORT_LINK = {
 	result: true,
 	url: 'http://rite.ly/jr6e',

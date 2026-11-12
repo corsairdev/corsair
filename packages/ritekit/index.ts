@@ -69,6 +69,7 @@ export type RiteKitEndpoints = {
 	imagesQuote: RiteKitEndpoint<'imagesQuote'>;
 	imagesAnimate: RiteKitEndpoint<'imagesAnimate'>;
 	imagesExtractTopImage: RiteKitEndpoint<'imagesExtractTopImage'>;
+	linksListCtas: RiteKitEndpoint<'linksListCtas'>;
 	linksShorten: RiteKitEndpoint<'linksShorten'>;
 	personFreemail: RiteKitEndpoint<'personFreemail'>;
 	personDisposable: RiteKitEndpoint<'personDisposable'>;
@@ -101,6 +102,7 @@ const ritekitEndpointsNested = {
 		extractTopImage: Images.extractTopImage,
 	},
 	links: {
+		listCtas: Links.listCtas,
 		shorten: Links.shorten,
 	},
 	person: {
@@ -168,6 +170,10 @@ export const ritekitEndpointSchemas = {
 	'images.extractTopImage': {
 		input: RiteKitEndpointInputSchemas.imagesExtractTopImage,
 		output: RiteKitEndpointOutputSchemas.imagesExtractTopImage,
+	},
+	'links.listCtas': {
+		input: RiteKitEndpointInputSchemas.linksListCtas,
+		output: RiteKitEndpointOutputSchemas.linksListCtas,
 	},
 	'links.shorten': {
 		input: RiteKitEndpointInputSchemas.linksShorten,
@@ -261,20 +267,26 @@ const ritekitEndpointMeta = {
 	'images.quote': {
 		riskLevel: 'read',
 		description:
-			'Render a quote as an image with chosen fonts, colors, gradient and an optional logo, returning its URL',
+			'Render a quote as a PNG with chosen fonts, colors, gradient and an optional logo, returned as a data URL',
 	},
 	'images.animate': {
 		riskLevel: 'read',
-		description: 'Turn a still image into an animated GIF and return its URL',
+		description:
+			'Turn a still image into an animated GIF, returned as a data URL',
 	},
 	'images.extractTopImage': {
 		riskLevel: 'read',
 		description: "Return a page's lead image URL",
 	},
+	'links.listCtas': {
+		riskLevel: 'read',
+		description:
+			'List the Link Ads on the account, whose ids links.shorten takes as its cta',
+	},
 	'links.shorten': {
 		riskLevel: 'write',
 		description:
-			'Create a rite.ly short link, optionally with a Link Ad attached, and report the plan balance',
+			'Create a rite.ly short link carrying a Link Ad from links.listCtas, and report the plan balance',
 	},
 	'person.freemail': {
 		riskLevel: 'read',
@@ -405,6 +417,8 @@ export type {
 	ImagesExtractResponse,
 	ImagesQuoteInput,
 	ImagesQuoteResponse,
+	LinksListCtasInput,
+	LinksListCtasResponse,
 	LinksShortenInput,
 	LinksShortenResponse,
 	NameFromEmailInput,

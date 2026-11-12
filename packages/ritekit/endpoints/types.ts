@@ -371,15 +371,46 @@ const ImagesExtractResponseSchema = EnvelopeSchema.extend({
 
 export type ImagesExtractResponse = z.infer<typeof ImagesExtractResponseSchema>;
 
+// ── links.listCtas ────────────────────────────────────────────────────────
+
+const LinksListCtasInputSchema = z.object({});
+
+export type LinksListCtasInput = z.infer<typeof LinksListCtasInputSchema>;
+
+const CtaSchema = z
+	.object({
+		id: z
+			.union([z.string(), z.number()])
+			.nullish()
+			.describe('Pass as links.shorten `cta`. bit.ly means no ad.'),
+		name: z.string().nullish(),
+		code: z.string().nullish(),
+		default: z
+			.number()
+			.nullish()
+			.describe("1 for the account's default Link Ad."),
+	})
+	.loose();
+
+// Live 11-12: `{ result, list }`, with no message or code.
+const LinksListCtasResponseSchema = z
+	.object({
+		result: z.boolean().nullish(),
+		list: z.array(CtaSchema).nullish(),
+	})
+	.loose();
+
+export type LinksListCtasResponse = z.infer<typeof LinksListCtasResponseSchema>;
+
 // ── links.shortLink ───────────────────────────────────────────────────────
 
 const LinksShortenInputSchema = z.object({
 	url: UrlSchema.describe('The URL to shorten.'),
 	cta: z
 		.string()
-		.optional()
+		.min(1)
 		.describe(
-			'The Link Ad to attach, from links.listCtas. Omit it for a plain short link.',
+			'The Link Ad to attach: an id from links.listCtas, such as bit.ly for none. RiteKit answers 500 without one.',
 		),
 });
 
@@ -646,6 +677,7 @@ export type RiteKitEndpointInputs = {
 	imagesQuote: ImagesQuoteInput;
 	imagesAnimate: ImagesAnimateInput;
 	imagesExtractTopImage: ImagesExtractInput;
+	linksListCtas: LinksListCtasInput;
 	linksShorten: LinksShortenInput;
 	personFreemail: FreemailInput;
 	personDisposable: DisposableInput;
@@ -671,6 +703,7 @@ export type RiteKitEndpointOutputs = {
 	imagesQuote: ImagesQuoteResponse;
 	imagesAnimate: ImagesAnimateResponse;
 	imagesExtractTopImage: ImagesExtractResponse;
+	linksListCtas: LinksListCtasResponse;
 	linksShorten: LinksShortenResponse;
 	personFreemail: FreemailResponse;
 	personDisposable: DisposableResponse;
@@ -696,6 +729,7 @@ export const RiteKitEndpointInputSchemas = {
 	imagesQuote: ImagesQuoteInputSchema,
 	imagesAnimate: ImagesAnimateInputSchema,
 	imagesExtractTopImage: ImagesExtractInputSchema,
+	linksListCtas: LinksListCtasInputSchema,
 	linksShorten: LinksShortenInputSchema,
 	personFreemail: FreemailInputSchema,
 	personDisposable: DisposableInputSchema,
@@ -721,6 +755,7 @@ export const RiteKitEndpointOutputSchemas = {
 	imagesQuote: ImagesQuoteResponseSchema,
 	imagesAnimate: ImagesAnimateResponseSchema,
 	imagesExtractTopImage: ImagesExtractResponseSchema,
+	linksListCtas: LinksListCtasResponseSchema,
 	linksShorten: LinksShortenResponseSchema,
 	personFreemail: FreemailResponseSchema,
 	personDisposable: DisposableResponseSchema,

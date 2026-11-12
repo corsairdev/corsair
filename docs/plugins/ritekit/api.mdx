@@ -149,7 +149,8 @@ await corsair.ritekit.api.companies.nameToDomain({ name: 'Google' });
 | `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
 | `message` | `string \| null` | No | — |
 | `code` | `number \| null` | No | Repeats the HTTP status when present. |
-| `domains` | `string[] \| null` | No | The most probable domains, best first. |
+| `name` | `string \| null` | No | The name as RiteKit read it. |
+| `data` | `string[] \| null` | No | The most probable domains, best first. |
 
 
 
@@ -566,7 +567,7 @@ await corsair.ritekit.api.hashtags.trending({ green: true, latin: true });
 
 `images.animate`
 
-Turn a still image into an animated GIF and return its URL
+Turn a still image into an animated GIF, returned as a data URL
 
 **Risk:** `read`
 
@@ -587,10 +588,9 @@ await corsair.ritekit.api.images.animate({ url: 'https://jpeg.org/images/jpeg-ho
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
-| `message` | `string \| null` | No | — |
-| `code` | `number \| null` | No | Repeats the HTTP status when present. |
-| `url` | `string \| null` | No | The animated GIF. |
+| `url` | `string` | Yes | The image as a data URL (data:&lt;type&gt;;base64,...). |
+| `contentType` | `string` | Yes | Such as image/png or image/gif. |
+| `bytes` | `number` | Yes | Size of the image in bytes. |
 
 
 
@@ -633,7 +633,7 @@ await corsair.ritekit.api.images.extractTopImage({ url: 'https://fedoramagazine.
 
 `images.quote`
 
-Render a quote as an image with chosen fonts, colors, gradient and an optional logo, returning its URL
+Render a quote as a PNG with chosen fonts, colors, gradient and an optional logo, returned as a data URL
 
 **Risk:** `read`
 
@@ -667,10 +667,9 @@ await corsair.ritekit.api.images.quote({ text: 'If you love life, do not waste t
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
-| `message` | `string \| null` | No | — |
-| `code` | `number \| null` | No | Repeats the HTTP status when present. |
-| `url` | `string \| null` | No | The rendered image. |
+| `url` | `string` | Yes | The image as a data URL (data:&lt;type&gt;;base64,...). |
+| `contentType` | `string` | Yes | Such as image/png or image/gif. |
+| `bytes` | `number` | Yes | Size of the image in bytes. |
 
 
 
@@ -678,11 +677,51 @@ await corsair.ritekit.api.images.quote({ text: 'If you love life, do not waste t
 
 ## Links
 
+### listCtas
+
+`links.listCtas`
+
+List the Link Ads on the account, whose ids links.shorten takes as its cta
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.links.listCtas({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | — |
+| `list` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  code?: string | null,
+  default?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### shorten
 
 `links.shorten`
 
-Create a rite.ly short link, optionally with a Link Ad attached, and report the plan balance
+Create a rite.ly short link carrying a Link Ad from links.listCtas, and report the plan balance
 
 **Risk:** `write`
 
@@ -695,7 +734,7 @@ await corsair.ritekit.api.links.shorten({ url: 'https://ritekit.com', cta: '6530
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | The URL to shorten. |
-| `cta` | `string` | No | The Link Ad to attach, from links.listCtas. Omit it for a plain short link. |
+| `cta` | `string` | Yes | The Link Ad to attach: an id from links.listCtas, such as bit.ly for none. RiteKit answers 500 without one. |
 
 
 
@@ -857,13 +896,13 @@ await corsair.ritekit.api.person.nameFromEmail({ email: 'john.doe@test.com' });
 | `message` | `string \| null` | No | — |
 | `code` | `number \| null` | No | Repeats the HTTP status when present. |
 | `email` | `string \| null` | No | The address as RiteKit read it. |
-| `info` | `object \| null` | No | — |
+| `info` | `string \| object \| null` | No | The derived name: a string such as "John Doe" in live answers. |
 
 <AccordionGroup>
 <Accordion title="info full type">
 
 ```ts
-{
+string | {
   givenName?: string | null,
   surname?: string | null
 } | null

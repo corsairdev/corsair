@@ -6,12 +6,29 @@ import {
 } from './types';
 
 /**
- * `links.listCtas` is not wrapped: RiteKit's demo page says it "requires each
- * user to authenticate with RiteKit and cannot be shown in the Demo", i.e. it
- * needs a per-user OAuth consent this plugin's single Client ID cannot supply, so
- * its response shape is unpublished. `links.shorten` accepts the same `cta` value
- * from the Rite.ly dashboard.
+ * RiteKit's demo page says this "requires each user to authenticate with
+ * RiteKit", but live (11-12) the Client ID alone lists the account's own Link
+ * Ads, which is what links.shorten needs for its `cta`.
  */
+export const listCtas: RiteKitEndpoints['linksListCtas'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'links.listCtas',
+			input: Inputs.linksListCtas,
+			output: Outputs.linksListCtas,
+		},
+		input,
+		() => ({
+			method: 'GET',
+			path: '/v1/link/cta',
+			replayable: true,
+		}),
+		{
+			log: (_, result) => ({ count: result.list?.length ?? 0 }),
+		},
+	);
+
 export const shorten: RiteKitEndpoints['linksShorten'] = (ctx, input) =>
 	call(
 		ctx,
