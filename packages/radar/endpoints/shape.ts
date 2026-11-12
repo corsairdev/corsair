@@ -11,6 +11,8 @@ import { asRecord } from 'corsair/core';
  */
 export function listShape(key: string) {
 	return (
+		// unknown: the unchecked Radar response body; the operation's output
+		// schema parses what this returns.
 		raw: unknown,
 		// unknown: the operation input, unused by this shaper.
 		_parsed: unknown,
@@ -33,6 +35,8 @@ export function listShape(key: string) {
  */
 export function singleShape(key: string) {
 	return (
+		// unknown: the unchecked Radar response body; the operation's output
+		// schema parses what this returns.
 		raw: unknown,
 		// unknown: the operation input, unused by this shaper.
 		_parsed: unknown,
