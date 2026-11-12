@@ -2,10 +2,22 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
 import type {
+	AllBacklinksResponse,
+	AnchorsResponse,
 	BacklinksStatsResponse,
+	BrokenBacklinksResponse,
+	DomainRatingHistoryResponse,
 	DomainRatingResponse,
+	KeywordsHistoryResponse,
+	LinkedDomainsResponse,
+	MetricsHistoryResponse,
+	OrganicCompetitorsResponse,
 	OrganicKeywordsResponse,
+	PagesByBacklinksResponse,
+	PagesByTrafficResponse,
+	RefdomainsHistoryResponse,
 	RefdomainsResponse,
+	SiteMetricsResponse,
 	TopPagesResponse,
 } from './types';
 
@@ -208,6 +220,333 @@ export const topPages: AhrefsEndpoints['topPages'] = async (ctx, input) => {
 			target: input.target,
 			country: input.country,
 			date: input.date,
+			resultCount: response.pages.length,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+export const metrics: AhrefsEndpoints['siteMetrics'] = async (ctx, input) => {
+	const response = await makeAhrefsRequest<SiteMetricsResponse>(
+		'/site-explorer/metrics',
+		ctx.key,
+		{
+			query: input,
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ahrefs.siteExplorer.metrics',
+		{
+			portfolio_id: input.portfolio_id,
+			target: input.target,
+			country: input.country,
+			date: input.date,
+			mode: input.mode,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+export const metricsHistory: AhrefsEndpoints['metricsHistory'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeAhrefsRequest<MetricsHistoryResponse>(
+		'/site-explorer/metrics-history',
+		ctx.key,
+		{
+			query: input,
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ahrefs.siteExplorer.metricsHistory',
+		{
+			portfolio_id: input.portfolio_id,
+			target: input.target,
+			country: input.country,
+			date_from: input.date_from,
+			date_to: input.date_to,
+			mode: input.mode,
+			resultCount: response.metrics.length,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+export const domainRatingHistory: AhrefsEndpoints['domainRatingHistory'] =
+	async (ctx, input) => {
+		const response = await makeAhrefsRequest<DomainRatingHistoryResponse>(
+			'/site-explorer/domain-rating-history',
+			ctx.key,
+			{
+				query: input,
+			},
+		);
+
+		await logEventFromContext(
+			ctx,
+			'ahrefs.siteExplorer.domainRatingHistory',
+			{
+				target: input.target,
+				date_from: input.date_from,
+				date_to: input.date_to,
+				resultCount: response.domain_ratings.length,
+			},
+			'completed',
+		);
+
+		return response;
+	};
+
+export const allBacklinks: AhrefsEndpoints['allBacklinks'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeAhrefsRequest<AllBacklinksResponse>(
+		'/site-explorer/all-backlinks',
+		ctx.key,
+		{
+			query: input,
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ahrefs.siteExplorer.allBacklinks',
+		{
+			portfolio_id: input.portfolio_id,
+			target: input.target,
+			mode: input.mode,
+			resultCount: response.backlinks.length,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+export const brokenBacklinks: AhrefsEndpoints['brokenBacklinks'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeAhrefsRequest<BrokenBacklinksResponse>(
+		'/site-explorer/broken-backlinks',
+		ctx.key,
+		{
+			query: input,
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ahrefs.siteExplorer.brokenBacklinks',
+		{
+			portfolio_id: input.portfolio_id,
+			target: input.target,
+			mode: input.mode,
+			resultCount: response.backlinks.length,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+export const anchors: AhrefsEndpoints['anchors'] = async (ctx, input) => {
+	const response = await makeAhrefsRequest<AnchorsResponse>(
+		'/site-explorer/anchors',
+		ctx.key,
+		{
+			query: input,
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ahrefs.siteExplorer.anchors',
+		{
+			portfolio_id: input.portfolio_id,
+			target: input.target,
+			mode: input.mode,
+			resultCount: response.anchors.length,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+export const organicCompetitors: AhrefsEndpoints['organicCompetitors'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeAhrefsRequest<OrganicCompetitorsResponse>(
+		'/site-explorer/organic-competitors',
+		ctx.key,
+		{
+			query: input,
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ahrefs.siteExplorer.organicCompetitors',
+		{
+			portfolio_id: input.portfolio_id,
+			target: input.target,
+			country: input.country,
+			date: input.date,
+			mode: input.mode,
+			resultCount: response.competitors.length,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+export const pagesByTraffic: AhrefsEndpoints['pagesByTraffic'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeAhrefsRequest<PagesByTrafficResponse>(
+		'/site-explorer/pages-by-traffic',
+		ctx.key,
+		{
+			query: input,
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ahrefs.siteExplorer.pagesByTraffic',
+		{
+			portfolio_id: input.portfolio_id,
+			target: input.target,
+			country: input.country,
+			mode: input.mode,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+export const refdomainsHistory: AhrefsEndpoints['refdomainsHistory'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeAhrefsRequest<RefdomainsHistoryResponse>(
+		'/site-explorer/refdomains-history',
+		ctx.key,
+		{
+			query: input,
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ahrefs.siteExplorer.refdomainsHistory',
+		{
+			portfolio_id: input.portfolio_id,
+			target: input.target,
+			date_from: input.date_from,
+			date_to: input.date_to,
+			mode: input.mode,
+			resultCount: response.refdomains.length,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+export const keywordsHistory: AhrefsEndpoints['keywordsHistory'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeAhrefsRequest<KeywordsHistoryResponse>(
+		'/site-explorer/keywords-history',
+		ctx.key,
+		{
+			query: input,
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ahrefs.siteExplorer.keywordsHistory',
+		{
+			portfolio_id: input.portfolio_id,
+			target: input.target,
+			country: input.country,
+			date_from: input.date_from,
+			date_to: input.date_to,
+			mode: input.mode,
+			resultCount: response.keywords.length,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+export const linkedDomains: AhrefsEndpoints['linkedDomains'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeAhrefsRequest<LinkedDomainsResponse>(
+		'/site-explorer/linkeddomains',
+		ctx.key,
+		{
+			query: input,
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ahrefs.siteExplorer.linkedDomains',
+		{
+			portfolio_id: input.portfolio_id,
+			target: input.target,
+			mode: input.mode,
+			resultCount: response.linkeddomains.length,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+export const pagesByBacklinks: AhrefsEndpoints['pagesByBacklinks'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeAhrefsRequest<PagesByBacklinksResponse>(
+		'/site-explorer/pages-by-backlinks',
+		ctx.key,
+		{
+			query: input,
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ahrefs.siteExplorer.pagesByBacklinks',
+		{
+			portfolio_id: input.portfolio_id,
+			target: input.target,
+			mode: input.mode,
 			resultCount: response.pages.length,
 		},
 		'completed',

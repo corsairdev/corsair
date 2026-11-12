@@ -1,0 +1,1216 @@
+{
+  "gsc.anonymousQueries": {
+    "input": {
+      "project_id": 1234567,
+      "date_from": "2026-10-12",
+      "country": "us",
+      "select": "keyword,position,url",
+      "limit": 3
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "example keyword 1",
+          "position": 9,
+          "url": "https://example.com/integrations/calendly/and/mailchimp"
+        },
+        {
+          "keyword": "example keyword 2",
+          "position": 4,
+          "url": "https://example.com/integrations/ambientweather"
+        }
+      ]
+    }
+  },
+  "gsc.ctrByPosition": {
+    "input": {
+      "project_id": 1234567,
+      "date_from": "2026-10-12",
+      "date_to": "2026-11-10"
+    },
+    "response": {
+      "metrics": [
+        {
+          "position": 1,
+          "average_ctr_percent": 2.31764763014763,
+          "keyword_count": 52
+        },
+        {
+          "position": 2,
+          "average_ctr_percent": 4.545454545454546,
+          "keyword_count": 22
+        },
+        {
+          "position": 3,
+          "average_ctr_percent": 2.256944444444444,
+          "keyword_count": 48
+        }
+      ]
+    }
+  },
+  "gsc.keywordHistory": {
+    "input": {
+      "project_id": 1234567,
+      "date_from": "2026-10-12",
+      "date_to": "2026-11-10",
+      "history_grouping": "weekly",
+      "keywords": "example keyword 3"
+    },
+    "response": {
+      "metrics": [
+        {
+          "keyword": "example keyword 3",
+          "date": "2026-10-12T00:00:00Z",
+          "clicks": 1,
+          "impressions": 31,
+          "ctr": 3.2258,
+          "position": 15.483871
+        },
+        {
+          "keyword": "example keyword 3",
+          "date": "2026-10-19T00:00:00Z",
+          "clicks": 0,
+          "impressions": 32,
+          "ctr": 0,
+          "position": 17.3125
+        },
+        {
+          "keyword": "example keyword 3",
+          "date": "2026-10-26T00:00:00Z",
+          "clicks": 0,
+          "impressions": 12,
+          "ctr": 0,
+          "position": 18.083333
+        }
+      ]
+    }
+  },
+  "gsc.keywords": {
+    "input": {
+      "project_id": 1234567,
+      "date_from": "2026-10-12",
+      "date_to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "example keyword 4",
+          "urls_count": 1,
+          "top_url": "https://example.com/integrations/worldnewsapi",
+          "clicks": 49,
+          "impressions": 787,
+          "ctr": 6.2261,
+          "position": 7.857687,
+          "keyword_list_labels": []
+        },
+        {
+          "keyword": "example keyword 5",
+          "urls_count": 31,
+          "top_url": "https://example.com/",
+          "clicks": 17,
+          "impressions": 29,
+          "ctr": 58.6207,
+          "position": 1,
+          "keyword_list_labels": []
+        },
+        {
+          "keyword": "example keyword 6",
+          "urls_count": 32,
+          "top_url": "https://example.com/",
+          "clicks": 10,
+          "impressions": 285,
+          "ctr": 3.5088,
+          "position": 1.129825,
+          "keyword_list_labels": []
+        }
+      ]
+    }
+  },
+  "gsc.metricsByCountry": {
+    "input": {
+      "project_id": 1234567,
+      "date_from": "2026-10-12",
+      "date_to": "2026-11-10"
+    },
+    "response": {
+      "metrics": [
+        {
+          "country": "us",
+          "clicks": 34
+        },
+        {
+          "country": "ru",
+          "clicks": 34
+        },
+        {
+          "country": "in",
+          "clicks": 16
+        }
+      ]
+    }
+  },
+  "gsc.pageHistory": {
+    "input": {
+      "project_id": 1234567,
+      "date_from": "2026-10-12",
+      "date_to": "2026-11-10",
+      "history_grouping": "weekly",
+      "pages": "https://example.com/blog/google-drive-mcp-server-claude-code-setup"
+    },
+    "response": {
+      "metrics": [
+        {
+          "page": "https://example.com/blog/google-drive-mcp-server-claude-code-setup",
+          "date": "2026-10-12T00:00:00Z",
+          "clicks": 3,
+          "impressions": 326,
+          "ctr": 0.9202,
+          "position": 8.469325
+        },
+        {
+          "page": "https://example.com/blog/google-drive-mcp-server-claude-code-setup",
+          "date": "2026-10-19T00:00:00Z",
+          "clicks": 1,
+          "impressions": 293,
+          "ctr": 0.3413,
+          "position": 9.003413
+        },
+        {
+          "page": "https://example.com/blog/google-drive-mcp-server-claude-code-setup",
+          "date": "2026-10-26T00:00:00Z",
+          "clicks": 1,
+          "impressions": 269,
+          "ctr": 0.3717,
+          "position": 7.245353
+        }
+      ]
+    }
+  },
+  "gsc.pages": {
+    "input": {
+      "project_id": 1234567,
+      "date_from": "2026-10-12",
+      "date_to": "2026-11-10",
+      "limit": 3
+    },
+    "response": {
+      "pages": [
+        {
+          "page": "https://example.com/",
+          "keywords_count": 325,
+          "top_keyword": "example keyword 5",
+          "clicks": 57,
+          "impressions": 3057,
+          "ctr": 1.8645,
+          "position": 7.845273,
+          "traffic_value": 0.9
+        },
+        {
+          "page": "https://example.com/integrations/worldnewsapi",
+          "keywords_count": 4,
+          "top_keyword": "example keyword 4",
+          "clicks": 49,
+          "impressions": 840,
+          "ctr": 5.8333,
+          "position": 8.134522,
+          "traffic_value": null
+        },
+        {
+          "page": "https://example.com/blog/google-drive-mcp-server-claude-code-setup",
+          "keywords_count": 139,
+          "top_keyword": "example keyword 7",
+          "clicks": 6,
+          "impressions": 1162,
+          "ctr": 0.5163,
+          "position": 7.516351,
+          "traffic_value": 2
+        }
+      ]
+    }
+  },
+  "gsc.pagesHistory": {
+    "input": {
+      "project_id": 1234567,
+      "date_from": "2026-10-12",
+      "date_to": "2026-11-10",
+      "history_grouping": "weekly"
+    },
+    "response": {
+      "metrics": [
+        {
+          "date": "2026-10-12T00:00:00Z",
+          "total_pages": 247
+        },
+        {
+          "date": "2026-10-19T00:00:00Z",
+          "total_pages": 242
+        },
+        {
+          "date": "2026-10-26T00:00:00Z",
+          "total_pages": 320
+        }
+      ]
+    }
+  },
+  "gsc.performanceByDevice": {
+    "input": {
+      "project_id": 1234567,
+      "date_from": "2026-10-12",
+      "date_to": "2026-11-10"
+    },
+    "response": {
+      "metrics": [
+        {
+          "device": "desktop",
+          "clicks": 304,
+          "impressions": 70155,
+          "ctr": 0.4333,
+          "position": 10.39196
+        },
+        {
+          "device": "mobile",
+          "clicks": 111,
+          "impressions": 11141,
+          "ctr": 0.9963,
+          "position": 12.711157
+        },
+        {
+          "device": "tablet",
+          "clicks": 2,
+          "impressions": 394,
+          "ctr": 0.5076,
+          "position": 8.139594
+        }
+      ]
+    }
+  },
+  "gsc.performanceByPosition": {
+    "input": {
+      "project_id": 1234567,
+      "date_from": "2026-10-12",
+      "date_to": "2026-11-10"
+    },
+    "response": {
+      "metrics": [
+        {
+          "position_range": "1-3",
+          "clicks": 36,
+          "clicks_percent": 25.71428571428571,
+          "impressions": 2709,
+          "impressions_percent": 7.903028181340802,
+          "keyword_count": 423,
+          "keyword_count_percent": 11.538461538461538
+        },
+        {
+          "position_range": "4-10",
+          "clicks": 99,
+          "clicks_percent": 70.71428571428572,
+          "impressions": 18237,
+          "impressions_percent": 53.20322072466305,
+          "keyword_count": 1423,
+          "keyword_count_percent": 38.816148390616476
+        },
+        {
+          "position_range": "11-20",
+          "clicks": 3,
+          "clicks_percent": 2.142857142857143,
+          "impressions": 4782,
+          "impressions_percent": 13.950638893751094,
+          "keyword_count": 738,
+          "keyword_count_percent": 20.130932896890343
+        }
+      ]
+    }
+  },
+  "gsc.performanceHistory": {
+    "input": {
+      "project_id": 1234567,
+      "date_from": "2026-10-12",
+      "date_to": "2026-11-10",
+      "history_grouping": "weekly"
+    },
+    "response": {
+      "metrics": [
+        {
+          "date": "2026-10-12T00:00:00Z",
+          "clicks": 73,
+          "impressions": 14395,
+          "ctr": 0.5071,
+          "position": 8.469051
+        },
+        {
+          "date": "2026-10-19T00:00:00Z",
+          "clicks": 96,
+          "impressions": 15125,
+          "ctr": 0.6347,
+          "position": 9.047933
+        },
+        {
+          "date": "2026-10-26T00:00:00Z",
+          "clicks": 111,
+          "impressions": 22264,
+          "ctr": 0.4986,
+          "position": 11.635285
+        }
+      ]
+    }
+  },
+  "gsc.positionsHistory": {
+    "input": {
+      "project_id": 1234567,
+      "date_from": "2026-10-12",
+      "date_to": "2026-11-10",
+      "history_grouping": "weekly"
+    },
+    "response": {
+      "metrics": [
+        {
+          "date": "2026-10-12T00:00:00Z",
+          "position_1_to_3": 141,
+          "position_4_to_10": 428,
+          "position_11_to_20": 213,
+          "position_21_to_50": 216,
+          "position_51_plus": 56,
+          "total": 1054
+        },
+        {
+          "date": "2026-10-19T00:00:00Z",
+          "position_1_to_3": 155,
+          "position_4_to_10": 452,
+          "position_11_to_20": 367,
+          "position_21_to_50": 190,
+          "position_51_plus": 53,
+          "total": 1217
+        },
+        {
+          "date": "2026-10-26T00:00:00Z",
+          "position_1_to_3": 208,
+          "position_4_to_10": 629,
+          "position_11_to_20": 307,
+          "position_21_to_50": 319,
+          "position_51_plus": 187,
+          "total": 1650
+        }
+      ]
+    }
+  },
+  "keywordsExplorer.matchingTerms": {
+    "input": {
+      "keywords": "ahrefs",
+      "country": "us",
+      "select": "keyword,volume",
+      "limit": 3
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "ahrefs topic clusters guide",
+          "volume": 10
+        },
+        {
+          "keyword": "most common dreams by country ahrefs dreammoods",
+          "volume": 10
+        },
+        {
+          "keyword": "ahrefs rank tracker google",
+          "volume": 10
+        }
+      ]
+    }
+  },
+  "keywordsExplorer.relatedTerms": {
+    "input": {
+      "keywords": "ahrefs",
+      "country": "us",
+      "select": "keyword,volume",
+      "limit": 3
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "ahrefs content marketing",
+          "volume": 150
+        },
+        {
+          "keyword": "ahrefs w3schools",
+          "volume": 80
+        },
+        {
+          "keyword": "account settings",
+          "volume": 1300
+        }
+      ]
+    }
+  },
+  "keywordsExplorer.searchSuggestions": {
+    "input": {
+      "keywords": "ahrefs",
+      "country": "us",
+      "select": "keyword,volume",
+      "limit": 3
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "ahrefs 30 day trial",
+          "volume": 100
+        },
+        {
+          "keyword": "ahrefs glossary",
+          "volume": 70
+        },
+        {
+          "keyword": "ahrefs certification",
+          "volume": 350
+        }
+      ]
+    }
+  },
+  "keywordsExplorer.volumeByCountry": {
+    "input": {
+      "keyword": "ahrefs",
+      "select": "country,volume",
+      "limit": 3
+    },
+    "response": {
+      "countries": [
+        {
+          "country": "us",
+          "volume": 76000
+        },
+        {
+          "country": "in",
+          "volume": 57000
+        },
+        {
+          "country": "gb",
+          "volume": 24000
+        }
+      ]
+    }
+  },
+  "keywordsExplorer.volumeHistory": {
+    "input": {
+      "keyword": "ahrefs",
+      "country": "us",
+      "date_from": "2026-05-01"
+    },
+    "response": {
+      "metrics": [
+        {
+          "date": "2026-05-01T00:00:00Z",
+          "volume": 73024
+        },
+        {
+          "date": "2026-06-01T00:00:00Z",
+          "volume": 76146
+        },
+        {
+          "date": "2026-07-01T00:00:00Z",
+          "volume": 72330
+        }
+      ]
+    }
+  },
+  "management.keywordListKeywords": {
+    "input": {
+      "keyword_list_id": 1548813
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "example keyword 8"
+        },
+        {
+          "keyword": "example keyword 9"
+        }
+      ]
+    }
+  },
+  "management.keywordLists": {
+    "input": {},
+    "response": {
+      "keyword_lists": [
+        {
+          "keyword_list_id": "1548813",
+          "name": "Example list",
+          "location": "us",
+          "countries": [],
+          "access": "shared",
+          "owned_by": "owner@example.com",
+          "folder_id": null,
+          "keyword_count": 2
+        }
+      ]
+    }
+  },
+  "management.locations": {
+    "input": {
+      "country_code": "gb"
+    },
+    "response": {
+      "location": {
+        "country_code": "gb",
+        "languages": [["en", "English"]],
+        "locations": [
+          [2826, "United Kingdom"],
+          [20339, "England,United Kingdom"],
+          [20341, "Northern Ireland,United Kingdom"]
+        ]
+      }
+    }
+  },
+  "management.projectKeywords": {
+    "input": {
+      "project_id": 1234567
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "example keyword 10",
+          "language_code": "en",
+          "language": "English",
+          "location_id": 2840,
+          "location": "United States",
+          "tags": ["app-page"]
+        },
+        {
+          "keyword": "example keyword 11",
+          "language_code": "en",
+          "language": "English",
+          "location_id": 2840,
+          "location": "United States",
+          "tags": ["app-page"]
+        },
+        {
+          "keyword": "example keyword 12",
+          "language_code": "en",
+          "language": "English",
+          "location_id": 2840,
+          "location": "United States",
+          "tags": ["app-page"]
+        }
+      ]
+    }
+  },
+  "management.projects": {
+    "input": {},
+    "response": {
+      "projects": [
+        {
+          "project_id": "1234567",
+          "project_name": "Example",
+          "url": "example.com/",
+          "mode": "subdomains",
+          "protocol": "both",
+          "access": "shared",
+          "verified": true,
+          "folder": null,
+          "owned_by": "owner@example.com",
+          "keyword_count": 50,
+          "web_analytics_data_key": "redacted"
+        }
+      ]
+    }
+  },
+  "rankTracker.competitorsOverview": {
+    "input": {
+      "project_id": 1234567,
+      "device": "desktop",
+      "date": "2026-11-11",
+      "select": "keyword,volume,competitors_list",
+      "limit": 3
+    },
+    "response": {
+      "keywords": [
+        {
+          "keyword": "calendly mcp",
+          "volume": 200,
+          "competitors_list": [
+            {
+              "url": "https://example.com/integrations/calendly",
+              "position": 19,
+              "best_position_kind": "organic",
+              "traffic": 1,
+              "value": null
+            },
+            {
+              "url": "https://composio.dev/toolkits/calendly",
+              "position": 11,
+              "best_position_kind": "organic",
+              "traffic": 9,
+              "value": null
+            },
+            {
+              "url": "https://zapier.com/mcp/calendly",
+              "position": 6,
+              "best_position_kind": "organic",
+              "traffic": 13,
+              "value": null
+            }
+          ]
+        },
+        {
+          "keyword": "intercom mcp",
+          "volume": 20,
+          "competitors_list": [
+            {
+              "url": "https://example.com/integrations/intercom",
+              "position": 24,
+              "best_position_kind": "organic",
+              "traffic": 0,
+              "value": 23
+            },
+            {
+              "url": "https://docs.composio.dev/toolkits/intercom_mcp",
+              "position": 25,
+              "best_position_kind": "organic",
+              "traffic": 0,
+              "value": 19
+            },
+            {
+              "url": null,
+              "position": null,
+              "best_position_kind": null,
+              "traffic": 0,
+              "value": null
+            }
+          ]
+        },
+        {
+          "keyword": "airtable mcp",
+          "volume": 250,
+          "competitors_list": [
+            {
+              "url": null,
+              "position": null,
+              "best_position_kind": null,
+              "traffic": 0,
+              "value": null
+            },
+            {
+              "url": "https://composio.dev/toolkits/airtable",
+              "position": 6,
+              "best_position_kind": "ai_overview",
+              "traffic": 13,
+              "value": 667
+            },
+            {
+              "url": null,
+              "position": null,
+              "best_position_kind": null,
+              "traffic": 0,
+              "value": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "rankTracker.serpOverview": {
+    "input": {
+      "project_id": 1234567,
+      "keyword": "airtable mcp",
+      "country": "us",
+      "device": "desktop",
+      "top_positions": 3
+    },
+    "response": {
+      "positions": [
+        {
+          "position": 1,
+          "title": "Using the Airtable MCP server",
+          "url": "https://support.airtable.com/articles/9897799762-using-the-airtable-mcp-server",
+          "type": ["organic"],
+          "update_date": "2026-11-09T14:31:15Z",
+          "nr_words": 2071,
+          "domain_rating": 91,
+          "url_rating": 4,
+          "ahrefs_rank": 646,
+          "backlinks": 116,
+          "refdomains": 79,
+          "traffic": 181,
+          "value": 9600,
+          "keywords": 1,
+          "top_keyword": "airtable mcp",
+          "top_keyword_volume": 800,
+          "page_type": "Article > How-to"
+        },
+        {
+          "position": 2,
+          "title": "Airtable's MCP server now builds interfaces and automations",
+          "url": "https://www.airtable.com/articles/mcp-server-interfaces-automations",
+          "type": ["organic"],
+          "update_date": "2026-11-09T14:31:15Z",
+          "nr_words": 2070,
+          "domain_rating": 91,
+          "url_rating": 4,
+          "ahrefs_rank": 646,
+          "backlinks": 13,
+          "refdomains": 10,
+          "traffic": 80,
+          "value": 4221,
+          "keywords": 1,
+          "top_keyword": "airtable mcp",
+          "top_keyword_volume": 800,
+          "page_type": "Article > News"
+        },
+        {
+          "position": 3,
+          "title": "domdomegg/airtable-mcp-server",
+          "url": "https://github.com/domdomegg/airtable-mcp-server",
+          "type": ["organic"],
+          "update_date": "2026-11-09T14:31:15Z",
+          "nr_words": 2145,
+          "domain_rating": 97,
+          "url_rating": 4,
+          "ahrefs_rank": 15,
+          "backlinks": 1651,
+          "refdomains": 524,
+          "traffic": 66,
+          "value": 3492,
+          "keywords": 1,
+          "top_keyword": "airtable mcp",
+          "top_keyword_volume": 800,
+          "page_type": "Listing > Product"
+        }
+      ]
+    }
+  },
+  "siteAudit.issues": {
+    "input": {
+      "project_id": 1234567
+    },
+    "response": {
+      "issues": [
+        {
+          "issue_id": "854c2345-b0f8-4853-9677-2a2d5064bb6d",
+          "name": "Article page missing Article schema",
+          "importance": "Notice",
+          "category": "AI Discoverability",
+          "is_indexable": null,
+          "crawled": 378,
+          "change": 252,
+          "added": 233,
+          "new": 22,
+          "removed": 3,
+          "missing": 0
+        },
+        {
+          "issue_id": "a9e4af25-cc90-4451-a072-af97bc60672e",
+          "name": "Category page missing ItemList schema",
+          "importance": "Notice",
+          "category": "AI Discoverability",
+          "is_indexable": null,
+          "crawled": 0,
+          "change": 0,
+          "added": 0,
+          "new": 0,
+          "removed": 0,
+          "missing": 0
+        },
+        {
+          "issue_id": "b23ae498-5dee-4626-930b-9d5facd8a17d",
+          "name": "Changed pages not submitted to IndexNow",
+          "importance": "Notice",
+          "category": "AI Discoverability",
+          "is_indexable": null,
+          "crawled": 1688,
+          "change": -265,
+          "added": null,
+          "new": null,
+          "removed": null,
+          "missing": null
+        }
+      ]
+    }
+  },
+  "siteAudit.pageContent": {
+    "input": {
+      "project_id": 1234567,
+      "target_url": "https://example.com/",
+      "select": "crawl_datetime,page_text_md"
+    },
+    "response": {
+      "page-content": {
+        "crawl_datetime": "2026-11-11T06:13:50Z",
+        "page_text_md": "# Example\n\nExample page text."
+      }
+    }
+  },
+  "siteAudit.pageExplorer": {
+    "input": {
+      "project_id": 1234567,
+      "select": "url,http_code,title,depth",
+      "limit": 3
+    },
+    "response": {
+      "pages": [
+        {
+          "url": "https://example.com/",
+          "http_code": 200,
+          "title": ["Example — Open Source Integration Layer for AI Agents"],
+          "depth": 0
+        },
+        {
+          "url": "https://example.com/blog/example-vs-pipedream-ai-agent-automation-infrastructure",
+          "http_code": 200,
+          "title": [
+            "Example vs Pipedream: Best AI Agent Automation Platform | Example"
+          ],
+          "depth": 0
+        },
+        {
+          "url": "https://example.com/oss",
+          "http_code": 200,
+          "title": ["OSS Integrations | Example"],
+          "depth": 1
+        }
+      ]
+    }
+  },
+  "siteAudit.projects": {
+    "input": {},
+    "response": {
+      "healthscores": [
+        {
+          "project_id": "1234567",
+          "project_name": "Example",
+          "target_protocol": "both",
+          "target_url": "example.com/",
+          "target_mode": "subdomains",
+          "date": "2026-11-11T09:14:01Z",
+          "status": "Completed",
+          "health_score": 98,
+          "urls_with_errors": 96,
+          "urls_with_warnings": 4589,
+          "urls_with_notices": 4513,
+          "total": 5374
+        }
+      ]
+    }
+  },
+  "siteExplorer.allBacklinks": {
+    "input": {
+      "target": "ahrefs.com",
+      "select": "url_from,url_to,anchor,domain_rating_source,first_seen",
+      "limit": 3
+    },
+    "response": {
+      "backlinks": [
+        {
+          "url_from": "https://zapier.com/blog/best-keyword-research-tool/",
+          "url_to": "https://ahrefs.com/keyword-generator",
+          "anchor": "Free Keyword Generator",
+          "domain_rating_source": 92,
+          "first_seen": "2021-06-02T23:03:55Z"
+        },
+        {
+          "url_from": "https://zapier.com/blog/best-keyword-research-tool/",
+          "url_to": "https://ahrefs.com/keyword-difficulty",
+          "anchor": "Keyword Difficulty Checker",
+          "domain_rating_source": 92,
+          "first_seen": "2021-06-02T23:03:55Z"
+        },
+        {
+          "url_from": "https://zapier.com/blog/best-keyword-research-tool/",
+          "url_to": "https://ahrefs.com/free-seo-tools",
+          "anchor": "Ahrefs Free SEO Tools",
+          "domain_rating_source": 92,
+          "first_seen": "2021-06-02T23:03:55Z"
+        }
+      ]
+    }
+  },
+  "siteExplorer.anchors": {
+    "input": {
+      "target": "ahrefs.com",
+      "select": "anchor,refpages,dofollow_links",
+      "order_by": "refpages:desc",
+      "limit": 3
+    },
+    "response": {
+      "anchors": [
+        {
+          "anchor": "",
+          "refpages": 5805275,
+          "dofollow_links": 12612104
+        },
+        {
+          "anchor": "AHREFs",
+          "refpages": 4023342,
+          "dofollow_links": 3951684
+        }
+      ]
+    }
+  },
+  "siteExplorer.brokenBacklinks": {
+    "input": {
+      "target": "ahrefs.com",
+      "select": "url_from,url_to,anchor,http_code",
+      "limit": 3
+    },
+    "response": {
+      "backlinks": [
+        {
+          "url_from": "https://www.ibest.tw/seo-detail/basic-knowledge/",
+          "url_to": "https://help.ahrefs.com/en/articles/2240105-%E6%9C%89%E5%85%8D%E8%B4%B9%E8%AF%95%E7%94%A8%E7%89%88%E6%88%96%E4%BC%98%E6%83%A0%E5%88%B8%E5%90%97",
+          "anchor": "體驗連結",
+          "http_code": 200
+        },
+        {
+          "url_from": "https://blog.hubspot.com/website/website-seo-software",
+          "url_to": "https://ahrefs.com/blog/historical-keyword-data/%23:~:text%3DHistorical%2520mode,that%2520happened%2520back%2520in%2520time./",
+          "anchor": "its historical keyword data goes back to May 2015,",
+          "http_code": 200
+        },
+        {
+          "url_from": "https://www.karinex.de/blogs/news/windows-11-download-iso-produktschluessel-installation",
+          "url_to": "https://ahrefs.com/privacy",
+          "anchor": "Datenschutzerklärung des Anbieters lesen",
+          "http_code": 200
+        }
+      ]
+    }
+  },
+  "siteExplorer.domainRatingHistory": {
+    "input": {
+      "target": "ahrefs.com",
+      "date_from": "2026-08-01",
+      "history_grouping": "monthly"
+    },
+    "response": {
+      "domain_ratings": [
+        {
+          "date": "2026-08-01T00:00:00Z",
+          "domain_rating": 91
+        },
+        {
+          "date": "2026-09-01T00:00:00Z",
+          "domain_rating": 91
+        },
+        {
+          "date": "2026-10-01T00:00:00Z",
+          "domain_rating": 91
+        }
+      ]
+    }
+  },
+  "siteExplorer.keywordsHistory": {
+    "input": {
+      "target": "ahrefs.com",
+      "date_from": "2026-08-01",
+      "history_grouping": "monthly"
+    },
+    "response": {
+      "keywords": [
+        {
+          "date": "2026-08-01T00:00:00Z",
+          "top3": 20640,
+          "top4_10": 23729,
+          "top11_plus": 5779
+        },
+        {
+          "date": "2026-09-01T00:00:00Z",
+          "top3": 18562,
+          "top4_10": 22743,
+          "top11_plus": 4662
+        },
+        {
+          "date": "2026-10-01T00:00:00Z",
+          "top3": 21345,
+          "top4_10": 20706,
+          "top11_plus": 2384
+        }
+      ]
+    }
+  },
+  "siteExplorer.linkedDomains": {
+    "input": {
+      "target": "ahrefs.com",
+      "select": "domain,dofollow_links,domain_rating",
+      "limit": 3
+    },
+    "response": {
+      "linkeddomains": [
+        {
+          "domain": "abc.xyz",
+          "dofollow_links": 1,
+          "domain_rating": 83
+        },
+        {
+          "domain": "whitespark.ca",
+          "dofollow_links": 9,
+          "domain_rating": 82
+        },
+        {
+          "domain": "digitas.co.uk",
+          "dofollow_links": 0,
+          "domain_rating": 70
+        }
+      ]
+    }
+  },
+  "siteExplorer.metrics": {
+    "input": {
+      "target": "ahrefs.com",
+      "date": "2026-11-01"
+    },
+    "response": {
+      "metrics": {
+        "org_keywords": 36060,
+        "paid_keywords": 104,
+        "org_keywords_1_3": 18539,
+        "org_traffic": 3270234,
+        "org_cost": 428325352,
+        "paid_traffic": 4106,
+        "paid_cost": 723476,
+        "paid_pages": 24
+      }
+    }
+  },
+  "siteExplorer.metricsHistory": {
+    "input": {
+      "target": "ahrefs.com",
+      "date_from": "2026-08-01",
+      "history_grouping": "monthly"
+    },
+    "response": {
+      "metrics": [
+        {
+          "date": "2026-08-01T00:00:00Z",
+          "org_cost": 602033090,
+          "org_traffic": 3526638,
+          "paid_cost": 383849,
+          "paid_traffic": 1724
+        },
+        {
+          "date": "2026-09-01T00:00:00Z",
+          "org_cost": 525006165,
+          "org_traffic": 5134485,
+          "paid_cost": 40312,
+          "paid_traffic": 344
+        },
+        {
+          "date": "2026-10-01T00:00:00Z",
+          "org_cost": 416801903,
+          "org_traffic": 3218664,
+          "paid_cost": 275942,
+          "paid_traffic": 2035
+        }
+      ]
+    }
+  },
+  "siteExplorer.organicCompetitors": {
+    "input": {
+      "target": "wordcount.com",
+      "date": "2026-11-01",
+      "country": "us",
+      "select": "competitor_domain,keywords_common,share",
+      "limit": 3
+    },
+    "response": {
+      "competitors": [
+        {
+          "competitor_domain": "abadis.ir",
+          "keywords_common": 172,
+          "share": 0.9
+        },
+        {
+          "competitor_domain": "ahrefs.com",
+          "keywords_common": 125,
+          "share": 0.5
+        },
+        {
+          "competitor_domain": "bing.com",
+          "keywords_common": 475,
+          "share": 2.4
+        }
+      ]
+    }
+  },
+  "siteExplorer.pagesByBacklinks": {
+    "input": {
+      "target": "wordcount.com",
+      "select": "url_to,links_to_target,title_target",
+      "limit": 3
+    },
+    "response": {
+      "pages": [
+        {
+          "url_to": "https://wordcount.com/",
+          "links_to_target": 164038,
+          "title_target": "Word Count — Free Online Word Counter, No Signup"
+        },
+        {
+          "url_to": "https://wordcount.com/grammar-checker",
+          "links_to_target": 128088,
+          "title_target": "Grammar Checker & Spell Check — Online Proofreader | Free"
+        },
+        {
+          "url_to": "https://wordcount.com/th/translator/th/en",
+          "links_to_target": 22863,
+          "title_target": "ไทยแปลอังกฤษ ฟรี เลือกโทนทางการหรือเป็นกันเองได้ | WordCount"
+        }
+      ]
+    }
+  },
+  "siteExplorer.pagesByTraffic": {
+    "input": {
+      "target": "ahrefs.com"
+    },
+    "response": {
+      "pages": {
+        "range0_pages": 1920,
+        "range100_traffic": 44732,
+        "range100_pages": 2758,
+        "range1k_traffic": 117876,
+        "range1k_pages": 390,
+        "range5k_traffic": 134087,
+        "range5k_pages": 66,
+        "range10k_traffic": 136560,
+        "range10k_pages": 17,
+        "range10k_plus_traffic": 3492391,
+        "range10k_plus_pages": 25
+      }
+    }
+  },
+  "siteExplorer.refdomainsHistory": {
+    "input": {
+      "target": "ahrefs.com",
+      "date_from": "2026-08-01",
+      "history_grouping": "monthly"
+    },
+    "response": {
+      "refdomains": [
+        {
+          "date": "2026-08-01T00:00:00Z",
+          "refdomains": 109235
+        },
+        {
+          "date": "2026-09-01T00:00:00Z",
+          "refdomains": 114046
+        },
+        {
+          "date": "2026-10-01T00:00:00Z",
+          "refdomains": 118160
+        }
+      ]
+    }
+  },
+  "subscriptionInfo.limitsAndUsage": {
+    "input": {},
+    "response": {
+      "limits_and_usage": {
+        "subscription": "Lite, billed monthly",
+        "usage_reset_date": "2026-11-27T00:00:00Z",
+        "units_limit_workspace": 200000,
+        "units_usage_workspace": 24036,
+        "units_limit_api_key": null,
+        "units_usage_api_key": 200,
+        "api_key_expiration_date": "2036-11-12T23:59:58Z"
+      }
+    }
+  }
+}

@@ -8,7 +8,725 @@ description: "API reference for the Ahrefs plugin in Corsair: every `ahrefs.api.
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Gsc
+
+### anonymousQueries
+
+`gsc.anonymousQueries`
+
+Estimate the queries Search Console hides as anonymous for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.gsc.anonymousQueries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | A comma-separated list of columns to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `order_by` | `string` | No | A comma-separated list of columns to order results by, with optional direction. |
+| `limit` | `number` | No | The number of results to return. |
+| `timeout` | `number` | No | A manual timeout duration in seconds. |
+| `project_id` | `number` | Yes | Project ID |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `country` | `string` | Yes | A two-letter country code (ISO 3166-1 alpha-2). |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keywords full type">
+
+```ts
+{
+  cpc?: number | null,
+  keyword?: string | null,
+  keyword_country?: string | null,
+  keyword_difficulty?: number | null,
+  position?: number | null,
+  position_kind?: string | null,
+  traffic?: number | null,
+  url?: string | null,
+  volume?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ctrByPosition
+
+`gsc.ctrByPosition`
+
+Get average Search Console CTR for each ranking position
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.gsc.ctrByPosition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | No | Project ID. |
+| `portfolio_id` | `number` | No | Portfolio ID. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `device` | `desktop \| mobile \| tablet` | No | Filter by device type (DESKTOP, MOBILE, TABLET). |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  average_ctr_percent?: number | null,
+  keyword_count?: number | null,
+  position?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### keywordHistory
+
+`gsc.keywordHistory`
+
+Get Search Console history for specific queries
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.gsc.keywordHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | No | Project ID. |
+| `portfolio_id` | `number` | No | Portfolio ID. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `history_grouping` | `daily \| weekly \| monthly` | No | The time interval used to group historical data. |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `device` | `desktop \| mobile \| tablet` | No | Filter by device type (DESKTOP, MOBILE, TABLET). |
+| `keywords` | `string` | No | A comma-separated list of keywords to get history data for. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  clicks?: number | null,
+  ctr?: number | null,
+  date?: string | null,
+  impressions?: number | null,
+  keyword?: string | null,
+  position?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### keywords
+
+`gsc.keywords`
+
+List Search Console queries for a project with clicks, impressions, CTR and average position
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.gsc.keywords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | No | Project ID. |
+| `portfolio_id` | `number` | No | Portfolio ID. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `search_type` | `web \| image \| video \| news` | No | The type of search results to return (web, image, video, news). |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `device` | `desktop \| mobile \| tablet` | No | Filter by device type (DESKTOP, MOBILE, TABLET). |
+| `limit` | `number` | No | The number of results to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `keyword_list_id` | `number` | No | The id of an existing keyword list to show metrics for. |
+| `keyword_lists` | `string` | No | Keyword lists filter (JSON string). |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keywords full type">
+
+```ts
+{
+  clicks?: number | null,
+  ctr?: number | null,
+  impressions?: number | null,
+  keyword?: string | null,
+  keyword_list_labels?: string[] | null,
+  position?: number | null,
+  top_url?: string | null,
+  urls_count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### metricsByCountry
+
+`gsc.metricsByCountry`
+
+Get Search Console clicks by country
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.gsc.metricsByCountry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | No | Project ID. |
+| `portfolio_id` | `number` | No | Portfolio ID. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `history_grouping` | `daily \| weekly \| monthly` | No | The time interval used to group historical data. |
+| `search_type` | `web \| image \| video \| news` | No | The type of search results to return (web, image, video, news). |
+| `device` | `desktop \| mobile \| tablet` | No | Filter by device type (DESKTOP, MOBILE, TABLET). |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  clicks?: number | null,
+  country?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pageHistory
+
+`gsc.pageHistory`
+
+Get Search Console history for specific pages
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.gsc.pageHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | No | Project ID. |
+| `portfolio_id` | `number` | No | Portfolio ID. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `history_grouping` | `daily \| weekly \| monthly` | No | The time interval used to group historical data. |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `device` | `desktop \| mobile \| tablet` | No | Filter by device type (DESKTOP, MOBILE, TABLET). |
+| `pages` | `string` | No | A comma-separated list of page URLs to get history data for. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  clicks?: number | null,
+  ctr?: number | null,
+  date?: string | null,
+  impressions?: number | null,
+  page?: string | null,
+  position?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pages
+
+`gsc.pages`
+
+List Search Console pages for a project with clicks, impressions, CTR and average position
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.gsc.pages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | No | Project ID. |
+| `portfolio_id` | `number` | No | Portfolio ID. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `search_type` | `web \| image \| video \| news` | No | The type of search results to return (web, image, video, news). |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `device` | `desktop \| mobile \| tablet` | No | Filter by device type (DESKTOP, MOBILE, TABLET). |
+| `limit` | `number` | No | The number of results to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  clicks?: number | null,
+  ctr?: number | null,
+  impressions?: number | null,
+  keywords_count?: number | null,
+  page?: string | null,
+  position?: number | null,
+  top_keyword?: string | null,
+  traffic_value?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pagesHistory
+
+`gsc.pagesHistory`
+
+Get the number of pages with Search Console impressions over time
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.gsc.pagesHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | No | Project ID. |
+| `portfolio_id` | `number` | No | Portfolio ID. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `history_grouping` | `daily \| weekly \| monthly` | No | The time interval used to group historical data. |
+| `search_type` | `web \| image \| video \| news` | No | The type of search results to return (web, image, video, news). |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `device` | `desktop \| mobile \| tablet` | No | Filter by device type (DESKTOP, MOBILE, TABLET). |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  date?: string | null,
+  total_pages?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### performanceByDevice
+
+`gsc.performanceByDevice`
+
+Get Search Console performance split by device
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.gsc.performanceByDevice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | No | Project ID. |
+| `portfolio_id` | `number` | No | Portfolio ID. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `search_type` | `web \| image \| video \| news` | No | The type of search results to return (web, image, video, news). |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  clicks?: number | null,
+  ctr?: number | null,
+  device?: string | null,
+  impressions?: number | null,
+  position?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### performanceByPosition
+
+`gsc.performanceByPosition`
+
+Get Search Console clicks and impressions split by position range
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.gsc.performanceByPosition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | No | Project ID. |
+| `portfolio_id` | `number` | No | Portfolio ID. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `search_type` | `web \| image \| video \| news` | No | The type of search results to return (web, image, video, news). |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `device` | `desktop \| mobile \| tablet` | No | Filter by device type (DESKTOP, MOBILE, TABLET). |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  clicks?: number | null,
+  clicks_percent?: number | null,
+  impressions?: number | null,
+  impressions_percent?: number | null,
+  keyword_count?: number | null,
+  keyword_count_percent?: number | null,
+  position_range?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### performanceHistory
+
+`gsc.performanceHistory`
+
+Get Search Console clicks, impressions, CTR and position over time
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.gsc.performanceHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | No | Project ID. |
+| `portfolio_id` | `number` | No | Portfolio ID. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `history_grouping` | `daily \| weekly \| monthly` | No | The time interval used to group historical data. |
+| `search_type` | `web \| image \| video \| news` | No | The type of search results to return (web, image, video, news). |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `device` | `desktop \| mobile \| tablet` | No | Filter by device type (DESKTOP, MOBILE, TABLET). |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  clicks?: number | null,
+  ctr?: number | null,
+  date?: string | null,
+  impressions?: number | null,
+  position?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### positionsHistory
+
+`gsc.positionsHistory`
+
+Get how many queries rank in each position bucket over time in Search Console
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.gsc.positionsHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | No | Project ID. |
+| `portfolio_id` | `number` | No | Portfolio ID. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `history_grouping` | `daily \| weekly \| monthly` | No | The time interval used to group historical data. |
+| `search_type` | `web \| image \| video \| news` | No | The type of search results to return (web, image, video, news). |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `device` | `desktop \| mobile \| tablet` | No | Filter by device type (DESKTOP, MOBILE, TABLET). |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  date?: string | null,
+  position_1_to_3?: number | null,
+  position_4_to_10?: number | null,
+  position_11_to_20?: number | null,
+  position_21_to_50?: number | null,
+  position_51_plus?: number | null,
+  total?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Keywords Explorer
+
+### matchingTerms
+
+`keywordsExplorer.matchingTerms`
+
+Find keyword ideas that contain the seed keywords
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.keywordsExplorer.matchingTerms({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | A comma-separated list of columns to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `order_by` | `string` | No | A column to order results by. |
+| `limit` | `number` | No | The number of results to return. |
+| `timeout` | `number` | No | A manual timeout duration in seconds. |
+| `keyword_list_id` | `number` | No | The id of an existing keyword list. |
+| `keywords` | `string` | No | A comma-separated list of keywords to show metrics for. |
+| `country` | `string` | Yes | A country code, or all for matching terms across all locations. |
+| `terms` | `all \| questions \| global` | No | All keyword ideas (all), questions (questions), or global terms including translations (global). |
+| `match_mode` | `terms \| phrase` | No | Keyword ideas contain the words from your query in any order (terms) or in the exact order they are written (phrase). |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keywords full type">
+
+```ts
+{
+  country?: string | null,
+  cpc?: number | null,
+  cps?: number | null,
+  difficulty?: number | null,
+  first_seen?: string | null,
+  global_traffic_potential?: number | null,
+  global_volume?: number | null,
+  intents?: Record<string, any> | null,
+  keyword?: string | null,
+  parent_topic?: string | null,
+  serp_features?: string[] | null,
+  serp_last_update?: string | null,
+  traffic_potential?: number | null,
+  volume?: number | null,
+  volume_desktop_pct?: number | null,
+  volume_mobile_pct?: number | null,
+  volume_monthly?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### overview
 
@@ -91,7 +809,547 @@ await corsair.ahrefs.api.keywordsExplorer.overview({});
 
 ---
 
+### relatedTerms
+
+`keywordsExplorer.relatedTerms`
+
+Find related keyword ideas that top pages also rank for or talk about
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.keywordsExplorer.relatedTerms({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | A comma-separated list of columns to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `order_by` | `string` | No | A column to order results by. |
+| `limit` | `number` | No | The number of results to return. |
+| `timeout` | `number` | No | A manual timeout duration in seconds. |
+| `keyword_list_id` | `number` | No | The id of an existing keyword list. |
+| `keywords` | `string` | No | A comma-separated list of keywords to show metrics for. |
+| `country` | `string` | Yes | A two-letter country code (ISO 3166-1 alpha-2). |
+| `terms` | `all \| also_rank_for \| also_talk_about` | No | Related keywords which top-ranking pages also rank for (also_rank_for), additional keywords frequently mentioned in top-ranking pages (also_talk_about), or comb |
+| `view_for` | `top_10 \| top_100` | No | View keywords for the top 10 or top 100 ranking pages. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keywords full type">
+
+```ts
+{
+  country?: string | null,
+  cpc?: number | null,
+  cps?: number | null,
+  difficulty?: number | null,
+  first_seen?: string | null,
+  global_traffic_potential?: number | null,
+  global_volume?: number | null,
+  intents?: Record<string, any> | null,
+  keyword?: string | null,
+  parent_topic?: string | null,
+  serp_features?: string[] | null,
+  serp_last_update?: string | null,
+  traffic_potential?: number | null,
+  volume?: number | null,
+  volume_desktop_pct?: number | null,
+  volume_mobile_pct?: number | null,
+  volume_monthly?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchSuggestions
+
+`keywordsExplorer.searchSuggestions`
+
+Get search autocomplete suggestions for seed keywords
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.keywordsExplorer.searchSuggestions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | A comma-separated list of columns to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `order_by` | `string` | No | A column to order results by. |
+| `limit` | `number` | No | The number of results to return. |
+| `timeout` | `number` | No | A manual timeout duration in seconds. |
+| `keyword_list_id` | `number` | No | The id of an existing keyword list. |
+| `keywords` | `string` | No | A comma-separated list of keywords to show metrics for. |
+| `country` | `string` | Yes | A two-letter country code (ISO 3166-1 alpha-2). |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keywords full type">
+
+```ts
+{
+  country?: string | null,
+  cpc?: number | null,
+  cps?: number | null,
+  difficulty?: number | null,
+  first_seen?: string | null,
+  global_traffic_potential?: number | null,
+  global_volume?: number | null,
+  intents?: Record<string, any> | null,
+  keyword?: string | null,
+  parent_topic?: string | null,
+  serp_features?: string[] | null,
+  serp_last_update?: string | null,
+  traffic_potential?: number | null,
+  volume?: number | null,
+  volume_desktop_pct?: number | null,
+  volume_mobile_pct?: number | null,
+  volume_monthly?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### volumeByCountry
+
+`keywordsExplorer.volumeByCountry`
+
+Get search volume for keywords in each country
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.keywordsExplorer.volumeByCountry({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | A comma-separated list of fields to return. |
+| `order_by` | `string` | No | A field to order the results by, with optional direction. |
+| `limit` | `number` | No | The number of results to return. |
+| `offset` | `number` | No | The number of results to skip. |
+| `keyword_list_id` | `number` | No | The id of an existing keyword list. |
+| `keyword` | `string` | No | A comma-separated list of keywords to show metrics for. |
+| `countries` | `string` | No | A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2). |
+| `volume_monthly_date_from` | `string` | No | The start date in YYYY-MM-DD format for retrieving historical monthly search volumes in the volume_monthly_history field. |
+| `volume_monthly_date_to` | `string` | No | The end date in YYYY-MM-DD format for retrieving historical monthly search volumes in the volume_monthly_history field. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `countries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="countries full type">
+
+```ts
+{
+  country?: string | null,
+  cpc?: number | null,
+  difficulty?: number | null,
+  growth_rate_12m?: number | null,
+  has_serp?: boolean | null,
+  top_keyword?: string | null,
+  top_page?: string | null,
+  top_page_title?: string | null,
+  traffic_potential?: number | null,
+  volume?: number | null,
+  volume_monthly_history?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### volumeHistory
+
+`keywordsExplorer.volumeHistory`
+
+Get monthly search volume history for a keyword
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.keywordsExplorer.volumeHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword` | `string` | Yes | The keyword to show metrics for. |
+| `country` | `string` | Yes | A country code, or all for all locations. |
+| `date_from` | `string` | No | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  date?: string | null,
+  volume?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Management
+
+### keywordListKeywords
+
+`management.keywordListKeywords`
+
+List keywords in a saved keyword list
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.management.keywordListKeywords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword_list_id` | `number` | Yes | The id of an existing keyword list. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keywords full type">
+
+```ts
+{
+  keyword?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### keywordLists
+
+`management.keywordLists`
+
+List saved Keywords Explorer keyword lists
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.management.keywordLists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword_lists` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keyword_lists full type">
+
+```ts
+{
+  access?: string | null,
+  countries?: string[] | null,
+  folder_id?: string | null,
+  keyword_count?: number | null,
+  keyword_list_id?: string | null,
+  location?: string | null,
+  name?: string | null,
+  owned_by?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations
+
+`management.locations`
+
+Look up Rank Tracker location ids for a country
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.management.locations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country_code` | `string` | Yes | A two-letter country code (ISO 3166-1 alpha-2). |
+| `us_state` | `string` | No | A two-letter US state code (ISO 3166-2:US). |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  country_code?: string | null,
+  languages?: any[] | null,
+  locations?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### projectKeywords
+
+`management.projectKeywords`
+
+List keywords tracked in a Rank Tracker project
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.management.projectKeywords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | The unique identifier of the project. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keywords full type">
+
+```ts
+{
+  keyword?: string | null,
+  language?: string | null,
+  language_code?: string | null,
+  location?: string | null,
+  location_id?: number | null,
+  tags?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### projects
+
+`management.projects`
+
+List Ahrefs projects in the workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.management.projects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `access` | `private \| shared` | No | The access type of the project. |
+| `owned_by` | `string` | No | The email of the project owner |
+| `project_id` | `number` | No | The unique identifier of the project. |
+| `has_keywords` | `boolean` | No | Has Rank Tracker keywords. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  access?: string | null,
+  folder?: Record<string, any> | null,
+  keyword_count?: number | null,
+  mode?: string | null,
+  owned_by?: string | null,
+  project_id?: string | null,
+  project_name?: string | null,
+  protocol?: string | null,
+  url?: string | null,
+  verified?: boolean | null,
+  web_analytics_data_key?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Rank Tracker
+
+### competitorsOverview
+
+`rankTracker.competitorsOverview`
+
+Compare positions of tracked keywords against project competitors
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.rankTracker.competitorsOverview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | A comma-separated list of columns to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `order_by` | `string` | No | A comma-separated list of columns to order results by, with optional direction. |
+| `limit` | `number` | No | The number of results to return. |
+| `timeout` | `number` | No | A manual timeout duration in seconds. |
+| `volume_mode` | `monthly \| average` | No | The search volume calculation mode: monthly or average. |
+| `project_id` | `number` | Yes | The unique identifier of the project. |
+| `device` | `desktop \| mobile` | Yes | Choose between mobile and desktop rankings. |
+| `date` | `string` | Yes | A date to report metrics on in YYYY-MM-DD format. |
+| `date_compared` | `string` | No | A date to compare metrics with in YYYY-MM-DD format. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keywords full type">
+
+```ts
+{
+  competitors_list?: any[] | null,
+  country?: string | null,
+  keyword?: string | null,
+  keyword_difficulty?: number | null,
+  keyword_has_data?: boolean | null,
+  keyword_is_frozen?: boolean | null,
+  language?: string | null,
+  location?: string | null,
+  serp_features?: string[] | null,
+  serp_updated?: string | null,
+  serp_updated_prev?: string | null,
+  tags?: string[] | null,
+  volume?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### overview
 
@@ -144,6 +1402,71 @@ await corsair.ahrefs.api.rankTracker.overview({});
   volume?: number | null,
   traffic?: number | null,
   url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### serpOverview
+
+`rankTracker.serpOverview`
+
+Get the latest search results for a tracked keyword in a Rank Tracker project
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.rankTracker.serpOverview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | The unique identifier of the project. |
+| `keyword` | `string` | Yes | The keyword to return SERP Overview for. |
+| `language_code` | `string` | No | The language code of a tracked keyword.You can use the management/project-keywords endpoint to get country codes, language codes and location IDs for your track |
+| `country` | `string` | Yes | A two-letter country code (ISO 3166-1 alpha-2). |
+| `location_id` | `number` | No | The location ID of a tracked keyword.You can use the management/project-keywords endpoint to get country codes, language codes and location IDs for your tracked |
+| `date` | `string` | No | A timestamp on which the last available SERP Overview is returned in YYYY-MM-DDThh:mm:ss format. |
+| `device` | `desktop \| mobile` | Yes | Choose between mobile and desktop rankings. |
+| `top_positions` | `number` | No | The number of top organic SERP positions to return. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `positions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="positions full type">
+
+```ts
+{
+  ahrefs_rank?: number | null,
+  backlinks?: number | null,
+  domain_rating?: number | null,
+  keywords?: number | null,
+  nr_words?: number | null,
+  page_type?: string | null,
+  position?: number | null,
+  refdomains?: number | null,
+  title?: string | null,
+  top_keyword?: string | null,
+  top_keyword_volume?: number | null,
+  traffic?: number | null,
+  type?: string[] | null,
+  update_date?: string | null,
+  url?: string | null,
+  url_rating?: number | null,
+  value?: number | null
 }[]
 ```
 </Accordion>
@@ -211,7 +1534,436 @@ await corsair.ahrefs.api.serp.overview({});
 
 ---
 
+## Site Audit
+
+### issues
+
+`siteAudit.issues`
+
+List Site Audit issues for a project with affected URL counts
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteAudit.issues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | Yes | The unique identifier of the project. |
+| `date` | `string` | No | A timestamp in YYYY-MM-DDThh:mm:ss format specifying the crawl date to retrieve metrics from. |
+| `date_compared` | `string` | No | A timestamp in YYYY-MM-DDThh:mm:ss format specifying the crawl date to compare metrics with. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issues` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="issues full type">
+
+```ts
+{
+  added?: number | null,
+  category?: string | null,
+  change?: number | null,
+  crawled?: number | null,
+  importance?: string | null,
+  is_indexable?: boolean | null,
+  issue_id?: string | null,
+  missing?: number | null,
+  name?: string | null,
+  new?: number | null,
+  removed?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pageContent
+
+`siteAudit.pageContent`
+
+Get the crawled content of one page from a Site Audit project
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteAudit.pageContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | A comma-separated list of fields to return. |
+| `project_id` | `number` | Yes | The unique identifier of the project. |
+| `target_url` | `string` | Yes | The URL of the page to retrieve content for. |
+| `date` | `string` | No | A timestamp in YYYY-MM-DDThh:mm:ss format specifying the crawl date to retrieve metrics from. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page-content` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="page-content full type">
+
+```ts
+{
+  crawl_datetime?: string | null,
+  page_text?: string | null,
+  page_text_md?: string | null,
+  raw_html?: string | null,
+  rendered_html?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pageExplorer
+
+`siteAudit.pageExplorer`
+
+List crawled pages from a Site Audit project, optionally only those with a given issue
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteAudit.pageExplorer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | A comma-separated list of fields to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `order_by` | `string` | No | A field to order the results by, with optional direction. |
+| `project_id` | `number` | Yes | The unique identifier of the project. |
+| `date` | `string` | No | A timestamp in YYYY-MM-DDThh:mm:ss format specifying the crawl date to retrieve metrics from. |
+| `date_compared` | `string` | No | A timestamp in YYYY-MM-DDThh:mm:ss format specifying the crawl date to compare metrics with. |
+| `issue_id` | `string` | No | The unique identifier of an issue. |
+| `filter_mode` | `added \| new \| removed \| missing \| no_change` | No | Indicates which pages to return compared to the previous crawl. |
+| `offset` | `number` | No | The number of results to skip. |
+| `limit` | `number` | No | The number of results to return. |
+| `timeout` | `number` | No | A manual timeout duration in seconds. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  backlinks?: number | null,
+  canonical?: string | null,
+  compliant?: boolean | null,
+  content_type?: string | null,
+  depth?: number | null,
+  h1?: string[] | null,
+  http_code?: number | null,
+  incoming_all_links?: number | null,
+  incoming_links?: number | null,
+  is_html?: boolean | null,
+  is_valid_internal_html?: boolean | null,
+  keywords?: string[] | null,
+  loading_time?: number | null,
+  meta_description?: string[] | null,
+  origin?: string | null,
+  page_rating?: number | null,
+  redirect?: string | null,
+  scheme?: string | null,
+  size?: number | null,
+  time_to_first_byte?: number | null,
+  title?: string[] | null,
+  traffic?: number | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### projects
+
+`siteAudit.projects`
+
+List Site Audit projects with health scores and issue counts
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteAudit.projects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `number` | No | The unique identifier of the project. |
+| `date` | `string` | No | A timestamp in YYYY-MM-DDThh:mm:ss format specifying the crawl date to retrieve metrics from. |
+| `project_name` | `string` | No | Filters projects by name. |
+| `project_url` | `string` | No | Filters projects by target URL (ignores protocol and trailing slash). |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `healthscores` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="healthscores full type">
+
+```ts
+{
+  date?: string | null,
+  health_score?: number | null,
+  project_id?: string | null,
+  project_name?: string | null,
+  status?: string | null,
+  target_mode?: string | null,
+  target_protocol?: string | null,
+  target_url?: string | null,
+  total?: number | null,
+  urls_with_errors?: number | null,
+  urls_with_notices?: number | null,
+  urls_with_warnings?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Site Explorer
+
+### allBacklinks
+
+`siteExplorer.allBacklinks`
+
+List backlinks pointing to a target
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.allBacklinks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | A comma-separated list of columns to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `order_by` | `string` | No | A column to order results by. |
+| `limit` | `number` | No | The number of results to return. |
+| `timeout` | `number` | No | A manual timeout duration in seconds. |
+| `aggregation` | `similar_links \| 1_per_domain \| all` | No | The backlinks grouping mode. |
+| `history` | `string` | No | A time frame to add lost backlinks to the report. |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | The scope of the search based on the target you entered. |
+| `target` | `string` | Yes | The target of the search: a domain or a URL. |
+| `portfolio_id` | `number` | No | The unique identifier of the portfolio. |
+| `protocol` | `both \| http \| https` | No | The protocol of your target. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `backlinks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="backlinks full type">
+
+```ts
+{
+  ahrefs_rank_source?: number | null,
+  ahrefs_rank_target?: number | null,
+  alt?: string | null,
+  anchor?: string | null,
+  broken_redirect_new_target?: string | null,
+  broken_redirect_reason?: string | null,
+  broken_redirect_source?: string | null,
+  class_c?: number | null,
+  discovered_status?: string | null,
+  domain_rating_source?: number | null,
+  domain_rating_target?: number | null,
+  drop_reason?: string | null,
+  encoding?: string | null,
+  first_seen?: string | null,
+  first_seen_link?: string | null,
+  http_code?: number | null,
+  http_crawl?: boolean | null,
+  ip_source?: string | null,
+  is_alternate?: boolean | null,
+  is_canonical?: boolean | null,
+  is_content?: boolean | null,
+  is_dofollow?: boolean | null,
+  is_form?: boolean | null,
+  is_frame?: boolean | null,
+  is_image?: boolean | null,
+  is_lost?: boolean | null,
+  is_new?: boolean | null,
+  is_nofollow?: boolean | null,
+  is_redirect?: boolean | null,
+  is_redirect_lost?: boolean | null,
+  is_root_source?: boolean | null,
+  is_root_target?: boolean | null,
+  is_rss?: boolean | null,
+  is_spam?: boolean | null,
+  is_sponsored?: boolean | null,
+  is_text?: boolean | null,
+  is_ugc?: boolean | null,
+  js_crawl?: boolean | null,
+  languages?: string[] | null,
+  last_seen?: string | null,
+  last_visited?: string | null,
+  link_group_count?: number | null,
+  link_type?: string | null,
+  linked_domains_source_domain?: number | null,
+  linked_domains_source_page?: number | null,
+  linked_domains_target_domain?: number | null,
+  links_external?: number | null,
+  links_internal?: number | null,
+  lost_reason?: string | null,
+  name_source?: string | null,
+  name_target?: string | null,
+  noindex?: boolean | null,
+  page_category_source?: string | null,
+  page_size?: number | null,
+  page_type_source?: string | null,
+  port_source?: number | null,
+  port_target?: number | null,
+  positions?: number | null,
+  powered_by?: string[] | null,
+  redirect_code?: number | null,
+  redirect_kind?: number[] | null,
+  refdomains_source?: number | null,
+  refdomains_source_domain?: number | null,
+  refdomains_target_domain?: number | null,
+  root_name_source?: string | null,
+  root_name_target?: string | null,
+  snippet_left?: string | null,
+  snippet_right?: string | null,
+  source_page_author?: string | null,
+  source_page_publish_date?: string | null,
+  title?: string | null,
+  tld_class_source?: string | null,
+  tld_class_target?: string | null,
+  traffic?: number | null,
+  traffic_domain?: number | null,
+  url_from?: string | null,
+  url_from_plain?: string | null,
+  url_rating_source?: number | null,
+  url_redirect?: string[] | null,
+  url_redirect_with_target?: string[] | null,
+  url_to?: string | null,
+  url_to_plain?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### anchors
+
+`siteExplorer.anchors`
+
+List anchor texts of backlinks pointing to a target
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.anchors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | A comma-separated list of columns to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `order_by` | `string` | No | A comma-separated list of columns to order results by, with optional direction. |
+| `limit` | `number` | No | The number of results to return. |
+| `timeout` | `number` | No | A manual timeout duration in seconds. |
+| `history` | `string` | No | A time frame to add lost backlinks to the report. |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | The scope of the search based on the target you entered. |
+| `target` | `string` | Yes | The target of the search: a domain or a URL. |
+| `portfolio_id` | `number` | No | The unique identifier of the portfolio. |
+| `protocol` | `both \| http \| https` | No | The protocol of your target. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `anchors` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="anchors full type">
+
+```ts
+{
+  anchor?: string | null,
+  dofollow_links?: number | null,
+  first_seen?: string | null,
+  is_spam?: boolean | null,
+  last_seen?: string | null,
+  links_to_target?: number | null,
+  lost_links?: number | null,
+  new_links?: number | null,
+  refdomains?: number | null,
+  refpages?: number | null,
+  top_domain_rating?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### backlinksStats
 
@@ -261,6 +2013,175 @@ await corsair.ahrefs.api.siteExplorer.backlinksStats({});
 
 ---
 
+### brokenBacklinks
+
+`siteExplorer.brokenBacklinks`
+
+List backlinks pointing to broken pages on a target
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.brokenBacklinks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | A comma-separated list of columns to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `order_by` | `string` | No | A column to order results by. |
+| `limit` | `number` | No | The number of results to return. |
+| `timeout` | `number` | No | A manual timeout duration in seconds. |
+| `aggregation` | `similar_links \| 1_per_domain \| all` | No | The backlinks grouping mode. |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | The scope of the search based on the target you entered. |
+| `target` | `string` | Yes | The target of the search: a domain or a URL. |
+| `portfolio_id` | `number` | No | The unique identifier of the portfolio. |
+| `protocol` | `both \| http \| https` | No | The protocol of your target. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `backlinks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="backlinks full type">
+
+```ts
+{
+  ahrefs_rank_source?: number | null,
+  ahrefs_rank_target?: number | null,
+  alt?: string | null,
+  anchor?: string | null,
+  class_c?: number | null,
+  domain_rating_source?: number | null,
+  domain_rating_target?: number | null,
+  encoding?: string | null,
+  first_seen?: string | null,
+  first_seen_link?: string | null,
+  http_code?: number | null,
+  http_code_target?: number | null,
+  http_crawl?: boolean | null,
+  ip_source?: string | null,
+  is_alternate?: boolean | null,
+  is_canonical?: boolean | null,
+  is_content?: boolean | null,
+  is_dofollow?: boolean | null,
+  is_form?: boolean | null,
+  is_frame?: boolean | null,
+  is_image?: boolean | null,
+  is_nofollow?: boolean | null,
+  is_redirect?: boolean | null,
+  is_root_source?: boolean | null,
+  is_root_target?: boolean | null,
+  is_rss?: boolean | null,
+  is_spam?: boolean | null,
+  is_sponsored?: boolean | null,
+  is_text?: boolean | null,
+  is_ugc?: boolean | null,
+  js_crawl?: boolean | null,
+  languages?: string[] | null,
+  last_seen?: string | null,
+  last_visited?: string | null,
+  last_visited_target?: string | null,
+  link_group_count?: number | null,
+  link_type?: string | null,
+  linked_domains_source_domain?: number | null,
+  linked_domains_source_page?: number | null,
+  linked_domains_target_domain?: number | null,
+  links_external?: number | null,
+  links_internal?: number | null,
+  name_source?: string | null,
+  name_target?: string | null,
+  page_category_source?: string | null,
+  page_size?: number | null,
+  page_type_source?: string | null,
+  port_source?: number | null,
+  port_target?: number | null,
+  positions?: number | null,
+  powered_by?: string[] | null,
+  redirect_code?: number | null,
+  redirect_kind?: number[] | null,
+  refdomains_source?: number | null,
+  refdomains_source_domain?: number | null,
+  refdomains_target_domain?: number | null,
+  root_name_source?: string | null,
+  root_name_target?: string | null,
+  snippet_left?: string | null,
+  snippet_right?: string | null,
+  source_page_author?: string | null,
+  title?: string | null,
+  tld_class_source?: string | null,
+  tld_class_target?: string | null,
+  traffic?: number | null,
+  traffic_domain?: number | null,
+  url_from?: string | null,
+  url_from_plain?: string | null,
+  url_rating_source?: number | null,
+  url_redirect?: string[] | null,
+  url_redirect_with_target?: string[] | null,
+  url_to?: string | null,
+  url_to_plain?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### domainRatingHistory
+
+`siteExplorer.domainRatingHistory`
+
+Get Domain Rating history for a target
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.domainRatingHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target` | `string` | Yes | The target of the search: a domain or a URL. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `history_grouping` | `daily \| weekly \| monthly` | No | The time interval used to group historical data. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain_ratings` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domain_ratings full type">
+
+```ts
+{
+  date?: string | null,
+  domain_rating?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### getDomainRating
 
 `siteExplorer.getDomainRating`
@@ -298,6 +2219,307 @@ await corsair.ahrefs.api.siteExplorer.getDomainRating({});
   ahrefs_rank: number | null,
   domain_rating: number | null
 }
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### keywordsHistory
+
+`siteExplorer.keywordsHistory`
+
+Get organic keyword counts by position bucket over time for a target
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.keywordsHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | A comma-separated list of columns to return. |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | The scope of the target. |
+| `target` | `string` | Yes | The target of the search: a domain or a URL. |
+| `portfolio_id` | `number` | No | The unique identifier of the portfolio. |
+| `protocol` | `both \| http \| https` | No | The protocol of your target. |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `history_grouping` | `daily \| weekly \| monthly` | No | The time interval used to group historical data. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="keywords full type">
+
+```ts
+{
+  date?: string | null,
+  top3?: number | null,
+  top4_10?: number | null,
+  top11_20?: number | null,
+  top11_plus?: number | null,
+  top21_50?: number | null,
+  top51_plus?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### linkedDomains
+
+`siteExplorer.linkedDomains`
+
+List external domains a target links to
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.linkedDomains({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | A comma-separated list of columns to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `order_by` | `string` | No | A comma-separated list of columns to order results by, with optional direction. |
+| `limit` | `number` | No | The number of results to return. |
+| `timeout` | `number` | No | A manual timeout duration in seconds. |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | The scope of the search based on the target you entered. |
+| `target` | `string` | Yes | The target of the search: a domain or a URL. |
+| `portfolio_id` | `number` | No | The unique identifier of the portfolio. |
+| `protocol` | `both \| http \| https` | No | The protocol of your target. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkeddomains` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="linkeddomains full type">
+
+```ts
+{
+  dofollow_linked_domains?: number | null,
+  dofollow_links?: number | null,
+  dofollow_refdomains?: number | null,
+  domain?: string | null,
+  domain_rating?: number | null,
+  first_seen?: string | null,
+  is_root_domain?: boolean | null,
+  linked_domain_traffic?: number | null,
+  linked_pages?: number | null,
+  links_from_target?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### metrics
+
+`siteExplorer.metrics`
+
+Get organic and paid traffic, keyword and value metrics for a target
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.metrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | A date to report metrics on in YYYY-MM-DD format. |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | The scope of the target. |
+| `target` | `string` | Yes | The target of the search: a domain or a URL. |
+| `portfolio_id` | `number` | No | The unique identifier of the portfolio. |
+| `protocol` | `both \| http \| https` | No | The protocol of your target. |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `volume_mode` | `monthly \| average` | No | The search volume calculation mode: monthly or average. |
+| `traffic_mode` | `static \| adaptive` | No | The organic traffic calculation mode: static or adaptive. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  org_cost?: number | null,
+  org_keywords?: number | null,
+  org_keywords_1_3?: number | null,
+  org_traffic?: number | null,
+  paid_cost?: number | null,
+  paid_keywords?: number | null,
+  paid_pages?: number | null,
+  paid_traffic?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### metricsHistory
+
+`siteExplorer.metricsHistory`
+
+Get organic and paid traffic and value history for a target
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.metricsHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | No | A comma-separated list of columns to return. |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | The scope of the target. |
+| `target` | `string` | Yes | The target of the search: a domain or a URL. |
+| `portfolio_id` | `number` | No | The unique identifier of the portfolio. |
+| `protocol` | `both \| http \| https` | No | The protocol of your target. |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `history_grouping` | `daily \| weekly \| monthly` | No | The time interval used to group historical data. |
+| `volume_mode` | `monthly \| average` | No | The search volume calculation mode: monthly or average. |
+| `traffic_mode` | `static \| adaptive` | No | The organic traffic calculation mode: static or adaptive. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  date?: string | null,
+  org_cost?: number | null,
+  org_traffic?: number | null,
+  paid_cost?: number | null,
+  paid_traffic?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### organicCompetitors
+
+`siteExplorer.organicCompetitors`
+
+List sites that compete with a target for the same organic keywords
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.organicCompetitors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | A comma-separated list of columns to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `order_by` | `string` | No | A comma-separated list of columns to order results by, with optional direction. |
+| `limit` | `number` | No | The number of results to return. |
+| `timeout` | `number` | No | A manual timeout duration in seconds. |
+| `volume_mode` | `monthly \| average` | No | The search volume calculation mode: monthly or average. |
+| `traffic_mode` | `static \| adaptive` | No | The organic traffic calculation mode: static or adaptive. |
+| `date` | `string` | Yes | A date to report metrics on in YYYY-MM-DD format. |
+| `date_compared` | `string` | No | A date to compare metrics with in YYYY-MM-DD format. |
+| `country` | `string` | Yes | A two-letter country code (ISO 3166-1 alpha-2). |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | The scope of the search based on the target you entered. |
+| `target` | `string` | Yes | The target of the search: a domain or a URL. |
+| `portfolio_id` | `number` | No | The unique identifier of the portfolio. |
+| `protocol` | `both \| http \| https` | No | The protocol of your target. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `competitors` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="competitors full type">
+
+```ts
+{
+  competitor_domain?: string | null,
+  competitor_url?: string | null,
+  domain_rating?: number | null,
+  group_mode?: string | null,
+  keywords_common?: number | null,
+  keywords_competitor?: number | null,
+  keywords_target?: number | null,
+  pages?: number | null,
+  pages_diff?: number | null,
+  pages_merged?: number | null,
+  pages_prev?: number | null,
+  share?: number | null,
+  traffic?: number | null,
+  traffic_diff?: number | null,
+  traffic_merged?: number | null,
+  traffic_prev?: number | null,
+  value?: number | null,
+  value_diff?: number | null,
+  value_merged?: number | null,
+  value_prev?: number | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -369,6 +2591,136 @@ await corsair.ahrefs.api.siteExplorer.organicKeywords({});
 
 ---
 
+### pagesByBacklinks
+
+`siteExplorer.pagesByBacklinks`
+
+List pages of a target ranked by backlinks and referring domains
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.pagesByBacklinks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `select` | `string` | Yes | A comma-separated list of columns to return. |
+| `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
+| `order_by` | `string` | No | A column to order results by. |
+| `limit` | `number` | No | The number of results to return. |
+| `timeout` | `number` | No | A manual timeout duration in seconds. |
+| `history` | `string` | No | A time frame to add lost backlinks to the report. |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | The scope of the search based on the target you entered. |
+| `target` | `string` | Yes | The target of the search: a domain or a URL. |
+| `portfolio_id` | `number` | No | The unique identifier of the portfolio. |
+| `protocol` | `both \| http \| https` | No | The protocol of your target. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  dofollow_to_target?: number | null,
+  first_seen_link?: string | null,
+  http_code_target?: number | null,
+  is_spam?: boolean | null,
+  languages_target?: string[] | null,
+  last_seen?: string | null,
+  last_visited_source?: string | null,
+  last_visited_target?: string | null,
+  links_to_target?: number | null,
+  lost_links_to_target?: number | null,
+  new_links_to_target?: number | null,
+  nofollow_to_target?: number | null,
+  page_type_target?: string | null,
+  powered_by_target?: string[] | null,
+  redirects_to_target?: number | null,
+  refdomains_target?: number | null,
+  target_redirect?: string | null,
+  title_target?: string | null,
+  top_domain_rating_source?: number | null,
+  url_rating_target?: number | null,
+  url_to?: string | null,
+  url_to_plain?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pagesByTraffic
+
+`siteExplorer.pagesByTraffic`
+
+Get how many pages of a target fall into each organic traffic range
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.pagesByTraffic({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target` | `string` | Yes | The target of the search: a domain or a URL. |
+| `portfolio_id` | `number` | No | The unique identifier of the portfolio. |
+| `protocol` | `both \| http \| https` | No | The protocol of your target. |
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | The scope of the target. |
+| `volume_mode` | `monthly \| average` | No | The search volume calculation mode: monthly or average. |
+| `traffic_mode` | `static \| adaptive` | No | The organic traffic calculation mode: static or adaptive. |
+| `country` | `string` | No | A two-letter country code (ISO 3166-1 alpha-2). |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pages` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  range0_pages?: number | null,
+  range1k_pages?: number | null,
+  range1k_traffic?: number | null,
+  range5k_pages?: number | null,
+  range5k_traffic?: number | null,
+  range10k_pages?: number | null,
+  range10k_plus_pages?: number | null,
+  range10k_plus_traffic?: number | null,
+  range10k_traffic?: number | null,
+  range100_pages?: number | null,
+  range100_traffic?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### refdomains
 
 `siteExplorer.refdomains`
@@ -418,6 +2770,55 @@ await corsair.ahrefs.api.siteExplorer.refdomains({});
   refdomains?: number | null,
   first_seen?: string | null,
   last_visited?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refdomainsHistory
+
+`siteExplorer.refdomainsHistory`
+
+Get referring domains count history for a target
+
+**Risk:** `read`
+
+```ts
+await corsair.ahrefs.api.siteExplorer.refdomainsHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mode` | `exact \| prefix \| domain \| subdomains` | No | The scope of the target. |
+| `target` | `string` | Yes | The target of the search: a domain or a URL. |
+| `portfolio_id` | `number` | No | The unique identifier of the portfolio. |
+| `protocol` | `both \| http \| https` | No | The protocol of your target. |
+| `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
+| `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
+| `history_grouping` | `daily \| weekly \| monthly` | No | The time interval used to group historical data. |
+| `output` | `json` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `refdomains` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="refdomains full type">
+
+```ts
+{
+  date?: string | null,
+  refdomains?: number | null
 }[]
 ```
 </Accordion>

@@ -1,7 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
-import type { RankTrackerOverviewResponse } from './types';
+import type {
+	RankTrackerCompetitorsOverviewResponse,
+	RankTrackerOverviewResponse,
+	RankTrackerSerpOverviewResponse,
+} from './types';
 
 export const overview: AhrefsEndpoints['rankTrackerOverview'] = async (
 	ctx,
@@ -54,3 +58,56 @@ export const overview: AhrefsEndpoints['rankTrackerOverview'] = async (
 
 	return response;
 };
+
+export const serpOverview: AhrefsEndpoints['rankTrackerSerpOverview'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeAhrefsRequest<RankTrackerSerpOverviewResponse>(
+		'/rank-tracker/serp-overview',
+		ctx.key,
+		{
+			query: input,
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ahrefs.rankTracker.serpOverview',
+		{
+			project_id: input.project_id,
+			keyword: input.keyword,
+			country: input.country,
+			date: input.date,
+			resultCount: response.positions.length,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+export const competitorsOverview: AhrefsEndpoints['rankTrackerCompetitorsOverview'] =
+	async (ctx, input) => {
+		const response =
+			await makeAhrefsRequest<RankTrackerCompetitorsOverviewResponse>(
+				'/rank-tracker/competitors-overview',
+				ctx.key,
+				{
+					query: input,
+				},
+			);
+
+		await logEventFromContext(
+			ctx,
+			'ahrefs.rankTracker.competitorsOverview',
+			{
+				project_id: input.project_id,
+				date: input.date,
+				resultCount: response.keywords.length,
+			},
+			'completed',
+		);
+
+		return response;
+	};

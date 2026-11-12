@@ -1,30 +1,11 @@
-import { overview } from './keywords-explorer';
-import { overview as rankTrackerOverview } from './rank-tracker';
+import * as Gsc from './gsc';
+import * as KeywordsExplorer from './keywords-explorer';
+import * as Management from './management';
+import * as RankTracker from './rank-tracker';
 import { overview as serpOverview } from './serp-overview';
-import {
-	backlinksStats,
-	getDomainRating,
-	organicKeywords,
-	refdomains,
-	topPages,
-} from './site-explorer';
+import * as SiteAudit from './site-audit';
+import * as SiteExplorer from './site-explorer';
 import { limitsAndUsage } from './subscription-info';
-
-export const SiteExplorer = {
-	getDomainRating,
-	backlinksStats,
-	organicKeywords,
-	refdomains,
-	topPages,
-};
-
-export const KeywordsExplorer = {
-	overview,
-};
-
-export const RankTracker = {
-	overview: rankTrackerOverview,
-};
 
 export const SerpOverview = {
 	overview: serpOverview,
@@ -32,6 +13,15 @@ export const SerpOverview = {
 
 export const SubscriptionInfo = {
 	limitsAndUsage,
+};
+
+export {
+	Gsc,
+	KeywordsExplorer,
+	Management,
+	RankTracker,
+	SiteAudit,
+	SiteExplorer,
 };
 
 export * from './types';
