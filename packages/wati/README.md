@@ -19,7 +19,7 @@ pnpm add @corsair-dev/wati
 | `channels.list` | `wati.api.channels.list` | `read` | List the channels connected to the workspace |
 | `contacts.count` | `wati.api.contacts.count` | `read` | Count the contacts on the workspace |
 | `contacts.create` | `wati.api.contacts.create` | `write` | Add a contact by WhatsApp number, with a name and custom attributes as name/value pairs |
-| `contacts.delete` | `wati.api.contacts.delete` | `destructive` | Delete a contact and their conversation history; this cannot be undone |
+| `contacts.delete` | `wati.api.contacts.delete` | `destructive` | Remove a contact from the workspace (WATI documents this as a soft delete, not a physical erasure) |
 | `contacts.get` | `wati.api.contacts.get` | `read` | Read one contact by wa_id or phone number, including custom attributes and opt-in state |
 | `contacts.list` | `wati.api.contacts.list` | `read` | Page through contacts, 100 per page at most |
 | `conversations.list` | `wati.api.conversations.list` | `read` | List conversations newest first, filtered by channel type or channel |
