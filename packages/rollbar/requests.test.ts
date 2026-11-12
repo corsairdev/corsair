@@ -127,6 +127,20 @@ describe('items.update', () => {
 		expect(result.item.status).toBe('resolved');
 	});
 
+	it('sends the project id in the body, where this route reads it', async () => {
+		respond(fetchMock, ITEM_UPDATE_RESULT);
+
+		await invoke(Endpoints.itemsUpdate, {
+			item_id: ITEM_ID,
+			project_id: 678,
+			status: 'active',
+		});
+
+		const request = lastRequest(fetchMock);
+		expect(request.json()).toEqual({ project_id: 678, status: 'active' });
+		expect(request.query).toEqual({});
+	});
+
 	it('rejects a status Rollbar does not define', async () => {
 		await expect(
 			invoke(Endpoints.itemsUpdate, { item_id: ITEM_ID, status: 'closed' }),

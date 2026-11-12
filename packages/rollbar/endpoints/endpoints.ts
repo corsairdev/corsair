@@ -79,8 +79,10 @@ export const itemsUpdate: RollbarEndpoints['itemsUpdate'] = (ctx, input) =>
 			method: 'PATCH',
 			path: `/item/${segment(parsed.item_id)}`,
 			replayable: false,
-			query: queryOf({ project_id: parsed.project_id }),
+			// This route reads `project_id` from the body; in the query string an
+			// account or personal token is still refused with 403 (checked live).
 			body: queryOf({
+				project_id: parsed.project_id,
 				status: parsed.status,
 				level: parsed.level,
 				title: parsed.title,
