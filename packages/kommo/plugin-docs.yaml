@@ -1,0 +1,71 @@
+displayName: Kommo
+description: CRM with Kommo - manage leads, contacts, companies and tasks, and read the pipelines with their stages, the account users and the account itself.
+domain: kommo.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a private integration in Kommo, then generate a long-lived token under its Keys and scopes tab. A token lasts from one day to five years, and only an account administrator can create one. It is sent as a bearer token.
+
+  Two things are needed before the first call:
+
+  - **The account subdomain.** Every account is served from its own host: `acme` for `acme.kommo.com`, under `/api/v4`. Connect delivers it as the `subdomain` credential; the plugin option of the same name overrides it. A call with neither throws before any request is sent.
+  - **A pipeline and stage.** A lead's `pipeline_id` and `status_id` come from `pipelines.list`. A lead created without them lands in the first stage of the main pipeline.
+
+  Things to know before you call:
+
+  - **Timestamps are Unix seconds.** `created_at`, `updated_at`, `closed_at`, `closest_task_at` and a task's `complete_till` are integers counting seconds, not ISO strings. The plugin passes them through as Kommo sends them.
+  - **Paging is by page number.** A list takes `page` and `limit` (250 at most) and returns a `_page` and `_links` block. The plugin adds `next_page`, which is null on the last page.
+  - **Filters are bracketed query keys.** `pipeline_id`, `status_id` and the date filters become `filter[pipeline_id][]` and `filter[created_at][from]` on the wire, which is how Kommo documents them. Kommo allows only one stage in one pipeline per request.
+  - **A write takes an array.** `leads.create` and `contacts.create` post up to 250 entities at once, and the update routes are PATCH with each entity carrying its `id`. A field left out of an update is untouched.
+  - **Custom field values go by `field_id` or `field_code`.** The plugin refuses a value that names neither, because Kommo would reject it. A value's type follows its `field_type`, so a `date_time` field takes a Unix timestamp.
+  - **A contact needs a name.** `name`, or `first_name` and `last_name`; a contact with neither is refused before the call.
+  - **A task needs a deadline.** `complete_till` is required, in Unix seconds.
+  - **Rate limits.** Kommo allows two requests a second with a burst of seven, and sends `Retry-After` on a 429, which the plugin honours before backing off. A 402 means the account's plan does not include that entity, and is not retried. Only reads are replayed after a 5xx, because a retried lead create would make a second lead.
+  - **Webhooks.** Kommo does send webhooks, but this plugin does not receive them; that is a separate integration surface.
+examples:
+  read:
+    path: leads.list
+    title: List the first page of leads
+    args:
+      limit: 50
+      with:
+        - contacts
+  write:
+    path: leads.create
+    title: Create a lead
+    args:
+      leads:
+        - name: Acme renewal
+          price: 5000
+apiExamples:
+  account.get: {}
+  leads.list:
+    call: "{ limit: 50, pipeline_id: 12215168, with: ['contacts'], order_by: 'created_at', order_direction: 'desc' }"
+  leads.get:
+    call: "{ leadId: 20024930, with: ['contacts', 'loss_reason'] }"
+  leads.create:
+    call: "{ leads: [{ name: 'Acme renewal', price: 5000, pipeline_id: 12215168, custom_fields_values: [{ field_id: 1928052, values: [{ value: 'Diagnostic', enum_id: 1669868 }] }] }] }"
+  leads.update:
+    call: "{ leads: [{ id: 20024930, price: 7000, status_id: 94386188 }] }"
+  contacts.list:
+    call: "{ limit: 50, with: ['leads'] }"
+  contacts.get:
+    call: "{ contactId: 30012345 }"
+  contacts.create:
+    call: "{ contacts: [{ first_name: 'Jordan', last_name: 'Lee', custom_fields_values: [{ field_code: 'PHONE', values: [{ value: '+15550100' }] }] }] }"
+  contacts.update:
+    call: "{ contacts: [{ id: 30012345, first_name: 'Jordy' }] }"
+  companies.list:
+    call: "{ limit: 50 }"
+  tasks.list:
+    call: "{ entity_type: 'leads', is_completed: false }"
+  tasks.create:
+    call: "{ tasks: [{ entity_id: 20024930, entity_type: 'leads', text: 'Call about the quote', complete_till: 1762000000 }] }"
+  pipelines.list: {}
+  users.list: {}
+apiNotes:
+  leads.list: 'Pages by number, 250 at most. `next_page` is null on the last page. Kommo allows one stage in one pipeline per request.'
+  leads.create: 'Posts an array of up to 250. A lead without `pipeline_id` or `status_id` lands in the first stage of the main pipeline.'
+  leads.update: 'PATCH with an array, each lead carrying its `id`. A field left out is untouched.'
+  contacts.create: 'A contact needs a `name`, or a `first_name` and `last_name`.'
+  tasks.create: '`complete_till` is required and is Unix seconds.'
+  pipelines.list: 'Where a lead’s `pipeline_id` and `status_id` come from.'
