@@ -68,12 +68,15 @@ export type AnyEndpoint = (
  * and `keys.get_subdomain`. The real context also carries a database, hooks and
  * the rest of the key manager, which the endpoints never touch.
  */
-function fakeContext(subdomain?: string): RepairshoprContext {
+function fakeContext(
+	subdomain?: string,
+	stored: () => Promise<string | null> = async () => subdomain ?? null,
+): RepairshoprContext {
 	return {
 		key: 'repairshopr-test-key',
 		options: { subdomain },
 		keys: {
-			get_subdomain: async () => subdomain ?? null,
+			get_subdomain: stored,
 		},
 		// unknown: a real context carries a database, hooks and the whole key
 		// manager; the endpoints read none of them, so the fixture is cast at this
@@ -90,6 +93,18 @@ export function invoke(
 	subdomain = 'acme',
 ): Promise<unknown /* unknown: see AnyEndpoint */> {
 	return endpoint(fakeContext(subdomain) as never, input as never);
+}
+
+/**
+ * Calls an endpoint on a plugin created without `subdomain`, so the only source
+ * is the value stored on the account, read through `get_subdomain`.
+ */
+export function invokeWithStoredSubdomain(
+	endpoint: AnyEndpoint,
+	input: unknown, // unknown: same open input as `invoke`
+	stored: () => Promise<string | null>,
+): Promise<unknown /* unknown: see AnyEndpoint */> {
+	return endpoint(fakeContext(undefined, stored) as never, input as never);
 }
 
 /** A decoded request body: JSON with values the test has not checked yet. */

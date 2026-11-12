@@ -1,6 +1,11 @@
 import * as Catalog from './endpoints/catalog';
 import * as Customers from './endpoints/customers';
 import * as Tickets from './endpoints/tickets';
+import type {
+	CustomersUpdateInput,
+	ProductsUpdateInput,
+	TicketsUpdateInput,
+} from './endpoints/types';
 import {
 	CONTACT_PAGE,
 	CUSTOMER,
@@ -18,7 +23,13 @@ import {
 	TICKET_PAGE,
 	VENDOR_PAGE,
 } from './test-fixtures';
-import { invoke, lastRequest, respond, spyOnFetch } from './test-support';
+import {
+	invoke,
+	invokeWithStoredSubdomain,
+	lastRequest,
+	respond,
+	spyOnFetch,
+} from './test-support';
 
 let fetchMock: jest.SpyInstance;
 
@@ -44,10 +55,11 @@ describe('the account host', () => {
 	it('reads the stored subdomain when the plugin was given none', async () => {
 		respond(fetchMock, CUSTOMER_PAGE);
 
-		// The fixture's key manager returns the same value, so this exercises the
-		// fallback path rather than the inline option.
-		await invoke(Customers.list, {}, 'stored-tenant');
+		const stored = jest.fn(async () => 'stored-tenant');
 
+		await invokeWithStoredSubdomain(Customers.list, {}, stored);
+
+		expect(stored).toHaveBeenCalledTimes(1);
 		expect(lastRequest(fetchMock).origin).toBe(
 			'https://stored-tenant.repairshopr.com',
 		);
@@ -114,7 +126,8 @@ describe('customers.list', () => {
 
 describe('customers.get', () => {
 	it('reads one customer by id', async () => {
-		respond(fetchMock, CUSTOMER);
+		// RepairShopr wraps a single record under its resource name.
+		respond(fetchMock, { customer: CUSTOMER });
 
 		const result = (await invoke(Customers.get, {
 			customer_id: CUSTOMER_ID,
@@ -137,12 +150,16 @@ describe('customers.create', () => {
 	it('sends the customer fields', async () => {
 		respond(fetchMock, { customer: CUSTOMER });
 
-		await invoke(Customers.create, {
+		const result = (await invoke(Customers.create, {
 			firstname: 'Walkin',
 			lastname: 'Customer',
 			email: 'walkin@example.com',
 			business_name: 'Acme',
-		});
+		})) as Awaited<ReturnType<typeof Customers.create>>;
+
+		// The record comes back once, not nested under a second `customer`.
+		expect(result.customer.id).toBe(CUSTOMER_ID);
+		expect(result.customer).not.toHaveProperty('customer');
 
 		expect(lastRequest(fetchMock).json()).toEqual({
 			firstname: 'Walkin',
@@ -198,7 +215,8 @@ describe('tickets', () => {
 	});
 
 	it('reads one ticket by id', async () => {
-		respond(fetchMock, TICKET);
+		// RepairShopr wraps a single record under its resource name.
+		respond(fetchMock, { ticket: TICKET });
 
 		const result = (await invoke(Tickets.get, {
 			ticket_id: TICKET_ID,
@@ -265,6 +283,19 @@ describe('tickets', () => {
 		expect(request.json()).toEqual({ status: 'Resolved' });
 	});
 
+	it('sends a default status the account defines, such as Waiting for Parts', async () => {
+		respond(fetchMock, { ticket: { ...TICKET, status: 'Waiting for Parts' } });
+
+		await invoke(Tickets.update, {
+			ticket_id: TICKET_ID,
+			status: 'Waiting for Parts',
+		});
+
+		expect(lastRequest(fetchMock).json()).toEqual({
+			status: 'Waiting for Parts',
+		});
+	});
+
 	it('deletes a ticket', async () => {
 		respond(fetchMock, { id: TICKET_ID });
 
@@ -277,6 +308,13 @@ describe('tickets', () => {
 });
 
 describe('invoices', () => {
+	it('rejects a per_page above the 25 RepairShopr allows', async () => {
+		await expect(
+			invoke(Catalog.invoicesList, { per_page: 100 }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('lists unpaid invoices with per_page', async () => {
 		respond(fetchMock, INVOICE_PAGE);
 
@@ -294,7 +332,8 @@ describe('invoices', () => {
 	});
 
 	it('reads one invoice by id', async () => {
-		respond(fetchMock, INVOICE);
+		// RepairShopr wraps a single record under its resource name.
+		respond(fetchMock, { invoice: INVOICE });
 
 		const result = (await invoke(Catalog.invoicesGet, {
 			invoice_id: INVOICE_ID,
@@ -320,7 +359,8 @@ describe('products', () => {
 	});
 
 	it('reads one product by id', async () => {
-		respond(fetchMock, PRODUCT);
+		// RepairShopr wraps a single record under its resource name.
+		respond(fetchMock, { product: PRODUCT });
 
 		const result = (await invoke(Catalog.productsGet, {
 			product_id: PRODUCT_ID,
@@ -399,5 +439,38 @@ describe('page envelope', () => {
 		respond(fetchMock, { meta: { total_pages: 1 } });
 
 		await expect(invoke(Customers.list, {})).rejects.toThrow();
+	});
+});
+
+describe('update input types', () => {
+	it('accept an id with only the fields being changed', async () => {
+		// These assignments fail tsc if an update type requires the create fields
+		// or lacks the record id.
+		const ticket: TicketsUpdateInput = {
+			ticket_id: TICKET_ID,
+			status: 'Resolved',
+		};
+		const customer: CustomersUpdateInput = {
+			customer_id: CUSTOMER_ID,
+			business_name: 'Acme B.V.',
+		};
+		const product: ProductsUpdateInput = {
+			product_id: PRODUCT_ID,
+			price_retail: 165,
+		};
+
+		respond(fetchMock, { ticket: TICKET });
+		await invoke(Tickets.update, ticket);
+		expect(lastRequest(fetchMock).json()).toEqual({ status: 'Resolved' });
+
+		respond(fetchMock, { customer: CUSTOMER });
+		await invoke(Customers.update, customer);
+		expect(lastRequest(fetchMock).json()).toEqual({
+			business_name: 'Acme B.V.',
+		});
+
+		respond(fetchMock, { product: PRODUCT });
+		await invoke(Catalog.productsUpdate, product);
+		expect(lastRequest(fetchMock).json()).toEqual({ price_retail: 165 });
 	});
 });

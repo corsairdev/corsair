@@ -11,8 +11,8 @@ import { asRecord } from 'corsair/core';
  */
 export function pagedShape(key: string) {
 	return (
+		// unknown: the response body, which the operation's output schema parses.
 		raw: unknown,
-		// unknown: the parsed input, narrowed to the page this shaper reads.
 		parsed: { page?: number },
 	) => {
 		// RepairShopr pages from 1, and an omitted page means the first one.
@@ -38,15 +38,21 @@ export function pagedShape(key: string) {
 }
 
 /**
- * Wraps a single-object answer under the operation's field so a read and a list
- * return the same top-level shape.
+ * RepairShopr answers a read, a create and an update with the record under its
+ * resource name (`{ customer: {...} }`). That envelope is passed through as is;
+ * a bare record is wrapped so the operation's output keeps one shape.
  */
 export function singleShape(key: string) {
 	return (
+		// unknown: the response body, which the operation's output schema parses.
 		raw: unknown,
 		// unknown: the operation input, unused by this shaper.
 		_parsed: unknown,
-	) => ({ [key]: raw });
+	) => {
+		const record = asRecord(raw);
+		if (record && key in record) return { [key]: record[key] };
+		return { [key]: raw };
+	};
 }
 
 /**
