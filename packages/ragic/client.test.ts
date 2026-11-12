@@ -150,6 +150,40 @@ describe('Ragic client', () => {
 		expect(error.message).toBe('Ragic 303: Your account has expired.');
 	});
 
+	it('marks a 429 as rate limited and keeps its Retry-After', async () => {
+		respond({ status: 'ERROR', code: 429, msg: 'busy' }, 429, {
+			'Retry-After': '3',
+		});
+
+		const error = await failure(
+			makeRagicRequest(API_KEY, 'www.ragic.com', {
+				method: 'GET',
+				path: '/demo/sales/1',
+				replayable: true,
+			}),
+		);
+
+		expect(error.isRateLimited).toBe(true);
+		expect(error.retryAfter).toBe(3000);
+	});
+
+	it('marks body code 204 as rate limited', async () => {
+		respond(
+			{ status: 'ERROR', code: 204, msg: 'Request Frequency Too High' },
+			200,
+		);
+
+		const error = await failure(
+			makeRagicRequest(API_KEY, 'www.ragic.com', {
+				method: 'GET',
+				path: '/demo/sales/1',
+				replayable: true,
+			}),
+		);
+
+		expect(error.isRateLimited).toBe(true);
+	});
+
 	it('records whether the failed call may be replayed', async () => {
 		respond({ status: 'ERROR', code: 500, msg: 'boom' }, 200);
 

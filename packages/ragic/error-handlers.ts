@@ -13,6 +13,19 @@ function apiError(error: Error): RagicAPIError | undefined {
  * Codes: https://www.ragic.com/intl/en/doc-http-api (Error Responses).
  */
 export const errorHandlers = {
+	// HTTP 429 or body code 204, "Request Frequency Too High": the account's queue
+	// of 50 is full. The request was refused, but only an operation that declared
+	// itself replayable is sent again, waiting for Retry-After when Ragic sends one.
+	RATE_LIMIT_ERROR: {
+		match: (error: Error) => apiError(error)?.isRateLimited === true,
+		handler: async (error: Error) => {
+			const api = apiError(error);
+			if (api?.replayable !== true) return { maxRetries: 0 };
+			return api.retryAfter
+				? { maxRetries: 3, headersRetryAfterMs: api.retryAfter }
+				: { maxRetries: 3, retryStrategy: 'exponential_backoff_jitter' as const };
+		},
+	},
 	// 105 auth required, 106 no access right. A missing key and a wrong key both
 	// answer 106 as the guest account, and a non-manager key answers it on the
 	// schema route, so this covers both an unusable key and a real permission gap.

@@ -97,6 +97,40 @@ describe('Ragic error handlers', () => {
 		});
 	});
 
+	it('retries a rate-limited read: HTTP 429 or body code 204', async () => {
+		const status429 = apiError({ status: 429, method: 'GET', replayable: true });
+		const code204 = apiError({ code: 204, method: 'GET', replayable: true });
+
+		expect(await matches(status429)).toBe('RATE_LIMIT_ERROR');
+		expect(await matches(code204)).toBe('RATE_LIMIT_ERROR');
+		await expect(run('RATE_LIMIT_ERROR', code204)).resolves.toMatchObject({
+			maxRetries: 3,
+		});
+	});
+
+	it('waits for Retry-After on a rate-limited read when Ragic sends one', async () => {
+		const error = new RagicAPIError('slow down', {
+			status: 429,
+			retryAfter: 5000,
+			method: 'GET',
+			replayable: true,
+		});
+
+		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toEqual({
+			maxRetries: 3,
+			headersRetryAfterMs: 5000,
+		});
+	});
+
+	it('does not resend a rate-limited create', async () => {
+		const error = apiError({ status: 429, method: 'POST', replayable: false });
+
+		expect(await matches(error)).toBe('RATE_LIMIT_ERROR');
+		await expect(run('RATE_LIMIT_ERROR', error)).resolves.toEqual({
+			maxRetries: 0,
+		});
+	});
+
 	it('matches an HTTP 500 as a server error too', async () => {
 		expect(await matches(apiError({ status: 503 }))).toBe('SERVER_ERROR');
 	});

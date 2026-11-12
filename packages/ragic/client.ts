@@ -105,6 +105,14 @@ export class RagicAPIError extends Error {
 		return this.code === 109 || this.code === 303;
 	}
 
+	/**
+	 * HTTP 429, or body code 204 ("Request Frequency Too High"). Ragic's per-account
+	 * queue holds 50 requests and refuses GETs once it is full.
+	 */
+	get isRateLimited(): boolean {
+		return this.status === 429 || this.code === 204 || this.code === 429;
+	}
+
 	/** A server-side failure, worth retrying. */
 	get isServerError(): boolean {
 		return (this.code ?? 0) >= 500 || (this.status ?? 0) >= 500;
