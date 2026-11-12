@@ -208,7 +208,7 @@ await corsair.redcircle.api.products.get({ tcin: '94907686' });
 | `gtin` | `string` | No | A GTIN/ISBN/UPC; it overrides `tcin` and `dpci`. |
 | `url` | `string` | No | A Target product URL, which overrides every other selector. |
 
-`gtin` overrides `tcin` and `dpci`, and `url` overrides all three.
+Provide at least one non-empty selector: `tcin`, `dpci`, `gtin` or `url`. `gtin` overrides `tcin` and `dpci`, and `url` overrides all three.
 
 
 
@@ -331,7 +331,7 @@ await corsair.redcircle.api.reviews.list({ tcin: '94907686', sort_by: 'most_rece
 | `page` | `number` | No | 1-based page of results. |
 | `max_page` | `number` | No | Retrieve and concatenate this many pages in one request. Each page costs a credit, so the cap is 10. |
 
-The sort values are `most_recent`, `most_helpful`, `high_to_low_rating` and `low_to_high_rating`.
+Provide at least one non-empty selector: `tcin`, `dpci`, `gtin` or `url`. The sort values are `most_recent`, `most_helpful`, `high_to_low_rating` and `low_to_high_rating`.
 
 
 
@@ -357,8 +357,10 @@ The sort values are `most_recent`, `most_helpful`, `high_to_low_rating` and `low
   title?: string | null,
   body?: string | null,
   date?: string | null,
-  nickname?: string | null,
-  verified_purchase?: boolean | null,
+  source?: {
+    author_name?: string | null,
+    verified_purchase?: boolean | null
+  } | null,
   helpful_votes?: number | null,
   recommended?: boolean | null
 }[]

@@ -36,7 +36,7 @@ apiExamples:
   account.get: {}
 apiNotes:
   'search.products': 'Each page costs a credit; `max_page` concatenates several and is capped.'
-  'products.get': '`gtin` overrides `tcin` and `dpci`, and `url` overrides all three.'
-  'reviews.list': 'The sort values are `most_recent`, `most_helpful`, `high_to_low_rating` and `low_to_high_rating`.'
+  'products.get': 'Provide at least one non-empty selector: `tcin`, `dpci`, `gtin` or `url`. `gtin` overrides `tcin` and `dpci`, and `url` overrides all three.'
+  'reviews.list': 'Provide at least one non-empty selector: `tcin`, `dpci`, `gtin` or `url`. The sort values are `most_recent`, `most_helpful`, `high_to_low_rating` and `low_to_high_rating`.'
   'categories.list': '`parent_id` and `search_term` are mutually exclusive; with neither, the root categories return.'
   'account.get': 'RedCircle echoes the api_key in this response; the plugin strips it before parsing.'
