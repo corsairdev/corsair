@@ -55,7 +55,7 @@ apiNotes:
   scrape.html: 'Returns the body as it comes and the target status beside it. A target 404 or 410 returns its page and still costs a credit, which is why the status is reported rather than thrown.'
   scrape.markdown: 'Sets `output=markdown`. The answer starts with `- Meta:` and `- Title:` lines for the page metadata, then the body.'
   scrape.json: 'Sets `returnJSON=true` and renames the answer to `status_code`, `content`, `network_requests` and `websocket_requests`. The network log is empty without `render`.'
-  scrape.screenshot: 'Requires `render: true` and always sets `returnJSON=true`, because the live API answers 400 for a screenshot without it. `fullPage` and `area` are mutually exclusive.'
+  scrape.screenshot: 'Requires `render: true` and always sets `returnJSON=true`, because the live API answers 400 for a screenshot without it. `fullPage` and `selector` (a CSS selector for one element) are mutually exclusive.'
   account.info: 'Reads `/info`. A bad token answers HTTP 200 with `IsActive: false`, which this turns into an error. Limited to 10 calls a minute.'
   account.asyncInfo: 'Reads `/me` on the async host. The provider spells its credits field `AvaliableCredits`; this exposes it as `available_credits`.'
   jobs.start: 'Takes up to 100 URLs and returns a job id plus one task id per URL. Results are held by Scrape.do until they expire. Set `webhookUrl` to have them POSTed instead of polled.'

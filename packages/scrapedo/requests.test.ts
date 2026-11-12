@@ -200,18 +200,18 @@ describe('scrape.screenshot', () => {
 		expect(sentQuery().has('screenShot')).toBe(false);
 	});
 
-	it('sends a particular area as JSON', async () => {
+	it('sends the element selector as particularScreenShot', async () => {
 		respond(SCREENSHOT_BODY);
 
 		await endpoints().scrape.screenshot(makeCtx(), {
 			url: 'https://example.com/',
 			render: true,
-			area: { x: 0, y: 0, width: 400, height: 300 },
+			selector: '#price-table',
 		});
 
-		expect(sentQuery().get('particularScreenShot')).toBe(
-			'{"x":0,"y":0,"width":400,"height":300}',
-		);
+		// Scrape.do takes a CSS selector here, not pixel coordinates.
+		expect(sentQuery().get('particularScreenShot')).toBe('#price-table');
+		expect(sentQuery().has('screenShot')).toBe(false);
 	});
 });
 

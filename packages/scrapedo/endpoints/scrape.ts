@@ -125,12 +125,12 @@ export const screenshot: ScrapeDoEndpoints['scrapeScreenshot'] = (ctx, input) =>
 				// Only the flag the caller asked for is sent: `screenShot: false`
 				// beside `fullScreenShot: true` is accepted but is meaningless noise.
 				screenShot:
-					parsed.fullPage === true || parsed.area !== undefined
+					parsed.fullPage === true || parsed.selector !== undefined
 						? undefined
 						: true,
 				fullScreenShot: parsed.fullPage === true ? true : undefined,
-				particularScreenShot:
-					parsed.area === undefined ? undefined : JSON.stringify(parsed.area),
+				// A CSS selector for one element, sent as is.
+				particularScreenShot: parsed.selector,
 			},
 		}),
 		{

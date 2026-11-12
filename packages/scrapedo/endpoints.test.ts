@@ -135,24 +135,24 @@ describe('screenshot input validation', () => {
 		).not.toThrow();
 	});
 
-	it('rejects fullPage together with an area', () => {
+	it('rejects fullPage together with a selector', () => {
 		const result = Inputs.scrapeScreenshot.safeParse({
 			url: 'https://example.com/',
 			render: true,
 			fullPage: true,
-			area: { x: 0, y: 0, width: 10, height: 10 },
+			selector: 'h1',
 		});
 		expect(result.success).toBe(false);
 		if (result.success) throw new Error('expected a rejection');
-		expect(result.error.issues[0]?.path).toEqual(['area']);
+		expect(result.error.issues[0]?.path).toEqual(['selector']);
 	});
 
-	it('rejects an area with a non-positive width', () => {
+	it('rejects an empty selector', () => {
 		expect(() =>
 			Inputs.scrapeScreenshot.parse({
 				url: 'https://example.com/',
 				render: true,
-				area: { x: 0, y: 0, width: 0, height: 10 },
+				selector: '',
 			}),
 		).toThrow();
 	});

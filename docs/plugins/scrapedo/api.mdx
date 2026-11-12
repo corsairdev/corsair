@@ -524,23 +524,9 @@ await corsair.scrapedo.api.scrape.screenshot({ url: 'https://example.com/', rend
 | `customWait` | `number` | No | Milliseconds to wait after the page loads. Defaults to 0. Needs `render`. |
 | `waitSelector` | `string` | No | CSS selector to wait for before answering. Needs `render`. |
 | `fullPage` | `boolean` | No | Capture the whole scrollable page instead of the viewport. Defaults to false. |
-| `area` | `object` | No | Capture only this area. Mutually exclusive with `fullPage`. |
+| `selector` | `string` | No | CSS selector of one element to capture, such as `h1` or `#price-table`. Mutually exclusive with `fullPage`. |
 
-Requires `render: true` and always sets `returnJSON=true`, because the live API answers 400 for a screenshot without it. `fullPage` and `area` are mutually exclusive.
-
-<AccordionGroup>
-<Accordion title="area full type">
-
-```ts
-{
-  x: number,
-  y: number,
-  width: number,
-  height: number
-}
-```
-</Accordion>
-</AccordionGroup>
+Requires `render: true` and always sets `returnJSON=true`, because the live API answers 400 for a screenshot without it. `fullPage` and `selector` (a CSS selector for one element) are mutually exclusive.
 
 
 

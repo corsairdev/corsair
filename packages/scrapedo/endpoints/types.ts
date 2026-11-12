@@ -254,17 +254,6 @@ export type ScrapeMarkdownResponse = z.infer<
 
 // ── scrape.screenshot ─────────────────────────────────────────────────────
 
-const ScreenshotAreaSchema = z
-	.object({
-		x: z.number().int().nonnegative(),
-		y: z.number().int().nonnegative(),
-		width: z.number().int().positive(),
-		height: z.number().int().positive(),
-	})
-	.describe(
-		'The area to capture, in pixels. `particularScreenShot` takes this as JSON.',
-	);
-
 const ScrapeScreenshotInputSchema = z
 	.object({
 		url: HttpUrl.describe('The page to capture.'),
@@ -282,17 +271,21 @@ const ScrapeScreenshotInputSchema = z
 			.describe(
 				'Capture the whole scrollable page instead of the viewport. Defaults to false.',
 			),
-		area: ScreenshotAreaSchema.optional().describe(
-			'Capture only this area. Mutually exclusive with `fullPage`.',
-		),
+		selector: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'CSS selector of one element to capture, such as `h1` or `#price-table`. Mutually exclusive with `fullPage`.',
+			),
 	})
 	.superRefine((input, ctx) => {
-		if (input.fullPage === true && input.area !== undefined) {
+		if (input.fullPage === true && input.selector !== undefined) {
 			ctx.addIssue({
 				code: 'custom',
-				path: ['area'],
+				path: ['selector'],
 				message:
-					'Choose one: `fullPage` captures everything and `area` captures a region.',
+					'Choose one: `fullPage` captures everything and `selector` captures one element.',
 			});
 		}
 	});
