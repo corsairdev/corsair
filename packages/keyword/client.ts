@@ -1,0 +1,241 @@
+import { asRecord } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
+
+export const KEYWORD_API_BASE = 'https://app.keyword.com/api/v2';
+
+// A rank chart over 180 days and a few hundred keywords answers a large body,
+// and the rank history for a whole group can take longer than the 20 second
+// default in corsair/http.
+const KEYWORD_TIMEOUT_MS = 60_000;
+
+/**
+ * Keyword answers every failure in a JSON:API error envelope:
+ *
+ * ```json
+ * { "errors": [{ "code": "401", "title": "...", "message": "Unauthenticated." }] }
+ * ```
+ *
+ * `code` is the status as a string, which is what a handler matches on.
+ */
+// unknown: the body is an untyped error body until asRecord narrows it.
+export function readErrors(body: unknown): {
+	code?: string;
+	title?: string;
+	message?: string;
+} {
+	const record = asRecord(body);
+	const errors = record?.errors;
+	if (!Array.isArray(errors) || errors.length === 0) return {};
+	const first = asRecord(errors[0]);
+	const read = (key: string) => {
+		const value = first?.[key];
+		if (typeof value === 'string' && value.length > 0) return value;
+		if (typeof value === 'number') return String(value);
+		return undefined;
+	};
+	return {
+		code: read('code'),
+		title: read('title'),
+		message: read('message') ?? read('detail'),
+	};
+}
+
+// Keyword enforces the plan's keyword count rather than a request rate, and it
+// publishes no Retry-After, so the handler's own backoff is the only delay.
+const KEYWORD_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+};
+
+/**
+ * A Keyword failure. The key travels in an `Authorization` header, so no body
+ * can echo it, but the body is still dropped: a keyword create echoes the
+ * project's `auth` key inside the resource attributes, and keeping it as
+ * `cause` would put that into every log line.
+ */
+export class KeywordAPIError extends Error {
+	readonly status?: number;
+	/** The status Keyword repeated in its error envelope, as a string. */
+	readonly code?: string;
+	/** Milliseconds from a Retry-After header, when Keyword sent one. */
+	readonly retryAfter?: number;
+	/** The HTTP method of the failed request. */
+	readonly method?: string;
+	readonly transport: boolean;
+	readonly timedOut: boolean;
+
+	constructor(
+		message: string,
+		options: {
+			cause?: Error;
+			status?: number;
+			code?: string;
+			retryAfter?: number;
+			method?: string;
+			transport?: boolean;
+			timedOut?: boolean;
+		} = {},
+	) {
+		super(message, options.cause ? { cause: options.cause } : undefined);
+		this.name = 'KeywordAPIError';
+		this.status = options.status;
+		this.code = options.code;
+		this.retryAfter = options.retryAfter;
+		this.method = options.method;
+		this.transport = options.transport ?? false;
+		this.timedOut = options.timedOut ?? false;
+	}
+
+	get isRateLimit(): boolean {
+		return this.status === 429;
+	}
+
+	get isAuthError(): boolean {
+		return this.status === 401;
+	}
+
+	/** The token's user is not allowed to make this call. */
+	get isPermissionError(): boolean {
+		return this.status === 403;
+	}
+
+	/** The plan's keyword allowance is full, which no retry can fix. */
+	get isQuotaError(): boolean {
+		return this.status === 402;
+	}
+}
+
+/** The message Keyword sent, with the status in front. */
+// unknown: an error body is untyped: a JSON:API envelope, or text from a proxy
+// that never reached Keyword.
+export function describeKeywordError(
+	status: number | undefined,
+	body: unknown,
+	fallback: string,
+): string {
+	const fields = readErrors(body);
+	const text = fields.message ?? fields.title ?? fallback;
+	return status === undefined ? text : `Keyword ${status}: ${text}`;
+}
+
+export type KeywordQueryValue = string | number | boolean;
+
+export type KeywordRequest = {
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+	path: string;
+	query?: Record<string, KeywordQueryValue | undefined>;
+	// unknown: the endpoint's input schema has already validated the body, which
+	// is a JSON:API document built per operation.
+	body?: unknown;
+};
+
+/** Encodes one path segment. */
+export function segment(value: string | number): string {
+	return encodeURIComponent(String(value));
+}
+
+/**
+ * The project (group) name goes into a path segment, and Keyword's names can
+ * contain a `[sub]` marker for a subproject, such as
+ * `Disney[sub]Disney Classics`. `encodeURIComponent` leaves the brackets in
+ * the reserved set, so they are restored after encoding to keep the marker
+ * readable to Keyword rather than turning it into `%5Bsub%5D`.
+ */
+export function projectSegment(name: string): string {
+	return encodeURIComponent(name).replace(/%5B/g, '[').replace(/%5D/g, ']');
+}
+
+// unknown: callers parse the body with the endpoint's zod output schema.
+export async function makeKeywordRequest(
+	apiKey: string,
+	{ method, path, query, body }: KeywordRequest,
+): Promise<unknown> {
+	const config: OpenAPIConfig = {
+		BASE: KEYWORD_API_BASE,
+		VERSION: '2.0.0',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		TIMEOUT: KEYWORD_TIMEOUT_MS,
+		HEADERS: { Accept: 'application/json', Authorization: `Bearer ${apiKey}` },
+	};
+
+	const requestOptions: ApiRequestOptions = {
+		method,
+		url: path,
+		query,
+		body,
+		mediaType: body === undefined ? undefined : 'application/json',
+	};
+
+	try {
+		return await request<unknown>(config, requestOptions, {
+			rateLimitConfig: KEYWORD_RATE_LIMIT_CONFIG,
+		});
+	} catch (error) {
+		if (error instanceof ApiError) {
+			const fields = readErrors(error.body);
+			throw new KeywordAPIError(
+				describeKeywordError(error.status, error.body, error.message),
+				{
+					status: error.status,
+					code: fields.code,
+					retryAfter: error.retryAfter,
+					method,
+				},
+			);
+		}
+		// DOMException (fetch timeouts) can fail instanceof Error across realms.
+		if (error instanceof Error || error instanceof DOMException) {
+			// A transport failure never had a response body, so its cause is safe.
+			throw new KeywordAPIError(error.message, {
+				cause: error,
+				method,
+				transport: true,
+				timedOut: error.name === 'TimeoutError',
+			});
+		}
+		throw new KeywordAPIError('Unknown Keyword error', {
+			method,
+			transport: true,
+		});
+	}
+}
+
+/** Drops the keys whose value is undefined, so a query carries only what was asked for. */
+export function definedQuery(
+	query: Record<string, KeywordQueryValue | undefined>,
+): Record<string, KeywordQueryValue> {
+	return Object.fromEntries(
+		Object.entries(query).filter(
+			(entry): entry is [string, KeywordQueryValue] => entry[1] !== undefined,
+		),
+	);
+}
+
+/**
+ * The project's `auth` key is a credential that Keyword returns inside every
+ * project and keyword resource. It is stripped before a result reaches a
+ * caller's log or payload, because it is not theirs to pass on.
+ */
+// unknown: a resource is a JSON:API document whose attributes have no closed
+// shape per provider version, so the walk is over open records.
+export function stripProjectAuth(value: unknown): unknown {
+	if (Array.isArray(value)) return value.map(stripProjectAuth);
+	const record = asRecord(value);
+	if (!record) return value;
+
+	const cleaned: Record<string, unknown> = {};
+	for (const [key, entry] of Object.entries(record)) {
+		if (key === 'auth') continue;
+		cleaned[key] = stripProjectAuth(entry);
+	}
+	return cleaned;
+}
