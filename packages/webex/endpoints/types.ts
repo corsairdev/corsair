@@ -173,6 +173,11 @@ const MaxSchema = z
 const NextLinkSchema = z
 	.string()
 	.url()
+	// The plugin sends the token to this URL, so only Webex's own host passes.
+	.refine((value) => new URL(value).origin === 'https://webexapis.com', {
+		message:
+			'nextLink must be a https://webexapis.com URL from a previous page.',
+	})
 	.optional()
 	.describe(
 		"Pass the previous page's `nextLink` to read the next page. Omit it for the first page.",

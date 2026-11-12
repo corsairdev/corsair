@@ -537,3 +537,21 @@ describe('review fixes', () => {
 		expect(url).toBe('https://webexapis.com/v1/rooms?max=2&page=4');
 	});
 });
+
+describe('nextLink', () => {
+	it('never sends the token to another host', async () => {
+		await expect(
+			invoke(Rooms.list, { nextLink: 'https://attacker.example/v1/rooms' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('refuses a page link that belongs to another list', async () => {
+		await expect(
+			invoke(Rooms.list, {
+				nextLink: 'https://webexapis.com/v1/messages?roomId=r&max=2',
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});

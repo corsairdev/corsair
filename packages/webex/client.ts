@@ -201,7 +201,7 @@ export function nextPageFromLink(
 ): string | undefined {
 	if (!link) return undefined;
 	for (const part of link.split(',')) {
-		const match = /<([^>]+)>\s*;\s*rel="?next"?/.exec(part.trim());
+		const match = /<([^<>]+)>\s*;\s*rel="?next"?/.exec(part.trim());
 		if (match?.[1]) return match[1];
 	}
 	return undefined;
@@ -222,7 +222,9 @@ export async function makeWebexListRequest(
 		nextLink,
 	}: { path: string; query?: WebexQuery; nextLink?: string },
 ): Promise<WebexPage> {
-	const url = nextLink ?? buildListUrl(path, query);
+	const url = nextLink
+		? checkNextLink(nextLink, path)
+		: buildListUrl(path, query);
 
 	let response: Response;
 	try {
@@ -282,6 +284,31 @@ export async function makeWebexListRequest(
 		body,
 		nextLink: nextPageFromLink(response.headers.get('link')),
 	};
+}
+
+/**
+ * A `nextLink` comes back from the caller, and the token is sent with it, so it
+ * must be a Webex URL for the same list. Anything else is refused before the
+ * request leaves.
+ */
+function checkNextLink(nextLink: string, path: string): string {
+	let parsed: URL;
+	try {
+		parsed = new URL(nextLink);
+	} catch {
+		throw new WebexAPIError('nextLink is not a URL', { method: 'GET' });
+	}
+	const base = new URL(WEBEX_API_BASE);
+	if (
+		parsed.origin !== base.origin ||
+		parsed.pathname !== `${base.pathname}${path}`
+	) {
+		throw new WebexAPIError(
+			`nextLink must be a ${WEBEX_API_BASE}${path} page from this list`,
+			{ method: 'GET' },
+		);
+	}
+	return parsed.toString();
 }
 
 /** Builds the first-page URL from the path and its query. */
