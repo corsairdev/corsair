@@ -1,0 +1,1673 @@
+{
+  "id": "imagekit",
+  "displayName": "ImageKit",
+  "description": "Image and video media library and CDN with ImageKit - upload files, list and search assets, organize folders, tag files, read versions and metadata, run folder jobs and purge CDN cache.",
+  "npmPackageName": "@corsair-dev/imagekit",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 26,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "imagekit.api.cache.getPurgeStatus",
+      "shortPath": "cache.getPurgeStatus",
+      "description": "Where a cache purge stands; status Pending or Completed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string",
+            "description": "Request ID from a cache purge call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.cache.purge",
+      "shortPath": "cache.purge",
+      "description": "Purge the CDN cache of one delivered file URL; follow with cache.getPurgeStatus until status is Completed",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "requestId",
+        "status": {
+          "op": "cache.getPurgeStatus",
+          "idArg": "requestId",
+          "statusPath": "status",
+          "done": ["Completed"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Full https URL of the delivered file whose CDN cache to purge."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.files.addTags",
+      "shortPath": "files.addTags",
+      "description": "Add tags to up to 50 files at once; the answer splits successes from per-file errors",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 50 file IDs to update in one call."
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]",
+            "description": "Tags to add to every listed file."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "successfullyUpdatedFileIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ fileId: string, error: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.files.bulkDelete",
+      "shortPath": "files.bulkDelete",
+      "description": "Permanently delete up to 100 files by ID; a 207 answer lists per-file failures in errors. The CDN keeps serving cached copies until cache.purge clears them",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 100 file IDs to delete permanently; a 207 answer reports per-file failures."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "successfullyDeletedFileIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ fileId: string, error: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.files.copy",
+      "shortPath": "files.copy",
+      "description": "Copy a file to another folder, optionally with all of its versions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourceFilePath",
+            "optional": false,
+            "type": "string",
+            "description": "Path of the file to copy."
+          },
+          {
+            "key": "destinationPath",
+            "optional": false,
+            "type": "string",
+            "description": "Folder path to copy the file into, e.g. `/archive/`."
+          },
+          {
+            "key": "includeFileVersions",
+            "optional": true,
+            "type": "boolean",
+            "description": "Copy the file with all of its versions."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "imagekit.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Permanently delete a file and all of its versions; there is no trash and no restore. The CDN keeps serving cached copies until cache.purge clears them",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the asset."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "imagekit.api.files.getDetails",
+      "shortPath": "files.getDetails",
+      "description": "Read one file by ID: path, URL, tags, AI tags, size, versions and custom metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the asset."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filePath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "AITags",
+            "optional": true,
+            "type": "{ name: string, source?: string | null, confidence?: number | null }[] | null"
+          },
+          {
+            "key": "versionInfo",
+            "optional": true,
+            "type": "{ id: string, name?: string | null } | null"
+          },
+          {
+            "key": "isPrivateFile",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isPublished",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "customCoordinates",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customMetadata",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom metadata to set, keyed by field label, identifier or UUID."
+          },
+          {
+            "key": "extensionStatus",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "embeddedMetadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.files.list",
+      "shortPath": "files.list",
+      "description": "List and search files and folders with paging (limit and skip), a folder path filter, file type and a searchQuery expression",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "file | file-version | folder | all",
+            "description": "Asset kind to list; the default `file` lists only files."
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string",
+            "description": "Only assets inside this folder path, e.g. `/products/`."
+          },
+          {
+            "key": "searchQuery",
+            "optional": true,
+            "type": "string",
+            "description": "Search filter expression over name, tags, type, size and createdAt, e.g. `name = \"summer\"`."
+          },
+          {
+            "key": "fileType",
+            "optional": true,
+            "type": "all | image | non-image",
+            "description": "All files, images only, or non-image files (video and others)."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "ASC_NAME | DESC_NAME | ASC_CREATED | DESC_CREATED | ASC_UPDATED | DESC_UPDATED | ASC_HEIGHT | DESC_HEIGHT | ASC_WIDTH | DESC_WIDTH | ASC_SIZE | DESC_SIZE | ASC_RELEVANCE | DESC_RELEVANCE",
+            "description": "Sort token, e.g. ASC_CREATED (the default) or DESC_SIZE."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1-1000; the default is 1000."
+          },
+          {
+            "key": "skip",
+            "optional": true,
+            "type": "number",
+            "description": "Assets to skip before this page; combine with limit to page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "({ fileId: string, type?: string | null, name?: string | null, filePath?: string | null, url?: string | null, thumbnail?: string | null, fileType?: string | null, size?: number | null, width?: number | null, height?: number | null, tags?: string[] | null, AITags?: { name: string, source?: string | null, confidence?: number | null }[] | null, versionInfo?: { id: string, name?: string | null } | null, isPrivateFile?: boolean | null, isPublished?: boolean | null, customCoordinates?: string | null, description?: string | null, customMetadata?: Record<string, any> | null, extensionStatus?: Record<string, any> | null, embeddedMetadata?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null } | { type?: string | null, folderId: string, name?: string | null, folderPath?: string | null, customMetadata?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null })[]"
+      }
+    },
+    {
+      "path": "imagekit.api.files.move",
+      "shortPath": "files.move",
+      "description": "Move a file to another folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourceFilePath",
+            "optional": false,
+            "type": "string",
+            "description": "Path of the file to move."
+          },
+          {
+            "key": "destinationPath",
+            "optional": false,
+            "type": "string",
+            "description": "Folder path to move the file into."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "imagekit.api.files.removeAITags",
+      "shortPath": "files.removeAITags",
+      "description": "Remove AI-generated tags from up to 50 files at once",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 50 file IDs to update in one call."
+          },
+          {
+            "key": "AITags",
+            "optional": false,
+            "type": "string[]",
+            "description": "AI tag names to remove from every listed file."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "successfullyUpdatedFileIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ fileId: string, error: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.files.removeTags",
+      "shortPath": "files.removeTags",
+      "description": "Remove tags from up to 50 files at once",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 50 file IDs to update in one call."
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]",
+            "description": "Tags to remove from every listed file."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "successfullyUpdatedFileIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ fileId: string, error: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.files.rename",
+      "shortPath": "files.rename",
+      "description": "Rename a file in place; purgeCache purges the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations need cache.purge), reported by purgeRequestId. If the purge fails (e.g. quota exceeded), the rename still happens and the answer has reason PURGE_FAILED instead",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filePath",
+            "optional": false,
+            "type": "string",
+            "description": "Path of the file to rename."
+          },
+          {
+            "key": "newFileName",
+            "optional": false,
+            "type": "string",
+            "description": "New file name, without the folder."
+          },
+          {
+            "key": "purgeCache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also purge the old URL, its versions and query-parameter transformations from the CDN (path-parameter transformations stay cached); adds purgeRequestId to the answer, or reason PURGE_FAILED when the rename worked but the purge did not."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "purgeRequestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.files.updateDetails",
+      "shortPath": "files.updateDetails",
+      "description": "Change a file: replace tags, set custom metadata, coordinates or description, remove AI tags (names or all), or publish or unpublish it (that call alone)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the asset."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Full replacement tag list; an empty array clears every tag."
+          },
+          {
+            "key": "customCoordinates",
+            "optional": true,
+            "type": "string",
+            "description": "Custom coordinates string, e.g. `10,10,100,100`."
+          },
+          {
+            "key": "customMetadata",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom metadata to set, keyed by field label, identifier or UUID."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Short human-readable description stored with the file."
+          },
+          {
+            "key": "removeAITags",
+            "optional": true,
+            "type": "string[] | all",
+            "description": "AI tag names to remove, or the string `all` to remove every AI tag."
+          },
+          {
+            "key": "isPublished",
+            "optional": true,
+            "type": "boolean",
+            "description": "Publish or unpublish the file. Send this alone: ImageKit rejects it mixed with the other fields."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filePath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "AITags",
+            "optional": true,
+            "type": "{ name: string, source?: string | null, confidence?: number | null }[] | null"
+          },
+          {
+            "key": "versionInfo",
+            "optional": true,
+            "type": "{ id: string, name?: string | null } | null"
+          },
+          {
+            "key": "isPrivateFile",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isPublished",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "customCoordinates",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customMetadata",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom metadata to set, keyed by field label, identifier or UUID."
+          },
+          {
+            "key": "extensionStatus",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "embeddedMetadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a file from an https URL or base64 content into the media library, optionally into a folder and with tags",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string",
+            "description": "The file to upload: an https URL ImageKit can fetch, or base64-encoded content."
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string",
+            "description": "Name the file gets in the media library, e.g. photo.jpg."
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "string",
+            "description": "Destination folder path, e.g. `/products/`."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tags to attach to the uploaded file; no commas inside a tag."
+          },
+          {
+            "key": "isPrivateFile",
+            "optional": true,
+            "type": "boolean",
+            "description": "Mark the file private; it is then served only through a signed URL or a named transformation."
+          },
+          {
+            "key": "isPublished",
+            "optional": true,
+            "type": "boolean",
+            "description": "Publish the file immediately."
+          },
+          {
+            "key": "useUniqueFileName",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add a random suffix to fileName when true (the default)."
+          },
+          {
+            "key": "overwriteFile",
+            "optional": true,
+            "type": "boolean",
+            "description": "Replace an existing file at the same path."
+          },
+          {
+            "key": "overwriteTags",
+            "optional": true,
+            "type": "boolean",
+            "description": "When overwriting a file and no tags are sent, true (the default) removes its existing tags and false keeps them. Sent tags always replace them."
+          },
+          {
+            "key": "overwriteAITags",
+            "optional": true,
+            "type": "boolean",
+            "description": "When overwriting a file, true (the default) removes its AI tags and false keeps them."
+          },
+          {
+            "key": "overwriteCustomMetadata",
+            "optional": true,
+            "type": "boolean",
+            "description": "When overwriting a file and no customMetadata is sent, true (the default) removes its existing custom metadata and false keeps it. Sent customMetadata always replaces it."
+          },
+          {
+            "key": "customMetadata",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom metadata to set, keyed by field label, identifier or UUID."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Short human-readable description stored with the file."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filePath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnailUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bitRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "audioCodec",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "videoCodec",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "AITags",
+            "optional": true,
+            "type": "{ name: string, source?: string | null, confidence?: number | null }[] | null"
+          },
+          {
+            "key": "versionInfo",
+            "optional": true,
+            "type": "{ id: string, name?: string | null } | null"
+          },
+          {
+            "key": "isPrivateFile",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isPublished",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "customCoordinates",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customMetadata",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom metadata to set, keyed by field label, identifier or UUID."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.fileVersions.delete",
+      "shortPath": "fileVersions.delete",
+      "description": "Permanently delete one non-current version of a file; the current version cannot be deleted",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the asset."
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string",
+            "description": "Version ID, the `versionInfo.id` of a version entry."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "imagekit.api.fileVersions.getDetails",
+      "shortPath": "fileVersions.getDetails",
+      "description": "Read one stored version of a file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the asset."
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string",
+            "description": "Version ID, the `versionInfo.id` of a version entry."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filePath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "AITags",
+            "optional": true,
+            "type": "{ name: string, source?: string | null, confidence?: number | null }[] | null"
+          },
+          {
+            "key": "versionInfo",
+            "optional": true,
+            "type": "{ id: string, name?: string | null } | null"
+          },
+          {
+            "key": "isPrivateFile",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isPublished",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "customCoordinates",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customMetadata",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom metadata to set, keyed by field label, identifier or UUID."
+          },
+          {
+            "key": "extensionStatus",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "embeddedMetadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.fileVersions.list",
+      "shortPath": "fileVersions.list",
+      "description": "List every stored version of a file, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the asset."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ fileId: string, type?: string | null, name?: string | null, filePath?: string | null, url?: string | null, thumbnail?: string | null, fileType?: string | null, size?: number | null, width?: number | null, height?: number | null, tags?: string[] | null, AITags?: { name: string, source?: string | null, confidence?: number | null }[] | null, versionInfo?: { id: string, name?: string | null } | null, isPrivateFile?: boolean | null, isPublished?: boolean | null, customCoordinates?: string | null, description?: string | null, customMetadata?: Record<string, any> | null, extensionStatus?: Record<string, any> | null, embeddedMetadata?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "imagekit.api.fileVersions.restore",
+      "shortPath": "fileVersions.restore",
+      "description": "Make a stored version the current version of a file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the asset."
+          },
+          {
+            "key": "versionId",
+            "optional": false,
+            "type": "string",
+            "description": "Version ID, the `versionInfo.id` of a version entry."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filePath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "AITags",
+            "optional": true,
+            "type": "{ name: string, source?: string | null, confidence?: number | null }[] | null"
+          },
+          {
+            "key": "versionInfo",
+            "optional": true,
+            "type": "{ id: string, name?: string | null } | null"
+          },
+          {
+            "key": "isPrivateFile",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isPublished",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "customCoordinates",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customMetadata",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom metadata to set, keyed by field label, identifier or UUID."
+          },
+          {
+            "key": "extensionStatus",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "embeddedMetadata",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.folders.copy",
+      "shortPath": "folders.copy",
+      "description": "Copy a folder subtree into another folder as a background job; follow with folders.getJobStatus until status is Completed",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "jobId",
+        "status": {
+          "op": "folders.getJobStatus",
+          "idArg": "jobId",
+          "statusPath": "status",
+          "done": ["Completed"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourceFolderPath",
+            "optional": false,
+            "type": "string",
+            "description": "Path of the folder to copy."
+          },
+          {
+            "key": "destinationPath",
+            "optional": false,
+            "type": "string",
+            "description": "Folder path to copy the source folder into."
+          },
+          {
+            "key": "includeVersions",
+            "optional": true,
+            "type": "boolean",
+            "description": "Copy folder contents with all file versions."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a folder in a parent folder path",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderName",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the new folder; characters outside letters and digits become underscores."
+          },
+          {
+            "key": "parentFolderPath",
+            "optional": false,
+            "type": "string",
+            "description": "Folder path to create the new folder in, e.g. `/` for the library root."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "imagekit.api.folders.delete",
+      "shortPath": "folders.delete",
+      "description": "Permanently delete a folder and everything inside it; there is no trash and no restore",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderPath",
+            "optional": false,
+            "type": "string",
+            "description": "Full path of the folder to delete, contents included."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "imagekit.api.folders.getJobStatus",
+      "shortPath": "folders.getJobStatus",
+      "description": "Where a folder bulk job stands; status Pending or Completed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "Job ID from a folder copy, move or rename call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "purgeRequestId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.folders.move",
+      "shortPath": "folders.move",
+      "description": "Move a folder subtree into another folder as a background job; follow with folders.getJobStatus",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "jobId",
+        "status": {
+          "op": "folders.getJobStatus",
+          "idArg": "jobId",
+          "statusPath": "status",
+          "done": ["Completed"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourceFolderPath",
+            "optional": false,
+            "type": "string",
+            "description": "Path of the folder to move."
+          },
+          {
+            "key": "destinationPath",
+            "optional": false,
+            "type": "string",
+            "description": "Folder path to move the source folder into."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.folders.rename",
+      "shortPath": "folders.rename",
+      "description": "Rename a folder as a background job; follow with folders.getJobStatus. purgeCache also purges old CDN paths",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "jobId",
+        "status": {
+          "op": "folders.getJobStatus",
+          "idArg": "jobId",
+          "statusPath": "status",
+          "done": ["Completed"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderPath",
+            "optional": false,
+            "type": "string",
+            "description": "Path of the folder to rename."
+          },
+          {
+            "key": "newFolderName",
+            "optional": false,
+            "type": "string",
+            "description": "New folder name; characters outside letters, digits and `-` become underscores."
+          },
+          {
+            "key": "purgeCache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also purge the CDN cache for the moved paths; adds purgeRequestId to the job status."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.metadata.getByFileId",
+      "shortPath": "metadata.getByFileId",
+      "description": "Read image or video metadata of a stored file: dimensions, format, pHash, EXIF",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "Unique identifier of the asset."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hasColorProfile",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "density",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hasTransparency",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "pHash",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bitRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "audioCodec",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "videoCodec",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "exif",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "imagekit.api.metadata.getByUrl",
+      "shortPath": "metadata.getByUrl",
+      "description": "Read metadata of any delivered file URL, including transformed variants",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Full https URL of the delivered file, transformation parameters allowed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hasColorProfile",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "density",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hasTransparency",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "pHash",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bitRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "audioCodec",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "videoCodec",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "exif",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
