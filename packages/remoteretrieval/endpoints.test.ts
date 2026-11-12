@@ -219,6 +219,21 @@ describe('orders.create', () => {
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('Steele Street');
 	});
 
+	it.each([429, 503])(
+		'sends a create once when the API answers %i',
+		async (status) => {
+			respond(
+				fetchMock,
+				{ message: 'busy', status: 'Fail', code: status },
+				status,
+			);
+
+			await expect(invoke(Api.create, { orders: [ORDER] })).rejects.toThrow();
+			// A resend would book and bill a second shipment.
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		},
+	);
+
 	it('surfaces a refused order that arrived with a 200', async () => {
 		respond(fetchMock, FAILED_IN_BODY);
 
