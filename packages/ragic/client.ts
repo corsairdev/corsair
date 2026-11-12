@@ -144,12 +144,18 @@ function failure(body: unknown): {
 /**
  * True when a body is Ragic's error envelope rather than data. Ragic answers 200
  * for a failed call as well as a successful one, so this is the only reliable
- * check.
+ * check. A write that fails a field rule comes back as `INVALID` rather than
+ * `ERROR` (seen live: `{"status":"INVALID","msg":"Field Account Owner contains
+ * empty value","code":202}`), so both are failures.
  * unknown: the body is untyped until `failure` narrows it.
  */
 export function isRagicError(body: unknown): boolean {
 	const { status, code } = failure(body);
-	return status === 'ERROR' || (status === undefined && code !== undefined);
+	return (
+		status === 'ERROR' ||
+		status === 'INVALID' ||
+		(status === undefined && code !== undefined)
+	);
 }
 
 /**

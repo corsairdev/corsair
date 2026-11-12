@@ -7,6 +7,7 @@ import {
 	CREATED,
 	DELETED,
 	GUEST_106,
+	INVALID_FIELD,
 	RECORD,
 	RECORD_WITH_SUBTABLE,
 	RECORDS,
@@ -630,6 +631,26 @@ describe('errors expressed inside a 200', () => {
 
 		expect(error.code).toBe(201);
 		expect(error.isValidationError).toBe(true);
+	});
+
+	it('throws a write Ragic refused as INVALID instead of returning it', async () => {
+		respond(fetchMock, INVALID_FIELD);
+
+		// unknown: the rejection is narrowed by the assertions below.
+		const error = (await invoke(Records.create, {
+			...SHEET,
+			fields: { '1000001': 'Acme' },
+		}).catch((e: unknown) => e)) as {
+			code?: number;
+			message?: string;
+			isValidationError?: boolean;
+		};
+
+		expect(error.code).toBe(202);
+		expect(error.isValidationError).toBe(true);
+		expect(error.message).toBe(
+			'Ragic 202: Field Account Owner contains empty value',
+		);
 	});
 
 	it('never lets a refusal reach the output schema as a record', async () => {

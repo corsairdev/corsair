@@ -84,6 +84,13 @@ export const UPDATED = {
 
 export const DELETED = { status: 'SUCCESS', code: 200 };
 
+// Live: a create that left a required field empty, at HTTP 200.
+export const INVALID_FIELD = {
+	status: 'INVALID',
+	msg: 'Field Account Owner contains empty value',
+	code: 202,
+};
+
 // Comment fields by fixed id: 61 timestamp, 65 commenter, 66 text, 67 attachment, 73 ms.
 export const COMMENT_ADDED = {
 	'61': '2025/02/13 14:30',
