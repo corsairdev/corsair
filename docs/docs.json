@@ -71,7 +71,11 @@
               },
               {
                 "group": "Clients",
-                "pages": ["clients/python", "clients/go", "clients/swift"]
+                "pages": [
+                  "clients/python",
+                  "clients/go",
+                  "clients/swift"
+                ]
               }
             ]
           },
@@ -144,7 +148,10 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
+            "pages": [
+              "guides/plugins",
+              "guides/create-your-own-plugin"
+            ]
           },
           {
             "group": "Plugins",
@@ -1704,6 +1711,14 @@
                   "plugins/diffbot/overview",
                   "plugins/diffbot/api",
                   "plugins/diffbot/database"
+                ]
+              },
+              {
+                "group": "DigiCert",
+                "pages": [
+                  "plugins/digicert/overview",
+                  "plugins/digicert/api",
+                  "plugins/digicert/database"
                 ]
               },
               {
@@ -4177,7 +4192,9 @@
         "groups": [
           {
             "group": "Changelog",
-            "pages": ["changelog"]
+            "pages": [
+              "changelog"
+            ]
           }
         ]
       }

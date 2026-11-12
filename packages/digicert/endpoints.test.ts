@@ -1,0 +1,356 @@
+import { logEventFromContext } from 'corsair/core';
+import { makeDigicertRequest } from './client';
+import { endpoints } from './endpoints';
+import type { DigicertContext, DigicertKeyBuilderContext } from './index';
+import { digicert } from './index';
+
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual('corsair/core');
+	return { ...actual, logEventFromContext: jest.fn() };
+});
+jest.mock('./client', () => ({ makeDigicertRequest: jest.fn() }));
+
+const call = jest.mocked(makeDigicertRequest);
+const log = jest.mocked(logEventFromContext);
+
+type EndpointContext = Parameters<typeof endpoints.usersList>[0];
+
+function buildCtx(): EndpointContext {
+	const ctx: DigicertContext = {
+		endpoints: {},
+		$getAccountId: () => Promise.resolve('test-account'),
+		key: 'test-key',
+		options: { certCentralRegion: 'us' },
+		keys: {
+			get_dek: () => Promise.resolve('test-dek'),
+			issue_new_dek: () => Promise.resolve('test-dek'),
+			get_api_key: () => Promise.resolve('test-key'),
+			set_api_key: () => Promise.resolve(),
+			get_digicert_one_api_key: () => Promise.resolve('test-one-key'),
+			set_digicert_one_api_key: () => Promise.resolve(),
+			get_webhook_signature: () => Promise.resolve(null),
+			set_webhook_signature: () => Promise.resolve(),
+		},
+		db: {},
+	};
+	return ctx;
+}
+
+beforeEach(() => {
+	call.mockReset();
+	log.mockReset();
+});
+
+describe('DigiCert endpoint requests', () => {
+	const ctx = buildCtx();
+	it('calls CertCentral user, order, and organization list routes with documented paging queries', async () => {
+		call.mockResolvedValueOnce({
+			users: [],
+			page: { total: 0, limit: 30, offset: 0 },
+		});
+		await endpoints.usersList(ctx, {
+			container_id: 8,
+			limit: 30,
+			filters: { status: 'active' },
+		});
+		expect(call.mock.calls[0]).toEqual([
+			'certcentral',
+			'/user',
+			'test-key',
+			expect.objectContaining({
+				method: 'GET',
+				query: { container_id: 8, limit: 30, 'filters[status]': 'active' },
+			}),
+		]);
+
+		call.mockResolvedValueOnce({
+			orders: [],
+			page: { total: 0, limit: 25, offset: 0 },
+		});
+		await endpoints.ordersList(ctx, {
+			limit: 25,
+			filters: { status: 'issued' },
+		});
+		expect(call.mock.calls[1]).toEqual([
+			'certcentral',
+			'/order/certificate',
+			'test-key',
+			expect.objectContaining({
+				method: 'GET',
+				query: { limit: 25, 'filters[status]': 'issued' },
+			}),
+		]);
+
+		call.mockResolvedValueOnce({
+			organizations: [],
+			page: { total: 0, limit: 25, offset: 0 },
+		});
+		await endpoints.organizationsList(ctx, {
+			include_validation: true,
+			limit: 25,
+		});
+		expect(call.mock.calls[2]).toEqual([
+			'certcentral',
+			'/organization',
+			'test-key',
+			expect.objectContaining({
+				method: 'GET',
+				query: { include_validation: true, limit: 25 },
+			}),
+		]);
+	});
+
+	it('lists intermediates from the CertCentral certificate route', async () => {
+		call.mockResolvedValue({ intermediates: [] });
+		await expect(endpoints.intermediatesList(ctx, {})).resolves.toEqual({
+			intermediates: [],
+		});
+		expect(call).toHaveBeenCalledWith(
+			'certcentral',
+			'/certificate/intermediates',
+			'test-key',
+			expect.objectContaining({ method: 'GET' }),
+		);
+	});
+
+	it('calls Account Manager locales with the separate DigiCert ONE credential', async () => {
+		const locales = [{ code: 'en_US', language: 'English' }];
+		call.mockResolvedValue(locales);
+		await expect(endpoints.accountManagerLocales(ctx, {})).resolves.toEqual(
+			locales,
+		);
+		expect(call).toHaveBeenCalledWith(
+			'accountManager',
+			'/account/api/v1/locales',
+			'test-key',
+			expect.objectContaining({ method: 'GET' }),
+		);
+	});
+
+	it('calls the Private CA helper with the separate DigiCert ONE credential', async () => {
+		call.mockResolvedValue({ version: '1.2.3' });
+		await expect(endpoints.privateCAHelper(ctx, {})).resolves.toEqual({
+			version: '1.2.3',
+		});
+		expect(call).toHaveBeenCalledWith(
+			'privateCA',
+			'/certificate-authority/api/v1/helper',
+			'test-key',
+			expect.objectContaining({ method: 'GET' }),
+		);
+	});
+
+	it('adds certificate tags using the TLM service-user credential', async () => {
+		call.mockResolvedValue(undefined);
+		await expect(
+			endpoints.certificateTags(ctx, {
+				certificateId: 'cert-123',
+				tags: ['reviewed'],
+			}),
+		).resolves.toBeUndefined();
+		expect(call).toHaveBeenCalledWith(
+			'trustLifecycle',
+			'/mpki/api/v1/certificate/cert-123/tag',
+			'test-key',
+			expect.objectContaining({ method: 'POST', body: { tags: ['reviewed'] } }),
+		);
+	});
+
+	it('verifies a Private CA template using the DigiCert ONE credential', async () => {
+		call.mockResolvedValue(undefined);
+		const template = '{"name":"TLS"}';
+		await expect(
+			endpoints.verifyTemplate(ctx, { template }),
+		).resolves.toBeUndefined();
+		expect(call).toHaveBeenCalledWith(
+			'privateCA',
+			'/certificate-authority/api/v1/template/verify',
+			'test-key',
+			expect.objectContaining({ method: 'POST', body: { template } }),
+		);
+	});
+
+	it('uses Report Library paths and parameters for names, types, history, and details', async () => {
+		call.mockResolvedValueOnce({ report_names: ['Quarterly'] });
+		await endpoints.reportNames(ctx, { report_display_name: 'Quarter' });
+		expect(call.mock.calls[0]).toEqual([
+			'reportLibrary',
+			'/report/names',
+			'test-key',
+			expect.objectContaining({
+				method: 'GET',
+				query: { report_display_name: 'Quarter' },
+			}),
+		]);
+
+		call.mockResolvedValueOnce({ report_types: [] });
+		await endpoints.reportTypes(ctx, { language_id: 1 });
+		expect(call.mock.calls[1]?.[1]).toBe('/report/types');
+
+		call.mockResolvedValueOnce({
+			page: { total: 0, limit: 100, offset: 0 },
+			report_history: [],
+		});
+		await endpoints.reportHistory(ctx, { limit: 100, status: 'READY' });
+		expect(call.mock.calls[2]?.[1]).toBe('/report/history');
+
+		const report = {
+			report_display_name: 'Quarterly',
+			report_identifier: '00000000-0000-4000-8000-000000000001',
+			created_by_user_id: 1,
+			created_by_user_name: 'user',
+			created_date: '2026-01-01 00:00:00',
+			report_metadata: {
+				report_type: 'orders',
+				columns: [{ identifier: 'order_id' }],
+			},
+			schedule: { frequency: 'ON_DEMAND' },
+			format: ['CSV'],
+			status: 'ACTIVE',
+		};
+		call.mockResolvedValueOnce({ report });
+		await endpoints.reportDetails(ctx, {
+			reportIdentifier: report.report_identifier,
+		});
+		expect(call.mock.calls[3]?.[1]).toBe(`/report/${report.report_identifier}`);
+	});
+
+	it('encodes both documented Custom Reports GraphQL query modes on the same route', async () => {
+		call.mockResolvedValue({
+			data: { order_details: [{ id: '123', status: 'issued' }] },
+		});
+		await endpoints.customReportOrders(ctx, {
+			fields: ['id', 'status'],
+			status: 'issued',
+			limit: 5,
+		});
+		expect(call.mock.calls[0]).toEqual([
+			'certcentral',
+			'/reports/query',
+			'test-key',
+			expect.objectContaining({
+				method: 'POST',
+				body: { query: '{order_details(status:"issued",limit:5){id status}}' },
+			}),
+		]);
+		call.mockResolvedValue({
+			data: { order_details_by_id: { id: '123', status: 'issued' } },
+		});
+		await endpoints.customReportOrderById(ctx, {
+			id: 123,
+			fields: ['id', 'status'],
+		});
+		expect(call.mock.calls[1]?.[1]).toBe('/reports/query');
+		expect(call.mock.calls[1]?.[3]).toMatchObject({
+			body: { query: '{order_details_by_id(id:123){id status}}' },
+		});
+	});
+
+	it('calls the public TLM version route without a credential', async () => {
+		call.mockResolvedValue({ version: '1.2893.0' });
+		await endpoints.trustLifecycleVersion(ctx, {});
+		expect(call).toHaveBeenCalledWith(
+			'trustLifecycle',
+			'/mpki/api/v1/version',
+			undefined,
+			expect.objectContaining({ method: 'GET' }),
+		);
+	});
+
+	it('calls public CSC v0 and v1 info routes without credentials', async () => {
+		call.mockResolvedValue({
+			lang: 'en-US',
+			name: 'CSC service',
+			methods: [],
+			authType: [],
+		});
+		await endpoints.contentTrustInfoV0(ctx, { lang: 'en-US' });
+		await endpoints.contentTrustInfoV1(ctx, { lang: 'en-US' });
+		expect(call.mock.calls[0]).toEqual([
+			'contentTrust',
+			'/csc/v0/info',
+			undefined,
+			expect.objectContaining({ method: 'POST', body: { lang: 'en-US' } }),
+		]);
+		expect(call.mock.calls[1]).toEqual([
+			'contentTrust',
+			'/csc/v1/info',
+			undefined,
+			expect.objectContaining({ method: 'POST', body: { lang: 'en-US' } }),
+		]);
+	});
+
+	it('resolves CertCentral and DigiCert ONE credentials separately', async () => {
+		const plugin = digicert();
+		const base = {
+			authType: 'api_key' as const,
+			options: {},
+			tenantId: 'tenant',
+			keys: {
+				get_dek: () => Promise.resolve('dek'),
+				issue_new_dek: () => Promise.resolve('dek'),
+				get_api_key: () => Promise.resolve('certcentral-key'),
+				set_api_key: () => Promise.resolve(),
+				get_digicert_one_api_key: () => Promise.resolve('one-token'),
+				set_digicert_one_api_key: () => Promise.resolve(),
+				get_webhook_signature: () => Promise.resolve(null),
+				set_webhook_signature: () => Promise.resolve(),
+			},
+		} satisfies Omit<DigicertKeyBuilderContext, 'meteredOperationId'>;
+		const certCentralContext: DigicertKeyBuilderContext = {
+			...base,
+			meteredOperationId: 'users.list',
+		};
+		const oneContext: DigicertKeyBuilderContext = {
+			...base,
+			meteredOperationId: 'accountManager.locales',
+		};
+		const keyBuilder = plugin.keyBuilder;
+		if (!keyBuilder) throw new Error('DigiCert key builder missing');
+		expect(await keyBuilder(certCentralContext, 'endpoint')).toBe(
+			'certcentral-key',
+		);
+		expect(await keyBuilder(oneContext, 'endpoint')).toBe('one-token');
+	});
+
+	it('rejects invalid requests before network or event logging', async () => {
+		await expect(endpoints.usersList(ctx, { limit: -1 })).rejects.toThrow();
+		const invalidOrderInput = {
+			filters: { status: 'issued' as const },
+			undocumented: true,
+		};
+		await expect(
+			endpoints.ordersList(ctx, invalidOrderInput),
+		).rejects.toThrow();
+		await expect(
+			endpoints.organizationsList(ctx, { limit: 1001 }),
+		).rejects.toThrow();
+		await expect(
+			endpoints.contentTrustInfoV0(ctx, { lang: '' }),
+		).rejects.toThrow();
+		await expect(
+			endpoints.contentTrustInfoV1(ctx, { lang: '' }),
+		).rejects.toThrow();
+		expect(call).not.toHaveBeenCalled();
+		expect(log).not.toHaveBeenCalled();
+	});
+
+	it('logs only safe list counts, never request filters', async () => {
+		call.mockResolvedValue({
+			users: [],
+			page: { total: 0, limit: 10, offset: 0 },
+		});
+		await endpoints.usersList(ctx, {
+			filters: { search: 'sensitive-domain.test' },
+		});
+		expect(log).toHaveBeenCalledWith(
+			ctx,
+			'digicert.users.list',
+			{ count: 0 },
+			'completed',
+		);
+		expect(JSON.stringify(log.mock.calls[0]?.[2])).not.toContain(
+			'sensitive-domain.test',
+		);
+	});
+});

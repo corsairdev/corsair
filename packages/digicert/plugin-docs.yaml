@@ -1,0 +1,59 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: DigiCert
+description: Inspect CertCentral users, certificate orders, organizations and intermediates, plus public DigiCert ONE and CSC service information.
+recommendedAuth: api_key
+overviewNote: |
+  This plugin currently covers only a small subset of DigiCert's official API surface. CertCentral and Report Library use `X-DC-DEVKEY`; DigiCert ONE product APIs use a separate service-user token in `x-api-key`; the documented public version and CSC info routes need no key. The combined plugin requires both API-key fields because Corsair requires each custom account field. DigiCert ONE also offers mTLS, which this plugin does not implement. Webhook operations are out of scope, five deprecated TLM routes are excluded, and the 14 CertCentral Discovery catalog operations were discontinued on October 1, 2026.
+apiExamples:
+  users.list:
+    call: '{}'
+  orders.list:
+    call: '{}'
+  organizations.list:
+    call: '{}'
+  certificates.listIntermediates:
+    call: '{}'
+  accountManager.locales:
+    call: '{}'
+  privateCA.helper:
+    call: '{}'
+  privateCA.verifyTemplate:
+    call: "{ template: '{\"name\":\"TLS\"}' }"
+  reportLibrary.names:
+    call: '{}'
+  reportLibrary.types:
+    call: '{}'
+  reportLibrary.history:
+    call: '{}'
+  reportLibrary.details:
+    call: "{ reportIdentifier: '00000000-0000-4000-8000-000000000001' }"
+  customReports.orders:
+    call: "{ fields: ['id', 'status'], status: 'issued', limit: 5 }"
+  customReports.orderById:
+    call: "{ id: 123, fields: ['id', 'common_name', 'status'] }"
+  trustLifecycle.version:
+    call: '{}'
+  trustLifecycle.addCertificateTags:
+    call: "{ certificateId: '00000000-0000-0000-0000-000000000000', tags: ['reviewed'] }"
+  contentTrust.infoV0:
+    call: "{ lang: 'en-US' }"
+  contentTrust.infoV1:
+    call: "{ lang: 'en-US' }"
+apiNotes:
+  users.list: 'Uses offset and limit pagination; `without_container` controls whether the nested primary container is returned.'
+  orders.list: 'Uses offset and limit pagination; available filters and the maximum limit are documented in the CertCentral route reference.'
+  organizations.list: 'Uses offset and limit pagination; `include_validation` adds validation-related response fields.'
+  certificates.listIntermediates: 'Returns PEM certificate content; avoid logging response bodies.'
+  accountManager.locales: 'Uses the DigiCert ONE service-user token stored in `digicert_one_api_key`, sent as `x-api-key`.'
+  privateCA.helper: 'Uses the DigiCert ONE service-user token stored in `digicert_one_api_key`, sent as `x-api-key`.'
+  privateCA.verifyTemplate: 'Validates the required template string and returns no content on a successful 204 response.'
+  reportLibrary.names: 'Uses the separate Report Library regional host and CertCentral API key.'
+  reportLibrary.types: 'Report types and supported formats vary by account and current service configuration.'
+  reportLibrary.history: 'Uses offset and limit pagination; includes scheduled report records and individual run records.'
+  reportLibrary.details: 'Requires a UUID report identifier; use the Report Library route family, not the Services API host.'
+  customReports.orders: 'The result fields are determined by `fields`; pagination and filters are serialized into the documented GraphQL query.'
+  customReports.orderById: 'Requires an order ID and at least one requested field; its response keys depend on the selected fields.'
+  trustLifecycle.version: 'This DigiCert ONE route is explicitly unauthenticated in the official OpenAPI document.'
+  trustLifecycle.addCertificateTags: 'This is a write operation; tag changes use the separate DigiCert ONE service-user token, not the CertCentral key.'
+  contentTrust.infoV0: 'CSC v0 info is public in the OpenAPI security declaration; other CSC methods use different authentication and are not exposed here.'
+  contentTrust.infoV1: 'CSC v1 info is public in the OpenAPI security declaration; other CSC methods use different authentication and are not exposed here.'

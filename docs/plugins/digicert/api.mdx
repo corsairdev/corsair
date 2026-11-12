@@ -1,0 +1,964 @@
+---
+title: "DigiCert API reference"
+sidebarTitle: "API"
+description: "API reference for the DigiCert plugin in Corsair: every `digicert.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account Manager
+
+### locales
+
+`accountManager.locales`
+
+List locales supported by DigiCert ONE Account Manager.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.accountManager.locales({});
+```
+
+**Input:** _empty object_
+
+Uses the DigiCert ONE service-user token stored in `digicert_one_api_key`, sent as `x-api-key`.
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  code?: de_DE | en_US | es_ES | fr_FR | it_IT | ja_JP | ko_KR | pt_PT | ru_RU | zh_CN | zh_TW,
+  language?: Deutsch | English | Español | Français | Italiano | 日本語 | 한국어 | Português | Русский | 简体中文 | 繁體中文
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Certificates
+
+### listIntermediates
+
+`certificates.listIntermediates`
+
+List account intermediate certificates.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.certificates.listIntermediates({});
+```
+
+**Input:** _empty object_
+
+Returns PEM certificate content; avoid logging response bodies.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `intermediates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="intermediates full type">
+
+```ts
+{
+  id: string,
+  subject_common_name: string,
+  subject_org_name: string,
+  issuer_common_name: string,
+  status: string,
+  valid_to: string,
+  serial_number: string,
+  thumbprint: string,
+  signature_hash: string,
+  is_private: string,
+  is_root: string,
+  pem: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+---
+
+## Content Trust
+
+### infoV0
+
+`contentTrust.infoV0`
+
+Read public Content Trust CSC v0 service information.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.contentTrust.infoV0({ lang: 'en-US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lang` | `string` | Yes | — |
+
+CSC v0 info is public in the OpenAPI security declaration; other CSC methods use different authentication and are not exposed here.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lang` | `string` | No | — |
+| `specs` | `string` | No | — |
+| `name` | `string` | No | — |
+| `logo` | `string` | No | — |
+| `region` | `string` | No | — |
+| `description` | `string` | No | — |
+| `oauth2` | `string` | No | — |
+| `methods` | `string[]` | No | — |
+| `authType` | `string[]` | No | — |
+
+
+
+---
+
+### infoV1
+
+`contentTrust.infoV1`
+
+Read public Content Trust CSC v1 service information.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.contentTrust.infoV1({ lang: 'en-US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lang` | `string` | Yes | — |
+
+CSC v1 info is public in the OpenAPI security declaration; other CSC methods use different authentication and are not exposed here.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lang` | `string` | No | — |
+| `specs` | `string` | No | — |
+| `name` | `string` | No | — |
+| `logo` | `string` | No | — |
+| `region` | `string` | No | — |
+| `description` | `string` | No | — |
+| `oauth2` | `string` | No | — |
+| `methods` | `string[]` | No | — |
+| `authType` | `string[]` | No | — |
+
+
+
+---
+
+## Custom Reports
+
+### orderById
+
+`customReports.orderById`
+
+Query one CertCentral certificate order by ID through Custom Reports GraphQL.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.customReports.orderById({ id: 123, fields: ['id', 'common_name', 'status'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `fields` | `(account_id \| additional_emails \| agreement_id \| auto_renew \| ca_cert_id \| certificate_tracker_id \| common_name \| contacts_email \| container_id \| container_name \| cost \| csr \| custom_renewal_message \| customer_order_id \| date_created \| dcv_method \| disable_issuance_email \| disable_renewal_notifications \| dns_names \| email \| firstname \| has_duplicates \| id \| is_out_of_contract \| is_renewed \| issuer_common_name \| job_title \| lastname \| locale \| metadata \| org_addr1 \| org_addr2 \| organization_city \| organization_country \| organization_id \| organization_name \| organization_state \| organization_unit \| pay_type \| plus_feature \| product_id \| product_name \| product_name_id \| product_type \| purchased_dns_names \| receipt_id \| Renewed \| renewed_order_id \| serial_number \| server_platform_id \| signature_hash \| status \| telephone \| thumbprint \| user_assignments \| user_email \| user_first_name \| user_id \| user_last_name \| valid_from \| valid_till \| validity_years)[]` | Yes | — |
+
+Requires an order ID and at least one requested field; its response keys depend on the selected fields.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  order_details_by_id: Record<string, JsonValue> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### orders
+
+`customReports.orders`
+
+Query CertCentral certificate order details through Custom Reports GraphQL.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.customReports.orders({ fields: ['id', 'status'], status: 'issued', limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `(account_id \| additional_emails \| agreement_id \| auto_renew \| ca_cert_id \| certificate_tracker_id \| common_name \| contacts_email \| container_id \| container_name \| cost \| csr \| custom_renewal_message \| customer_order_id \| date_created \| dcv_method \| disable_issuance_email \| disable_renewal_notifications \| dns_names \| email \| firstname \| has_duplicates \| id \| is_out_of_contract \| is_renewed \| issuer_common_name \| job_title \| lastname \| locale \| metadata \| org_addr1 \| org_addr2 \| organization_city \| organization_country \| organization_id \| organization_name \| organization_state \| organization_unit \| pay_type \| plus_feature \| product_id \| product_name \| product_name_id \| product_type \| purchased_dns_names \| receipt_id \| Renewed \| renewed_order_id \| serial_number \| server_platform_id \| signature_hash \| status \| telephone \| thumbprint \| user_assignments \| user_email \| user_first_name \| user_id \| user_last_name \| valid_from \| valid_till \| validity_years)[]` | Yes | — |
+| `id` | `number` | No | — |
+| `status` | `string` | No | — |
+| `valid_from` | `string` | No | — |
+| `valid_till` | `string` | No | — |
+| `container_id` | `number` | No | — |
+| `organization_id` | `number` | No | — |
+| `product_name_id` | `string` | No | — |
+| `serial_number` | `string` | No | — |
+| `signature_hash` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `date_created` | `string` | No | — |
+| `ca_cert_id` | `string` | No | — |
+| `common_name` | `string` | No | — |
+| `dns_names` | `string` | No | — |
+| `locale` | `string` | No | — |
+| `thumbprint` | `string` | No | — |
+| `email` | `string` | No | — |
+| `search` | `string` | No | — |
+| `sort` | `[valid_till \| container_id \| organization_id \| product_name_id \| serial_number \| signature_hash \| user_id \| date_created \| ca_cert_id \| common_name \| dns_names \| locale \| thumbprint \| email, ASC \| DESC]` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+The result fields are determined by `fields`; pagination and filters are serialized into the documented GraphQL query.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  order_details: Record<string, JsonValue>[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### list
+
+`orders.list`
+
+List CertCentral certificate orders.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.orders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filters` | `object` | No | — |
+| `sort` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+Uses offset and limit pagination; available filters and the maximum limit are documented in the CertCentral route reference.
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  id?: string,
+  status?: pending | issued | rejected | revoked | waiting_pickup | reissue_pending | canceled | active_issued,
+  organization_id?: string,
+  product_name_id?: string,
+  valid_till?: string,
+  user_id?: string,
+  common_name?: string,
+  domain_name?: string,
+  date_created?: string,
+  container_id?: string,
+  is_renewed?: 0 | 1,
+  disable_renewal_notifications?: 0 | 1,
+  email?: string,
+  certificate_id?: string,
+  origin?: certcentral | migrated,
+  serial_number?: string,
+  search?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orders` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+{
+  id: number,
+  certificate?: {
+    id: number,
+    common_name: string,
+    dns_names?: string[],
+    valid_till?: string,
+    days_remaining?: number,
+    signature_hash?: string
+  },
+  status: string,
+  is_renewed?: boolean,
+  date_created?: string,
+  organization?: {
+    id: number,
+    name: string
+  } | never[],
+  validity_years?: number,
+  disable_renewal_notifications?: boolean,
+  container?: {
+    id: number,
+    name: string
+  },
+  product?: {
+    name_id: string,
+    name: string,
+    type: string
+  },
+  has_duplicates?: boolean,
+  product_name_id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total: number,
+  limit: number,
+  offset: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organizations
+
+### list
+
+`organizations.list`
+
+List CertCentral organizations.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.organizations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_validation` | `boolean` | No | — |
+| `filters` | `object` | No | — |
+| `sort` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+Uses offset and limit pagination; `include_validation` adds validation-related response fields.
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  status?: active | inactive,
+  validation?: pending | not_pending,
+  container_id_for_organization?: string,
+  search?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizations` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="organizations full type">
+
+```ts
+{
+  id: number,
+  status: string,
+  name: string,
+  display_name?: string,
+  is_active: boolean,
+  address?: string,
+  address2?: string,
+  zip?: string,
+  city?: string,
+  state?: string,
+  country?: string,
+  telephone?: string,
+  container?: {
+    id: number,
+    parent_id: number,
+    name: string,
+    is_active: boolean
+  },
+  container_id_assignments?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total: number,
+  limit: number,
+  offset: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Private CA
+
+### helper
+
+`privateCA.helper`
+
+Read DigiCert Private CA application helper version information.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.privateCA.helper({});
+```
+
+**Input:** _empty object_
+
+Uses the DigiCert ONE service-user token stored in `digicert_one_api_key`, sent as `x-api-key`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string` | Yes | — |
+
+
+
+---
+
+### verifyTemplate
+
+`privateCA.verifyTemplate`
+
+Validate a DigiCert Private CA template payload without creating it.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.privateCA.verifyTemplate({ template: '{"name":"TLS"}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template` | `string` | Yes | — |
+
+Validates the required template string and returns no content on a successful 204 response.
+
+
+
+**Output:** `undefined`
+
+
+---
+
+## Report Library
+
+### details
+
+`reportLibrary.details`
+
+Read a Report Library report configuration.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.reportLibrary.details({ reportIdentifier: '00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportIdentifier` | `string` | Yes | — |
+| `language_id` | `number` | No | — |
+
+Requires a UUID report identifier; use the Report Library route family, not the Services API host.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="report full type">
+
+```ts
+{
+  report_display_name: string,
+  report_identifier: string,
+  created_by_user_id: number | string,
+  created_by_user_name: string,
+  created_date: string,
+  report_metadata: {
+    report_type: string,
+    columns: {
+      identifier: string
+    }[],
+    filters?: {
+      filter_identifier: string,
+      column_identifier: string,
+      values?: string[]
+    }[],
+    sources?: {
+      division_filter_type?: string,
+      sub_account_filter_type?: string,
+      divisions?: number[] | null,
+      sub_accounts?: number[] | null
+    }
+  },
+  schedule: {
+    frequency: string,
+    weekday_to_run?: string,
+    weekday_frequency?: string,
+    run_until?: string,
+    repeat_every?: number,
+    repeat_on?: string,
+    repeat_on_date?: {
+      date?: number,
+      last_day_of_the_month?: boolean
+    }
+  },
+  next_run_date?: string,
+  format: string[],
+  status: string,
+  notification_emails?: {
+    user_id: number,
+    first_name: string,
+    last_name: string,
+    email: string
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`reportLibrary.history`
+
+List scheduled reports and individual report runs.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.reportLibrary.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `report_display_name` | `string` | No | — |
+| `schedule` | `ON_DEMAND \| WEEKLY \| MONTHLY` | No | — |
+| `status` | `SCHEDULED \| GENERATING \| READY \| FAILED` | No | — |
+| `report_type` | `string` | No | — |
+| `report_type_display_name` | `string` | No | — |
+| `search` | `string` | No | — |
+| `sort_by` | `report_display_name \| report_type \| schedule \| format \| report_start_date` | No | — |
+| `sort_direction` | `ASC \| DESC` | No | — |
+| `language_id` | `number` | No | — |
+
+Uses offset and limit pagination; includes scheduled report records and individual run records.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | Yes | — |
+| `report_history` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  total: number,
+  limit: number,
+  offset: number
+}
+```
+</Accordion>
+
+<Accordion title="report_history full type">
+
+```ts
+{
+  report_display_name: string,
+  report_identifier: string,
+  report_run_identifier?: string,
+  created_by_user_id: number | string,
+  created_by_user_name: string,
+  created_date: string,
+  report_type: string,
+  report_type_display_name: string,
+  report_start_date?: string,
+  report_end_date?: string,
+  schedule?: string,
+  format?: string[],
+  status: string,
+  manually_triggered?: boolean,
+  split_report_count?: number,
+  data_from_date?: string,
+  data_to_date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### names
+
+`reportLibrary.names`
+
+List Report Library report names.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.reportLibrary.names({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report_display_name` | `string` | No | — |
+
+Uses the separate Report Library regional host and CertCentral API key.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report_names` | `string[]` | Yes | — |
+
+
+
+---
+
+### types
+
+`reportLibrary.types`
+
+List Report Library report types and supported formats.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.reportLibrary.types({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language_id` | `number` | No | — |
+
+Report types and supported formats vary by account and current service configuration.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report_types` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="report_types full type">
+
+```ts
+{
+  report_type: string,
+  display_name: string,
+  supported_formats: string[],
+  custom_fields_enabled: boolean,
+  sub_account_enabled: boolean,
+  division_enabled: boolean,
+  report_description: string,
+  status: boolean,
+  is_customizable?: boolean,
+  is_customisable?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Trust Lifecycle
+
+### addCertificateTags
+
+`trustLifecycle.addCertificateTags`
+
+Add custom tags to a Trust Lifecycle Manager certificate.
+
+**Risk:** `write`
+
+```ts
+await corsair.digicert.api.trustLifecycle.addCertificateTags({ certificateId: '00000000-0000-0000-0000-000000000000', tags: ['reviewed'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `certificateId` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+
+This is a write operation; tag changes use the separate DigiCert ONE service-user token, not the CertCentral key.
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### version
+
+`trustLifecycle.version`
+
+Read the unauthenticated Trust Lifecycle Manager version.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.trustLifecycle.version({});
+```
+
+**Input:** _empty object_
+
+This DigiCert ONE route is explicitly unauthenticated in the official OpenAPI document.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string` | Yes | — |
+
+
+
+---
+
+## Users
+
+### list
+
+`users.list`
+
+List CertCentral account users.
+
+**Risk:** `read`
+
+```ts
+await corsair.digicert.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `container_id` | `number` | No | — |
+| `access_role_id` | `number` | No | — |
+| `without_container` | `boolean` | No | — |
+| `filters` | `object` | No | — |
+| `sort` | `string` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+Uses offset and limit pagination; `without_container` controls whether the nested primary container is returned.
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  status?: active | incomplete | inactive,
+  search?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `page` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  username: string,
+  account_id: number,
+  first_name: string,
+  last_name: string,
+  email: string,
+  job_title?: string,
+  telephone?: string,
+  status: string,
+  container?: {
+    id: number,
+    public_id?: string,
+    name: string,
+    parent_id?: number,
+    template_id?: number,
+    ekey?: string,
+    has_logo?: boolean,
+    is_active?: boolean
+  },
+  access_roles: {
+    id: number,
+    name: string
+  }[],
+  type: string,
+  has_container_assignments: boolean,
+  container_assignments?: {
+    id: number,
+    parent_id: number,
+    name: string,
+    is_active: boolean
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  total: number,
+  limit: number,
+  offset: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
