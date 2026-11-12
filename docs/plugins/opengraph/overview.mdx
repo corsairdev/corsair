@@ -1,0 +1,137 @@
+---
+title: "OpenGraph.io plugin"
+sidebarTitle: "Overview"
+description: "Web data extraction with OpenGraph.io - unfurl link preview metadata, scrape raw HTML, capture screenshots, pull structured elements, ask AI questions about pages, resolve oEmbed cards, convert pages to Markdown and analyze brands."
+---
+
+Use **OpenGraph.io** through Corsair: one client, typed API calls.
+
+Create an App ID at dashboard.opengraph.io after signing up; free accounts get 100 credits a month. Every request authenticates with it as the `app_id` query parameter. Things to know before you call:
+
+- **Credits, not side effects.** Every operation is a read, but each request bills credits: 1 for a base call or cache hit, 10 for `full_render` or `use_proxy`, 20 for `use_premium` or a screenshot, 30 for `use_superior`. `query.run` bills a fixed 100 credits on the default `nano` model and 200 on `mini`, whatever proxy or render options are set, so one uncached query uses up a free account's month. On v3.0 `auto_proxy`, `auto_render` and `retry` default to true, so OpenGraph.io may pick a proxy tier for a hard domain and bill that tier.
+- **Rate limits are concurrent.** Plans allow 1 (free) to 100 requests in flight at once. Past that the API answers 429; the plugin retries up to three times with exponential backoff and honors Retry-After when sent.
+- **Enum-typed options.** `screenshot.capture` takes `format` (jpeg, png, webp) and `dimensions` (xs, sm, md, lg); `oembed.get` takes `orientation` (vertical, horizontal), `theme` (light, dark, auto) and `template` (default, compact, horizontal); `query.run` takes `modelSize` (nano, mini); `extract.run` and `markdown.get` take `ai_sanitize_mode` (sanitize, warn, block); an `extract.run` selector's `type` is text or attr; a `brand.analyze` question's `type` is one of string, boolean, number, string[] or object, which name the answer's type. Pass them all as strings, e.g. `type: 'string[]'`.
+- **Screenshot links expire.** `screenshot.capture` returns a CDN URL that dies after 24 hours; download the image if you need it longer.
+- **Markdown always comes back as the JSON envelope**, never a bare text body, so chunking, structure and usage metadata parse uniformly.
+- **Brand analysis is slow and partial.** `brand.analyze` reads several pages of the site and can take tens of seconds; sections that fail come back null rather than failing the call. Requests with `sections` or `questions` POST a JSON body, plain ones GET.
+- **Webhooks.** OpenGraph.io sends none, so the plugin receives none.
+
+**What you get:**
+
+- 8 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/opengraph better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/opengraph better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/opengraph better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/opengraph better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { opengraph } from '@corsair-dev/opengraph';
+
+export const corsair = createCorsair({
+	plugins: [
+		opengraph(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+opengraph()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'opengraph',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Unfurl a page into link preview metadata**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.opengraph.api.site.get({ url: 'https://github.com' });
+```
+
+
+**Ask a question about a page**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.opengraph.api.query.run({ url: 'https://en.wikipedia.org/wiki/Web_scraping', query: 'What legal issues surround web scraping?' });
+```
+
+
+See the full list on the [API](/plugins/opengraph/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/opengraph/api">
+    Every `opengraph.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
