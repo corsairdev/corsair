@@ -219,6 +219,9 @@ export async function fetchDriveBytes(
 				: undefined,
 			// The body names an exhausted daily quota, which no retry can clear.
 			/exceeded\s+your\s+daily\s+limit|dailyLimitExceeded/i.test(body),
+			// Drive reports a temporary limit as a 403 with rateLimitExceeded or
+			// userRateLimitExceeded in the body, and documents both as retryable.
+			/"reason"\s*:\s*"(user)?rateLimitExceeded"/i.test(body),
 		);
 	}
 
@@ -249,6 +252,8 @@ export class GoogleSlidesExportError extends Error {
 		public readonly retryAfter?: number,
 		/** True when the body says the daily quota is spent and no wait clears it. */
 		public readonly quotaExhausted?: boolean,
+		/** True when the body names a temporary rate limit, which a wait clears. */
+		public readonly rateLimited?: boolean,
 	) {
 		super(message);
 		this.name = 'GoogleSlidesExportError';

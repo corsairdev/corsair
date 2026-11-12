@@ -52,12 +52,6 @@ function errorReason(error: Error): string {
 
 /**
  * Google documents no fixed retry window for this API: the quota is per minute
- * per project and the 429 carries no Retry-After. A four second fallback lets a
- * per-minute window recover in one or two attempts instead of spending every
- * attempt inside the same exhausted minute.
- */
-/**
- * Google documents no fixed retry window for this API: the quota is per minute
  * per project and a 429 often carries no Retry-After. The fallback has to be
  * long enough to reach the next window, which a four second wait does not: the
  * four bounded attempts would then all land inside the same exhausted minute.
@@ -100,12 +94,16 @@ const RATE_LIMIT_ERROR: CorsairErrorHandler[keyof CorsairErrorHandler] = {
 			return RATE_LIMIT_REASONS.some((entry) => reason.includes(entry));
 		}
 		// Export streams bytes through fetch, so its failures are an export error
-		// rather than an ApiError. Only 429 is a rate limit here: a 403 on export
-		// is a permission the account lacks, and retrying cannot grant it. The
-		// message fallback below is skipped for exports for the same reason, since
-		// Drive's 403 text can mention the rate limit that was hit elsewhere.
+		// rather than an ApiError. A 429 is a rate limit, and so is a 403 whose
+		// body names rateLimitExceeded or userRateLimitExceeded. Any other 403 is
+		// a permission the account lacks, and retrying cannot grant it, so the
+		// message fallback below is skipped for exports.
 		if (error.name === 'GoogleSlidesExportError') {
-			return (error as { status?: number }).status === 429;
+			const exportError = error as { status?: number; rateLimited?: boolean };
+			return (
+				exportError.status === 429 ||
+				(exportError.status === 403 && exportError.rateLimited === true)
+			);
 		}
 		if (errorStatus(error) === 'resource_exhausted') return true;
 		const message = error.message.toLowerCase();

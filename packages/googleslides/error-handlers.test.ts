@@ -1,4 +1,5 @@
 import { ApiError } from 'corsair/http';
+import { fetchDriveBytes } from './client';
 import {
 	errorHandlers,
 	mergeErrorHandlers,
@@ -219,6 +220,44 @@ describe('error handler matching', () => {
 
 		expect(
 			errorHandlers.RATE_LIMIT_ERROR?.match(error, errorContext as never),
+		).toBe(false);
+	});
+
+	it('retries an export rate limit that Drive reports as a 403', async () => {
+		const driveBody = (reason: string) =>
+			JSON.stringify({
+				error: {
+					code: 403,
+					message: 'limit',
+					errors: [{ domain: 'usageLimits', reason, message: 'limit' }],
+				},
+			});
+		const fetchMock = jest
+			.spyOn(global, 'fetch')
+			.mockResolvedValueOnce(
+				new Response(driveBody('userRateLimitExceeded'), { status: 403 }),
+			)
+			.mockResolvedValueOnce(
+				new Response(driveBody('insufficientFilePermissions'), {
+					status: 403,
+				}),
+			);
+		const ctx = { key: 'test-access-token' };
+
+		const limited = (await fetchDriveBytes(ctx, '/files/deck-1/export', {
+			accept: 'application/pdf',
+		}).catch((caught: unknown) => caught)) as Error; // unknown: rejection.
+		const denied = (await fetchDriveBytes(ctx, '/files/deck-1/export', {
+			accept: 'application/pdf',
+		}).catch((caught: unknown) => caught)) as Error; // unknown: rejection.
+		fetchMock.mockRestore();
+
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR?.match(limited, errorContext as never),
+		).toBe(true);
+		// A permission 403 stays permanent.
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR?.match(denied, errorContext as never),
 		).toBe(false);
 	});
 
