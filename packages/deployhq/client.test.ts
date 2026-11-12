@@ -106,6 +106,43 @@ describe('DeployHQ client', () => {
 		).rejects.toThrow('plugin safety cap');
 	});
 
+	it('does not shorten a valid invoice Retry-After beyond the fallback backoff cap', async () => {
+		jest.useFakeTimers();
+		try {
+			mockedFetch
+				.mockResolvedValueOnce(
+					jsonResponse({ error_code: 'service_unavailable' }, 503, {
+						'Retry-After': '61',
+					}),
+				)
+				.mockResolvedValueOnce(
+					new Response(new Uint8Array([0x25, 0x50, 0x44, 0x46]), {
+						status: 200,
+						headers: { 'Content-Type': 'application/pdf' },
+					}),
+				);
+			const request = makeDeployHQRequest(
+				'/account/invoices/42',
+				{
+					accountSubdomain: 'demo-account',
+					username: 'agent@example.com',
+					apiKey: 'secret-api-key',
+				},
+				{ binary: true },
+			);
+			await jest.advanceTimersByTimeAsync(60_000);
+			expect(mockedFetch).toHaveBeenCalledTimes(1);
+			await jest.advanceTimersByTimeAsync(1_000);
+			await expect(request).resolves.toMatchObject({
+				kind: 'binary',
+				contentType: 'application/pdf',
+			});
+			expect(mockedFetch).toHaveBeenCalledTimes(2);
+		} finally {
+			jest.useRealTimers();
+		}
+	});
+
 	it('fails explicitly when the API key or username is missing', async () => {
 		await expect(
 			makeDeployHQRequest('/account', {

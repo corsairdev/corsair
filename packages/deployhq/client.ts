@@ -214,8 +214,9 @@ async function makeBinaryDeployHQRequest(
 				) {
 					await response.body?.cancel().catch(() => undefined);
 					const backoff = Math.min(1_000 * 2 ** attempt, 60_000);
-					const boundedDelay = Math.min(retryAfter ?? backoff, 60_000);
-					await new Promise((resolve) => setTimeout(resolve, boundedDelay));
+					await new Promise((resolve) =>
+						setTimeout(resolve, retryAfter ?? backoff),
+					);
 					continue;
 				}
 				const hint = await readProviderErrorHint(response, credentials);
