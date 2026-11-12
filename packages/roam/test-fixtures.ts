@@ -141,7 +141,9 @@ export const BLOCK_MESSAGE = {
 	chatId: CHAT_ID,
 	timestamp: TIMESTAMP + 2,
 	contentType: 'block',
-	blocks: [{ type: 'image', image_url: 'https://cdn.ro.am/x.png', alt_text: 'x' }],
+	blocks: [
+		{ type: 'image', image_url: 'https://cdn.ro.am/x.png', alt_text: 'x' },
+	],
 };
 
 /** A voice message as the spec returns it. */

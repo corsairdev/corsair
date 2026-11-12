@@ -154,9 +154,7 @@ describe('chat.list and chat.history', () => {
 	});
 
 	it('rejects a page size above the route maximum', async () => {
-		await expect(
-			invoke(Endpoints.chatList, { limit: 51 }),
-		).rejects.toThrow();
+		await expect(invoke(Endpoints.chatList, { limit: 51 })).rejects.toThrow();
 		await expect(
 			invoke(Endpoints.chatHistory, { chat_id: CHAT_ID, limit: 201 }),
 		).rejects.toThrow();
