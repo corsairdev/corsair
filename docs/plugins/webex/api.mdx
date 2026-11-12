@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Webex: every `webex.api.*` operation with input and output types."
+title: "Webex API reference"
+sidebarTitle: "API"
+description: "API reference for the Webex plugin in Corsair: every `webex.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `webex.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -143,7 +142,7 @@ await corsair.webex.api.memberships.list({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00v
 
 `messages.create`
 
-Post a message to a room or directly to a person, with text, markdown, html or file attachments
+Post a message to a room or directly to a person, with text, markdown, html or one file attachment
 
 **Risk:** `write`
 
@@ -161,7 +160,7 @@ await corsair.webex.api.messages.create({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vY
 | `text` | `string` | No | — |
 | `markdown` | `string` | No | — |
 | `html` | `string` | No | — |
-| `files` | `string[]` | No | Public URLs of files to attach. |
+| `files` | `string[]` | No | The public URL of one file to attach; Webex takes one per message. |
 | `parentId` | `string` | No | Post as a reply in this thread. |
 
 
@@ -273,7 +272,7 @@ await corsair.webex.api.messages.get({ id: 'message-1' });
 
 `messages.list`
 
-List messages in a room or a thread, optionally before a time or message id
+List messages in a room, or the replies in one of its threads, optionally before a time or message id
 
 **Risk:** `read`
 
@@ -285,8 +284,8 @@ await corsair.webex.api.messages.list({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJ
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `roomId` | `string` | No | Only messages in this room. |
-| `parentId` | `string` | No | Only the replies in this thread. |
+| `roomId` | `string` | Yes | The room to list messages from. |
+| `parentId` | `string` | No | Only the replies in this thread of the room. |
 | `mentionedPeople` | `string` | No | Only messages mentioning this person. |
 | `before` | `string` | No | ISO 8601: only earlier messages. |
 | `beforeMessage` | `string` | No | Only messages before this id. |
@@ -337,12 +336,12 @@ await corsair.webex.api.messages.list({ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJ
 
 `messages.update`
 
-Edit a message you sent, or move it to another room
+Edit the text or markdown of a message you sent, up to 10 times per message
 
 **Risk:** `write`
 
 ```ts
-await corsair.webex.api.messages.update({ id: 'message-1', text: 'Corrected text' });
+await corsair.webex.api.messages.update({ id: 'message-1', roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY', text: 'Corrected text' });
 ```
 
 **Input**
@@ -350,7 +349,7 @@ await corsair.webex.api.messages.update({ id: 'message-1', text: 'Corrected text
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `roomId` | `string` | No | Move the message to another room you are in. |
+| `roomId` | `string` | Yes | The room the message is in; Webex requires it on an edit. |
 | `text` | `string` | No | — |
 | `markdown` | `string` | No | — |
 
@@ -649,7 +648,7 @@ await corsair.webex.api.rooms.get({ id: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY' })
 
 `rooms.list`
 
-List spaces, filtered by type, lock state, organization or team
+List spaces, filtered by type or team and sorted by id, last activity or creation
 
 **Risk:** `read`
 
@@ -664,8 +663,6 @@ await corsair.webex.api.rooms.list({ max: 50, type: 'group' });
 | `max` | `number` | No | Items per page, up to 1000. |
 | `nextLink` | `string` | No | Pass the previous page's `nextLink` to read the next page. Omit it for the first page. |
 | `type` | `group \| direct` | No | — |
-| `isLocked` | `boolean` | No | — |
-| `orgId` | `string` | No | — |
 | `teamId` | `string` | No | Only rooms shared with this team, or with no team for `none`. |
 | `sortBy` | `id \| lastactivity \| created` | No | — |
 
@@ -708,7 +705,7 @@ await corsair.webex.api.rooms.list({ max: 50, type: 'group' });
 
 `rooms.update`
 
-Change a space title, description or lock and read-only settings
+Change a space title, description or lock and read-only settings; the title is always sent
 
 **Risk:** `write`
 
@@ -721,7 +718,7 @@ await corsair.webex.api.rooms.update({ id: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `title` | `string` | No | — |
+| `title` | `string` | Yes | Webex requires the title on every update, even when unchanged. |
 | `description` | `string` | No | — |
 | `isLocked` | `boolean` | No | — |
 | `isReadOnly` | `boolean` | No | — |
@@ -1038,8 +1035,8 @@ await corsair.webex.api.webhooks.create({ name: 'Message hook', targetUrl: 'http
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `targetUrl` | `string` | Yes | — |
-| `resource` | `messages \| memberships \| rooms \| meetings \| recordings` | Yes | The resource whose events to send. |
-| `event` | `created \| updated \| deleted \| all` | Yes | Which event on that resource. |
+| `resource` | `attachmentActions \| dataSources \| memberships \| messages \| rooms \| meetings \| recordings \| convergedRecordings \| meetingParticipants \| meetingTranscripts \| telephony_calls \| telephony_conference \| telephony_mwi \| uc_counters \| serviceApp \| adminBatchJobs` | Yes | The resource whose events to send. |
+| `event` | `created \| updated \| deleted \| started \| ended \| joined \| left \| migrated \| authorized \| deauthorized \| statusChanged \| all` | Yes | Which event on that resource, e.g. started or ended for meetings, joined or left for meetingParticipants. |
 | `filter` | `string` | No | Restrict to a room id, e.g. `roomId=abc`. |
 | `secret` | `string` | No | The HMAC key Webex signs deliveries with. |
 
@@ -1196,12 +1193,12 @@ await corsair.webex.api.webhooks.list({ max: 50 });
 
 `webhooks.update`
 
-Change a webhook target, secret or status, or set it inactive to pause delivery
+Change a webhook name, target or secret, or reactivate one Webex disabled; name and target are always sent
 
 **Risk:** `write`
 
 ```ts
-await corsair.webex.api.webhooks.update({ id: 'wh-1', status: 'inactive' });
+await corsair.webex.api.webhooks.update({ id: 'wh-1', name: 'Message hook', targetUrl: 'https://acme.example/hooks/webex', status: 'active' });
 ```
 
 **Input**
@@ -1209,10 +1206,10 @@ await corsair.webex.api.webhooks.update({ id: 'wh-1', status: 'inactive' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `targetUrl` | `string` | No | — |
+| `name` | `string` | Yes | Webex requires the name on every update, even when unchanged. |
+| `targetUrl` | `string` | Yes | Webex requires the target URL on every update, even when unchanged. |
 | `secret` | `string` | No | — |
-| `status` | `active \| inactive` | No | inactive stops delivery without deleting the webhook. |
+| `status` | `active` | No | active turns back on a webhook Webex disabled after failed deliveries. Webex refuses inactive; delete the webhook to stop it. |
 
 
 
