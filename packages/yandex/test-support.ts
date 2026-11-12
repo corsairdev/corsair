@@ -12,10 +12,19 @@ export async function invoke(endpoint: AnyEndpoint, input: unknown) {
 	return endpoint(testContext, input as never);
 }
 
+/** An unmocked call fails the test instead of reaching the real API. */
+function refuseUnmockedFetch(): never {
+	throw new Error('unmocked fetch in a unit test');
+}
+
 export function installFetchMock() {
-	const fetchMock = jest.spyOn(globalThis, 'fetch');
+	const fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockImplementation(refuseUnmockedFetch);
 	afterEach(() => {
+		// mockReset drops the implementation too, so it is put back each time.
 		fetchMock.mockReset();
+		fetchMock.mockImplementation(refuseUnmockedFetch);
 	});
 	return fetchMock;
 }
@@ -33,7 +42,15 @@ export type RecordedRequest = {
 };
 
 export function lastRequest(fetchMock: jest.SpyInstance): RecordedRequest {
-	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
+	return requestAt(fetchMock, -1);
+}
+
+/** The recorded request at `index`; a negative index counts from the end. */
+export function requestAt(
+	fetchMock: jest.SpyInstance,
+	index: number,
+): RecordedRequest {
+	const [url, init] = fetchMock.mock.calls.at(index) as [string, RequestInit];
 	const parsed = new URL(url);
 	const pairs = [...parsed.searchParams.entries()];
 	const headers = new Headers(init.headers);
