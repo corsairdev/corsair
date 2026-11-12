@@ -263,12 +263,20 @@ export const REIMBURSEMENT = {
 		currency_code: 'USD',
 		minor_unit_conversion_rate: 100,
 	},
-	entity_amount: { amount: 2975, currency_code: 'USD' },
-	merchant_amount: { amount: 2975, currency_code: 'USD' },
+	entity_amount: {
+		currency: 'USD',
+		value: 2975,
+		minor_unit_conversion_rate: 100,
+	},
+	merchant_amount: {
+		currency: 'USD',
+		value: 2975,
+		minor_unit_conversion_rate: 100,
+	},
 	receipts: [],
 	line_items: [],
 	attendees: [],
-	waypoints: [],
+	waypoints: ['Union Square, San Francisco, CA'],
 };
 
 export const REIMBURSEMENT_PAGE = {

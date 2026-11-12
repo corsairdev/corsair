@@ -538,10 +538,19 @@ const BillsListInputSchema = z.object({
 				'AWAITING_PAYMENT',
 				'AWAITING_RELEASE',
 				'BLOCKED',
-				'PAID',
-				'PARTIAL_PAYMENT',
-				'PAYMENT_FAILED',
+				'HELD_BY_PROVIDER',
+				'ON_HOLD',
+				'PAYMENT_COMPLETED',
+				'PAYMENT_DETAILS_MISSING',
+				'PAYMENT_ERROR',
+				'PAYMENT_NOT_INSTRUCTED',
 				'PAYMENT_PROCESSING',
+				'PAYMENT_READY',
+				'PAYMENT_SCHEDULED',
+				'PENDING_VENDOR_APPROVAL',
+				'WAITING_FOR_TRANSACTION_MATCH',
+				'WAITING_FOR_TRANSFER_MATCH',
+				'WAITING_FOR_VENDOR',
 			]),
 		)
 		.optional()
@@ -684,7 +693,10 @@ const BillsUpdateInputSchema = z.object({
 		.optional()
 		.describe('Replaces the memo shown to the vendor.'),
 	invoice_number: z.string().optional(),
-	due_at: z.string().optional().describe('A new due date, in ISO 8601 format.'),
+	due_at: z
+		.string()
+		.optional()
+		.describe('A new due date, as a `YYYY-MM-DD` date.'),
 });
 
 export type BillsUpdateInput = z.input<typeof BillsUpdateInputSchema>;
@@ -715,8 +727,23 @@ const ReimbursementsListInputSchema = z.object({
 			'DRAFT',
 			'EXPORTED',
 			'EXPORT_FAILED',
+			'EXPORT_INITIATED',
+			'EXPORT_MARKED_AS_FAILED',
+			'EXPORT_SUCCESSFUL',
+			'FAILED_REIMBURSEMENT',
+			'INIT',
+			'MANUALLY_REIMBURSED',
+			'MISSING_ACH',
+			'PAYROLL_FAILED',
+			'PAYROLL_SUBMITTED',
+			'PENDING',
+			'PROCESSING',
+			'PUSH_PAYMENT_FAILED',
+			'PUSH_PAYMENT_INITIATED',
+			'REIMBURSED',
+			'REIMBURSED_VIA_PAYROLL',
+			'REIMBURSED_VIA_PUSH',
 			'REJECTED',
-			'SUBMITTED',
 		])
 		.optional(),
 	sync_status: z.enum(['NOT_SYNC_READY', 'SYNCED', 'SYNC_READY']).optional(),
@@ -742,10 +769,15 @@ export type ReimbursementsListInput = z.input<
 	typeof ReimbursementsListInputSchema
 >;
 
+/**
+ * Ramp's reimbursement money object: `value` in minor units with a `currency`,
+ * unlike the `amount`/`currency_code` spelling used for `payee_amount`.
+ */
 const ReimbursementAmountSchema = z
 	.object({
-		amount: z.number().nullish(),
-		currency_code: z.string().nullish(),
+		currency: z.string().nullish(),
+		value: z.number().nullish(),
+		minor_unit_conversion_rate: z.number().nullish(),
 	})
 	.loose();
 
@@ -763,15 +795,6 @@ const ReimbursementAttendeeSchema = z
 	.object({
 		name: z.string().nullish(),
 		user_id: z.string().nullish(),
-	})
-	.loose();
-
-/** A stop on a mileage reimbursement's route. */
-const ReimbursementWaypointSchema = z
-	.object({
-		address: z.string().nullish(),
-		latitude: z.number().nullish(),
-		longitude: z.number().nullish(),
 	})
 	.loose();
 
@@ -807,7 +830,8 @@ const ReimbursementSchema = z
 		receipts: z.array(z.string()).nullish(),
 		line_items: z.array(ReimbursementLineItemSchema).nullish(),
 		attendees: z.array(ReimbursementAttendeeSchema).nullish(),
-		waypoints: z.array(ReimbursementWaypointSchema).nullish(),
+		// Intermediate stops of a mileage trip, sent as plain strings.
+		waypoints: z.array(z.string()).nullish(),
 	})
 	.loose();
 
@@ -910,24 +934,19 @@ export type DepartmentsCreateResponse = z.infer<
 // ── users.list / users.get ────────────────────────────────────────────────
 
 const UserRoleSchema = z.enum([
+	'AUDITOR',
 	'BUSINESS_ADMIN',
 	'BUSINESS_BOOKKEEPER',
 	'BUSINESS_OWNER',
 	'BUSINESS_USER',
-	'DEVELOPER',
-	'EXTERNAL_ACCOUNTANT',
-	'GLOBAL_ADMIN',
-	'GLOBAL_VIEWER',
-	'MANAGER',
-	'MERCHANT',
-	'VENDOR_ADMIN',
+	'GUEST_USER',
+	'IT_ADMIN',
 ]);
 
 const UserStatusSchema = z.enum([
-	'INVITE_EXPIRED',
-	'INVITE_PENDING',
 	'USER_ACTIVE',
-	'USER_DISABLED',
+	'USER_DRAFT',
+	'USER_INACTIVE',
 	'USER_SUSPENDED',
 ]);
 

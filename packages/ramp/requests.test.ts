@@ -291,7 +291,7 @@ describe('bills.list', () => {
 
 		const result = await callEndpoint(Spend.billsList, {
 			vendor_id: '9b1c0a4e-6f4c-4b3a-9f6d-0a1b2c3d4e5f',
-			status_summaries: ['PAID', 'AWAITING_PAYMENT'],
+			status_summaries: ['PAYMENT_COMPLETED', 'AWAITING_PAYMENT'],
 			approval_status: 'APPROVED',
 			payment_status: 'PAID',
 			sync_status: 'BILL_SYNCED',
@@ -305,7 +305,7 @@ describe('bills.list', () => {
 		expect(request.path).toBe('/developer/v1/bills');
 		expect(request.query).toEqual({
 			vendor_id: '9b1c0a4e-6f4c-4b3a-9f6d-0a1b2c3d4e5f',
-			status_summaries: 'PAID,AWAITING_PAYMENT',
+			status_summaries: 'PAYMENT_COMPLETED,AWAITING_PAYMENT',
 			approval_status: 'APPROVED',
 			payment_status: 'PAID',
 			sync_status: 'BILL_SYNCED',
@@ -322,7 +322,23 @@ describe('bills.list', () => {
 		await expect(
 			callEndpoint(Spend.billsList, { status_summaries: ['NOT_A_STATUS'] }),
 		).rejects.toThrow();
+		// PAID is a payment_status value, not a status summary.
+		await expect(
+			callEndpoint(Spend.billsList, { status_summaries: ['PAID'] }),
+		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts every status summary in the API reference', async () => {
+		respond(fetchMock, BILL_PAGE);
+
+		await callEndpoint(Spend.billsList, {
+			status_summaries: ['PAYMENT_ERROR', 'WAITING_FOR_VENDOR', 'ON_HOLD'],
+		});
+
+		expect(lastRequest(fetchMock).query).toEqual({
+			status_summaries: 'PAYMENT_ERROR,WAITING_FOR_VENDOR,ON_HOLD',
+		});
 	});
 });
 
@@ -345,7 +361,7 @@ describe('bills.update', () => {
 		await callEndpoint(Spend.billsUpdate, {
 			bill_id: BILL_ID,
 			memo: 'Q2 hosting, corrected',
-			due_at: '2026-06-15T00:00:00+00:00',
+			due_at: '2026-06-15',
 		});
 
 		const request = lastRequest(fetchMock);
@@ -353,7 +369,7 @@ describe('bills.update', () => {
 		expect(request.path).toBe(`/developer/v1/bills/${BILL_ID}`);
 		expect(request.json()).toEqual({
 			memo: 'Q2 hosting, corrected',
-			due_at: '2026-06-15T00:00:00+00:00',
+			due_at: '2026-06-15',
 		});
 	});
 });
@@ -385,6 +401,27 @@ describe('reimbursements.list', () => {
 		});
 		expect(result.reimbursements[0]?.type).toBe('MILEAGE');
 		expect(result.reimbursements[0]?.payee_amount?.amount).toBe(2975);
+	});
+
+	it('reads mileage waypoints as strings and the value/currency amounts', async () => {
+		respond(fetchMock, REIMBURSEMENT_PAGE);
+
+		const result = await callEndpoint(Org.list, {});
+
+		const reimbursement = result.reimbursements[0];
+		expect(reimbursement?.waypoints).toEqual([
+			'Union Square, San Francisco, CA',
+		]);
+		expect(reimbursement?.entity_amount?.value).toBe(2975);
+		expect(reimbursement?.entity_amount?.currency).toBe('USD');
+	});
+
+	it('accepts the paid-out states in the API reference', async () => {
+		respond(fetchMock, REIMBURSEMENT_PAGE);
+
+		await callEndpoint(Org.list, { state: 'REIMBURSED' });
+
+		expect(lastRequest(fetchMock).query).toEqual({ state: 'REIMBURSED' });
 	});
 });
 
@@ -514,6 +551,20 @@ describe('users.list', () => {
 			callEndpoint(Org.usersList, { role: 'SUPERUSER' }),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts the roles and statuses in the API reference', async () => {
+		respond(fetchMock, USER_PAGE);
+
+		await callEndpoint(Org.usersList, {
+			role: 'IT_ADMIN',
+			status: 'USER_INACTIVE',
+		});
+
+		expect(lastRequest(fetchMock).query).toEqual({
+			role: 'IT_ADMIN',
+			status: 'USER_INACTIVE',
+		});
 	});
 });
 
