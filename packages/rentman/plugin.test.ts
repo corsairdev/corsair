@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { AuthMissingError } from 'corsair/core';
 import { RentmanEndpointInputSchemas } from './endpoints/types';
 import type { RentmanKeyBuilderContext } from './index';
@@ -103,6 +105,16 @@ describe('rentman plugin', () => {
 			expect(meta.description.length).toBeGreaterThan(20);
 			expect(['read', 'write', 'destructive']).toContain(meta.riskLevel);
 			expect(operation).toMatch(/^[a-zA-Z]+\.[a-zA-Z]+$/);
+		}
+	});
+
+	it('keeps the README operation table in step with the descriptions', () => {
+		const plugin = internalsOf(rentman());
+		const readme = readFileSync(join(__dirname, 'README.md'), 'utf8');
+
+		for (const [operation, meta] of Object.entries(plugin.endpointMeta)) {
+			expect(readme).toContain(`| \`${operation}\` |`);
+			expect(readme).toContain(`| ${meta.description} |`);
 		}
 	});
 
