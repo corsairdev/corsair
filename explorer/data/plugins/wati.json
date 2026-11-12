@@ -1,0 +1,1407 @@
+{
+  "id": "wati",
+  "displayName": "WATI",
+  "description": "WhatsApp messaging with WATI - manage contacts, read conversations and their messages, send text, template and file messages, and read templates, channels, campaigns, segments and webhook subscriptions.",
+  "npmPackageName": "@corsair-dev/wati",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "wati.api.account.credits",
+      "shortPath": "account.credits",
+      "description": "Read the workspace messaging credit balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credit",
+            "optional": true,
+            "type": "number | null",
+            "description": "The credit balance."
+          },
+          {
+            "key": "welcome_credit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "remaining_free_conversations_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "auto_charge_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.broadcasts.get",
+      "shortPath": "broadcasts.get",
+      "description": "Read one campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "broadcast_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "broadcast_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_updated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scheduled",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scheduled_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "statistics",
+            "optional": true,
+            "type": "Record<string, number | null> | null"
+          },
+          {
+            "key": "sent",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "delivered",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "read",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.broadcasts.list",
+      "shortPath": "broadcasts.list",
+      "description": "List campaigns with their delivery counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, 1-based. Defaults to 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 100. Defaults to 20."
+          },
+          {
+            "key": "date_from",
+            "optional": false,
+            "type": "string",
+            "description": "Campaigns created from this date, e.g. 2026-11-01."
+          },
+          {
+            "key": "date_to",
+            "optional": false,
+            "type": "string",
+            "description": "Campaigns created up to this date, e.g. 2026-11-30."
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string",
+            "description": "Only campaigns sent from this channel."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "broadcasts",
+            "optional": true,
+            "type": "{ id?: string | null, broadcast_id?: string | null, name?: string | null, status?: string | null, template_name?: string | null, template_id?: string | null, channel_id?: string | null, created?: string | null, last_updated?: string | null, scheduled?: string | null, scheduled_at?: string | null, statistics?: Record<string, number | null> | null, sent?: number | null, delivered?: number | null, read?: number | null, failed?: number | null }[] | null"
+          },
+          {
+            "key": "broadcast_list",
+            "optional": true,
+            "type": "{ id?: string | null, broadcast_id?: string | null, name?: string | null, status?: string | null, template_name?: string | null, template_id?: string | null, channel_id?: string | null, created?: string | null, last_updated?: string | null, scheduled?: string | null, scheduled_at?: string | null, statistics?: Record<string, number | null> | null, sent?: number | null, delivered?: number | null, read?: number | null, failed?: number | null }[] | null"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.broadcasts.recipients",
+      "shortPath": "broadcasts.recipients",
+      "description": "Read per-recipient delivery outcomes for a campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "broadcast_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, 1-based. Defaults to 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 100. Defaults to 20."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ id?: string | null, contact_id?: string | null, contact_name?: string | null, contact_phone?: string | null, failed_code?: string | null, message_id?: string | null, local_message_id?: string | null, created?: string | null, wa_id?: string | null, phone?: string | null, name?: string | null, status?: string | null, sent?: string | null, delivered?: string | null, read?: string | null, error?: string | null }[] | null"
+          },
+          {
+            "key": "recipient_list",
+            "optional": true,
+            "type": "{ id?: string | null, contact_id?: string | null, contact_name?: string | null, contact_phone?: string | null, failed_code?: string | null, message_id?: string | null, local_message_id?: string | null, created?: string | null, wa_id?: string | null, phone?: string | null, name?: string | null, status?: string | null, sent?: string | null, delivered?: string | null, read?: string | null, error?: string | null }[] | null"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.channels.list",
+      "shortPath": "channels.list",
+      "description": "List the channels connected to the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, 1-based. Defaults to 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 100. Defaults to 20."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "{ id?: string | null, channel_id?: string | null, name?: string | null, type?: string | null, channel?: string | null, status?: string | null, phone_number?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.contacts.count",
+      "shortPath": "contacts.count",
+      "description": "Count the contacts on the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "The number of contacts."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Add a contact by WhatsApp number, with a name and custom attributes as name/value pairs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "whatsapp_number",
+            "optional": false,
+            "type": "string",
+            "description": "The number in international form, without a leading +."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "custom_params",
+            "optional": true,
+            "type": "{ name: string, value: string }[]",
+            "description": "Custom attributes, as name/value pairs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "wa_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The WhatsApp identifier."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_updated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contact_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null",
+            "description": "Where the contact came from, e.g. manual."
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "opted_in",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_broadcast",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_sms",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "teams",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "custom_params",
+            "optional": true,
+            "type": "{ name: string, value: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Remove a contact from the workspace (WATI documents this as a soft delete, not a physical erasure)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "cleanup_completed",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Read one contact by wa_id or phone number, including custom attributes and opt-in state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string",
+            "description": "The contact wa_id or phone number. A leading + is allowed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "wa_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The WhatsApp identifier."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "photo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_updated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contact_status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null",
+            "description": "Where the contact came from, e.g. manual."
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "opted_in",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_broadcast",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "allow_sms",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "teams",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "custom_params",
+            "optional": true,
+            "type": "{ name: string, value: string }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "Page through contacts, 100 per page at most",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, 1-based. Defaults to 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 100. Defaults to 20."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact_list",
+            "optional": true,
+            "type": "{ id?: string | null, wa_id?: string | null, name?: string | null, phone?: string | null, photo?: string | null, created?: string | null, last_updated?: string | null, contact_status?: string | null, source?: string | null, channel_id?: string | null, opted_in?: boolean | null, allow_broadcast?: boolean | null, allow_sms?: boolean | null, teams?: string[] | null, custom_params?: { name: string, value: string }[] | null }[] | null"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "List conversations newest first, filtered by channel type or channel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, 1-based. Defaults to 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 100. Defaults to 20."
+          },
+          {
+            "key": "channel_type",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by channel type, case-insensitive, such as whatsapp."
+          },
+          {
+            "key": "channel_id",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by connected channel ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversation_list",
+            "optional": true,
+            "type": "{ id?: string | null, conversation_id?: string | null, contact_id?: string | null, wa_id?: string | null, contact_name?: string | null, started_date?: string | null, last_updated?: string | null, phone?: string | null, channel_id?: string | null, channel_type?: string | null, last_message?: string | null, last_message_timestamp?: string | null, unread_count?: number | null, status?: string | null, assigned_operator?: string | null, assigned_team?: string | null, tags?: string[] | null }[] | null"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.conversations.messages",
+      "shortPath": "conversations.messages",
+      "description": "Read the messages in one conversation; the target is a wa_id, phone number or conversation ID, not a bare contact ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string",
+            "description": "The conversation target: a contact wa_id, a phone number, or a conversation ID. Do not pass a bare contact ID, which is a different value."
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, 1-based. Defaults to 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 100. Defaults to 20."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message_list",
+            "optional": true,
+            "type": "{ id?: string | null, message_id?: string | null, conversation_id?: string | null, wa_id?: string | null, message_type?: string | null, type?: string | null, event_type?: string | null, ticket_id?: string | null, owner?: boolean | null, operator_name?: string | null, local_message_id?: string | null, failed_detail?: string | null, text?: string | null, content?: any | null, status?: string | null, timestamp?: string | null, created?: string | null, from_me?: boolean | null, operator?: string | null, template_name?: string | null, media_url?: string | null }[] | null"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.messages.sendFile",
+      "shortPath": "messages.sendFile",
+      "description": "Send a file from a public URL, with an optional caption",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "A publicly reachable media URL."
+          },
+          {
+            "key": "caption",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ id?: string | null, message_id?: string | null, conversation_id?: string | null, wa_id?: string | null, message_type?: string | null, type?: string | null, event_type?: string | null, ticket_id?: string | null, owner?: boolean | null, operator_name?: string | null, local_message_id?: string | null, failed_detail?: string | null, text?: string | null, content?: any | null, status?: string | null, timestamp?: string | null, created?: string | null, from_me?: boolean | null, operator?: string | null, template_name?: string | null, media_url?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.messages.sendTemplate",
+      "shortPath": "messages.sendTemplate",
+      "description": "Send an approved template with bound placeholders, optionally as a named campaign; the only route outside the service window",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "whatsapp_number",
+            "optional": false,
+            "type": "string",
+            "description": "The recipient number, without a leading +."
+          },
+          {
+            "key": "template_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "broadcast_name",
+            "optional": false,
+            "type": "string",
+            "description": "Groups the send as a campaign under this name. Required by WATI even for a single recipient."
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "{ name: string, value: string }[]",
+            "description": "The values bound to the template placeholders, in order."
+          },
+          {
+            "key": "local_message_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your own id, which WATI echoes back for correlation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "broadcast_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ local_message_id?: string | null, phone_number?: string | null, target?: string | null, errors?: string[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.messages.sendText",
+      "shortPath": "messages.sendText",
+      "description": "Send a free-text message, which only works inside the 24-hour service window",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string",
+            "description": "The contact wa_id or phone number."
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ id?: string | null, message_id?: string | null, conversation_id?: string | null, wa_id?: string | null, message_type?: string | null, type?: string | null, event_type?: string | null, ticket_id?: string | null, owner?: boolean | null, operator_name?: string | null, local_message_id?: string | null, failed_detail?: string | null, text?: string | null, content?: any | null, status?: string | null, timestamp?: string | null, created?: string | null, from_me?: boolean | null, operator?: string | null, template_name?: string | null, media_url?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.segments.evaluate",
+      "shortPath": "segments.evaluate",
+      "description": "Evaluate a segment to see how many contacts match, without saving anything",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "{ operator: AND | OR, conditions: { attribute: string, operator: string, value: string }[] }[]",
+            "description": "The filters to run."
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, 1-based. Defaults to 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 100. Defaults to 20."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{ id?: string | null, wa_id?: string | null, name?: string | null, phone?: string | null, photo?: string | null, created?: string | null, last_updated?: string | null, contact_status?: string | null, source?: string | null, channel_id?: string | null, opted_in?: boolean | null, allow_broadcast?: boolean | null, allow_sms?: boolean | null, teams?: string[] | null, custom_params?: { name: string, value: string }[] | null }[] | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.segments.get",
+      "shortPath": "segments.get",
+      "description": "Read one saved segment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segmentId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "segmentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "hitCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalContactCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "contact_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastUpdated",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.segments.list",
+      "shortPath": "segments.list",
+      "description": "List saved segments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, 1-based. Defaults to 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 100. Defaults to 20."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segments",
+            "optional": true,
+            "type": "{ id?: string | null, segmentId?: string | null, name?: string | null, tag?: string | null, description?: string | null, hitCount?: number | null, totalContactCount?: number | null, contact_count?: number | null, created?: string | null, lastUpdated?: string | null }[] | null"
+          },
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Read one message template and its components",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "APPROVED, PENDING, REJECTED and so on."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "custom_params",
+            "optional": true,
+            "type": "{ name: string, value: string }[] | null"
+          },
+          {
+            "key": "language_option",
+            "optional": true,
+            "type": "{ key?: string | null, value?: string | null, text?: string | null } | null"
+          },
+          {
+            "key": "last_modified",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List the message templates with their approval status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, 1-based. Defaults to 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 100. Defaults to 20."
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string",
+            "description": "Only templates on this sending channel."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, language?: string | null, status?: string | null, category?: string | null, body?: string | null, custom_params?: { name: string, value: string }[] | null, language_option?: { key?: string | null, value?: string | null, text?: string | null } | null, last_modified?: string | null, components?: any[] | null, created?: string | null, updated?: string | null }[] | null"
+          },
+          {
+            "key": "messageTemplates",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, language?: string | null, status?: string | null, category?: string | null, body?: string | null, custom_params?: { name: string, value: string }[] | null, language_option?: { key?: string | null, value?: string | null, text?: string | null } | null, last_modified?: string | null, components?: any[] | null, created?: string | null, updated?: string | null }[] | null"
+          },
+          {
+            "key": "message_templates",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, language?: string | null, status?: string | null, category?: string | null, body?: string | null, custom_params?: { name: string, value: string }[] | null, language_option?: { key?: string | null, value?: string | null, text?: string | null } | null, last_modified?: string | null, components?: any[] | null, created?: string | null, updated?: string | null }[] | null"
+          },
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook subscription, which stops delivery to that URL",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contact_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "cleanup_completed",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Read one webhook subscription and its event list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_types",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Enabled, Disabled or Defective."
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wati.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhook subscriptions; creating one still needs the V2 route, which this plugin does not wrap",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "{ id?: string | null, url?: string | null, name?: string | null, phone_number?: string | null, event_types?: string[] | null, eventTypes?: string[] | null, status?: string | null, created?: string | null }[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

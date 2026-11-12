@@ -1683,6 +1683,14 @@
                 ]
               },
               {
+                "group": "Demio",
+                "pages": [
+                  "plugins/demio/overview",
+                  "plugins/demio/api",
+                  "plugins/demio/database"
+                ]
+              },
+              {
                 "group": "DeskTime",
                 "pages": [
                   "plugins/desktime/overview",
@@ -2288,6 +2296,14 @@
                 ]
               },
               {
+                "group": "Google Slides",
+                "pages": [
+                  "plugins/googleslides/overview",
+                  "plugins/googleslides/api",
+                  "plugins/googleslides/database"
+                ]
+              },
+              {
                 "group": "Grafana",
                 "pages": [
                   "plugins/grafana/overview",
@@ -2572,11 +2588,27 @@
                 ]
               },
               {
+                "group": "Klazify",
+                "pages": [
+                  "plugins/klazify/overview",
+                  "plugins/klazify/api",
+                  "plugins/klazify/database"
+                ]
+              },
+              {
                 "group": "Kling",
                 "pages": [
                   "plugins/kling/overview",
                   "plugins/kling/api",
                   "plugins/kling/database"
+                ]
+              },
+              {
+                "group": "Knack",
+                "pages": [
+                  "plugins/knack/overview",
+                  "plugins/knack/api",
+                  "plugins/knack/database"
                 ]
               },
               {
@@ -3128,6 +3160,30 @@
                 ]
               },
               {
+                "group": "Radar",
+                "pages": [
+                  "plugins/radar/overview",
+                  "plugins/radar/api",
+                  "plugins/radar/database"
+                ]
+              },
+              {
+                "group": "Raisely",
+                "pages": [
+                  "plugins/raisely/overview",
+                  "plugins/raisely/api",
+                  "plugins/raisely/database"
+                ]
+              },
+              {
+                "group": "Ragic",
+                "pages": [
+                  "plugins/ragic/overview",
+                  "plugins/ragic/api",
+                  "plugins/ragic/database"
+                ]
+              },
+              {
                 "group": "Ramp",
                 "pages": [
                   "plugins/ramp/overview",
@@ -3153,11 +3209,35 @@
                 ]
               },
               {
+                "group": "RealPhoneValidation",
+                "pages": [
+                  "plugins/realphonevalidation/overview",
+                  "plugins/realphonevalidation/api",
+                  "plugins/realphonevalidation/database"
+                ]
+              },
+              {
                 "group": "Recall.ai",
                 "pages": [
                   "plugins/recallai/overview",
                   "plugins/recallai/api",
                   "plugins/recallai/database"
+                ]
+              },
+              {
+                "group": "Recruitee",
+                "pages": [
+                  "plugins/recruitee/overview",
+                  "plugins/recruitee/api",
+                  "plugins/recruitee/database"
+                ]
+              },
+              {
+                "group": "RedCircle API",
+                "pages": [
+                  "plugins/redcircle/overview",
+                  "plugins/redcircle/api",
+                  "plugins/redcircle/database"
                 ]
               },
               {
@@ -3178,11 +3258,43 @@
                 ]
               },
               {
+                "group": "Referral Rock",
+                "pages": [
+                  "plugins/referralrock/overview",
+                  "plugins/referralrock/api",
+                  "plugins/referralrock/database"
+                ]
+              },
+              {
+                "group": "Refiner",
+                "pages": [
+                  "plugins/refiner/overview",
+                  "plugins/refiner/api",
+                  "plugins/refiner/database"
+                ]
+              },
+              {
+                "group": "Remarkety",
+                "pages": [
+                  "plugins/remarkety/overview",
+                  "plugins/remarkety/api",
+                  "plugins/remarkety/database"
+                ]
+              },
+              {
                 "group": "Remoet",
                 "pages": [
                   "plugins/remoet/overview",
                   "plugins/remoet/api",
                   "plugins/remoet/database"
+                ]
+              },
+              {
+                "group": "Remote Retrieval",
+                "pages": [
+                  "plugins/remoteretrieval/overview",
+                  "plugins/remoteretrieval/api",
+                  "plugins/remoteretrieval/database"
                 ]
               },
               {
@@ -3199,6 +3311,30 @@
                   "plugins/render/overview",
                   "plugins/render/api",
                   "plugins/render/database"
+                ]
+              },
+              {
+                "group": "Renderform",
+                "pages": [
+                  "plugins/renderform/overview",
+                  "plugins/renderform/api",
+                  "plugins/renderform/database"
+                ]
+              },
+              {
+                "group": "Rentman",
+                "pages": [
+                  "plugins/rentman/overview",
+                  "plugins/rentman/api",
+                  "plugins/rentman/database"
+                ]
+              },
+              {
+                "group": "RepairShopr",
+                "pages": [
+                  "plugins/repairshopr/overview",
+                  "plugins/repairshopr/api",
+                  "plugins/repairshopr/database"
                 ]
               },
               {
@@ -3228,6 +3364,14 @@
                 ]
               },
               {
+                "group": "respond.io",
+                "pages": [
+                  "plugins/respondio/overview",
+                  "plugins/respondio/api",
+                  "plugins/respondio/database"
+                ]
+              },
+              {
                 "group": "Retailed",
                 "pages": [
                   "plugins/retailed/overview",
@@ -3244,6 +3388,14 @@
                 ]
               },
               {
+                "group": "Retently",
+                "pages": [
+                  "plugins/retently/overview",
+                  "plugins/retently/api",
+                  "plugins/retently/database"
+                ]
+              },
+              {
                 "group": "Rev AI",
                 "pages": [
                   "plugins/revai/overview",
@@ -3252,11 +3404,91 @@
                 ]
               },
               {
+                "group": "Revolt (Stoat)",
+                "pages": [
+                  "plugins/revolt/overview",
+                  "plugins/revolt/api",
+                  "plugins/revolt/database"
+                ]
+              },
+              {
+                "group": "Roam HQ",
+                "pages": [
+                  "plugins/roam/overview",
+                  "plugins/roam/api",
+                  "plugins/roam/database"
+                ]
+              },
+              {
+                "group": "Rocketlane",
+                "pages": [
+                  "plugins/rocketlane/overview",
+                  "plugins/rocketlane/api",
+                  "plugins/rocketlane/database"
+                ]
+              },
+              {
+                "group": "Rollbar",
+                "pages": [
+                  "plugins/rollbar/overview",
+                  "plugins/rollbar/api",
+                  "plugins/rollbar/database"
+                ]
+              },
+              {
+                "group": "RiteKit",
+                "pages": [
+                  "plugins/ritekit/overview",
+                  "plugins/ritekit/api",
+                  "plugins/ritekit/database"
+                ]
+              },
+              {
+                "group": "RocketReach",
+                "pages": [
+                  "plugins/rocketreach/overview",
+                  "plugins/rocketreach/api",
+                  "plugins/rocketreach/database"
+                ]
+              },
+              {
+                "group": "Roboflow",
+                "pages": [
+                  "plugins/roboflow/overview",
+                  "plugins/roboflow/api",
+                  "plugins/roboflow/database"
+                ]
+              },
+              {
                 "group": "Rootly",
                 "pages": [
                   "plugins/rootly/overview",
                   "plugins/rootly/api",
                   "plugins/rootly/database"
+                ]
+              },
+              {
+                "group": "Rosette",
+                "pages": [
+                  "plugins/rosette/overview",
+                  "plugins/rosette/api",
+                  "plugins/rosette/database"
+                ]
+              },
+              {
+                "group": "Route4Me",
+                "pages": [
+                  "plugins/route4me/overview",
+                  "plugins/route4me/api",
+                  "plugins/route4me/database"
+                ]
+              },
+              {
+                "group": "RudderStack Transformations",
+                "pages": [
+                  "plugins/rudderstacktransform/overview",
+                  "plugins/rudderstacktransform/api",
+                  "plugins/rudderstacktransform/database"
                 ]
               },
               {
@@ -3311,6 +3543,14 @@
                 ]
               },
               {
+                "group": "SatisMeter",
+                "pages": [
+                  "plugins/satismeter/overview",
+                  "plugins/satismeter/api",
+                  "plugins/satismeter/database"
+                ]
+              },
+              {
                 "group": "Scale AI",
                 "pages": [
                   "plugins/scaleai/overview",
@@ -3319,11 +3559,27 @@
                 ]
               },
               {
+                "group": "Scrape.do",
+                "pages": [
+                  "plugins/scrapedo/overview",
+                  "plugins/scrapedo/api",
+                  "plugins/scrapedo/database"
+                ]
+              },
+              {
                 "group": "ScrapeGraphAI",
                 "pages": [
                   "plugins/scrapegraphai/overview",
                   "plugins/scrapegraphai/api",
                   "plugins/scrapegraphai/database"
+                ]
+              },
+              {
+                "group": "ScrapingAnt",
+                "pages": [
+                  "plugins/scrapingant/overview",
+                  "plugins/scrapingant/api",
+                  "plugins/scrapingant/database"
                 ]
               },
               {
@@ -3811,6 +4067,14 @@
                 ]
               },
               {
+                "group": "U301",
+                "pages": [
+                  "plugins/u301/overview",
+                  "plugins/u301/api",
+                  "plugins/u301/database"
+                ]
+              },
+              {
                 "group": "UniOne",
                 "pages": [
                   "plugins/unione/overview",
@@ -3826,6 +4090,14 @@
                   "plugins/unipile/api",
                   "plugins/unipile/database",
                   "plugins/unipile/webhooks"
+                ]
+              },
+              {
+                "group": "Unisender",
+                "pages": [
+                  "plugins/unisender/overview",
+                  "plugins/unisender/api",
+                  "plugins/unisender/database"
                 ]
               },
               {
@@ -3853,6 +4125,31 @@
                 ]
               },
               {
+                "group": "UptimeRobot",
+                "pages": [
+                  "plugins/uptimerobot/overview",
+                  "plugins/uptimerobot/api",
+                  "plugins/uptimerobot/database"
+                ]
+              },
+              {
+                "group": "Userflow",
+                "pages": [
+                  "plugins/userflow/overview",
+                  "plugins/userflow/api",
+                  "plugins/userflow/database"
+                ]
+              },
+              {
+                "group": "Userlist",
+                "pages": [
+                  "plugins/userlist/overview",
+                  "plugins/userlist/api",
+                  "plugins/userlist/database",
+                  "plugins/userlist/webhooks"
+                ]
+              },
+              {
                 "group": "Vapi",
                 "pages": [
                   "plugins/vapi/overview",
@@ -3868,6 +4165,14 @@
                   "plugins/vaquill/overview",
                   "plugins/vaquill/api",
                   "plugins/vaquill/database"
+                ]
+              },
+              {
+                "group": "VectorShift",
+                "pages": [
+                  "plugins/vectorshift/overview",
+                  "plugins/vectorshift/api",
+                  "plugins/vectorshift/database"
                 ]
               },
               {
@@ -3897,6 +4202,14 @@
                 ]
               },
               {
+                "group": "VirusTotal",
+                "pages": [
+                  "plugins/virustotal/overview",
+                  "plugins/virustotal/api",
+                  "plugins/virustotal/database"
+                ]
+              },
+              {
                 "group": "waboxapp",
                 "pages": [
                   "plugins/waboxapp/overview",
@@ -3905,11 +4218,51 @@
                 ]
               },
               {
+                "group": "Wachete",
+                "pages": [
+                  "plugins/wachete/overview",
+                  "plugins/wachete/api",
+                  "plugins/wachete/database"
+                ]
+              },
+              {
+                "group": "WaiverFile",
+                "pages": [
+                  "plugins/waiverfile/overview",
+                  "plugins/waiverfile/api",
+                  "plugins/waiverfile/database"
+                ]
+              },
+              {
                 "group": "WakaTime",
                 "pages": [
                   "plugins/wakatime/overview",
                   "plugins/wakatime/api",
                   "plugins/wakatime/database"
+                ]
+              },
+              {
+                "group": "WATI",
+                "pages": [
+                  "plugins/wati/overview",
+                  "plugins/wati/api",
+                  "plugins/wati/database"
+                ]
+              },
+              {
+                "group": "Webex",
+                "pages": [
+                  "plugins/webex/overview",
+                  "plugins/webex/api",
+                  "plugins/webex/database"
+                ]
+              },
+              {
+                "group": "Web Scraper Cloud",
+                "pages": [
+                  "plugins/webscraperio/overview",
+                  "plugins/webscraperio/api",
+                  "plugins/webscraperio/database"
                 ]
               },
               {
@@ -4026,11 +4379,27 @@
                 ]
               },
               {
+                "group": "Worksnaps",
+                "pages": [
+                  "plugins/worksnaps/overview",
+                  "plugins/worksnaps/api",
+                  "plugins/worksnaps/database"
+                ]
+              },
+              {
                 "group": "World News API",
                 "pages": [
                   "plugins/worldnewsapi/overview",
                   "plugins/worldnewsapi/api",
                   "plugins/worldnewsapi/database"
+                ]
+              },
+              {
+                "group": "Wrike",
+                "pages": [
+                  "plugins/wrike/overview",
+                  "plugins/wrike/api",
+                  "plugins/wrike/database"
                 ]
               },
               {
@@ -4066,6 +4435,22 @@
                   "plugins/xquik/api",
                   "plugins/xquik/database",
                   "plugins/xquik/webhooks"
+                ]
+              },
+              {
+                "group": "Yandex Translate",
+                "pages": [
+                  "plugins/yandex/overview",
+                  "plugins/yandex/api",
+                  "plugins/yandex/database"
+                ]
+              },
+              {
+                "group": "YNAB",
+                "pages": [
+                  "plugins/ynab/overview",
+                  "plugins/ynab/api",
+                  "plugins/ynab/database"
                 ]
               },
               {

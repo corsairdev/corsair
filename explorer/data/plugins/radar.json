@@ -1,0 +1,878 @@
+{
+  "id": "radar",
+  "displayName": "Radar",
+  "description": "Location infrastructure with Radar - geocode addresses and coordinates, search places and geofences, read tracked users, geofences and trips, upsert a geofence, submit location updates and log conversions.",
+  "npmPackageName": "@corsair-dev/radar",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "radar.api.events.conversion",
+      "shortPath": "events.conversion",
+      "description": "Log a named conversion with optional revenue and metadata against a user, device or install id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "A generic name, such as `in_app_purchase`."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "install_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "revenue",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "{ _id?: string | null, name?: string | null, userId?: string | null, createdAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.geocode.forward",
+      "shortPath": "geocode.forward",
+      "description": "Turn an address into coordinates, returning every match with its layer and confidence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "The address to geocode."
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "(place | address | postalCode | locality | county | state | country | coarse | fine)[]",
+            "description": "Layer filters, sent comma-separated. `coarse` covers every admin layer and `fine` the address and place layers."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string[]",
+            "description": "Two-letter country codes to restrict the search to."
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "ar | de | en | es | fr | it | ja | ko | nl | pt | ru | zh"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "{ latitude?: number | null, longitude?: number | null, geometry?: { type?: string | null, coordinates?: number[] | null } | null, addressLabel?: string | null, formattedAddress?: string | null, country?: string | null, countryCode?: string | null, countryFlag?: string | null, state?: string | null, stateCode?: string | null, postalCode?: string | null, city?: string | null, county?: string | null, number?: string | null, street?: string | null, layer?: string | null, distance?: number | null, confidence?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.geocode.reverse",
+      "shortPath": "geocode.reverse",
+      "description": "Turn `latitude,longitude` into an address, with the admin layers that contain it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "coordinates",
+            "optional": false,
+            "type": "string",
+            "description": "`latitude,longitude`, such as `40.70390,-73.98670`."
+          },
+          {
+            "key": "layers",
+            "optional": true,
+            "type": "(place | address | postalCode | locality | county | state | country | coarse | fine)[]",
+            "description": "Layer filters, sent comma-separated. `coarse` covers every admin layer and `fine` the address and place layers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addresses",
+            "optional": false,
+            "type": "{ latitude?: number | null, longitude?: number | null, geometry?: { type?: string | null, coordinates?: number[] | null } | null, addressLabel?: string | null, formattedAddress?: string | null, country?: string | null, countryCode?: string | null, countryFlag?: string | null, state?: string | null, stateCode?: string | null, postalCode?: string | null, city?: string | null, county?: string | null, number?: string | null, street?: string | null, layer?: string | null, distance?: number | null, confidence?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.geofences.delete",
+      "shortPath": "geofences.delete",
+      "description": "Delete a geofence permanently; the API keeps no copy",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "geofence_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "geofence_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.geofences.get",
+      "shortPath": "geofences.get",
+      "description": "Fetch one geofence with its geometry, radius and metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "geofence_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Radar `_id` of the geofence."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "geofence",
+            "optional": false,
+            "type": "{ _id?: string | null, live?: boolean | null, tag?: string | null, externalId?: string | null, description?: string | null, type?: string | null, geometryType?: string | null, geometryRadius?: number | null, geometryCenter?: { type?: string | null, coordinates?: number[] | null } | null, geometryCoordinates?: number[][] | null, metadata?: Record<string, string | number | boolean> | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.geofences.list",
+      "shortPath": "geofences.list",
+      "description": "List geofences with tag and external-id filters, paging by update time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, 1 to 1000. Radar defaults to 100."
+          },
+          {
+            "key": "updated_before",
+            "optional": true,
+            "type": "string",
+            "description": "A date or ISO string: return records updated before it. Pass the last row’s timestamp to page."
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string",
+            "description": "A date or ISO string: return records updated after it."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "geofences",
+            "optional": false,
+            "type": "{ _id?: string | null, live?: boolean | null, tag?: string | null, externalId?: string | null, description?: string | null, type?: string | null, geometryType?: string | null, geometryRadius?: number | null, geometryCenter?: { type?: string | null, coordinates?: number[] | null } | null, geometryCoordinates?: number[][] | null, metadata?: Record<string, string | number | boolean> | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when Radar supplies meta.hasMore. Users and geofences page with updated_before; trips use created_before and sort_by: createdAt."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ code?: number | null, hasMore?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.geofences.upsert",
+      "shortPath": "geofences.upsert",
+      "description": "Create or replace a geofence by tag and external id, or by Radar id: a circle, a polygon or an isochrone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "geofence_id",
+            "optional": true,
+            "type": "string",
+            "description": "Radar `_id`, for an update by id rather than by tag and external id."
+          },
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string",
+            "description": "The geofence group."
+          },
+          {
+            "key": "external_id",
+            "optional": false,
+            "type": "string",
+            "description": "A stable id within the tag."
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "(circle | polygon | isochrone) & string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "foot | bike | car",
+            "description": "Required travel mode for an isochrone."
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number",
+            "description": "Required for circle in meters, or isochrone in travel minutes."
+          },
+          {
+            "key": "center",
+            "optional": true,
+            "type": "number[]",
+            "description": "[longitude, latitude] for a circle or isochrone."
+          },
+          {
+            "key": "ring",
+            "optional": true,
+            "type": "number[][]",
+            "description": "A closed ring of [longitude, latitude] pairs for a polygon, first point repeated last."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "geofence",
+            "optional": false,
+            "type": "{ _id?: string | null, live?: boolean | null, tag?: string | null, externalId?: string | null, description?: string | null, type?: string | null, geometryType?: string | null, geometryRadius?: number | null, geometryCenter?: { type?: string | null, coordinates?: number[] | null } | null, geometryCoordinates?: number[][] | null, metadata?: Record<string, string | number | boolean> | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.search.geofences",
+      "shortPath": "search.geofences",
+      "description": "Search geofences near a point, filtered by tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "near",
+            "optional": false,
+            "type": "string",
+            "description": "`latitude,longitude` for the search centre."
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number",
+            "description": "Search radius in meters."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "geofences",
+            "optional": false,
+            "type": "{ _id?: string | null, live?: boolean | null, tag?: string | null, externalId?: string | null, description?: string | null, type?: string | null, geometryType?: string | null, geometryRadius?: number | null, geometryCenter?: { type?: string | null, coordinates?: number[] | null } | null, geometryCoordinates?: number[][] | null, metadata?: Record<string, string | number | boolean> | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ code?: number | null, hasMore?: boolean | null, message?: string | null, param?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.search.places",
+      "shortPath": "search.places",
+      "description": "Search the places database near a point, filtered by chain or category within a radius",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "near",
+            "optional": false,
+            "type": "string",
+            "description": "`latitude,longitude` for the search centre."
+          },
+          {
+            "key": "chains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "places",
+            "optional": false,
+            "type": "{ _id?: string | null, name?: string | null, location?: { type?: string | null, coordinates?: number[] | null } | null, categories?: string[] | null, chain?: { name?: string | null, slug?: string | null, externalId?: string | null, metadata?: Record<string, string | number | boolean> | null } | null, address?: { latitude?: number | null, longitude?: number | null, geometry?: { type?: string | null, coordinates?: number[] | null } | null, addressLabel?: string | null, formattedAddress?: string | null, country?: string | null, countryCode?: string | null, countryFlag?: string | null, state?: string | null, stateCode?: string | null, postalCode?: string | null, city?: string | null, county?: string | null, number?: string | null, street?: string | null, layer?: string | null, distance?: number | null, confidence?: string | null } | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ code?: number | null, hasMore?: boolean | null, message?: string | null, param?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.track.update",
+      "shortPath": "track.update",
+      "description": "Submit a location update, which creates the user when none matches and may generate geofence events",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "device_id",
+            "optional": false,
+            "type": "string",
+            "description": "The device identifier; Radar keys a logged-out user by it."
+          },
+          {
+            "key": "latitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "longitude",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "accuracy",
+            "optional": false,
+            "type": "number",
+            "description": "The accuracy in meters. Radar uses it to decide geofence confidence."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "A stable user id. With `device_id` it identifies a logged-in user; a new one is created when none matches."
+          },
+          {
+            "key": "foreground",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "stopped",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device_type",
+            "optional": true,
+            "type": "iOS | Android | Web"
+          },
+          {
+            "key": "device_os",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device_make",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device_model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "altitude",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "vertical_accuracy",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replayed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Up to 32 keys of your own user attributes."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "track",
+            "optional": false,
+            "type": "{ user?: { _id?: string | null, live?: boolean | null, userId?: string | null, deviceId?: string | null, description?: string | null, deviceType?: string | null, platform?: string | null, foreground?: boolean | null, stopped?: boolean | null, location?: { latitude?: number | null, longitude?: number | null, accuracy?: number | null, speed?: number | null, altitude?: number | null, updatedAt?: string | null } | null, geofences?: { _id?: string | null, live?: boolean | null, tag?: string | null, externalId?: string | null, description?: string | null, type?: string | null, geometryType?: string | null, geometryRadius?: number | null, geometryCenter?: { type?: string | null, coordinates?: number[] | null } | null, geometryCoordinates?: number[][] | null, metadata?: Record<string, string | number | boolean> | null, createdAt?: string | null, updatedAt?: string | null }[] | null, metadata?: Record<string, string | number | boolean> | null, createdAt?: string | null, updatedAt?: string | null } | null, events?: { _id?: string | null, type?: string | null, createdAt?: string | null, live?: boolean | null, geofenceId?: string | null, userId?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.trips.create",
+      "shortPath": "trips.create",
+      "description": "Create a trip for a user with its destination geofence, travel mode and approaching threshold",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "external_id",
+            "optional": false,
+            "type": "string",
+            "description": "A stable id for the trip, such as an order id."
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "foot | bike | car"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "The user's external id, as tracked by the SDK."
+          },
+          {
+            "key": "destination_geofence_tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination_geofence_external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approaching_threshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "scheduled_arrival_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trip",
+            "optional": false,
+            "type": "{ _id?: string | null, live?: boolean | null, externalId?: string | null, status?: string | null, mode?: string | null, userId?: string | null, deviceId?: string | null, destinationGeofenceTag?: string | null, destinationGeofenceExternalId?: string | null, destinationLocation?: { type?: string | null, coordinates?: number[] | null } | null, eta?: { duration?: number | null, distance?: number | null } | null, createdAt?: string | null, updatedAt?: string | null, locations?: { latitude?: number | null, longitude?: number | null, accuracy?: number | null, speed?: number | null, altitude?: number | null, updatedAt?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.trips.get",
+      "shortPath": "trips.get",
+      "description": "Fetch one trip with its status, destination and live ETA",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trip_id",
+            "optional": false,
+            "type": "string",
+            "description": "The Radar `_id` of the trip."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trip",
+            "optional": false,
+            "type": "{ _id?: string | null, live?: boolean | null, externalId?: string | null, status?: string | null, mode?: string | null, userId?: string | null, deviceId?: string | null, destinationGeofenceTag?: string | null, destinationGeofenceExternalId?: string | null, destinationLocation?: { type?: string | null, coordinates?: number[] | null } | null, eta?: { duration?: number | null, distance?: number | null } | null, createdAt?: string | null, updatedAt?: string | null, locations?: { latitude?: number | null, longitude?: number | null, accuracy?: number | null, speed?: number | null, altitude?: number | null, updatedAt?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.trips.list",
+      "shortPath": "trips.list",
+      "description": "List trips by status, user, destination or time window, optionally with their location trace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, 1 to 1000. Radar defaults to 100."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(pending | started | approaching | arrived | completed | canceled | expired)[]",
+            "description": "Sent comma-separated."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "The Radar `_id` of the user."
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "destination_geofence_tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination_geofence_external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "include_locations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "createdAt | updatedAt"
+          },
+          {
+            "key": "delayed",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trips",
+            "optional": false,
+            "type": "{ _id?: string | null, live?: boolean | null, externalId?: string | null, status?: string | null, mode?: string | null, userId?: string | null, deviceId?: string | null, destinationGeofenceTag?: string | null, destinationGeofenceExternalId?: string | null, destinationLocation?: { type?: string | null, coordinates?: number[] | null } | null, eta?: { duration?: number | null, distance?: number | null } | null, createdAt?: string | null, updatedAt?: string | null, locations?: { latitude?: number | null, longitude?: number | null, accuracy?: number | null, speed?: number | null, altitude?: number | null, updatedAt?: string | null }[] | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when Radar supplies meta.hasMore. Users and geofences page with updated_before; trips use created_before and sort_by: createdAt."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ code?: number | null, hasMore?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.trips.update",
+      "shortPath": "trips.update",
+      "description": "Update a trip: its status, mode, destination or approaching threshold",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trip_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | started | approaching | arrived | completed | canceled"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "foot | bike | car"
+          },
+          {
+            "key": "destination_geofence_tag",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "destination_geofence_external_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "approaching_threshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "scheduled_arrival_at",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trip",
+            "optional": false,
+            "type": "{ _id?: string | null, live?: boolean | null, externalId?: string | null, status?: string | null, mode?: string | null, userId?: string | null, deviceId?: string | null, destinationGeofenceTag?: string | null, destinationGeofenceExternalId?: string | null, destinationLocation?: { type?: string | null, coordinates?: number[] | null } | null, eta?: { duration?: number | null, distance?: number | null } | null, createdAt?: string | null, updatedAt?: string | null, locations?: { latitude?: number | null, longitude?: number | null, accuracy?: number | null, speed?: number | null, altitude?: number | null, updatedAt?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.users.get",
+      "shortPath": "users.get",
+      "description": "Fetch one user by Radar id, user id or device id, including their location and metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string",
+            "description": "A Radar `_id`, `userId` or `deviceId`; all three resolve."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ _id?: string | null, live?: boolean | null, userId?: string | null, deviceId?: string | null, description?: string | null, deviceType?: string | null, platform?: string | null, foreground?: boolean | null, stopped?: boolean | null, location?: { latitude?: number | null, longitude?: number | null, accuracy?: number | null, speed?: number | null, altitude?: number | null, updatedAt?: string | null } | null, geofences?: { _id?: string | null, live?: boolean | null, tag?: string | null, externalId?: string | null, description?: string | null, type?: string | null, geometryType?: string | null, geometryRadius?: number | null, geometryCenter?: { type?: string | null, coordinates?: number[] | null } | null, geometryCoordinates?: number[][] | null, metadata?: Record<string, string | number | boolean> | null, createdAt?: string | null, updatedAt?: string | null }[] | null, metadata?: Record<string, string | number | boolean> | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "radar.api.users.list",
+      "shortPath": "users.list",
+      "description": "List tracked users with their last location and geofences, paging by update time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, 1 to 1000. Radar defaults to 100."
+          },
+          {
+            "key": "updated_before",
+            "optional": true,
+            "type": "string",
+            "description": "A date or ISO string: return records updated before it. Pass the last row’s timestamp to page."
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string",
+            "description": "A date or ISO string: return records updated after it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ _id?: string | null, live?: boolean | null, userId?: string | null, deviceId?: string | null, description?: string | null, deviceType?: string | null, platform?: string | null, foreground?: boolean | null, stopped?: boolean | null, location?: { latitude?: number | null, longitude?: number | null, accuracy?: number | null, speed?: number | null, altitude?: number | null, updatedAt?: string | null } | null, geofences?: { _id?: string | null, live?: boolean | null, tag?: string | null, externalId?: string | null, description?: string | null, type?: string | null, geometryType?: string | null, geometryRadius?: number | null, geometryCenter?: { type?: string | null, coordinates?: number[] | null } | null, geometryCoordinates?: number[][] | null, metadata?: Record<string, string | number | boolean> | null, createdAt?: string | null, updatedAt?: string | null }[] | null, metadata?: Record<string, string | number | boolean> | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when Radar supplies meta.hasMore. Users and geofences page with updated_before; trips use created_before and sort_by: createdAt."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ code?: number | null, hasMore?: boolean | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

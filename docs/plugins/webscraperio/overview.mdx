@@ -1,0 +1,144 @@
+---
+title: "Web Scraper Cloud plugin"
+sidebarTitle: "Overview"
+description: "Web scraping with Web Scraper Cloud - list and read sitemaps with their selectors and start URLs, create a sitemap from an exported definition, and read the account's page credits."
+---
+
+Use **Web Scraper Cloud** through Corsair: one client, typed API calls.
+
+Create an API token in the Web Scraper Cloud app under **Account → API**. The plugin sends it as `Authorization: Bearer <token>` on every call to `https://api.webscraper.io/api/v1`.
+
+- **The token goes in a Bearer header.** That is what the provider's API reference documents. The older `api_token` query parameter still works, but it would put the key in every request URL, so the plugin does not use it. A wrong token is refused with `401 Unauthorized, invalid Bearer token.`
+- **This plugin covers sitemaps and the account.** It wraps `GET /sitemaps`, `GET /sitemap/{id}`, `POST /sitemap` and `GET /account`. The Cloud API also serves sitemap update and delete, schedulers, tags, and scraping jobs (start, status, stop, and downloading the scraped data); those are not in this plugin yet.
+- **Two error shapes, and they mean different things.** A handled failure is `{ success: false, error }` — that is what a bad token produces. An unrouted request is Laravel's own 404 `{ message: "The route ... could not be found." }`, which means the *path* is wrong. The plugin keeps them apart, so a 404 from a mistyped path is not reported as a missing sitemap.
+- **A 401 is the key; a 403 is the resource.** A 401 means the token is wrong or missing. A 403 `Forbidden` means the token works but cannot reach what was asked for: the live API answers 403, not 404, for a sitemap id that does not exist or belongs to another account.
+- **A sitemap is the scraping configuration.** `sitemaps.get` returns its definition in `data.sitemap` as a JSON string; parse it to read `startUrl` (where the crawl begins) and `selectors` (what is extracted).
+- **`sitemaps.create` takes the export as-is.** The body is the JSON the browser extension exports (`_id`, `startUrl`, `selectors`), and its shape belongs to the builder, so the plugin passes it through unchanged. The answer is the new sitemap's `id`.
+- **The list is paginated.** `sitemaps.list` returns `{ id, name }` rows in `data`, with `current_page`, `last_page`, `total` and `per_page` at the root; pass `page` until it reaches `last_page`, and `tag` to filter.
+- **`account.get` is the cheapest check.** It returns the user's email and name and the `page_credits` left, so it verifies a token and reports the remaining credits in one call.
+
+**What you get:**
+
+- 4 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/webscraperio better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/webscraperio better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/webscraperio better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/webscraperio better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { webscraperio } from '@corsair-dev/webscraperio';
+
+export const corsair = createCorsair({
+	plugins: [
+		webscraperio(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+webscraperio()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'webscraperio',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List sitemaps**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.webscraperio.api.sitemaps.list({});
+```
+
+
+**Create a sitemap from an export**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.webscraperio.api.sitemaps.create({
+	sitemap: {
+		_id: 'product_catalogue',
+		startUrl: ['https://acme.example/products'],
+		selectors: [],
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/webscraperio/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/webscraperio/api">
+    Every `webscraperio.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
