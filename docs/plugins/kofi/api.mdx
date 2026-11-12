@@ -1,0 +1,52 @@
+---
+title: "Ko-fi API reference"
+sidebarTitle: "API"
+description: "API reference for the Ko-fi plugin in Corsair: every `kofi.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Webhooks
+
+### listEvents
+
+`webhooks.listEvents`
+
+List the payment types Ko-fi can deliver, from its webhook reference; makes no API call, because Ko-fi has no REST API
+
+**Risk:** `read`
+
+```ts
+await corsair.kofi.api.webhooks.listEvents({});
+```
+
+**Input:** _empty object_
+
+Returns the four documented payment types from Ko-fi’s webhook reference. Makes no API call, because Ko-fi has none.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  type: string,
+  description: string,
+  docs_url: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
