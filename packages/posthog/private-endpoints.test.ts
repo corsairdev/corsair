@@ -405,6 +405,18 @@ describe('PostHog read endpoints build the right requests', () => {
 		expect(result.results.length).toBeGreaterThan(0);
 	});
 
+	it('drops the extra row the query runner adds for hasMore', async () => {
+		const body = fixture('errorTrackingIssuesList') as { results: unknown[] };
+		const one = body.results[0];
+		mockFetch(() => ({
+			status: 200,
+			body: { ...body, results: [one, one, one], hasMore: true },
+		}));
+		const result = await errorTrackingIssuesList(ctx, { limit: 2 });
+		expect(result.results).toHaveLength(2);
+		expect(result.hasMore).toBe(true);
+	});
+
 	it('sends property filters as PostHog expects', async () => {
 		const calls = mockFetch(() => ({
 			status: 200,

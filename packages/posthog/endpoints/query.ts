@@ -80,6 +80,15 @@ export const errorTrackingIssuesList =
 				},
 			},
 			log: { status: input.status, search: input.search, limit: input.limit },
+			// The query runner returns one row past the limit so it can set
+			// hasMore; drop it so callers get exactly `limit` issues.
+			transform: (response) => {
+				const limit = input.limit ?? 10;
+				const res = response as { results?: unknown[] };
+				return Array.isArray(res.results) && res.results.length > limit
+					? { ...res, results: res.results.slice(0, limit) }
+					: response;
+			},
 		}),
 	);
 
