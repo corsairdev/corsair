@@ -62,6 +62,11 @@ export const projectsGet: RentmanEndpoints['projectsGet'] = (ctx, input) =>
 		},
 	);
 
+/** Rentman writes a linked crew member as its path, `/crew/<id>`. */
+function crewLink(id: number | undefined): string | undefined {
+	return id === undefined ? undefined : `/crew/${id}`;
+}
+
 export const projectsCreate: RentmanEndpoints['projectsCreate'] = (
 	ctx,
 	input,
@@ -80,10 +85,9 @@ export const projectsCreate: RentmanEndpoints['projectsCreate'] = (
 			replayable: false,
 			body: queryOf({
 				name: parsed.name,
-				customer: parsed.customer,
 				number: parsed.number,
 				reference: parsed.reference,
-				account_manager: parsed.account_manager,
+				account_manager: crewLink(parsed.account_manager),
 				deposit_status: parsed.deposit_status,
 				color: parsed.color,
 				conditions: parsed.conditions,
@@ -116,10 +120,9 @@ export const projectsUpdate: RentmanEndpoints['projectsUpdate'] = (
 				replayable: false,
 				body: queryOf({
 					name: rest.name,
-					customer: rest.customer,
 					number: rest.number,
 					reference: rest.reference,
-					account_manager: rest.account_manager,
+					account_manager: crewLink(rest.account_manager),
 					deposit_status: rest.deposit_status,
 					color: rest.color,
 					conditions: rest.conditions,
@@ -193,7 +196,7 @@ export function equipmentBody(parsed: {
 	code?: string;
 	in_shop?: boolean;
 	folder?: string;
-	type?: number;
+	type?: 'item' | 'set' | 'case';
 	price?: number;
 	list_price?: number;
 	weight?: number;

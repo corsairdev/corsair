@@ -96,7 +96,6 @@ describe('retry behaviour', () => {
 				withFakeTimers(
 					corsair.rentman.api.projects.create({
 						name: 'Festival 2026',
-						customer: 12,
 					}),
 				),
 			).rejects.toThrow(/Rentman 500/);

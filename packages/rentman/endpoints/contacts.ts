@@ -102,9 +102,11 @@ export const get: RentmanEndpoints['contactsGet'] = (ctx, input) =>
 
 /**
  * The address blocks arrive as three nested objects but are sent flat, so the
- * prefix is folded into each field name.
+ * prefix is folded into each field name. The visiting address is the
+ * exception for its country: Rentman has no `visit_country` and keeps that
+ * country in the contact's own `country`.
  */
-function flattenAddress(
+export function flattenAddress(
 	target: Record<string, unknown>,
 	// unknown: the parsed address block, whose fields are read by name here.
 	block: unknown,
@@ -112,7 +114,12 @@ function flattenAddress(
 ): void {
 	if (typeof block !== 'object' || block === null) return;
 	for (const [field, value] of Object.entries(block)) {
-		if (value !== undefined) target[`${prefix}_${field}`] = value;
+		if (value === undefined) continue;
+		const key =
+			prefix === 'visit' && field === 'country'
+				? 'country'
+				: `${prefix}_${field}`;
+		target[key] = value;
 	}
 }
 
@@ -146,8 +153,9 @@ export const create: RentmanEndpoints['contactsCreate'] = (ctx, input) =>
 				latitude: parsed.latitude,
 				distance: parsed.distance,
 				travel_time: parsed.travel_time,
-				email: parsed.email,
-				phone: parsed.phone,
+				// Rentman stores two of each; the input's single value is the first.
+				email_1: parsed.email,
+				phone_1: parsed.phone,
 			});
 			flattenAddress(body, parsed.mailing_address, 'mailing');
 			flattenAddress(body, parsed.visit_address, 'visit');
@@ -196,8 +204,8 @@ export const update: RentmanEndpoints['contactsUpdate'] = (ctx, input) =>
 				latitude: rest.latitude,
 				distance: rest.distance,
 				travel_time: rest.travel_time,
-				email: rest.email,
-				phone: rest.phone,
+				email_1: rest.email,
+				phone_1: rest.phone,
 			});
 			flattenAddress(body, rest.mailing_address, 'mailing');
 			flattenAddress(body, rest.visit_address, 'visit');

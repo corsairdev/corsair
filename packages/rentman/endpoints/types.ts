@@ -69,11 +69,14 @@ const NumericFilterSchema = z
 		gte: z.number().optional(),
 		neq: z.number().optional(),
 	})
+	.strict()
 	.optional();
 
 /**
- * A string or date filter. Rentman documents `lt`, `gt`, `lte`, `gte` and `neq`,
- * and an ISO date reaches them as a string, so every operator is available.
+ * A string or date filter. Rentman accepts `eq`, `lt`, `gt`, `lte`, `gte` and
+ * `neq` (and answers 400 to any other), and an ISO date reaches them as a
+ * string. The object is strict so an unsupported operator fails here instead
+ * of being dropped and sending an unfiltered request.
  */
 const StringFilterSchema = z
 	.object({
@@ -84,6 +87,7 @@ const StringFilterSchema = z
 		lte: z.string().optional(),
 		gte: z.string().optional(),
 	})
+	.strict()
 	.optional();
 
 /**
@@ -106,13 +110,28 @@ const pagingFields = {
 	limit: z.number().nullish(),
 };
 
+/**
+ * A linked item: a path such as `/contacts/12` by default, or the linked
+ * object itself when the caller names the field in `expand`.
+ * unknown: an expanded object has the linked resource's own fields, which
+ * depend on what was expanded.
+ */
+const LinkSchema = z.union([z.string(), z.record(z.string(), z.unknown())]);
+
+/**
+ * Custom fields are keyed `custom_<n>` and typed by the account's own field
+ * definitions (text, number, boolean, date, ...).
+ * unknown: the value type is set per account, not by the API.
+ */
+const CustomFieldsSchema = z.record(z.string(), z.unknown());
+
 /** The keys every Rentman entity carries. */
 const EntityBaseSchema = z
 	.object({
 		id: z.number().nullish(),
 		created: z.string().nullish(),
 		modified: z.string().nullish(),
-		creator: z.string().nullish(),
+		creator: LinkSchema.nullish(),
 		displayname: z.string().nullish(),
 	})
 	.loose();
@@ -123,13 +142,15 @@ const ContactsListInputSchema = z.object({
 	...listQueryFields,
 	country: z.string().optional().describe('A two-letter country code.'),
 	type: z
-		.string()
+		.enum(['private', 'company'])
 		.optional()
-		.describe('The contact type, such as `company` or `person`.'),
+		.describe('The contact type: `company` or `private` (a person).'),
 	folder: z
 		.string()
 		.optional()
-		.describe('The folder path a contact is filed under.'),
+		.describe(
+			'The folder a contact is filed under, as a path such as `/folders/34`.',
+		),
 	modified: StringFilterSchema,
 });
 
@@ -145,26 +166,51 @@ const ContactSchema = EntityBaseSchema.extend({
 	type: z.string().nullish(),
 	code: z.string().nullish(),
 	accounting_code: z.string().nullish(),
-	folder: z.string().nullish(),
+	vendor_accounting_code: z.string().nullish(),
+	folder: LinkSchema.nullish(),
+	// The visiting address has no `visit_country`: its country is `country`.
 	country: z.string().nullish(),
 	distance: z.number().nullish(),
 	travel_time: z.number().nullish(),
 	longitude: z.number().nullish(),
 	latitude: z.number().nullish(),
-	email: z.string().nullish(),
-	phone: z.string().nullish(),
-	mailing_city: z.string().nullish(),
+	email_1: z.string().nullish(),
+	email_2: z.string().nullish(),
+	phone_1: z.string().nullish(),
+	phone_2: z.string().nullish(),
+	website: z.string().nullish(),
+	VAT_code: z.string().nullish(),
+	commerce_code: z.string().nullish(),
 	mailing_street: z.string().nullish(),
+	mailing_number: z.string().nullish(),
+	mailing_unit_number: z.string().nullish(),
+	mailing_district: z.string().nullish(),
+	mailing_extra_address_line: z.string().nullish(),
 	mailing_postalcode: z.string().nullish(),
+	mailing_city: z.string().nullish(),
+	mailing_state: z.string().nullish(),
 	mailing_country: z.string().nullish(),
-	visit_city: z.string().nullish(),
 	visit_street: z.string().nullish(),
+	visit_number: z.string().nullish(),
+	visit_unit_number: z.string().nullish(),
+	visit_district: z.string().nullish(),
+	visit_extra_address_line: z.string().nullish(),
 	visit_postalcode: z.string().nullish(),
-	visit_country: z.string().nullish(),
-	invoice_city: z.string().nullish(),
+	visit_city: z.string().nullish(),
+	visit_state: z.string().nullish(),
 	invoice_street: z.string().nullish(),
+	invoice_number: z.string().nullish(),
+	invoice_unit_number: z.string().nullish(),
+	invoice_district: z.string().nullish(),
+	invoice_extra_address_line: z.string().nullish(),
 	invoice_postalcode: z.string().nullish(),
+	invoice_city: z.string().nullish(),
+	invoice_state: z.string().nullish(),
 	invoice_country: z.string().nullish(),
+	default_person: LinkSchema.nullish(),
+	admin_contactperson: LinkSchema.nullish(),
+	tags: z.string().nullish(),
+	custom: CustomFieldsSchema.nullish(),
 });
 
 export type RentmanContact = z.infer<typeof ContactSchema>;
@@ -201,15 +247,22 @@ const AddressInputSchema = z.object({
 	postalcode: z.string().optional(),
 	city: z.string().optional(),
 	state: z.string().optional(),
-	country: z.string().optional(),
+	country: z
+		.string()
+		.optional()
+		.describe(
+			'A two-letter country code, lowercase as Rentman stores it (`nl`). For the visit address it is sent as the contact `country`.',
+		),
 });
 
 const ContactsWriteInputSchema = z.object({
 	folder: z.string().optional(),
 	type: z
-		.string()
+		.enum(['private', 'company'])
 		.optional()
-		.describe('`company` or `person`; Rentman derives `displayname` from it.'),
+		.describe(
+			'`company` or `private` (a person); Rentman derives `displayname` from it.',
+		),
 	ext_name_line: z.string().optional(),
 	name: z.string().optional().describe('The company name.'),
 	firstname: z.string().optional(),
@@ -219,13 +272,24 @@ const ContactsWriteInputSchema = z.object({
 	code: z.string().optional(),
 	accounting_code: z.string().optional(),
 	vendor_accounting_code: z.string().optional(),
-	country: z.string().optional().describe('A two-letter country code.'),
+	country: z
+		.string()
+		.optional()
+		.describe(
+			'The visit address country, a two-letter code such as `nl`. Same as `visit_address.country`.',
+		),
 	longitude: z.number().min(-180).max(180).optional(),
 	latitude: z.number().min(-90).max(90).optional(),
 	distance: z.number().optional(),
 	travel_time: z.number().optional(),
-	email: z.string().optional(),
-	phone: z.string().optional(),
+	email: z
+		.string()
+		.optional()
+		.describe('The primary email address, stored as `email_1`.'),
+	phone: z
+		.string()
+		.optional()
+		.describe('The primary phone number, stored as `phone_1`.'),
 	mailing_address: AddressInputSchema.optional(),
 	visit_address: AddressInputSchema.optional(),
 	invoice_address: AddressInputSchema.optional(),
@@ -270,7 +334,10 @@ const ProjectsListInputSchema = z.object({
 	...listQueryFields,
 	name: StringFilterSchema,
 	number: StringFilterSchema,
-	deposit_status: z.string().optional(),
+	deposit_status: z
+		.string()
+		.optional()
+		.describe('`no_deposit_paid`, `deposit_paid` or `deposit_returned`.'),
 	modified: StringFilterSchema,
 });
 
@@ -278,20 +345,21 @@ export type ProjectsListInput = z.input<typeof ProjectsListInputSchema>;
 
 const ProjectSchema = EntityBaseSchema.extend({
 	name: z.string().nullish(),
-	number: z.string().nullish(),
+	// Rentman's spec says string; the live API returns an integer.
+	number: z.union([z.number(), z.string()]).nullish(),
 	reference: z.string().nullish(),
-	project_type: z.string().nullish(),
+	project_type: LinkSchema.nullish(),
 	deposit_status: z.string().nullish(),
 	color: z.string().nullish(),
 	conditions: z.string().nullish(),
 	tags: z.string().nullish(),
 	// Linked resources come back as a path such as `/contacts/12` unless the
-	// caller passes `expand`.
-	customer: z.string().nullish(),
-	cust_contact: z.string().nullish(),
-	loc_contact: z.string().nullish(),
-	location: z.string().nullish(),
-	account_manager: z.string().nullish(),
+	// caller passes `expand`, which inlines the object.
+	customer: LinkSchema.nullish(),
+	cust_contact: LinkSchema.nullish(),
+	loc_contact: LinkSchema.nullish(),
+	location: LinkSchema.nullish(),
+	account_manager: LinkSchema.nullish(),
 	usageperiod_start: z.string().nullish(),
 	usageperiod_end: z.string().nullish(),
 	planperiod_start: z.string().nullish(),
@@ -316,8 +384,7 @@ const ProjectSchema = EntityBaseSchema.extend({
 	current: z.number().nullish(),
 	purchasecosts: z.number().nullish(),
 	volume: z.number().nullish(),
-	// Rentman's own example carries a string and a number per custom field.
-	custom: z.record(z.string(), z.union([z.string(), z.number()])).nullish(),
+	custom: CustomFieldsSchema.nullish(),
 });
 
 export type RentmanProject = z.infer<typeof ProjectSchema>;
@@ -340,17 +407,23 @@ export type ProjectsGetInput = z.input<typeof ProjectsGetInputSchema>;
 const ProjectsGetResponseSchema = z.object({ project: ProjectSchema });
 export type ProjectsGetResponse = z.infer<typeof ProjectsGetResponseSchema>;
 
+/**
+ * Rentman answers 400 "not permitted to set the following field: customer" to
+ * a project write that names a customer, so the customer is set in the app.
+ */
 const ProjectsCreateInputSchema = z.object({
 	name: z.string().min(1).describe('The project name.'),
-	customer: z
+	number: z.string().optional(),
+	reference: z.string().optional(),
+	account_manager: z
 		.number()
 		.int()
 		.positive()
-		.describe('The contact id the project belongs to.'),
-	number: z.string().optional(),
-	reference: z.string().optional(),
-	account_manager: z.number().int().optional().describe('A crew member id.'),
-	deposit_status: z.string().optional(),
+		.optional()
+		.describe('A crew member id, sent as the link `/crew/<id>`.'),
+	deposit_status: z
+		.enum(['no_deposit_paid', 'deposit_paid', 'deposit_returned'])
+		.optional(),
 	color: z.string().optional(),
 	conditions: z.string().optional(),
 	refundabledeposit: z.number().optional(),
@@ -390,24 +463,27 @@ export type EquipmentListInput = z.input<typeof EquipmentListInputSchema>;
 const EquipmentSchema = EntityBaseSchema.extend({
 	name: z.string().nullish(),
 	code: z.string().nullish(),
-	folder: z.string().nullish(),
-	factor_group: z.string().nullish(),
+	folder: LinkSchema.nullish(),
+	factor_group: LinkSchema.nullish(),
 	unit: z.string().nullish(),
 	type: z.string().nullish(),
-	taxclass: z.string().nullish(),
-	ledger: z.string().nullish(),
-	ledger_debit: z.string().nullish(),
+	taxclass: LinkSchema.nullish(),
+	ledger: LinkSchema.nullish(),
+	ledger_debit: LinkSchema.nullish(),
 	defaultgroup: z.string().nullish(),
 	country_of_origin: z.string().nullish(),
-	image: z.string().nullish(),
+	image: LinkSchema.nullish(),
 	// There is no `active` on equipment: availability is `in_shop`, `in_planner`
 	// and `in_archive`.
 	in_shop: z.boolean().nullish(),
 	in_planner: z.boolean().nullish(),
 	in_archive: z.boolean().nullish(),
-	rental_sales: z.boolean().nullish(),
+	// Strings, not flags: `Rental` or `Sale`, and `Track stock` or
+	// `Exclude from stock tracking`. Read as strings so a new value parses.
+	rental_sales: z.string().nullish(),
+	is_physical: z.string().nullish(),
 	temporary: z.boolean().nullish(),
-	stock_management: z.boolean().nullish(),
+	stock_management: z.string().nullish(),
 	price: z.number().nullish(),
 	list_price: z.number().nullish(),
 	subrental_costs: z.number().nullish(),
@@ -423,6 +499,7 @@ const EquipmentSchema = EntityBaseSchema.extend({
 	current: z.number().nullish(),
 	internal_remark: z.string().nullish(),
 	external_remark: z.string().nullish(),
+	custom: CustomFieldsSchema.nullish(),
 });
 
 export type RentmanEquipment = z.infer<typeof EquipmentSchema>;
@@ -454,8 +531,11 @@ const EquipmentCreateInputSchema = z.object({
 		.describe(
 			'Whether the item is offered in the shop. Equipment has no `active` flag.',
 		),
-	folder: z.string().optional(),
-	type: z.number().int().optional(),
+	folder: z
+		.string()
+		.optional()
+		.describe('A folder link such as `/folders/11`.'),
+	type: z.enum(['item', 'set', 'case']).optional(),
 	price: z.number().optional().describe('The rental price.'),
 	list_price: z.number().optional().describe('The replacement value.'),
 	weight: z.number().optional(),
@@ -492,7 +572,6 @@ const CrewListInputSchema = z.object({
 	...listQueryFields,
 	name: StringFilterSchema,
 	active: z.boolean().optional(),
-	crew_type: z.string().optional().describe('The crew member type.'),
 	modified: StringFilterSchema,
 });
 
@@ -505,8 +584,8 @@ const CrewSchema = EntityBaseSchema.extend({
 	email: z.string().nullish(),
 	phone: z.string().nullish(),
 	active: z.boolean().nullish(),
-	avatar: z.string().nullish(),
-	folder: z.string().nullish(),
+	avatar: LinkSchema.nullish(),
+	folder: LinkSchema.nullish(),
 	company_name: z.string().nullish(),
 	external_reference: z.string().nullish(),
 	tags: z.string().nullish(),
@@ -520,8 +599,8 @@ const CrewSchema = EntityBaseSchema.extend({
 	extraaddressline: z.string().nullish(),
 	state: z.string().nullish(),
 	country: z.string().nullish(),
-	// Rentman's own example carries a string and a number per custom field.
-	custom: z.record(z.string(), z.union([z.string(), z.number()])).nullish(),
+	default_warehouse: LinkSchema.nullish(),
+	custom: CustomFieldsSchema.nullish(),
 });
 
 export type RentmanCrewMember = z.infer<typeof CrewSchema>;
@@ -548,7 +627,6 @@ export type CrewGetResponse = z.infer<typeof CrewGetResponseSchema>;
 
 const AppointmentsListInputSchema = z.object({
 	...listQueryFields,
-	project: z.number().int().optional().describe('Only this project id.'),
 	start: StringFilterSchema,
 	end: StringFilterSchema,
 	modified: StringFilterSchema,
@@ -568,7 +646,7 @@ const AppointmentSchema = EntityBaseSchema.extend({
 	recurrence_interval_unit: z.string().nullish(),
 	recurrence_enddate: z.string().nullish(),
 	recurrence_interval: z.number().nullish(),
-	recurrence_group: z.string().nullish(),
+	recurrence_group: z.number().nullish(),
 	recurrence_weekdays: z.string().nullish(),
 	synchronization_id: z.string().nullish(),
 	synchronisation_uri: z.string().nullish(),
@@ -614,16 +692,24 @@ export type InvoicesListInput = z.input<typeof InvoicesListInputSchema>;
 
 const InvoiceSchema = EntityBaseSchema.extend({
 	number: z.string().nullish(),
-	project: z.string().nullish(),
-	contact: z.string().nullish(),
-	status: z.string().nullish(),
+	subject: z.string().nullish(),
+	project: LinkSchema.nullish(),
+	customer: LinkSchema.nullish(),
+	contact: LinkSchema.nullish(),
+	account_manager: LinkSchema.nullish(),
 	date: z.string().nullish(),
-	expiration: z.string().nullish(),
-	total_excl_vat: z.number().nullish(),
-	total_incl_vat: z.number().nullish(),
-	amount_paid: z.number().nullish(),
-	balance: z.number().nullish(),
-	locked: z.boolean().nullish(),
+	expiration: z.string().nullish().describe('The latest payment date.'),
+	// `F` for an invoice, `C` for a credit note.
+	invoicetype: z.string().nullish(),
+	finalized: z.boolean().nullish(),
+	price: z.number().nullish().describe('Total excluding VAT.'),
+	price_invat: z.number().nullish().describe('Total including VAT.'),
+	vat_amount: z.number().nullish(),
+	total_paid: z.number().nullish(),
+	outstanding_balance: z.number().nullish(),
+	is_paid: z.boolean().nullish(),
+	date_sent: z.string().nullish(),
+	payment_date: z.string().nullish(),
 });
 
 export type RentmanInvoice = z.infer<typeof InvoiceSchema>;

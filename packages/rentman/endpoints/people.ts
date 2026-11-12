@@ -23,7 +23,7 @@ export const crewList: RentmanEndpoints['crewList'] = (ctx, input) =>
 			replayable: true,
 			query: {
 				...listQuery(parsed),
-				...queryOf({ active: parsed.active, type: parsed.crew_type }),
+				...queryOf({ active: parsed.active }),
 				...filterQuery('name', parsed.name),
 				...filterQuery('modified', parsed.modified),
 			},
@@ -79,7 +79,6 @@ export const appointmentsList: RentmanEndpoints['appointmentsList'] = (
 			replayable: true,
 			query: {
 				...listQuery(parsed),
-				...queryOf({ project: parsed.project }),
 				...filterQuery('start', parsed.start),
 				...filterQuery('end', parsed.end),
 				...filterQuery('modified', parsed.modified),

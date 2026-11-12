@@ -66,6 +66,7 @@ export class RentmanAPIError extends Error {
  *
  * - API Gateway, before the app runs: `{ "message": "Unauthorized" }`
  * - API Gateway denials: `{ "Message": "User is not authorized …" }`
+ * - The app's 400s: `{ "errorType": "string", "errorMessage": "[400] …" }`
  * - The app's own validation errors: `{ "errors": { field: [msg] } }`
  *
  * unknown: the body is provider JSON until this reader narrows it.
@@ -77,7 +78,11 @@ export function describeRentmanError(
 ): string {
 	const record = asRecord(body);
 
-	const direct = record?.message ?? record?.Message ?? record?.detail;
+	const direct =
+		record?.errorMessage ??
+		record?.message ??
+		record?.Message ??
+		record?.detail;
 	const text =
 		typeof direct === 'string' && direct.length > 0 ? direct : undefined;
 
@@ -127,9 +132,9 @@ export function segment(value: string | number): string {
 }
 
 /**
- * Rentman documents no throughput window and no `Retry-After`, so this config
- * exists only to read the header if a gateway adds one; the handler owns the
- * retry count.
+ * Rentman allows 10 requests a second and 50,000 a day but sends no
+ * `Retry-After`, so this config exists only to read the header if a gateway
+ * adds one; the handler owns the retry count.
  */
 const RENTMAN_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,

@@ -42,7 +42,7 @@ describe('contacts.list', () => {
 			country: 'NL',
 			type: 'company',
 			folder: '/contacts',
-			fields: ['displayname', 'email'],
+			fields: ['displayname', 'email_1'],
 			expand: ['customer'],
 			sort: '+displayname',
 			limit: 100,
@@ -54,7 +54,7 @@ describe('contacts.list', () => {
 			country: 'NL',
 			type: 'company',
 			folder: '/contacts',
-			fields: 'displayname,email',
+			fields: 'displayname,email_1',
 			expand: 'customer',
 			sort: '+displayname',
 			limit: '100',
@@ -192,32 +192,23 @@ describe('projects', () => {
 		expect(result.project.customer).toBe(`/contacts/${CONTACT_ID}`);
 	});
 
-	it('creates a project under a customer contact', async () => {
+	it('creates a project with its number', async () => {
 		respond(fetchMock, { data: PROJECT });
 
 		await invoke(Catalog.projectsCreate, {
 			name: 'Festival 2026',
-			customer: CONTACT_ID,
 			number: 'P-2026-001',
 		});
 
 		expect(lastRequest(fetchMock).json()).toEqual({
 			name: 'Festival 2026',
-			customer: CONTACT_ID,
 			number: 'P-2026-001',
 		});
 	});
 
-	it('rejects a project with no customer', async () => {
-		await expect(
-			invoke(Catalog.projectsCreate, { name: 'Festival 2026' }),
-		).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-
 	it('rejects an empty project name', async () => {
 		await expect(
-			invoke(Catalog.projectsCreate, { name: '', customer: CONTACT_ID }),
+			invoke(Catalog.projectsCreate, { name: '' }),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
@@ -310,13 +301,11 @@ describe('crew and appointments', () => {
 		respond(fetchMock, APPOINTMENT_PAGE);
 
 		const result = (await invoke(People.appointmentsList, {
-			project: PROJECT_ID,
 			start: { gte: '2026-07-01' },
 		})) as Awaited<ReturnType<typeof People.appointmentsList>>;
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/appointments');
-		expect(request.query.project).toBe(String(PROJECT_ID));
 		expect(request.query['start[gte]']).toBe('2026-07-01');
 		expect(result.appointments[0]?.name).toBe('Load-in');
 	});
@@ -342,7 +331,7 @@ describe('invoices', () => {
 		})) as Awaited<ReturnType<typeof People.invoicesList>>;
 
 		expect(lastRequest(fetchMock).query['number[eq]']).toBe('F-2026-001');
-		expect(result.invoices[0]?.balance).toBe(18150);
+		expect(result.invoices[0]?.outstanding_balance).toBe(18150);
 	});
 
 	it('reads one invoice by id', async () => {
@@ -352,8 +341,8 @@ describe('invoices', () => {
 			invoice_id: INVOICE_ID,
 		})) as Awaited<ReturnType<typeof People.invoicesGet>>;
 
-		expect(result.invoice.total_incl_vat).toBe(18150);
-		expect(result.invoice.locked).toBe(false);
+		expect(result.invoice.price_invat).toBe(18150);
+		expect(result.invoice.is_paid).toBe(false);
 	});
 });
 
