@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Instantly plugin"
+sidebarTitle: "Overview"
 description: "Instantly API v2 for cold email - campaigns, subsequences and leads, the Unibox, sending accounts and warmup, inbox placement tests, email verification, the blocklist, webhooks and workspace admin."
 ---
 
@@ -31,16 +32,20 @@ Create an API v2 key in Instantly under Settings, Integrations, API keys, with t
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/instantly
+npm install corsair @corsair-dev/instantly better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/instantly
+yarn add corsair @corsair-dev/instantly better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/instantly
+pnpm install corsair @corsair-dev/instantly better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/instantly
+bun add corsair @corsair-dev/instantly better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
