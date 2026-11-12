@@ -199,6 +199,21 @@ describe('messages', () => {
 		});
 	});
 
+	it('sends mention: false when a reply leaves it out, which the API requires', async () => {
+		respond(fetchMock, MESSAGE);
+
+		await invoke(Endpoints.messagesSend, {
+			channel_id: CHANNEL_ID,
+			content: 'Standup in five',
+			replies: [{ id: MESSAGE_ID }],
+		});
+
+		expect(lastRequest(fetchMock).json()).toEqual({
+			content: 'Standup in five',
+			replies: [{ id: MESSAGE_ID, mention: false }],
+		});
+	});
+
 	it('rejects an empty message with no attachment', async () => {
 		await expect(
 			invoke(Endpoints.messagesSend, { channel_id: CHANNEL_ID }),

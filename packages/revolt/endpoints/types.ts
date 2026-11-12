@@ -360,7 +360,12 @@ const MessagesSendInputSchema = z
 			.array(
 				z.object({
 					id: z.string(),
-					mention: z.boolean().optional(),
+					// Revolt requires `mention` and answers 422 without it (live,
+					// 11-12), so an omitted value is sent as false.
+					mention: z
+						.boolean()
+						.default(false)
+						.describe("Whether the reply pings the original message's author."),
 				}),
 			)
 			.optional(),
