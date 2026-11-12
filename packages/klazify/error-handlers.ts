@@ -39,9 +39,11 @@ export const errorHandlers = {
 	},
 	// A classification error arrives inside a 200 with `success: false`, and the
 	// docs name two categories: `/Unreachable` and `/No indexable content`.
-	// Klazify does not bill for either, and neither improves on a retry.
+	// Klazify does not bill for either, and neither improves on a retry. A 5xx
+	// is left to SERVER_ERROR even when its body happens to say "unreachable".
 	CLASSIFICATION_ERROR: {
 		match: (error: Error) => {
+			if ((statusOf(error) ?? 0) >= 500) return false;
 			const message = error.message.toLowerCase();
 			return (
 				message.includes('unreachable') ||

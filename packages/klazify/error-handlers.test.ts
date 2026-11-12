@@ -142,6 +142,19 @@ describe('server failures', () => {
 		expect(name).toBe('SERVER_ERROR');
 		expect(result.maxRetries).toBeGreaterThan(0);
 	});
+
+	// The client copies the provider's message into the error, so a gateway
+	// body that mentions "unreachable" must still reach the 5xx retry.
+	it('retries a 5xx whose body says unreachable', async () => {
+		const error = new KlazifyAPIError('Klazify 503: upstream unreachable', {
+			status: 503,
+			detail: 'upstream unreachable',
+		});
+		const { name, result } = await resolve(error);
+
+		expect(name).toBe('SERVER_ERROR');
+		expect(result.maxRetries).toBeGreaterThan(0);
+	});
 });
 
 describe('unrecognised failures', () => {
