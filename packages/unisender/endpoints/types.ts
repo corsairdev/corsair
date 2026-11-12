@@ -150,13 +150,18 @@ const ContactsGetResponseSchema = resultOf(
 						.loose(),
 				)
 				.nullish(),
-			// With include_fields the values come back keyed by field name, not an array.
+			// With include_fields the values come back as an object, not an array, keyed by
+			// the field's public name (live 11-12: "Имя" for the Name field).
+			// unknown: custom fields hold whatever the account stores; every type is text
+			// on Unisender's side but older accounts may return numbers.
 			fields: z
 				.union([
 					z.record(z.string(), z.unknown()),
 					z.array(z.record(z.string(), z.unknown())),
 				])
 				.nullish(),
+			// unknown: not on the current getContact page (details now sit inside `email`);
+			// kept open for older answers.
 			details: z.record(z.string(), z.unknown()).nullish(),
 		})
 		.loose(),
@@ -233,7 +238,10 @@ export type ContactsUnsubscribeInput = z.infer<
 	typeof ContactsUnsubscribeInputSchema
 >;
 
-/** Unsubscribe and exclude answer the contact as they stand afterwards. */
+/**
+ * Unsubscribe and exclude answer an empty object, `{"result":{}}` (live 11-12).
+ * unknown: nothing is documented inside it, so any key Unisender adds is let through.
+ */
 const ContactsUnsubscribeResponseSchema = resultOf(
 	z.record(z.string(), z.unknown()),
 );
@@ -247,6 +255,7 @@ const ContactsExcludeInputSchema = ContactsUnsubscribeInputSchema;
 
 export type ContactsExcludeInput = z.infer<typeof ContactsExcludeInputSchema>;
 
+// unknown: same empty `{"result":{}}` as unsubscribe (live 11-12).
 const ContactsExcludeResponseSchema = resultOf(
 	z.record(z.string(), z.unknown()),
 );
@@ -348,6 +357,7 @@ const ContactsCountResponseSchema = resultOf(
 			listId: z.number().nullish(),
 			// The documented success body sends "count":"500" as a string.
 			count: z.union([z.number(), z.string()]).nullish(),
+			// unknown: an echo of the filters sent, such as {"type":"address"}.
 			searchParams: z.record(z.string(), z.unknown()).nullish(),
 		})
 		.loose(),
@@ -372,9 +382,19 @@ const ContactsExportInputSchema = z.object({
 
 export type ContactsExportInput = z.infer<typeof ContactsExportInputSchema>;
 
-/** An export is asynchronous and answers only an acknowledgement. */
+/**
+ * An export is asynchronous and answers a task, such as
+ * `{"task_uuid":"07f99e2e-…","status":"new"}` (live 11-12). Unisender posts the file
+ * to notify_url; its async/getTaskResult method reports the task and, once done, a
+ * `file_to_download` URL.
+ */
 const ContactsExportResponseSchema = resultOf(
-	z.record(z.string(), z.unknown()),
+	z
+		.object({
+			task_uuid: z.string().nullish(),
+			status: z.string().nullish(),
+		})
+		.loose(),
 );
 
 export type ContactsExportResponse = z.infer<
@@ -598,9 +618,14 @@ const CampaignsCreateInputSchema = z.object({
 		.string()
 		.optional()
 		.describe(
-			'YYYY-MM-DD hh:mm:ss in the given timezone. Omit it to start immediately.',
+			'YYYY-MM-DD hh:mm in the given timezone, at most 100 days ahead. Omit it to start immediately.',
 		),
-	timezone: z.string().optional().describe('The timezone start_time is in.'),
+	timezone: z
+		.string()
+		.optional()
+		.describe(
+			'The timezone start_time is in. UTC is the only value Unisender accepts; omit it to use the account timezone.',
+		),
 	track_read: z.union([z.literal(0), z.literal(1)]).optional(),
 	track_links: z.union([z.literal(0), z.literal(1)]).optional(),
 	contacts: z
@@ -662,7 +687,10 @@ const CampaignSchema = z
 		sender_name: z.string().nullish(),
 		sender_email: z.string().nullish(),
 		message_id: z.number().nullish(),
+		// getCampaigns documents a single list_id per campaign.
+		list_id: z.number().nullish(),
 		lists: z.array(z.union([z.number(), z.string()])).nullish(),
+		stats_url: z.string().nullish(),
 	})
 	.loose();
 
