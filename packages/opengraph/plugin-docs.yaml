@@ -1,0 +1,43 @@
+displayName: OpenGraph.io
+description: Web data extraction with OpenGraph.io - unfurl link preview metadata, scrape raw HTML, capture screenshots, pull structured elements, ask AI questions about pages, resolve oEmbed cards, convert pages to Markdown and analyze brands.
+domain: opengraph.io
+recommendedAuth: api_key
+overviewNote: |
+  Create an App ID at dashboard.opengraph.io after signing up; free accounts get 100 credits a month. Every request authenticates with it as the `app_id` query parameter. Things to know before you call:
+
+  - **Credits, not side effects.** Every operation is a read, but each request bills credits: 1 for a base call or cache hit, 10 for `full_render` or `use_proxy`, 20 for `use_premium` or a screenshot, 30 for `use_superior`. `query.run` bills a fixed 100 credits on the default `nano` model and 200 on `mini`, whatever proxy or render options are set, so one uncached query uses up a free account's month. On v3.0 `auto_proxy`, `auto_render` and `retry` default to true, so OpenGraph.io may pick a proxy tier for a hard domain and bill that tier.
+  - **Rate limits are concurrent.** Plans allow 1 (free) to 100 requests in flight at once. Past that the API answers 429; the plugin retries up to three times with exponential backoff and honors Retry-After when sent.
+  - **Enum-typed options.** `screenshot.capture` takes `format` (jpeg, png, webp) and `dimensions` (xs, sm, md, lg); `oembed.get` takes `orientation` (vertical, horizontal), `theme` (light, dark, auto) and `template` (default, compact, horizontal); `query.run` takes `modelSize` (nano, mini); `extract.run` and `markdown.get` take `ai_sanitize_mode` (sanitize, warn, block); an `extract.run` selector's `type` is text or attr; a `brand.analyze` question's `type` is one of string, boolean, number, string[] or object, which name the answer's type. Pass them all as strings, e.g. `type: 'string[]'`.
+  - **Screenshot links expire.** `screenshot.capture` returns a CDN URL that dies after 24 hours; download the image if you need it longer.
+  - **Markdown always comes back as the JSON envelope**, never a bare text body, so chunking, structure and usage metadata parse uniformly.
+  - **Brand analysis is slow and partial.** `brand.analyze` reads several pages of the site and can take tens of seconds; sections that fail come back null rather than failing the call. Requests with `sections` or `questions` POST a JSON body, plain ones GET.
+  - **Webhooks.** OpenGraph.io sends none, so the plugin receives none.
+examples:
+  read:
+    path: site.get
+    title: Unfurl a page into link preview metadata
+    args:
+      url: 'https://github.com'
+  write:
+    path: query.run
+    title: Ask a question about a page
+    args:
+      url: 'https://en.wikipedia.org/wiki/Web_scraping'
+      query: What legal issues surround web scraping?
+apiExamples:
+  site.get:
+    call: "{ url: 'https://github.com', use_proxy: true }"
+  scrape.fetch:
+    call: "{ url: 'https://example.com', full_render: true }"
+  screenshot.capture:
+    call: "{ url: 'https://example.com', full_page: true, quality: 80 }"
+  extract.run:
+    call: "{ site: 'https://example.com', selectors: { heading: { selector: 'h1' }, links: { selector: 'a', multiple: true, type: 'attr', attr: 'href' } } }"
+  query.run:
+    call: "{ url: 'https://example.com', query: 'What does this page sell?', responseStructure: { products: ['string'] } }"
+  oembed.get:
+    call: "{ url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', maxwidth: 640 }"
+  markdown.get:
+    call: "{ url: 'https://en.wikipedia.org/wiki/Web_scraping', chunking: true, chunk_size: 1200, query: 'legal issues' }"
+  brand.analyze:
+    call: "{ url: 'https://asana.com', sections: { visual: false } }"
