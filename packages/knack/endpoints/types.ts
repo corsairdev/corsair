@@ -58,10 +58,17 @@ const RecordIdSchema = z
 /**
  * A value Knack accepts for a field. Knack coerces a number or boolean to the
  * field's own type (a number sent to a short-text field is stored as `"123"`),
- * and a connection field takes an array of record ids. The plugin cannot narrow
+ * a connection or multiple-choice field takes an array of strings, and name,
+ * email, address, link and date fields take an object (`{ first, last }`,
+ * `{ url }`, `{ street, city }`, `{ date, hours }`). The plugin cannot narrow
  * this further without knowing the caller's field types.
  */
-export type KnackFieldValue = string | number | boolean | readonly string[];
+export type KnackFieldValue =
+	| string
+	| number
+	| boolean
+	| readonly string[]
+	| Record<string, unknown>;
 
 /**
  * Knack passes `field_N` names and their values through to the API, so a write
@@ -70,10 +77,15 @@ export type KnackFieldValue = string | number | boolean | readonly string[];
 export const KnackFieldsSchema = z
 	.record(
 		z.string(),
-		z.union([z.string(), z.number(), z.boolean(), z.array(z.string())]),
+		z.union([
+			z.string(),
+			z.number(),
+			z.boolean(),
+			z.array(z.string()),
+		]),
 	)
 	.describe(
-		'Field values keyed by Knack field name, e.g. `{ field_23: "Acme" }`. A connection field takes an array of record ids. Read-only mirrors such as `field_23_raw` are not accepted.',
+		'Field values keyed by Knack field name, e.g. `{ field_23: "Acme" }`. A connection field takes an array of record ids; name, email, address, link and date fields take an object such as `{ first: "Ada", last: "Lovelace" }` or `{ url: "https://example.com" }`. Read-only mirrors such as `field_23_raw` are not accepted.',
 	);
 
 // ── applications.get ──────────────────────────────────────────────────────
@@ -174,8 +186,10 @@ export type KnackObjectsGetResponse = z.infer<
 // ── records.list ──────────────────────────────────────────────────────────
 
 /**
- * The filter operators Knack documents. A value outside this set is rejected
- * by the API, so it is rejected here first.
+ * The filter operators Knack lists in its "Filters & Field Types" reference
+ * that take a plain value. Numbers compare with `higher than` / `lower than`;
+ * there is no `is greater than`. The relative date operators (`is during the
+ * previous` and the like) also need `range` and `type`, so they are left out.
  */
 export const KNACK_FILTER_OPERATORS = [
 	'is',
@@ -186,11 +200,18 @@ export const KNACK_FILTER_OPERATORS = [
 	'ends with',
 	'is blank',
 	'is not blank',
-	'is greater than',
-	'is less than',
-	'is greater than or equal to',
-	'is less than or equal to',
-	'is between',
+	'is any',
+	'higher than',
+	'lower than',
+	'is before',
+	'is after',
+	'is today',
+	'is today or before',
+	'is today or after',
+	'is before today',
+	'is after today',
+	'is before current time',
+	'is after current time',
 ] as const;
 
 export const KnackFilterSchema = z.object({
@@ -201,8 +222,9 @@ export const KnackFilterSchema = z.object({
 	operator: z.enum(KNACK_FILTER_OPERATORS),
 	value: z
 		.string()
+		.optional()
 		.describe(
-			'The value to compare against. Knack compares as text, so a number is sent as a string.',
+			'The value to compare against, sent as text (a number too). Not needed for `is blank`, `is not blank` or the `is today` family.',
 		),
 });
 
@@ -220,8 +242,9 @@ export const KnackRecordsListInputSchema = z.object({
 		.number()
 		.int()
 		.min(1)
+		.max(1000)
 		.optional()
-		.describe('How many records to return per page.'),
+		.describe('How many records to return per page: 25 by default, 1000 at most.'),
 	sort_field: z
 		.string()
 		.regex(/^field_\d+$/, 'A field key looks like `field_23`.')

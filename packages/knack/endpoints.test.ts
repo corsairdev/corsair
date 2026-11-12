@@ -257,6 +257,64 @@ describe('records.list', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	// Knack's filter reference lists `higher than` and `lower than` for number,
+	// rating and timer fields, and `is any`, `is before` and `is after` for
+	// choice and date fields. The schema must accept the documented names.
+	it.each([
+		'higher than',
+		'lower than',
+		'is any',
+		'is before',
+		'is after',
+		'is today',
+	])('accepts the documented operator %s', async (operator) => {
+		respond(recordList);
+
+		await invoke(Records.list, {
+			object_key: 'object_1',
+			filters: [{ field: 'field_4', operator, value: '10' }],
+		});
+
+		expect(lastRequest().query['filters[0][operator]']).toBe(operator);
+	});
+
+	// `is greater than` and its relatives are not Knack operators; a number
+	// comparison is `higher than` / `lower than`.
+	it.each(['is greater than', 'is less than', 'is between'])(
+		'rejects the undocumented operator %s',
+		async (operator) => {
+			await expect(
+				invoke(Records.list, {
+					object_key: 'object_1',
+					filters: [{ field: 'field_4', operator, value: '10' }],
+				}),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+
+	// `is blank` and `is not blank` take no value in Knack's filter reference.
+	it('sends a blank check without a value', async () => {
+		respond(recordList);
+
+		await invoke(Records.list, {
+			object_key: 'object_1',
+			filters: [{ field: 'field_4', operator: 'is blank' }],
+		});
+
+		const sent = lastRequest();
+		expect(sent.query['filters[0][operator]']).toBe('is blank');
+		expect(sent.query['filters[0][value]']).toBeUndefined();
+	});
+
+	// Knack returns at most 1,000 records a page.
+	it('rejects rows_per_page above 1000 before sending', async () => {
+		await expect(
+			invoke(Records.list, { object_key: 'object_1', rows_per_page: 5000 }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a filter field that is not a field key', async () => {
 		await expect(
 			invoke(Records.list, {

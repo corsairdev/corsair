@@ -132,13 +132,16 @@ export type KnackQuery = Record<string, string | number | boolean | undefined>;
 
 /** Expands filters into the indexed parameter names Knack reads. */
 export function buildFilterQuery(
-	filters: readonly { field: string; operator: string; value: string }[],
+	filters: readonly { field: string; operator: string; value?: string }[],
 ): KnackQuery {
 	const query: KnackQuery = {};
 	filters.forEach((filter, index) => {
 		query[`filters[${index}][field]`] = filter.field;
 		query[`filters[${index}][operator]`] = filter.operator;
-		query[`filters[${index}][value]`] = filter.value;
+		// `is blank` and the like take no value.
+		if (filter.value !== undefined) {
+			query[`filters[${index}][value]`] = filter.value;
+		}
 	});
 	return query;
 }
