@@ -23,9 +23,9 @@ export function companyPath(companyId: string | number, path: string): string {
  * Recruitee has **three** error shapes, and which one arrives depends on the
  * route and how far the request got:
  *
- * - The documented live 401: `{ errors: [{ code, data, message }] }`
- * - The older ATS routes: `{ error: 'Resource access requires authentication!',
- *   error_code: null }`
+ * - `{ errors: [{ code, data, message }] }`
+ * - The ATS routes: `{ error: 'Resource access requires authentication!',
+ *   error_code: null }` on a 401, `{ error: ['Page not found'] }` on a 404
  * - A bare `401` with no body at all, before the app layer.
  *
  * The message is read from whichever is present. A `401` from a revoked token is
@@ -121,9 +121,15 @@ function errorBody(body: unknown): {
 		}
 	}
 
-	// The older ATS shape: a bare `error` string beside `error_code`.
+	// The older ATS shape: `error` is a string beside `error_code` on a 401,
+	// and an array of strings on a 404 (`["Page not found"]`) or a 422.
 	const single = record?.error;
 	if (typeof single === 'string' && single.length > 0) messages.push(single);
+	if (Array.isArray(single)) {
+		for (const entry of single) {
+			if (typeof entry === 'string' && entry.length > 0) messages.push(entry);
+		}
+	}
 
 	const first =
 		Array.isArray(list) && list.length > 0 ? asRecord(list[0]) : null;

@@ -8,6 +8,7 @@ import {
 import {
 	LEGACY_UNAUTHORIZED,
 	NOT_FOUND,
+	PAGE_NOT_FOUND,
 	UNAUTHORIZED,
 	VALIDATION_ERROR,
 } from './test-fixtures';
@@ -116,6 +117,22 @@ describe('the three error shapes', () => {
 		expect(error.isValidationError).toBe(true);
 		expect(error.code).toBe('unprocessable_entity');
 		expect(error.message).toContain("Name can't be blank");
+	});
+
+	it('reads the live 404, whose error is an array of strings', async () => {
+		respond(fetchMock, PAGE_NOT_FOUND, 404);
+
+		const error = (await captureError(
+			makeRecruiteeRequest('key', {
+				method: 'GET',
+				path: '/c/1111/candidates/1',
+				replayable: true,
+			}),
+		)) as RecruiteeAPIError;
+
+		expect(error.isNotFound).toBe(true);
+		expect(error.errors).toEqual(['Page not found']);
+		expect(error.message).toBe('Recruitee 404: Page not found');
 	});
 
 	it('reads a 404 body', async () => {
