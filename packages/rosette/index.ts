@@ -172,7 +172,7 @@ const rosetteEndpointMeta = {
 	language: {
 		riskLevel: 'read',
 		description:
-			'Detect the language of a text, with every candidate and its confidence',
+			'Detect the language of a text: every candidate, most likely first, with its confidence',
 	},
 	entities: {
 		riskLevel: 'read',
@@ -182,20 +182,21 @@ const rosetteEndpointMeta = {
 	sentiment: {
 		riskLevel: 'read',
 		description:
-			'Score document and per-entity sentiment, where the label and the score are separate signals',
+			'Score document and per-entity sentiment as a pos, neg or neu label with a confidence',
 	},
 	tokens: {
 		riskLevel: 'read',
-		description: 'Split a text into tokens with part-of-speech tags and lemmas',
+		description:
+			'Split a text into tokens; use morphology for part-of-speech tags and lemmas',
 	},
 	sentences: {
 		riskLevel: 'read',
-		description: 'Find sentence boundaries, as offsets into the text',
+		description: 'Split a text into sentences, returned as text',
 	},
 	morphology: {
 		riskLevel: 'read',
 		description:
-			'Analyse morphology: lemmas, part-of-speech tags and compound components',
+			'Analyse morphology: lemmas, part-of-speech tags, compound components and Han readings',
 	},
 	categories: {
 		riskLevel: 'read',
@@ -205,20 +206,21 @@ const rosetteEndpointMeta = {
 	topics: {
 		riskLevel: 'read',
 		description:
-			'Extract topics and their broader concepts, with a salience rather than a probability',
+			'Extract keyphrases and their broader concepts, with a salience rather than a probability',
 	},
 	relationships: {
 		riskLevel: 'read',
 		description:
-			'Extract subject-verb-object relationships with the confidence of each predicate',
+			'Extract relationships between the entities in a text, such as a person employed by an organisation',
 	},
 	'semantics.similarTerms': {
 		riskLevel: 'read',
-		description: 'Find terms near the input in embedding space',
+		description:
+			'Find terms near the input in embedding space, in each requested result language',
 	},
 	'semantics.vector': {
 		riskLevel: 'read',
-		description: 'Compute a text embedding, with its dimension count',
+		description: 'Compute a text embedding for the whole document',
 	},
 	nameSimilarity: {
 		riskLevel: 'read',
@@ -233,7 +235,7 @@ const rosetteEndpointMeta = {
 	transliteration: {
 		riskLevel: 'read',
 		description:
-			'Transliterate text into another script, which keeps the words rather than translating them',
+			'Transliterate text between Latin and the native script of its language, which keeps the words rather than translating them',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof rosetteEndpointsNested>;
 

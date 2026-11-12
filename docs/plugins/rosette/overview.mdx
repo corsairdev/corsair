@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Rosette plugin"
+sidebarTitle: "Overview"
 description: "Language detection, entity and relationship extraction, sentiment, topics, semantic vectors, name matching and transliteration with the Rosette text-analytics API."
 ---
 
@@ -10,9 +11,9 @@ Rosette is now part of **Babel Street**, and both the host and the key header mo
 - **Host:** `analytics.babelstreet.com/rest/v1`. The old `api.rosette.com` still answers, but the current docs and the official bindings point here, so this plugin uses the new host.
 - **Header:** `X-BabelStreetAPI-Key`. The legacy `X-RosetteAPI-Key` is still accepted by the server, but the bindings send the new one and so does the plugin.
 
-Get a key from your Babel Street account; the free tier allows 2,000 calls a month.
+Get a key from your Babel Street account (developer.babelstreet.com); the 30-day free trial allows 2,000 calls a month and 500 a day.
 
-**One error body covers three different problems.** A key that is wrong, an endpoint your plan does not include, and an exhausted daily or monthly quota all answer the same `403` with `{"code":"forbidden","message":"you have either provided an invalid API key, or are not authorized to call the endpoint, or have exceeded the daily or monthly API call limits"}` — captured live on every endpoint. The plugin never retries that, because two of the three cannot be fixed by a retry, and it keeps the `endpoint` on the error so a failing call is identifiable.
+**One error body covers three different problems.** A key that is wrong, an endpoint your plan does not include, and an exhausted daily or monthly quota all answer the same `403` with `{"code":"forbidden","message":"you have either provided an invalid API key, or are not authorized to call the endpoint, or have exceeded the daily or monthly API call limits"}` — captured live on every endpoint. A `profileId` the account does not have gets the same answer. The plugin never retries that, because two of the three cannot be fixed by a retry, and it keeps the `endpoint` on the error so a failing call is identifiable.
 
 Every analysis takes the same shape:
 
@@ -22,12 +23,17 @@ Every analysis takes the same shape:
 
 Reading the answers:
 
-- **`entities`** groups mentions by `entityId`, so an entity's `count` is how many times it appears, not how many surface forms exist. Each `mentions` entry carries offsets.
-- **`sentiment`** keeps the `label` and the `score` apart: a `neu` label can still carry a score away from zero, so decide which one you trust before filtering on it.
-- **`topics`** returns `concepts` (the broader theme) and `topics` (the specific label), each with a salience rather than a probability, so the scores are not comparable across documents the way a probability would be.
-- **`tokens`** returns `tokens`, `posTags` and `lemmas` as three arrays in the **same order**, so index N of each describes the same token.
+- **`language`** returns only `languageDetections`, most likely first. There is no separate top-level answer: the first candidate is the result.
+- **`entities`** groups mentions by `entityId`, so an entity's `count` is how many times it appears, and `mentionOffsets` holds the start and end of each one. A `Q…` ID is a Wikidata item; a `T…` ID is local to the text.
+- **`sentiment`** gives the document a `label` (`pos`, `neg` or `neu`) and a `confidence`; each entity carries its own label and confidence under `sentiment`.
+- **`tokens`** returns the tokens only. For part-of-speech tags and lemmas, call **`morphology`**, which returns `tokens`, `posTags` and `lemmas` as arrays in the **same order**, plus `compoundComponents` and `hanReadings` with `null` for a token that has none.
+- **`sentences`** returns each sentence as text, with its trailing whitespace.
+- **`topics`** returns `keyphrases` (phrases from the text) and `concepts` (broader themes with a Wikidata `conceptId`), each with a salience rather than a probability, so the scores are not comparable across documents the way a probability would be.
+- **`relationships`** links `arg1` and `arg2` (sometimes `arg3`) through a `predicate`, such as `PER-EMPLOYEE-MEMBER-OF`.
+- **`semantics.similarTerms`** needs `resultLanguages` (for example `["eng"]`); the API refuses the call without it. The answer is keyed by language.
+- **`semantics.vector`** returns `documentEmbedding`, one vector for the whole text.
 - **`nameSimilarity` is not symmetric.** It scores how likely `name1` is to be the same entity as `name2`, so swapping them can change the score. Use `language`, `script` and `entityType` on each name to sharpen it.
-- **`transliteration` is not translation.** It moves text between scripts and keeps the words; `nameTranslation` is the one that translates a name into another language.
+- **`transliteration` is not translation.** It moves text between Latin and the native script of its `language` and keeps the words; it takes no target script. `nameTranslation` is the one that translates a name into another language.
 
 **What you get:**
 

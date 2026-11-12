@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import * as Api from './endpoints';
+import { RosetteEndpointOutputSchemas as Outputs } from './endpoints/types';
 import {
 	CATEGORIES,
 	ENTITIES,
@@ -13,7 +14,6 @@ import {
 	RELATIONSHIPS,
 	SENTENCES,
 	SENTIMENT,
-	SENTIMENT_NEUTRAL,
 	SIMILAR_TERMS,
 	TOKENS,
 	TOPICS,
@@ -47,12 +47,18 @@ describe('ping and info', () => {
 	it('pings the host', async () => {
 		respond(fetchMock, PING);
 
-		const result = (await invoke(Api.ping, {})) as { message?: string };
+		const result = (await invoke(Api.ping, {})) as {
+			message?: string;
+			time?: number;
+		};
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('GET');
 		expect(request.path).toBe('/rest/v1/ping');
-		expect(result.message).toBe('ping');
+		expect(result.message).toBe(
+			'Babel Street Analytics Server at your service',
+		);
+		expect(result.time).toBe(1794460423822);
 	});
 
 	it('reads the build, which explains a change in output', async () => {
@@ -61,11 +67,13 @@ describe('ping and info', () => {
 		const result = (await invoke(Api.info, {})) as {
 			version?: string;
 			buildNumber?: string;
+			buildTime?: string;
 		};
 
 		expect(lastRequest(fetchMock).path).toBe('/rest/v1/info');
-		expect(result.version).toBe('1.36');
-		expect(result.buildNumber).toBe('f8b9b2e');
+		expect(result.version).toBe('1.39.0');
+		expect(result.buildNumber).toBe('2d103cf6');
+		expect(result.buildTime).toBe('20260922013523');
 	});
 });
 
@@ -76,7 +84,6 @@ describe('language', () => {
 		const result = (await invoke(Api.language, {
 			content: 'The quick brown fox.',
 		})) as {
-			language?: string;
 			languageDetections?: { language?: string; confidence?: number }[];
 		};
 
@@ -84,7 +91,10 @@ describe('language', () => {
 		expect(request.method).toBe('POST');
 		expect(request.path).toBe('/rest/v1/language');
 		expect(request.bodyRecord).toEqual({ content: 'The quick brown fox.' });
-		expect(result.language).toBe('eng');
+		expect(result.languageDetections?.[0]).toEqual({
+			language: 'eng',
+			confidence: 0.87597701,
+		});
 		expect(result.languageDetections).toHaveLength(2);
 	});
 
@@ -129,7 +139,7 @@ describe('language', () => {
 		expect(request.query.profileId).toBe('profile-1');
 	});
 
-	it('logs the language and the candidate count, never the text', async () => {
+	it('logs the top candidate and the candidate count, never the text', async () => {
 		respond(fetchMock, LANGUAGE);
 
 		await invoke(Api.language, { content: 'a secret sentence' });
@@ -157,21 +167,26 @@ describe('entities', () => {
 		};
 
 		expect(lastRequest(fetchMock).path).toBe('/rest/v1/entities');
-		expect(result.entities).toHaveLength(2);
-		expect(result.entities?.[0]?.entityId).toBe('Q1');
-		// A count of 2 means two mentions of the same entity.
-		expect(result.entities?.[0]?.count).toBe(2);
+		expect(result.entities).toHaveLength(3);
+		// A Q-prefixed ID is a Wikidata link; T-prefixed IDs are local to the text.
+		expect(result.entities?.[0]?.entityId).toBe('Q16200474');
+		expect(result.entities?.[0]?.count).toBe(1);
 	});
 
-	it('keeps the individual mentions with their offsets', async () => {
+	it('keeps each mention offset and the linking confidence', async () => {
 		respond(fetchMock, ENTITIES);
 
 		const result = (await invoke(Api.entities, { content: 'x' })) as {
-			entities?: { mentions?: { mention?: string; startOffset?: number }[] }[];
+			entities?: {
+				mentionOffsets?: { startOffset?: number; endOffset?: number }[];
+				linkingConfidence?: number;
+			}[];
 		};
 
-		expect(result.entities?.[0]?.mentions).toHaveLength(2);
-		expect(result.entities?.[0]?.mentions?.[1]?.startOffset).toBe(40);
+		expect(result.entities?.[1]?.mentionOffsets).toEqual([
+			{ startOffset: 20, endOffset: 29 },
+		]);
+		expect(result.entities?.[2]?.linkingConfidence).toBe(0.76339067);
 	});
 
 	it('logs the entity and type counts', async () => {
@@ -182,42 +197,33 @@ describe('entities', () => {
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'rosette.entities',
-			{ entities: 2, types: 2 },
+			{ entities: 3, types: 3 },
 			'completed',
 		);
 	});
 });
 
 describe('sentiment', () => {
-	it('reads the document and entity sentiment', async () => {
+	it('reads the document and per-entity sentiment', async () => {
 		respond(fetchMock, SENTIMENT);
 
 		const result = (await invoke(Api.sentiment, {
-			content: 'I love this product.',
+			content: 'I love this product, but the delivery was slow.',
 		})) as {
-			document?: { label?: string; score?: number };
-			entities?: unknown[];
+			document?: { label?: string; confidence?: number };
+			entities?: { sentiment?: { label?: string; confidence?: number } }[];
 		};
 
 		expect(lastRequest(fetchMock).path).toBe('/rest/v1/sentiment');
-		expect(result.document?.label).toBe('pos');
-		expect(result.document?.score).toBe(0.723);
-		expect(result.entities).toHaveLength(1);
+		expect(result.document).toEqual({ label: 'neg', confidence: 0.50514893 });
+		// An entity's sentiment is nested, a label with its own confidence.
+		expect(result.entities?.[0]?.sentiment).toEqual({
+			label: 'neg',
+			confidence: 0.51519182,
+		});
 	});
 
-	it('keeps a neutral label whose score is not zero', async () => {
-		respond(fetchMock, SENTIMENT_NEUTRAL);
-
-		const result = (await invoke(Api.sentiment, { content: 'x' })) as {
-			document?: { label?: string; score?: number };
-		};
-
-		// The label and the score are separate signals.
-		expect(result.document?.label).toBe('neu');
-		expect(result.document?.score).toBe(-0.12);
-	});
-
-	it('logs the label and score', async () => {
+	it('logs the label and confidence', async () => {
 		respond(fetchMock, SENTIMENT);
 
 		await invoke(Api.sentiment, { content: 'x' });
@@ -225,38 +231,49 @@ describe('sentiment', () => {
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'rosette.sentiment',
-			{ label: 'pos', score: 0.723, entities: 1 },
+			{ label: 'neg', confidence: 0.50514893, entities: 1 },
 			'completed',
 		);
 	});
 });
 
 describe('tokens, sentences and morphology', () => {
-	it('returns tokens with their tags and lemmas in matching order', async () => {
+	it('returns the tokens', async () => {
 		respond(fetchMock, TOKENS);
 
 		const result = (await invoke(Api.tokens, { content: 'x' })) as {
 			tokens?: string[];
-			posTags?: string[];
-			lemmas?: string[];
 		};
 
 		expect(lastRequest(fetchMock).path).toBe('/rest/v1/tokens');
-		expect(result.tokens).toHaveLength(4);
-		expect(result.posTags).toHaveLength(4);
-		expect(result.lemmas?.[0]).toBe('the');
+		expect(result.tokens).toEqual(['The', 'quick', 'brown', 'fox']);
 	});
 
-	it('finds sentence offsets', async () => {
+	it('returns each sentence as text', async () => {
 		respond(fetchMock, SENTENCES);
 
 		const result = (await invoke(Api.sentences, { content: 'x' })) as {
-			sentenceDetections?: { start?: number; end?: number }[];
+			sentences?: string[];
 		};
 
 		expect(lastRequest(fetchMock).path).toBe('/rest/v1/sentences');
-		expect(result.sentenceDetections).toHaveLength(2);
-		expect(result.sentenceDetections?.[0]?.end).toBe(19);
+		expect(result.sentences).toEqual([
+			'The quick brown fox. ',
+			'It jumped over the dog.',
+		]);
+	});
+
+	it('logs the sentence count', async () => {
+		respond(fetchMock, SENTENCES);
+
+		await invoke(Api.sentences, { content: 'x' });
+
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'rosette.sentences',
+			{ sentences: 2 },
+			'completed',
+		);
 	});
 
 	it('analyses morphology on the complete route, including compounds', async () => {
@@ -295,37 +312,58 @@ describe('categories, topics and relationships', () => {
 		};
 
 		expect(lastRequest(fetchMock).path).toBe('/rest/v1/categories');
-		expect(result.categories?.[0]?.label).toBe('/technology');
-		expect(result.categories?.[0]?.score).toBe(0.42);
+		expect(result.categories?.[0]?.label).toBe('TECHNOLOGY_AND_COMPUTING');
+		expect(result.categories?.[0]?.score).toBe(0.12309286);
 	});
 
-	it('separates topics from concepts', async () => {
+	it('separates keyphrases from concepts', async () => {
 		respond(fetchMock, TOPICS);
 
 		const result = (await invoke(Api.topics, { content: 'x' })) as {
-			topics?: { label?: string }[];
-			concepts?: { label?: string }[];
+			keyphrases?: { phrase?: string; salience?: number }[];
+			concepts?: { phrase?: string; conceptId?: string }[];
 		};
 
 		expect(lastRequest(fetchMock).path).toBe('/rest/v1/topics');
-		expect(result.topics).toHaveLength(2);
-		expect(result.concepts?.[0]?.label).toBe('Software');
+		expect(result.keyphrases?.[0]).toEqual({
+			phrase: 'recommendation systems',
+			salience: 0.79139363,
+		});
+		expect(result.concepts?.[0]?.conceptId).toBe('Q6460070');
 	});
 
-	it('extracts subject-verb-object relationships', async () => {
+	it('logs the keyphrase and concept counts', async () => {
+		respond(fetchMock, TOPICS);
+
+		await invoke(Api.topics, { content: 'x' });
+
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'rosette.topics',
+			{ keyphrases: 2, concepts: 1 },
+			'completed',
+		);
+	});
+
+	it('extracts relationships between two arguments', async () => {
 		respond(fetchMock, RELATIONSHIPS);
 
 		const result = (await invoke(Api.relationships, { content: 'x' })) as {
 			relationships?: {
-				predicate?: string;
-				confidence?: number;
-				subject?: { mention?: string };
+				predicateId?: string;
+				arg1?: string;
+				arg1Id?: string;
+				arg2?: string;
 			}[];
 		};
 
 		expect(lastRequest(fetchMock).path).toBe('/rest/v1/relationships');
-		expect(result.relationships?.[0]?.predicate).toBe('work for');
-		expect(result.relationships?.[0]?.subject?.mention).toBe('John Smith');
+		expect(result.relationships?.[0]).toMatchObject({
+			predicateId: 'PER-EMPLOYEE-MEMBER-OF',
+			arg1: 'John Smith',
+			arg1Id: 'Q16200474',
+			arg2: 'Acme Corp.',
+		});
 	});
 });
 
@@ -381,13 +419,11 @@ describe('semantics', () => {
 		respond(fetchMock, VECTOR);
 
 		const result = (await invoke(Api.textEmbedding, { content: 'x' })) as {
-			embedding?: number[];
-			dimensions?: number;
+			documentEmbedding?: number[];
 		};
 
 		expect(lastRequest(fetchMock).path).toBe('/rest/v1/semantics/vector');
-		expect(result.embedding).toHaveLength(4);
-		expect(result.dimensions).toBe(4);
+		expect(result.documentEmbedding).toHaveLength(4);
 	});
 
 	it('logs the dimensions', async () => {
@@ -419,7 +455,7 @@ describe('name similarity and translation', () => {
 			name1: { text: 'John Smith' },
 			name2: { text: 'Jon Smith' },
 		});
-		expect(result.score).toBe(0.81);
+		expect(result.score).toBe(0.94313833);
 	});
 
 	it('carries a name entity type', async () => {
@@ -458,15 +494,17 @@ describe('name similarity and translation', () => {
 			name: 'John Smith',
 			targetLanguage: 'rus',
 			entityType: 'PERSON',
-		})) as { translation?: string };
+		})) as { translation?: string; confidence?: number; targetScript?: string };
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/rest/v1/name-translation');
+		expect(result.confidence).toBe(0.14273171);
+		expect(result.targetScript).toBe('Cyrl');
 		expect(request.bodyRecord).toMatchObject({
 			name: 'John Smith',
 			targetLanguage: 'rus',
 		});
-		expect(result.translation).toBe('Хуан Смит');
+		expect(result.translation).toBe('Жоан Смит');
 	});
 
 	it('rejects a translation with no target language', async () => {
@@ -527,5 +565,55 @@ describe('error propagation', () => {
 		)) as { endpoint?: string };
 
 		expect(error.endpoint).toBe('/entities');
+	});
+});
+
+describe('output schemas declare the fields the API returns', () => {
+	// The schemas are loose, so an undeclared field still passes through, but only
+	// declared fields reach the typed result and the generated docs.
+	const live = {
+		ping: PING,
+		info: INFO,
+		language: LANGUAGE,
+		entities: ENTITIES,
+		sentiment: SENTIMENT,
+		tokens: TOKENS,
+		sentences: SENTENCES,
+		morphology: MORPHOLOGY,
+		categories: CATEGORIES,
+		topics: TOPICS,
+		relationships: RELATIONSHIPS,
+		similarTerms: SIMILAR_TERMS,
+		textEmbedding: VECTOR,
+		nameSimilarity: NAME_SIMILARITY,
+		nameTranslation: NAME_TRANSLATION,
+		transliteration: TRANSLITERATION,
+	} as const;
+
+	it.each(Object.entries(live))('%s', (name, body) => {
+		const schema = Outputs[name as keyof typeof live];
+		const declared = Object.keys(schema.shape);
+		expect(declared).toEqual(expect.arrayContaining(Object.keys(body)));
+	});
+
+	it('declares the nested entity, sentiment and relationship fields', () => {
+		const entity = Outputs.entities.shape.entities.unwrap().unwrap().element;
+		expect(Object.keys(entity.shape)).toEqual(
+			expect.arrayContaining(Object.keys(ENTITIES.entities[0] ?? {})),
+		);
+		const sentimentEntity = Outputs.sentiment.shape.entities
+			.unwrap()
+			.unwrap().element;
+		expect(Object.keys(sentimentEntity.shape)).toEqual(
+			expect.arrayContaining(Object.keys(SENTIMENT.entities[0] ?? {})),
+		);
+		const relationship = Outputs.relationships.shape.relationships
+			.unwrap()
+			.unwrap().element;
+		expect(Object.keys(relationship.shape)).toEqual(
+			expect.arrayContaining(Object.keys(RELATIONSHIPS.relationships[0] ?? {})),
+		);
+		const keyphrase = Outputs.topics.shape.keyphrases;
+		expect(keyphrase).toBeDefined();
 	});
 });

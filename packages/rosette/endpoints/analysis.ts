@@ -5,7 +5,7 @@ import {
 	RosetteEndpointOutputSchemas as Outputs,
 } from './types';
 
-/** The host reachability check. It needs no text and no key in the binding. */
+/** The host reachability check. It needs no text, but the hosted API still wants the key. */
 export const ping: RosetteEndpoints['ping'] = (ctx, input) =>
 	call(
 		ctx,
@@ -40,11 +40,12 @@ export const info: RosetteEndpoints['info'] = (ctx, input) =>
 			log: (_, result) => ({
 				version: result.version ?? undefined,
 				buildNumber: result.buildNumber ?? undefined,
+				buildTime: result.buildTime ?? undefined,
 			}),
 		},
 	);
 
-/** The detected language, with every candidate and its confidence. */
+/** The candidate languages, most likely first, each with its confidence. */
 export const language: RosetteEndpoints['language'] = (ctx, input) =>
 	call(
 		ctx,
@@ -65,7 +66,7 @@ export const language: RosetteEndpoints['language'] = (ctx, input) =>
 		}),
 		{
 			log: (_, result) => ({
-				language: result.language ?? undefined,
+				language: result.languageDetections?.[0]?.language ?? undefined,
 				candidates: result.languageDetections?.length ?? 0,
 			}),
 		},
@@ -105,11 +106,8 @@ export const entities: RosetteEndpoints['entities'] = (ctx, input) =>
 	);
 
 /**
- * Document and entity sentiment.
- *
- * The document `label` and `score` are separate: a `neu` label can still carry a
- * score away from zero, so a caller filtering on sentiment should decide which one
- * it trusts.
+ * Document and entity sentiment: a `pos`, `neg` or `neu` label with a confidence,
+ * for the document and nested under each entity's `sentiment`.
  */
 export const sentiment: RosetteEndpoints['sentiment'] = (ctx, input) =>
 	call(
@@ -130,13 +128,13 @@ export const sentiment: RosetteEndpoints['sentiment'] = (ctx, input) =>
 		{
 			log: (_, result) => ({
 				label: result.document?.label ?? undefined,
-				score: result.document?.score ?? undefined,
+				confidence: result.document?.confidence ?? undefined,
 				entities: result.entities?.length ?? 0,
 			}),
 		},
 	);
 
-/** Tokens with their part-of-speech tags and lemmas, in matching order. */
+/** The text split into tokens. Tags and lemmas come from `morphology`. */
 export const tokens: RosetteEndpoints['tokens'] = (ctx, input) =>
 	call(
 		ctx,
@@ -158,7 +156,7 @@ export const tokens: RosetteEndpoints['tokens'] = (ctx, input) =>
 		},
 	);
 
-/** Sentence boundaries, as offsets into the text. */
+/** The text split into sentences, each returned as text. */
 export const sentences: RosetteEndpoints['sentences'] = (ctx, input) =>
 	call(
 		ctx,
@@ -177,7 +175,7 @@ export const sentences: RosetteEndpoints['sentences'] = (ctx, input) =>
 		}),
 		{
 			log: (_, result) => ({
-				sentences: result.sentenceDetections?.length ?? 0,
+				sentences: result.sentences?.length ?? 0,
 			}),
 		},
 	);
@@ -236,11 +234,11 @@ export const categories: RosetteEndpoints['categories'] = (ctx, input) =>
 	);
 
 /**
- * Topics and concepts.
+ * Keyphrases and concepts.
  *
- * A concept is the broader theme and a topic the specific label, and both carry a
- * salience rather than a probability, so they are not comparable across documents in
- * the way a score would be.
+ * A keyphrase is taken from the text and a concept is the broader theme, and both
+ * carry a salience rather than a probability, so they are not comparable across
+ * documents in the way a score would be.
  */
 export const topics: RosetteEndpoints['topics'] = (ctx, input) =>
 	call(
@@ -260,13 +258,13 @@ export const topics: RosetteEndpoints['topics'] = (ctx, input) =>
 		}),
 		{
 			log: (_, result) => ({
-				topics: result.topics?.length ?? 0,
+				keyphrases: result.keyphrases?.length ?? 0,
 				concepts: result.concepts?.length ?? 0,
 			}),
 		},
 	);
 
-/** Subject-verb-object triples, each with the confidence of its predicate. */
+/** Relationships: a predicate linking two or three arguments from the text. */
 export const relationships: RosetteEndpoints['relationships'] = (ctx, input) =>
 	call(
 		ctx,
@@ -321,7 +319,7 @@ export const similarTerms: RosetteEndpoints['similarTerms'] = (ctx, input) =>
 		},
 	);
 
-/** The text embedding, with its dimension count. */
+/** The text embedding, one vector for the whole document. */
 export const textEmbedding: RosetteEndpoints['textEmbedding'] = (ctx, input) =>
 	call(
 		ctx,
@@ -340,7 +338,7 @@ export const textEmbedding: RosetteEndpoints['textEmbedding'] = (ctx, input) =>
 		}),
 		{
 			log: (_, result) => ({
-				dimensions: result.dimensions ?? result.embedding?.length ?? 0,
+				dimensions: result.documentEmbedding?.length ?? 0,
 			}),
 		},
 	);

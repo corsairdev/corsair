@@ -1,23 +1,27 @@
 /**
- * Response bodies for the tests, from the Rosette API documentation surfaced by the
- * official Python binding (https://github.com/rosette-api/python) and the live
- * refusals captured from analytics.babelstreet.com.
+ * Response bodies for the tests. The success bodies are live responses from
+ * analytics.babelstreet.com on a free-trial key (11-12), trimmed; the field names
+ * match the official Java binding's model classes
+ * (https://github.com/rosette-api/java, model/.../apimodel).
  */
 
-export const PING = { message: 'ping' };
-
-export const INFO = {
-	name: 'Rosette API',
-	version: '1.36',
-	buildNumber: 'f8b9b2e',
-	buildDate: '2026-04-01T00:00:00Z',
+export const PING = {
+	message: 'Babel Street Analytics Server at your service',
+	time: 1794460423822,
 };
 
+export const INFO = {
+	name: 'Babel Street Analytics Server',
+	version: '1.39.0',
+	buildNumber: '2d103cf6',
+	buildTime: '20260922013523',
+};
+
+// There is no top-level `language`: the first detection is the most likely one.
 export const LANGUAGE = {
-	language: 'eng',
 	languageDetections: [
-		{ language: 'eng', confidence: 0.98 },
-		{ language: 'sco', confidence: 0.01 },
+		{ language: 'eng', confidence: 0.87597701 },
+		{ language: 'nld', confidence: 0.02437225 },
 	],
 };
 
@@ -27,61 +31,56 @@ export const ENTITIES = {
 			type: 'PERSON',
 			mention: 'John Smith',
 			normalized: 'John Smith',
-			count: 2,
-			confidence: 0.95,
-			entityId: 'Q1',
-			mentions: [
-				{ mention: 'John Smith', startOffset: 0, endOffset: 10 },
-				{ mention: 'Smith', startOffset: 40, endOffset: 45 },
-			],
+			count: 1,
+			mentionOffsets: [{ startOffset: 0, endOffset: 10 }],
+			entityId: 'Q16200474',
+			confidence: 0.91628879,
+			linkingConfidence: 0.0746221,
+		},
+		{
+			type: 'ORGANIZATION',
+			mention: 'Acme Corp',
+			normalized: 'Acme Corp',
+			count: 1,
+			mentionOffsets: [{ startOffset: 20, endOffset: 29 }],
+			entityId: 'T1',
+			confidence: 0.62137556,
 		},
 		{
 			type: 'LOCATION',
 			mention: 'Seattle',
 			normalized: 'Seattle',
 			count: 1,
-			confidence: 0.91,
-			entityId: 'Q2',
+			mentionOffsets: [{ startOffset: 33, endOffset: 40 }],
+			entityId: 'Q5083',
+			linkingConfidence: 0.76339067,
 		},
 	],
 };
 
+// A label with a confidence, for the document and inside each entity; no score.
 export const SENTIMENT = {
-	document: {
-		label: 'pos',
-		score: 0.723,
-		confidence: 0.88,
-	},
+	document: { label: 'neg', confidence: 0.50514893 },
 	entities: [
 		{
 			type: 'PERSON',
 			mention: 'John Smith',
 			normalized: 'John Smith',
 			count: 1,
-			label: 'pos',
-			score: 0.5,
-			confidence: 0.8,
-			entityId: 'Q1',
+			mentionOffsets: [{ startOffset: 48, endOffset: 58 }],
+			entityId: 'T0',
+			confidence: 0.91822904,
+			sentiment: { label: 'neg', confidence: 0.51519182 },
 		},
 	],
 };
 
-// A neutral label can still carry a score away from zero.
-export const SENTIMENT_NEUTRAL = {
-	document: { label: 'neu', score: -0.12, confidence: 0.4 },
-};
+// Tokens only; tags and lemmas come from morphology.
+export const TOKENS = { tokens: ['The', 'quick', 'brown', 'fox'] };
 
-export const TOKENS = {
-	tokens: ['The', 'quick', 'brown', 'fox'],
-	posTags: ['DT', 'JJ', 'JJ', 'NN'],
-	lemmas: ['the', 'quick', 'brown', 'fox'],
-};
-
+// The sentences themselves, with their trailing whitespace, not offsets.
 export const SENTENCES = {
-	sentenceDetections: [
-		{ start: 0, end: 19, text: 'The quick brown fox.' },
-		{ start: 20, end: 44, text: 'It jumped over the dog.' },
-	],
+	sentences: ['The quick brown fox. ', 'It jumped over the dog.'],
 };
 
 // Live from /morphology/complete (11-12): a compound splits into its parts, and a
@@ -99,27 +98,39 @@ export const MORPHOLOGY = {
 
 export const CATEGORIES = {
 	categories: [
-		{ label: '/technology', score: 0.42, confidence: 0.71 },
-		{ label: '/business', score: 0.18 },
+		{
+			label: 'TECHNOLOGY_AND_COMPUTING',
+			confidence: 0.05797729,
+			score: 0.12309286,
+		},
+		{ label: 'AUTOMOTIVE', confidence: 0.05555504, score: 0.08041562 },
 	],
 };
 
+// Keyphrases from the text and broader concepts, each with a salience.
 export const TOPICS = {
-	concepts: [{ label: 'Software', score: 0.61 }],
-	topics: [
-		{ label: 'Machine Learning', score: 0.44 },
-		{ label: 'Cloud Computing', score: 0.21 },
+	keyphrases: [
+		{ phrase: 'recommendation systems', salience: 0.79139363 },
+		{ phrase: 'startup', salience: 0.77872994 },
+	],
+	concepts: [
+		{
+			phrase: 'San Francisco Bay Area',
+			salience: 0.16027612,
+			conceptId: 'Q6460070',
+		},
 	],
 };
 
+// Arguments are plain strings with an optional ID, not objects.
 export const RELATIONSHIPS = {
 	relationships: [
 		{
-			predicate: 'work for',
-			predicateId: 'R1',
-			confidence: 0.87,
-			subject: { mention: 'John Smith', entityId: 'Q1' },
-			object: { mention: 'Acme Corp', entityId: 'Q2' },
+			predicate: 'Person Employee or Member of',
+			predicateId: 'PER-EMPLOYEE-MEMBER-OF',
+			arg1: 'John Smith',
+			arg1Id: 'Q16200474',
+			arg2: 'Acme Corp.',
 		},
 	],
 };
@@ -143,14 +154,23 @@ export const SIMILAR_TERMS_NO_LANGUAGES = {
 	stack: null,
 };
 
+// The live vector has 300 numbers; trimmed to four.
 export const VECTOR = {
-	embedding: [0.12, -0.44, 0.09, 0.31],
-	dimensions: 4,
+	documentEmbedding: [0.00904728, -0.11852804, 0.04762501, 0.04446864],
 };
 
-export const NAME_SIMILARITY = { score: 0.81 };
+export const NAME_SIMILARITY = { score: 0.94313833 };
 
-export const NAME_TRANSLATION = { translation: 'Хуан Смит' };
+export const NAME_TRANSLATION = {
+	extendedInformation: { processedByBabel: true },
+	sourceScript: 'Latn',
+	sourceLanguageOfUse: 'eng',
+	targetLanguage: 'rus',
+	targetScript: 'Cyrl',
+	targetScheme: 'NATIVE',
+	translation: 'Жоан Смит',
+	confidence: 0.14273171,
+};
 
 // Live (11-12) for content 'Mohammed Ali' with language 'ara'.
 export const TRANSLITERATION = { transliteration: 'محمد علي' };
@@ -162,9 +182,12 @@ export const FORBIDDEN = {
 		'you have either provided an invalid API key, or are not authorized to call the endpoint, or have exceeded the daily or monthly API call limits',
 };
 
+// Live (11-12), for a request with no content.
 export const BAD_REQUEST = {
-	code: 'badRequest',
-	message: 'The content must be specified',
+	code: 'badRequestFormat',
+	message:
+		'no content provided; must be one of an attachment, an inline "content" field, or an external "contentUri"',
+	stack: null,
 };
 
 export const INVALID_PARAMETER = {

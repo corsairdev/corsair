@@ -2,9 +2,11 @@ import { z } from 'zod';
 
 // Inputs use Rosette's own parameter names. Outputs are `.loose()` and the
 // documented optionals nullish, so a field Rosette adds or omits cannot fail a
-// call that has already happened. Shapes come from the official Python binding at
+// call that has already happened. Requests follow the official Python binding at
 // https://github.com/rosette-api/python (whose `DocumentParameters` defines the
-// request) and the live `analytics.babelstreet.com` host.
+// request); responses follow the Java binding's model classes
+// (https://github.com/rosette-api/java) and were checked against live responses
+// from `analytics.babelstreet.com` on 11-12.
 //
 // Almost every analysis shares one request shape: a `content` string (or a
 // `contentUri` for the server to fetch), an optional `language`, and an optional
@@ -13,9 +15,9 @@ import { z } from 'zod';
 // modelled separately rather than forced into the shared shape.
 
 /**
- * A JSON value. Used where a field's shape belongs to the analysis rather than the
- * transport - semantic vectors, entity mentions, topic scores - so it is described
- * as JSON rather than `unknown`, which would reach the docs as `any`.
+ * A JSON value. Used where a field's shape is open-ended server detail, such as a
+ * name translation's `extendedInformation`, so it is described as JSON rather than
+ * `unknown`, which would reach the docs as `any`.
  */
 export type RosetteJsonValue =
 	| string
@@ -110,7 +112,10 @@ const PingResponseSchema = z
 		message: z
 			.string()
 			.nullish()
-			.describe('"ping" when the host is reachable.'),
+			.describe(
+				'A greeting such as "Babel Street Analytics Server at your service".',
+			),
+		time: z.number().nullish().describe('Server time in epoch milliseconds.'),
 	})
 	.loose();
 
@@ -121,7 +126,11 @@ const InfoResponseSchema = z
 		name: z.string().nullish(),
 		version: z.string().nullish(),
 		buildNumber: z.string().nullish(),
-		buildDate: z.string().nullish(),
+		buildTime: z.string().nullish().describe('Such as 20260922013523.'),
+		licenseExpiration: z
+			.string()
+			.nullish()
+			.describe("When the key's license ends, where the server reports it."),
 	})
 	.loose();
 
@@ -130,23 +139,26 @@ export type InfoResponse = z.infer<typeof InfoResponseSchema>;
 // ── language ──────────────────────────────────────────────────────────────
 
 /**
- * The detected language. `confidence` is a fraction, and the `languageDetections`
- * list ranks the alternatives.
+ * The candidate languages, most likely first, each with a `confidence` fraction.
+ * There is no separate top-level answer: the first detection is the result.
  */
+const LanguageDetectionSchema = z
+	.object({
+		language: z.string().nullish(),
+		confidence: z.number().nullish(),
+	})
+	.loose();
+
 const LanguageResponseSchema = z
 	.object({
-		language: z.string().nullish().describe('The most likely language.'),
 		languageDetections: z
-			.array(
-				z
-					.object({
-						language: z.string().nullish(),
-						confidence: z.number().nullish(),
-					})
-					.loose(),
-			)
+			.array(LanguageDetectionSchema)
 			.nullish()
 			.describe('Every candidate, most likely first.'),
+		regionalDetections: z
+			.array(LanguageDetectionSchema)
+			.nullish()
+			.describe('Regional variants, when the server returns them.'),
 	})
 	.loose();
 
@@ -154,33 +166,58 @@ export type LanguageResponse = z.infer<typeof LanguageResponseSchema>;
 
 // ── entities ──────────────────────────────────────────────────────────────
 
+/** The start and end of one mention, as character offsets into the text. */
+const MentionOffsetsSchema = z
+	.object({
+		startOffset: z.number().nullish(),
+		endOffset: z.number().nullish(),
+	})
+	.loose();
+
+/** A label with its confidence, for the document or for one entity. */
+const SentimentLabelSchema = z
+	.object({
+		label: z.string().nullish().describe('pos, neg or neu.'),
+		confidence: z.number().nullish(),
+	})
+	.loose();
+
 /**
  * One extracted entity.
  *
  * `type` is the entity type (PERSON, LOCATION, ORGANIZATION, …), `mention` the
- * surface form, and `count`/`confidence` the aggregate over the text. The
- * `entityId` groups mentions of the same thing.
+ * surface form and `count` how many times it appears. `entityId` groups mentions
+ * of the same thing: a `Q…` ID is a Wikidata link, a `T…` ID is local to the text.
  */
-const EntitySchema = z
-	.object({
-		type: z
-			.string()
-			.nullish()
-			.describe('Such as PERSON, LOCATION or ORGANIZATION.'),
-		mention: z.string().nullish(),
-		normalized: z.string().nullish(),
-		count: z.number().nullish(),
-		confidence: z.number().nullish(),
-		entityId: z
-			.string()
-			.nullish()
-			.describe('Groups mentions that refer to the same entity.'),
-		mentions: z
-			.array(z.record(z.string(), JsonValueSchema))
-			.nullish()
-			.describe('Each occurrence, with its offset and length.'),
-	})
-	.loose();
+const EntityFields = {
+	type: z
+		.string()
+		.nullish()
+		.describe('Such as PERSON, LOCATION or ORGANIZATION.'),
+	mention: z.string().nullish(),
+	normalized: z.string().nullish(),
+	count: z.number().nullish(),
+	mentionOffsets: z
+		.array(MentionOffsetsSchema)
+		.nullish()
+		.describe('Each occurrence, as start and end offsets.'),
+	entityId: z
+		.string()
+		.nullish()
+		.describe(
+			'Groups mentions of the same entity; Q-prefixed IDs are Wikidata items.',
+		),
+	confidence: z.number().nullish(),
+	linkingConfidence: z
+		.number()
+		.nullish()
+		.describe('Confidence in the Wikidata link, when there is one.'),
+	salience: z.number().nullish(),
+	dbpediaTypes: z.array(z.string()).nullish(),
+	permId: z.string().nullish(),
+} as const;
+
+const EntitySchema = z.object(EntityFields).loose();
 
 export type RosetteEntity = z.infer<typeof EntitySchema>;
 
@@ -198,35 +235,18 @@ export type EntitiesResponse = z.infer<typeof EntitiesResponseSchema>;
 // ── sentiment ─────────────────────────────────────────────────────────────
 
 /**
- * Document- and entity-level sentiment.
- *
- * The document label is `pos`/`neg`/`neu` and its score runs from -1 to 1, so a
- * neutral label can still carry a non-zero score.
+ * Document- and entity-level sentiment: each is a `pos`/`neg`/`neu` label with a
+ * confidence. An entity's sentiment is nested under `sentiment`.
  */
-const SentimentLabelSchema = z.string().nullish().describe('pos, neg or neu.');
-
 const SentimentResponseSchema = z
 	.object({
-		document: z
-			.object({
-				label: SentimentLabelSchema,
-				score: z.number().nullish().describe('From -1 to 1.'),
-				confidence: z.number().nullish(),
-			})
-			.loose()
-			.nullish(),
+		document: SentimentLabelSchema.nullish(),
 		entities: z
 			.array(
 				z
 					.object({
-						type: z.string().nullish(),
-						mention: z.string().nullish(),
-						normalized: z.string().nullish(),
-						count: z.number().nullish(),
-						label: SentimentLabelSchema,
-						score: z.number().nullish(),
-						confidence: z.number().nullish(),
-						entityId: z.string().nullish(),
+						...EntityFields,
+						sentiment: SentimentLabelSchema.nullish(),
 					})
 					.loose(),
 			)
@@ -239,20 +259,13 @@ export type SentimentResponse = z.infer<typeof SentimentResponseSchema>;
 
 // ── tokens, sentences and morphology ──────────────────────────────────────
 
+/** Tokens only; part-of-speech tags and lemmas come from `morphology`. */
 const TokensResponseSchema = z
 	.object({
 		tokens: z
 			.array(z.string())
 			.nullish()
 			.describe('The text split into tokens.'),
-		posTags: z
-			.array(z.string())
-			.nullish()
-			.describe('A part-of-speech tag per token, in the same order.'),
-		lemmas: z
-			.array(z.string())
-			.nullish()
-			.describe('A lemma per token, in the same order.'),
 	})
 	.loose();
 
@@ -260,17 +273,10 @@ export type TokensResponse = z.infer<typeof TokensResponseSchema>;
 
 const SentencesResponseSchema = z
 	.object({
-		sentenceDetections: z
-			.array(
-				z
-					.object({
-						start: z.number().nullish(),
-						end: z.number().nullish(),
-						text: z.string().nullish(),
-					})
-					.loose(),
-			)
-			.nullish(),
+		sentences: z
+			.array(z.string())
+			.nullish()
+			.describe('Each sentence as text, with its trailing whitespace.'),
 	})
 	.loose();
 
@@ -323,13 +329,31 @@ const TopicsInputSchema = documentSchema;
 export type TopicsInput = z.infer<typeof TopicsInputSchema>;
 
 /**
- * Topic extraction. `concepts` are the wider themes and `topics` the specific
- * labels, and both carry a salience rather than a probability.
+ * Topic extraction. `keyphrases` are phrases taken from the text and `concepts`
+ * the broader themes (with a Wikidata `conceptId`); both carry a salience rather
+ * than a probability.
  */
+const KeyphraseSchema = z
+	.object({
+		phrase: z.string().nullish(),
+		salience: z.number().nullish(),
+	})
+	.loose();
+
 const TopicsResponseSchema = z
 	.object({
-		concepts: z.array(CategorySchema).nullish(),
-		topics: z.array(CategorySchema).nullish(),
+		keyphrases: z.array(KeyphraseSchema).nullish(),
+		concepts: z
+			.array(
+				z
+					.object({
+						phrase: z.string().nullish(),
+						salience: z.number().nullish(),
+						conceptId: z.string().nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
 	})
 	.loose();
 
@@ -339,7 +363,10 @@ const RelationshipsInputSchema = documentSchema;
 
 export type RelationshipsInput = z.infer<typeof RelationshipsInputSchema>;
 
-/** A subject-verb-object triple, with the confidence of the predicate. */
+/**
+ * A relationship: a predicate between `arg1` and `arg2` (and sometimes `arg3`),
+ * each a string with an optional entity ID, plus any adjuncts.
+ */
 const RelationshipsResponseSchema = z
 	.object({
 		relationships: z
@@ -348,9 +375,17 @@ const RelationshipsResponseSchema = z
 					.object({
 						predicate: z.string().nullish(),
 						predicateId: z.string().nullish(),
+						arg1: z.string().nullish(),
+						arg1Id: z.string().nullish(),
+						arg2: z.string().nullish(),
+						arg2Id: z.string().nullish(),
+						arg3: z.string().nullish(),
+						arg3Id: z.string().nullish(),
+						adjuncts: z.array(z.string()).nullish(),
+						locatives: z.array(z.string()).nullish(),
+						temporals: z.array(z.string()).nullish(),
+						modalities: z.array(z.string()).nullish(),
 						confidence: z.number().nullish(),
-						subject: z.record(z.string(), JsonValueSchema).nullish(),
-						object: z.record(z.string(), JsonValueSchema).nullish(),
 					})
 					.loose(),
 			)
@@ -366,11 +401,18 @@ const VectorInputSchema = documentSchema;
 
 export type VectorInput = z.infer<typeof VectorInputSchema>;
 
-/** A text embedding: a fixed-length vector plus its dimensions. */
+/** A text embedding: one vector for the whole document (300 numbers live). */
 const VectorResponseSchema = z
 	.object({
-		embedding: z.array(z.number()).nullish().describe('The embedding vector.'),
-		dimensions: z.number().nullish(),
+		documentEmbedding: z
+			.array(z.number())
+			.nullish()
+			.describe('The embedding vector for the whole text.'),
+		tokens: z.array(z.string()).nullish(),
+		tokenEmbeddings: z
+			.array(z.array(z.number()))
+			.nullish()
+			.describe('A vector per token, when per-token output was requested.'),
 	})
 	.loose();
 
@@ -469,6 +511,17 @@ export type NameTranslationInput = z.infer<typeof NameTranslationInputSchema>;
 const NameTranslationResponseSchema = z
 	.object({
 		translation: z.string().nullish(),
+		confidence: z.number().nullish(),
+		targetLanguage: z.string().nullish(),
+		targetScript: z.string().nullish(),
+		targetScheme: z.string().nullish(),
+		sourceScript: z.string().nullish(),
+		sourceLanguageOfOrigin: z.string().nullish(),
+		sourceLanguageOfUse: z.string().nullish(),
+		extendedInformation: z
+			.record(z.string(), JsonValueSchema)
+			.nullish()
+			.describe('Extra server details, such as processedByBabel.'),
 	})
 	.loose();
 

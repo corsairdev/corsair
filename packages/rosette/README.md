@@ -15,19 +15,19 @@ pnpm add @corsair-dev/rosette
 | `categories` | `rosette.api.categories` | `read` | Classify a text into topic-taxonomy categories with confidence |
 | `entities` | `rosette.api.entities` | `read` | Extract people, places, organisations and other entities, grouped by entity ID and ranked by confidence |
 | `info` | `rosette.api.info` | `read` | Read the server name, version and build, which explains a change in analysis output |
-| `language` | `rosette.api.language` | `read` | Detect the language of a text, with every candidate and its confidence |
-| `morphology` | `rosette.api.morphology` | `read` | Analyse morphology: lemmas, part-of-speech tags and compound components |
+| `language` | `rosette.api.language` | `read` | Detect the language of a text: every candidate, most likely first, with its confidence |
+| `morphology` | `rosette.api.morphology` | `read` | Analyse morphology: lemmas, part-of-speech tags, compound components and Han readings |
 | `nameSimilarity` | `rosette.api.nameSimilarity` | `read` | Score how likely two names are to be the same entity; the order of the two affects the score |
 | `nameTranslation` | `rosette.api.nameTranslation` | `read` | Translate a name into another language, optionally saying which script and entity type it is |
 | `ping` | `rosette.api.ping` | `read` | Check that the host is reachable |
-| `relationships` | `rosette.api.relationships` | `read` | Extract subject-verb-object relationships with the confidence of each predicate |
-| `semantics.similarTerms` | `rosette.api.semantics.similarTerms` | `read` | Find terms near the input in embedding space |
-| `semantics.vector` | `rosette.api.semantics.vector` | `read` | Compute a text embedding, with its dimension count |
-| `sentences` | `rosette.api.sentences` | `read` | Find sentence boundaries, as offsets into the text |
-| `sentiment` | `rosette.api.sentiment` | `read` | Score document and per-entity sentiment, where the label and the score are separate signals |
-| `tokens` | `rosette.api.tokens` | `read` | Split a text into tokens with part-of-speech tags and lemmas |
-| `topics` | `rosette.api.topics` | `read` | Extract topics and their broader concepts, with a salience rather than a probability |
-| `transliteration` | `rosette.api.transliteration` | `read` | Transliterate text into another script, which keeps the words rather than translating them |
+| `relationships` | `rosette.api.relationships` | `read` | Extract relationships between the entities in a text, such as a person employed by an organisation |
+| `semantics.similarTerms` | `rosette.api.semantics.similarTerms` | `read` | Find terms near the input in embedding space, in each requested result language |
+| `semantics.vector` | `rosette.api.semantics.vector` | `read` | Compute a text embedding for the whole document |
+| `sentences` | `rosette.api.sentences` | `read` | Split a text into sentences, returned as text |
+| `sentiment` | `rosette.api.sentiment` | `read` | Score document and per-entity sentiment as a pos, neg or neu label with a confidence |
+| `tokens` | `rosette.api.tokens` | `read` | Split a text into tokens; use morphology for part-of-speech tags and lemmas |
+| `topics` | `rosette.api.topics` | `read` | Extract keyphrases and their broader concepts, with a salience rather than a probability |
+| `transliteration` | `rosette.api.transliteration` | `read` | Transliterate text between Latin and the native script of its language, which keeps the words rather than translating them |
 
 ## Auth
 

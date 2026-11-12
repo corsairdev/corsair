@@ -117,7 +117,7 @@ describe('Rosette client', () => {
 			}),
 		);
 
-		expect(error.code).toBe('badRequest');
+		expect(error.code).toBe('badRequestFormat');
 		expect(error.isValidationError).toBe(true);
 		expect(error.isAuthError).toBe(false);
 	});
