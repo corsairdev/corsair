@@ -11,9 +11,9 @@ type LogFields = Record<string, string | number | boolean | undefined>;
  * then logs the event. Member and referral names and email addresses are
  * personal data, so `log` records ids and counts rather than free text.
  *
- * A collection's `message` field is where Referral Rock explains a refusal, so a
- * non-empty `message` on a `messageIsError` operation throws rather than being
- * returned as if it were a successful page.
+ * A `message` field is where Referral Rock explains a refusal. It is returned to
+ * the caller as part of the result, not thrown, so a create that answers
+ * `{ member: null, message }` resolves and the caller reads `message`.
  */
 export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	ctx: ReferralrockContext,
