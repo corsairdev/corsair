@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { RecruiteeContext } from '..';
 import type { RecruiteeRequest } from '../client';
@@ -16,9 +16,9 @@ export async function resolveCompanyId(ctx: RecruiteeContext): Promise<string> {
 		ctx.options.company_id ?? (await ctx.keys.get_company_id());
 	const value = (configured ?? '').trim();
 	if (value.length === 0) {
-		throw new Error(
-			'[auth-missing:recruitee:company_id]: Recruitee needs the company id from the API tokens page',
-		);
+		// The keyBuilder checks this first; this guard covers a context built
+		// without it, so a request never goes to `/c//…`.
+		throw new AuthMissingError('recruitee', 'api_key');
 	}
 	return value;
 }

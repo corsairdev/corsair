@@ -5,6 +5,7 @@ import { recruitee } from './index';
 
 function keyContext(
 	apiKey: string | undefined,
+	companyId: string | null = '1111',
 	authType: 'api_key' = 'api_key',
 ): RecruiteeKeyBuilderContext {
 	return {
@@ -12,6 +13,7 @@ function keyContext(
 		options: {},
 		keys: {
 			get_api_key: async () => apiKey,
+			get_company_id: async () => companyId,
 		},
 		// unknown: the fixture implements the one method the builder calls, not
 		// the full AccountKeyManager, so the cast sits here rather than at every
@@ -183,5 +185,24 @@ describe('keyBuilder', () => {
 		await expect(
 			keyBuilderOf(plugin)(keyContext(undefined), 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('throws AuthMissingError when the token is stored without its company id', async () => {
+		const plugin = recruitee();
+
+		await expect(
+			keyBuilderOf(plugin)(keyContext('stored-key', null), 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('accepts a company id passed in the plugin options', async () => {
+		const plugin = recruitee({ company_id: '2222' });
+
+		const key = await keyBuilderOf(plugin)(
+			keyContext('stored-key', null),
+			'endpoint',
+		);
+
+		expect(key).toBe('stored-key');
 	});
 });

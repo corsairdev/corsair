@@ -255,16 +255,26 @@ export function recruitee<const T extends RecruiteePluginOptions>(
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: RecruiteeKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint') {
+				throw new AuthMissingError('recruitee', ctx.authType ?? 'api_key');
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+			const key =
+				options.key ??
+				(ctx.authType === 'api_key' ? await ctx.keys.get_api_key() : null);
+			if (!key) {
+				throw new AuthMissingError('recruitee', ctx.authType ?? 'api_key');
 			}
 
-			throw new AuthMissingError('recruitee', ctx.authType ?? 'api_key');
+			// Every route sits under `/c/{company_id}`, so a token without its
+			// company id cannot make a call. Checking it here sends a missing id
+			// down the same connect-link path as a missing token.
+			const companyId = options.company_id ?? (await ctx.keys.get_company_id());
+			if (!companyId || companyId.trim().length === 0) {
+				throw new AuthMissingError('recruitee', 'api_key');
+			}
+
+			return key;
 		},
 	} satisfies InternalRecruiteePlugin;
 }
