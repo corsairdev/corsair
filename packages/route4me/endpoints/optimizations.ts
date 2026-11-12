@@ -40,8 +40,9 @@ function readsOneOptimization(
 	const offset = parsed.offset ?? 0;
 	const limit = parsed.limit;
 	const hasNext =
-		limit !== undefined &&
-		returned >= limit &&
+		// With no limit Route4Me applies its own default page size, so any
+		// non-empty page short of the total may have more behind it.
+		(limit === undefined ? returned > 0 : returned >= limit) &&
 		typeof total === 'number' &&
 		offset + returned < total;
 

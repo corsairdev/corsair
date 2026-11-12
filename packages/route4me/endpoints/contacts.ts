@@ -49,8 +49,10 @@ export const addressesList: Route4meEndpoints['addressesList'] = (ctx, input) =>
 				const limit = parsed.limit;
 				// A full page means there may be more; a short one is the last.
 				const hasNext =
-					limit !== undefined &&
-					returned >= limit &&
+					// With no limit Route4Me applies its own default page size (10,000
+					// for the address book), so a non-empty page short of the total
+					// may have more behind it.
+					(limit === undefined ? returned > 0 : returned >= limit) &&
 					typeof total === 'number' &&
 					offset + returned < total;
 				return {

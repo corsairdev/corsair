@@ -308,6 +308,16 @@ describe('addresses.list', () => {
 		expect(result.next_offset).toBe(11);
 	});
 
+	it('offers the next offset when no limit was sent and more remain', async () => {
+		respond(fetchMock, { results: [{ address_id: ADDRESS_ID }], total: 25 });
+
+		const result = (await invoke(Contacts.addressesList, {
+			offset: 4,
+		})) as Awaited<ReturnType<typeof Contacts.addressesList>>;
+
+		expect(result.next_offset).toBe(5);
+	});
+
 	it('stops paging on a short page even when records remain', async () => {
 		respond(fetchMock, { results: [{ address_id: ADDRESS_ID }], total: 25 });
 
@@ -445,6 +455,19 @@ describe('optimizations.list', () => {
 		})) as Awaited<ReturnType<typeof Optimizations.list>>;
 
 		expect(result.next_offset).toBe(11);
+	});
+
+	it('offers the next offset when no limit was sent and more remain', async () => {
+		respond(fetchMock, {
+			optimizations: [{ optimization_problem_id: OPTIMIZATION_ID }],
+			totalRecords: 40,
+		});
+
+		const result = (await invoke(Optimizations.list, {})) as Awaited<
+			ReturnType<typeof Optimizations.list>
+		>;
+
+		expect(result.next_offset).toBe(1);
 	});
 });
 
