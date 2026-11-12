@@ -3460,6 +3460,14 @@
                 ]
               },
               {
+                "group": "Rosette",
+                "pages": [
+                  "plugins/rosette/overview",
+                  "plugins/rosette/api",
+                  "plugins/rosette/database"
+                ]
+              },
+              {
                 "group": "Route4Me",
                 "pages": [
                   "plugins/route4me/overview",

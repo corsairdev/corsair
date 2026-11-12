@@ -414,6 +414,7 @@ export const BaseProviders = [
 	'rocketreach',
 	'rollbar',
 	'rootly',
+	'rosette',
 	'rudderstacktransform',
 	'runpod',
 	'salesflare',
@@ -940,6 +941,7 @@ export const ProviderDisplayNames = {
 	rocketreach: 'RocketReach',
 	rollbar: 'Rollbar',
 	rootly: 'Rootly',
+	rosette: 'Rosette',
 	rudderstacktransform: 'RudderStack Transformations',
 	runpod: 'RunPod',
 	salesflare: 'Salesflare',
@@ -1473,6 +1475,7 @@ export type AllProviders =
 	| 'rocketreach'
 	| 'rollbar'
 	| 'rootly'
+	| 'rosette'
 	| 'rudderstacktransform'
 	| 'runpod'
 	| 'salesflare'
