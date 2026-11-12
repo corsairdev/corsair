@@ -12,10 +12,19 @@ export async function invoke(endpoint: AnyEndpoint, input: unknown) {
 	return endpoint(testContext, input as never);
 }
 
+// A unit test must never reach the network: any fetch without a queued
+// response throws instead of passing through to the real one.
+function refuseUnmockedFetch(): never {
+	throw new Error('unmocked fetch in a unit test');
+}
+
 export function installFetchMock() {
-	const fetchMock = jest.spyOn(globalThis, 'fetch');
+	const fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockImplementation(refuseUnmockedFetch);
 	afterEach(() => {
 		fetchMock.mockReset();
+		fetchMock.mockImplementation(refuseUnmockedFetch);
 	});
 	return fetchMock;
 }
