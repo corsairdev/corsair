@@ -578,6 +578,7 @@ describe('person insights', () => {
 
 		const result = (await invoke(Person.nameFromEmail, {
 			email: 'john.doe@test.com',
+			// unknown: this test checks that a plain string passes, whatever the schema's union allows.
 		})) as { info?: unknown };
 
 		expect(result.info).toBe('John Doe');
