@@ -26,8 +26,16 @@ export const list: Route4meEndpoints['routesList'] = (ctx, input) =>
 				query: parsed.query,
 				search_query: parsed.search_query,
 				exclude_ids: parsed.exclude_ids,
-				filtersfacility_ids: parsed.facility_ids,
-				filtersroute_id: parsed.route_id,
+				// The reference renders these as `filtersroute_id` and
+				// `filtersfacility_ids`; they are `filters.route_id` and
+				// `filters.facility_ids`, which is how Route4Me's own SDK sends them.
+				filters:
+					parsed.route_id !== undefined || parsed.facility_ids !== undefined
+						? queryOf({
+								route_id: parsed.route_id,
+								facility_ids: parsed.facility_ids,
+							})
+						: undefined,
 				timezone: parsed.timezone,
 				group_by: parsed.group_by,
 				page: parsed.page,

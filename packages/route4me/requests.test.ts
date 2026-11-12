@@ -52,8 +52,7 @@ describe('routes.list', () => {
 		expect(request.method).toBe('POST');
 		expect(request.json()).toEqual({
 			query: 'north',
-			filtersfacility_ids: ['facility-1'],
-			filtersroute_id: ROUTE_ID,
+			filters: { facility_ids: ['facility-1'], route_id: ROUTE_ID },
 			timezone: 'Europe/Amsterdam',
 			page: 1,
 			per_page: 50,
