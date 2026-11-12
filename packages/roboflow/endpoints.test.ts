@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { Inference, Platform } from './endpoints';
+import type { ProjectGetResponse, VersionGetResponse } from './endpoints/types';
 import {
 	AUTHENTICATED,
 	BAD_KEY,
@@ -26,7 +27,9 @@ const mockLog = jest.mocked(logEventFromContext);
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockRejectedValue(new Error('Unexpected unmocked fetch'));
 	mockLog.mockClear();
 });
 
@@ -113,10 +116,7 @@ describe('project.get', () => {
 		const result = (await invoke(Platform.project, {
 			workspace: 'roboflow',
 			project: 'chess-sample-4ckfl',
-		})) as {
-			project?: { images?: number; unannotated?: number; classes?: unknown };
-			versions?: { id?: string }[];
-		};
+		})) as ProjectGetResponse;
 
 		expect(lastRequest(fetchMock).path).toBe('/roboflow/chess-sample-4ckfl');
 		expect(result.project?.images).toBe(12);
@@ -246,9 +246,7 @@ describe('version.get', () => {
 			workspace: 'roboflow',
 			project: 'chess-sample-4ckfl',
 			version: 3,
-		})) as {
-			version?: { id?: string; images?: number; preprocessing?: unknown };
-		};
+		})) as VersionGetResponse;
 
 		expect(lastRequest(fetchMock).path).toBe('/roboflow/chess-sample-4ckfl/3');
 		expect(result.version?.id).toBe('roboflow/chess-sample-4ckfl/3');
@@ -342,10 +340,34 @@ describe('images.upload', () => {
 		})) as { id?: string; success?: boolean };
 
 		const request = lastRequest(fetchMock);
-		expect(request.path).toBe('/dataset/roboflow%2Fchess-sample-4ckfl/upload');
-		expect(request.bodyRecord).toEqual({ image: 'https://x.com/a.jpg' });
+		expect(request.path).toBe('/dataset/chess-sample-4ckfl/upload');
+		expect(request.body).toBeUndefined();
+		expect(request.query.image).toBe('https://x.com/a.jpg');
 		expect(request.query).toMatchObject({ batch: 'batch-1', tag: 'chess' });
 		expect(result.id).toBe('YbNIgavTIk2xOOmJsHv5');
+	});
+
+	it('uses the dataset route for a project slug', async () => {
+		respond(fetchMock, IMAGE_UPLOADED);
+		await invoke(Platform.upload, {
+			project: 'my project',
+			image: 'https://x.com/a.jpg',
+		});
+		expect(lastRequest(fetchMock).path).toBe('/dataset/my%20project/upload');
+	});
+
+	it('uploads base64 as the raw form body', async () => {
+		respond(fetchMock, IMAGE_UPLOADED);
+		await invoke(Platform.upload, {
+			project: 'w/p',
+			image: 'data:image/png;base64,aGVsbG8=',
+		});
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(new URL(url).searchParams.has('image')).toBe(false);
+		expect(init.body).toBe('data:image/png;base64,aGVsbG8=');
+		expect(new Headers(init.headers).get('content-type')).toBe(
+			'application/x-www-form-urlencoded',
+		);
 	});
 
 	it('reports a duplicate as a success, not a failure', async () => {
@@ -395,7 +417,13 @@ describe('infer', () => {
 			image: 'data:image/jpeg;base64,/9j/4AAQ',
 		});
 
-		expect(lastRequest(fetchMock).query.image_type).toBe('base64');
+		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(new URL(url).searchParams.get('image_type')).toBe('base64');
+		expect(new URL(url).searchParams.has('image')).toBe(false);
+		expect(init.body).toBe('data:image/jpeg;base64,/9j/4AAQ');
+		expect(new Headers(init.headers).get('content-type')).toBe(
+			'application/x-www-form-urlencoded',
+		);
 	});
 
 	it('omits image_type for a plain URL', async () => {
@@ -436,6 +464,43 @@ describe('infer', () => {
 
 		expect(result.predictions?.[0]?.class).toBe('cat');
 		expect(result.predictions?.[0]?.confidence).toBe(0.98);
+	});
+
+	it('accepts multi-label predictions keyed by class', async () => {
+		respond(fetchMock, {
+			image: { width: 224, height: 224 },
+			predictions: { cat: { confidence: 0.98 } },
+			predicted_classes: ['cat'],
+		});
+		await expect(
+			invoke(Inference.infer, {
+				modelId: 'p/1',
+				image: 'https://x.com/cat.jpg',
+			}),
+		).resolves.toMatchObject({ predictions: { cat: { confidence: 0.98 } } });
+		expect(mockLog).toHaveBeenLastCalledWith(
+			expect.anything(),
+			'roboflow.infer',
+			{ modelId: 'p/1', predictions: 1 },
+			'completed',
+		);
+	});
+
+	it('accepts a semantic segmentation prediction object', async () => {
+		respond(fetchMock, {
+			image: { width: 224, height: 224 },
+			predictions: {
+				segmentation_mask: 'aGVsbG8=',
+				class_map: { '0': 'background' },
+				confidence_mask: 'bWFzaw==',
+			},
+		});
+		await expect(
+			invoke(Inference.infer, {
+				modelId: 'p/1',
+				image: 'https://x.com/cat.jpg',
+			}),
+		).resolves.toHaveProperty('predictions.segmentation_mask', 'aGVsbG8=');
 	});
 
 	it('rejects a model ID with no project/version separator', async () => {

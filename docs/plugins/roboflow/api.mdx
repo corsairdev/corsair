@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Roboflow: every `roboflow.api.*` operation with input and output types."
+title: "Roboflow API reference"
+sidebarTitle: "API"
+description: "API reference for the Roboflow plugin in Corsair: every `roboflow.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `roboflow.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -59,7 +58,7 @@ await corsair.roboflow.api.images.upload({ project: 'roboflow/chess-sample-4ckfl
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `project` | `string` | Yes | The project ID, which is workspace/project. |
+| `project` | `string` | Yes | The project URL slug or workspace/project ID. |
 | `image` | `string` | Yes | A publicly reachable image URL, or a base64 data URI. Up to 20MB. |
 | `name` | `string` | No | The file name to record, when the image is a data URI. |
 | `batch` | `string` | No | A batch name to group the upload under. |
@@ -99,7 +98,7 @@ await corsair.roboflow.api.infer({ modelId: 'chess-sample-4ckfl/3', image: 'http
 |------|------|----------|-------------|
 | `modelId` | `string` | Yes | The model ID from models.list `url`, in the form project/version, or workspace/model for a model not tied to a version. |
 | `image` | `string` | Yes | A publicly reachable image URL, a base64 string, or a data URI. Base64 is sent as `image_type=base64`. |
-| `imageType` | `url \| base64` | No | url sends `image` as a URL, base64 sends it in the body. Inferred from a data URI prefix when omitted. |
+| `imageType` | `url \| base64` | No | url sends `image` in the query; base64 sends the raw image in the request body. HTTP URLs select url when imageType is omitted; other strings select base64. |
 | `confidence` | `number` | No | The confidence threshold, 0 to 1, to filter predictions. |
 | `overlap` | `number` | No | The IoU threshold above which two boxes are treated as duplicates. |
 | `maxDetections` | `number` | No | The most predictions to return. |
@@ -110,8 +109,9 @@ await corsair.roboflow.api.infer({ modelId: 'chess-sample-4ckfl/3', image: 'http
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `image` | `Record<string, JsonValue> \| null` | No | The input image, with its width and height. |
-| `predictions` | `object[] \| null` | No | Boxes for a detection model, class scores for a classification model. A segmentation model adds `points` to each. |
+| `image` | `Record<string, JsonValue> \| Record<string, JsonValue>[] \| null` | No | The input image, with its width and height. |
+| `predictions` | `object[] \| Record<string, JsonValue> \| null` | No | Detection and single-label classification return arrays. Multi-label classification returns a class-keyed object; semantic segmentation returns a mask object. |
+| `predicted_classes` | `string[] \| null` | No | — |
 | `count` | `number \| null` | No | How many predictions came back. |
 | `time` | `number \| null` | No | Inference time in seconds. |
 
@@ -128,7 +128,7 @@ await corsair.roboflow.api.infer({ modelId: 'chess-sample-4ckfl/3', image: 'http
   class?: string | null,
   class_id?: number | null,
   detection_id?: string | null
-}[] | null
+}[] | Record<string, JsonValue> | null
 ```
 </Accordion>
 </AccordionGroup>

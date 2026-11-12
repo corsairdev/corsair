@@ -18,7 +18,9 @@ const KEY = 'roboflow-secret-key';
 let fetchMock: jest.SpyInstance;
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockRejectedValue(new Error('Unexpected unmocked fetch'));
 });
 
 afterEach(() => {

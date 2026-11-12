@@ -217,8 +217,9 @@ export const models: RoboflowEndpoints['modelsList'] = (ctx, input) =>
 /**
  * Uploads one image to a project, by URL or as base64.
  *
- * The route takes the project ID, which is `workspace/project` joined by a slash,
- * rather than the workspace and project as separate segments.
+ * The upload route takes the project slug. For a workspace/project ID, extract
+ * the slug; the API key selects the workspace. The documented workspace alias
+ * returns 404 on the live host.
  */
 export const upload: RoboflowEndpoints['imageUpload'] = (ctx, input) =>
 	call(
@@ -231,9 +232,15 @@ export const upload: RoboflowEndpoints['imageUpload'] = (ctx, input) =>
 		input,
 		({ project: projectId, image, name, batch, tag }) => ({
 			method: 'POST',
-			path: `/dataset/${segment(projectId)}/upload`,
-			query: { name, batch, tag: tag?.join(',') },
-			body: { image },
+			path: `/dataset/${segment(projectId.split('/').at(-1) ?? projectId)}/upload`,
+			query: {
+				name,
+				batch,
+				tag: tag?.join(','),
+				image: /^https?:\/\//i.test(image) ? image : undefined,
+			},
+			body: /^https?:\/\//i.test(image) ? undefined : image,
+			mediaType: 'application/x-www-form-urlencoded',
 			// A re-upload of the same image is answered as a duplicate with no new
 			// image, so a retry cannot duplicate it, but the upload is also billed, so
 			// it is not resent.

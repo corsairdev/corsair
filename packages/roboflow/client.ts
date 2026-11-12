@@ -147,6 +147,8 @@ export type RoboflowRequest = {
 	query?: RoboflowQuery;
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
+	/** Raw base64 uses form encoding; structured management requests use JSON. */
+	mediaType?: string;
 	/** Declared per operation so a write is never replayed. */
 	replayable: boolean;
 	/** Which host the call goes to; defaults to the management host. */
@@ -187,14 +189,23 @@ function configWith(apiKey: string, host: 'api' | 'inference'): OpenAPIConfig {
 // unknown: callers parse the body with the endpoint's zod output schema.
 export async function makeRoboflowRequest(
 	apiKey: string,
-	{ method, path, query, body, replayable, host = 'api' }: RoboflowRequest,
+	{
+		method,
+		path,
+		query,
+		body,
+		mediaType,
+		replayable,
+		host = 'api',
+	}: RoboflowRequest,
 ): Promise<unknown> {
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
 		query,
 		body,
-		mediaType: body === undefined ? undefined : 'application/json',
+		mediaType:
+			body === undefined ? undefined : (mediaType ?? 'application/json'),
 	};
 
 	try {

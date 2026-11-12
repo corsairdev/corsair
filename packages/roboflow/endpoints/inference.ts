@@ -9,10 +9,8 @@ import {
 /**
  * Runs a model on an image, on the inference host rather than the management host.
  *
- * Every input is a query parameter, including the image itself: the Inference
- * server takes `image` as a URL, a base64 string or a data URI, with `image_type`
- * telling it which. There is no request body, which is why this reads unlike the
- * Platform API's POSTs.
+ * Image URLs go in the `image` query parameter. Base64 and data URIs go in
+ * the raw form body with `image_type=base64`. Other options stay in the query.
  *
  * A model ID from `models.list` is `project/version`, so `modelId` is split on the
  * first slash to fill the two path segments; a model not tied to a version is
@@ -41,21 +39,22 @@ export const infer: RoboflowEndpoints['infer'] = (ctx, input) =>
 			const dataset = modelId.slice(0, slash);
 			const version = modelId.slice(slash + 1);
 
-			// A data URI already says what it is, so the type is only defaulted when the
-			// caller gave neither.
+			// HTTP URLs select URL transport; data URIs and raw base64 use the body.
 			const resolvedType =
-				imageType ?? (image.startsWith('data:') ? 'base64' : 'url');
+				imageType ?? (/^https?:\/\//i.test(image) ? 'url' : 'base64');
 
 			return {
 				method: 'POST',
 				path: `/${segment(dataset)}/${segment(version)}`,
 				query: {
-					image,
+					image: resolvedType === 'url' ? image : undefined,
 					image_type: resolvedType === 'base64' ? 'base64' : undefined,
 					confidence,
 					overlap,
 					max_detections: maxDetections,
 				},
+				body: resolvedType === 'base64' ? image : undefined,
+				mediaType: 'application/x-www-form-urlencoded',
 				host: 'inference' as const,
 				replayable: false,
 			};
@@ -63,7 +62,10 @@ export const infer: RoboflowEndpoints['infer'] = (ctx, input) =>
 		{
 			log: (parsed, result) => ({
 				modelId: parsed.modelId,
-				predictions: result.predictions?.length ?? result.count ?? 0,
+				predictions:
+					result.count ??
+					result.predicted_classes?.length ??
+					(Array.isArray(result.predictions) ? result.predictions.length : 0),
 			}),
 		},
 	);

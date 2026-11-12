@@ -355,7 +355,8 @@ const ImageUploadInputSchema = z.object({
 	project: z
 		.string()
 		.min(1)
-		.describe('The project ID, which is workspace/project.'),
+		.regex(/^[^/]+(?:\/[^/]+)?$/)
+		.describe('The project URL slug or workspace/project ID.'),
 	image: z
 		.string()
 		.min(1)
@@ -411,7 +412,7 @@ const InferInputSchema = z.object({
 		.enum(['url', 'base64'])
 		.optional()
 		.describe(
-			'url sends `image` as a URL, base64 sends it in the body. Inferred from a data URI prefix when omitted.',
+			'url sends `image` in the query; base64 sends the raw image in the request body. HTTP URLs select url when imageType is omitted; other strings select base64.',
 		),
 	confidence: z
 		.number()
@@ -454,22 +455,23 @@ const PredictionSchema = z
 /**
  * An inference answer.
  *
- * The prediction payload is the Inference server's, so it is kept open: a
- * detection model returns `predictions` of boxes, a classification model returns
- * `predictions` of class scores, and a segmentation model adds `points` per
- * prediction. The counts are what a caller can rely on across tasks.
+ * Prediction shapes depend on the task: arrays for detection and single-label
+ * classification, class-keyed objects for multi-label classification, and a mask
+ * object for semantic segmentation. Instance segmentation adds points to boxes.
  */
 const InferResponseSchema = z
 	.object({
-		image: JsonObjectSchema.nullish().describe(
-			'The input image, with its width and height.',
-		),
+		image: z
+			.union([JsonObjectSchema, z.array(JsonObjectSchema)])
+			.nullish()
+			.describe('The input image, with its width and height.'),
 		predictions: z
-			.array(PredictionSchema)
+			.union([z.array(PredictionSchema), JsonObjectSchema])
 			.nullish()
 			.describe(
-				'Boxes for a detection model, class scores for a classification model. A segmentation model adds `points` to each.',
+				'Detection and single-label classification return arrays. Multi-label classification returns a class-keyed object; semantic segmentation returns a mask object.',
 			),
+		predicted_classes: z.array(z.string()).nullish(),
 		count: z.number().nullish().describe('How many predictions came back.'),
 		time: z.number().nullish().describe('Inference time in seconds.'),
 	})
