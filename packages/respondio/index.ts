@@ -236,7 +236,7 @@ const respondioEndpointMeta = {
 	'contacts.merge': {
 		riskLevel: 'destructive',
 		description:
-			'Merge one contact into another and remove the second, keeping the first',
+			'Merge two contacts by their IDs, setting the merged fields; the older contact stays and the other is removed',
 	},
 	'contacts.list': {
 		riskLevel: 'read',
@@ -258,7 +258,8 @@ const respondioEndpointMeta = {
 	},
 	'contacts.lifecycle': {
 		riskLevel: 'write',
-		description: 'Move a contact to a lifecycle stage',
+		description:
+			'Move a contact to a lifecycle stage by name, or clear it with null',
 	},
 	'conversations.assign': {
 		riskLevel: 'write',

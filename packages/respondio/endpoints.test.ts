@@ -10,6 +10,7 @@ import {
 	CONTACT_ID,
 	CONTACTS,
 	CUSTOM_FIELDS,
+	LIFECYCLE_ACK,
 	MESSAGE,
 	MESSAGE_SENT,
 	MESSAGES,
@@ -74,6 +75,7 @@ describe('contacts.get', () => {
 		respond(fetchMock, CONTACT);
 
 		const result = (await invoke(Contacts.get, { identifier: 'id:1' })) as {
+			// unknown: only the fields asserted below are read from the result.
 			custom_fields?: { name?: string; value?: unknown }[];
 			tags?: string[];
 			assignee?: { email?: string };
@@ -114,7 +116,7 @@ describe('contacts.create', () => {
 			firstName: 'Muhammad',
 			email: 'test@example.com',
 			countryCode: 'MY',
-		})) as { code?: string; message?: string };
+		})) as { code?: string | number; message?: string };
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('POST');
@@ -124,8 +126,8 @@ describe('contacts.create', () => {
 			email: 'test@example.com',
 			countryCode: 'MY',
 		});
-		// The ack carries a string code, unlike an error's numeric one.
-		expect(result.code).toBe('200');
+		// The docs call this code a string; the live API sends the number 200.
+		expect(result.code).toBe(200);
 	});
 
 	it('keeps custom_fields with their formatted values', async () => {
@@ -157,18 +159,19 @@ describe('contacts.create', () => {
 });
 
 describe('contacts.update', () => {
-	it('puts the changed fields', async () => {
-		respond(fetchMock, ACK);
+	it('puts the changed fields and returns the contact ID', async () => {
+		respond(fetchMock, CONTACT_ID);
 
-		await invoke(Contacts.update, {
+		const result = (await invoke(Contacts.update, {
 			identifier: 'id:12345',
 			firstName: 'Updated',
-		});
+		})) as { contactId?: number };
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('PUT');
 		expect(request.path).toBe('/v2/contact/id%3A12345');
 		expect(request.bodyRecord).toEqual({ firstName: 'Updated' });
+		expect(result.contactId).toBe(12345);
 	});
 
 	it('rejects an empty identifier', async () => {
@@ -180,7 +183,7 @@ describe('contacts.update', () => {
 
 describe('contacts.delete', () => {
 	it('deletes by identifier', async () => {
-		respond(fetchMock, ACK);
+		respond(fetchMock, CONTACT_ID);
 
 		await invoke(Contacts.remove, { identifier: 'id:12345' });
 
@@ -192,7 +195,7 @@ describe('contacts.delete', () => {
 
 describe('contacts.upsert', () => {
 	it('uses the create_or_update route, not create', async () => {
-		respond(fetchMock, ACK);
+		respond(fetchMock, CONTACT_ID);
 
 		await invoke(Contacts.upsert, {
 			identifier: 'email:a@b.com',
@@ -204,40 +207,59 @@ describe('contacts.upsert', () => {
 		expect(request.path).toBe('/v2/contact/create_or_update/email%3Aa%40b.com');
 	});
 
-	it('logs the identifier', async () => {
-		respond(fetchMock, ACK);
+	it('logs the identifier kind, never the email itself', async () => {
+		respond(fetchMock, CONTACT_ID);
 
-		await invoke(Contacts.upsert, { identifier: 'id:1', firstName: 'A' });
+		await invoke(Contacts.upsert, {
+			identifier: 'email:test@example.com',
+			firstName: 'A',
+		});
 
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'respondio.contact.upsert',
-			{ identifier: 'id:1' },
+			{ identifierKind: 'email' },
 			'completed',
+		);
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain(
+			'test@example.com',
 		);
 	});
 });
 
 describe('contacts.merge', () => {
-	it('posts both prefixed identifiers', async () => {
-		respond(fetchMock, ACK);
+	it('posts both contact IDs and the merged fields, as the docs specify', async () => {
+		respond(fetchMock, CONTACT_ID);
 
-		await invoke(Contacts.merge, {
-			identifier: 'id:1',
-			mergeWith: 'id:2',
-		});
+		const result = (await invoke(Contacts.merge, {
+			contactIds: [1, 2],
+			firstName: 'Muhammad',
+			email: 'test@example.com',
+		})) as { contactId?: number };
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v2/contact/merge');
 		expect(request.bodyRecord).toEqual({
-			identifier: 'id%3A1',
-			mergeWith: 'id%3A2',
+			contactIds: [1, 2],
+			firstName: 'Muhammad',
+			email: 'test@example.com',
 		});
+		expect(result.contactId).toBe(12345);
 	});
 
-	it('rejects a merge with no second contact', async () => {
+	it('rejects a merge with one contact ID', async () => {
 		await expect(
-			invoke(Contacts.merge, { identifier: 'id:1' }),
+			invoke(Contacts.merge, { contactIds: [1], firstName: 'A' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects prefixed identifiers, which the merge route does not take', async () => {
+		await expect(
+			invoke(Contacts.merge, {
+				contactIds: ['id:1', 'id:2'],
+				firstName: 'A',
+			}),
 		).rejects.toThrow();
 	});
 });
@@ -286,12 +308,16 @@ describe('contacts.list', () => {
 		expect(fetchMock).toHaveBeenCalled();
 	});
 
-	it('accepts a search with no filter', async () => {
+	it('fills in the filter and timezone respond.io requires with a search', async () => {
 		respond(fetchMock, CONTACTS);
 
 		await invoke(Contacts.list, { search: 'jane' });
 
-		expect(lastRequest(fetchMock).bodyRecord?.search).toBe('jane');
+		expect(lastRequest(fetchMock).bodyRecord).toEqual({
+			search: 'jane',
+			filter: { $and: [] },
+			timezone: 'UTC',
+		});
 	});
 
 	it('rejects a filter with both $and and $or', async () => {
@@ -306,9 +332,17 @@ describe('contacts.list', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('rejects a list with neither a filter nor a search', async () => {
-		await expect(invoke(Contacts.list, {})).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
+	it('sends an empty search, an empty filter and UTC when given nothing', async () => {
+		respond(fetchMock, CONTACTS);
+
+		await invoke(Contacts.list, {});
+
+		// respond.io answers 400 when any of the three is missing.
+		expect(lastRequest(fetchMock).bodyRecord).toEqual({
+			search: '',
+			filter: { $and: [] },
+			timezone: 'UTC',
+		});
 	});
 
 	it('rejects an operator respond.io does not document', async () => {
@@ -321,47 +355,75 @@ describe('contacts.list', () => {
 		).rejects.toThrow();
 	});
 
-	it('passes the timezone and cursor', async () => {
+	it('sends the page in the query and the timezone in the body', async () => {
 		respond(fetchMock, CONTACTS);
 
 		await invoke(Contacts.list, {
 			search: 'x',
 			timezone: 'Asia/Kuala_Lumpur',
-			cursorId: 'abc',
+			cursorId: 10,
 			limit: 50,
 		});
 
-		expect(lastRequest(fetchMock).bodyRecord).toMatchObject({
+		const request = lastRequest(fetchMock);
+		expect(request.query).toEqual({ limit: '50', cursorId: '10' });
+		expect(request.bodyRecord).toEqual({
+			search: 'x',
+			filter: { $and: [] },
 			timezone: 'Asia/Kuala_Lumpur',
-			cursorId: 'abc',
-			limit: 50,
 		});
+	});
+
+	it('takes the previous pagination.next URL as the cursor', async () => {
+		respond(fetchMock, CONTACTS);
+
+		await invoke(Contacts.list, {
+			cursorId: 'https://api.respond.io/contact/list?limit=10&cursorId=-10',
+		});
+
+		expect(lastRequest(fetchMock).query.cursorId).toBe('-10');
+	});
+
+	it('rejects a page size of 100, which respond.io refuses', async () => {
+		await expect(invoke(Contacts.list, { limit: 100 })).rejects.toThrow();
 	});
 });
 
 describe('contact tags', () => {
-	it('adds tags with POST', async () => {
-		respond(fetchMock, ACK);
+	it('adds tags with POST, sending the bare array respond.io expects', async () => {
+		respond(fetchMock, CONTACT_ID);
 
-		await invoke(Contacts.addTags, {
+		const result = (await invoke(Contacts.addTags, {
 			identifier: 'id:1',
 			tags: ['vip', 'renewal'],
-		});
+		})) as { contactId?: number };
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('POST');
 		expect(request.path).toBe('/v2/contact/id%3A1/tag');
-		expect(request.bodyRecord).toEqual({ tags: ['vip', 'renewal'] });
+		// `{ tags: [...] }` is answered with 400 "Tags: Cannot be empty".
+		expect(request.body).toEqual(['vip', 'renewal']);
+		expect(result.contactId).toBe(12345);
 	});
 
-	it('removes tags with DELETE on the same path', async () => {
-		respond(fetchMock, ACK);
+	it('removes tags with DELETE on the same path and the same bare array', async () => {
+		respond(fetchMock, CONTACT_ID);
 
 		await invoke(Contacts.deleteTags, { identifier: 'id:1', tags: ['vip'] });
 
 		const request = lastRequest(fetchMock);
 		expect(request.method).toBe('DELETE');
 		expect(request.path).toBe('/v2/contact/id%3A1/tag');
+		expect(request.body).toEqual(['vip']);
+	});
+
+	it('rejects more than 10 tags', async () => {
+		await expect(
+			invoke(Contacts.addTags, {
+				identifier: 'id:1',
+				tags: Array.from({ length: 11 }, (_, i) => `t${i}`),
+			}),
+		).rejects.toThrow();
 	});
 
 	it('rejects an empty tag list', async () => {
@@ -382,20 +444,47 @@ describe('contacts.channels', () => {
 		expect(lastRequest(fetchMock).path).toBe('/v2/contact/id%3A1/channels');
 		expect(result.items?.[0]?.id).toBe(42);
 	});
+
+	it('pages with limit and cursorId in the query', async () => {
+		respond(fetchMock, CONTACT_CHANNELS);
+
+		await invoke(Contacts.channels, {
+			identifier: 'id:1',
+			limit: 20,
+			cursorId:
+				'https://api.respond.io/contact/{identifier}/channels?limit=10&cursorId=10',
+		});
+
+		expect(lastRequest(fetchMock).query).toEqual({
+			limit: '20',
+			cursorId: '10',
+		});
+	});
 });
 
 describe('contacts.lifecycle', () => {
-	it('moves the contact to a stage', async () => {
-		respond(fetchMock, ACK);
+	it('moves the contact to a stage, sending it as name', async () => {
+		respond(fetchMock, LIFECYCLE_ACK);
 
-		await invoke(Contacts.lifecycle, {
+		const result = (await invoke(Contacts.lifecycle, {
 			identifier: 'id:1',
-			lifecycle: 'Hot Lead',
-		});
+			name: 'Hot Lead',
+		})) as { code?: number | string };
 
 		const request = lastRequest(fetchMock);
 		expect(request.path).toBe('/v2/contact/id%3A1/lifecycle/update');
-		expect(request.bodyRecord).toEqual({ lifecycle: 'Hot Lead' });
+		// respond.io answers 400 "check if name is provided" to { lifecycle }.
+		expect(request.bodyRecord).toEqual({ name: 'Hot Lead' });
+		// A number here, which the old string-only ack schema rejected.
+		expect(result.code).toBe(200);
+	});
+
+	it('clears the stage with a null name', async () => {
+		respond(fetchMock, LIFECYCLE_ACK);
+
+		await invoke(Contacts.lifecycle, { identifier: 'id:1', name: null });
+
+		expect(lastRequest(fetchMock).bodyRecord).toEqual({ name: null });
 	});
 });
 
@@ -412,6 +501,17 @@ describe('conversations.assign', () => {
 		expect(request.path).toBe('/v2/contact/id%3A1/conversation/assignee');
 		expect(request.bodyRecord).toEqual({ assignee: 'jane@example.com' });
 		expect(result.contactId).toBe(12345);
+	});
+
+	it('sends a user ID as a number, since respond.io rejects a string ID', async () => {
+		respond(fetchMock, CONTACT_ID);
+
+		await invoke(Conversations.assign, { identifier: 'id:1', assignee: 76 });
+		expect(lastRequest(fetchMock).bodyRecord).toEqual({ assignee: 76 });
+
+		respond(fetchMock, CONTACT_ID);
+		await invoke(Conversations.assign, { identifier: 'id:1', assignee: '76' });
+		expect(lastRequest(fetchMock).bodyRecord).toEqual({ assignee: 76 });
 	});
 
 	it('unassigns by sending null, which is what the docs require', async () => {
@@ -526,6 +626,46 @@ describe('messages.send', () => {
 		).rejects.toThrow('24 hour window');
 	});
 
+	it('sends the snake_case type respond.io documents', async () => {
+		respond(fetchMock, MESSAGE_SENT);
+
+		await invoke(Messages.send, {
+			identifier: 'id:1',
+			channelId: 42,
+			message: { type: 'quick_reply', title: 'Pick one', replies: ['A', 'B'] },
+		});
+
+		expect(lastRequest(fetchMock).bodyRecord?.message).toEqual({
+			type: 'quick_reply',
+			title: 'Pick one',
+			replies: ['A', 'B'],
+		});
+	});
+
+	it('rejects a camelCase type, which is not the wire value', async () => {
+		await expect(
+			invoke(Messages.send, {
+				identifier: 'id:1',
+				channelId: 42,
+				message: { type: 'customPayload', payload: {} },
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a text message with no text before any request', async () => {
+		await expect(
+			invoke(Messages.send, { identifier: 'id:1', message: { type: 'text' } }),
+		).rejects.toThrow();
+		await expect(
+			invoke(Messages.send, {
+				identifier: 'id:1',
+				message: { type: 'text', text: '' },
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a message type respond.io does not document', async () => {
 		await expect(
 			invoke(Messages.send, {
@@ -576,9 +716,10 @@ describe('messages.get', () => {
 		const result = (await invoke(Messages.get, {
 			identifier: 'id:1',
 			messageId: 1,
-		})) as { status?: { status?: string }[] };
+		})) as { status?: { value?: string }[]; sender?: { source?: string } };
 
-		expect(result.status?.[0]?.status).toBe('delivered');
+		expect(result.status?.[0]?.value).toBe('delivered');
+		expect(result.sender?.source).toBe('api');
 	});
 });
 
@@ -589,11 +730,28 @@ describe('messages.list', () => {
 		const result = (await invoke(Messages.list, {
 			identifier: 'id:1',
 			limit: 2,
+			// unknown: only the fields asserted below are read from the result.
 		})) as { items?: unknown[]; pagination?: { next?: string } };
 
 		expect(lastRequest(fetchMock).path).toBe('/v2/contact/id%3A1/message/list');
 		expect(result.items).toHaveLength(2);
 		expect(result.pagination?.next).toBeDefined();
+	});
+
+	it('requests the next page from the previous pagination.next URL', async () => {
+		respond(fetchMock, MESSAGES);
+		const first = (await invoke(Messages.list, { identifier: 'id:1' })) as {
+			pagination?: { next?: string };
+		};
+
+		respond(fetchMock, MESSAGES);
+		await invoke(Messages.list, {
+			identifier: 'id:1',
+			cursorId: first.pagination?.next,
+		});
+
+		// The cursor is read out of the URL rather than sent as the whole URL.
+		expect(lastRequest(fetchMock).query.cursorId).toBe('10');
 	});
 
 	it('passes includeComments', async () => {
@@ -613,6 +771,7 @@ describe('messages.list', () => {
 		const result = (await invoke(Messages.list, {
 			identifier: 'id:1',
 			includeComments: true,
+			// unknown: only the fields asserted below are read from the result.
 		})) as { items?: Record<string, unknown>[] };
 
 		expect(result.items?.[0]?.type).toBe('message');
@@ -625,6 +784,7 @@ describe('messages.list', () => {
 		const result = (await invoke(Messages.list, {
 			identifier: 'id:1',
 			includeComments: true,
+			// unknown: only the fields asserted below are read from the result.
 		})) as { items?: unknown[]; pagination?: { next?: string } };
 
 		// The docs warn that an empty page can still have more to come.
@@ -680,10 +840,28 @@ describe('space', () => {
 
 		const result = (await invoke(Space.getUser, { id: 67890 })) as {
 			email?: string;
+			role?: string;
 		};
 
 		expect(lastRequest(fetchMock).path).toBe('/v2/space/user/67890');
 		expect(result.email).toBe('jane@example.com');
+		expect(result.role).toBe('owner');
+	});
+
+	it('logs the user ID, never the email', async () => {
+		respond(fetchMock, USERS.items[0]);
+
+		await invoke(Space.getUser, { id: 67890 });
+
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'respondio.space.getUser',
+			{ userId: 67890 },
+			'completed',
+		);
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain(
+			'jane@example.com',
+		);
 	});
 
 	it('lists the connected channels', async () => {
@@ -703,34 +881,43 @@ describe('space', () => {
 
 		const result = (await invoke(Space.listTemplates, {
 			channelId: 42,
-		})) as { items?: { name?: string }[] };
+			limit: 20,
+		})) as { items?: { name?: string; languageCode?: string }[] };
 
-		expect(lastRequest(fetchMock).path).toBe('/v2/space/channel/42/template');
+		const request = lastRequest(fetchMock);
+		expect(request.path).toBe('/v2/space/channel/42/template');
+		expect(request.query).toEqual({ limit: '20' });
 		expect(result.items?.[0]?.name).toBe('order_update');
+		expect(result.items?.[0]?.languageCode).toBe('en');
 	});
 
 	it('lists closing notes', async () => {
 		respond(fetchMock, CLOSING_NOTES);
 
-		const result = (await invoke(Space.listClosingNotes, {})) as {
-			items?: { name?: string; category?: string }[];
-		};
+		const result = (await invoke(Space.listClosingNotes, {
+			cursorId:
+				'https://api.respond.io/space/closing_notes?limit=10&cursorId=10',
+		})) as { items?: { category?: string; description?: string }[] };
 
-		expect(lastRequest(fetchMock).path).toBe('/v2/space/closing_notes');
+		const request = lastRequest(fetchMock);
+		expect(request.path).toBe('/v2/space/closing_notes');
+		expect(request.query).toEqual({ cursorId: '10' });
 		expect(result.items).toHaveLength(2);
-		expect(result.items?.[0]?.category).toBe('Support');
+		expect(result.items?.[0]?.category).toBe('General Inquiry');
 	});
 
 	it('lists custom fields with their types', async () => {
 		respond(fetchMock, CUSTOM_FIELDS);
 
-		const result = (await invoke(Space.listCustomFields, {})) as {
-			items?: { name?: string; type?: string; options?: string[] }[];
+		const result = (await invoke(Space.listCustomFields, { limit: 50 })) as {
+			items?: { name?: string; dataType?: string; allowedValues?: string[] }[];
 		};
 
-		expect(lastRequest(fetchMock).path).toBe('/v2/space/custom_field');
-		expect(result.items?.[0]?.type).toBe('url');
-		expect(result.items?.[1]?.options).toEqual(['free', 'pro']);
+		const request = lastRequest(fetchMock);
+		expect(request.path).toBe('/v2/space/custom_field');
+		expect(request.query).toEqual({ limit: '50' });
+		expect(result.items?.[0]?.dataType).toBe('url');
+		expect(result.items?.[1]?.allowedValues).toEqual(['free', 'pro']);
 	});
 });
 

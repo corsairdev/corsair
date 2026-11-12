@@ -1,5 +1,5 @@
 import type { RespondioEndpoints } from '..';
-import { contactIdentifier } from '../client';
+import { contactIdentifier, cursorFrom, identifierKind } from '../client';
 import { call } from './call';
 import {
 	RespondioEndpointInputSchemas as Inputs,
@@ -53,7 +53,8 @@ export const create: RespondioEndpoints['contactCreate'] = (ctx, input) =>
 			replayable: false,
 		}),
 		{
-			log: (parsed) => ({ identifier: parsed.identifier }),
+			// The kind only: the identifier itself can be an email or a phone number.
+			log: (parsed) => ({ identifierKind: identifierKind(parsed.identifier) }),
 		},
 	);
 
@@ -74,7 +75,8 @@ export const update: RespondioEndpoints['contactUpdate'] = (ctx, input) =>
 			replayable: true,
 		}),
 		{
-			log: (parsed) => ({ identifier: parsed.identifier }),
+			// The kind only: the identifier itself can be an email or a phone number.
+			log: (parsed) => ({ identifierKind: identifierKind(parsed.identifier) }),
 		},
 	);
 
@@ -94,7 +96,8 @@ export const remove: RespondioEndpoints['contactDelete'] = (ctx, input) =>
 			replayable: false,
 		}),
 		{
-			log: (parsed) => ({ identifier: parsed.identifier }),
+			// The kind only: the identifier itself can be an email or a phone number.
+			log: (parsed) => ({ identifierKind: identifierKind(parsed.identifier) }),
 		},
 	);
 
@@ -120,7 +123,8 @@ export const upsert: RespondioEndpoints['contactUpsert'] = (ctx, input) =>
 			replayable: true,
 		}),
 		{
-			log: (parsed) => ({ identifier: parsed.identifier }),
+			// The kind only: the identifier itself can be an email or a phone number.
+			log: (parsed) => ({ identifierKind: identifierKind(parsed.identifier) }),
 		},
 	);
 
@@ -133,21 +137,19 @@ export const merge: RespondioEndpoints['contactMerge'] = (ctx, input) =>
 			output: Outputs.contactMerge,
 		},
 		input,
-		({ identifier, mergeWith }) => ({
+		(fields) => ({
 			method: 'POST',
 			path: '/contact/merge',
-			body: {
-				identifier: contactIdentifier(identifier),
-				mergeWith: contactIdentifier(mergeWith),
-			},
+			// The IDs and the merged contact's field values all travel in the body.
+			body: fields,
 			// The second contact is removed by the merge, so a replay finds nothing to
 			// merge.
 			replayable: false,
 		}),
 		{
-			log: (parsed) => ({
-				identifier: parsed.identifier,
-				mergedWith: parsed.mergeWith,
+			log: (parsed, result) => ({
+				contactId: result.contactId ?? undefined,
+				merged: parsed.contactIds.length,
 			}),
 		},
 	);
@@ -164,7 +166,15 @@ export const list: RespondioEndpoints['contactList'] = (ctx, input) =>
 		({ filter, search, timezone, limit, cursorId }) => ({
 			method: 'POST',
 			path: '/contact/list',
-			body: { filter, search, timezone, limit, cursorId },
+			// The page travels in the query. The body must carry all three of
+			// search, filter and timezone or respond.io answers 400, so the
+			// defaults match every contact.
+			query: { limit, cursorId: cursorFrom(cursorId) },
+			body: {
+				search: search ?? '',
+				filter: filter ?? { $and: [] },
+				timezone: timezone ?? 'UTC',
+			},
 			replayable: true,
 		}),
 		{
@@ -189,7 +199,8 @@ export const addTags: RespondioEndpoints['contactAddTags'] = (ctx, input) =>
 		({ identifier, tags }) => ({
 			method: 'POST',
 			path: `/contact/${contactIdentifier(identifier)}/tag`,
-			body: { tags },
+			// The body is the bare array; `{ tags }` is rejected with a 400.
+			body: tags,
 			// Adding a tag that is already there leaves the same set.
 			replayable: true,
 		}),
@@ -213,7 +224,8 @@ export const deleteTags: RespondioEndpoints['contactDeleteTags'] = (
 		({ identifier, tags }) => ({
 			method: 'DELETE',
 			path: `/contact/${contactIdentifier(identifier)}/tag`,
-			body: { tags },
+			// The body is the bare array; `{ tags }` is rejected with a 400.
+			body: tags,
 			// Removing a tag that is already gone leaves the same set.
 			replayable: true,
 		}),
@@ -231,10 +243,11 @@ export const channels: RespondioEndpoints['contactChannels'] = (ctx, input) =>
 			output: Outputs.contactChannels,
 		},
 		input,
-		({ identifier }) => ({
+		({ identifier, limit, cursorId }) => ({
 			method: 'GET',
 			// Plural on this route alone: every other contact sub-route is singular.
 			path: `/contact/${contactIdentifier(identifier)}/channels`,
+			query: { limit, cursorId: cursorFrom(cursorId) },
 			replayable: true,
 		}),
 		{
@@ -251,14 +264,15 @@ export const lifecycle: RespondioEndpoints['contactLifecycle'] = (ctx, input) =>
 			output: Outputs.contactLifecycle,
 		},
 		input,
-		({ identifier, lifecycle: stage }) => ({
+		({ identifier, name }) => ({
 			method: 'POST',
 			path: `/contact/${contactIdentifier(identifier)}/lifecycle/update`,
-			body: { lifecycle: stage },
+			// respond.io reads `name`; null clears the stage.
+			body: { name },
 			// Setting the same stage again leaves the contact in that stage.
 			replayable: true,
 		}),
 		{
-			log: (parsed) => ({ lifecycle: parsed.lifecycle }),
+			log: (parsed) => ({ cleared: parsed.name === null }),
 		},
 	);

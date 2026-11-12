@@ -7,6 +7,20 @@ import {
 } from './types';
 
 /**
+ * respond.io takes the assignee as an integer user ID or an email and answers 400
+ * to an ID sent as a string, so a numeric string is sent as a number.
+ */
+function assigneeValue(
+	assignee: string | number | null | undefined,
+): string | number | null {
+	if (assignee === undefined || assignee === null) return null;
+	if (typeof assignee === 'string' && /^\d+$/.test(assignee)) {
+		return Number(assignee);
+	}
+	return assignee;
+}
+
+/**
  * Assigns a user, or unassigns with a null assignee.
  *
  * The docs say a contact is unassigned by "leaving the assignee value empty", so
@@ -26,7 +40,7 @@ export const assign: RespondioEndpoints['conversationAssign'] = (ctx, input) =>
 			path: `/contact/${contactIdentifier(identifier)}/conversation/assignee`,
 			// The key is always sent: an absent assignee would read as "no change",
 			// while null is what unassigns.
-			body: { assignee: assignee ?? null },
+			body: { assignee: assigneeValue(assignee) },
 			// Assigning the same user twice leaves the same assignee.
 			replayable: true,
 		}),

@@ -1,5 +1,5 @@
 import type { RespondioEndpoints } from '..';
-import { segment } from '../client';
+import { cursorFrom, segment } from '../client';
 import { call } from './call';
 import {
 	RespondioEndpointInputSchemas as Inputs,
@@ -18,7 +18,7 @@ export const listUsers: RespondioEndpoints['spaceListUsers'] = (ctx, input) =>
 		({ limit, cursorId }) => ({
 			method: 'GET',
 			path: '/space/user',
-			query: { limit, cursorId },
+			query: { limit, cursorId: cursorFrom(cursorId) },
 			replayable: true,
 		}),
 		{
@@ -41,7 +41,7 @@ export const getUser: RespondioEndpoints['spaceGetUser'] = (ctx, input) =>
 			replayable: true,
 		}),
 		{
-			log: (_, result) => ({ email: result.email ?? undefined }),
+			log: (_, result) => ({ userId: result.id ?? undefined }),
 		},
 	);
 
@@ -57,13 +57,13 @@ export const listChannels: RespondioEndpoints['spaceChannels'] = (ctx, input) =>
 		({ limit, cursorId }) => ({
 			method: 'GET',
 			path: '/space/channel',
-			query: { limit, cursorId },
+			query: { limit, cursorId: cursorFrom(cursorId) },
 			replayable: true,
 		}),
 		{
 			log: (_, result) => ({
 				count: result.items?.length ?? 0,
-				// The channel ID is what a customPayload message needs, so its presence
+				// The channel ID is what a custom_payload message needs, so its presence
 				// is worth reporting.
 				channels: result.items?.length ?? 0,
 			}),
@@ -82,9 +82,10 @@ export const listTemplates: RespondioEndpoints['spaceTemplates'] = (
 			output: Outputs.spaceTemplates,
 		},
 		input,
-		({ channelId }) => ({
+		({ channelId, limit, cursorId }) => ({
 			method: 'GET',
 			path: `/space/channel/${segment(channelId)}/template`,
+			query: { limit, cursorId: cursorFrom(cursorId) },
 			replayable: true,
 		}),
 		{
@@ -105,9 +106,10 @@ export const listClosingNotes: RespondioEndpoints['spaceClosingNotes'] = (
 			output: Outputs.spaceClosingNotes,
 		},
 		input,
-		() => ({
+		({ limit, cursorId }) => ({
 			method: 'GET',
 			path: '/space/closing_notes',
+			query: { limit, cursorId: cursorFrom(cursorId) },
 			replayable: true,
 		}),
 		{
@@ -132,9 +134,10 @@ export const listCustomFields: RespondioEndpoints['spaceCustomFields'] = (
 			output: Outputs.spaceCustomFields,
 		},
 		input,
-		() => ({
+		({ limit, cursorId }) => ({
 			method: 'GET',
 			path: '/space/custom_field',
+			query: { limit, cursorId: cursorFrom(cursorId) },
 			replayable: true,
 		}),
 		{

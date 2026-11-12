@@ -19,6 +19,26 @@ const CountryCodeSchema = z
 	.string()
 	.describe('An ISO 3166-1 alpha-2 country code, such as MY or US.');
 
+/** Page size on every list route: respond.io takes 1 to 99, default 10. */
+const LimitSchema = z
+	.number()
+	.int()
+	.min(1)
+	.max(99)
+	.optional()
+	.describe('Page size, 1 to 99. respond.io defaults to 10.');
+
+/**
+ * The cursor on every list route. respond.io answers `pagination.next` with a
+ * whole URL, so either that URL or the bare cursorId is accepted.
+ */
+const CursorSchema = z
+	.union([z.string(), z.number().int()])
+	.optional()
+	.describe(
+		'Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it.',
+	);
+
 /**
  * One custom field. The `value` is a string on the wire even for a number, date,
  * time or checkbox, and the docs spell out the format each type needs:
@@ -63,6 +83,12 @@ const UserSchema = z
 		firstName: z.string().nullish(),
 		lastName: z.string().nullish(),
 		email: z.string().nullish(),
+		role: z.string().nullish().describe('owner, manager or agent.'),
+		team: z
+			.object({ id: z.number().nullish(), name: z.string().nullish() })
+			.loose()
+			.nullish(),
+		restrictions: z.array(z.string()).nullish(),
 	})
 	.loose();
 
@@ -88,6 +114,7 @@ export const ContactSchema = ContactFieldsSchema.extend({
 		.describe('The lifecycle stage name, such as Hot Lead.'),
 	created_at: z.number().nullish().describe('Unix timestamp in seconds.'),
 	isBlocked: z.boolean().nullish(),
+	locale: z.string().nullish(),
 }).loose();
 
 export type RespondioContact = z.infer<typeof ContactSchema>;
@@ -119,18 +146,38 @@ const ContactCreateInputSchema = ContactFieldsSchema.extend({
 export type ContactCreateInput = z.infer<typeof ContactCreateInputSchema>;
 
 /**
- * The create, update, delete and tag routes answer a `code` and a `message` rather
- * than the contact, which is worth knowing: a caller who wants the record back
- * must read it separately.
+ * Create and the lifecycle update answer a `code` and a `message` rather than the
+ * contact, so a caller who wants the record back must read it separately. The
+ * docs call `code` a string on create; the live API sends the number 200.
  */
 const AckSchema = z
 	.object({
-		code: z.string().nullish().describe('A string, unlike the error code.'),
+		code: z
+			.union([z.number(), z.string()])
+			.nullish()
+			.describe('200 on success.'),
 		message: z.string().nullish(),
 	})
 	.loose();
 
 export type RespondioAck = z.infer<typeof AckSchema>;
+
+/**
+ * Update, delete, upsert, merge, both tag routes and both conversation routes
+ * answer with the ID of the contact they acted on, not the record.
+ */
+const ContactIdResponseSchema = z
+	.object({
+		contactId: z
+			.number()
+			.nullish()
+			.describe('The ID of the contact the action was performed on.'),
+	})
+	.loose();
+
+export type RespondioContactIdResponse = z.infer<
+	typeof ContactIdResponseSchema
+>;
 
 const ContactCreateResponseSchema = AckSchema;
 
@@ -150,7 +197,7 @@ const ContactUpdateInputSchema = z.object({
 
 export type ContactUpdateInput = z.infer<typeof ContactUpdateInputSchema>;
 
-const ContactUpdateResponseSchema = AckSchema;
+const ContactUpdateResponseSchema = ContactIdResponseSchema;
 
 export type ContactUpdateResponse = z.infer<typeof ContactUpdateResponseSchema>;
 
@@ -160,7 +207,7 @@ const ContactDeleteInputSchema = z.object({
 
 export type ContactDeleteInput = z.infer<typeof ContactDeleteInputSchema>;
 
-const ContactDeleteResponseSchema = AckSchema;
+const ContactDeleteResponseSchema = ContactIdResponseSchema;
 
 export type ContactDeleteResponse = z.infer<typeof ContactDeleteResponseSchema>;
 
@@ -174,24 +221,25 @@ const ContactUpsertInputSchema = ContactFieldsSchema.extend({
 
 export type ContactUpsertInput = z.infer<typeof ContactUpsertInputSchema>;
 
-const ContactUpsertResponseSchema = AckSchema;
+const ContactUpsertResponseSchema = ContactIdResponseSchema;
 
 export type ContactUpsertResponse = z.infer<typeof ContactUpsertResponseSchema>;
 
-const ContactMergeInputSchema = z.object({
-	identifier: z
-		.string()
-		.min(1)
-		.describe('The contact that survives the merge.'),
-	mergeWith: z
-		.string()
-		.min(1)
-		.describe('The contact merged into the first one and then removed.'),
+/**
+ * Merge takes the two contact IDs plus the field values the merged contact keeps.
+ * The older contact becomes the primary one and the other is removed.
+ */
+const ContactMergeInputSchema = ContactFieldsSchema.extend({
+	contactIds: z
+		.tuple([z.number().int(), z.number().int()])
+		.describe(
+			'The IDs of the two contacts to merge. The older one survives; the other is removed.',
+		),
 });
 
 export type ContactMergeInput = z.infer<typeof ContactMergeInputSchema>;
 
-const ContactMergeResponseSchema = AckSchema;
+const ContactMergeResponseSchema = ContactIdResponseSchema;
 
 export type ContactMergeResponse = z.infer<typeof ContactMergeResponseSchema>;
 
@@ -228,39 +276,39 @@ const FilterConditionSchema = z.object({
 		),
 });
 
-const ContactListInputSchema = z
-	.object({
-		filter: z
-			.object({
-				$and: z.array(FilterConditionSchema).optional(),
-				$or: z.array(FilterConditionSchema).optional(),
-			})
-			.refine(
-				(value) => (value.$and === undefined) !== (value.$or === undefined),
-				'Give either $and or $or, not both and not neither.',
-			)
-			.optional()
-			.describe('Every condition in $and must hold; any one in $or must.'),
-		search: z
-			.string()
-			.optional()
-			.describe('A free-text search across the contacts.'),
-		timezone: z
-			.string()
-			.optional()
-			.describe(
-				'An IANA timezone used to interpret any timestamp condition, such as Asia/Kuala_Lumpur.',
-			),
-		limit: z.number().int().min(1).max(100).optional().describe('Page size.'),
-		cursorId: z
-			.string()
-			.optional()
-			.describe('The cursor for the next page, from the previous answer.'),
-	})
-	.refine((value) => value.filter !== undefined || value.search !== undefined, {
-		message:
-			'Give a filter or a search; respond.io rejects a list request with neither.',
-	});
+/**
+ * respond.io rejects a list body without all three of `search`, `filter` and
+ * `timezone` (checked live), so each has a default that matches every contact.
+ */
+const ContactListInputSchema = z.object({
+	filter: z
+		.object({
+			$and: z.array(FilterConditionSchema).optional(),
+			$or: z.array(FilterConditionSchema).optional(),
+		})
+		.refine(
+			(value) => (value.$and === undefined) !== (value.$or === undefined),
+			'Give either $and or $or, not both and not neither.',
+		)
+		.optional()
+		.describe(
+			'Every condition in $and must hold; any one in $or must. Defaults to no conditions.',
+		),
+	search: z
+		.string()
+		.optional()
+		.describe(
+			'A free-text search across the contacts. Defaults to empty, which matches every contact.',
+		),
+	timezone: z
+		.string()
+		.optional()
+		.describe(
+			'An IANA timezone used to interpret any timestamp condition, such as Asia/Kuala_Lumpur. Defaults to UTC.',
+		),
+	limit: LimitSchema,
+	cursorId: CursorSchema,
+});
 
 export type ContactListInput = z.infer<typeof ContactListInputSchema>;
 
@@ -314,17 +362,20 @@ const ContactTagsInputSchema = z.object({
 	tags: z
 		.array(z.string().min(1))
 		.min(1)
-		.describe('The tags to add or remove.'),
+		.max(10)
+		.describe('The tags to add or remove, 1 to 10.'),
 });
 
 export type ContactTagsInput = z.infer<typeof ContactTagsInputSchema>;
 
-const ContactTagsResponseSchema = AckSchema;
+const ContactTagsResponseSchema = ContactIdResponseSchema;
 
 export type ContactTagsResponse = z.infer<typeof ContactTagsResponseSchema>;
 
 const ContactChannelsInputSchema = z.object({
 	identifier: z.string().min(1),
+	limit: LimitSchema,
+	cursorId: CursorSchema,
 });
 
 export type ContactChannelsInput = z.infer<typeof ContactChannelsInputSchema>;
@@ -333,8 +384,13 @@ const ContactChannelSchema = z
 	.object({
 		id: z.number().nullish(),
 		name: z.string().nullish(),
-		source: z.string().nullish(),
-		status: z.string().nullish(),
+		source: z.string().nullish().describe('Such as whatsapp or telegram.'),
+		meta: JsonObjectSchema.nullish().describe(
+			'What the channel knows about the contact; varies by channel.',
+		),
+		lastMessageTime: z.number().nullish().describe('Unix seconds.'),
+		lastIncomingMessageTime: z.number().nullish().describe('Unix seconds.'),
+		created_at: z.number().nullish().describe('Unix seconds.'),
 	})
 	.loose();
 
@@ -351,10 +407,13 @@ export type ContactChannelsResponse = z.infer<
 
 const ContactLifecycleInputSchema = z.object({
 	identifier: z.string().min(1),
-	lifecycle: z
+	name: z
 		.string()
 		.min(1)
-		.describe('The lifecycle stage to move the contact to.'),
+		.nullable()
+		.describe(
+			'The lifecycle stage to move the contact to. null removes the stage.',
+		),
 });
 
 export type ContactLifecycleInput = z.infer<typeof ContactLifecycleInputSchema>;
@@ -370,25 +429,15 @@ export type ContactLifecycleResponse = z.infer<
 const ConversationAssignInputSchema = z.object({
 	identifier: z.string().min(1),
 	assignee: z
-		.string()
+		.union([z.number().int(), z.string().min(1)])
 		.nullish()
 		.describe(
-			'A user ID or email. Leave it out or send null to unassign the contact.',
+			'A user ID (from space.listUsers) or a user email. Leave it out or send null to unassign the contact.',
 		),
 });
 
 export type ConversationAssignInput = z.infer<
 	typeof ConversationAssignInputSchema
->;
-
-const ContactIdResponseSchema = z
-	.object({
-		contactId: z.number().nullish(),
-	})
-	.loose();
-
-export type RespondioContactIdResponse = z.infer<
-	typeof ContactIdResponseSchema
 >;
 
 const ConversationAssignResponseSchema = ContactIdResponseSchema;
@@ -424,22 +473,11 @@ export type ConversationStatusResponse = z.infer<
 
 // ── messaging ─────────────────────────────────────────────────────────────
 
-/** A plain text message. */
-const TextMessageSchema = z.object({
-	type: z.literal('text'),
-	text: z.string().min(1),
-	messageTag: z
-		.string()
-		.optional()
-		.describe(
-			'Required when the channel is Facebook or Instagram and the message is outside the 24-hour window: ACCOUNT_UPDATE, POST_PURCHASE_UPDATE or CONFIRMED_EVENT_UPDATE.',
-		),
-});
-
 /**
- * The documented message kinds. Only `text` is modelled in full; the others are
- * kept loose because each has its own shape and respond.io validates it against
- * the channel's capabilities. `text` is the one that works on every channel.
+ * The documented message kinds, by the `type` value respond.io expects on the
+ * wire (snake_case, as in each kind's schema page). Only `text` is checked in
+ * full; the others are kept loose because each has its own shape and respond.io
+ * validates it against the channel's capabilities.
  */
 const MessageSchema = z
 	.object({
@@ -447,19 +485,34 @@ const MessageSchema = z
 			.enum([
 				'text',
 				'attachment',
-				'customPayload',
-				'quickReply',
-				'whatsAppTemplate',
+				'custom_payload',
+				'quick_reply',
+				'whatsapp_template',
 				'email',
-				'facebookTemplate',
+				'facebook_template',
 			])
 			.describe(
-				'text works on every channel; the others need a matching channel, and a customPayload also needs channelId.',
+				'text works on every channel; the others need a matching channel, and a custom_payload also needs channelId.',
 			),
-		text: z.string().nullish().describe('The body, for type text.'),
-		messageTag: z.string().nullish(),
+		text: z.string().nullish().describe('The body, for type text or email.'),
+		messageTag: z
+			.enum([
+				'ACCOUNT_UPDATE',
+				'POST_PURCHASE_UPDATE',
+				'CONFIRMED_EVENT_UPDATE',
+			])
+			.nullish()
+			.describe(
+				'Required when the channel is Facebook or Instagram and the message is outside the 24-hour window.',
+			),
 	})
-	.loose();
+	.loose()
+	.refine(
+		(message) =>
+			message.type !== 'text' ||
+			(typeof message.text === 'string' && message.text.length > 0),
+		{ message: 'A text message needs a non-empty text.', path: ['text'] },
+	);
 
 const MessageSendInputSchema = z.object({
 	identifier: z.string().min(1),
@@ -468,7 +521,7 @@ const MessageSendInputSchema = z.object({
 		.int()
 		.nullish()
 		.describe(
-			'The channel to send on. Omit it to use the last channel the contact interacted on; a customPayload message requires it.',
+			'The channel to send on. Omit it to use the last channel the contact interacted on; a custom_payload message requires it.',
 		),
 	message: MessageSchema,
 });
@@ -494,8 +547,12 @@ export type MessageGetInput = z.infer<typeof MessageGetInputSchema>;
 
 const MessageStatusSchema = z
 	.object({
-		status: z.string().nullish().describe('Such as delivered, read or failed.'),
-		timestamp: z.number().nullish(),
+		value: z
+			.string()
+			.nullish()
+			.describe('pending, sent, delivered, read or failed.'),
+		timestamp: z.number().nullish().describe('Unix seconds.'),
+		message: z.string().nullish().describe('The reason, for a failure.'),
 	})
 	.loose();
 
@@ -517,12 +574,15 @@ const MessageResultSchema = z
 			.describe('The message body, whose shape follows its type.'),
 		status: z.array(MessageStatusSchema).nullish(),
 		sender: z
-			.object({ type: z.string().nullish() })
+			.object({
+				source: z
+					.string()
+					.nullish()
+					.describe('user, ai_agent, broadcast, workflow, api or echo.'),
+			})
 			.loose()
 			.nullish()
-			.describe(
-				'Who sent it: a user, AI Agent, broadcast, workflow, API or echo.',
-			),
+			.describe('Who sent it.'),
 	})
 	.loose();
 
@@ -534,12 +594,7 @@ export type MessageGetResponse = z.infer<typeof MessageGetResponseSchema>;
 
 const MessageListInputSchema = z.object({
 	identifier: z.string().min(1),
-	cursorId: z
-		.string()
-		.optional()
-		.describe(
-			'Where the next batch starts, from the previous pagination.next.',
-		),
+	cursorId: CursorSchema,
 	includeComments: z
 		.boolean()
 		.optional()
@@ -573,10 +628,13 @@ export type MessageListResponse = z.infer<typeof MessageListResponseSchema>;
 
 // ── space ─────────────────────────────────────────────────────────────────
 
-const SpaceListUsersInputSchema = z.object({
-	limit: z.number().int().min(1).optional(),
-	cursorId: z.string().optional(),
+/** The paging every space list route takes. */
+const SpacePageInputSchema = z.object({
+	limit: LimitSchema,
+	cursorId: CursorSchema,
 });
+
+const SpaceListUsersInputSchema = SpacePageInputSchema;
 
 export type SpaceListUsersInput = z.infer<typeof SpaceListUsersInputSchema>;
 
@@ -599,10 +657,7 @@ const SpaceGetUserResponseSchema = UserSchema;
 
 export type SpaceGetUserResponse = z.infer<typeof SpaceGetUserResponseSchema>;
 
-const SpaceChannelsInputSchema = z.object({
-	limit: z.number().int().min(1).optional(),
-	cursorId: z.string().optional(),
-});
+const SpaceChannelsInputSchema = SpacePageInputSchema;
 
 export type SpaceChannelsInput = z.infer<typeof SpaceChannelsInputSchema>;
 
@@ -611,8 +666,7 @@ const SpaceChannelDetailSchema = z
 		id: z.number().nullish(),
 		name: z.string().nullish(),
 		source: z.string().nullish().describe('Such as whatsapp or facebook.'),
-		status: z.string().nullish(),
-		created_at: z.number().nullish(),
+		created_at: z.number().nullish().describe('Unix seconds.'),
 	})
 	.loose();
 
@@ -625,7 +679,7 @@ const SpaceChannelsResponseSchema = z
 
 export type SpaceChannelsResponse = z.infer<typeof SpaceChannelsResponseSchema>;
 
-const SpaceTemplatesInputSchema = z.object({
+const SpaceTemplatesInputSchema = SpacePageInputSchema.extend({
 	channelId: z.number().int().describe('The channel whose templates to list.'),
 });
 
@@ -643,9 +697,14 @@ const MessageTemplateSchema = z
 	.object({
 		id: z.number().nullish(),
 		name: z.string().nullish(),
-		language: z.string().nullish(),
-		status: z.string().nullish(),
-		category: z.string().nullish(),
+		languageCode: z.string().nullish().describe('ISO 639-1, such as en.'),
+		category: z.string().nullish().describe('Such as MARKETING.'),
+		status: z.string().nullish().describe('Such as approved.'),
+		channelId: z.number().nullish(),
+		components: z
+			.array(JsonObjectSchema)
+			.nullish()
+			.describe('The header, body, footer and buttons.'),
 	})
 	.loose();
 
@@ -660,13 +719,16 @@ export type SpaceTemplatesResponse = z.infer<
 	typeof SpaceTemplatesResponseSchema
 >;
 
-const SpaceClosingNotesInputSchema = z.object({});
+const SpaceClosingNotesInputSchema = SpacePageInputSchema;
 
+/** A closing note: `category` is the name a conversation close passes back. */
 const ClosingNoteSchema = z
 	.object({
-		id: z.number().nullish(),
-		name: z.string().nullish(),
-		category: z.string().nullish(),
+		category: z
+			.string()
+			.nullish()
+			.describe('The closing note name, which conversations.status takes.'),
+		description: z.string().nullish(),
 	})
 	.loose();
 
@@ -681,17 +743,21 @@ export type SpaceClosingNotesResponse = z.infer<
 	typeof SpaceClosingNotesResponseSchema
 >;
 
-const SpaceCustomFieldsInputSchema = z.object({});
+const SpaceCustomFieldsInputSchema = SpacePageInputSchema;
 
 const CustomFieldDefinitionSchema = z
 	.object({
 		id: z.number().nullish(),
 		name: z.string().nullish(),
-		type: z
+		description: z.string().nullish(),
+		dataType: z
 			.string()
 			.nullish()
 			.describe('text, number, email, url, list, date, time or checkbox.'),
-		options: z.array(z.string()).nullish().describe('For a list field.'),
+		allowedValues: z
+			.array(z.string())
+			.nullish()
+			.describe('The options, for a list field.'),
 	})
 	.loose();
 

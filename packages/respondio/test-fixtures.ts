@@ -35,7 +35,15 @@ export const CONTACTS = {
 };
 
 // The write routes answer a code and a message, not the record.
-export const ACK = { code: '200', message: 'Contact added successfully!' };
+// Live answer from contacts.create (11-12): the code is a number, though the
+// docs call it a string.
+export const ACK = { code: 200, message: 'Contact added successfully!' };
+
+// Live answer from contacts.lifecycle (11-12).
+export const LIFECYCLE_ACK = {
+	code: 200,
+	message: 'Contact lifecycle stage updated successfully!',
+};
 
 export const COMMENT = {
 	contactId: 12345,
@@ -57,11 +65,13 @@ export const MESSAGE = {
 		type: 'text',
 		text: 'There has been an update in your account...',
 	},
+	// The docs' field names: a status entry's state is `value`, a sender's kind
+	// is `source`.
 	status: [
-		{ status: 'delivered', timestamp: 1662979868 },
-		{ status: 'read', timestamp: 1662979900 },
+		{ value: 'delivered', timestamp: 1662979868 },
+		{ value: 'read', timestamp: 1662979900 },
 	],
-	sender: { type: 'api' },
+	sender: { source: 'api', userId: null, teamId: null },
 };
 
 export const MESSAGES = {
@@ -77,11 +87,15 @@ export const MESSAGES = {
 export const MESSAGES_WITH_COMMENTS = {
 	items: [
 		{ type: 'message', messageId: 1262965213, traffic: 'outgoing' },
+		// A comment item as the live API returned it on 11-12.
 		{
 			type: 'comment',
+			commentId: 1794476858761029,
 			contactId: 12345,
 			text: 'A note',
-			created_at: 1662979868,
+			mentionedUserIds: [],
+			attachments: [],
+			sender: { source: 'api', userId: null, teamId: null },
 		},
 	],
 	pagination: { next: null, previous: null },
@@ -102,6 +116,10 @@ export const USERS = {
 			firstName: 'Jane',
 			lastName: 'Doe',
 			email: 'jane@example.com',
+			// role, team and restrictions as the live API sends them (11-12).
+			role: 'owner',
+			team: null,
+			restrictions: null,
 		},
 	],
 	pagination: { next: null, previous: null },
@@ -125,27 +143,43 @@ export const TEMPLATES = {
 		{
 			id: 1,
 			name: 'order_update',
-			language: 'en',
+			languageCode: 'en',
 			status: 'approved',
 			category: 'UTILITY',
+			channelId: 42,
+			components: [{ type: 'body', text: 'Your order has shipped.' }],
 		},
 	],
 	pagination: { next: null, previous: null },
 };
 
 export const CLOSING_NOTES = {
+	// Live shape (11-12): a closing note is a category and a description.
 	items: [
-		{ id: 1, name: 'Resolved', category: 'Support' },
-		{ id: 2, name: 'Duplicate', category: 'Support' },
+		{
+			category: 'General Inquiry',
+			description: 'Questions related to products or services.',
+		},
+		{
+			category: 'Others',
+			description: 'For conversations that match no other category.',
+		},
 	],
 	pagination: { next: null, previous: null },
 };
 
 export const CUSTOM_FIELDS = {
 	items: [
-		{ id: 1, name: 'Company Website', type: 'url' },
-		{ id: 2, name: 'Plan', type: 'list', options: ['free', 'pro'] },
-		{ id: 3, name: 'Renewal', type: 'date' },
+		// The docs' field names: dataType and allowedValues.
+		{ id: 1, name: 'company_website', description: 'Website', dataType: 'url' },
+		{
+			id: 2,
+			name: 'plan',
+			description: 'Plan',
+			dataType: 'list',
+			allowedValues: ['free', 'pro'],
+		},
+		{ id: 3, name: 'renewal', description: 'Renewal', dataType: 'date' },
 	],
 	pagination: { next: null, previous: null },
 };

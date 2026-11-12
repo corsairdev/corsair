@@ -1,5 +1,5 @@
 import type { RespondioEndpoints } from '..';
-import { contactIdentifier } from '../client';
+import { contactIdentifier, cursorFrom } from '../client';
 import { call } from './call';
 import {
 	RespondioEndpointInputSchemas as Inputs,
@@ -11,7 +11,7 @@ import {
  *
  * Without a `channelId` respond.io uses the last channel the contact interacted
  * on, which is convenient but means a message can go somewhere unexpected if the
- * contact has moved; a customPayload message *requires* the channel.
+ * contact has moved; a custom_payload message *requires* the channel.
  */
 export const send: RespondioEndpoints['messageSend'] = (ctx, input) =>
 	call(
@@ -81,7 +81,7 @@ export const list: RespondioEndpoints['messageList'] = (ctx, input) =>
 		({ identifier, cursorId, includeComments, limit }) => ({
 			method: 'GET',
 			path: `/contact/${contactIdentifier(identifier)}/message/list`,
-			query: { cursorId, includeComments, limit },
+			query: { cursorId: cursorFrom(cursorId), includeComments, limit },
 			replayable: true,
 		}),
 		{

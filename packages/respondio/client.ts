@@ -244,6 +244,29 @@ export function prefixedIdentifier(value: string): string {
 	return encodeURIComponent(value);
 }
 
+/**
+ * The kind of an identifier (`id`, `email` or `phone`), which is what the event
+ * log records: the value itself can be an email address or a phone number.
+ */
+export function identifierKind(value: string): 'id' | 'email' | 'phone' {
+	const match = /^(id|email|phone):/.exec(value);
+	return (match?.[1] as 'id' | 'email' | 'phone' | undefined) ?? 'id';
+}
+
+/**
+ * The cursor to send for the next page. respond.io answers `pagination.next` with
+ * a whole URL (`https://api.respond.io/v2/space/user?limit=10&cursorId=10`), so a
+ * caller can pass that URL back as it is and the `cursorId` is read out of it.
+ * A bare cursor is passed through.
+ */
+export function cursorFrom(
+	value: string | number | undefined,
+): string | number | undefined {
+	if (typeof value !== 'string' || !value.includes('cursorId=')) return value;
+	const query = value.slice(value.indexOf('?') + 1);
+	return new URLSearchParams(query).get('cursorId') ?? value;
+}
+
 /** Encodes one path segment. */
 export function segment(value: string | number): string {
 	return encodeURIComponent(String(value));
