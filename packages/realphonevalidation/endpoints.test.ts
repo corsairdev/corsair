@@ -207,7 +207,11 @@ describe('wirelessId', () => {
 			phone: '7275555555',
 		});
 
-		expect(lastRequest(fetchMock).path).toBe('/rpvWebService/WirelessID.php');
+		const request = lastRequest(fetchMock);
+		expect(request.path).toBe('/rpvWebService/WirelessID.php');
+		// The Wireless ID docs and example name the parameter `Phone`.
+		expect(request.query.Phone).toBe('7275555555');
+		expect(request.query.phone).toBeUndefined();
 		expect(result.RESPONSECODE).toBe('Landline');
 	});
 

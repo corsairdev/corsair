@@ -171,7 +171,9 @@ export const wirelessId: RealPhoneValidationEndpoints['wirelessId'] = (
 		input,
 		({ phone }) => ({
 			method: 'GET',
-			query: { phone },
+			// Unlike the other services, Wireless ID's docs and example name the
+			// parameter `Phone`, and PHP reads query keys case-sensitively.
+			query: { Phone: phone },
 			replayable: true,
 		}),
 		{
