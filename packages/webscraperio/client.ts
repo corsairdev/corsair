@@ -13,7 +13,8 @@ const WEBSCRAPERIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
+	// The spec documents X-RateLimit-Reset (a Unix time) on a 429, not Retry-After.
+	headerNames: { retryAfter: 'retry-after', resetTime: 'x-ratelimit-reset' },
 	isRateLimitError: (status) => status === 429,
 };
 

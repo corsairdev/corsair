@@ -100,6 +100,33 @@ describe('makeWebscraperioRequest', () => {
 		expect(error.isNotFound).toBe(false);
 	});
 
+	it('reads the 429 wait from X-RateLimit-Reset, the header the spec sends', async () => {
+		const resetAt = Math.floor(Date.now() / 1000) + 30;
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({ success: false, error: 'Too many requests' }),
+				{
+					status: 429,
+					headers: {
+						'Content-Type': 'application/json',
+						'X-RateLimit-Limit': '200',
+						'X-RateLimit-Remaining': '0',
+						'X-RateLimit-Reset': String(resetAt),
+					},
+				},
+			),
+		);
+
+		const error = (await makeWebscraperioRequest(API_KEY, {
+			method: 'GET',
+			path: '/sitemaps',
+		}).catch((thrown: unknown) => thrown)) as WebscraperioAPIError;
+
+		expect(error.status).toBe(429);
+		expect(error.retryAfter).toBeGreaterThan(25_000);
+		expect(error.retryAfter).toBeLessThanOrEqual(30_000);
+	});
+
 	it('wraps a transport failure', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
