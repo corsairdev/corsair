@@ -348,7 +348,13 @@ export type ExtractDataInput = z.input<typeof ExtractDataInputSchema>;
  * The provider documents that a property it cannot find arrives as null
  * (https://docs.scrapingant.com/ai-data-extraction/ai-extractor-best-practices).
  */
-const ExtractDataResponseSchema = z.looseObject({});
+// unknown: each value's type comes from the caller's own `extract_properties`
+// text (a string, a number, a nested list), so no per-key type can be declared.
+const ExtractDataResponseSchema = z
+	.record(z.string(), z.unknown())
+	.describe(
+		"An object keyed by the camelCased property names from `extract_properties`, for example `{ title: 'Example Domain', price: 19.99 }`. A property the model could not find is `null`.",
+	);
 
 export type ExtractDataResponse = z.infer<typeof ExtractDataResponseSchema>;
 
