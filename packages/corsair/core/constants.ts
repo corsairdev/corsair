@@ -208,6 +208,7 @@ export const BaseProviders = [
 	'dockerhub',
 	'docmosis',
 	'docsumo',
+	'documenso',
 	'docupost',
 	'docusign',
 	'dodopayments',
@@ -694,6 +695,7 @@ export const ProviderDisplayNames = {
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
 	docsumo: 'Docsumo',
+	documenso: 'Documenso',
 	docupost: 'Docupost',
 	docusign: 'DocuSign',
 	dodopayments: 'Dodo Payments',
@@ -1187,6 +1189,7 @@ export type AllProviders =
 	| 'dockerhub'
 	| 'docmosis'
 	| 'docsumo'
+	| 'documenso'
 	| 'docupost'
 	| 'docusign'
 	| 'dodopayments'
