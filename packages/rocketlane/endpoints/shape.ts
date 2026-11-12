@@ -12,6 +12,8 @@ import { asRecord } from 'corsair/core';
  */
 export function pagedShape(key: string) {
 	return (
+		// unknown: the response body; asRecord narrows it and the operation's
+		// output schema validates the result.
 		raw: unknown,
 		// unknown: the operation input, unused by this shaper.
 		_parsed: unknown,
@@ -40,6 +42,8 @@ export function pagedShape(key: string) {
  */
 export function singleShape(key: string) {
 	return (
+		// unknown: the response body, passed through for the operation's output
+		// schema to validate.
 		raw: unknown,
 		// unknown: the operation input, unused by this shaper.
 		_parsed: unknown,

@@ -5,11 +5,12 @@ recommendedAuth: api_key
 overviewNote: |
   Generate a key in Rocketlane under **Settings → API**, then send it in the `api-key` header. The base URL is `https://api.rocketlane.com/api` and every route carries its own version segment (`/1.0/...`). Things to know before you call:
 
-  - **Paging is a token, not a page number.** Every list returns `data` and a `pagination` block; pass `pagination.nextPageToken` back as `page_token`. **The token expires after 15 minutes**, so a paginated walk has to keep moving rather than pausing between pages.
-  - **Filters are `field.operator` query keys.** Rocketlane reads a filter as a key such as `projectName.cn`, with a documented operator set: `eq`, `cn`, `nc`, `oneOf`, `noneOf`, and the numeric `gt`/`ge`/`lt`/`le`. Each operation models the operators it accepts, so a typo is caught before the request rather than silently ignored.
-  - **Status filters take ids or names.** The OpenAPI document types them as strings while its own example is the bare number `1`, so `tasks.list` accepts either for `task_status` and `project_status`.
+  - **Paging is a token, not a page number.** Each list returns its records under a named array (`tasks`, `projects`, ...) with `next_page_token`, `has_more` and the provider's `pagination` block; pass `next_page_token` back as `page_token`. **The token expires after 15 minutes**, so a paginated walk has to keep moving rather than pausing between pages.
+  - **Filters are `field.operator` query keys.** Rocketlane reads a filter as a key such as `projectName.cn`, with a documented operator set: `eq`, `cn`, `nc`, `oneOf`, `noneOf`, and the numeric `gt`/`ge`/`lt`/`le`. Each filter accepts only the operators the reference lists for it, so a typo fails before the request instead of being dropped. `match` sets how filters combine (`all` or `any`), and `sort_order` is `ASC` or `DESC`.
+  - **Statuses are numbers with labels.** A project or task `status` comes back as `{ value, label }`; filter and set it by `value`. The OpenAPI document types the filter as a string while its example is the bare number `1`, so `tasks.list` accepts either for `task_status` and `project_status`.
+  - **Team members get an email.** Rocketlane emails an invite to every user added through `team_member_ids` on `projects.create`.
   - **Create needs a customer and an owner.** `projects.create` takes a `customer` block naming either a company id or a company name, and an `owner` block naming either a user id or an email. A block that names neither is rejected before the request is sent.
-  - **Ids live in the path, never the body.** `tasks.update`, `projects.update` and `companies.update` send the id in the URL and the changed fields in the body.
+  - **Ids live in the path, never the body.** `tasks.update`, `projects.update` and `companies.update` send the id in the URL and the changed fields in the body. The update calls take fewer fields than create: a task's project, phase, assignees and followers, and a project's customer and members, are not part of an update and are rejected.
   - **Deletes answer 204.** `tasks.delete`, `projects.delete`, `companies.delete` and `timeEntries.delete` return no body, so the plugin reports `{ success: true, id }` from the id you sent. **These are permanent**, which is why they are marked destructive.
   - **Archiving is not deleting.** `projects.archive` posts to the project's `/archive` action and keeps the records, so it is a write rather than a destructive call.
   - **Time entries are capped per day.** Rocketlane rejects entries that would push a single day past 1440 minutes; the plugin requires at least one minute per entry but cannot see the other entries already logged for that day.
@@ -42,7 +43,7 @@ apiExamples:
   tasks.delete:
     call: "{ task_id: 9001 }"
   projects.list:
-    call: "{ company_id: { eq: 301 }, status: { oneOf: ['ACTIVE'] }, page_size: 50 }"
+    call: "{ company_id: { eq: 301 }, status: { oneOf: [2] }, page_size: 50 }"
   projects.get:
     call: "{ project_id: 201 }"
   projects.create:
@@ -54,7 +55,7 @@ apiExamples:
   projects.archive:
     call: "{ project_id: 201 }"
   companies.list:
-    call: "{ match: 'acme', page_size: 50 }"
+    call: "{ company_name: { cn: 'acme' }, page_size: 50 }"
   companies.get:
     call: "{ company_id: 301 }"
   companies.create:
