@@ -54,13 +54,18 @@ describeIfKey('live Rollbar API', () => {
 			} as never,
 		);
 
+		// An empty project would leave nothing to read, so the check fails rather
+		// than passing without a read: report one item to Rollbar first.
 		const first = page.items[0];
+		expect(first?.id).toEqual(expect.any(Number));
 		if (first?.id === undefined || first.id === null) return;
 
 		const one = await Endpoints.itemsGet(
 			liveContext() as never,
 			{
 				item_id: first.id,
+				// An account or personal token needs the project to read one item.
+				project_id: first.project_id ?? undefined,
 			} as never,
 		);
 		expect(one.item.id).toBe(first.id);
