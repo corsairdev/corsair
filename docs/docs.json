@@ -4017,6 +4017,14 @@
                 ]
               },
               {
+                "group": "VirusTotal",
+                "pages": [
+                  "plugins/virustotal/overview",
+                  "plugins/virustotal/api",
+                  "plugins/virustotal/database"
+                ]
+              },
+              {
                 "group": "waboxapp",
                 "pages": [
                   "plugins/waboxapp/overview",
