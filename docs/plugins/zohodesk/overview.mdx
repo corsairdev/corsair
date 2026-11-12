@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Zoho Desk plugin"
+sidebarTitle: "Overview"
 description: "Read tickets, threads, contacts, agents, departments and roles in Zoho Desk, update tasks in bulk and manage department logos."
 ---
 
@@ -55,16 +56,20 @@ Access tokens last an hour. The plugin refreshes them when they expire, and once
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/zohodesk
+npm install corsair @corsair-dev/zohodesk better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/zohodesk
+yarn add corsair @corsair-dev/zohodesk better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/zohodesk
+pnpm install corsair @corsair-dev/zohodesk better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/zohodesk
+bun add corsair @corsair-dev/zohodesk better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 

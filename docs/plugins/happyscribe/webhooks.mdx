@@ -1,0 +1,492 @@
+---
+title: "Happy Scribe webhooks"
+sidebarTitle: "Webhooks"
+description: "Happy Scribe incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Happy Scribe plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/happyscribe/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `meetings`
+  - `cancelled` (`meetings.cancelled`)
+  - `failed` (`meetings.failed`)
+  - `recordingCompleted` (`meetings.recordingCompleted`)
+  - `recordingStarted` (`meetings.recordingStarted`)
+  - `summaryReady` (`meetings.summaryReady`)
+  - `transcriptReady` (`meetings.transcriptReady`)
+- `other`
+  - `other` (`other.other`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Meetings
+
+### Cancelled
+
+`meetings.cancelled`
+
+The Meeting was cancelled before completion
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID beginning with `evt_`; deduplicate retries on it. |
+| `type` | `string` | Yes | Event type, e.g. `meeting.summary_ready`. |
+| `created_at` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  created_at?: string | null,
+  data: {
+    object: Record<string, any>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+happyscribe({
+    webhookHooks: {
+        meetings: {
+            cancelled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Failed
+
+`meetings.failed`
+
+The notetaker or transcription flow reached a terminal failure
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID beginning with `evt_`; deduplicate retries on it. |
+| `type` | `string` | Yes | Event type, e.g. `meeting.summary_ready`. |
+| `created_at` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  created_at?: string | null,
+  data: {
+    object: Record<string, any>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+happyscribe({
+    webhookHooks: {
+        meetings: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Recording Completed
+
+`meetings.recordingCompleted`
+
+The provider recording is available for processing
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID beginning with `evt_`; deduplicate retries on it. |
+| `type` | `string` | Yes | Event type, e.g. `meeting.summary_ready`. |
+| `created_at` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  created_at?: string | null,
+  data: {
+    object: Record<string, any>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+happyscribe({
+    webhookHooks: {
+        meetings: {
+            recordingCompleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Recording Started
+
+`meetings.recordingStarted`
+
+The notetaker entered the call and recording started
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID beginning with `evt_`; deduplicate retries on it. |
+| `type` | `string` | Yes | Event type, e.g. `meeting.summary_ready`. |
+| `created_at` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  created_at?: string | null,
+  data: {
+    object: Record<string, any>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+happyscribe({
+    webhookHooks: {
+        meetings: {
+            recordingStarted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Summary Ready
+
+`meetings.summaryReady`
+
+The plain-text meeting summary has been generated and persisted
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID beginning with `evt_`; deduplicate retries on it. |
+| `type` | `string` | Yes | Event type, e.g. `meeting.summary_ready`. |
+| `created_at` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  created_at?: string | null,
+  data: {
+    object: Record<string, any>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+happyscribe({
+    webhookHooks: {
+        meetings: {
+            summaryReady: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Transcript Ready
+
+`meetings.transcriptReady`
+
+The full JSON transcript is ready
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID beginning with `evt_`; deduplicate retries on it. |
+| `type` | `string` | Yes | Event type, e.g. `meeting.summary_ready`. |
+| `created_at` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  created_at?: string | null,
+  data: {
+    object: Record<string, any>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+happyscribe({
+    webhookHooks: {
+        meetings: {
+            transcriptReady: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Other
+
+### Other
+
+`other.other`
+
+HappyScribe delivery whose event type this plugin has no dedicated handler for; check `type` before acting
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Event ID beginning with `evt_`; deduplicate retries on it. |
+| `type` | `string` | Yes | Event type, e.g. `meeting.summary_ready`. |
+| `created_at` | `string \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  created_at?: string | null,
+  data: {
+    object: Record<string, any>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+happyscribe({
+    webhookHooks: {
+        other: {
+            other: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
