@@ -1,0 +1,111 @@
+displayName: Thanks.io
+description: Manage direct-mail recipients, mailing lists, orders, creatives, and webhook destinations with Thanks.io.
+domain: thanks.io
+recommendedAuth: api_key
+overviewNote: |
+  Thanks.io uses bearer API keys. An email-only recipient may trigger paid address lookup. Direct mail sends and radius purchases can incur charges. Requests are not retried automatically.
+
+  The bulk recipient example uses `mailing_list`, while the published schema uses `mailing_list_id`; both are accepted and forwarded unchanged. Bulk results may contain an `error` for an individual recipient.
+
+  Webhook destination operations manage Thanks.io's outbound subscriptions; inbound webhook verification is not included.
+
+  Deleting a sub-account also deletes its image templates, message templates, and campaigns; its orders and mailing lists move to the main account.
+
+  Replaying an order creates and charges for a fresh mailing. Invalidating an unredeemed gift card is irreversible.
+
+  Send operations can create paid mailings. Use `preview: true` to request previews or the corresponding `estimate` endpoint to price a mailing before submitting. Email-to-address and radius lookup may incur additional charges.
+
+  `imageBuilder.create` returns a PNG as a `Blob`; it does not place an order.
+examples:
+  read:
+    path: creatives.get
+    args: { creativeId: 501 }
+  write:
+    path: recipients.create
+    args:
+      body: { mailing_list_id: 1, email: "person@example.com" }
+apiExamples:
+  creatives.get:
+    args: { creativeId: 501 }
+  imageBuilder.create:
+    args: { id: 8 }
+  mailingLists.get:
+    args: { mailingListId: 1 }
+  mailingLists.listRecipients:
+    args: { mailingListId: 1 }
+  mailingLists.countRadiusSearch:
+    args: { body: { address: "123 Main Street", postal_code: "55555", record_count: 5 } }
+  messageTemplates.get:
+    args: { messageTemplateId: 1912 }
+  orders.listItems:
+    args: { orderId: 42708 }
+  orders.track:
+    args: { orderId: 42708 }
+  recipients.get:
+    args: { recipientId: 56 }
+  subAccounts.get:
+    args: { subAccountId: 1 }
+  estimate.postcard:
+    args: { body: { creative_id: 501, recipients: [{ address: "123 Main Street" }] } }
+  estimate.magnacard:
+    args: { body: { creative_id: 501, recipients: [{ address: "123 Main Street" }] } }
+  estimate.windowedLetter:
+    args: { body: { creative_id: 501, recipients: [{ address: "123 Main Street" }] } }
+  estimate.windowlessLetter:
+    args: { body: { creative_id: 501, recipients: [{ address: "123 Main Street" }] } }
+  estimate.notecard:
+    args: { body: { creative_id: 501, recipients: [{ address: "123 Main Street" }] } }
+  estimate.giftcard:
+    args: { body: { creative_id: 501, recipients: [{ address: "123 Main Street" }] } }
+  recipients.create:
+    args: { body: { mailing_list_id: 1, email: "person@example.com" } }
+  recipients.update:
+    args: { recipientId: 56, body: { name: "Pat" } }
+  recipients.delete:
+    args: { recipientId: 56 }
+  recipients.createMultiple:
+    args: { body: [{ mailing_list_id: 1, address: "123 Main Street" }] }
+  recipients.deleteByAddress:
+    args: { body: { mailing_list_id: 1, email: "person@example.com" } }
+  mailingLists.create:
+    args: { body: { description: "Birthday List" } }
+  mailingLists.delete:
+    args: { mailingListId: 1 }
+  mailingLists.buyRadiusSearch:
+    args: { body: { address: "123 Main Street", postal_code: "55555", record_count: 5 } }
+  webhookDestinations.create:
+    args: { body: { url: "https://example.com/hook", type: "order.status_update", verb: "post" } }
+  webhookDestinations.update:
+    args: { webhookId: 13, body: { url: "https://example.com/hook", type: "order.status_update", verb: "post" } }
+  webhookDestinations.delete:
+    args: { webhookId: 13 }
+  subAccounts.create:
+    args: { body: { title: "My Sub Account" } }
+  subAccounts.update:
+    args: { subAccountId: 1, body: { title: "Updated Account" } }
+  subAccounts.delete:
+    args: { subAccountId: 1 }
+  messageTemplates.create:
+    args: { body: { type: "postcard", name: "Thank you", content: "Thank you!" } }
+  messageTemplates.update:
+    args: { messageTemplateId: 1912, body: { content: "Updated message" } }
+  messageTemplates.delete:
+    args: { messageTemplateId: 1912 }
+  orders.cancel:
+    args: { orderId: "42708" }
+  orders.replay:
+    args: { orderId: 42708, body: { recipients: [{ address: "123 Main Street" }] } }
+  orderItems.invalidateGiftcard:
+    args: { orderItemId: 2668662 }
+  send.postcard:
+    args: { body: { preview: true, creative_id: 501, recipients: [{ address: "123 Main Street" }] } }
+  send.magnacard:
+    args: { body: { preview: true, creative_id: 501, recipients: [{ address: "123 Main Street" }] } }
+  send.windowedLetter:
+    args: { body: { preview: true, creative_id: 501, recipients: [{ address: "123 Main Street" }] } }
+  send.windowlessLetter:
+    args: { body: { preview: true, creative_id: 501, recipients: [{ address: "123 Main Street" }] } }
+  send.notecard:
+    args: { body: { preview: true, creative_id: 501, recipients: [{ address: "123 Main Street" }] } }
+  send.giftcard:
+    args: { body: { preview: true, creative_id: 501, recipients: [{ address: "123 Main Street" }] } }

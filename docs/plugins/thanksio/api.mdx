@@ -1,0 +1,4445 @@
+---
+title: "Thanks.io API reference"
+sidebarTitle: "API"
+description: "API reference for the Thanks.io plugin in Corsair: every `thanksio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Creatives
+
+### get
+
+`creatives.get`
+
+Get a saved creative.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.creatives.get({ creativeId: 501 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creativeId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  mailer_type?: string | null,
+  postcard_size?: string | null,
+  sub_account_id?: number | null,
+  source?: string | null,
+  hidden?: boolean,
+  default?: boolean,
+  preview_image_url?: string | null,
+  thumbnail_url?: string | null,
+  share_url?: string | null,
+  is_complete?: boolean,
+  needs?: string[],
+  image_template?: Record<string, any> | null,
+  message_template?: Record<string, any> | null,
+  back_background?: Record<string, any> | null,
+  created_at?: string,
+  updated_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`creatives.list`
+
+List saved creatives.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.creatives.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sub_account_id` | `number` | No | — |
+| `mailer_type` | `postcard \| postcard6x9 \| postcard6x11 \| letter \| windowlessletter \| notecard \| giftcard \| magnacard` | No | — |
+| `complete_only` | `boolean` | No | — |
+| `search` | `string` | No | — |
+| `include_hidden` | `boolean` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  mailer_type?: string | null,
+  postcard_size?: string | null,
+  sub_account_id?: number | null,
+  source?: string | null,
+  hidden?: boolean,
+  default?: boolean,
+  preview_image_url?: string | null,
+  thumbnail_url?: string | null,
+  share_url?: string | null,
+  is_complete?: boolean,
+  needs?: string[],
+  image_template?: Record<string, any> | null,
+  message_template?: Record<string, any> | null,
+  back_background?: Record<string, any> | null,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  from?: number | null,
+  last_page?: number,
+  path?: string,
+  per_page?: number | string,
+  to?: number | null,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Estimate
+
+### giftcard
+
+`estimate.giftcard`
+
+Estimate gift-card costs without sending.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.estimate.giftcard({
+	body: {
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  preview?: boolean,
+  mailing_list_ids?: number[],
+  recipients?: {
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    absentee_city?: string | null,
+    absentee_province?: string | null,
+    absentee_postal_code?: string | null
+  }[],
+  radius_search?: {
+    preview?: boolean,
+    address?: string,
+    record_count?: number,
+    record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+    include_condos?: boolean,
+    append_data?: boolean,
+    use_property_owner?: boolean,
+    include_search_address?: boolean
+  },
+  handwriting_style_id?: number,
+  handwriting_color?: string,
+  handwriting_realism?: boolean,
+  sub_account?: number,
+  notification_emails?: string,
+  email_lookup?: boolean,
+  postage_class?: first_class | standard,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  metadata?: Record<string, any> | null,
+  creative_id?: number,
+  image_template_id?: number,
+  front_image_url?: string,
+  message?: string,
+  message_template_id?: number,
+  giftcard_brand?: string,
+  giftcard_amount_in_cents?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  size?: string | null,
+  total_recipients?: number,
+  recipients?: {
+    united_states?: number,
+    international?: number
+  },
+  pending_email_lookups?: number,
+  costs_in_cents?: {
+    united_states?: number,
+    international?: number,
+    additional_pages?: number,
+    giftcard_face_value?: number,
+    grand_total?: number
+  },
+  total_cost_in_cents?: number,
+  total_cost?: string,
+  current_balance_in_cents?: number,
+  covered_by_balance?: boolean,
+  test_mode?: boolean,
+  notes?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### magnacard
+
+`estimate.magnacard`
+
+Estimate magnacard costs without sending.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.estimate.magnacard({
+	body: {
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  preview?: boolean,
+  mailing_list_ids?: number[],
+  recipients?: {
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    absentee_city?: string | null,
+    absentee_province?: string | null,
+    absentee_postal_code?: string | null
+  }[],
+  radius_search?: {
+    preview?: boolean,
+    address?: string,
+    record_count?: number,
+    record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+    include_condos?: boolean,
+    append_data?: boolean,
+    use_property_owner?: boolean,
+    include_search_address?: boolean
+  },
+  handwriting_style_id?: number,
+  handwriting_color?: string,
+  handwriting_realism?: boolean,
+  sub_account?: number,
+  notification_emails?: string,
+  email_lookup?: boolean,
+  postage_class?: first_class | standard,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  metadata?: Record<string, any> | null,
+  creative_id?: number,
+  image_template_id?: number,
+  front_image_url?: string,
+  message?: string,
+  message_template_id?: number,
+  use_custom_background?: boolean,
+  custom_background_image?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  size?: string | null,
+  total_recipients?: number,
+  recipients?: {
+    united_states?: number,
+    international?: number
+  },
+  pending_email_lookups?: number,
+  costs_in_cents?: {
+    united_states?: number,
+    international?: number,
+    additional_pages?: number,
+    giftcard_face_value?: number,
+    grand_total?: number
+  },
+  total_cost_in_cents?: number,
+  total_cost?: string,
+  current_balance_in_cents?: number,
+  covered_by_balance?: boolean,
+  test_mode?: boolean,
+  notes?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### notecard
+
+`estimate.notecard`
+
+Estimate notecard costs without sending.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.estimate.notecard({
+	body: {
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  preview?: boolean,
+  mailing_list_ids?: number[],
+  recipients?: {
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    absentee_city?: string | null,
+    absentee_province?: string | null,
+    absentee_postal_code?: string | null
+  }[],
+  radius_search?: {
+    preview?: boolean,
+    address?: string,
+    record_count?: number,
+    record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+    include_condos?: boolean,
+    append_data?: boolean,
+    use_property_owner?: boolean,
+    include_search_address?: boolean
+  },
+  handwriting_style_id?: number,
+  handwriting_color?: string,
+  handwriting_realism?: boolean,
+  sub_account?: number,
+  notification_emails?: string,
+  email_lookup?: boolean,
+  postage_class?: first_class | standard,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  metadata?: Record<string, any> | null,
+  creative_id?: number,
+  image_template_id?: number,
+  front_image_url?: string,
+  message?: string,
+  message_template_id?: number,
+  use_custom_background?: boolean,
+  custom_background_image?: string,
+  qrcode_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  size?: string | null,
+  total_recipients?: number,
+  recipients?: {
+    united_states?: number,
+    international?: number
+  },
+  pending_email_lookups?: number,
+  costs_in_cents?: {
+    united_states?: number,
+    international?: number,
+    additional_pages?: number,
+    giftcard_face_value?: number,
+    grand_total?: number
+  },
+  total_cost_in_cents?: number,
+  total_cost?: string,
+  current_balance_in_cents?: number,
+  covered_by_balance?: boolean,
+  test_mode?: boolean,
+  notes?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postcard
+
+`estimate.postcard`
+
+Estimate postcard costs without sending.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.estimate.postcard({
+	body: {
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  preview?: boolean,
+  mailing_list_ids?: number[],
+  recipients?: {
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    absentee_city?: string | null,
+    absentee_province?: string | null,
+    absentee_postal_code?: string | null
+  }[],
+  radius_search?: {
+    preview?: boolean,
+    address?: string,
+    record_count?: number,
+    record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+    include_condos?: boolean,
+    append_data?: boolean,
+    use_property_owner?: boolean,
+    include_search_address?: boolean
+  },
+  handwriting_style_id?: number,
+  handwriting_color?: string,
+  handwriting_realism?: boolean,
+  sub_account?: number,
+  notification_emails?: string,
+  email_lookup?: boolean,
+  postage_class?: first_class | standard,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  metadata?: Record<string, any> | null,
+  creative_id?: number,
+  image_template_id?: number,
+  front_image_url?: string,
+  message?: string,
+  message_template_id?: number,
+  use_custom_background?: boolean,
+  custom_background_image?: string,
+  qrcode_url?: string,
+  size?: 4x6 | 6x9 | 6x11
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  size?: string | null,
+  total_recipients?: number,
+  recipients?: {
+    united_states?: number,
+    international?: number
+  },
+  pending_email_lookups?: number,
+  costs_in_cents?: {
+    united_states?: number,
+    international?: number,
+    additional_pages?: number,
+    giftcard_face_value?: number,
+    grand_total?: number
+  },
+  total_cost_in_cents?: number,
+  total_cost?: string,
+  current_balance_in_cents?: number,
+  covered_by_balance?: boolean,
+  test_mode?: boolean,
+  notes?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### windowedLetter
+
+`estimate.windowedLetter`
+
+Estimate windowed-letter costs without sending.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.estimate.windowedLetter({
+	body: {
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  preview?: boolean,
+  mailing_list_ids?: number[],
+  recipients?: {
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    absentee_city?: string | null,
+    absentee_province?: string | null,
+    absentee_postal_code?: string | null
+  }[],
+  radius_search?: {
+    preview?: boolean,
+    address?: string,
+    record_count?: number,
+    record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+    include_condos?: boolean,
+    append_data?: boolean,
+    use_property_owner?: boolean,
+    include_search_address?: boolean
+  },
+  handwriting_style_id?: number,
+  handwriting_color?: string,
+  handwriting_realism?: boolean,
+  sub_account?: number,
+  notification_emails?: string,
+  email_lookup?: boolean,
+  postage_class?: first_class | standard,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  metadata?: Record<string, any> | null,
+  creative_id?: number,
+  image_template_id?: number,
+  front_image_url?: string,
+  message?: string,
+  message_template_id?: number,
+  qrcode_url?: string,
+  additional_pages_url?: string,
+  pdf_only_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  size?: string | null,
+  total_recipients?: number,
+  recipients?: {
+    united_states?: number,
+    international?: number
+  },
+  pending_email_lookups?: number,
+  costs_in_cents?: {
+    united_states?: number,
+    international?: number,
+    additional_pages?: number,
+    giftcard_face_value?: number,
+    grand_total?: number
+  },
+  total_cost_in_cents?: number,
+  total_cost?: string,
+  current_balance_in_cents?: number,
+  covered_by_balance?: boolean,
+  test_mode?: boolean,
+  notes?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### windowlessLetter
+
+`estimate.windowlessLetter`
+
+Estimate windowless-letter costs without sending.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.estimate.windowlessLetter({
+	body: {
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  preview?: boolean,
+  mailing_list_ids?: number[],
+  recipients?: {
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    absentee_city?: string | null,
+    absentee_province?: string | null,
+    absentee_postal_code?: string | null
+  }[],
+  radius_search?: {
+    preview?: boolean,
+    address?: string,
+    record_count?: number,
+    record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+    include_condos?: boolean,
+    append_data?: boolean,
+    use_property_owner?: boolean,
+    include_search_address?: boolean
+  },
+  handwriting_style_id?: number,
+  handwriting_color?: string,
+  handwriting_realism?: boolean,
+  sub_account?: number,
+  notification_emails?: string,
+  email_lookup?: boolean,
+  postage_class?: first_class | standard,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  metadata?: Record<string, any> | null,
+  creative_id?: number,
+  image_template_id?: number,
+  front_image_url?: string,
+  message?: string,
+  message_template_id?: number,
+  qrcode_url?: string,
+  additional_pages_url?: string,
+  pdf_only_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  size?: string | null,
+  total_recipients?: number,
+  recipients?: {
+    united_states?: number,
+    international?: number
+  },
+  pending_email_lookups?: number,
+  costs_in_cents?: {
+    united_states?: number,
+    international?: number,
+    additional_pages?: number,
+    giftcard_face_value?: number,
+    grand_total?: number
+  },
+  total_cost_in_cents?: number,
+  total_cost?: string,
+  current_balance_in_cents?: number,
+  covered_by_balance?: boolean,
+  test_mode?: boolean,
+  notes?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Giftcard Brands
+
+### list
+
+`giftcardBrands.list`
+
+List gift-card brands by group.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.giftcardBrands.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `main` | `object` | No | — |
+| `food` | `object` | No | — |
+| `entertainment` | `object` | No | — |
+| `gift` | `object` | No | — |
+| `gifts` | `object` | No | — |
+| `travel` | `object` | No | — |
+| `big_box` | `object` | No | — |
+| `other` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="main full type">
+
+```ts
+{
+  title?: string,
+  brands?: {
+    brand_code?: string,
+    title?: string,
+    image?: string,
+    available_amounts?: number[],
+    group?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="food full type">
+
+```ts
+{
+  title?: string,
+  brands?: {
+    brand_code?: string,
+    title?: string,
+    image?: string,
+    available_amounts?: number[],
+    group?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="entertainment full type">
+
+```ts
+{
+  title?: string,
+  brands?: {
+    brand_code?: string,
+    title?: string,
+    image?: string,
+    available_amounts?: number[],
+    group?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="gift full type">
+
+```ts
+{
+  title?: string,
+  brands?: {
+    brand_code?: string,
+    title?: string,
+    image?: string,
+    available_amounts?: number[],
+    group?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="gifts full type">
+
+```ts
+{
+  title?: string,
+  brands?: {
+    brand_code?: string,
+    title?: string,
+    image?: string,
+    available_amounts?: number[],
+    group?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="travel full type">
+
+```ts
+{
+  title?: string,
+  brands?: {
+    brand_code?: string,
+    title?: string,
+    image?: string,
+    available_amounts?: number[],
+    group?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="big_box full type">
+
+```ts
+{
+  title?: string,
+  brands?: {
+    brand_code?: string,
+    title?: string,
+    image?: string,
+    available_amounts?: number[],
+    group?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="other full type">
+
+```ts
+{
+  title?: string,
+  brands?: {
+    brand_code?: string,
+    title?: string,
+    image?: string,
+    available_amounts?: number[],
+    group?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFlat
+
+`giftcardBrands.listFlat`
+
+List gift-card brands with their groups.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.giftcardBrands.listFlat({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  brands?: {
+    brand_code?: string,
+    title?: string,
+    image?: string,
+    available_amounts?: number[],
+    group?: string
+  }[]
+} | {
+  brands?: {
+    brand_code?: string,
+    title?: string,
+    image?: string,
+    available_amounts?: number[],
+    group?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Handwriting Styles
+
+### list
+
+`handwritingStyles.list`
+
+List handwriting styles.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.handwritingStyles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  handwriting_style_id?: number,
+  name?: string,
+  sample?: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Image Builder
+
+### create
+
+`imageBuilder.create`
+
+Build and return a PNG image without placing an order.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.imageBuilder.create({ id: 8 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `background_url` | `string` | No | — |
+| `header` | `string` | No | — |
+| `subheader` | `string` | No | — |
+| `redirect_url` | `string` | No | — |
+| `logo_url` | `string` | No | — |
+| `overlay_url` | `string` | No | — |
+| `size` | `4x6 \| 6x9` | No | — |
+
+
+
+**Output:** `custom`
+
+
+---
+
+## Image Templates
+
+### list
+
+`imageTemplates.list`
+
+List image templates.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.imageTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `items_per_page` | `number` | No | — |
+| `sub_account_id` | `number` | No | — |
+| `type` | `postcard \| postcard6x9 \| postcard6x11 \| letter \| windowlessletter \| notecard \| giftcard \| magnacard` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  user_id?: number,
+  sub_account_id?: number | null,
+  type?: string,
+  name?: string,
+  image?: string,
+  is_dynamic?: boolean,
+  dynamic_image_url?: string | null,
+  canva_id?: string | null,
+  share_uuid?: string | null,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  from?: number | null,
+  last_page?: number,
+  path?: string,
+  per_page?: number | string,
+  to?: number | null,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Mailing Lists
+
+### buyRadiusSearch
+
+`mailingLists.buyRadiusSearch`
+
+Purchase radius-search records; charges may apply.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.mailingLists.buyRadiusSearch({
+	body: { address: '123 Main Street', postal_code: '55555', record_count: 5 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  address: string,
+  postal_code: string,
+  record_count: number,
+  record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+  include_condos?: boolean,
+  mailing_list_id?: number,
+  append_data?: boolean,
+  use_property_owner?: boolean,
+  include_search_address?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `status` | `string` | No | — |
+| `mailing_list_id` | `number` | No | — |
+| `count` | `number` | No | — |
+| `failure` | `boolean` | No | — |
+
+
+
+---
+
+### countRadiusSearch
+
+`mailingLists.countRadiusSearch`
+
+Count available radius-search records.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.mailingLists.countRadiusSearch({
+	body: { address: '123 Main Street', postal_code: '55555', record_count: 5 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  address: string,
+  postal_code: string,
+  record_count: number,
+  record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+  include_condos?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `status` | `string` | No | — |
+| `mailing_list_id` | `number` | No | — |
+| `count` | `number` | No | — |
+| `failure` | `boolean` | No | — |
+
+
+
+---
+
+### create
+
+`mailingLists.create`
+
+Create a mailing list.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.mailingLists.create({
+	body: { description: 'Birthday List' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  description: string,
+  sub_account_id?: number,
+  qrcode_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `sub_account_id` | `number \| null` | No | — |
+| `type` | `string` | No | — |
+| `description` | `string` | No | — |
+| `qrcode_url` | `string \| null` | No | — |
+| `total_recipients` | `number` | No | — |
+| `processed` | `boolean` | No | — |
+| `is_suppression_list` | `boolean` | No | — |
+| `total_scans` | `number` | No | — |
+| `unique_scans` | `number` | No | — |
+| `last_scan` | `string \| null` | No | — |
+| `total_sends` | `number` | No | — |
+| `last_send` | `string \| null` | No | — |
+| `api_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `created_at_diff` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`mailingLists.delete`
+
+Delete a mailing list.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thanksio.api.mailingLists.delete({ mailingListId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`mailingLists.get`
+
+Get a mailing list.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.mailingLists.get({ mailingListId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `sub_account_id` | `number \| null` | No | — |
+| `type` | `string` | No | — |
+| `description` | `string` | No | — |
+| `qrcode_url` | `string \| null` | No | — |
+| `total_recipients` | `number` | No | — |
+| `processed` | `boolean` | No | — |
+| `is_suppression_list` | `boolean` | No | — |
+| `total_scans` | `number` | No | — |
+| `unique_scans` | `number` | No | — |
+| `last_scan` | `string \| null` | No | — |
+| `total_sends` | `number` | No | — |
+| `last_send` | `string \| null` | No | — |
+| `api_key` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `created_at_diff` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`mailingLists.list`
+
+List mailing lists.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.mailingLists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `items_per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  user_id?: number,
+  sub_account_id?: number | null,
+  type?: string,
+  description?: string,
+  qrcode_url?: string | null,
+  total_recipients?: number,
+  processed?: boolean,
+  is_suppression_list?: boolean,
+  total_scans?: number,
+  unique_scans?: number,
+  last_scan?: string | null,
+  total_sends?: number,
+  last_send?: string | null,
+  api_key?: string,
+  created_at?: string,
+  created_at_diff?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  from?: number | null,
+  last_page?: number,
+  path?: string,
+  per_page?: number | string,
+  to?: number | null,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRecipients
+
+`mailingLists.listRecipients`
+
+List recipients in a mailing list.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.mailingLists.listRecipients({ mailingListId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `updated_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_page` | `number` | No | — |
+| `from` | `number \| null` | No | — |
+| `last_page` | `number` | No | — |
+| `path` | `string` | No | — |
+| `per_page` | `number \| string` | No | — |
+| `to` | `number \| null` | No | — |
+| `total` | `number` | No | — |
+| `data` | `object[]` | No | — |
+| `first_page_url` | `string \| null` | No | — |
+| `last_page_url` | `string \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+| `prev_page_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  mailing_list_id?: number,
+  name?: string | null,
+  company?: string | null,
+  address?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  province?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  dob?: string | null,
+  anniversary?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  custom1?: string | null,
+  custom2?: string | null,
+  custom3?: string | null,
+  custom4?: string | null,
+  custom5?: string | null,
+  custom6?: string | null,
+  custom7?: string | null,
+  custom8?: string | null,
+  custom9?: string | null,
+  custom10?: string | null,
+  absentee_address?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  error?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Message Templates
+
+### create
+
+`messageTemplates.create`
+
+Create a message template.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.messageTemplates.create({
+	body: { type: 'postcard', name: 'Thank you', content: 'Thank you!' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type?: postcard | postcard6x9 | postcard6x11 | letter | windowlessletter | notecard | giftcard | magnacard,
+  name?: string,
+  handwriting_style_id?: number,
+  font_color?: string,
+  handwriting_realism?: boolean,
+  content?: string,
+  sub_account_id?: number | null,
+  additional_pages?: string,
+  pdf_only_url?: string,
+  custom_background_url?: string,
+  qrcode_url?: string,
+  cc_emails?: string[],
+  giftcard_brand_code?: string,
+  giftcard_amount?: number,
+  landing_page_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `sub_account_id` | `number \| null` | No | — |
+| `handwriting_style_id` | `number` | No | — |
+| `font_size` | `string \| number` | No | — |
+| `font_color` | `string` | No | — |
+| `handwriting_realism` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `content` | `string` | No | — |
+| `additional_pages` | `string \| null` | No | — |
+| `skip_creative_generation` | `number \| boolean` | No | — |
+| `custom_background_url` | `string \| null` | No | — |
+| `qrcode_url` | `string \| null` | No | — |
+| `cc_emails` | `string[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `giftcard_brand_code` | `string` | No | — |
+| `giftcard_brand_image` | `string \| null` | No | — |
+| `giftcard_amount` | `string \| number` | No | — |
+| `landing_page_url` | `string \| null` | No | — |
+| `share_uuid` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`messageTemplates.delete`
+
+Delete a message template.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thanksio.api.messageTemplates.delete({ messageTemplateId: 1912 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageTemplateId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`messageTemplates.get`
+
+Get a message template.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.messageTemplates.get({ messageTemplateId: 1912 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageTemplateId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `sub_account_id` | `number \| null` | No | — |
+| `handwriting_style_id` | `number` | No | — |
+| `font_size` | `string \| number` | No | — |
+| `font_color` | `string` | No | — |
+| `handwriting_realism` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `content` | `string` | No | — |
+| `additional_pages` | `string \| null` | No | — |
+| `skip_creative_generation` | `number \| boolean` | No | — |
+| `custom_background_url` | `string \| null` | No | — |
+| `qrcode_url` | `string \| null` | No | — |
+| `cc_emails` | `string[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `giftcard_brand_code` | `string` | No | — |
+| `giftcard_brand_image` | `string \| null` | No | — |
+| `giftcard_amount` | `string \| number` | No | — |
+| `landing_page_url` | `string \| null` | No | — |
+| `share_uuid` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`messageTemplates.list`
+
+List message templates.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.messageTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `items_per_page` | `number` | No | — |
+| `sub_account_id` | `number` | No | — |
+| `type` | `postcard \| postcard6x9 \| postcard6x11 \| letter \| windowlessletter \| notecard \| giftcard \| magnacard` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  user_id?: number,
+  sub_account_id?: number | null,
+  handwriting_style_id?: number,
+  font_size?: string | number,
+  font_color?: string,
+  handwriting_realism?: boolean,
+  name?: string,
+  content?: string,
+  additional_pages?: string | null,
+  skip_creative_generation?: number | boolean,
+  custom_background_url?: string | null,
+  qrcode_url?: string | null,
+  cc_emails?: string[],
+  created_at?: string,
+  updated_at?: string,
+  type?: string,
+  giftcard_brand_code?: string,
+  giftcard_brand_image?: string | null,
+  giftcard_amount?: string | number,
+  landing_page_url?: string | null,
+  share_uuid?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  from?: number | null,
+  last_page?: number,
+  path?: string,
+  per_page?: number | string,
+  to?: number | null,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`messageTemplates.update`
+
+Update a message template.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.messageTemplates.update({
+	messageTemplateId: 1912,
+	body: { content: 'Updated message' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messageTemplateId` | `number` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type?: postcard | postcard6x9 | postcard6x11 | letter | windowlessletter | notecard | giftcard | magnacard,
+  name?: string,
+  handwriting_style_id?: number,
+  font_color?: string,
+  handwriting_realism?: boolean,
+  content?: string,
+  sub_account_id?: number | null,
+  additional_pages?: string,
+  pdf_only_url?: string,
+  custom_background_url?: string,
+  qrcode_url?: string,
+  cc_emails?: string[],
+  giftcard_brand_code?: string,
+  giftcard_amount?: number,
+  landing_page_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `sub_account_id` | `number \| null` | No | — |
+| `handwriting_style_id` | `number` | No | — |
+| `font_size` | `string \| number` | No | — |
+| `font_color` | `string` | No | — |
+| `handwriting_realism` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `content` | `string` | No | — |
+| `additional_pages` | `string \| null` | No | — |
+| `skip_creative_generation` | `number \| boolean` | No | — |
+| `custom_background_url` | `string \| null` | No | — |
+| `qrcode_url` | `string \| null` | No | — |
+| `cc_emails` | `string[]` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `type` | `string` | No | — |
+| `giftcard_brand_code` | `string` | No | — |
+| `giftcard_brand_image` | `string \| null` | No | — |
+| `giftcard_amount` | `string \| number` | No | — |
+| `landing_page_url` | `string \| null` | No | — |
+| `share_uuid` | `string` | No | — |
+
+
+
+---
+
+## Order Items
+
+### invalidateGiftcard
+
+`orderItems.invalidateGiftcard`
+
+Permanently invalidate an unredeemed gift card.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.thanksio.api.orderItems.invalidateGiftcard({ orderItemId: 2668662 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderItemId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  status?: string,
+  delivery_date?: string | null,
+  scans?: number,
+  failure?: string | null,
+  recipient?: {
+    id?: number,
+    mailing_list_id?: number,
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    error?: string
+  },
+  giftcard?: {
+    brand?: string,
+    amount?: number,
+    redeemed_at?: string | null,
+    invalidated_at?: string | null
+  } | null,
+  preview?: {
+    front?: string | null,
+    back?: string | null,
+    pdf?: string | null
+  },
+  created_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### cancel
+
+`orders.cancel`
+
+Cancel a reviewing order.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thanksio.api.orders.cancel({ orderId: '42708' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="order full type">
+
+```ts
+{
+  id?: number,
+  user_id?: number,
+  sub_account_id?: number | null,
+  message?: string,
+  size?: string,
+  type?: string,
+  display_type?: string,
+  style?: number,
+  front_image?: string,
+  high_quality_preview?: string,
+  authorization_total?: number,
+  grand_total?: number,
+  order_total?: number,
+  total_estimated_recipients?: number,
+  total_recipients?: number,
+  recipient_count?: number,
+  status?: string,
+  method?: string,
+  cancellable?: boolean,
+  total_scans?: number,
+  metadata?: Record<string, any> | null,
+  created_at?: string,
+  updated_at?: string,
+  replayed_from_order_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`orders.list`
+
+List recent orders.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.orders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `items_per_page` | `number` | No | — |
+| `sub_account_id` | `number` | No | — |
+| `type` | `postcard \| postcard6x9 \| postcard6x11 \| letter \| windowlessletter \| notecard \| giftcard \| magnacard \| 4x6-postcard \| 6x9-postcard` | No | — |
+| `creative_id` | `number` | No | — |
+| `campaign` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  user_id?: number,
+  sub_account_id?: number | null,
+  message?: string,
+  size?: string,
+  type?: string,
+  display_type?: string,
+  style?: number,
+  front_image?: string,
+  high_quality_preview?: string,
+  authorization_total?: number,
+  grand_total?: number,
+  order_total?: number,
+  total_estimated_recipients?: number,
+  total_recipients?: number,
+  recipient_count?: number,
+  status?: string,
+  method?: string,
+  cancellable?: boolean,
+  total_scans?: number,
+  metadata?: Record<string, any> | null,
+  created_at?: string,
+  updated_at?: string,
+  replayed_from_order_id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  from?: number | null,
+  last_page?: number,
+  path?: string,
+  per_page?: number | string,
+  to?: number | null,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listItems
+
+`orders.listItems`
+
+List individual order items.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.orders.listItems({ orderId: 42708 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderId` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  status?: string,
+  delivery_date?: string | null,
+  scans?: number,
+  failure?: string | null,
+  recipient?: {
+    id?: number,
+    mailing_list_id?: number,
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    error?: string
+  },
+  giftcard?: {
+    brand?: string,
+    amount?: number,
+    redeemed_at?: string | null,
+    invalidated_at?: string | null
+  } | null,
+  preview?: {
+    front?: string | null,
+    back?: string | null,
+    pdf?: string | null
+  },
+  created_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  from?: number | null,
+  last_page?: number,
+  path?: string,
+  per_page?: number | string,
+  to?: number | null,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replay
+
+`orders.replay`
+
+Place a new copy of a settled order; this charges and mails again.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.orders.replay({
+	orderId: 42708,
+	body: {
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  recipients?: {
+    name?: string,
+    company?: string,
+    address: string,
+    address2?: string,
+    city?: string,
+    province?: string,
+    postal_code?: string,
+    country?: string
+  }[],
+  schedule_for?: string,
+  metadata?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `sub_account_id` | `number \| null` | No | — |
+| `message` | `string` | No | — |
+| `size` | `string` | No | — |
+| `type` | `string` | No | — |
+| `display_type` | `string` | No | — |
+| `style` | `number` | No | — |
+| `front_image` | `string` | No | — |
+| `high_quality_preview` | `string` | No | — |
+| `authorization_total` | `number` | No | — |
+| `grand_total` | `number` | No | — |
+| `order_total` | `number` | No | — |
+| `total_estimated_recipients` | `number` | No | — |
+| `total_recipients` | `number` | No | — |
+| `recipient_count` | `number` | No | — |
+| `status` | `string` | No | — |
+| `method` | `string` | No | — |
+| `cancellable` | `boolean` | No | — |
+| `total_scans` | `number` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `replayed_from_order_id` | `number` | No | — |
+
+
+
+---
+
+### track
+
+`orders.track`
+
+Track an order and its delivery statistics.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.orders.track({ orderId: 42708 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orderId` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number,
+  order?: {
+    id?: number,
+    user_id?: number,
+    sub_account_id?: number | null,
+    message?: string,
+    size?: string,
+    type?: string,
+    display_type?: string,
+    style?: number,
+    front_image?: string,
+    high_quality_preview?: string,
+    authorization_total?: number,
+    grand_total?: number,
+    order_total?: number,
+    total_estimated_recipients?: number,
+    total_recipients?: number,
+    recipient_count?: number,
+    status?: string,
+    method?: string,
+    cancellable?: boolean,
+    total_scans?: number,
+    metadata?: Record<string, any> | null,
+    created_at?: string,
+    updated_at?: string,
+    replayed_from_order_id?: number
+  },
+  stats?: {
+    delivered?: number,
+    processing?: number,
+    printed?: number,
+    in_transit?: number,
+    in_local_area?: number,
+    processed_for_delivery?: number,
+    re_routed?: number,
+    returned_to_sender?: number,
+    failed?: number,
+    scans?: number,
+    multi_scans?: number
+  },
+  errors?: {
+    id?: number,
+    mailing_list_id?: number,
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    error?: string,
+    failure?: string
+  }[],
+  returned?: {
+    id?: number,
+    mailing_list_id?: number,
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    error?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Recipients
+
+### create
+
+`recipients.create`
+
+Create a recipient; email-only address lookup may incur a fee.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.recipients.create({
+	body: { mailing_list_id: 1, email: 'person@example.com' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  mailing_list_id: number,
+  name?: string | null,
+  company?: string | null,
+  address?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  province?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  dob?: string | null,
+  anniversary?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  custom1?: string | null,
+  custom2?: string | null,
+  custom3?: string | null,
+  custom4?: string | null,
+  custom5?: string | null,
+  custom6?: string | null,
+  custom7?: string | null,
+  custom8?: string | null,
+  custom9?: string | null,
+  custom10?: string | null,
+  absentee_address?: string | null,
+  absentee_city?: string | null,
+  absentee_province?: string | null,
+  absentee_postal_code?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `mailing_list_id` | `number` | No | — |
+| `name` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `address2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `province` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `dob` | `string \| null` | No | — |
+| `anniversary` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `custom1` | `string \| null` | No | — |
+| `custom2` | `string \| null` | No | — |
+| `custom3` | `string \| null` | No | — |
+| `custom4` | `string \| null` | No | — |
+| `custom5` | `string \| null` | No | — |
+| `custom6` | `string \| null` | No | — |
+| `custom7` | `string \| null` | No | — |
+| `custom8` | `string \| null` | No | — |
+| `custom9` | `string \| null` | No | — |
+| `custom10` | `string \| null` | No | — |
+| `absentee_address` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### createMultiple
+
+`recipients.createMultiple`
+
+Create recipients; email-only address lookup may incur a fee.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.recipients.createMultiple({
+	body: [{ mailing_list_id: 1, address: '123 Main Street' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  mailing_list_id?: number,
+  name?: string | null,
+  company?: string | null,
+  address?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  province?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  dob?: string | null,
+  anniversary?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  custom1?: string | null,
+  custom2?: string | null,
+  custom3?: string | null,
+  custom4?: string | null,
+  custom5?: string | null,
+  custom6?: string | null,
+  custom7?: string | null,
+  custom8?: string | null,
+  custom9?: string | null,
+  custom10?: string | null,
+  absentee_address?: string | null,
+  absentee_city?: string | null,
+  absentee_province?: string | null,
+  absentee_postal_code?: string | null,
+  mailing_list?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number,
+  mailing_list_id?: number,
+  name?: string | null,
+  company?: string | null,
+  address?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  province?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  dob?: string | null,
+  anniversary?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  custom1?: string | null,
+  custom2?: string | null,
+  custom3?: string | null,
+  custom4?: string | null,
+  custom5?: string | null,
+  custom6?: string | null,
+  custom7?: string | null,
+  custom8?: string | null,
+  custom9?: string | null,
+  custom10?: string | null,
+  absentee_address?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  error?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`recipients.delete`
+
+Delete a recipient by ID.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thanksio.api.recipients.delete({ recipientId: 56 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipientId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### deleteByAddress
+
+`recipients.deleteByAddress`
+
+Delete a recipient by address or email.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thanksio.api.recipients.deleteByAddress({
+	body: { mailing_list_id: 1, email: 'person@example.com' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  mailing_list_id: number,
+  address?: string,
+  address2?: string,
+  city?: string,
+  province?: string,
+  postal_code?: string,
+  country?: string,
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`recipients.get`
+
+Get a recipient by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.recipients.get({ recipientId: 56 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipientId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `mailing_list_id` | `number` | No | — |
+| `name` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `address2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `province` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `dob` | `string \| null` | No | — |
+| `anniversary` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `custom1` | `string \| null` | No | — |
+| `custom2` | `string \| null` | No | — |
+| `custom3` | `string \| null` | No | — |
+| `custom4` | `string \| null` | No | — |
+| `custom5` | `string \| null` | No | — |
+| `custom6` | `string \| null` | No | — |
+| `custom7` | `string \| null` | No | — |
+| `custom8` | `string \| null` | No | — |
+| `custom9` | `string \| null` | No | — |
+| `custom10` | `string \| null` | No | — |
+| `absentee_address` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`recipients.update`
+
+Update a recipient by ID.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.recipients.update({
+	recipientId: 56,
+	body: { name: 'Pat' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipientId` | `number` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  mailing_list_id?: number,
+  name?: string | null,
+  company?: string | null,
+  address?: string | null,
+  address2?: string | null,
+  city?: string | null,
+  province?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  dob?: string | null,
+  anniversary?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  custom1?: string | null,
+  custom2?: string | null,
+  custom3?: string | null,
+  custom4?: string | null,
+  custom5?: string | null,
+  custom6?: string | null,
+  custom7?: string | null,
+  custom8?: string | null,
+  custom9?: string | null,
+  custom10?: string | null,
+  absentee_address?: string | null,
+  absentee_city?: string | null,
+  absentee_province?: string | null,
+  absentee_postal_code?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `mailing_list_id` | `number` | No | — |
+| `name` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `address2` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `province` | `string \| null` | No | — |
+| `postal_code` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `dob` | `string \| null` | No | — |
+| `anniversary` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `custom1` | `string \| null` | No | — |
+| `custom2` | `string \| null` | No | — |
+| `custom3` | `string \| null` | No | — |
+| `custom4` | `string \| null` | No | — |
+| `custom5` | `string \| null` | No | — |
+| `custom6` | `string \| null` | No | — |
+| `custom7` | `string \| null` | No | — |
+| `custom8` | `string \| null` | No | — |
+| `custom9` | `string \| null` | No | — |
+| `custom10` | `string \| null` | No | — |
+| `absentee_address` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+## Send
+
+### giftcard
+
+`send.giftcard`
+
+Send a gift card; charges may apply.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.send.giftcard({
+	body: {
+		preview: true,
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  preview?: boolean,
+  mailing_list_ids?: number[],
+  recipients?: {
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    absentee_city?: string | null,
+    absentee_province?: string | null,
+    absentee_postal_code?: string | null
+  }[],
+  radius_search?: {
+    preview?: boolean,
+    address?: string,
+    record_count?: number,
+    record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+    include_condos?: boolean,
+    append_data?: boolean,
+    use_property_owner?: boolean,
+    include_search_address?: boolean
+  },
+  handwriting_style_id?: number,
+  handwriting_color?: string,
+  handwriting_realism?: boolean,
+  sub_account?: number,
+  notification_emails?: string,
+  email_lookup?: boolean,
+  postage_class?: first_class | standard,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  metadata?: Record<string, any> | null,
+  creative_id?: number,
+  image_template_id?: number,
+  front_image_url?: string,
+  message?: string,
+  message_template_id?: number,
+  giftcard_brand?: string,
+  giftcard_amount_in_cents?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  message?: string,
+  data: {
+    previews?: string[]
+  }
+} | {
+  id?: number,
+  user_id?: number,
+  sub_account_id?: number | null,
+  message?: string,
+  size?: string,
+  type?: string,
+  display_type?: string,
+  style?: number,
+  front_image?: string,
+  high_quality_preview?: string,
+  authorization_total?: number,
+  grand_total?: number,
+  order_total?: number,
+  total_estimated_recipients?: number,
+  total_recipients?: number,
+  recipient_count?: number,
+  status?: string,
+  method?: string,
+  cancellable?: boolean,
+  total_scans?: number,
+  metadata?: Record<string, any> | null,
+  created_at?: string,
+  updated_at?: string,
+  replayed_from_order_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### magnacard
+
+`send.magnacard`
+
+Send a magnacard; charges may apply.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.send.magnacard({
+	body: {
+		preview: true,
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  preview?: boolean,
+  mailing_list_ids?: number[],
+  recipients?: {
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    absentee_city?: string | null,
+    absentee_province?: string | null,
+    absentee_postal_code?: string | null
+  }[],
+  radius_search?: {
+    preview?: boolean,
+    address?: string,
+    record_count?: number,
+    record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+    include_condos?: boolean,
+    append_data?: boolean,
+    use_property_owner?: boolean,
+    include_search_address?: boolean
+  },
+  handwriting_style_id?: number,
+  handwriting_color?: string,
+  handwriting_realism?: boolean,
+  sub_account?: number,
+  notification_emails?: string,
+  email_lookup?: boolean,
+  postage_class?: first_class | standard,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  metadata?: Record<string, any> | null,
+  creative_id?: number,
+  image_template_id?: number,
+  front_image_url?: string,
+  message?: string,
+  message_template_id?: number,
+  use_custom_background?: boolean,
+  custom_background_image?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  message?: string,
+  data: {
+    previews?: string[]
+  }
+} | {
+  id?: number,
+  user_id?: number,
+  sub_account_id?: number | null,
+  message?: string,
+  size?: string,
+  type?: string,
+  display_type?: string,
+  style?: number,
+  front_image?: string,
+  high_quality_preview?: string,
+  authorization_total?: number,
+  grand_total?: number,
+  order_total?: number,
+  total_estimated_recipients?: number,
+  total_recipients?: number,
+  recipient_count?: number,
+  status?: string,
+  method?: string,
+  cancellable?: boolean,
+  total_scans?: number,
+  metadata?: Record<string, any> | null,
+  created_at?: string,
+  updated_at?: string,
+  replayed_from_order_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### notecard
+
+`send.notecard`
+
+Send a notecard; charges may apply.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.send.notecard({
+	body: {
+		preview: true,
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  preview?: boolean,
+  mailing_list_ids?: number[],
+  recipients?: {
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    absentee_city?: string | null,
+    absentee_province?: string | null,
+    absentee_postal_code?: string | null
+  }[],
+  radius_search?: {
+    preview?: boolean,
+    address?: string,
+    record_count?: number,
+    record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+    include_condos?: boolean,
+    append_data?: boolean,
+    use_property_owner?: boolean,
+    include_search_address?: boolean
+  },
+  handwriting_style_id?: number,
+  handwriting_color?: string,
+  handwriting_realism?: boolean,
+  sub_account?: number,
+  notification_emails?: string,
+  email_lookup?: boolean,
+  postage_class?: first_class | standard,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  metadata?: Record<string, any> | null,
+  creative_id?: number,
+  image_template_id?: number,
+  front_image_url?: string,
+  message?: string,
+  message_template_id?: number,
+  use_custom_background?: boolean,
+  custom_background_image?: string,
+  qrcode_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  message?: string,
+  data: {
+    previews?: string[]
+  }
+} | {
+  id?: number,
+  user_id?: number,
+  sub_account_id?: number | null,
+  message?: string,
+  size?: string,
+  type?: string,
+  display_type?: string,
+  style?: number,
+  front_image?: string,
+  high_quality_preview?: string,
+  authorization_total?: number,
+  grand_total?: number,
+  order_total?: number,
+  total_estimated_recipients?: number,
+  total_recipients?: number,
+  recipient_count?: number,
+  status?: string,
+  method?: string,
+  cancellable?: boolean,
+  total_scans?: number,
+  metadata?: Record<string, any> | null,
+  created_at?: string,
+  updated_at?: string,
+  replayed_from_order_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### postcard
+
+`send.postcard`
+
+Send a postcard; charges may apply.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.send.postcard({
+	body: {
+		preview: true,
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  preview?: boolean,
+  mailing_list_ids?: number[],
+  recipients?: {
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    absentee_city?: string | null,
+    absentee_province?: string | null,
+    absentee_postal_code?: string | null
+  }[],
+  radius_search?: {
+    preview?: boolean,
+    address?: string,
+    record_count?: number,
+    record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+    include_condos?: boolean,
+    append_data?: boolean,
+    use_property_owner?: boolean,
+    include_search_address?: boolean
+  },
+  handwriting_style_id?: number,
+  handwriting_color?: string,
+  handwriting_realism?: boolean,
+  sub_account?: number,
+  notification_emails?: string,
+  email_lookup?: boolean,
+  postage_class?: first_class | standard,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  metadata?: Record<string, any> | null,
+  creative_id?: number,
+  image_template_id?: number,
+  front_image_url?: string,
+  message?: string,
+  message_template_id?: number,
+  use_custom_background?: boolean,
+  custom_background_image?: string,
+  qrcode_url?: string,
+  size?: 4x6 | 6x9 | 6x11
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  message?: string,
+  data: {
+    previews?: string[]
+  }
+} | {
+  id?: number,
+  user_id?: number,
+  sub_account_id?: number | null,
+  message?: string,
+  size?: string,
+  type?: string,
+  display_type?: string,
+  style?: number,
+  front_image?: string,
+  high_quality_preview?: string,
+  authorization_total?: number,
+  grand_total?: number,
+  order_total?: number,
+  total_estimated_recipients?: number,
+  total_recipients?: number,
+  recipient_count?: number,
+  status?: string,
+  method?: string,
+  cancellable?: boolean,
+  total_scans?: number,
+  metadata?: Record<string, any> | null,
+  created_at?: string,
+  updated_at?: string,
+  replayed_from_order_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### windowedLetter
+
+`send.windowedLetter`
+
+Send a windowed letter; charges may apply.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.send.windowedLetter({
+	body: {
+		preview: true,
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  preview?: boolean,
+  mailing_list_ids?: number[],
+  recipients?: {
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    absentee_city?: string | null,
+    absentee_province?: string | null,
+    absentee_postal_code?: string | null
+  }[],
+  radius_search?: {
+    preview?: boolean,
+    address?: string,
+    record_count?: number,
+    record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+    include_condos?: boolean,
+    append_data?: boolean,
+    use_property_owner?: boolean,
+    include_search_address?: boolean
+  },
+  handwriting_style_id?: number,
+  handwriting_color?: string,
+  handwriting_realism?: boolean,
+  sub_account?: number,
+  notification_emails?: string,
+  email_lookup?: boolean,
+  postage_class?: first_class | standard,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  metadata?: Record<string, any> | null,
+  creative_id?: number,
+  image_template_id?: number,
+  front_image_url?: string,
+  message?: string,
+  message_template_id?: number,
+  qrcode_url?: string,
+  additional_pages_url?: string,
+  pdf_only_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  message?: string,
+  data: {
+    previews?: string[]
+  }
+} | {
+  id?: number,
+  user_id?: number,
+  sub_account_id?: number | null,
+  message?: string,
+  size?: string,
+  type?: string,
+  display_type?: string,
+  style?: number,
+  front_image?: string,
+  high_quality_preview?: string,
+  authorization_total?: number,
+  grand_total?: number,
+  order_total?: number,
+  total_estimated_recipients?: number,
+  total_recipients?: number,
+  recipient_count?: number,
+  status?: string,
+  method?: string,
+  cancellable?: boolean,
+  total_scans?: number,
+  metadata?: Record<string, any> | null,
+  created_at?: string,
+  updated_at?: string,
+  replayed_from_order_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### windowlessLetter
+
+`send.windowlessLetter`
+
+Send a windowless letter; charges may apply.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.send.windowlessLetter({
+	body: {
+		preview: true,
+		creative_id: 501,
+		recipients: [{ address: '123 Main Street' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  preview?: boolean,
+  mailing_list_ids?: number[],
+  recipients?: {
+    name?: string | null,
+    company?: string | null,
+    address?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    province?: string | null,
+    postal_code?: string | null,
+    country?: string | null,
+    dob?: string | null,
+    anniversary?: string | null,
+    email?: string | null,
+    phone?: string | null,
+    custom1?: string | null,
+    custom2?: string | null,
+    custom3?: string | null,
+    custom4?: string | null,
+    custom5?: string | null,
+    custom6?: string | null,
+    custom7?: string | null,
+    custom8?: string | null,
+    custom9?: string | null,
+    custom10?: string | null,
+    absentee_address?: string | null,
+    absentee_city?: string | null,
+    absentee_province?: string | null,
+    absentee_postal_code?: string | null
+  }[],
+  radius_search?: {
+    preview?: boolean,
+    address?: string,
+    record_count?: number,
+    record_types?: all | likelytomove | apartmentcomplex | likelytodownsize | likelytorefi | absenteeowner | highnetworth | majorityhomeequity | homefreeclear | underwater | kidsinhousehold | newhomeowner | firsttimehomebuyer | renters | retiring | retired | pool | onlybusinesses | newbusiness,
+    include_condos?: boolean,
+    append_data?: boolean,
+    use_property_owner?: boolean,
+    include_search_address?: boolean
+  },
+  handwriting_style_id?: number,
+  handwriting_color?: string,
+  handwriting_realism?: boolean,
+  sub_account?: number,
+  notification_emails?: string,
+  email_lookup?: boolean,
+  postage_class?: first_class | standard,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  metadata?: Record<string, any> | null,
+  creative_id?: number,
+  image_template_id?: number,
+  front_image_url?: string,
+  message?: string,
+  message_template_id?: number,
+  qrcode_url?: string,
+  additional_pages_url?: string,
+  pdf_only_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  message?: string,
+  data: {
+    previews?: string[]
+  }
+} | {
+  id?: number,
+  user_id?: number,
+  sub_account_id?: number | null,
+  message?: string,
+  size?: string,
+  type?: string,
+  display_type?: string,
+  style?: number,
+  front_image?: string,
+  high_quality_preview?: string,
+  authorization_total?: number,
+  grand_total?: number,
+  order_total?: number,
+  total_estimated_recipients?: number,
+  total_recipients?: number,
+  recipient_count?: number,
+  status?: string,
+  method?: string,
+  cancellable?: boolean,
+  total_scans?: number,
+  metadata?: Record<string, any> | null,
+  created_at?: string,
+  updated_at?: string,
+  replayed_from_order_id?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Sub Accounts
+
+### create
+
+`subAccounts.create`
+
+Create a sub-account.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.subAccounts.create({
+	body: { title: 'My Sub Account' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  title: string,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `return_name` | `string` | No | — |
+| `return_address` | `string` | No | — |
+| `return_address2` | `string` | No | — |
+| `return_city` | `string` | No | — |
+| `return_state` | `string` | No | — |
+| `return_postal_code` | `string` | No | — |
+| `id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`subAccounts.delete`
+
+Delete a sub-account and its image templates, message templates, and campaigns; orders and lists move to the main account.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.thanksio.api.subAccounts.delete({ subAccountId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subAccountId` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`subAccounts.get`
+
+Get a sub-account.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.subAccounts.get({ subAccountId: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subAccountId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `return_name` | `string` | No | — |
+| `return_address` | `string` | No | — |
+| `return_address2` | `string` | No | — |
+| `return_city` | `string` | No | — |
+| `return_state` | `string` | No | — |
+| `return_postal_code` | `string` | No | — |
+| `id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`subAccounts.list`
+
+List sub-accounts.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.subAccounts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  title?: string,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string,
+  id?: number,
+  user_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`subAccounts.update`
+
+Update a sub-account.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.subAccounts.update({
+	subAccountId: 1,
+	body: { title: 'Updated Account' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subAccountId` | `number` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  title: string,
+  return_name?: string,
+  return_address?: string,
+  return_address2?: string,
+  return_city?: string,
+  return_state?: string,
+  return_postal_code?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `return_name` | `string` | No | — |
+| `return_address` | `string` | No | — |
+| `return_address2` | `string` | No | — |
+| `return_city` | `string` | No | — |
+| `return_state` | `string` | No | — |
+| `return_postal_code` | `string` | No | — |
+| `id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+
+
+
+---
+
+## Webhook Destinations
+
+### create
+
+`webhookDestinations.create`
+
+Create an outbound webhook destination.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.webhookDestinations.create({
+	body: { url: 'https://example.com/hook', type: 'order.status_update', verb: 'post' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  url: string,
+  type: order_item.status_update | order.status_update | order_item.delivered | scans.scan_update | scan_board.status_update,
+  verb: string,
+  scan_board_status?: new | contacted | follow_up | done | null,
+  description?: string | null,
+  mailing_list_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `type` | `order_item.status_update \| order.status_update \| order_item.delivered \| scans.scan_update \| scan_board.status_update` | No | — |
+| `verb` | `string` | No | — |
+| `scan_board_status` | `new \| contacted \| follow_up \| done \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `mailing_list_id` | `number \| null` | No | — |
+| `invoke_count` | `number` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string \| null` | No | — |
+
+
+
+---
+### delete
+
+`webhookDestinations.delete`
+
+Delete an outbound webhook destination.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.thanksio.api.webhookDestinations.delete({ webhookId: 13 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`webhookDestinations.list`
+
+List outbound webhook destinations.
+
+**Risk:** `read`
+
+```ts
+await corsair.thanksio.api.webhookDestinations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `items_per_page` | `number` | No | — |
+| `type` | `order_item.status_update \| order.status_update \| order_item.delivered \| scans.scan_update \| scan_board.status_update` | No | — |
+| `scan_board_status` | `new \| contacted \| follow_up \| done` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `can_manage_webhooks` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  url?: string,
+  type?: order_item.status_update | order.status_update | order_item.delivered | scans.scan_update | scan_board.status_update,
+  verb?: string,
+  scan_board_status?: new | contacted | follow_up | done | null,
+  description?: string | null,
+  id?: number,
+  user_id?: number,
+  mailing_list_id?: number | null,
+  invoke_count?: number,
+  created_at?: string | null,
+  updated_at?: string,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  from?: number | null,
+  last_page?: number,
+  path?: string,
+  per_page?: number | string,
+  to?: number | null,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhookDestinations.update`
+
+Update an outbound webhook destination.
+
+**Risk:** `write`
+
+```ts
+await corsair.thanksio.api.webhookDestinations.update({
+	webhookId: 13,
+	body: { url: 'https://example.com/hook', type: 'order.status_update', verb: 'post' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `number` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  url: string,
+  type: order_item.status_update | order.status_update | order_item.delivered | scans.scan_update | scan_board.status_update,
+  verb: string,
+  scan_board_status?: new | contacted | follow_up | done | null,
+  description?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | — |
+| `type` | `order_item.status_update \| order.status_update \| order_item.delivered \| scans.scan_update \| scan_board.status_update` | No | — |
+| `verb` | `string` | No | — |
+| `scan_board_status` | `new \| contacted \| follow_up \| done \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `mailing_list_id` | `number \| null` | No | — |
+| `invoke_count` | `number` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string` | No | — |
+| `deleted_at` | `string \| null` | No | — |
+
+
+
+---

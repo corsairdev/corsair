@@ -1,0 +1,143 @@
+---
+title: "Thanks.io plugin"
+sidebarTitle: "Overview"
+description: "Manage direct-mail recipients, mailing lists, orders, creatives, and webhook destinations with Thanks.io."
+---
+
+Use **Thanks.io** through Corsair: one client, typed API calls.
+
+Thanks.io uses bearer API keys. An email-only recipient may trigger paid address lookup. Direct mail sends and radius purchases can incur charges. Requests are not retried automatically.
+
+The bulk recipient example uses `mailing_list`, while the published schema uses `mailing_list_id`; both are accepted and forwarded unchanged. Bulk results may contain an `error` for an individual recipient.
+
+Webhook destination operations manage Thanks.io's outbound subscriptions; inbound webhook verification is not included.
+
+Deleting a sub-account also deletes its image templates, message templates, and campaigns; its orders and mailing lists move to the main account.
+
+Replaying an order creates and charges for a fresh mailing. Invalidating an unredeemed gift card is irreversible.
+
+Send operations can create paid mailings. Use `preview: true` to request previews or the corresponding `estimate` endpoint to price a mailing before submitting. Email-to-address and radius lookup may incur additional charges.
+
+`imageBuilder.create` returns a PNG as a `Blob`; it does not place an order.
+
+**What you get:**
+
+- 52 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/thanksio better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/thanksio better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/thanksio better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/thanksio better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { thanksio } from '@corsair-dev/thanksio';
+
+export const corsair = createCorsair({
+	plugins: [
+		thanksio(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+thanksio()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'thanksio',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`creatives.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.thanksio.api.creatives.get({ creativeId: 501 });
+```
+
+
+**`recipients.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.thanksio.api.recipients.create({
+	body: { mailing_list_id: 1, email: 'person@example.com' },
+});
+```
+
+
+See the full list on the [API](/plugins/thanksio/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/thanksio/api">
+    Every `thanksio.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
