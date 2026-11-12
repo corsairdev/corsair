@@ -3905,5 +3905,14 @@
     "version": "0.1.21",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/ynab",
+    "dir": "packages/ynab",
+    "name": "YNAB",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
