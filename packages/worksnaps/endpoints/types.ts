@@ -194,10 +194,19 @@ const ProjectsUpdateInputSchema = z
 		project_id: z.number().int(),
 		name: z.string().min(1).optional(),
 		description: z.string().optional(),
+		status: z
+			.enum(['active', 'archived'])
+			.optional()
+			.describe(
+				'Set active to restore a project that projects.delete archived.',
+			),
 	})
 	.refine(
-		(input) => input.name !== undefined || input.description !== undefined,
-		'Give a name or a description to change.',
+		(input) =>
+			input.name !== undefined ||
+			input.description !== undefined ||
+			input.status !== undefined,
+		'Give a name, a description or a status to change.',
 	);
 
 export type ProjectsUpdateInput = z.infer<typeof ProjectsUpdateInputSchema>;

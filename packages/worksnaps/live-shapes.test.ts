@@ -412,6 +412,18 @@ describe('errors', () => {
 	});
 });
 
+describe('archived projects', () => {
+	it('restores an archived project through an update', async () => {
+		respondText(fetchMock, replyProjectXml);
+
+		await invoke(Projects.update, { project_id: 5001, status: 'active' });
+
+		expect(lastRequest(fetchMock).rawBody).toBe(
+			'<project><status>active</status></project>',
+		);
+	});
+});
+
 describe('updates with nothing to change', () => {
 	it('refuses a project update with no fields', async () => {
 		await expect(

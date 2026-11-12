@@ -13,10 +13,10 @@ pnpm add @corsair-dev/worksnaps
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `projects.create` | `worksnaps.api.projects.create` | `write` | Create a project with a name and description |
-| `projects.delete` | `worksnaps.api.projects.delete` | `destructive` | Archive a project; Worksnaps marks it archived rather than erasing it |
+| `projects.delete` | `worksnaps.api.projects.delete` | `write` | Archive a project; it is not erased and projects.update with status active restores it |
 | `projects.get` | `worksnaps.api.projects.get` | `read` | Read one project with its name and description |
 | `projects.list` | `worksnaps.api.projects.list` | `read` | List the projects the token is involved in, optionally with each project members |
-| `projects.update` | `worksnaps.api.projects.update` | `write` | Change a project name or description |
+| `projects.update` | `worksnaps.api.projects.update` | `write` | Change a project name or description, or restore an archived project |
 | `reports.project` | `worksnaps.api.reports.project` | `read` | Read time per user and task in one project over at most 30 days |
 | `reports.summary` | `worksnaps.api.reports.summary` | `read` | Read time by user, project, task and day across the projects you manage, over at most 30 days |
 | `taskAssignments.create` | `worksnaps.api.taskAssignments.create` | `write` | Assign a user to a task |

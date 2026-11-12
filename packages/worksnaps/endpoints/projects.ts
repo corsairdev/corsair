@@ -73,7 +73,7 @@ export const create: WorksnapsEndpoints['projectsCreate'] = (ctx, input) =>
 
 /**
  * Updates a project. Only the fields given are written, which is why an update
- * with neither name nor description is rejected before the request.
+ * with no field is rejected before the request.
  */
 export const update: WorksnapsEndpoints['projectsUpdate'] = (ctx, input) =>
 	call(
@@ -84,10 +84,10 @@ export const update: WorksnapsEndpoints['projectsUpdate'] = (ctx, input) =>
 			output: Outputs.projectsUpdate,
 		},
 		input,
-		({ project_id, name, description }) => ({
+		({ project_id, name, description, status }) => ({
 			method: 'PUT',
 			path: `/projects/${segment(project_id)}.xml`,
-			body: toXml('project', { name, description }),
+			body: toXml('project', { name, description, status }),
 		}),
 		{
 			log: (parsed, result) => ({
@@ -98,8 +98,9 @@ export const update: WorksnapsEndpoints['projectsUpdate'] = (ctx, input) =>
 	);
 
 /**
- * The API archives the project rather than deleting it: it is marked
- * archived and stops showing as active.
+ * The API archives the project rather than deleting it: it is marked archived
+ * and drops out of projects.list. projects.update with status 'active'
+ * restores it.
  */
 export const remove: WorksnapsEndpoints['projectsDelete'] = (ctx, input) =>
 	call(

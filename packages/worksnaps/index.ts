@@ -273,12 +273,13 @@ const worksnapsEndpointMeta = {
 	},
 	'projects.update': {
 		riskLevel: 'write',
-		description: 'Change a project name or description',
+		description:
+			'Change a project name or description, or restore an archived project',
 	},
 	'projects.delete': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description:
-			'Archive a project; Worksnaps marks it archived rather than erasing it',
+			'Archive a project; it is not erased and projects.update with status active restores it',
 	},
 	'tasks.list': {
 		riskLevel: 'read',

@@ -59,9 +59,9 @@ await corsair.worksnaps.api.projects.create({ name: 'Acme storefront', descripti
 
 `projects.delete`
 
-Archive a project; Worksnaps marks it archived rather than erasing it
+Archive a project; it is not erased and projects.update with status active restores it
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.worksnaps.api.projects.delete({ project_id: 3456 });
@@ -179,7 +179,7 @@ await corsair.worksnaps.api.projects.list({ include_user_assignment: true });
 
 `projects.update`
 
-Change a project name or description
+Change a project name or description, or restore an archived project
 
 **Risk:** `write`
 
@@ -194,6 +194,7 @@ await corsair.worksnaps.api.projects.update({ project_id: 3456, name: 'Renamed' 
 | `project_id` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
+| `status` | `active \| archived` | No | Set active to restore a project that projects.delete archived. |
 
 
 

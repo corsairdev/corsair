@@ -18,7 +18,7 @@ Find the API token in Worksnaps under **Profile & Settings → Web Service API**
 - **`GET /me.xml` is the cheapest check.** It returns the account behind the token, which verifies the credential without touching project data.
 - **Time is Unix seconds on a 10-minute grid.** `from_timestamp` and `to_timestamp` are Unix seconds that must be multiples of 600. `timeEntries.list` also needs `user_ids`. `timeEntries.create` logs offline time for yourself on a task you are assigned to; Worksnaps splits it into 10-minute entries and the call returns all of them. `timeEntries.update` can only move an entry to another task or change its comment.
 - **Reports.** `reports.project` is a time summary (or, with `name: 'time_entries'`, the entries) for some users over at most 30 days. `reports.summary` is the manager report: time per user, project, task and day across the projects you manage, by date.
-- **`projects.delete` archives.** The API marks the project archived; it is not erased.
+- **`projects.delete` archives.** The API marks the project archived and drops it from `projects.list`; nothing is erased, and `projects.update` with `status: 'active'` restores it.
 
 **What you get:**
 

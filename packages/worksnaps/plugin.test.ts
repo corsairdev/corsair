@@ -90,15 +90,16 @@ describe('worksnaps plugin definition', () => {
 		}
 	});
 
-	it('marks the deletes as destructive', () => {
+	it('marks the deletes as destructive, but not the project archive', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const destructive = operations.filter(
 			(operation) =>
 				meta[operation as keyof typeof meta]?.riskLevel === 'destructive',
 		);
 
+		// projects.delete archives, and projects.update can restore the project.
+		expect(meta['projects.delete']?.riskLevel).toBe('write');
 		expect(destructive.sort()).toEqual([
-			'projects.delete',
 			'taskAssignments.delete',
 			'tasks.delete',
 			'timeEntries.delete',
