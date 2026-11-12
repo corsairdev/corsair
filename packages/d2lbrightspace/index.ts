@@ -370,6 +370,8 @@ export type InternalD2LBrightspacePlugin =
 	BaseD2LBrightspacePlugin<D2LBrightspacePluginOptions>;
 
 export function d2lbrightspace<const T extends D2LBrightspacePluginOptions>(
+	// All options are optional; the generic preserves callers' literal options,
+	// but TypeScript cannot infer the empty default as every possible subtype T.
 	incomingOptions: T = {} as T,
 ): BaseD2LBrightspacePlugin<T> {
 	const options = {

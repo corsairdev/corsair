@@ -9,12 +9,15 @@ jest.mock('corsair/http', () => ({
 	request: jest.fn(),
 }));
 
+// The module mock above replaces request with a Jest mock at runtime.
 const http = request as jest.Mock;
 const plugin = d2lbrightspace({
 	baseUrl: 'https://school.example',
 	key: 'token',
 });
 const endpoints = plugin.endpoints!;
+// Endpoint seam tests supply only the key and options the endpoint reads;
+// the full Corsair context is exercised separately by the bound-client test.
 const ctx = {
 	key: 'token',
 	options: { baseUrl: 'https://school.example' },
@@ -58,6 +61,8 @@ test('grade writes require the fields for their documented grade type', async ()
 		CategoryId: null,
 		Description: { Content: '', Type: 'Text' as const },
 	};
+	// Deliberately bypass the static input type to exercise runtime rejection of
+	// an incomplete numeric grade; a correctly typed input cannot represent it.
 	await expect(
 		endpoints.grades.create(ctx, {
 			orgUnitId: '10',
@@ -298,6 +303,8 @@ test('OAuth connections acquire tokens via Corsair and direct tokens stay suppor
 			.mockResolvedValue(String(Math.floor(Date.now() / 1000) + 3600)),
 	};
 	const oauth = d2lbrightspace();
+	// These minimal key-builder contexts provide only the fields each tested
+	// branch reads; full key-manager/context objects are not needed at this seam.
 	const token = await oauth.keyBuilder!(
 		{
 			keys: credentials,

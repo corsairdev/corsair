@@ -51,7 +51,10 @@ export async function makeD2LBrightspaceRequest<T>(
 	options: {
 		baseUrl: string | undefined;
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+		// This shared transport accepts the different endpoint-specific bodies;
+		// each endpoint validates its own shape before passing it here.
 		body?: unknown;
+		// Query shapes vary by route and are validated by each endpoint schema.
 		query?: Record<string, unknown>;
 	},
 ): Promise<T> {
