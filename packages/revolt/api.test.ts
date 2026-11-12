@@ -25,6 +25,14 @@ const channelId = process.env.REVOLT_CHANNEL_ID ?? '';
 const describeIfKey =
 	botToken && serverId && channelId ? describe : describe.skip;
 
+if (botToken && !(serverId && channelId)) {
+	// A token means a live run was asked for; without the ids it would skip
+	// every check and still finish green.
+	throw new Error(
+		'REVOLT_BOT_TOKEN is set but REVOLT_SERVER_ID or REVOLT_CHANNEL_ID is not: the live Revolt suite needs all three.',
+	);
+}
+
 if (!botToken) {
 	// A skipped run must not read as a green one.
 	console.warn(
@@ -207,6 +215,7 @@ describeIfKey('live Revolt API', () => {
 			const { _id: newChannel } = (await created.json()) as { _id: string };
 
 			const owner = await client('user', sessionToken ?? '');
+			let removed = false;
 			try {
 				const edited = await owner.api.channels.edit({
 					channel_id: newChannel,
@@ -220,10 +229,18 @@ describeIfKey('live Revolt API', () => {
 					channel_id: newChannel,
 				});
 				expect(deleted.success).toBe(true);
+				removed = true;
 				await expect(
 					owner.api.channels.get({ channel_id: newChannel }),
 				).rejects.toThrow('Revolt 404');
 			} finally {
+				// Leave no test channel behind when an edit or assertion failed;
+				// a cleanup error must not hide the original failure.
+				if (!removed) {
+					await owner.api.channels
+						.delete({ channel_id: newChannel })
+						.catch(() => undefined);
+				}
 				owner.cleanup();
 			}
 		},
