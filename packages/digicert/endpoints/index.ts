@@ -36,6 +36,8 @@ import {
 	privateCAHelper,
 	verifyTemplate,
 } from './digicert-one';
+import { generatedDocEndpoints } from './generated-docs';
+import { generatedOpenApiEndpoints } from './generated-openapi';
 import {
 	contentTrustInfoV0,
 	contentTrustInfoV1,
@@ -66,4 +68,6 @@ export const endpoints = {
 	reportDetails,
 	customReportOrders,
 	customReportOrderById,
+	...generatedOpenApiEndpoints,
+	...generatedDocEndpoints,
 };

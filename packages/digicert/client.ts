@@ -49,18 +49,30 @@ export async function makeDigicertRequest<T>(
 		reportRegion?: 'us' | 'eu';
 		digicertOneRegion?: DigiCertOneRegion;
 		public?: boolean;
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, string | readonly string[]>;
-		query?: Record<string, string | number | boolean | undefined>;
+		authScheme?: 'api_key' | 'oauth_2';
+		method?: ApiRequestOptions['method'];
+		path?: ApiRequestOptions['path'];
+		query?: ApiRequestOptions['query'];
+		headers?: ApiRequestOptions['headers'];
+		cookies?: ApiRequestOptions['cookies'];
+		body?: ApiRequestOptions['body'];
+		formData?: ApiRequestOptions['formData'];
+		mediaType?: ApiRequestOptions['mediaType'];
 	} = {},
 ): Promise<T> {
 	const {
 		method = 'GET',
-		body,
-		query,
 		region = 'us',
 		reportRegion = 'us',
 		digicertOneRegion = 'us',
+		authScheme = 'api_key',
+		path,
+		query,
+		headers,
+		cookies,
+		body,
+		formData,
+		mediaType,
 	} = options;
 	const publicRoute = options.public === true;
 	if (!publicRoute && apiKey !== undefined && apiKey.length === 0) {
@@ -80,28 +92,36 @@ export async function makeDigicertRequest<T>(
 					? `${oneBase}/documentmanager`
 					: oneBase;
 	const authHeader =
-		family === 'certcentral' || family === 'reportLibrary'
-			? 'X-DC-DEVKEY'
-			: 'x-api-key';
+		authScheme === 'oauth_2'
+			? 'Authorization'
+			: family === 'certcentral' || family === 'reportLibrary'
+				? 'X-DC-DEVKEY'
+				: 'x-api-key';
 	const config: OpenAPIConfig = {
 		BASE: base,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
-			'Content-Type': 'application/json',
-			...(apiKey ? { [authHeader]: apiKey } : {}),
+			...(formData ? {} : { 'Content-Type': 'application/json' }),
+			...(apiKey && !publicRoute
+				? {
+						[authHeader]:
+							authScheme === 'oauth_2' ? `Bearer ${apiKey}` : apiKey,
+					}
+				: {}),
 		},
 	};
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
+		path,
 		query,
+		headers,
+		cookies,
+		body,
+		formData,
+		mediaType,
 	};
 	return request<T>(config, requestOptions);
 }

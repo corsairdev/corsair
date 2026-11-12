@@ -1,5 +1,4 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
@@ -14,6 +13,19 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { endpoints } from './endpoints';
+import {
+	generatedDocEndpointMeta,
+	generatedDocEndpointSchemas,
+	generatedDocEndpoints,
+} from './endpoints/generated-docs';
+import {
+	generatedOpenApiEndpointMeta,
+	generatedOpenApiEndpointSchemas,
+	generatedOpenApiEndpoints,
+	generatedOpenApiOAuthOperationIds,
+	generatedOpenApiOneAuthPrefixes,
+	generatedOpenApiPublicOperationIds,
+} from './endpoints/generated-openapi';
 import type {
 	DigicertEndpointInputs,
 	DigicertEndpointOutputs,
@@ -26,7 +38,7 @@ import { errorHandlers } from './error-handlers';
 import { DigicertSchema } from './schema';
 
 export type DigicertPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	certCentralRegion?: 'us' | 'eu';
 	reportRegion?: 'us' | 'eu';
 	digicertOneRegion?: 'us' | 'jp' | 'ch' | 'nl' | 'au';
@@ -83,7 +95,8 @@ export type DigicertEndpoints = {
 		orders: Endpoint<'customReportQuery'>;
 		orderById: Endpoint<'customReportById'>;
 	};
-};
+} & typeof generatedOpenApiEndpoints &
+	typeof generatedDocEndpoints;
 
 const digicertEndpointsNested = {
 	users: { list: endpoints.usersList },
@@ -113,6 +126,8 @@ const digicertEndpointsNested = {
 		orders: endpoints.customReportOrders,
 		orderById: endpoints.customReportOrderById,
 	},
+	...generatedOpenApiEndpoints,
+	...generatedDocEndpoints,
 } as const;
 
 export const digicertEndpointSchemas = {
@@ -184,11 +199,13 @@ export const digicertEndpointSchemas = {
 		input: DigicertEndpointInputSchemas.customReportById,
 		output: DigicertEndpointOutputSchemas.customReportById,
 	},
+	...generatedOpenApiEndpointSchemas,
+	...generatedDocEndpointSchemas,
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof digicertEndpointsNested
 >;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType: PickAuth<'api_key' | 'oauth_2'> = 'api_key';
 
 const digicertEndpointMeta = {
 	'users.list': {
@@ -263,6 +280,8 @@ const digicertEndpointMeta = {
 		description:
 			'Query one CertCentral certificate order by ID through Custom Reports GraphQL.',
 	},
+	...generatedOpenApiEndpointMeta,
+	...generatedDocEndpointMeta,
 } as const satisfies RequiredPluginEndpointMeta<typeof digicertEndpointsNested>;
 
 export const digicertAuthConfig = {
@@ -273,6 +292,7 @@ const PUBLIC_OPERATIONS = new Set([
 	'trustLifecycle.version',
 	'contentTrust.infoV0',
 	'contentTrust.infoV1',
+	...generatedOpenApiPublicOperationIds,
 ]);
 const DIGICERT_ONE_AUTH_OPERATIONS = new Set([
 	'accountManager.locales',
@@ -315,9 +335,29 @@ export function digicert<const T extends DigicertPluginOptions>(
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: DigicertKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
-			if (PUBLIC_OPERATIONS.has(ctx.meteredOperationId ?? '')) return '';
+			const operationId = ctx.meteredOperationId ?? '';
+			if (PUBLIC_OPERATIONS.has(operationId)) return '';
+			if (ctx.authType === 'oauth_2') {
+				if (
+					!generatedOpenApiOAuthOperationIds.some(
+						(oauthOperationId) => oauthOperationId === operationId,
+					)
+				) {
+					throw new AuthMissingError('digicert', 'api_key');
+				}
+				const accessToken = await ctx.keys.get_access_token();
+				if (!accessToken) {
+					throw new AuthMissingError('digicert', 'oauth_2');
+				}
+				return accessToken;
+			}
 			if (!ctx.keys) throw new AuthMissingError('digicert', 'api_key');
-			if (DIGICERT_ONE_AUTH_OPERATIONS.has(ctx.meteredOperationId ?? '')) {
+			if (
+				DIGICERT_ONE_AUTH_OPERATIONS.has(operationId) ||
+				generatedOpenApiOneAuthPrefixes.some((prefix) =>
+					operationId.startsWith(prefix),
+				)
+			) {
 				const oneKey = await ctx.keys.get_digicert_one_api_key();
 				if (!oneKey) throw new AuthMissingError('digicert', 'api_key');
 				return oneKey;
@@ -325,6 +365,12 @@ export function digicert<const T extends DigicertPluginOptions>(
 			const apiKey = await ctx.keys.get_api_key();
 			if (!apiKey) throw new AuthMissingError('digicert', 'api_key');
 			return apiKey;
+		},
+		oauthConfig: {
+			providerName: 'DigiCert Content Trust',
+			authUrl: 'https://one.digicert.com/imauth/oauth2/authorize',
+			tokenUrl: 'https://one.digicert.com/imauth/oauth2/token',
+			scopes: ['service'],
 		},
 	} satisfies InternalDigicertPlugin;
 }
