@@ -1,0 +1,4 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Endorsal"
+description: TODO one sentence on what the API is and what this plugin can do with it.
