@@ -261,7 +261,7 @@ export const reactionsAdd: RevoltEndpoints['reactionsAdd'] = (ctx, input) =>
 		},
 		input,
 		(parsed) => ({
-			method: 'POST',
+			method: 'PUT',
 			path: `/channels/${segment(parsed.channel_id)}/messages/${segment(
 				parsed.message_id,
 			)}/reactions/${segment(parsed.emoji)}`,

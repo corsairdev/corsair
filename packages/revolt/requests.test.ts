@@ -226,7 +226,10 @@ describe('reactions.add', () => {
 			emoji: '👍',
 		})) as Awaited<ReturnType<typeof Endpoints.reactionsAdd>>;
 
-		expect(lastRequest(fetchMock).path).toBe(
+		const request = lastRequest(fetchMock);
+		// Stoat registers the reaction route as PUT; a POST answers 404.
+		expect(request.method).toBe('PUT');
+		expect(request.path).toBe(
 			`/channels/${CHANNEL_ID}/messages/${MESSAGE_ID}/reactions/${encodeURIComponent('👍')}`,
 		);
 		expect(result.success).toBe(true);

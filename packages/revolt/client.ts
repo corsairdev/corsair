@@ -151,7 +151,7 @@ export function describeRevoltError(
 export type RevoltQuery = Record<string, RevoltValue | undefined>;
 
 export type RevoltRequest = {
-	method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	/** Path starting with a slash. */
 	path: string;
 	query?: RevoltQuery;
