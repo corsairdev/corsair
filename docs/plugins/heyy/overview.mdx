@@ -1,0 +1,141 @@
+---
+title: "Heyy plugin"
+sidebarTitle: "Overview"
+description: "Customer messaging over WhatsApp, SMS and Instagram from Heyy - search and create contacts, define custom attributes and labels, and manage the webhook endpoints that deliver message events."
+---
+
+Use **Heyy** through Corsair: one client, typed API calls.
+
+Create a key in the Heyy app under Settings, API keys, then send it as a bearer token. This plugin targets API v3 at `https://api.heyy.io/v3`.
+
+Things that shape the calls:
+
+- **Search replaces the old list calls.** v2's `GET` lists became `POST .../search` with a body in v3, and v2 was sunset on 1 November 2026. Every read here is a search.
+- **`query` is a filter expression, not keywords.** Use `equals(...)`, `contains(...)`, `and(...)`, `or(...)`, `not(...)` on the fields each search lists in its `query` description; contacts filter on `firstName`, `lastName`, `email` and the like, not `name`. For free-text matching use the separate `search` field. The two can be sent together and each narrows the rows.
+- **Sorting uses function syntax.** `sortBy` is `desc(createdAt)` or `asc(name)`, optionally with `'nulls last'`.
+- **Paging is zero-based.** `pagination.page` starts at 0, `limit` is 1 to 100, and the default is 10. Replies carry `pagination.total` so a caller knows how many rows matched.
+- **Deletes report partial success.** The label and webhook deletes answer 200 with `deletedIds` and `notFoundIds`; an id that did not exist is not an error there, so check `notFoundIds`. `attributes.remove` is the exception: an unknown attribute id fails with 404 `attribute_not_found`.
+- **Ids are UUIDs, and a malformed one is a 500.** Heyy answers 500 `internal_error`, not 400, to a path id that is not a UUID and to a `query` that compares an id field with a non-UUID or an enum field with a value outside its list (template `status` is `in_review`, `active`, `rejected` or `unavailable`). This plugin refuses a malformed path id before sending; inside `query`, use real ids and values.
+- **Select attributes need options.** A `single_select` or `multi_select` attribute without options is rejected, and options on a text attribute are rejected too.
+- **Webhook URLs must be https.** Heyy only delivers to `https://`, so a plain http URL is refused before the request.
+- **Rate limits are per minute per tenant**: 100 on Hobby, 500 on Pro, 1,000 on Ultra. A 429 carries `X-RateLimit-Reset`, which this plugin turns into a delay, and retries are capped at three.
+
+**What you get:**
+
+- 15 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/heyy better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/heyy better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/heyy better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/heyy better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { heyy } from '@corsair-dev/heyy';
+
+export const corsair = createCorsair({
+	plugins: [
+		heyy(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+heyy()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'heyy',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Find a contact by email**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.heyy.api.contacts.search({ query: 'equals(email, \'jordan@acme.com\')' });
+```
+
+
+**Create a label**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.heyy.api.labels.create({ name: 'Priority', color: '#EF4444' });
+```
+
+
+See the full list on the [API](/plugins/heyy/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/heyy/api">
+    Every `heyy.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

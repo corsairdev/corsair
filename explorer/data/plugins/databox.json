@@ -1,0 +1,807 @@
+{
+  "id": "databox",
+  "displayName": "Databox",
+  "description": "Business analytics with Databox - create data sources and datasets, push up to 500 records per call, poll ingestion results, read metrics over date ranges with breakdowns, and list dashboards.",
+  "npmPackageName": "@corsair-dev/databox",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "databox.api.auth.validateKey",
+      "shortPath": "auth.validateKey",
+      "description": "Check that the configured API key is valid; a setup or health check that reads nothing else",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "valid",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.dashboards.list",
+      "shortPath": "dashboards.list",
+      "description": "List dashboards with their tags and the integrations they use",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Search filter."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based page number."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum items per page; the docs example uses 100."
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dashboards",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, tags?: string[] | null, integrationKeys?: string[] | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalItems",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next zero-based page while more items remain; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.datasets.create",
+      "shortPath": "datasets.create",
+      "description": "Create a dataset in a data source with column definitions and an optional primary key that makes re-ingested records overwrite",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Display name, such as Transactions."
+          },
+          {
+            "key": "dataSourceId",
+            "optional": false,
+            "type": "number",
+            "description": "The data source that holds the dataset."
+          },
+          {
+            "key": "primaryKey",
+            "optional": true,
+            "type": "string[]",
+            "description": "Column identifiers that make a record unique; re-ingesting a matching record overwrites it instead of appending."
+          },
+          {
+            "key": "schema",
+            "optional": false,
+            "type": "{ id: string, dataType: datetime | number | string }[]",
+            "description": "Column definitions for the dataset."
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "A UUID, sent as Idempotency-Key; Databox rejects any other value with a 400 and returns the original response for the same key within 24 hours."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "{ id: number, type?: string | null, dataSourceId?: number | null, name?: string | null, timezone?: string | null, ingestionSupported?: boolean | null, statusInfo?: { status?: string | null, statusCode?: string | null, errorType?: string | null, reason?: string | null, description?: string | null, userAction?: string | null } | null, syncInfo?: { status?: string | null, type?: string | null, initiatedAt?: string | null, lastSuccessfulSyncAt?: string | null } | null, verificationInfo?: { isVerified?: boolean | null } | null, ingestionInfo?: { lastStatus?: string | null, lastIngestionAt?: string | null } | null, createdAt?: string | null, lastActivityAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.datasets.get",
+      "shortPath": "datasets.get",
+      "description": "Read one dataset with its status, sync and verification info",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The dataset to read."
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": false,
+            "type": "{ id: number, type?: string | null, dataSourceId?: number | null, name?: string | null, timezone?: string | null, ingestionSupported?: boolean | null, statusInfo?: { status?: string | null, statusCode?: string | null, errorType?: string | null, reason?: string | null, description?: string | null, userAction?: string | null } | null, syncInfo?: { status?: string | null, type?: string | null, initiatedAt?: string | null, lastSuccessfulSyncAt?: string | null } | null, verificationInfo?: { isVerified?: boolean | null } | null, ingestionInfo?: { lastStatus?: string | null, lastIngestionAt?: string | null } | null, createdAt?: string | null, lastActivityAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.datasets.getIngestion",
+      "shortPath": "datasets.getIngestion",
+      "description": "Read one ingestion's status and record counts: how many records were appended, overwritten or rejected",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The dataset the ingestion ran against."
+          },
+          {
+            "key": "ingestionId",
+            "optional": false,
+            "type": "string",
+            "description": "The ingestion ID returned by datasets.ingestData."
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ingestion",
+            "optional": false,
+            "type": "{ id: string, initiatedAt?: string | null, status?: string | null, duration?: number | null, initiatedBy?: { id?: number | null, name?: string | null } | null, summary?: { ingestion?: { receivedRecordCount?: number | null, appendedRecordCount?: number | null, overwrittenRecordCount?: number | null, rejectedRecordCount?: number | null } | null, dataset?: { columnCount?: number | null, rowCount?: number | null, size?: number | null } | null } | null, errors?: Record<string, any>[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.datasets.ingestData",
+      "shortPath": "datasets.ingestData",
+      "description": "Submit up to 500 records for ingestion; the response carries an ingestionId to poll in datasets.getIngestion",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The dataset to ingest into."
+          },
+          {
+            "key": "records",
+            "optional": false,
+            "type": "Record<string, string | number | boolean | null>[]",
+            "description": "Records keyed by column ID; at most 500 rows per request. With a primaryKey, matching records overwrite."
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "A UUID, sent as Idempotency-Key; Databox rejects any other value with a 400 and returns the original response for the same key within 24 hours."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ingestionId",
+            "optional": false,
+            "type": "string",
+            "description": "Pass with the dataset ID to datasets.getIngestion to poll."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.datasets.list",
+      "shortPath": "datasets.list",
+      "description": "List datasets, optionally filtered by data source or type (API-created or merged), with search and paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataSourceId",
+            "optional": true,
+            "type": "number",
+            "description": "Only datasets in this data source."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "dataset | mergedDataset",
+            "description": "dataset is API-created; mergedDataset combines several."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Search term."
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by."
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "string",
+            "description": "Sort direction, such as asc or desc."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based page number."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum items per page; the docs example uses 100."
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasets",
+            "optional": false,
+            "type": "{ id: number, type?: string | null, dataSourceId?: number | null, name?: string | null, timezone?: string | null, ingestionSupported?: boolean | null, statusInfo?: { status?: string | null, statusCode?: string | null, errorType?: string | null, reason?: string | null, description?: string | null, userAction?: string | null } | null, syncInfo?: { status?: string | null, type?: string | null, initiatedAt?: string | null, lastSuccessfulSyncAt?: string | null } | null, verificationInfo?: { isVerified?: boolean | null } | null, ingestionInfo?: { lastStatus?: string | null, lastIngestionAt?: string | null } | null, createdAt?: string | null, lastActivityAt?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalItems",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next zero-based page while more items remain; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.datasets.listData",
+      "shortPath": "datasets.listData",
+      "description": "Read a page of a dataset's records with the column schema; records are keyed by column ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The dataset whose records to read."
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "Column to sort by."
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "string",
+            "description": "Sort direction, such as asc or desc."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based page number."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum items per page; the docs example uses 100."
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "records",
+            "optional": false,
+            "type": "Record<string, string | number | boolean | null>[]"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "{ id?: string | null, displayName?: string | null, dataType?: string | null, order?: number | null, visible?: boolean | null }[] | null"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalItems",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next zero-based page while more items remain; null on the last page."
+          },
+          {
+            "key": "lastUpdatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.dataSources.create",
+      "shortPath": "dataSources.create",
+      "description": "Create a data source for pushing custom data through the API; only a name is required",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Display name, such as Sales."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA timezone identifier, such as Europe/Ljubljana."
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "A UUID, sent as Idempotency-Key; Databox rejects any other value with a 400 and returns the original response for the same key within 24 hours."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataSource",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, integrationKey?: string | null, timezone?: string | null, statusInfo?: { status?: string | null, statusCode?: string | null, errorType?: string | null, reason?: string | null, description?: string | null, userAction?: string | null } | null, connectionId?: number | null, managedBy?: { id?: number | null, name?: string | null } | null, createdAt?: string | null, lastActivityAt?: string | null, syncInterval?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.dataSources.delete",
+      "shortPath": "dataSources.delete",
+      "description": "Permanently delete a data source and every dataset and record it holds; this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The data source to delete, along with every dataset and record it holds."
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Databox's human-readable outcome note."
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.dataSources.get",
+      "shortPath": "dataSources.get",
+      "description": "Read one data source, including its status and sync interval",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The data source to read."
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataSource",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, integrationKey?: string | null, timezone?: string | null, statusInfo?: { status?: string | null, statusCode?: string | null, errorType?: string | null, reason?: string | null, description?: string | null, userAction?: string | null } | null, connectionId?: number | null, managedBy?: { id?: number | null, name?: string | null } | null, createdAt?: string | null, lastActivityAt?: string | null, syncInterval?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.dataSources.list",
+      "shortPath": "dataSources.list",
+      "description": "List the data sources in the organization, with search, connection filter, sorting and paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by keyword."
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "number",
+            "description": "Only data sources with this connection."
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by."
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "string",
+            "description": "Sort direction, such as asc or desc."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based page number."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum items per page; the docs example uses 100."
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataSources",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, integrationKey?: string | null, timezone?: string | null, statusInfo?: { status?: string | null, statusCode?: string | null, errorType?: string | null, reason?: string | null, description?: string | null, userAction?: string | null } | null, connectionId?: number | null, managedBy?: { id?: number | null, name?: string | null } | null, createdAt?: string | null, lastActivityAt?: string | null, syncInterval?: number | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalItems",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next zero-based page while more items remain; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.metrics.getData",
+      "shortPath": "metrics.getData",
+      "description": "Read a metric's values over a date range with granularity, dimension breakdowns and filters; may wait for a first sync (up to two minutes)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Metric ID, such as 'GoogleAnalytics4@sessions', from metrics.list."
+          },
+          {
+            "key": "sourceId",
+            "optional": true,
+            "type": "number",
+            "description": "Restrict the metric to one data source or dataset."
+          },
+          {
+            "key": "dateRange",
+            "optional": false,
+            "type": "{ from: string, to: string, granularity: daily | weekly | monthly | quarterly | yearly | allTime }"
+          },
+          {
+            "key": "dimensionIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Dimension IDs to break the values down by; from the metric."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ logicalOperator?: and | or, conditions: { type?: dimension | unit, field: string, operator: ANY_OF | NONE_OF | EQ | NEQ | CONTAINS | NOT_CONTAINS, values?: string[] }[] }"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metric",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, sourceId?: number | null } | null"
+          },
+          {
+            "key": "dataPoints",
+            "optional": false,
+            "type": "{ date?: string | null, value: number | null, dimensions?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "syncInfo",
+            "optional": true,
+            "type": "{ status?: string | null, lastSyncedAt?: string | null, message?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "databox.api.metrics.list",
+      "shortPath": "metrics.list",
+      "description": "List the organization's metrics with their dimensions, optionally filtered by source or name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourceId",
+            "optional": true,
+            "type": "number",
+            "description": "Only metrics of this data source or dataset."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Search metric names."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based page number."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum items per page; the docs example uses 100."
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "number",
+            "description": "Sent as x-account-id to act on one account of the organization instead of the organization tied to the key. Only for organizations with accounts enabled."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metrics",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, description?: string | null, sourceId?: number | null, dimensions?: { id?: string | null, displayName?: string | null }[] | null, supportsDrilldown?: boolean | null, verificationInfo?: { isVerified?: boolean | null } | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalItems",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "nextPage",
+            "optional": false,
+            "type": "number | null",
+            "description": "The next zero-based page while more items remain; null on the last page."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
