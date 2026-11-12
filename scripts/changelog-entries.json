@@ -3167,5 +3167,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/u301",
+    "dir": "packages/u301",
+    "name": "U301",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-12",
+    "package": "@corsair-dev/unisender",
+    "dir": "packages/unisender",
+    "name": "Unisender",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
