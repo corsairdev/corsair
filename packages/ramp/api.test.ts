@@ -33,7 +33,7 @@ describeIfToken('live Ramp API', () => {
 		const result = await Org.businessGet(liveContext() as never, {} as never);
 
 		expect(result.business.id).toBeTruthy();
-		expect(typeof result.business.business_name_legal).toBeDefined();
+		expect(typeof result.business.business_name_legal).toBe('string');
 	});
 
 	it('lists transactions through the output schema', async () => {
@@ -60,7 +60,7 @@ describeIfToken('live Ramp API', () => {
 		expect(Array.isArray(result.users)).toBe(true);
 	});
 
-	it('lists departments and reads the first back by id', async () => {
+	it('lists departments through the output schema', async () => {
 		const page = await Org.departmentsList(
 			liveContext() as never,
 			{

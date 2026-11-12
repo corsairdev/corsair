@@ -225,3 +225,17 @@ describe('pagination helpers', () => {
 		).toBe('a/b');
 	});
 });
+
+describe('captureError', () => {
+	it('fails when the operation resolves instead of returning an error', async () => {
+		await expect(captureError(Promise.resolve('ok'))).rejects.toThrow(
+			'the operation resolved',
+		);
+	});
+
+	it('returns the error the operation rejected with', async () => {
+		const error = await captureError(Promise.reject(new Error('boom')));
+
+		expect(error.message).toBe('boom');
+	});
+});
