@@ -108,6 +108,46 @@ describe('Rosette client', () => {
 		expect(error.endpoint).toBe('/entities');
 	});
 
+	it('reads the 403 body the gateway sends as text/plain', async () => {
+		// Live (11-12): the key check answers with JSON text under a text/plain
+		// content type, so the HTTP layer hands back a string.
+		respond(FORBIDDEN, 403, { 'Content-Type': 'text/plain' });
+
+		const error = await failure(
+			makeRosetteRequest(KEY, {
+				method: 'POST',
+				path: '/language',
+				body: { content: 'x' },
+				replayable: true,
+			}),
+		);
+
+		expect(error.code).toBe('forbidden');
+		expect(error.message).toContain('invalid API key');
+		expect(error.isAuthError).toBe(true);
+	});
+
+	it('keeps a plain-text body that is not JSON as the fallback', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response('<html>403 Forbidden</html>', {
+				status: 403,
+				headers: { 'Content-Type': 'text/html' },
+			}),
+		);
+
+		const error = await failure(
+			makeRosetteRequest(KEY, {
+				method: 'GET',
+				path: '/ping',
+				replayable: true,
+			}),
+		);
+
+		expect(error.status).toBe(403);
+		expect(error.code).toBeUndefined();
+		expect(error.isAuthError).toBe(true);
+	});
+
 	it('reads a badRequest as a validation error, not an auth error', async () => {
 		respond(BAD_REQUEST, 400);
 

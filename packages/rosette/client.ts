@@ -23,8 +23,9 @@ export const ROSETTE_API_BASE = 'https://analytics.babelstreet.com/rest/v1';
  * {"code":"forbidden","message":"you have either provided an invalid API key, or are not authorized to call the endpoint, or have exceeded the daily or monthly API call limits"}
  * ```
  *
- * Captured live on every endpoint. Note the message covers three distinct causes,
- * so the plugin's accessors do not guess between them beyond the status.
+ * Captured live on every endpoint, sent as `text/plain`. The message covers
+ * three causes (four with a profileId the account lacks), so the plugin's
+ * accessors do not guess between them beyond the status.
  */
 export class RosetteAPIError extends Error {
 	readonly status?: number;
@@ -94,11 +95,27 @@ export class RosetteAPIError extends Error {
 }
 
 /**
+ * The key check answers with JSON text under a `text/plain` content type (live,
+ * 11-12), which the HTTP layer returns as a string, so a string body is parsed
+ * once more. Anything that is not JSON is left as it is.
+ * unknown: the body is provider JSON, or text, until `failure` narrows it.
+ */
+function parseTextBody(body: unknown): unknown {
+	if (typeof body !== 'string') return body;
+	try {
+		// unknown: JSON.parse returns whatever the text held.
+		return JSON.parse(body) as unknown;
+	} catch {
+		return body;
+	}
+}
+
+/**
  * Reads a refusal body.
  * unknown: the body is provider JSON until this reader narrows it.
  */
 function failure(body: unknown): { message?: string; code?: string } {
-	const record = asRecord(body);
+	const record = asRecord(parseTextBody(body));
 	const message = record?.message;
 	const code = record?.code;
 	return {
