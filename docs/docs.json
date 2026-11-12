@@ -1881,6 +1881,14 @@
                 ]
               },
               {
+                "group": "Encodian",
+                "pages": [
+                  "plugins/encodian/overview",
+                  "plugins/encodian/api",
+                  "plugins/encodian/database"
+                ]
+              },
+              {
                 "group": "Enginemailer",
                 "pages": [
                   "plugins/enginemailer/overview",
