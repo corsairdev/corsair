@@ -363,6 +363,17 @@ const ScrapeJsonResponseSchema = z.object({
 		.array(z.looseObject({}))
 		.nullish()
 		.describe('WebSocket traffic, when `showWebsocketRequests` was set.'),
+	frames: z
+		.array(
+			z
+				.object({
+					url: z.string().nullish(),
+					content: z.string().nullish(),
+				})
+				.loose(),
+		)
+		.nullish()
+		.describe('Each iframe on the page, when `showFrames` was set.'),
 });
 
 export type ScrapeJsonResponse = z.infer<typeof ScrapeJsonResponseSchema>;

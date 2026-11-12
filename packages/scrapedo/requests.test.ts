@@ -156,6 +156,23 @@ describe('scrape.json', () => {
 			'https://example.com/api/items',
 		);
 	});
+
+	it('returns the iframe content when showFrames is set', async () => {
+		respond({
+			...JSON_BODY,
+			frames: [{ url: 'https://example.com/frame', content: '<p>in frame</p>' }],
+		});
+
+		const result = await endpoints().scrape.json(makeCtx(), {
+			url: 'https://example.com/',
+			render: true,
+			showFrames: true,
+		});
+
+		expect(result.frames).toEqual([
+			{ url: 'https://example.com/frame', content: '<p>in frame</p>' },
+		]);
+	});
 });
 
 describe('scrape.screenshot', () => {

@@ -411,6 +411,7 @@ Sets `returnJSON=true` and renames the answer to `status_code`, `content`, `netw
 | `content` | `string` | Yes | The page body as a string. |
 | `network_requests` | `object[]` | Yes | The XHR and fetch calls the page made. Empty without the browser. |
 | `websocket_requests` | `object[] \| null` | No | WebSocket traffic, when `showWebsocketRequests` was set. |
+| `frames` | `object[] \| null` | No | Each iframe on the page, when `showFrames` was set. |
 
 <AccordionGroup>
 <Accordion title="network_requests full type">
@@ -430,6 +431,16 @@ Sets `returnJSON=true` and renames the answer to `status_code`, `content`, `netw
 
 ```ts
 {
+}[] | null
+```
+</Accordion>
+
+<Accordion title="frames full type">
+
+```ts
+{
+  url?: string | null,
+  content?: string | null
 }[] | null
 ```
 </Accordion>

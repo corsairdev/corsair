@@ -94,6 +94,7 @@ export const json: ScrapeDoEndpoints['scrapeJson'] = (ctx, input) =>
 					content: body.content,
 					network_requests: body.networkRequests,
 					websocket_requests: body.websocketRequests,
+					frames: body.frames,
 				};
 			},
 			log: (parsed, result) => ({
