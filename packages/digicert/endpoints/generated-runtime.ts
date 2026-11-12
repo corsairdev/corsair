@@ -12,19 +12,30 @@ export type OpenApiFamily =
 	| 'trustLifecycle'
 	| 'contentTrust';
 
+// The per-operation schema validates the exact shape. This envelope only
+// forwards provider-defined JSON values to the transport, so each field stays
+// unconstrained here.
 const OpenApiCallInputSchema = z
 	.object({
+		// `unknown`: path values are validated by the operation schema before transport.
 		path: z.record(z.string(), z.unknown()).default({}),
+		// `unknown`: query values are validated by the operation schema before transport.
 		query: z.record(z.string(), z.unknown()).default({}),
+		// `unknown`: header values are validated by the operation schema before transport.
 		headers: z.record(z.string(), z.unknown()).default({}),
+		// `unknown`: cookie values are validated by the operation schema before transport.
 		cookies: z.record(z.string(), z.unknown()).default({}),
+		// `unknown`: body values are validated by the operation schema before transport.
 		body: z.unknown().optional(),
 	})
 	.strict();
 
 export type OpenApiCallInput = z.input<typeof OpenApiCallInputSchema>;
 
-export type OpenApiEndpointConfig = {
+export type OpenApiEndpointConfig<
+	InputSchema extends z.ZodTypeAny = z.ZodTypeAny,
+	OutputSchema extends z.ZodTypeAny = z.ZodTypeAny,
+> = {
 	family: OpenApiFamily;
 	path: string;
 	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS';
@@ -32,12 +43,17 @@ export type OpenApiEndpointConfig = {
 	mediaType?: string;
 	public?: boolean;
 	oauth2Allowed?: boolean;
-	inputSchema: z.ZodTypeAny;
-	outputSchema: z.ZodTypeAny;
+	/** `binary` returns the raw body bytes instead of decoding a JSON/text body. */
+	responseType?: 'json' | 'binary';
+	inputSchema: InputSchema;
+	outputSchema: OutputSchema;
 };
 
+// Query values are provider-defined JSON scalars or arrays; the per-operation
+// schema validates the exact query shape before this helper flattens it.
 function flattenQuery(query: Record<string, unknown>): Record<string, unknown> {
 	const flattened: Record<string, unknown> = {};
+	// `unknown`: query values are already schema-checked; this only flattens nested objects.
 	const visit = (key: string, value: unknown): void => {
 		if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
 			for (const [nestedKey, nestedValue] of Object.entries(value)) {
@@ -51,9 +67,16 @@ function flattenQuery(query: Record<string, unknown>): Record<string, unknown> {
 	return flattened;
 }
 
-export function createOpenApiEndpoint(
-	config: OpenApiEndpointConfig,
-): CorsairEndpoint<DigicertContext, OpenApiCallInput, unknown> {
+export function createOpenApiEndpoint<
+	InputSchema extends z.ZodTypeAny,
+	OutputSchema extends z.ZodTypeAny,
+>(
+	config: OpenApiEndpointConfig<InputSchema, OutputSchema>,
+): CorsairEndpoint<
+	DigicertContext,
+	z.input<InputSchema>,
+	z.output<OutputSchema>
+> {
 	return async (ctx, input) => {
 		if (
 			ctx.options.authType === 'oauth_2' &&
@@ -65,6 +88,7 @@ export function createOpenApiEndpoint(
 		const validatedInput = config.inputSchema.parse(input);
 		const call = OpenApiCallInputSchema.parse(validatedInput);
 		let body = call.body;
+		// `unknown`: multipart fields are provider-defined until the transport serializes them.
 		let formData: Record<string, unknown> | undefined;
 		let mediaType = config.mediaType;
 
@@ -119,6 +143,7 @@ export function createOpenApiEndpoint(
 				body,
 				formData,
 				mediaType,
+				binary: config.responseType === 'binary',
 			},
 		);
 		const output = config.outputSchema.parse(response);

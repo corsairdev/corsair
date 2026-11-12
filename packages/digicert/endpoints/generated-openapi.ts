@@ -804,6 +804,7 @@ export const generatedOpenApiEndpoints = {
 			mediaType: undefined,
 			public: false,
 			oauth2Allowed: false,
+			responseType: 'binary',
 			inputSchema: generatedSchemas.r_91c5268bb884Input,
 			outputSchema: generatedSchemas.r_91c5268bb884Output,
 		}),
@@ -6214,7 +6215,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Get CA Revoke Request',
 	},
 	'privateCAApi.postApproveCaRevokeRequest': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Approve CA Revoke Request',
 	},
 	'privateCAApi.postSignAnAttributeCertificate': {
@@ -6282,7 +6283,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Recover Escrowed EE Key',
 	},
 	'privateCAApi.putRevokeCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Revoke Certificate',
 	},
 	'privateCAApi.getGetCsvListOfCertificates': {
@@ -6685,7 +6686,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Recover escrowed certificate by serial number',
 	},
 	'trustLifecycleApi.certRevokeBySerial': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Revoke certificate',
 	},
 	'trustLifecycleApi.deleteResumeSuspendedCertificate': {
@@ -7180,7 +7181,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Create hash timestamp',
 	},
 	'contentTrustApi.revokeToken': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Revokes the access token',
 	},
 	'contentTrustApi.oauth2Token1': {
@@ -7213,7 +7214,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Create hash timestamp',
 	},
 	'contentTrustApi.revokeToken1': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Revokes the access token',
 	},
 	'contentTrustApi.reject': {
@@ -7324,7 +7325,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Cancel credential by credential name',
 	},
 	'contentTrustApi.revokeCredentials': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Revoke credentials',
 	},
 	'contentTrustApi.replaceClientAdmin': {
@@ -7333,10 +7334,16 @@ export const generatedOpenApiEndpointMeta: Record<
 	},
 } as const;
 
+// Fixture table over 364 differently-typed generated endpoints: each entry has
+// its own parsed input/output schema, so a single table row cannot keep the
+// per-operation types. The table only exercises routing, so erasing the output
+// to `unknown` avoids inventing a shared response type.
 export type GeneratedOpenApiTestCase = {
 	id: string;
+	// `unknown`: the fixture table covers 364 output types, so one row cannot keep them.
 	endpoint: CorsairEndpoint<DigicertContext, OpenApiCallInput, unknown>;
 	input: OpenApiCallInput;
+	// `unknown`: each row's output example is checked by that operation's schema at runtime.
 	outputExample: unknown;
 	expected: {
 		family: OpenApiFamily;

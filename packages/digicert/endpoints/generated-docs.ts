@@ -7928,6 +7928,69 @@ const doc_cf596c53b5beInput = z
 	})
 	.strict();
 const doc_cf596c53b5beOutput = z.json().optional();
+// Report Library create/edit bodies are nested: schedule, notification
+// recipients, and report_metadata are objects/arrays, not flattened fields.
+const reportScheduleSchema = z
+	.object({
+		frequency: z.string(),
+		weekday_to_run: z.string().optional(),
+		weekday_frequency: z.string().optional(),
+		// Docs table says string; the published cURL example sends an integer.
+		repeat_every: z.union([z.string(), z.number().int()]).optional(),
+		repeat_on: z.string().optional(),
+		repeat_on_date: z
+			.object({
+				date: z.number().int().optional(),
+				last_day_of_the_month: z.boolean().optional(),
+			})
+			.strict()
+			.optional(),
+		run_until: z.string().optional(),
+	})
+	.strict();
+const reportNotificationEmailSchema = z
+	.object({
+		user_id: z.number().int(),
+		first_name: z.string(),
+		last_name: z.string(),
+		email: z.string(),
+	})
+	.strict();
+const reportMetadataSchema = z
+	.object({
+		report_type: z.string(),
+		columns: z.array(z.object({ identifier: z.string() }).strict()).optional(),
+		filters: z
+			.array(
+				z
+					.object({
+						column_identifier: z.string(),
+						values: z.array(z.string()).optional(),
+						filter_identifier: z.string(),
+					})
+					.strict(),
+			)
+			.optional(),
+		sources: z
+			.object({
+				division_filter_type: z.string().optional(),
+				divisions: z.array(z.number().int()).optional(),
+				sub_account_filter_type: z.string().optional(),
+				sub_accounts: z.array(z.number().int()).optional(),
+			})
+			.strict()
+			.optional(),
+	})
+	.strict();
+const reportRequestBodySchema = z
+	.object({
+		display_name: z.string(),
+		schedule: reportScheduleSchema,
+		format: z.array(z.string()),
+		notification_emails: z.array(reportNotificationEmailSchema).optional(),
+		report_metadata: reportMetadataSchema,
+	})
+	.strict();
 const doc_25993fbcf6e2Input = z
 	.object({
 		path: z.object({}).strict().default({}),
@@ -7937,29 +8000,7 @@ const doc_25993fbcf6e2Input = z
 			.default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z
-			.object({
-				display_name: z.string(),
-				schedule: z.json(),
-				frequency: z.string(),
-				weekday_to_run: z.string().optional(),
-				weekday_frequency: z.string().optional(),
-				repeat_every: z.string().optional(),
-				repeat_on: z.string().optional(),
-				run_until: z.string().optional(),
-				format: z.array(z.json()),
-				notification_emails: z.array(z.json()).optional(),
-				user_id: z.number().int(),
-				first_name: z.string(),
-				last_name: z.string(),
-				email: z.string(),
-				report_metadata: z.json(),
-				report_type: z.string(),
-				columns: z.json().optional(),
-				filters: z.array(z.json()).optional(),
-				sources: z.json().optional(),
-			})
-			.strict(),
+		body: reportRequestBodySchema,
 	})
 	.strict();
 const doc_25993fbcf6e2Output = z
@@ -8038,29 +8079,7 @@ const doc_d6c0bc13eb4bInput = z
 			.default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
-		body: z
-			.object({
-				display_name: z.string(),
-				schedule: z.json(),
-				frequency: z.string(),
-				weekday_to_run: z.string().optional(),
-				weekday_frequency: z.string().optional(),
-				repeat_every: z.string().optional(),
-				repeat_on: z.string().optional(),
-				run_until: z.string().optional(),
-				format: z.array(z.json()),
-				notification_emails: z.array(z.json()).optional(),
-				user_id: z.number().int(),
-				first_name: z.string(),
-				last_name: z.string(),
-				email: z.string(),
-				report_metadata: z.json(),
-				report_type: z.string(),
-				columns: z.json().optional(),
-				filters: z.array(z.json()).optional(),
-				sources: z.json().optional(),
-			})
-			.strict(),
+		body: reportRequestBodySchema,
 	})
 	.strict();
 const doc_d6c0bc13eb4bOutput = z.json().optional();
@@ -12562,7 +12581,7 @@ export const generatedDocEndpointMeta: Record<
 		description: 'Restore certificate',
 	},
 	'certcentralApi.revokeCertificate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Revoke certificate',
 	},
 	'certcentralApi.activateContainer': {
@@ -13105,7 +13124,7 @@ export const generatedDocEndpointMeta: Record<
 		description: 'Resend order approval email',
 	},
 	'certcentralApi.revokeOrderCertificates': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Revoke order certificates',
 	},
 	'certcentralApi.siteSealSettings': {
@@ -13497,10 +13516,16 @@ export const generatedDocEndpointMeta: Record<
 	},
 } as const;
 
+// Fixture table over 282 differently-typed generated endpoints: each entry has
+// its own parsed input/output schema, so a single table row cannot keep the
+// per-operation types. The table only exercises routing, so erasing the output
+// to `unknown` avoids inventing a shared response type.
 export type GeneratedDocTestCase = {
 	id: string;
+	// `unknown`: the fixture table covers 282 output types, so one row cannot keep them.
 	endpoint: CorsairEndpoint<DigicertContext, OpenApiCallInput, unknown>;
 	input: OpenApiCallInput;
+	// `unknown`: each row's output example is checked by that operation's schema at runtime.
 	outputExample: unknown;
 	expected: { family: OpenApiFamily; path: string; method: string };
 };
@@ -18943,15 +18968,9 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 			cookies: {},
 			body: {
 				display_name: 'fixture',
-				schedule: {},
-				frequency: 'fixture',
-				format: [],
-				user_id: 1,
-				first_name: 'fixture',
-				last_name: 'fixture',
-				email: 'fixture',
-				report_metadata: {},
-				report_type: 'fixture',
+				schedule: { frequency: 'ON_DEMAND' },
+				format: ['CSV'],
+				report_metadata: { report_type: 'orders' },
 			},
 		},
 		outputExample: {},
@@ -19031,15 +19050,9 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 			cookies: {},
 			body: {
 				display_name: 'fixture',
-				schedule: {},
-				frequency: 'fixture',
-				format: [],
-				user_id: 1,
-				first_name: 'fixture',
-				last_name: 'fixture',
-				email: 'fixture',
-				report_metadata: {},
-				report_type: 'fixture',
+				schedule: { frequency: 'ON_DEMAND' },
+				format: ['CSV'],
+				report_metadata: { report_type: 'orders' },
 			},
 		},
 		outputExample: {},

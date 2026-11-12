@@ -1506,7 +1506,6 @@ const r_d37ec173c239Input = z
 const r_d37ec173c239Output = z.intersection(
 	z
 		.object({
-			items: z.object({}).passthrough().optional(),
 			limit: z.number().int().optional(),
 			offset: z.number().int().optional(),
 			total: z.number().int().optional(),
@@ -1734,7 +1733,6 @@ const r_9cd2e581f2a1Input = z
 const r_9cd2e581f2a1Output = z.intersection(
 	z
 		.object({
-			items: z.object({}).passthrough().optional(),
 			limit: z.number().int().optional(),
 			offset: z.number().int().optional(),
 			total: z.number().int().optional(),
@@ -1837,7 +1835,6 @@ const r_419129d1877aInput = z
 const r_419129d1877aOutput = z.intersection(
 	z
 		.object({
-			items: z.object({}).passthrough().optional(),
 			limit: z.number().int().optional(),
 			offset: z.number().int().optional(),
 			total: z.number().int().optional(),
@@ -5383,7 +5380,6 @@ const r_dade4aa006edInput = z
 const r_dade4aa006edOutput = z.intersection(
 	z
 		.object({
-			items: z.object({}).passthrough().optional(),
 			limit: z.number().int().optional(),
 			offset: z.number().int().optional(),
 			total: z.number().int().optional(),
@@ -6275,7 +6271,6 @@ const r_49bc49df9e00Input = z
 const r_49bc49df9e00Output = z.intersection(
 	z
 		.object({
-			items: z.object({}).passthrough().optional(),
 			limit: z.number().int().optional(),
 			offset: z.number().int().optional(),
 			total: z.number().int().optional(),
@@ -8233,7 +8228,7 @@ const r_adc5dc353665Input = z
 	.strict();
 const r_adc5dc353665Output = z
 	.object({
-		items: z.object({}).passthrough().optional(),
+		items: z.array(z.object({}).passthrough()).optional(),
 		limit: z.number().int().optional(),
 		offset: z.number().int().optional(),
 		total: z.number().int().optional(),
@@ -15593,7 +15588,6 @@ const r_672dcfb0f9e0Input = z
 const r_672dcfb0f9e0Output = z.intersection(
 	z
 		.object({
-			items: z.object({}).passthrough().optional(),
 			limit: z.number().int().optional(),
 			offset: z.number().int().optional(),
 			total: z.number().int().optional(),

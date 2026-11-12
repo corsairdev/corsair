@@ -187,6 +187,67 @@ describe('makeDigicertRequest', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
+	it('returns certificate download bytes without decoding them as text', async () => {
+		const payload = Uint8Array.from([0x30, 0x82, 0x01, 0x00, 0xff, 0x00]);
+		const originalFetch = global.fetch;
+		global.fetch = jest.fn(
+			async () =>
+				new Response(payload, {
+					status: 200,
+					headers: { 'Content-Type': 'application/octet-stream' },
+				}),
+		) as typeof fetch;
+		try {
+			await expect(
+				makeDigicertRequest(
+					'privateCA',
+					'/certificate-authority/api/v1/ca/{id}/download',
+					'one-token',
+					{
+						method: 'GET',
+						path: { id: 'ca-1' },
+						binary: true,
+					},
+				),
+			).resolves.toEqual([0x30, 0x82, 0x01, 0x00, 0xff, 0x00]);
+			expect(global.fetch).toHaveBeenCalledWith(
+				'https://one.digicert.com/certificate-authority/api/v1/ca/ca-1/download',
+				expect.objectContaining({ method: 'GET' }),
+			);
+			const init = (global.fetch as jest.Mock).mock.calls[0]?.[1] as
+				| { headers?: Headers }
+				| undefined;
+			expect(init?.headers?.get('x-api-key')).toBe('one-token');
+			expect(mockRequest).not.toHaveBeenCalled();
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+
+	it('keeps Retry-After when a binary download is rate limited', async () => {
+		const originalFetch = global.fetch;
+		global.fetch = jest.fn(
+			async () =>
+				new Response('slow down', {
+					status: 429,
+					statusText: 'Too Many Requests',
+					headers: { 'retry-after': '4' },
+				}),
+		) as typeof fetch;
+		try {
+			await expect(
+				makeDigicertRequest(
+					'privateCA',
+					'/certificate-authority/api/v1/ca/{id}/download',
+					'one-token',
+					{ binary: true, path: { id: 'ca-1' } },
+				),
+			).rejects.toMatchObject({ status: 429, retryAfter: 4000 });
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+
 	it('passes provider 429 retry metadata without wrapping it', async () => {
 		const apiError = new ApiError(
 			{ method: 'GET', url: '/user' },

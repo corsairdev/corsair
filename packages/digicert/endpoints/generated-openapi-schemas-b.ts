@@ -1171,7 +1171,6 @@ const r_f55c3dc3abceInput = z
 const r_f55c3dc3abceOutput = z.intersection(
 	z
 		.object({
-			items: z.object({}).passthrough().optional(),
 			limit: z.number().int().optional(),
 			offset: z.number().int().optional(),
 			total: z.number().int().optional(),
@@ -1179,7 +1178,7 @@ const r_f55c3dc3abceOutput = z.intersection(
 		.passthrough(),
 	z
 		.object({
-			itmes: z
+			items: z
 				.array(
 					z
 						.object({
@@ -1360,7 +1359,6 @@ const r_4538e37bbe0dInput = z
 const r_4538e37bbe0dOutput = z.intersection(
 	z
 		.object({
-			items: z.object({}).passthrough().optional(),
 			limit: z.number().int().optional(),
 			offset: z.number().int().optional(),
 			total: z.number().int().optional(),
@@ -1681,7 +1679,6 @@ const r_860e43c6a58aInput = z
 const r_860e43c6a58aOutput = z.intersection(
 	z
 		.object({
-			items: z.object({}).passthrough().optional(),
 			limit: z.number().int().optional(),
 			offset: z.number().int().optional(),
 			total: z.number().int().optional(),
@@ -4715,7 +4712,6 @@ const r_e6f593872eaaInput = z
 const r_e6f593872eaaOutput = z.intersection(
 	z
 		.object({
-			items: z.object({}).passthrough().optional(),
 			limit: z.number().int().optional(),
 			offset: z.number().int().optional(),
 			total: z.number().int().optional(),
@@ -5204,7 +5200,6 @@ const r_39c28941d620Input = z
 const r_39c28941d620Output = z.intersection(
 	z
 		.object({
-			items: z.object({}).passthrough().optional(),
 			limit: z.number().int().optional(),
 			offset: z.number().int().optional(),
 			total: z.number().int().optional(),

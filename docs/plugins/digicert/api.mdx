@@ -55,7 +55,12 @@ Create account
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.createAccount({});
+await corsair.digicert.api.accountManagerApi.createAccount({
+	body: {
+		name: 'example',
+		service_period: { to: 'example' },
+	},
+});
 ```
 
 **Input**
@@ -141,7 +146,9 @@ Create API key
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.createApiToken({});
+await corsair.digicert.api.accountManagerApi.createApiToken({
+	body: { name: 'example' },
+});
 ```
 
 **Input**
@@ -508,7 +515,9 @@ Delete API key
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.deleteApiToken({});
+await corsair.digicert.api.accountManagerApi.deleteApiToken({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -571,7 +580,9 @@ Delete user
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.deleteUser({});
+await corsair.digicert.api.accountManagerApi.deleteUser({
+	path: { user_id: 'example' },
+});
 ```
 
 **Input**
@@ -634,7 +645,9 @@ Enable/disable client authentication certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.enableClientAuthCertificate({});
+await corsair.digicert.api.accountManagerApi.enableClientAuthCertificate({
+	path: { certificate_id: 'example' },
+});
 ```
 
 **Input**
@@ -720,7 +733,9 @@ Get account details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.getAccountDetails({});
+await corsair.digicert.api.accountManagerApi.getAccountDetails({
+	path: { account_id: 'example' },
+});
 ```
 
 **Input**
@@ -869,7 +884,9 @@ Get API key by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.getApiTokenById({});
+await corsair.digicert.api.accountManagerApi.getApiTokenById({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -1032,7 +1049,9 @@ Get organization details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.getOrganizationDetails({});
+await corsair.digicert.api.accountManagerApi.getOrganizationDetails({
+	path: { organization_id: 'example' },
+});
 ```
 
 **Input**
@@ -1123,7 +1142,9 @@ Get user details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.getUserDetails({});
+await corsair.digicert.api.accountManagerApi.getUserDetails({
+	path: { user_id: 'example' },
+});
 ```
 
 **Input**
@@ -1512,7 +1533,9 @@ List API keys
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.listApiTokens({});
+await corsair.digicert.api.accountManagerApi.listApiTokens({
+	query: { user_id: 'example' },
+});
 ```
 
 **Input**
@@ -2107,7 +2130,13 @@ Update account
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.updateAccount({});
+await corsair.digicert.api.accountManagerApi.updateAccount({
+	path: { account_id: 'example' },
+	body: {
+		name: 'example',
+		service_period: { to: 'example' },
+	},
+});
 ```
 
 **Input**
@@ -2274,7 +2303,10 @@ Update API key
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.updateApiToken({});
+await corsair.digicert.api.accountManagerApi.updateApiToken({
+	path: { id: 'example' },
+	body: { name: 'example' },
+});
 ```
 
 **Input**
@@ -2362,7 +2394,9 @@ Update user
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.accountManagerApi.updateUser({});
+await corsair.digicert.api.accountManagerApi.updateUser({
+	path: { user_id: 'example' },
+});
 ```
 
 **Input**
@@ -2628,7 +2662,15 @@ ACME External Account Binding
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.acmeExternalAccountBinding({});
+await corsair.digicert.api.certcentralApi.acmeExternalAccountBinding({
+	body: {
+		name: 'example',
+		product_name_id: 'example',
+		validity_years: 1,
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -2721,7 +2763,9 @@ Activate container
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.activateContainer({});
+await corsair.digicert.api.certcentralApi.activateContainer({
+	path: { container_id: 'example' },
+});
 ```
 
 **Input**
@@ -2785,7 +2829,9 @@ Activate domain
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.activateDomain({});
+await corsair.digicert.api.certcentralApi.activateDomain({
+	path: { domain_id: 'example' },
+});
 ```
 
 **Input**
@@ -2849,7 +2895,9 @@ Activate domain locking
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.activateDomainLocking({});
+await corsair.digicert.api.certcentralApi.activateDomainLocking({
+	path: { domain_id: 'example' },
+});
 ```
 
 **Input**
@@ -2913,7 +2961,9 @@ Activate organization
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.activateOrganization({});
+await corsair.digicert.api.certcentralApi.activateOrganization({
+	path: { organization_id: 'example' },
+});
 ```
 
 **Input**
@@ -2977,7 +3027,9 @@ Add custom field
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.addCustomField({});
+await corsair.digicert.api.certcentralApi.addCustomField({
+	body: { label: 'example' },
+});
 ```
 
 **Input**
@@ -3053,7 +3105,15 @@ Add domain
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.addDomain({});
+await corsair.digicert.api.certcentralApi.addDomain({
+	body: {
+		name: 'example',
+		organization: 'example',
+		id: 1,
+		validations: ['example'],
+		type: 'example',
+	},
+});
 ```
 
 **Input**
@@ -3147,7 +3207,10 @@ Add IP restriction
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.addIpRestriction({});
+await corsair.digicert.api.certcentralApi.addIpRestriction({
+	path: { container_id: 'example' },
+	body: { ip_address: 'example', ip_address_end: 'example' },
+});
 ```
 
 **Input**
@@ -3224,7 +3287,12 @@ Additional emails
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.additionalEmails({});
+await corsair.digicert.api.certcentralApi.additionalEmails({
+	path: { order_id: 'example' },
+	body: {
+		additional_emails: ['example'],
+	},
+});
 ```
 
 **Input**
@@ -3297,7 +3365,10 @@ Add note
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.addNote({});
+await corsair.digicert.api.certcentralApi.addNote({
+	path: { certificate_id: 'example' },
+	body: { text: 'example' },
+});
 ```
 
 **Input**
@@ -3370,7 +3441,10 @@ Add note
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.addNote_504f5354({});
+await corsair.digicert.api.certcentralApi.addNote_504f5354({
+	path: { order_id: 'example' },
+	body: { text: 'example' },
+});
 ```
 
 **Input**
@@ -3454,7 +3528,10 @@ Add or remove funds
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.addOrRemoveFunds({});
+await corsair.digicert.api.certcentralApi.addOrRemoveFunds({
+	path: { subaccount_id: 'example' },
+	body: { amount: 1, transaction_type: 'example' },
+});
 ```
 
 **Input**
@@ -3528,7 +3605,9 @@ Add service user — Add service user
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.addServiceUserAddServiceUser({});
+await corsair.digicert.api.certcentralApi.addServiceUserAddServiceUser({
+	body: { is_api_only: true, email: 'jane.doe@example.com', api_name: 'example' },
+});
 ```
 
 **Input**
@@ -3610,7 +3689,16 @@ Add user — Add user
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.addUserAddUser({});
+await corsair.digicert.api.certcentralApi.addUserAddUser({
+	body: {
+		username: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		access_roles: ['example'],
+		container_id_assignments: ['example'],
+	},
+});
 ```
 
 **Input**
@@ -3697,7 +3785,9 @@ Allowlist issuing certificate authority
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.allowlistIssuingCertificateAuthority({});
+await corsair.digicert.api.certcentralApi.allowlistIssuingCertificateAuthority({
+	body: { issuer_brand: 'example' },
+});
 ```
 
 **Input**
@@ -3771,7 +3861,15 @@ Approve user invitation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.approveUserInvitation({});
+await corsair.digicert.api.certcentralApi.approveUserInvitation({
+	path: { invitation_id: 'example' },
+	body: {
+		status: 'example',
+		requested_user: 'example',
+		container_id_assignments: ['example'],
+		access_roles: ['example'],
+	},
+});
 ```
 
 **Input**
@@ -3848,7 +3946,9 @@ Archive certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.archiveCertificate({});
+await corsair.digicert.api.certcentralApi.archiveCertificate({
+	path: { certificate_id: 'example' },
+});
 ```
 
 **Input**
@@ -3974,7 +4074,9 @@ Balance details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.balanceDetails({});
+await corsair.digicert.api.certcentralApi.balanceDetails({
+	path: { subaccount_id: 'example' },
+});
 ```
 
 **Input**
@@ -4043,7 +4145,12 @@ Bulk add fields
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.bulkAddFields({});
+await corsair.digicert.api.certcentralApi.bulkAddFields({
+	body: {
+		metadata: ['example'],
+		label: 'example',
+	},
+});
 ```
 
 **Input**
@@ -4182,7 +4289,9 @@ Cancel voucher code
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.cancelVoucherCode({});
+await corsair.digicert.api.certcentralApi.cancelVoucherCode({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -4246,7 +4355,9 @@ Certificate chain
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.certificateChain({});
+await corsair.digicert.api.certcentralApi.certificateChain({
+	path: { certificate_id: 'example' },
+});
 ```
 
 **Input**
@@ -4387,7 +4498,10 @@ Change CT status
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.changeCtStatus({});
+await corsair.digicert.api.certcentralApi.changeCtStatus({
+	path: { order_id: 'example' },
+	body: { disable_ct: true },
+});
 ```
 
 **Input**
@@ -4460,7 +4574,10 @@ Change DCV method
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.changeDcvMethod({});
+await corsair.digicert.api.certcentralApi.changeDcvMethod({
+	path: { domain_id: 'example' },
+	body: { dcv_method: 'example' },
+});
 ```
 
 **Input**
@@ -4550,7 +4667,9 @@ Change order container
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.changeOrderContainer({});
+await corsair.digicert.api.certcentralApi.changeOrderContainer({
+	path: { order_id: 'example', container_id: 'example' },
+});
 ```
 
 **Input**
@@ -4615,7 +4734,13 @@ Change user role
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.changeUserRole({});
+await corsair.digicert.api.certcentralApi.changeUserRole({
+	path: { user_id: 'example' },
+	body: {
+		access_roles: ['example'],
+		id: 1,
+	},
+});
 ```
 
 **Input**
@@ -4689,7 +4814,10 @@ Check CAA (domain lock)
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.checkCaaDomainLock({});
+await corsair.digicert.api.certcentralApi.checkCaaDomainLock({
+	path: { domain_id: 'example' },
+	body: { account_token: 'example' },
+});
 ```
 
 **Input**
@@ -4835,7 +4963,15 @@ Configure OIDC SSO
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.configureOidcSso({});
+await corsair.digicert.api.certcentralApi.configureOidcSso({
+	body: {
+		provider_url: 'example',
+		client_id: 'example',
+		client_secret: 'example',
+		friendly_name: 'example',
+		scope_parameter: 'example',
+	},
+});
 ```
 
 **Input**
@@ -4912,7 +5048,9 @@ Container info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.containerInfo({});
+await corsair.digicert.api.certcentralApi.containerInfo({
+	path: { container_id: 'example' },
+});
 ```
 
 **Input**
@@ -4993,7 +5131,9 @@ Container permissions
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.containerPermissions({});
+await corsair.digicert.api.certcentralApi.containerPermissions({
+	path: { permission: 'example' },
+});
 ```
 
 **Input**
@@ -5188,7 +5328,10 @@ Create container
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.createContainer({});
+await corsair.digicert.api.certcentralApi.createContainer({
+	path: { container_id: 'example' },
+	body: { name: 'example' },
+});
 ```
 
 **Input**
@@ -5268,7 +5411,10 @@ Create key
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.createKey({});
+await corsair.digicert.api.certcentralApi.createKey({
+	path: { user_id: 'example' },
+	body: { name: 'example' },
+});
 ```
 
 **Input**
@@ -5348,7 +5494,22 @@ Create organization
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.createOrganization({});
+await corsair.digicert.api.certcentralApi.createOrganization({
+	body: {
+		name: 'example',
+		country: 'example',
+		address: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		telephone: 'example',
+		organization_contact: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		type: 'example',
+	},
+});
 ```
 
 **Input**
@@ -5443,7 +5604,23 @@ Create subaccount
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.createSubaccount({});
+await corsair.digicert.api.certcentralApi.createSubaccount({
+	body: {
+		account_type: 'example',
+		allowed_grandchildren: ['example'],
+		user: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		name: 'example',
+		address: 'example',
+		zip: 'example',
+		city: 'example',
+		state: 'example',
+		country: 'example',
+	},
+});
 ```
 
 **Input**
@@ -5576,7 +5753,14 @@ Create unit order
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.createUnitOrder({});
+await corsair.digicert.api.certcentralApi.createUnitOrder({
+	body: {
+		unit_account_id: 1,
+		bundle: ['example'],
+		product_name_id: 'example',
+		units: 1,
+	},
+});
 ```
 
 **Input**
@@ -5657,7 +5841,9 @@ Create verified contact delegation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.createVerifiedContactDelegation({});
+await corsair.digicert.api.certcentralApi.createVerifiedContactDelegation({
+	body: { user_id: 1, delegated_verified_contact_id: 1 },
+});
 ```
 
 **Input**
@@ -5735,7 +5921,25 @@ Create voucher order
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.createVoucherOrder({});
+await corsair.digicert.api.certcentralApi.createVoucherOrder({
+	body: {
+		vouchers: ['example'],
+		product_name_id: 'example',
+		quantity: 1,
+		payment_method: 'example',
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		name: 'example',
+		organization_name: 'example',
+		email: 'jane.doe@example.com',
+	},
+});
 ```
 
 **Input**
@@ -5855,7 +6059,9 @@ Deactivate container
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deactivateContainer({});
+await corsair.digicert.api.certcentralApi.deactivateContainer({
+	path: { container_id: 'example' },
+});
 ```
 
 **Input**
@@ -5919,7 +6125,9 @@ Deactivate domain
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deactivateDomain({});
+await corsair.digicert.api.certcentralApi.deactivateDomain({
+	path: { domain_id: 'example' },
+});
 ```
 
 **Input**
@@ -5983,7 +6191,9 @@ Deactivate domain locking
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deactivateDomainLocking({});
+await corsair.digicert.api.certcentralApi.deactivateDomainLocking({
+	path: { domain_id: 'example' },
+});
 ```
 
 **Input**
@@ -6047,7 +6257,9 @@ Deactivate organization
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deactivateOrganization({});
+await corsair.digicert.api.certcentralApi.deactivateOrganization({
+	path: { organization_id: 'example' },
+});
 ```
 
 **Input**
@@ -6173,7 +6385,9 @@ Delete custom field
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deleteCustomField({});
+await corsair.digicert.api.certcentralApi.deleteCustomField({
+	path: { metadata_id: 'example' },
+});
 ```
 
 **Input**
@@ -6236,7 +6450,9 @@ Delete custom field
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deleteCustomField_44454c45({});
+await corsair.digicert.api.certcentralApi.deleteCustomField_44454c45({
+	path: { order_id: 'example', metadata_id: 'example' },
+});
 ```
 
 **Input**
@@ -6300,7 +6516,9 @@ Delete domain
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deleteDomain({});
+await corsair.digicert.api.certcentralApi.deleteDomain({
+	path: { domain_id: 'example' },
+});
 ```
 
 **Input**
@@ -6363,7 +6581,9 @@ Delete IP restriction
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deleteIpRestriction({});
+await corsair.digicert.api.certcentralApi.deleteIpRestriction({
+	path: { container_id: 'example', rule_id: 'example' },
+});
 ```
 
 **Input**
@@ -6427,7 +6647,9 @@ Delete note — Delete note
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deleteNoteDeleteNote({});
+await corsair.digicert.api.certcentralApi.deleteNoteDeleteNote({
+	path: { order_id: 'example', note_id: 'example' },
+});
 ```
 
 **Input**
@@ -6553,7 +6775,9 @@ Delete order — Delete order
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deleteOrderDeleteOrder({});
+await corsair.digicert.api.certcentralApi.deleteOrderDeleteOrder({
+	path: { order_id: 'example', note_id: 'example' },
+});
 ```
 
 **Input**
@@ -6617,7 +6841,9 @@ Delete organization
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deleteOrganization({});
+await corsair.digicert.api.certcentralApi.deleteOrganization({
+	path: { organization_id: 'example' },
+});
 ```
 
 **Input**
@@ -6680,7 +6906,9 @@ Delete renewal message
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deleteRenewalMessage({});
+await corsair.digicert.api.certcentralApi.deleteRenewalMessage({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -6743,7 +6971,9 @@ Delete user
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.certcentralApi.deleteUser({});
+await corsair.digicert.api.certcentralApi.deleteUser({
+	path: { user_id: 'example' },
+});
 ```
 
 **Input**
@@ -6868,7 +7098,9 @@ DigiCert order ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.digiCertOrderId({});
+await corsair.digicert.api.certcentralApi.digiCertOrderId({
+	path: { legacy_order_id: 'example' },
+});
 ```
 
 **Input**
@@ -6936,7 +7168,9 @@ Disable CT log monitoring
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.disableCtLogMonitoring({});
+await corsair.digicert.api.certcentralApi.disableCtLogMonitoring({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -7000,7 +7234,9 @@ Disable scanning
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.certcentralApi.disableScanning({});
+await corsair.digicert.api.certcentralApi.disableScanning({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -7063,7 +7299,9 @@ Domain emails
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.domainEmails({});
+await corsair.digicert.api.certcentralApi.domainEmails({
+	path: { domain_id: 'example' },
+});
 ```
 
 **Input**
@@ -7135,7 +7373,9 @@ Domain info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.domainInfo({});
+await corsair.digicert.api.certcentralApi.domainInfo({
+	path: { domain_id: 'example' },
+});
 ```
 
 **Input**
@@ -7235,7 +7475,9 @@ Download certificate by format
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.downloadCertificateByFormat({});
+await corsair.digicert.api.certcentralApi.downloadCertificateByFormat({
+	path: { certificate_id: 'example', format_type: 'example' },
+});
 ```
 
 **Input**
@@ -7299,7 +7541,9 @@ Download certificate by format (order_id)
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.downloadCertificateByFormatOrderId({});
+await corsair.digicert.api.certcentralApi.downloadCertificateByFormatOrderId({
+	path: { order_id: 'example', format_type: 'example' },
+});
 ```
 
 **Input**
@@ -7363,7 +7607,9 @@ Download certificate (order_id)
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.downloadCertificateOrderId({});
+await corsair.digicert.api.certcentralApi.downloadCertificateOrderId({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -7426,7 +7672,9 @@ Download certificate (serial number)
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.downloadCertificateSerialNumber({});
+await corsair.digicert.api.certcentralApi.downloadCertificateSerialNumber({
+	path: { order_id: 'example', serial_id: 'example' },
+});
 ```
 
 **Input**
@@ -7495,7 +7743,9 @@ Download results
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.downloadResults({});
+await corsair.digicert.api.certcentralApi.downloadResults({
+	path: { order_id: 'example', domain_name: 'example' },
+});
 ```
 
 **Input**
@@ -7559,7 +7809,15 @@ Duplicate certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.duplicateCertificate({});
+await corsair.digicert.api.certcentralApi.duplicateCertificate({
+	path: { order_id: 'example' },
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+	},
+});
 ```
 
 **Input**
@@ -7649,7 +7907,10 @@ DV SSL: Change DCV method
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.dvSslChangeDcvMethod({});
+await corsair.digicert.api.certcentralApi.dvSslChangeDcvMethod({
+	path: { order_id: 'example' },
+	body: { dcv_method: 'example' },
+});
 ```
 
 **Input**
@@ -7728,7 +7989,10 @@ DV SSL: Check DCV
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.dvSslCheckDcv({});
+await corsair.digicert.api.certcentralApi.dvSslCheckDcv({
+	path: { order_id: 'example' },
+	body: { dns_name: 'example', dcv_method: 'example' },
+});
 ```
 
 **Input**
@@ -7813,7 +8077,10 @@ DV SSL: Resend emails
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.dvSslResendEmails({});
+await corsair.digicert.api.certcentralApi.dvSslResendEmails({
+	path: { order_id: 'example' },
+	body: { domain: 'example', email: 'jane.doe@example.com' },
+});
 ```
 
 **Input**
@@ -7890,7 +8157,10 @@ Edit container
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.editContainer({});
+await corsair.digicert.api.certcentralApi.editContainer({
+	path: { container_id: 'example' },
+	body: { name: 'example' },
+});
 ```
 
 **Input**
@@ -7964,7 +8234,10 @@ Edit custom field
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.editCustomField({});
+await corsair.digicert.api.certcentralApi.editCustomField({
+	path: { metadata_id: 'example' },
+	body: { label: 'example' },
+});
 ```
 
 **Input**
@@ -8041,7 +8314,10 @@ Edit custom field value
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.editCustomFieldValue({});
+await corsair.digicert.api.certcentralApi.editCustomFieldValue({
+	path: { order_id: 'example' },
+	body: { metadata_id: 1, value: 'example' },
+});
 ```
 
 **Input**
@@ -8115,7 +8391,10 @@ Edit domains on a pending order or reissue
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.editDomainsOnAPendingOrderOrReissue({});
+await corsair.digicert.api.certcentralApi.editDomainsOnAPendingOrderOrReissue({
+	path: { order_id: 'example' },
+	body: { certificate: 'example' },
+});
 ```
 
 **Input**
@@ -8199,7 +8478,9 @@ Edit guest access (order)
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.editGuestAccessOrder({});
+await corsair.digicert.api.certcentralApi.editGuestAccessOrder({
+	body: { enable_guest_access: 1 },
+});
 ```
 
 **Input**
@@ -8271,7 +8552,10 @@ Edit key
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.editKey({});
+await corsair.digicert.api.certcentralApi.editKey({
+	path: { key_id: 'example' },
+	body: { name: 'example' },
+});
 ```
 
 **Input**
@@ -8345,7 +8629,10 @@ Edit note
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.editNote({});
+await corsair.digicert.api.certcentralApi.editNote({
+	path: { order_id: 'example', note_id: 'example' },
+	body: { text: 'example' },
+});
 ```
 
 **Input**
@@ -8419,7 +8706,10 @@ Edit service user — Edit service user
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.editServiceUserEditServiceUser({});
+await corsair.digicert.api.certcentralApi.editServiceUserEditServiceUser({
+	path: { user_id: 'example' },
+	body: { email: 'jane.doe@example.com' },
+});
 ```
 
 **Input**
@@ -8492,7 +8782,9 @@ Edit subaccount
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.editSubaccount({});
+await corsair.digicert.api.certcentralApi.editSubaccount({
+	path: { subaccount_id: 'example' },
+});
 ```
 
 **Input**
@@ -8570,7 +8862,10 @@ Edit user — Edit user
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.editUserEditUser({});
+await corsair.digicert.api.certcentralApi.editUserEditUser({
+	path: { user_id: 'example' },
+	body: { email: 'jane.doe@example.com' },
+});
 ```
 
 **Input**
@@ -8649,7 +8944,13 @@ Email certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.emailCertificate({});
+await corsair.digicert.api.certcentralApi.emailCertificate({
+	path: { certificate_id: 'example' },
+	body: {
+		emails: ['example'],
+		certificate_collect_format: 'example',
+	},
+});
 ```
 
 **Input**
@@ -8724,7 +9025,9 @@ Email site seal
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.emailSiteSeal({});
+await corsair.digicert.api.certcentralApi.emailSiteSeal({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -8868,7 +9171,9 @@ Enable CT log monitoring
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.enableCtLogMonitoring({});
+await corsair.digicert.api.certcentralApi.enableCtLogMonitoring({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -8932,7 +9237,9 @@ Enable scanning
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.enableScanning({});
+await corsair.digicert.api.certcentralApi.enableScanning({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -9140,7 +9447,9 @@ Generate DCV token
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.generateDcvToken({});
+await corsair.digicert.api.certcentralApi.generateDcvToken({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -9210,7 +9519,9 @@ Get allowlisted issuing CA brand details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.getAllowlistedIssuingCaBrandDetails({});
+await corsair.digicert.api.certcentralApi.getAllowlistedIssuingCaBrandDetails({
+	query: {},
+});
 ```
 
 **Input**
@@ -9277,7 +9588,9 @@ Get CT log details for a certificate
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.getCtLogDetailsForACertificate({});
+await corsair.digicert.api.certcentralApi.getCtLogDetailsForACertificate({
+	path: { order_id: 'example', certificate_serial_number: 'example' },
+});
 ```
 
 **Input**
@@ -9351,7 +9664,9 @@ Get CT log monitoring status
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.getCtLogMonitoringStatus({});
+await corsair.digicert.api.certcentralApi.getCtLogMonitoringStatus({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -9419,7 +9734,10 @@ Get CT logs (order ID)
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.getCtLogsOrderId({});
+await corsair.digicert.api.certcentralApi.getCtLogsOrderId({
+	path: { order_id: 'example' },
+	query: {},
+});
 ```
 
 **Input**
@@ -9514,7 +9832,9 @@ Get enabled status
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.getEnabledStatus({});
+await corsair.digicert.api.certcentralApi.getEnabledStatus({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -9582,7 +9902,9 @@ Get key info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.getKeyInfo({});
+await corsair.digicert.api.certcentralApi.getKeyInfo({
+	path: { key_id: 'example' },
+});
 ```
 
 **Input**
@@ -9669,7 +9991,9 @@ Get notification settings
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.getNotificationSettings({});
+await corsair.digicert.api.certcentralApi.getNotificationSettings({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -9737,7 +10061,9 @@ Get orders by alternative order ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.getOrdersByAlternativeOrderId({});
+await corsair.digicert.api.certcentralApi.getOrdersByAlternativeOrderId({
+	path: { alternative_order_id: 'example' },
+});
 ```
 
 **Input**
@@ -9809,7 +10135,10 @@ Get scan details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.getScanDetails({});
+await corsair.digicert.api.certcentralApi.getScanDetails({
+	path: { order_id: 'example' },
+	query: {},
+});
 ```
 
 **Input**
@@ -9948,7 +10277,9 @@ Get voucher order details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.getVoucherOrderDetails({});
+await corsair.digicert.api.certcentralApi.getVoucherOrderDetails({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -10101,7 +10432,9 @@ Invite details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.inviteDetails({});
+await corsair.digicert.api.certcentralApi.inviteDetails({
+	path: { invite_id: 'example' },
+});
 ```
 
 **Input**
@@ -10175,7 +10508,9 @@ List all voucher orders
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listAllVoucherOrders({});
+await corsair.digicert.api.certcentralApi.listAllVoucherOrders({
+	query: {},
+});
 ```
 
 **Input**
@@ -10451,7 +10786,9 @@ List balance history
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listBalanceHistory({});
+await corsair.digicert.api.certcentralApi.listBalanceHistory({
+	query: {},
+});
 ```
 
 **Input**
@@ -10536,7 +10873,9 @@ List certificate notes
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listCertificateNotes({});
+await corsair.digicert.api.certcentralApi.listCertificateNotes({
+	path: { certificate_id: 'example' },
+});
 ```
 
 **Input**
@@ -10607,7 +10946,9 @@ List child containers
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listChildContainers({});
+await corsair.digicert.api.certcentralApi.listChildContainers({
+	path: { container_id: 'example' },
+});
 ```
 
 **Input**
@@ -10684,7 +11025,9 @@ List codes for voucher order
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listCodesForVoucherOrder({});
+await corsair.digicert.api.certcentralApi.listCodesForVoucherOrder({
+	path: { voucher_order_id: 'example' },
+});
 ```
 
 **Input**
@@ -10773,7 +11116,9 @@ List container organizations
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listContainerOrganizations({});
+await corsair.digicert.api.certcentralApi.listContainerOrganizations({
+	path: { container_id: 'example' },
+});
 ```
 
 **Input**
@@ -10855,7 +11200,9 @@ List container roles
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listContainerRoles({});
+await corsair.digicert.api.certcentralApi.listContainerRoles({
+	path: { container_id: 'example' },
+});
 ```
 
 **Input**
@@ -11147,7 +11494,9 @@ List domains
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listDomains({});
+await corsair.digicert.api.certcentralApi.listDomains({
+	query: {},
+});
 ```
 
 **Input**
@@ -11223,7 +11572,9 @@ List duplicates
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listDuplicates({});
+await corsair.digicert.api.certcentralApi.listDuplicates({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -11313,7 +11664,9 @@ List invites
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listInvites({});
+await corsair.digicert.api.certcentralApi.listInvites({
+	query: {},
+});
 ```
 
 **Input**
@@ -11380,7 +11733,9 @@ List IP restrictions
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listIpRestrictions({});
+await corsair.digicert.api.certcentralApi.listIpRestrictions({
+	path: { container_id: 'example' },
+});
 ```
 
 **Input**
@@ -11525,7 +11880,9 @@ List order notes
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listOrderNotes({});
+await corsair.digicert.api.certcentralApi.listOrderNotes({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -11666,7 +12023,9 @@ List purchase history
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listPurchaseHistory({});
+await corsair.digicert.api.certcentralApi.listPurchaseHistory({
+	query: {},
+});
 ```
 
 **Input**
@@ -11745,7 +12104,9 @@ List reissues
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listReissues({});
+await corsair.digicert.api.certcentralApi.listReissues({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -11834,7 +12195,11 @@ List replacement benefits
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listReplacementBenefits({});
+await corsair.digicert.api.certcentralApi.listReplacementBenefits({
+	body: {
+		domains: ['example'],
+	},
+});
 ```
 
 **Input**
@@ -11923,7 +12288,9 @@ List requests
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listRequests({});
+await corsair.digicert.api.certcentralApi.listRequests({
+	query: {},
+});
 ```
 
 **Input**
@@ -11989,7 +12356,9 @@ List service users
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listServiceUsers({});
+await corsair.digicert.api.certcentralApi.listServiceUsers({
+	query: {},
+});
 ```
 
 **Input**
@@ -12061,7 +12430,9 @@ List subaccount domains
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listSubaccountDomains({});
+await corsair.digicert.api.certcentralApi.listSubaccountDomains({
+	query: {},
+});
 ```
 
 **Input**
@@ -12132,7 +12503,9 @@ List subaccount orders
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listSubaccountOrders({});
+await corsair.digicert.api.certcentralApi.listSubaccountOrders({
+	query: {},
+});
 ```
 
 **Input**
@@ -12203,7 +12576,9 @@ List subaccount organizations
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listSubaccountOrganizations({});
+await corsair.digicert.api.certcentralApi.listSubaccountOrganizations({
+	query: {},
+});
 ```
 
 **Input**
@@ -12268,7 +12643,9 @@ List subaccount product limits
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listSubaccountProductLimits({});
+await corsair.digicert.api.certcentralApi.listSubaccountProductLimits({
+	path: { subaccount_id: 'example' },
+});
 ```
 
 **Input**
@@ -12337,7 +12714,9 @@ List subaccount products
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listSubaccountProducts({});
+await corsair.digicert.api.certcentralApi.listSubaccountProducts({
+	path: { subaccount_id: 'example' },
+});
 ```
 
 **Input**
@@ -12413,7 +12792,9 @@ List subaccounts
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listSubaccounts({});
+await corsair.digicert.api.certcentralApi.listSubaccounts({
+	query: {},
+});
 ```
 
 **Input**
@@ -12478,7 +12859,9 @@ List templates
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listTemplates({});
+await corsair.digicert.api.certcentralApi.listTemplates({
+	path: { container_id: 'example' },
+});
 ```
 
 **Input**
@@ -12549,7 +12932,9 @@ List unit orders
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listUnitOrders({});
+await corsair.digicert.api.certcentralApi.listUnitOrders({
+	query: {},
+});
 ```
 
 **Input**
@@ -12617,7 +13002,9 @@ List used voucher codes
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listUsedVoucherCodes({});
+await corsair.digicert.api.certcentralApi.listUsedVoucherCodes({
+	query: {},
+});
 ```
 
 **Input**
@@ -12697,7 +13084,9 @@ List user invitations
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.listUserInvitations({});
+await corsair.digicert.api.certcentralApi.listUserInvitations({
+	query: {},
+});
 ```
 
 **Input**
@@ -12919,7 +13308,10 @@ Move orders
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.moveOrders({});
+await corsair.digicert.api.certcentralApi.moveOrders({
+	query: { target_account_id: 1 },
+	body: { order_ids: 'example' },
+});
 ```
 
 **Input**
@@ -13073,7 +13465,38 @@ Order AATL Natural Person Certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderAatlNaturalPersonCertificate({});
+await corsair.digicert.api.certcentralApi.orderAatlNaturalPersonCertificate({
+	body: {
+		certificate: 'example',
+		usage_designation: 'example',
+		cs_provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		csa_agreed_to: true,
+		order_validity: 'example',
+		years: 1,
+		individual: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		telephone: 'example',
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -13197,7 +13620,40 @@ Order AATL Natural Person in Organisation Certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderAatlNaturalPersonInOrganisationCertificate({});
+await corsair.digicert.api.certcentralApi.orderAatlNaturalPersonInOrganisationCertificate({
+	body: {
+		certificate: 'example',
+		usage_designation: 'example',
+		cs_provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		csa_agreed_to: true,
+		order_validity: 'example',
+		years: 1,
+		individual: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		telephone: 'example',
+		organization: 'example',
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -13327,7 +13783,41 @@ Order AATL Organization eseal Certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderAatlOrganizationEsealCertificate({});
+await corsair.digicert.api.certcentralApi.orderAatlOrganizationEsealCertificate({
+	body: {
+		certificate: 'example',
+		usage_designation: 'example',
+		cs_provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		csa_agreed_to: true,
+		order_validity: 'example',
+		years: 1,
+		requester: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		telephone: 'example',
+		organization: 'example',
+		id: 1,
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -13455,7 +13945,31 @@ Order Basic EV — Order Basic EV
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderBasicEvOrderBasicEv({});
+await corsair.digicert.api.certcentralApi.orderBasicEvOrderBasicEv({
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		id: 1,
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -13605,7 +14119,31 @@ Order Basic OV
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderBasicOv({});
+await corsair.digicert.api.certcentralApi.orderBasicOv({
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		id: 1,
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -13755,7 +14293,30 @@ Order client certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderClientCertificate({});
+await corsair.digicert.api.certcentralApi.orderClientCertificate({
+	path: { client_certificate_id: 'example' },
+	body: {
+		certificate: 'example',
+		emails: ['example'],
+		signature_hash: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		id: 1,
+		order_validity: 'example',
+		years: 1,
+		metadata_id: 1,
+		value: 'example',
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+	},
+});
 ```
 
 **Input**
@@ -13884,7 +14445,28 @@ Order code signing certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderCodeSigningCertificate({});
+await corsair.digicert.api.certcentralApi.orderCodeSigningCertificate({
+	path: { code_signing_certificate_id: 'example' },
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		order_validity: 'example',
+		years: 1,
+		addr1: 'example',
+		method: 'example',
+		metadata_id: 1,
+		value: 'example',
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+	},
+});
 ```
 
 **Input**
@@ -14020,7 +14602,27 @@ Order Common Mark Certificate (CMC)
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderCommonMarkCertificateCmc({});
+await corsair.digicert.api.certcentralApi.orderCommonMarkCertificateCmc({
+	body: {
+		certificate: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -14154,7 +14756,37 @@ Order document signing certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderDocumentSigningCertificate({});
+await corsair.digicert.api.certcentralApi.orderDocumentSigningCertificate({
+	path: { document_certificate_id: 'example' },
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		id: 1,
+		name: 'example',
+		addr1: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		subject: 'example',
+		phone: 'example',
+		metadata_id: 1,
+		value: 'example',
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -14287,7 +14919,42 @@ Order Document Signing for Employee
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderDocumentSigningForEmployee({});
+await corsair.digicert.api.certcentralApi.orderDocumentSigningForEmployee({
+	body: {
+		certificate: 'example',
+		usage_designation: 'example',
+		cs_provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		organization: 'example',
+		id: 1,
+		contacts: ['example'],
+		csa_agreed_to: true,
+		subject: 'example',
+		given_name: 'example',
+		surname: 'example',
+		job_title: 'example',
+		phone: 'example',
+		email: 'jane.doe@example.com',
+		order_validity: 'example',
+		years: 1,
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -14418,7 +15085,38 @@ Order Document Signing for Individual
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderDocumentSigningForIndividual({});
+await corsair.digicert.api.certcentralApi.orderDocumentSigningForIndividual({
+	body: {
+		certificate: 'example',
+		usage_designation: 'example',
+		cs_provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		csa_agreed_to: true,
+		order_validity: 'example',
+		years: 1,
+		individual: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		telephone: 'example',
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -14544,7 +15242,36 @@ Order Document Signing for Organization
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderDocumentSigningForOrganization({});
+await corsair.digicert.api.certcentralApi.orderDocumentSigningForOrganization({
+	body: {
+		certificate: 'example',
+		usage_designation: 'example',
+		cs_provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		organization: 'example',
+		id: 1,
+		contacts: ['example'],
+		csa_agreed_to: true,
+		order_validity: 'example',
+		years: 1,
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -14669,7 +15396,32 @@ Order DV SSL
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderDvSsl({});
+await corsair.digicert.api.certcentralApi.orderDvSsl({
+	path: { dv_ssl_certificate_id: 'example' },
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		dns_name: 'example',
+		email_domain: 'jane.doe@example.com',
+		id: 1,
+		metadata_id: 1,
+		value: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		telephone: 'example',
+	},
+});
 ```
 
 **Input**
@@ -14814,7 +15566,35 @@ Order EU Qualified eSeal
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderEuQualifiedESeal({});
+await corsair.digicert.api.certcentralApi.orderEuQualifiedESeal({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		organization: 'example',
+		id: 1,
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -14926,7 +15706,36 @@ Order EU Qualified eSeal PSD2
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderEuQualifiedESealPsd2({});
+await corsair.digicert.api.certcentralApi.orderEuQualifiedESealPsd2({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		psp_roles: ['example'],
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		organization: 'example',
+		id: 1,
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -15040,7 +15849,38 @@ Order EU Qualified Personal
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderEuQualifiedPersonal({});
+await corsair.digicert.api.certcentralApi.orderEuQualifiedPersonal({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		common_name_indicator: 'example',
+		individual: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		telephone: 'example',
+		country: 'example',
+		state: 'example',
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		method: 'example',
+		id: 1,
+		metadata_id: 1,
+		value: 'example',
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -15169,7 +16009,36 @@ Order EU Qualified Personal Organisation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderEuQualifiedPersonalOrganisation({});
+await corsair.digicert.api.certcentralApi.orderEuQualifiedPersonalOrganisation({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		common_name_indictator: 'example',
+		individual: 'example',
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		organization: 'example',
+		id: 1,
+		contacts: ['example'],
+		metadata_id: 1,
+		value: 'example',
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -15521,7 +16390,32 @@ Order GeoTrust DV SSL
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderGeoTrustDvSsl({});
+await corsair.digicert.api.certcentralApi.orderGeoTrustDvSsl({
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		dns_name: 'example',
+		email_domain: 'jane.doe@example.com',
+		id: 1,
+		metadata_id: 1,
+		value: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		telephone: 'example',
+	},
+});
 ```
 
 **Input**
@@ -15666,7 +16560,9 @@ Order info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderInfo({});
+await corsair.digicert.api.certcentralApi.orderInfo({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -15844,7 +16740,30 @@ Order Multi-year Plan — Order Multi-year Plan
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderMultiYearPlanOrderMultiYearPlan({});
+await corsair.digicert.api.certcentralApi.orderMultiYearPlanOrderMultiYearPlan({
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -15993,7 +16912,32 @@ Order OV/EV SSL — Order OV/EV SSL
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderOvEvSslOrderOvEvSsl({});
+await corsair.digicert.api.certcentralApi.orderOvEvSslOrderOvEvSsl({
+	path: { ssl_certificate_id: 'example' },
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		id: 1,
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -16142,7 +17086,34 @@ Order PKIo Authentication or Encryption - Citizen
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionCitizen({});
+await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionCitizen({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		individual: 'example',
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		ship_info: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -16250,7 +17221,36 @@ Order PKIo Authentication or Encryption - Organisation Person
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionOrganisationPerson({});
+await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionOrganisationPerson({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		individual: 'example',
+		csa_agreed_to: true,
+		cs_provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		organization: 'example',
+		id: 1,
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -16362,7 +17362,35 @@ Order PKIo Authentication or Encryption - Organisation Services
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionOrganisationServices({});
+await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionOrganisationServices({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		organization: 'example',
+		id: 1,
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -16473,7 +17501,36 @@ Order PKIo Authentication or Encryption - Private Person
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionPrivatePerson({});
+await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionPrivatePerson({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		individual: 'example',
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		organization: 'example',
+		id: 1,
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -16585,7 +17642,33 @@ Order PKIo Authentication or Encryption - Private Professional
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionPrivateProfessional({});
+await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionPrivateProfessional({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		individual: 'example',
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -16693,7 +17776,33 @@ Order PKIo Authentication or Encryption - Professional
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionProfessional({});
+await corsair.digicert.api.certcentralApi.orderPkioAuthenticationOrEncryptionProfessional({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		individual: 'example',
+		csa_agreed_to: true,
+		cs_provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -16801,7 +17910,33 @@ Order PKIo Citizen - Signing
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioCitizenSigning({});
+await corsair.digicert.api.certcentralApi.orderPkioCitizenSigning({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		individual: 'example',
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -16909,7 +18044,36 @@ Order PKIo Personal Organisation - Signing
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioPersonalOrganisationSigning({});
+await corsair.digicert.api.certcentralApi.orderPkioPersonalOrganisationSigning({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		individual: 'example',
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		organization: 'example',
+		id: 1,
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -17023,7 +18187,35 @@ Order PKIo Private Person - Signing — Order PKIo Private Person - Signing
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioPrivatePersonSigningOrderPkioPrivatePersonSigning({});
+await corsair.digicert.api.certcentralApi.orderPkioPrivatePersonSigningOrderPkioPrivatePersonSigning({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		individual: 'example',
+		id: 1,
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		organization: 'example',
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -17136,7 +18328,35 @@ Order PKIo Private Professional - Signing — Order PKIo Private Professional - 
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioPrivateProfessionalSigningOrderPkioPrivateProfessionalSigning({});
+await corsair.digicert.api.certcentralApi.orderPkioPrivateProfessionalSigningOrderPkioPrivateProfessionalSigning({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		individual: 'example',
+		id: 1,
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		organization: 'example',
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -17249,7 +18469,28 @@ Order PKIo Private Services Server
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioPrivateServicesServer({});
+await corsair.digicert.api.certcentralApi.orderPkioPrivateServicesServer({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		csr: 'example',
+		csa_agreed_to: true,
+		id: 1,
+		organization: 'example',
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+	},
+});
 ```
 
 **Input**
@@ -17365,7 +18606,33 @@ Order PKIo Professional - Signing
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioProfessionalSigning({});
+await corsair.digicert.api.certcentralApi.orderPkioProfessionalSigning({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		individual: 'example',
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -17473,7 +18740,35 @@ Order PKIo Qualified eSeal
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPkioQualifiedESeal({});
+await corsair.digicert.api.certcentralApi.orderPkioQualifiedESeal({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		profile_option: 'example',
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		organization: 'example',
+		id: 1,
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -17586,7 +18881,32 @@ Order Private SSL
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderPrivateSsl({});
+await corsair.digicert.api.certcentralApi.orderPrivateSsl({
+	path: { private_ssl_certificate_id: 'example' },
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		id: 1,
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -17729,7 +19049,9 @@ Order report
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderReport({});
+await corsair.digicert.api.certcentralApi.orderReport({
+	query: {},
+});
 ```
 
 **Input**
@@ -17783,7 +19105,15 @@ Order secure email certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSecureEmailCertificate({});
+await corsair.digicert.api.certcentralApi.orderSecureEmailCertificate({
+	body: {
+		certificate: 'example',
+		emails: ['example'],
+		usage_designation: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+	},
+});
 ```
 
 **Input**
@@ -17885,7 +19215,30 @@ Order Secure Site EV
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSecureSiteEv({});
+await corsair.digicert.api.certcentralApi.orderSecureSiteEv({
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -18036,7 +19389,31 @@ Order Secure Site OV
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSecureSiteOv({});
+await corsair.digicert.api.certcentralApi.orderSecureSiteOv({
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		id: 1,
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -18187,7 +19564,31 @@ Order Secure Site Pro EV SSL
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSecureSiteProEvSsl({});
+await corsair.digicert.api.certcentralApi.orderSecureSiteProEvSsl({
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		id: 1,
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -18338,7 +19739,31 @@ Order Secure Site Pro SSL
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSecureSiteProSsl({});
+await corsair.digicert.api.certcentralApi.orderSecureSiteProSsl({
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		id: 1,
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -18489,7 +19914,32 @@ Order Secure Site SSL — Order Secure Site SSL
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSecureSiteSslOrderSecureSiteSsl({});
+await corsair.digicert.api.certcentralApi.orderSecureSiteSslOrderSecureSiteSsl({
+	path: { ssl_certificate_id: 'example' },
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		id: 1,
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -18639,7 +20089,21 @@ Order SSL (type_hint)
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSslTypeHint({});
+await corsair.digicert.api.certcentralApi.orderSslTypeHint({
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		order_validity: 'example',
+		years: 1,
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		id: 1,
+	},
+});
 ```
 
 **Input**
@@ -18771,7 +20235,28 @@ Order Swiss Client Authentication Certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSwissClientAuthenticationCertificate({});
+await corsair.digicert.api.certcentralApi.orderSwissClientAuthenticationCertificate({
+	body: {
+		certificate: 'example',
+		emails: ['example'],
+		signature_hash: 'example',
+		id: 1,
+		csa_agreed_to: true,
+		order_validity: 'example',
+		years: 1,
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+	},
+});
 ```
 
 **Input**
@@ -18882,7 +20367,38 @@ Order Swiss Qualified Certificate for Individual
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSwissQualifiedCertificateForIndividual({});
+await corsair.digicert.api.certcentralApi.orderSwissQualifiedCertificateForIndividual({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		individual: 'example',
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		requester: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		telephone: 'example',
+		job_title: 'example',
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -18994,7 +20510,41 @@ Order Swiss Qualified Certificate for Individual in Organisation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSwissQualifiedCertificateForIndividualInOrganisation({});
+await corsair.digicert.api.certcentralApi.orderSwissQualifiedCertificateForIndividualInOrganisation({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		individual: 'example',
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		requester: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		telephone: 'example',
+		job_title: 'example',
+		organization: 'example',
+		id: 1,
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -19110,7 +20660,38 @@ Order Swiss Regulated Certificate for Individual
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForIndividual({});
+await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForIndividual({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		individual: 'example',
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		requester: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		telephone: 'example',
+		job_title: 'example',
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -19223,7 +20804,41 @@ Order Swiss Regulated Certificate for Individual in Organisation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForIndividualInOrganisation({});
+await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForIndividualInOrganisation({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		individual: 'example',
+		id: 1,
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		requester: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		telephone: 'example',
+		job_title: 'example',
+		organization: 'example',
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -19340,7 +20955,40 @@ Order Swiss Regulated Certificate for Organisation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForOrganisation({});
+await corsair.digicert.api.certcentralApi.orderSwissRegulatedCertificateForOrganisation({
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		id: 1,
+		csa_agreed_to: true,
+		provisioning_method: 'example',
+		name: 'example',
+		addr1: 'example',
+		addr2: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+		requester: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		telephone: 'example',
+		job_title: 'example',
+		organization: 'example',
+		contacts: ['example'],
+		payment_method: 'example',
+		credit_card: 'example',
+		number: 'example',
+		expiration_month: 'example',
+		expiration_year: 'example',
+		cvv: 'example',
+		cardholder_name: 'example',
+		set_as_default: 'example',
+		address: 'example',
+	},
+});
 ```
 
 **Input**
@@ -19456,7 +21104,9 @@ Order validation status
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderValidationStatus({});
+await corsair.digicert.api.certcentralApi.orderValidationStatus({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -19546,7 +21196,27 @@ Order Verified Mark Certificate (VMC)
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderVerifiedMarkCertificateVmc({});
+await corsair.digicert.api.certcentralApi.orderVerifiedMarkCertificateVmc({
+	body: {
+		certificate: 'example',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		organization: 'example',
+		metadata_id: 1,
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -19684,7 +21354,30 @@ Order X9 PKI for TLS
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.orderX9PkiForTls({});
+await corsair.digicert.api.certcentralApi.orderX9PkiForTls({
+	body: {
+		certificate: 'example',
+		common_name: 'example',
+		csr: 'example',
+		signature_hash: 'example',
+		id: 1,
+		csa_agreed_to: true,
+		organization: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+		order_validity: 'example',
+		years: 1,
+		number: 'example',
+		expiration_month: 1,
+		expiration_year: 1,
+		cvv: 1,
+		cardholder_name: 'example',
+		address: 'example',
+		city: 'example',
+		country: 'example',
+	},
+});
 ```
 
 **Input**
@@ -19823,7 +21516,9 @@ Organization and technical contact info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.organizationAndTechnicalContactInfo({});
+await corsair.digicert.api.certcentralApi.organizationAndTechnicalContactInfo({
+	path: { organization_id: 'example' },
+});
 ```
 
 **Input**
@@ -19901,7 +21596,9 @@ Organization info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.organizationInfo({});
+await corsair.digicert.api.certcentralApi.organizationInfo({
+	path: { organization_id: 'example' },
+});
 ```
 
 **Input**
@@ -19994,7 +21691,9 @@ OV/EV SSL: Check DCV
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.ovEvSslCheckDcv({});
+await corsair.digicert.api.certcentralApi.ovEvSslCheckDcv({
+	path: { domain_id: 'example' },
+});
 ```
 
 **Input**
@@ -20063,7 +21762,9 @@ OV/EV SSL: Generate DCV token
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.ovEvSslGenerateDcvToken({});
+await corsair.digicert.api.certcentralApi.ovEvSslGenerateDcvToken({
+	path: { domain_id: 'example' },
+});
 ```
 
 **Input**
@@ -20145,7 +21846,9 @@ Parent container info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.parentContainerInfo({});
+await corsair.digicert.api.certcentralApi.parentContainerInfo({
+	path: { container_id: 'example' },
+});
 ```
 
 **Input**
@@ -20221,7 +21924,21 @@ Price estimate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.priceEstimate({});
+await corsair.digicert.api.certcentralApi.priceEstimate({
+	body: {
+		certificate: 'example',
+		dns_names: ['example'],
+		order_validity: 'example',
+		years: 1,
+		days: 1,
+		validity_years: 1,
+		product_name_id: 'example',
+		country: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+	},
+});
 ```
 
 **Input**
@@ -20397,7 +22114,9 @@ Product info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.productInfo({});
+await corsair.digicert.api.certcentralApi.productInfo({
+	path: { name_id: 'example' },
+});
 ```
 
 **Input**
@@ -20492,7 +22211,9 @@ Product limits
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.productLimits({});
+await corsair.digicert.api.certcentralApi.productLimits({
+	path: { container-id: 'example' },
+});
 ```
 
 **Input**
@@ -20651,7 +22372,10 @@ Purchase KeyLocker signatures
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.purchaseKeyLockerSignatures({});
+await corsair.digicert.api.certcentralApi.purchaseKeyLockerSignatures({
+	path: { order_id: 'example' },
+	body: { signature_units: 1, payment_method: 'example' },
+});
 ```
 
 **Input**
@@ -20725,7 +22449,9 @@ Receipt info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.receiptInfo({});
+await corsair.digicert.api.certcentralApi.receiptInfo({
+	path: { receipt_id: 'example' },
+});
 ```
 
 **Input**
@@ -20880,7 +22606,20 @@ Reissue certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.reissueCertificate({});
+await corsair.digicert.api.certcentralApi.reissueCertificate({
+	path: { order_id: 'example' },
+	body: {
+		certificate: 'example',
+		signature_hash: 'example',
+		name: 'example',
+		addr1: 'example',
+		city: 'example',
+		state: 'example',
+		zip: 'example',
+		country: 'example',
+		method: 'example',
+	},
+});
 ```
 
 **Input**
@@ -20998,7 +22737,9 @@ Request info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.requestInfo({});
+await corsair.digicert.api.certcentralApi.requestInfo({
+	path: { request_id: 'example' },
+});
 ```
 
 **Input**
@@ -21146,7 +22887,9 @@ Rescan domain
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.rescanDomain({});
+await corsair.digicert.api.certcentralApi.rescanDomain({
+	path: { order_id: 'example', domain: 'example' },
+});
 ```
 
 **Input**
@@ -21211,7 +22954,9 @@ Resend create user email
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.resendCreateUserEmail({});
+await corsair.digicert.api.certcentralApi.resendCreateUserEmail({
+	path: { user_id: 'example' },
+});
 ```
 
 **Input**
@@ -21274,7 +23019,9 @@ Resend DCV email
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.resendDcvEmail({});
+await corsair.digicert.api.certcentralApi.resendDcvEmail({
+	path: { domain_id: 'example' },
+});
 ```
 
 **Input**
@@ -21349,7 +23096,9 @@ Resend invite
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.resendInvite({});
+await corsair.digicert.api.certcentralApi.resendInvite({
+	path: { invite_id: 'example' },
+});
 ```
 
 **Input**
@@ -21422,7 +23171,12 @@ Resend order approval email
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.resendOrderApprovalEmail({});
+await corsair.digicert.api.certcentralApi.resendOrderApprovalEmail({
+	path: { order_id: 'example' },
+	body: {
+		emails: ['example'],
+	},
+});
 ```
 
 **Input**
@@ -21558,7 +23312,9 @@ Restore certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.restoreCertificate({});
+await corsair.digicert.api.certcentralApi.restoreCertificate({
+	path: { certificate_id: 'example' },
+});
 ```
 
 **Input**
@@ -21619,10 +23375,12 @@ await corsair.digicert.api.certcentralApi.restoreCertificate({});
 
 Revoke certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.certcentralApi.revokeCertificate({});
+await corsair.digicert.api.certcentralApi.revokeCertificate({
+	path: { certificate_identifier: 'example' },
+});
 ```
 
 **Input**
@@ -21707,10 +23465,12 @@ await corsair.digicert.api.certcentralApi.revokeCertificate({});
 
 Revoke order certificates
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.certcentralApi.revokeOrderCertificates({});
+await corsair.digicert.api.certcentralApi.revokeOrderCertificates({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -21876,7 +23636,12 @@ Send invite
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.sendInvite({});
+await corsair.digicert.api.certcentralApi.sendInvite({
+	body: {
+		emails: ['example'],
+		subaccount_type: 'example',
+	},
+});
 ```
 
 **Input**
@@ -21950,7 +23715,12 @@ Set subaccount products
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.setSubaccountProducts({});
+await corsair.digicert.api.certcentralApi.setSubaccountProducts({
+	path: { subaccount_id: 'example' },
+	body: {
+		products: ['example'],
+	},
+});
 ```
 
 **Input**
@@ -22028,7 +23798,9 @@ Site seal settings
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.siteSealSettings({});
+await corsair.digicert.api.certcentralApi.siteSealSettings({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -22190,7 +23962,9 @@ Subaccount info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.subaccountInfo({});
+await corsair.digicert.api.certcentralApi.subaccountInfo({
+	path: { subaccount_id: 'example' },
+});
 ```
 
 **Input**
@@ -22291,7 +24065,9 @@ Subaccount order info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.subaccountOrderInfo({});
+await corsair.digicert.api.certcentralApi.subaccountOrderInfo({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -22399,7 +24175,9 @@ Subaccount report
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.subaccountReport({});
+await corsair.digicert.api.certcentralApi.subaccountReport({
+	path: { subaccount_id: 'example' },
+});
 ```
 
 **Input**
@@ -22471,7 +24249,13 @@ Submit for validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.submitForValidation({});
+await corsair.digicert.api.certcentralApi.submitForValidation({
+	path: { domain_id: 'example' },
+	body: {
+		validations: ['example'],
+		type: 'example',
+	},
+});
 ```
 
 **Input**
@@ -22562,7 +24346,13 @@ Submit for validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.submitForValidation_504f5354({});
+await corsair.digicert.api.certcentralApi.submitForValidation_504f5354({
+	path: { organization_id: 'example' },
+	body: {
+		validations: ['example'],
+		type: 'example',
+	},
+});
 ```
 
 **Input**
@@ -22637,7 +24427,9 @@ Template info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.templateInfo({});
+await corsair.digicert.api.certcentralApi.templateInfo({
+	path: { container_id: 'example', template_id: 'example' },
+});
 ```
 
 **Input**
@@ -22709,7 +24501,9 @@ Transfer funds
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.transferFunds({});
+await corsair.digicert.api.certcentralApi.transferFunds({
+	body: { amount: 1, from_container_id: 1, to_container_id: 1 },
+});
 ```
 
 **Input**
@@ -22934,7 +24728,13 @@ Update account notification settings
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateAccountNotificationSettings({});
+await corsair.digicert.api.certcentralApi.updateAccountNotificationSettings({
+	body: {
+		account_settings: ['example'],
+		name: 'example',
+		value: 'example',
+	},
+});
 ```
 
 **Input**
@@ -23014,7 +24814,9 @@ Update ACME restrictions
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateAcmeRestrictions({});
+await corsair.digicert.api.certcentralApi.updateAcmeRestrictions({
+	path: { key_id: 'example' },
+});
 ```
 
 **Input**
@@ -23088,7 +24890,12 @@ Update allowed domains
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateAllowedDomains({});
+await corsair.digicert.api.certcentralApi.updateAllowedDomains({
+	path: { container_id: 'example' },
+	body: {
+		allowed_domain_names: ['example'],
+	},
+});
 ```
 
 **Input**
@@ -23161,7 +24968,9 @@ Update auto-reissue settings
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateAutoReissueSettings({});
+await corsair.digicert.api.certcentralApi.updateAutoReissueSettings({
+	body: { auto_reissue: 1 },
+});
 ```
 
 **Input**
@@ -23233,7 +25042,12 @@ Update container assignments
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateContainerAssignments({});
+await corsair.digicert.api.certcentralApi.updateContainerAssignments({
+	path: { user_id: 'example' },
+	body: {
+		container_id_assignments: ['example'],
+	},
+});
 ```
 
 **Input**
@@ -23306,7 +25120,10 @@ Update CSR
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateCsr({});
+await corsair.digicert.api.certcentralApi.updateCsr({
+	path: { order_id: 'example' },
+	body: { csr: 'example' },
+});
 ```
 
 **Input**
@@ -23379,7 +25196,9 @@ Update CSR for a pending reissue request
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateCsrForAPendingReissueRequest({});
+await corsair.digicert.api.certcentralApi.updateCsrForAPendingReissueRequest({
+	path: { request_id: 'example' },
+});
 ```
 
 **Input**
@@ -23442,7 +25261,10 @@ Update invite status
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateInviteStatus({});
+await corsair.digicert.api.certcentralApi.updateInviteStatus({
+	path: { invite_id: 'example' },
+	body: { status: 'example' },
+});
 ```
 
 **Input**
@@ -23515,7 +25337,10 @@ Update key status
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateKeyStatus({});
+await corsair.digicert.api.certcentralApi.updateKeyStatus({
+	path: { key_id: 'example' },
+	body: { status: 'example' },
+});
 ```
 
 **Input**
@@ -23588,7 +25413,15 @@ Update OIDC SSO configuration
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateOidcSsoConfiguration({});
+await corsair.digicert.api.certcentralApi.updateOidcSsoConfiguration({
+	body: {
+		provider_url: 'example',
+		client_id: 'example',
+		client_secret: 'example',
+		friendly_name: 'example',
+		scope_parameter: 'example',
+	},
+});
 ```
 
 **Input**
@@ -23665,7 +25498,16 @@ Update order contacts
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateOrderContacts({});
+await corsair.digicert.api.certcentralApi.updateOrderContacts({
+	path: { order_id: 'example' },
+	body: {
+		contacts: ['example'],
+		contact_type: 'example',
+		first_name: 'example',
+		last_name: 'example',
+		email: 'jane.doe@example.com',
+	},
+});
 ```
 
 **Input**
@@ -23745,7 +25587,10 @@ Update order status
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateOrderStatus({});
+await corsair.digicert.api.certcentralApi.updateOrderStatus({
+	path: { order_id: 'example' },
+	body: { status: 'example' },
+});
 ```
 
 **Input**
@@ -23819,7 +25664,12 @@ Update organization and technical contact
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateOrganizationAndTechnicalContact({});
+await corsair.digicert.api.certcentralApi.updateOrganizationAndTechnicalContact({
+	path: { organization_id: 'example' },
+	body: {
+		contacts: ['example'],
+	},
+});
 ```
 
 **Input**
@@ -23900,7 +25750,12 @@ Update organization assignments
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateOrganizationAssignments({});
+await corsair.digicert.api.certcentralApi.updateOrganizationAssignments({
+	path: { container_id: 'example' },
+	body: {
+		organization_id_assignments: ['example'],
+	},
+});
 ```
 
 **Input**
@@ -23973,7 +25828,9 @@ Update renewal message
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateRenewalMessage({});
+await corsair.digicert.api.certcentralApi.updateRenewalMessage({
+	path: { order_id: 'example' },
+});
 ```
 
 **Input**
@@ -24046,7 +25903,15 @@ Update renewal notification recipients
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateRenewalNotificationRecipients({});
+await corsair.digicert.api.certcentralApi.updateRenewalNotificationRecipients({
+	query: { container_id: 1 },
+	body: {
+		name: 'example',
+		value: 'example',
+		allow_override: true,
+		inheritable: true,
+	},
+});
 ```
 
 **Input**
@@ -24122,7 +25987,9 @@ Update renewal notification settings
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateRenewalNotificationSettings({});
+await corsair.digicert.api.certcentralApi.updateRenewalNotificationSettings({
+	path: { order_id: 'example', status: 'example' },
+});
 ```
 
 **Input**
@@ -24187,7 +26054,10 @@ Update request status
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateRequestStatus({});
+await corsair.digicert.api.certcentralApi.updateRequestStatus({
+	path: { request_id: 'example' },
+	body: { status: 'example' },
+});
 ```
 
 **Input**
@@ -24261,7 +26131,10 @@ Update SAML entity
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateSamlEntity({});
+await corsair.digicert.api.certcentralApi.updateSamlEntity({
+	path: { entity_id: 'example' },
+	body: { attribute_mapping: 'example', friendly_name: 'example' },
+});
 ```
 
 **Input**
@@ -24442,7 +26315,12 @@ Update user assignments
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.updateUserAssignments({});
+await corsair.digicert.api.certcentralApi.updateUserAssignments({
+	path: { container_id: 'example' },
+	body: {
+		user_id_assignments: ['example'],
+	},
+});
 ```
 
 **Input**
@@ -24783,7 +26661,9 @@ User info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.userInfo({});
+await corsair.digicert.api.certcentralApi.userInfo({
+	path: { user_id: 'example' },
+});
 ```
 
 **Input**
@@ -24880,7 +26760,9 @@ Username availability
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.usernameAvailability({});
+await corsair.digicert.api.certcentralApi.usernameAvailability({
+	path: { user_name: 'example' },
+});
 ```
 
 **Input**
@@ -24948,7 +26830,9 @@ Validate VMC or CMC logo format (encoded)
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.validateVmcOrCmcLogoFormatEncoded({});
+await corsair.digicert.api.certcentralApi.validateVmcOrCmcLogoFormatEncoded({
+	body: { logo: 'example' },
+});
 ```
 
 **Input**
@@ -25083,7 +26967,9 @@ Validation details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.validationDetails({});
+await corsair.digicert.api.certcentralApi.validationDetails({
+	path: { domain_id: 'example' },
+});
 ```
 
 **Input**
@@ -25160,7 +27046,9 @@ Validation details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.validationDetails_4745542f({});
+await corsair.digicert.api.certcentralApi.validationDetails_4745542f({
+	path: { organization_id: 'example' },
+});
 ```
 
 **Input**
@@ -25517,7 +27405,9 @@ View note
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.certcentralApi.viewNote({});
+await corsair.digicert.api.certcentralApi.viewNote({
+	path: { order_id: 'example', note_id: 'example' },
+});
 ```
 
 **Input**
@@ -25589,7 +27479,15 @@ Voucher price estimate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.certcentralApi.voucherPriceEstimate({});
+await corsair.digicert.api.certcentralApi.voucherPriceEstimate({
+	body: {
+		vouchers: ['example'],
+		product_name_id: 'example',
+		quantity: 1,
+		country: 'example',
+		city: 'example',
+	},
+});
 ```
 
 **Input**
@@ -25827,7 +27725,22 @@ Approve validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.approve({});
+await corsair.digicert.api.contentTrustApi.approve({
+	path: { validationId: 'example' },
+	query: { account_id: 'example' },
+	body: {
+		account: { id: 'example' },
+		contact_data: { mobile_phone: 'example', email: 'jane.doe@example.com' },
+		user_data: { first_name: 'example', last_name: 'example' },
+		identification_document: {
+			country: 'example',
+			number: 'example',
+			date_issued: 'example',
+			valid_until: 'example',
+			type: 'PASSPORT',
+		},
+	},
+});
 ```
 
 **Input**
@@ -26067,7 +27980,9 @@ Approve self-enrolled user validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.approvePendingSignerApproval({});
+await corsair.digicert.api.contentTrustApi.approvePendingSignerApproval({
+	path: { validationId: 'example' },
+});
 ```
 
 **Input**
@@ -26266,7 +28181,9 @@ Approve organization details for a validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.approveValidationOrganization({});
+await corsair.digicert.api.contentTrustApi.approveValidationOrganization({
+	path: { validationId: 'example' },
+});
 ```
 
 **Input**
@@ -26465,7 +28382,13 @@ Authorize credential access
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.authorizeCredentials({});
+await corsair.digicert.api.contentTrustApi.authorizeCredentials({
+	body: {
+		hash: ['example'],
+		credentialID: 'example',
+		numSignatures: 1,
+	},
+});
 ```
 
 **Input**
@@ -26549,7 +28472,13 @@ Authorize credential access
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.authorizeCredentials1({});
+await corsair.digicert.api.contentTrustApi.authorizeCredentials1({
+	body: {
+		hash: ['example'],
+		credentialID: 'example',
+		numSignatures: 1,
+	},
+});
 ```
 
 **Input**
@@ -26633,7 +28562,10 @@ Cancel credential by credential name
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.cancelCredentialByName({});
+await corsair.digicert.api.contentTrustApi.cancelCredentialByName({
+	path: { name: 'example' },
+	body: { notes: 'example' },
+});
 ```
 
 **Input**
@@ -26723,7 +28655,10 @@ Cancel validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.cancelValidation({});
+await corsair.digicert.api.contentTrustApi.cancelValidation({
+	path: { validationId: 'example' },
+	query: { account_id: 'example' },
+});
 ```
 
 **Input**
@@ -26923,7 +28858,13 @@ Create credential
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.createRecurringCredential({});
+await corsair.digicert.api.contentTrustApi.createRecurringCredential({
+	body: {
+		account: { id: 'example' },
+		label: 'example',
+		profileId: 'example',
+	},
+});
 ```
 
 **Input**
@@ -27013,7 +28954,17 @@ Create credential v2 flow supports credential creation with CertCentral, Trustli
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.createRecurringCredentialV2({});
+await corsair.digicert.api.contentTrustApi.createRecurringCredentialV2({
+	body: {
+		label: 'example',
+		productName: 'example',
+		organization: {
+			id: 1,
+			contacts: [{ contact_type: 'VERIFIED_CONTACT' }],
+		},
+		userId: 'example',
+	},
+});
 ```
 
 **Input**
@@ -27115,7 +29066,19 @@ Create user in AM
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.createUserInAm({});
+await corsair.digicert.api.contentTrustApi.createUserInAm({
+	body: {
+		email: 'jane.doe@example.com',
+		first_name: 'example',
+		last_name: 'example',
+		user_name: 'example',
+		user_type: 'example',
+		accounts: ['example'],
+		roles: ['AM_ACCOUNT_ADMIN'],
+		is_pipl_accepted: true,
+		is_tou_accepted: true,
+	},
+});
 ```
 
 **Input**
@@ -27203,7 +29166,12 @@ Create validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.createValidation({});
+await corsair.digicert.api.contentTrustApi.createValidation({
+	body: {
+		account: { id: 'example' },
+		associated_users: {},
+	},
+});
 ```
 
 **Input**
@@ -27441,7 +29409,9 @@ Send credential OTP
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.credentialSendOtp({});
+await corsair.digicert.api.contentTrustApi.credentialSendOtp({
+	body: { credentialID: 'example' },
+});
 ```
 
 **Input**
@@ -27514,7 +29484,9 @@ Send credential OTP
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.credentialSendOtp1({});
+await corsair.digicert.api.contentTrustApi.credentialSendOtp1({
+	body: { credentialID: 'example' },
+});
 ```
 
 **Input**
@@ -27587,7 +29559,9 @@ Get credential details
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.credentialsInfo({});
+await corsair.digicert.api.contentTrustApi.credentialsInfo({
+	body: { credentialID: 'example' },
+});
 ```
 
 **Input**
@@ -27732,7 +29706,9 @@ Get credential details
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.credentialsInfo1({});
+await corsair.digicert.api.contentTrustApi.credentialsInfo1({
+	body: { credentialID: 'example' },
+});
 ```
 
 **Input**
@@ -27877,7 +29853,10 @@ Disable validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.disableValidation({});
+await corsair.digicert.api.contentTrustApi.disableValidation({
+	path: { validationId: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -28090,7 +30069,10 @@ Enable validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.enableValidation({});
+await corsair.digicert.api.contentTrustApi.enableValidation({
+	path: { validationId: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -28303,7 +30285,9 @@ Enhance document hashes to AES(Advanced electronic signature) compliant hashes
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.enhanceHash({});
+await corsair.digicert.api.contentTrustApi.enhanceHash({
+	body: {},
+});
 ```
 
 **Input**
@@ -28383,7 +30367,9 @@ Enhance PKCS1 signature(s) to AES(Advanced electronic signature) compliant signa
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.enhanceSignature({});
+await corsair.digicert.api.contentTrustApi.enhanceSignature({
+	body: {},
+});
 ```
 
 **Input**
@@ -28464,7 +30450,13 @@ Extend multi-signature authorization
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.extendTransaction({});
+await corsair.digicert.api.contentTrustApi.extendTransaction({
+	body: {
+		hash: ['example'],
+		credentialID: 'example',
+		SAD: 'example',
+	},
+});
 ```
 
 **Input**
@@ -28545,7 +30537,13 @@ Extend multi-signature authorization
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.extendTransaction1({});
+await corsair.digicert.api.contentTrustApi.extendTransaction1({
+	body: {
+		hash: ['example'],
+		credentialID: 'example',
+		SAD: 'example',
+	},
+});
 ```
 
 **Input**
@@ -28626,7 +30624,9 @@ Get audit log by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.getById({});
+await corsair.digicert.api.contentTrustApi.getById({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -28712,7 +30712,9 @@ Returns credential details by credential name
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.getCredentialByName({});
+await corsair.digicert.api.contentTrustApi.getCredentialByName({
+	path: { name: 'example' },
+});
 ```
 
 **Input**
@@ -28897,7 +30899,10 @@ Get validation by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.getValidation({});
+await corsair.digicert.api.contentTrustApi.getValidation({
+	path: { validationId: 'example' },
+	query: { account_id: 'example' },
+});
 ```
 
 **Input**
@@ -29108,7 +31113,10 @@ Get user validation details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.getValidationDetails({});
+await corsair.digicert.api.contentTrustApi.getValidationDetails({
+	path: { userId: 'example' },
+	query: { account_id: 'example' },
+});
 ```
 
 **Input**
@@ -29208,7 +31216,10 @@ Invalidate validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.invalidateValidation({});
+await corsair.digicert.api.contentTrustApi.invalidateValidation({
+	path: { validationId: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -29713,7 +31724,9 @@ List validations
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.listValidations({});
+await corsair.digicert.api.contentTrustApi.listValidations({
+	query: { account_id: 'example' },
+});
 ```
 
 **Input**
@@ -30084,7 +32097,11 @@ Reject validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.reject({});
+await corsair.digicert.api.contentTrustApi.reject({
+	path: { validationId: 'example' },
+	query: { account_id: 'example' },
+	body: { reason: 'TECH_PHOTO' },
+});
 ```
 
 **Input**
@@ -30294,7 +32311,10 @@ Reject self-enrolled user validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.rejectPendingSignerApproval({});
+await corsair.digicert.api.contentTrustApi.rejectPendingSignerApproval({
+	path: { validationId: 'example' },
+	body: { reason: 'VALIDATION_IN_PROCESS' },
+});
 ```
 
 **Input**
@@ -30503,7 +32523,10 @@ Reject organization details for a validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.rejectValidationOrganization({});
+await corsair.digicert.api.contentTrustApi.rejectValidationOrganization({
+	path: { validationId: 'example' },
+	body: { reason: 'TECH_PHOTO' },
+});
 ```
 
 **Input**
@@ -30712,7 +32735,15 @@ Replace existing client admin user
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.replaceClientAdmin({});
+await corsair.digicert.api.contentTrustApi.replaceClientAdmin({
+	path: { userId: 'example' },
+	body: {
+		email: 'jane.doe@example.com',
+		first_name: 'example',
+		last_name: 'example',
+		user_name: 'example',
+	},
+});
 ```
 
 **Input**
@@ -30796,7 +32827,10 @@ Resend validation email
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.resendEmail({});
+await corsair.digicert.api.contentTrustApi.resendEmail({
+	path: { validationId: 'example' },
+	query: { account_id: 'example' },
+});
 ```
 
 **Input**
@@ -30997,7 +33031,9 @@ Retries to create user and his first credential
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.retryValidation({});
+await corsair.digicert.api.contentTrustApi.retryValidation({
+	path: { validationId: 'example' },
+});
 ```
 
 **Input**
@@ -31060,7 +33096,10 @@ Re-initiate validation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.revalidate({});
+await corsair.digicert.api.contentTrustApi.revalidate({
+	path: { validationId: 'example' },
+	query: { account_id: 'example' },
+});
 ```
 
 **Input**
@@ -31257,10 +33296,13 @@ await corsair.digicert.api.contentTrustApi.revalidate({});
 
 Revoke credentials
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.revokeCredentials({});
+await corsair.digicert.api.contentTrustApi.revokeCredentials({
+	path: { name: 'example' },
+	query: { user_id: 'example' },
+});
 ```
 
 **Input**
@@ -31346,7 +33388,7 @@ await corsair.digicert.api.contentTrustApi.revokeCredentials({});
 
 Revokes the access token
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.contentTrustApi.revokeToken({});
@@ -31420,7 +33462,7 @@ await corsair.digicert.api.contentTrustApi.revokeToken({});
 
 Revokes the access token
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.contentTrustApi.revokeToken1({});
@@ -31497,7 +33539,43 @@ Setup new onboarding account.
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.setupAccount({});
+await corsair.digicert.api.contentTrustApi.setupAccount({
+	body: {
+		account_name: 'example',
+		locale: 'example',
+		is_delegated: true,
+		admin_user: {
+			first_name: 'example',
+			last_name: 'example',
+			email: 'jane.doe@example.com',
+			user_name: 'example',
+			phone_number: 'example',
+			locale: 'example',
+			id: 'example',
+		},
+		service_user: { email: 'jane.doe@example.com' },
+		organization_details: {
+			name: 'example',
+			address: 'example',
+			address2: 'example',
+			country: 'example',
+			organization_contact: {
+				first_name: 'example',
+				last_name: 'example',
+				email: 'jane.doe@example.com',
+				job_title: 'example',
+				telephone: 'example',
+			},
+			authorized_representative: [{
+				first_name: 'example',
+				last_name: 'example',
+				email: 'jane.doe@example.com',
+				job_title: 'example',
+				telephone: 'example',
+			}],
+		},
+	},
+});
 ```
 
 **Input**
@@ -31680,7 +33758,14 @@ Sign hash
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.signHash({});
+await corsair.digicert.api.contentTrustApi.signHash({
+	body: {
+		hash: ['example'],
+		signAlgo: 'example',
+		credentialID: 'example',
+		SAD: 'example',
+	},
+});
 ```
 
 **Input**
@@ -31763,7 +33848,14 @@ Sign hash
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.signHash1({});
+await corsair.digicert.api.contentTrustApi.signHash1({
+	body: {
+		hash: ['example'],
+		signAlgo: 'example',
+		credentialID: 'example',
+		SAD: 'example',
+	},
+});
 ```
 
 **Input**
@@ -31846,7 +33938,9 @@ Create hash timestamp
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.timeStampToken({});
+await corsair.digicert.api.contentTrustApi.timeStampToken({
+	body: { hash: 'example', hashAlgo: 'example' },
+});
 ```
 
 **Input**
@@ -31921,7 +34015,9 @@ Create hash timestamp
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.timeStampToken1({});
+await corsair.digicert.api.contentTrustApi.timeStampToken1({
+	body: { hash: 'example', hashAlgo: 'example' },
+});
 ```
 
 **Input**
@@ -31996,7 +34092,10 @@ update the onboarded sub-account
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.updateAccount({});
+await corsair.digicert.api.contentTrustApi.updateAccount({
+	path: { onboardingId: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -32156,7 +34255,11 @@ Update credential
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.updateCredential({});
+await corsair.digicert.api.contentTrustApi.updateCredential({
+	path: { credentialId: 'example' },
+	query: { user_id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -32234,7 +34337,12 @@ Update user auth data like mobile or secret
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.updateUserData({});
+await corsair.digicert.api.contentTrustApi.updateUserData({
+	path: { userId: 'example' },
+	body: {
+		account: { id: 'example' },
+	},
+});
 ```
 
 **Input**
@@ -32315,7 +34423,9 @@ Verify audit log
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.contentTrustApi.verifyAuditLog({});
+await corsair.digicert.api.contentTrustApi.verifyAuditLog({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -32761,7 +34871,9 @@ Delete a certificate chain
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.privateCAApi.deleteDeleteACertificateChain({});
+await corsair.digicert.api.privateCAApi.deleteDeleteACertificateChain({
+	path: { id: 'example', chainID: 'example' },
+});
 ```
 
 **Input**
@@ -32825,7 +34937,10 @@ Delete CA Accounts
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.privateCAApi.deleteDeleteCaAccounts({});
+await corsair.digicert.api.privateCAApi.deleteDeleteCaAccounts({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -32965,7 +35080,9 @@ Deletes a pending sign CA
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.privateCAApi.deleteDeletesAPendingSignCa({});
+await corsair.digicert.api.privateCAApi.deleteDeletesAPendingSignCa({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -33163,7 +35280,9 @@ Download a CA
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getDownloadACa({});
+await corsair.digicert.api.privateCAApi.getDownloadACa({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -33227,7 +35346,9 @@ Download an OCSP responder CSR
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getDownloadAnOcspResponderCsr({});
+await corsair.digicert.api.privateCAApi.getDownloadAnOcspResponderCsr({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -33295,7 +35416,9 @@ Get a accounts certificate template is assigned to
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetAAccountsCertificateTemplateIsAssignedTo({});
+await corsair.digicert.api.privateCAApi.getGetAAccountsCertificateTemplateIsAssignedTo({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -33364,7 +35487,9 @@ Get a CA
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetACa({});
+await corsair.digicert.api.privateCAApi.getGetACa({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -34068,7 +36193,9 @@ Get a CA CSR
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetACaCsr({});
+await corsair.digicert.api.privateCAApi.getGetACaCsr({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -34136,7 +36263,9 @@ Get a certificate chain
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetACertificateChain({});
+await corsair.digicert.api.privateCAApi.getGetACertificateChain({
+	path: { id: 'example', chainID: 'example' },
+});
 ```
 
 **Input**
@@ -34252,7 +36381,9 @@ Get a certificate template
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetACertificateTemplate({});
+await corsair.digicert.api.privateCAApi.getGetACertificateTemplate({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -34400,8 +36531,6 @@ await corsair.digicert.api.privateCAApi.getGetAllCaCertificateAiaIssuerFiles({})
 
 ```ts
 {
-  items?: {
-  },
   limit?: number,
   offset?: number,
   total?: number
@@ -34493,7 +36622,7 @@ await corsair.digicert.api.privateCAApi.getGetAllCertificates({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object` | No | — |
+| `items` | `object[]` | No | — |
 | `limit` | `number` | No | — |
 | `offset` | `number` | No | — |
 | `total` | `number` | No | — |
@@ -34503,7 +36632,7 @@ await corsair.digicert.api.privateCAApi.getGetAllCertificates({});
 
 ```ts
 {
-}
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -34583,8 +36712,6 @@ await corsair.digicert.api.privateCAApi.getGetAllCertificates_a2d39d9({});
 
 ```ts
 {
-  items?: {
-  },
   limit?: number,
   offset?: number,
   total?: number
@@ -35020,13 +37147,11 @@ await corsair.digicert.api.privateCAApi.getGetAllCrlInfos({});
 
 ```ts
 {
-  items?: {
-  },
   limit?: number,
   offset?: number,
   total?: number
 }& {
-  itmes?: {
+  items?: {
     active?: boolean,
     ca?: {
       id?: string,
@@ -35134,8 +37259,6 @@ await corsair.digicert.api.privateCAApi.getGetAllOcspResponders({});
 
 ```ts
 {
-  items?: {
-  },
   limit?: number,
   offset?: number,
   total?: number
@@ -35414,7 +37537,9 @@ Get an AIA Issuer File
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetAnAiaIssuerFile({});
+await corsair.digicert.api.privateCAApi.getGetAnAiaIssuerFile({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -35503,7 +37628,9 @@ Get an AIA Issuer File Blob
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetAnAiaIssuerFileBlob({});
+await corsair.digicert.api.privateCAApi.getGetAnAiaIssuerFileBlob({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -35566,7 +37693,9 @@ Get an OCSP responder
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetAnOcspResponder({});
+await corsair.digicert.api.privateCAApi.getGetAnOcspResponder({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -36005,8 +38134,6 @@ await corsair.digicert.api.privateCAApi.getGetAuditLog({});
 
 ```ts
 {
-  items?: {
-  },
   limit?: number,
   offset?: number,
   total?: number
@@ -36041,7 +38168,9 @@ Get CA Active Status
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCaActiveStatus({});
+await corsair.digicert.api.privateCAApi.getGetCaActiveStatus({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -36109,7 +38238,9 @@ Get CA AIA Issuer Configuration
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCaAiaIssuerConfiguration({});
+await corsair.digicert.api.privateCAApi.getGetCaAiaIssuerConfiguration({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -36199,7 +38330,9 @@ Get CA certificate chains
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCaCertificateChains({});
+await corsair.digicert.api.privateCAApi.getGetCaCertificateChains({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -36255,8 +38388,6 @@ await corsair.digicert.api.privateCAApi.getGetCaCertificateChains({});
 
 ```ts
 {
-  items?: {
-  },
   limit?: number,
   offset?: number,
   total?: number
@@ -36319,7 +38450,9 @@ Get CA Cert Policies Configuration
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCaCertPoliciesConfiguration({});
+await corsair.digicert.api.privateCAApi.getGetCaCertPoliciesConfiguration({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -36406,7 +38539,9 @@ Get CA CRL issuance config
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCaCrlIssuanceConfig({});
+await corsair.digicert.api.privateCAApi.getGetCaCrlIssuanceConfig({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -36497,7 +38632,9 @@ Get CA Notes
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCaNotes({});
+await corsair.digicert.api.privateCAApi.getGetCaNotes({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -36555,8 +38692,6 @@ await corsair.digicert.api.privateCAApi.getGetCaNotes({});
 
 ```ts
 {
-  items?: {
-  },
   limit?: number,
   offset?: number,
   total?: number
@@ -36586,7 +38721,9 @@ Get CA OCSP config
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCaOcspConfig({});
+await corsair.digicert.api.privateCAApi.getGetCaOcspConfig({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -36677,7 +38814,9 @@ Get CA OCSP generation config
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCaOcspGenerationConfig({});
+await corsair.digicert.api.privateCAApi.getGetCaOcspGenerationConfig({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -36752,7 +38891,9 @@ Get CA OCSP issuance config
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCaOcspIssuanceConfig({});
+await corsair.digicert.api.privateCAApi.getGetCaOcspIssuanceConfig({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -36843,7 +38984,9 @@ Get CA OCSP responder config
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCaOcspResponderConfig({});
+await corsair.digicert.api.privateCAApi.getGetCaOcspResponderConfig({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -36969,7 +39112,9 @@ Get CA Reinstate Request
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCaReinstateRequest({});
+await corsair.digicert.api.privateCAApi.getGetCaReinstateRequest({
+	path: { id: 'example', requestId: 'example' },
+});
 ```
 
 **Input**
@@ -37042,7 +39187,9 @@ Get CA Revoke Request
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCaRevokeRequest({});
+await corsair.digicert.api.privateCAApi.getGetCaRevokeRequest({
+	path: { id: 'example', requestId: 'example' },
+});
 ```
 
 **Input**
@@ -37117,7 +39264,9 @@ Get Certificate
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCertificate({});
+await corsair.digicert.api.privateCAApi.getGetCertificate({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -37746,8 +39895,6 @@ await corsair.digicert.api.privateCAApi.getGetCertificateTemplates({});
 
 ```ts
 {
-  items?: {
-  },
   limit?: number,
   offset?: number,
   total?: number
@@ -37974,7 +40121,9 @@ Get CRL Blob
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCrlBlob({});
+await corsair.digicert.api.privateCAApi.getGetCrlBlob({
+	path: { id: 'example', crl_number: 'example' },
+});
 ```
 
 **Input**
@@ -38048,7 +40197,9 @@ Get CRL Blob List
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCrlBlobList({});
+await corsair.digicert.api.privateCAApi.getGetCrlBlobList({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -38106,8 +40257,6 @@ await corsair.digicert.api.privateCAApi.getGetCrlBlobList({});
 
 ```ts
 {
-  items?: {
-  },
   limit?: number,
   offset?: number,
   total?: number
@@ -38137,7 +40286,9 @@ Get CRL Config
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCrlConfig({});
+await corsair.digicert.api.privateCAApi.getGetCrlConfig({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -38238,7 +40389,9 @@ Get CRL Info
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetCrlInfo({});
+await corsair.digicert.api.privateCAApi.getGetCrlInfo({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -38645,8 +40798,6 @@ await corsair.digicert.api.privateCAApi.getGetHsmPartitions({});
 
 ```ts
 {
-  items?: {
-  },
   limit?: number,
   offset?: number,
   total?: number
@@ -38831,7 +40982,9 @@ Get the root CA hierarchy
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getGetTheRootCaHierarchy({});
+await corsair.digicert.api.privateCAApi.getGetTheRootCaHierarchy({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -38935,7 +41088,10 @@ Handle SCEP GET operations
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getHandleScepGetOperations({});
+await corsair.digicert.api.privateCAApi.getHandleScepGetOperations({
+	path: { profileID: 'example' },
+	query: { operation: 'GetCACert' },
+});
 ```
 
 **Input**
@@ -39063,7 +41219,9 @@ Recover Escrowed EE Key
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.privateCAApi.getRecoverEscrowedEeKey({});
+await corsair.digicert.api.privateCAApi.getRecoverEscrowedEeKey({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -39189,8 +41347,6 @@ await corsair.digicert.api.privateCAApi.getShowAllCas({});
 
 ```ts
 {
-  items?: {
-  },
   limit?: number,
   offset?: number,
   total?: number
@@ -39716,7 +41872,10 @@ Add a certificate chain to a CA
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postAddACertificateChainToACa({});
+await corsair.digicert.api.privateCAApi.postAddACertificateChainToACa({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -39972,7 +42131,10 @@ Add CA Accounts
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postAddCaAccounts({});
+await corsair.digicert.api.privateCAApi.postAddCaAccounts({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -40045,7 +42207,9 @@ Add CRL Infos
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postAddCrlInfos({});
+await corsair.digicert.api.privateCAApi.postAddCrlInfos({
+	body: {},
+});
 ```
 
 **Input**
@@ -40153,7 +42317,9 @@ Approve CA Reinstate Request
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postApproveCaReinstateRequest({});
+await corsair.digicert.api.privateCAApi.postApproveCaReinstateRequest({
+	path: { id: 'example', requestId: 'example' },
+});
 ```
 
 **Input**
@@ -40214,10 +42380,12 @@ await corsair.digicert.api.privateCAApi.postApproveCaReinstateRequest({});
 
 Approve CA Revoke Request
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postApproveCaRevokeRequest({});
+await corsair.digicert.api.privateCAApi.postApproveCaRevokeRequest({
+	path: { id: 'example', requestId: 'example' },
+});
 ```
 
 **Input**
@@ -40281,7 +42449,9 @@ Assertion Consumer Service
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postAssertionConsumerService({});
+await corsair.digicert.api.privateCAApi.postAssertionConsumerService({
+	body: { SAMLResponse: 'example' },
+});
 ```
 
 **Input**
@@ -40354,7 +42524,9 @@ Create a CA
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postCreateACa({});
+await corsair.digicert.api.privateCAApi.postCreateACa({
+	body: {},
+});
 ```
 
 **Input**
@@ -41568,7 +43740,9 @@ Create a custom certificate template
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postCreateACustomCertificateTemplate({});
+await corsair.digicert.api.privateCAApi.postCreateACustomCertificateTemplate({
+	body: {},
+});
 ```
 
 **Input**
@@ -41686,7 +43860,9 @@ Create an OCSP responder
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postCreateAnOcspResponder({});
+await corsair.digicert.api.privateCAApi.postCreateAnOcspResponder({
+	body: {},
+});
 ```
 
 **Input**
@@ -42329,7 +44505,9 @@ Create a pending Delegated OCSP responder
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postCreateAPendingDelegatedOcspResponder({});
+await corsair.digicert.api.privateCAApi.postCreateAPendingDelegatedOcspResponder({
+	body: {},
+});
 ```
 
 **Input**
@@ -42972,7 +45150,9 @@ Create a pending OCSP responder
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postCreateAPendingOcspResponder({});
+await corsair.digicert.api.privateCAApi.postCreateAPendingOcspResponder({
+	body: {},
+});
 ```
 
 **Input**
@@ -43615,7 +45795,10 @@ Create CA Note
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postCreateCaNote({});
+await corsair.digicert.api.privateCAApi.postCreateCaNote({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -43693,7 +45876,10 @@ Create CA Reinstate Request
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postCreateCaReinstateRequest({});
+await corsair.digicert.api.privateCAApi.postCreateCaReinstateRequest({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -43779,7 +45965,10 @@ Create CA Revoke Request
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postCreateCaRevokeRequest({});
+await corsair.digicert.api.privateCAApi.postCreateCaRevokeRequest({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -43869,7 +46058,9 @@ Create Certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postCreateCertificate({});
+await corsair.digicert.api.privateCAApi.postCreateCertificate({
+	body: {},
+});
 ```
 
 **Input**
@@ -44740,7 +46931,9 @@ Create CRL Now
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postCreateCrlNow({});
+await corsair.digicert.api.privateCAApi.postCreateCrlNow({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -44803,7 +46996,15 @@ Create or Update SAML Configuration
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postCreateOrUpdateSamlConfiguration({});
+await corsair.digicert.api.privateCAApi.postCreateOrUpdateSamlConfiguration({
+	body: {
+		idpCertificate: 'example',
+		idpEntityId: 'example',
+		idpMetadataXml: 'example',
+		idpSsoUrl: 'example',
+		spAcsUrl: 'example',
+	},
+});
 ```
 
 **Input**
@@ -44889,7 +47090,10 @@ Decrypt a PKCS7
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postDecryptAPkcs7({});
+await corsair.digicert.api.privateCAApi.postDecryptAPkcs7({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -44988,7 +47192,10 @@ Encrypt a PKCS7
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postEncryptAPkcs7({});
+await corsair.digicert.api.privateCAApi.postEncryptAPkcs7({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -45066,7 +47273,10 @@ Handle SCEP PKI operation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postHandleScepPkiOperation({});
+await corsair.digicert.api.privateCAApi.postHandleScepPkiOperation({
+	path: { profileID: 'example' },
+	body: [1],
+});
 ```
 
 **Input**
@@ -45130,7 +47340,9 @@ Import a CA
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postImportACa({});
+await corsair.digicert.api.privateCAApi.postImportACa({
+	body: {},
+});
 ```
 
 **Input**
@@ -46344,7 +48556,9 @@ Import a certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postImportACertificate({});
+await corsair.digicert.api.privateCAApi.postImportACertificate({
+	body: {},
+});
 ```
 
 **Input**
@@ -46867,7 +49081,9 @@ Import a client key
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postImportAClientKey({});
+await corsair.digicert.api.privateCAApi.postImportAClientKey({
+	body: { app_reference_id: 'example', partition_id: 'example', provider: 'example' },
+});
 ```
 
 **Input**
@@ -46958,7 +49174,9 @@ Import an OCSP responder
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postImportAnOcspResponder({});
+await corsair.digicert.api.privateCAApi.postImportAnOcspResponder({
+	body: {},
+});
 ```
 
 **Input**
@@ -47601,7 +49819,9 @@ Import an offline CA
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postImportAnOfflineCa({});
+await corsair.digicert.api.privateCAApi.postImportAnOfflineCa({
+	body: {},
+});
 ```
 
 **Input**
@@ -48815,7 +51035,9 @@ Import a third party CA
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postImportAThirdPartyCa({});
+await corsair.digicert.api.privateCAApi.postImportAThirdPartyCa({
+	body: {},
+});
 ```
 
 **Input**
@@ -50029,7 +52251,10 @@ Import CRL Blob
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postImportCrlBlob({});
+await corsair.digicert.api.privateCAApi.postImportCrlBlob({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -50179,7 +52404,9 @@ Link a CA key
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postLinkACaKey({});
+await corsair.digicert.api.privateCAApi.postLinkACaKey({
+	body: {},
+});
 ```
 
 **Input**
@@ -51393,7 +53620,9 @@ Parse IdP Metadata
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postParseIdPMetadata({});
+await corsair.digicert.api.privateCAApi.postParseIdPMetadata({
+	body: {},
+});
 ```
 
 **Input**
@@ -51474,7 +53703,10 @@ Recertifies a CA with a new imported certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postRecertifiesACaWithANewImportedCertificate({});
+await corsair.digicert.api.privateCAApi.postRecertifiesACaWithANewImportedCertificate({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -52188,7 +54420,10 @@ Recertifies existing CA by CA ID
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postRecertifiesExistingCaByCaId({});
+await corsair.digicert.api.privateCAApi.postRecertifiesExistingCaByCaId({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -52907,7 +55142,9 @@ Reject CA Reinstate Request
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postRejectCaReinstateRequest({});
+await corsair.digicert.api.privateCAApi.postRejectCaReinstateRequest({
+	path: { id: 'example', requestId: 'example' },
+});
 ```
 
 **Input**
@@ -52971,7 +55208,10 @@ Set a CA blob
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postSetACaBlob({});
+await corsair.digicert.api.privateCAApi.postSetACaBlob({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -53044,7 +55284,10 @@ Set CA Active Status
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postSetCaActiveStatus({});
+await corsair.digicert.api.privateCAApi.postSetCaActiveStatus({
+	path: { id: 'example' },
+	query: { active_status: 'active' },
+});
 ```
 
 **Input**
@@ -53108,7 +55351,10 @@ Sign a CMP request
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postSignACmpRequest({});
+await corsair.digicert.api.privateCAApi.postSignACmpRequest({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -53190,7 +55436,10 @@ Sign a GlobalPlatform request
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postSignAGlobalPlatformRequest({});
+await corsair.digicert.api.privateCAApi.postSignAGlobalPlatformRequest({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -53284,7 +55533,10 @@ Sign an Attribute Certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postSignAnAttributeCertificate({});
+await corsair.digicert.api.privateCAApi.postSignAnAttributeCertificate({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -53366,7 +55618,9 @@ Single Logout Service
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postSingleLogoutService({});
+await corsair.digicert.api.privateCAApi.postSingleLogoutService({
+	body: { SAMLRequest: 'example' },
+});
 ```
 
 **Input**
@@ -53438,7 +55692,9 @@ Verify ASN1 Template
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.postVerifyAsn1Template({});
+await corsair.digicert.api.privateCAApi.postVerifyAsn1Template({
+	body: {},
+});
 ```
 
 **Input**
@@ -53521,7 +55777,9 @@ Activate a custom certificate template
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putActivateACustomCertificateTemplate({});
+await corsair.digicert.api.privateCAApi.putActivateACustomCertificateTemplate({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -53614,7 +55872,9 @@ Deactivate a custom certificate template
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putDeactivateACustomCertificateTemplate({});
+await corsair.digicert.api.privateCAApi.putDeactivateACustomCertificateTemplate({
+	path: { id: 'example' },
+});
 ```
 
 **Input**
@@ -53704,10 +55964,13 @@ await corsair.digicert.api.privateCAApi.putDeactivateACustomCertificateTemplate(
 
 Revoke Certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putRevokeCertificate({});
+await corsair.digicert.api.privateCAApi.putRevokeCertificate({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -53783,7 +56046,10 @@ Set Additional Settings
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetAdditionalSettings({});
+await corsair.digicert.api.privateCAApi.putSetAdditionalSettings({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -53858,7 +56124,10 @@ Set an OCSP blob
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetAnOcspBlob({});
+await corsair.digicert.api.privateCAApi.putSetAnOcspBlob({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -53931,7 +56200,9 @@ Set an OCSP responder status
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetAnOcspResponderStatus({});
+await corsair.digicert.api.privateCAApi.putSetAnOcspResponderStatus({
+	path: { id: 'example', action: 'example' },
+});
 ```
 
 **Input**
@@ -53995,7 +56266,10 @@ Set CA Accounts
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetCaAccounts({});
+await corsair.digicert.api.privateCAApi.putSetCaAccounts({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -54068,7 +56342,10 @@ Set CA AIA Issuer Configuration
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetCaAiaIssuerConfiguration({});
+await corsair.digicert.api.privateCAApi.putSetCaAiaIssuerConfiguration({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -54154,7 +56431,10 @@ Set CA Cert Policies Configuration
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetCaCertPoliciesConfiguration({});
+await corsair.digicert.api.privateCAApi.putSetCaCertPoliciesConfiguration({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -54237,7 +56517,10 @@ Set CA CRL issuance config
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetCaCrlIssuanceConfig({});
+await corsair.digicert.api.privateCAApi.putSetCaCrlIssuanceConfig({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -54324,7 +56607,10 @@ Set CA issuance cert config
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetCaIssuanceCertConfig({});
+await corsair.digicert.api.privateCAApi.putSetCaIssuanceCertConfig({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -54399,7 +56685,10 @@ Set CA OCSP generation config
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetCaOcspGenerationConfig({});
+await corsair.digicert.api.privateCAApi.putSetCaOcspGenerationConfig({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -54479,7 +56768,10 @@ Set CA OCSP issuance config
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetCaOcspIssuanceConfig({});
+await corsair.digicert.api.privateCAApi.putSetCaOcspIssuanceConfig({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -54566,7 +56858,10 @@ Set CA OCSP responder config
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetCaOcspResponderConfig({});
+await corsair.digicert.api.privateCAApi.putSetCaOcspResponderConfig({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -54674,7 +56969,10 @@ Set CRL Config
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetCrlConfig({});
+await corsair.digicert.api.privateCAApi.putSetCrlConfig({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -54764,7 +57062,10 @@ Set include all certs in CRL
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetIncludeAllCertsInCrl({});
+await corsair.digicert.api.privateCAApi.putSetIncludeAllCertsInCrl({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -54837,7 +57138,10 @@ Set the Active AIA Issuer for a CA
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetTheActiveAiaIssuerForACa({});
+await corsair.digicert.api.privateCAApi.putSetTheActiveAiaIssuerForACa({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -54911,7 +57215,10 @@ Set the Active CRL for a CA
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putSetTheActiveCrlForACa({});
+await corsair.digicert.api.privateCAApi.putSetTheActiveCrlForACa({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -54986,7 +57293,10 @@ Update a certificate chain
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putUpdateACertificateChain({});
+await corsair.digicert.api.privateCAApi.putUpdateACertificateChain({
+	path: { id: 'example', chainID: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -55098,7 +57408,10 @@ Update a custom certificate template
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putUpdateACustomCertificateTemplate({});
+await corsair.digicert.api.privateCAApi.putUpdateACustomCertificateTemplate({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -55217,7 +57530,10 @@ Update an AIA Issuer File
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.privateCAApi.putUpdateAnAiaIssuerFile({});
+await corsair.digicert.api.privateCAApi.putUpdateAnAiaIssuerFile({
+	path: { id: 'example' },
+	body: {},
+});
 ```
 
 **Input**
@@ -55557,7 +57873,14 @@ Create report
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.reportLibraryApi.createReport({});
+await corsair.digicert.api.reportLibraryApi.createReport({
+	body: {
+		display_name: 'example',
+		schedule: { frequency: 'example' },
+		format: ['example'],
+		report_metadata: { report_type: 'example' },
+	},
+});
 ```
 
 **Input**
@@ -55609,24 +57932,42 @@ await corsair.digicert.api.reportLibraryApi.createReport({});
 ```ts
 {
   display_name: string,
-  schedule: JsonValue,
-  frequency: string,
-  weekday_to_run?: string,
-  weekday_frequency?: string,
-  repeat_every?: string,
-  repeat_on?: string,
-  run_until?: string,
-  format: JsonValue[],
-  notification_emails?: JsonValue[],
-  user_id: number,
-  first_name: string,
-  last_name: string,
-  email: string,
-  report_metadata: JsonValue,
-  report_type: string,
-  columns?: JsonValue,
-  filters?: JsonValue[],
-  sources?: JsonValue
+  schedule: {
+    frequency: string,
+    weekday_to_run?: string,
+    weekday_frequency?: string,
+    repeat_every?: string | number,
+    repeat_on?: string,
+    repeat_on_date?: {
+      date?: number,
+      last_day_of_the_month?: boolean
+    },
+    run_until?: string
+  },
+  format: string[],
+  notification_emails?: {
+    user_id: number,
+    first_name: string,
+    last_name: string,
+    email: string
+  }[],
+  report_metadata: {
+    report_type: string,
+    columns?: {
+      identifier: string
+    }[],
+    filters?: {
+      column_identifier: string,
+      values?: string[],
+      filter_identifier: string
+    }[],
+    sources?: {
+      division_filter_type?: string,
+      divisions?: number[],
+      sub_account_filter_type?: string,
+      sub_accounts?: number[]
+    }
+  }
 }
 ```
 </Accordion>
@@ -55654,7 +57995,9 @@ Delete report
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.reportLibraryApi.deleteReport({});
+await corsair.digicert.api.reportLibraryApi.deleteReport({
+	path: { report_identifier: 'example' },
+});
 ```
 
 **Input**
@@ -55722,7 +58065,9 @@ Delete report run
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.reportLibraryApi.deleteReportRun({});
+await corsair.digicert.api.reportLibraryApi.deleteReportRun({
+	path: { report_identifier: 'example', report_run_identifier: 'example' },
+});
 ```
 
 **Input**
@@ -55791,7 +58136,9 @@ Delete scheduled report
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.reportLibraryApi.deleteScheduledReport({});
+await corsair.digicert.api.reportLibraryApi.deleteScheduledReport({
+	path: { report_identifier: 'example' },
+});
 ```
 
 **Input**
@@ -55859,7 +58206,10 @@ Download report
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.reportLibraryApi.downloadReport({});
+await corsair.digicert.api.reportLibraryApi.downloadReport({
+	path: { report_identifier: 'example', report_run_identifier: 'example' },
+	query: { report_format: 'example' },
+});
 ```
 
 **Input**
@@ -55925,7 +58275,15 @@ Edit report
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.reportLibraryApi.editReport({});
+await corsair.digicert.api.reportLibraryApi.editReport({
+	path: { report_identifier: 'example' },
+	body: {
+		display_name: 'example',
+		schedule: { frequency: 'example' },
+		format: ['example'],
+		report_metadata: { report_type: 'example' },
+	},
+});
 ```
 
 **Input**
@@ -55978,24 +58336,42 @@ await corsair.digicert.api.reportLibraryApi.editReport({});
 ```ts
 {
   display_name: string,
-  schedule: JsonValue,
-  frequency: string,
-  weekday_to_run?: string,
-  weekday_frequency?: string,
-  repeat_every?: string,
-  repeat_on?: string,
-  run_until?: string,
-  format: JsonValue[],
-  notification_emails?: JsonValue[],
-  user_id: number,
-  first_name: string,
-  last_name: string,
-  email: string,
-  report_metadata: JsonValue,
-  report_type: string,
-  columns?: JsonValue,
-  filters?: JsonValue[],
-  sources?: JsonValue
+  schedule: {
+    frequency: string,
+    weekday_to_run?: string,
+    weekday_frequency?: string,
+    repeat_every?: string | number,
+    repeat_on?: string,
+    repeat_on_date?: {
+      date?: number,
+      last_day_of_the_month?: boolean
+    },
+    run_until?: string
+  },
+  format: string[],
+  notification_emails?: {
+    user_id: number,
+    first_name: string,
+    last_name: string,
+    email: string
+  }[],
+  report_metadata: {
+    report_type: string,
+    columns?: {
+      identifier: string
+    }[],
+    filters?: {
+      column_identifier: string,
+      values?: string[],
+      filter_identifier: string
+    }[],
+    sources?: {
+      division_filter_type?: string,
+      divisions?: number[],
+      sub_account_filter_type?: string,
+      sub_accounts?: number[]
+    }
+  }
 }
 ```
 </Accordion>
@@ -56017,7 +58393,9 @@ Get JSON report
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.reportLibraryApi.getJsonReport({});
+await corsair.digicert.api.reportLibraryApi.getJsonReport({
+	path: { report_identifier: 'example', report_run_identifier: 'example' },
+});
 ```
 
 **Input**
@@ -56279,7 +58657,14 @@ Abort scan
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.abortScanUsingPost({});
+await corsair.digicert.api.trustLifecycleApi.abortScanUsingPost({
+	path: {
+		scan_id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -56343,7 +58728,14 @@ Abort system scan
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.abortSystemScanUsingPostpublic({});
+await corsair.digicert.api.trustLifecycleApi.abortSystemScanUsingPostpublic({
+	path: {
+		agentId: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -56407,7 +58799,14 @@ Add scan
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.addScanUsingPost({});
+await corsair.digicert.api.trustLifecycleApi.addScanUsingPost({
+	body: {
+		account_id: {},
+		config: {},
+		frequency: 'DAILY',
+		name: {},
+	},
+});
 ```
 
 **Input**
@@ -56511,7 +58910,17 @@ Add and update system scan
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.addSystemScanUsingPostpublic({});
+await corsair.digicert.api.trustLifecycleApi.addSystemScanUsingPostpublic({
+	body: {
+		account_id: {},
+		targets: {},
+		options: {},
+		schedule: {
+			frequency: 'ONE_TIME',
+			start_time: {},
+		},
+	},
+});
 ```
 
 **Input**
@@ -56607,7 +59016,11 @@ Allocate sensor
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.allocateNewSensorUsingPost({});
+await corsair.digicert.api.trustLifecycleApi.allocateNewSensorUsingPost({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -56695,7 +59108,11 @@ Cancel certificate automation request
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.cancelAutomationUsingPut({});
+await corsair.digicert.api.trustLifecycleApi.cancelAutomationUsingPut({
+	path: {
+		automation_id: {},
+	},
+});
 ```
 
 **Input**
@@ -56755,10 +59172,14 @@ await corsair.digicert.api.trustLifecycleApi.cancelAutomationUsingPut({});
 
 Revoke certificate
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.certRevokeBySerial({});
+await corsair.digicert.api.trustLifecycleApi.certRevokeBySerial({
+	path: {
+		serial_number: {},
+	},
+});
 ```
 
 **Input**
@@ -57423,7 +59844,15 @@ Bulk unmap devices from profiles
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteBulkUnmapDevicesFromProfiles({});
+await corsair.digicert.api.trustLifecycleApi.deleteBulkUnmapDevicesFromProfiles({
+	query: {
+		account_id: {},
+	},
+	body: {
+		deviceInventoryIds: {},
+		profileIds: {},
+	},
+});
 ```
 
 **Input**
@@ -57504,7 +59933,14 @@ Delete connector
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteByIdUsingDelete({});
+await corsair.digicert.api.trustLifecycleApi.deleteByIdUsingDelete({
+	path: {
+		connector_id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -57568,7 +60004,12 @@ Delete discovered certificates by source types
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteCertificatesBySourceTypes({});
+await corsair.digicert.api.trustLifecycleApi.deleteCertificatesBySourceTypes({
+	query: {
+		account_id: {},
+		source_type: {},
+	},
+});
 ```
 
 **Input**
@@ -57669,7 +60110,11 @@ Delete business unit
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteDeleteBusinessUnit({});
+await corsair.digicert.api.trustLifecycleApi.deleteDeleteBusinessUnit({
+	path: {
+		bu_id: {},
+	},
+});
 ```
 
 **Input**
@@ -57732,7 +60177,11 @@ Delete certificate owner
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteDeleteCertificateOwner({});
+await corsair.digicert.api.trustLifecycleApi.deleteDeleteCertificateOwner({
+	path: {
+		id: {},
+	},
+});
 ```
 
 **Input**
@@ -57801,7 +60250,15 @@ Delete certificate owner mappings for a certificate
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteDeleteCertificateOwnerMappingsForACertificate({});
+await corsair.digicert.api.trustLifecycleApi.deleteDeleteCertificateOwnerMappingsForACertificate({
+	path: {
+		id: {},
+	},
+	body: {
+		account_id: {},
+		certificate_owner_ids: {},
+	},
+});
 ```
 
 **Input**
@@ -57875,7 +60332,11 @@ Delete custom attribute
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteDeleteCustomAttribute({});
+await corsair.digicert.api.trustLifecycleApi.deleteDeleteCustomAttribute({
+	path: {
+		id: {},
+	},
+});
 ```
 
 **Input**
@@ -57944,7 +60405,15 @@ Delete custom attributes mapping for certificate
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteDeleteCustomAttributesMappingForCertificate({});
+await corsair.digicert.api.trustLifecycleApi.deleteDeleteCustomAttributesMappingForCertificate({
+	path: {
+		id: {},
+	},
+	body: {
+		account_id: {},
+		custom_attribute_ids: {},
+	},
+});
 ```
 
 **Input**
@@ -58018,7 +60487,14 @@ Delete device
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteDeleteDevice({});
+await corsair.digicert.api.trustLifecycleApi.deleteDeleteDevice({
+	path: {
+		id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -58082,7 +60558,14 @@ Delete devices (bulk)
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteDeleteDevicesBulk({});
+await corsair.digicert.api.trustLifecycleApi.deleteDeleteDevicesBulk({
+	query: {
+		account_id: {},
+	},
+	body: {
+		deviceInventoryIds: {},
+	},
+});
 ```
 
 **Input**
@@ -58162,7 +60645,12 @@ Delete rules
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteDeleteRules({});
+await corsair.digicert.api.trustLifecycleApi.deleteDeleteRules({
+	query: {
+		account_id: {},
+	},
+	body: {},
+});
 ```
 
 **Input**
@@ -58226,7 +60714,12 @@ Delete seat
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteDeleteSeat({});
+await corsair.digicert.api.trustLifecycleApi.deleteDeleteSeat({
+	path: {
+		seat_id: {},
+	},
+	query: { seat_type_id: 'USER_SEAT' },
+});
 ```
 
 **Input**
@@ -58292,7 +60785,15 @@ Delete past system scan instance
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deletePastSystemScanUsingPostpublic({});
+await corsair.digicert.api.trustLifecycleApi.deletePastSystemScanUsingPostpublic({
+	path: {
+		agentId: {},
+		scanId: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -58357,7 +60858,12 @@ Remove an admin from a Business Unit
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteRemoveAnAdminFromABusinessUnit({});
+await corsair.digicert.api.trustLifecycleApi.deleteRemoveAnAdminFromABusinessUnit({
+	path: {
+		id: {},
+		adminId: {},
+	},
+});
 ```
 
 **Input**
@@ -58421,7 +60927,11 @@ Resume suspended certificate
 **Risk:** `destructive`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteResumeSuspendedCertificate({});
+await corsair.digicert.api.trustLifecycleApi.deleteResumeSuspendedCertificate({
+	path: {
+		serial_number: {},
+	},
+});
 ```
 
 **Input**
@@ -58484,7 +60994,12 @@ Delete scan
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.deleteScanUsingPost({});
+await corsair.digicert.api.trustLifecycleApi.deleteScanUsingPost({
+	query: {
+		account_id: {},
+	},
+	body: {},
+});
 ```
 
 **Input**
@@ -58557,7 +61072,14 @@ Edit scan
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.editScanUsingPut({});
+await corsair.digicert.api.trustLifecycleApi.editScanUsingPut({
+	body: {
+		account_id: {},
+		config: {},
+		frequency: 'DAILY',
+		name: {},
+	},
+});
 ```
 
 **Input**
@@ -58661,7 +61183,11 @@ Get additional formats for certificate by serial number
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getAdditionalFormatsBySerialNumber({});
+await corsair.digicert.api.trustLifecycleApi.getAdditionalFormatsBySerialNumber({
+	path: {
+		serial_number: {},
+	},
+});
 ```
 
 **Input**
@@ -58730,7 +61256,11 @@ Get enrollment details for renewable certificate using Certificate-Id
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getAttributesOfRenewableCertificateUsingCertIdUsingGet({});
+await corsair.digicert.api.trustLifecycleApi.getAttributesOfRenewableCertificateUsingCertIdUsingGet({
+	path: {
+		certificate_id: {},
+	},
+});
 ```
 
 **Input**
@@ -58971,7 +61501,14 @@ Get automatable endpoints count
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getAutomatableCount({});
+await corsair.digicert.api.trustLifecycleApi.getAutomatableCount({
+	query: {
+		account: {
+			id: {},
+			name: {},
+		},
+	},
+});
 ```
 
 **Input**
@@ -59048,7 +61585,14 @@ Get automatable endpoints
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getAutomatableEndpoint({});
+await corsair.digicert.api.trustLifecycleApi.getAutomatableEndpoint({
+	query: {
+		account: {
+			id: {},
+			name: {},
+		},
+	},
+});
 ```
 
 **Input**
@@ -59128,7 +61672,11 @@ Get certificate lifecycle automation details by inventory ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getAutomationDetailsUsingGet({});
+await corsair.digicert.api.trustLifecycleApi.getAutomationDetailsUsingGet({
+	path: {
+		automation_id: {},
+	},
+});
 ```
 
 **Input**
@@ -59277,7 +61825,11 @@ Get certificate counts for deletion preview
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getCertificateCountsBySourceTypes({});
+await corsair.digicert.api.trustLifecycleApi.getCertificateCountsBySourceTypes({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -59377,7 +61929,14 @@ Get connector metadata
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getConnectorMetadataUsingGet({});
+await corsair.digicert.api.trustLifecycleApi.getConnectorMetadataUsingGet({
+	path: {
+		connector_id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -59441,7 +62000,14 @@ Get connector details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getDetailsByIdUsingGet({});
+await corsair.digicert.api.trustLifecycleApi.getDetailsByIdUsingGet({
+	path: {
+		connector_id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -59506,7 +62072,14 @@ Get scan details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getDetailsUsingGet1({});
+await corsair.digicert.api.trustLifecycleApi.getDetailsUsingGet1({
+	path: {
+		scan_id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -59570,7 +62143,14 @@ Get discovered endpoints
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getDiscoveredEndpoints({});
+await corsair.digicert.api.trustLifecycleApi.getDiscoveredEndpoints({
+	query: {
+		account: {
+			id: {},
+			name: {},
+		},
+	},
+});
 ```
 
 **Input**
@@ -59648,7 +62228,14 @@ Get discovered endpoints count
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getDiscoveredEndpointsCount({});
+await corsair.digicert.api.trustLifecycleApi.getDiscoveredEndpointsCount({
+	query: {
+		account: {
+			id: {},
+			name: {},
+		},
+	},
+});
 ```
 
 **Input**
@@ -59723,7 +62310,11 @@ Export devices to CSV
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getExportDevicesToCsv({});
+await corsair.digicert.api.trustLifecycleApi.getExportDevicesToCsv({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -59790,7 +62381,14 @@ Get agent by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetAgentById({});
+await corsair.digicert.api.trustLifecycleApi.getGetAgentById({
+	path: {
+		id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -59920,7 +62518,14 @@ Get agent script by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetAgentScriptById({});
+await corsair.digicert.api.trustLifecycleApi.getGetAgentScriptById({
+	path: {
+		id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -60073,7 +62678,11 @@ Get audit log event by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetAuditLogEventById({});
+await corsair.digicert.api.trustLifecycleApi.getGetAuditLogEventById({
+	path: {
+		event_id: {},
+	},
+});
 ```
 
 **Input**
@@ -60247,7 +62856,11 @@ Get Business unit by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetBusinessUnitById({});
+await corsair.digicert.api.trustLifecycleApi.getGetBusinessUnitById({
+	path: {
+		bu_id: {},
+	},
+});
 ```
 
 **Input**
@@ -60333,7 +62946,11 @@ Get certificate by serial number
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetCertificateBySerialNumber({});
+await corsair.digicert.api.trustLifecycleApi.getGetCertificateBySerialNumber({
+	path: {
+		serial_number: {},
+	},
+});
 ```
 
 **Input**
@@ -60587,7 +63204,14 @@ Get certificate owner by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetCertificateOwnerById({});
+await corsair.digicert.api.trustLifecycleApi.getGetCertificateOwnerById({
+	path: {
+		id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -60661,7 +63285,11 @@ Get custom attribute by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetCustomAttributeById({});
+await corsair.digicert.api.trustLifecycleApi.getGetCustomAttributeById({
+	path: {
+		id: {},
+	},
+});
 ```
 
 **Input**
@@ -60736,7 +63364,14 @@ Get device
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetDevice({});
+await corsair.digicert.api.trustLifecycleApi.getGetDevice({
+	path: {
+		id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -60908,7 +63543,14 @@ Get enrollment details by enrollment code
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetEnrollmentDetailsByEnrollmentCode({});
+await corsair.digicert.api.trustLifecycleApi.getGetEnrollmentDetailsByEnrollmentCode({
+	path: {
+		enrollment_code: {},
+	},
+	query: {
+		seat_id: {},
+	},
+});
 ```
 
 **Input**
@@ -60985,7 +63627,11 @@ Get enrollment details by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetEnrollmentDetailsById({});
+await corsair.digicert.api.trustLifecycleApi.getGetEnrollmentDetailsById({
+	path: {
+		enrollment_id: {},
+	},
+});
 ```
 
 **Input**
@@ -61097,7 +63743,11 @@ Get global agent settings
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetGlobalAgentSettings({});
+await corsair.digicert.api.trustLifecycleApi.getGetGlobalAgentSettings({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -61161,7 +63811,11 @@ Get list of DNS integrations
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetListOfDnsIntegrations({});
+await corsair.digicert.api.trustLifecycleApi.getGetListOfDnsIntegrations({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -61310,7 +63964,11 @@ Get profile by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetProfileById({});
+await corsair.digicert.api.trustLifecycleApi.getGetProfileById({
+	path: {
+		profile_id: {},
+	},
+});
 ```
 
 **Input**
@@ -61529,7 +64187,11 @@ Get profile by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetProfileById_2316fef({});
+await corsair.digicert.api.trustLifecycleApi.getGetProfileById_2316fef({
+	path: {
+		profile_id: {},
+	},
+});
 ```
 
 **Input**
@@ -61792,7 +64454,11 @@ Get rule by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetRuleById({});
+await corsair.digicert.api.trustLifecycleApi.getGetRuleById({
+	path: {
+		id: {},
+	},
+});
 ```
 
 **Input**
@@ -61870,7 +64536,12 @@ Get seat by identifier
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetSeatByIdentifier({});
+await corsair.digicert.api.trustLifecycleApi.getGetSeatByIdentifier({
+	path: {
+		seat_id: {},
+	},
+	query: { seat_type_id: 'USER_SEAT' },
+});
 ```
 
 **Input**
@@ -61944,7 +64615,14 @@ Get sensor by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getGetSensorById({});
+await corsair.digicert.api.trustLifecycleApi.getGetSensorById({
+	path: {
+		sensor_id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -62008,7 +64686,15 @@ Get combined inventory instances
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getInstancesList({});
+await corsair.digicert.api.trustLifecycleApi.getInstancesList({
+	query: {
+		account: {
+			id: {},
+			name: {},
+		},
+		certificateThumbprint: {},
+	},
+});
 ```
 
 **Input**
@@ -62086,7 +64772,16 @@ Get inventory endpoint details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getInventoryDetails({});
+await corsair.digicert.api.trustLifecycleApi.getInventoryDetails({
+	path: {
+		id: {},
+	},
+	query: {
+		instance_type: {},
+		account_id: {},
+		inventory_type: {},
+	},
+});
 ```
 
 **Input**
@@ -62153,7 +64848,14 @@ Get certificate automation inventory details by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getInventoryDetailsUsingGet({});
+await corsair.digicert.api.trustLifecycleApi.getInventoryDetailsUsingGet({
+	path: {
+		automation_id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -62391,7 +65093,11 @@ List agents
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getListAgents({});
+await corsair.digicert.api.trustLifecycleApi.getListAgents({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -62458,7 +65164,11 @@ List agent scripts
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getListAgentScripts({});
+await corsair.digicert.api.trustLifecycleApi.getListAgentScripts({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -62701,7 +65411,11 @@ List certificate owners
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getListCertificateOwners({});
+await corsair.digicert.api.trustLifecycleApi.getListCertificateOwners({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -62776,7 +65490,11 @@ List custom attributes
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getListCustomAttributes({});
+await corsair.digicert.api.trustLifecycleApi.getListCustomAttributes({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -62847,7 +65565,14 @@ List custom attributes for certificate
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getListCustomAttributesForCertificate({});
+await corsair.digicert.api.trustLifecycleApi.getListCustomAttributesForCertificate({
+	path: {
+		id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -62911,7 +65636,11 @@ List devices
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getListDevices({});
+await corsair.digicert.api.trustLifecycleApi.getListDevices({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -63219,7 +65948,11 @@ List rules
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getListRules({});
+await corsair.digicert.api.trustLifecycleApi.getListRules({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -63300,7 +66033,12 @@ Get portlet count
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getPortletCount({});
+await corsair.digicert.api.trustLifecycleApi.getPortletCount({
+	query: {
+		account_id: {},
+		portlet_ids: {},
+	},
+});
 ```
 
 **Input**
@@ -63686,7 +66424,9 @@ List available configuration parameters for a sensor application
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getSensorIntegrationAppParameters({});
+await corsair.digicert.api.trustLifecycleApi.getSensorIntegrationAppParameters({
+	path: { application_name: 'AWS' },
+});
 ```
 
 **Input**
@@ -63749,7 +66489,11 @@ Get sensor integration by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getSensorIntegrationById({});
+await corsair.digicert.api.trustLifecycleApi.getSensorIntegrationById({
+	path: {
+		integration_id: {},
+	},
+});
 ```
 
 **Input**
@@ -63849,7 +66593,11 @@ Download sensor software environment details
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getSensorTemplateFileUsingGet({});
+await corsair.digicert.api.trustLifecycleApi.getSensorTemplateFileUsingGet({
+	path: {
+		license_key: {},
+	},
+});
 ```
 
 **Input**
@@ -63912,7 +66660,14 @@ Get unsecured endpoints
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getUnsecured({});
+await corsair.digicert.api.trustLifecycleApi.getUnsecured({
+	query: {
+		account: {
+			id: {},
+			name: {},
+		},
+	},
+});
 ```
 
 **Input**
@@ -63990,7 +66745,14 @@ Get unsecured endpoints count
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.getUnsecuredCount({});
+await corsair.digicert.api.trustLifecycleApi.getUnsecuredCount({
+	query: {
+		account: {
+			id: {},
+			name: {},
+		},
+	},
+});
 ```
 
 **Input**
@@ -64065,7 +66827,11 @@ handleGetCaCertsOperation
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.handleGetCaCertsOperationUsingGet({});
+await corsair.digicert.api.trustLifecycleApi.handleGetCaCertsOperationUsingGet({
+	path: {
+		profileId: {},
+	},
+});
 ```
 
 **Input**
@@ -64128,7 +66894,11 @@ handleSimpleEnrollOperation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.handleSimpleEnrollOperationUsingPost({});
+await corsair.digicert.api.trustLifecycleApi.handleSimpleEnrollOperationUsingPost({
+	path: {
+		profileId: {},
+	},
+});
 ```
 
 **Input**
@@ -64192,7 +66962,11 @@ handleSimpleReEnrollOperation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.handleSimpleReEnrollOperationUsingPost({});
+await corsair.digicert.api.trustLifecycleApi.handleSimpleReEnrollOperationUsingPost({
+	path: {
+		profileId: {},
+	},
+});
 ```
 
 **Input**
@@ -64345,7 +67119,11 @@ Search connectors
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.listByAccountUsingPost({});
+await corsair.digicert.api.trustLifecycleApi.listByAccountUsingPost({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -64427,7 +67205,11 @@ List scans
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.listOfScansUsingGet({});
+await corsair.digicert.api.trustLifecycleApi.listOfScansUsingGet({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -64500,7 +67282,14 @@ List past system scans
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.listPastSystemScansUsingGetpublic({});
+await corsair.digicert.api.trustLifecycleApi.listPastSystemScansUsingGetpublic({
+	path: {
+		id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -64569,7 +67358,11 @@ List sensor integrations
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.listSensorIntegrations({});
+await corsair.digicert.api.trustLifecycleApi.listSensorIntegrations({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -64651,7 +67444,11 @@ List sensors
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.listSensors({});
+await corsair.digicert.api.trustLifecycleApi.listSensors({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -64733,7 +67530,14 @@ List upcoming system scans
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.listUpcomingSystemScansUsingGetpublic({});
+await corsair.digicert.api.trustLifecycleApi.listUpcomingSystemScansUsingGetpublic({
+	path: {
+		id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -64803,7 +67607,11 @@ Add agent scripts in bulk
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postAddAgentScriptsInBulk({});
+await corsair.digicert.api.trustLifecycleApi.postAddAgentScriptsInBulk({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -64867,7 +67675,14 @@ Add devices
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postAddDevices({});
+await corsair.digicert.api.trustLifecycleApi.postAddDevices({
+	query: {
+		account_id: {},
+	},
+	body: {
+		devices: {},
+	},
+});
 ```
 
 **Input**
@@ -64940,7 +67755,11 @@ Approve escrowed certificate recovery
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postApproveEscrowedCertificateRecovery({});
+await corsair.digicert.api.trustLifecycleApi.postApproveEscrowedCertificateRecovery({
+	path: {
+		serial_number: {},
+	},
+});
 ```
 
 **Input**
@@ -65004,7 +67823,11 @@ Bulk replace tags
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postBulkReplaceTags({});
+await corsair.digicert.api.trustLifecycleApi.postBulkReplaceTags({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -65078,7 +67901,11 @@ Bulk update tags
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postBulkUpdateTags({});
+await corsair.digicert.api.trustLifecycleApi.postBulkUpdateTags({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -65224,7 +68051,21 @@ Create a new profile
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postCreateANewProfile({});
+await corsair.digicert.api.trustLifecycleApi.postCreateANewProfile({
+	body: {
+		name: {},
+		business_unit_id: {},
+		ica: {
+			id: {},
+		},
+		account_id: {},
+		template_id: {},
+		enrollment_method: 'digicert_desktop_client',
+		authentication_method: 'third_party_app',
+		seat_id_mapping: 'email',
+		renewal_window_days: {},
+	},
+});
 ```
 
 **Input**
@@ -65641,7 +68482,14 @@ Create certificate owners
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postCreateCertificateOwners({});
+await corsair.digicert.api.trustLifecycleApi.postCreateCertificateOwners({
+	body: {
+		account_id: {},
+		certificate_owner: {
+			email: {},
+		},
+	},
+});
 ```
 
 **Input**
@@ -65729,7 +68577,15 @@ Create custom attribute
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postCreateCustomAttribute({});
+await corsair.digicert.api.trustLifecycleApi.postCreateCustomAttribute({
+	body: {
+		account_id: {},
+		custom_attribute: {
+			name: {},
+			type: 'TEXT_FIELD',
+		},
+	},
+});
 ```
 
 **Input**
@@ -66053,7 +68909,11 @@ Create global agent settings
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postCreateGlobalAgentSettings({});
+await corsair.digicert.api.trustLifecycleApi.postCreateGlobalAgentSettings({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -66129,7 +68989,13 @@ Create rule
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postCreateRule({});
+await corsair.digicert.api.trustLifecycleApi.postCreateRule({
+	body: {
+		account_id: {},
+		name: {},
+		type: 'certificate',
+	},
+});
 ```
 
 **Input**
@@ -66353,7 +69219,14 @@ Import devices from CSV
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postImportDevicesFromCsv({});
+await corsair.digicert.api.trustLifecycleApi.postImportDevicesFromCsv({
+	query: {
+		account_id: {},
+	},
+	body: {
+		file: {},
+	},
+});
 ```
 
 **Input**
@@ -66647,7 +69520,11 @@ Pick up certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postPickUpCertificate({});
+await corsair.digicert.api.trustLifecycleApi.postPickUpCertificate({
+	path: {
+		request_id: {},
+	},
+});
 ```
 
 **Input**
@@ -66730,7 +69607,11 @@ Post agent script
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postPostAgentScript({});
+await corsair.digicert.api.trustLifecycleApi.postPostAgentScript({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -66810,7 +69691,11 @@ Post agent suggestions
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postPostAgentSuggestions({});
+await corsair.digicert.api.trustLifecycleApi.postPostAgentSuggestions({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -66884,7 +69769,11 @@ Recover escrowed certificate by serial number
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postRecoverEscrowedCertificateBySerialNumber({});
+await corsair.digicert.api.trustLifecycleApi.postRecoverEscrowedCertificateBySerialNumber({
+	path: {
+		serial_number: {},
+	},
+});
 ```
 
 **Input**
@@ -67163,7 +70052,11 @@ Renew certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postRenewCertificate({});
+await corsair.digicert.api.trustLifecycleApi.postRenewCertificate({
+	path: {
+		serial_number: {},
+	},
+});
 ```
 
 **Input**
@@ -67574,7 +70467,11 @@ Renew Certificate enrollment using certificate Id.
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postRenewCertificateEnrollmentUsingCertificateId({});
+await corsair.digicert.api.trustLifecycleApi.postRenewCertificateEnrollmentUsingCertificateId({
+	path: {
+		certificate_id: {},
+	},
+});
 ```
 
 **Input**
@@ -67656,7 +70553,14 @@ Run rule now
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postRunRuleNow({});
+await corsair.digicert.api.trustLifecycleApi.postRunRuleNow({
+	path: {
+		ruleId: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -67793,7 +70697,11 @@ Void by ID
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.postVoidById({});
+await corsair.digicert.api.trustLifecycleApi.postVoidById({
+	path: {
+		integration_id: {},
+	},
+});
 ```
 
 **Input**
@@ -67929,7 +70837,11 @@ Search certificate summaries
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.publicCertificateSearchSummary({});
+await corsair.digicert.api.trustLifecycleApi.publicCertificateSearchSummary({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -68153,7 +71065,11 @@ Get certificate by ID
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.publicGetCertUsingId({});
+await corsair.digicert.api.trustLifecycleApi.publicGetCertUsingId({
+	path: {
+		certificate_id: {},
+	},
+});
 ```
 
 **Input**
@@ -68220,7 +71136,14 @@ List past scans
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.publicListPastScansUsingGet({});
+await corsair.digicert.api.trustLifecycleApi.publicListPastScansUsingGet({
+	path: {
+		id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -68289,7 +71212,15 @@ Add certificate owners mapping for certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putAddCertificateOwnersMappingForCertificate({});
+await corsair.digicert.api.trustLifecycleApi.putAddCertificateOwnersMappingForCertificate({
+	path: {
+		id: {},
+	},
+	body: {
+		account_id: {},
+		certificate_owner_ids: {},
+	},
+});
 ```
 
 **Input**
@@ -68363,7 +71294,15 @@ Add custom attributes mapping for certificate
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putAddCustomAttributesMappingForCertificate({});
+await corsair.digicert.api.trustLifecycleApi.putAddCustomAttributesMappingForCertificate({
+	path: {
+		id: {},
+	},
+	body: {
+		account_id: {},
+		custom_attributes_request: {},
+	},
+});
 ```
 
 **Input**
@@ -68437,7 +71376,11 @@ Approve agents
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putApproveAgents({});
+await corsair.digicert.api.trustLifecycleApi.putApproveAgents({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -68510,7 +71453,14 @@ Assign an admin to a Business Unit
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putAssignAnAdminToABusinessUnit({});
+await corsair.digicert.api.trustLifecycleApi.putAssignAnAdminToABusinessUnit({
+	path: {
+		id: {},
+	},
+	body: {
+		id: {},
+	},
+});
 ```
 
 **Input**
@@ -68583,7 +71533,15 @@ Assign seat to another business unit
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putAssignSeatToAnotherBusinessUnit({});
+await corsair.digicert.api.trustLifecycleApi.putAssignSeatToAnotherBusinessUnit({
+	path: {
+		seat_id: {},
+		new_business_unit_id: {},
+	},
+	query: {
+		business_unit_id: {},
+	},
+});
 ```
 
 **Input**
@@ -68657,7 +71615,15 @@ Bulk map devices to profiles
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putBulkMapDevicesToProfiles({});
+await corsair.digicert.api.trustLifecycleApi.putBulkMapDevicesToProfiles({
+	query: {
+		account_id: {},
+	},
+	body: {
+		deviceInventoryIds: {},
+		profileIds: {},
+	},
+});
 ```
 
 **Input**
@@ -68738,7 +71704,17 @@ Link devices to a profile
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putLinkDevicesToAProfile({});
+await corsair.digicert.api.trustLifecycleApi.putLinkDevicesToAProfile({
+	path: {
+		profileId: {},
+	},
+	query: {
+		account_id: {},
+	},
+	body: {
+		deviceInventoryIds: {},
+	},
+});
 ```
 
 **Input**
@@ -68819,7 +71795,11 @@ Reinstate agents
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putReinstateAgents({});
+await corsair.digicert.api.trustLifecycleApi.putReinstateAgents({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -68892,7 +71872,11 @@ Reject agents
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putRejectAgents({});
+await corsair.digicert.api.trustLifecycleApi.putRejectAgents({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -68966,7 +71950,11 @@ Retry agent config
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putRetryAgentConfig({});
+await corsair.digicert.api.trustLifecycleApi.putRetryAgentConfig({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -69052,7 +72040,11 @@ Suspend agents
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putSuspendAgents({});
+await corsair.digicert.api.trustLifecycleApi.putSuspendAgents({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -69125,7 +72117,17 @@ Unlink devices from a profile
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putUnlinkDevicesFromAProfile({});
+await corsair.digicert.api.trustLifecycleApi.putUnlinkDevicesFromAProfile({
+	path: {
+		profileId: {},
+	},
+	query: {
+		account_id: {},
+	},
+	body: {
+		deviceInventoryIds: {},
+	},
+});
 ```
 
 **Input**
@@ -69206,7 +72208,11 @@ Update agent
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putUpdateAgent({});
+await corsair.digicert.api.trustLifecycleApi.putUpdateAgent({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -69292,7 +72298,14 @@ Update agent script
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putUpdateAgentScript({});
+await corsair.digicert.api.trustLifecycleApi.putUpdateAgentScript({
+	path: {
+		id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -69373,7 +72386,11 @@ Update business unit license
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putUpdateBusinessUnitLicense({});
+await corsair.digicert.api.trustLifecycleApi.putUpdateBusinessUnitLicense({
+	path: {
+		bu_id: {},
+	},
+});
 ```
 
 **Input**
@@ -69437,7 +72454,17 @@ Update certificate owner details for a given certificate owner ID
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putUpdateCertificateOwnerDetailsForAGivenCertificateOwnerId({});
+await corsair.digicert.api.trustLifecycleApi.putUpdateCertificateOwnerDetailsForAGivenCertificateOwnerId({
+	path: {
+		id: {},
+	},
+	body: {
+		account_id: {},
+		certificate_owner: {
+			email: {},
+		},
+	},
+});
 ```
 
 **Input**
@@ -69526,7 +72553,20 @@ Update custom attribute
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putUpdateCustomAttribute({});
+await corsair.digicert.api.trustLifecycleApi.putUpdateCustomAttribute({
+	path: {
+		id: {},
+	},
+	query: {
+		account_id: {},
+	},
+	body: {
+		custom_attribute: {
+			name: {},
+			type: 'TEXT_FIELD',
+		},
+	},
+});
 ```
 
 **Input**
@@ -69620,7 +72660,15 @@ Update device
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putUpdateDevice({});
+await corsair.digicert.api.trustLifecycleApi.putUpdateDevice({
+	path: {
+		id: {},
+	},
+	query: {
+		account_id: {},
+	},
+	body: {},
+});
 ```
 
 **Input**
@@ -69725,7 +72773,11 @@ Update global agent settings
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putUpdateGlobalAgentSettings({});
+await corsair.digicert.api.trustLifecycleApi.putUpdateGlobalAgentSettings({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -69801,7 +72853,24 @@ Update profile
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putUpdateProfile({});
+await corsair.digicert.api.trustLifecycleApi.putUpdateProfile({
+	path: {
+		profile_id: {},
+	},
+	body: {
+		name: {},
+		business_unit_id: {},
+		ica: {
+			id: {},
+		},
+		account_id: {},
+		template_id: {},
+		enrollment_method: 'digicert_desktop_client',
+		authentication_method: 'third_party_app',
+		seat_id_mapping: 'email',
+		renewal_window_days: {},
+	},
+});
 ```
 
 **Input**
@@ -70065,7 +73134,16 @@ Update rule
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putUpdateRule({});
+await corsair.digicert.api.trustLifecycleApi.putUpdateRule({
+	path: {
+		id: {},
+	},
+	body: {
+		account_id: {},
+		name: {},
+		type: 'certificate',
+	},
+});
 ```
 
 **Input**
@@ -70146,7 +73224,11 @@ Update seat
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putUpdateSeat({});
+await corsair.digicert.api.trustLifecycleApi.putUpdateSeat({
+	path: {
+		seat_id: {},
+	},
+});
 ```
 
 **Input**
@@ -70310,7 +73392,11 @@ Update status of manual approval enrollment
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putUpdateStatusOfManualApprovalEnrollment({});
+await corsair.digicert.api.trustLifecycleApi.putUpdateStatusOfManualApprovalEnrollment({
+	path: {
+		enrollment_id: {},
+	},
+});
 ```
 
 **Input**
@@ -70385,7 +73471,11 @@ Void agents
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.putVoidAgents({});
+await corsair.digicert.api.trustLifecycleApi.putVoidAgents({
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -70774,7 +73864,15 @@ Restore system scan schedule
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.restoreSystemScanScheduleUsingPostpublic({});
+await corsair.digicert.api.trustLifecycleApi.restoreSystemScanScheduleUsingPostpublic({
+	path: {
+		agentId: {},
+		time: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -70839,7 +73937,12 @@ Resume system scan
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.resumeSystemScanUsingPostpublic({});
+await corsair.digicert.api.trustLifecycleApi.resumeSystemScanUsingPostpublic({
+	query: {
+		account_id: {},
+	},
+	body: {},
+});
 ```
 
 **Input**
@@ -70912,7 +74015,11 @@ Retry certificate automation request
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.retryAutomationUsingPut({});
+await corsair.digicert.api.trustLifecycleApi.retryAutomationUsingPut({
+	path: {
+		automation_id: {},
+	},
+});
 ```
 
 **Input**
@@ -70975,7 +74082,14 @@ Connector run now
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.runNowUsingPost({});
+await corsair.digicert.api.trustLifecycleApi.runNowUsingPost({
+	path: {
+		connector_id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -71039,7 +74153,15 @@ Skip future system scan schedule
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.skipFutureSystemScanScheduleUsingPostpublic({});
+await corsair.digicert.api.trustLifecycleApi.skipFutureSystemScanScheduleUsingPostpublic({
+	path: {
+		agentId: {},
+		time: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -71104,7 +74226,14 @@ Stop connector
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.stopUsingPost({});
+await corsair.digicert.api.trustLifecycleApi.stopUsingPost({
+	path: {
+		connector_id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -71168,7 +74297,12 @@ Fetch field suggestions
 **Risk:** `read`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.suggestionsUsingGet({});
+await corsair.digicert.api.trustLifecycleApi.suggestionsUsingGet({
+	path: { field: 'provider' },
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -71232,7 +74366,12 @@ Suspend system scan
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.suspendSystemScanUsingPostpublic({});
+await corsair.digicert.api.trustLifecycleApi.suspendSystemScanUsingPostpublic({
+	query: {
+		account_id: {},
+	},
+	body: {},
+});
 ```
 
 **Input**
@@ -71305,7 +74444,14 @@ Test connector
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.testConnectionUsingPost({});
+await corsair.digicert.api.trustLifecycleApi.testConnectionUsingPost({
+	path: {
+		connector_id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -71369,7 +74515,14 @@ Unlink a connector
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.unlinkUsingPost({});
+await corsair.digicert.api.trustLifecycleApi.unlinkUsingPost({
+	path: {
+		connector_id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**
@@ -71433,7 +74586,11 @@ Update scheduled certificate automation
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.updateAutomationUsingPut({});
+await corsair.digicert.api.trustLifecycleApi.updateAutomationUsingPut({
+	path: {
+		automation_id: {},
+	},
+});
 ```
 
 **Input**
@@ -71526,7 +74683,12 @@ Update certificate delivery location
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.updateCertDeliveryLocationForAgentPostpublic({});
+await corsair.digicert.api.trustLifecycleApi.updateCertDeliveryLocationForAgentPostpublic({
+	query: {
+		account_id: {},
+	},
+	body: {},
+});
 ```
 
 **Input**
@@ -71600,7 +74762,14 @@ Update connector
 **Risk:** `write`
 
 ```ts
-await corsair.digicert.api.trustLifecycleApi.updateUsingPut1({});
+await corsair.digicert.api.trustLifecycleApi.updateUsingPut1({
+	path: {
+		connector_id: {},
+	},
+	query: {
+		account_id: {},
+	},
+});
 ```
 
 **Input**

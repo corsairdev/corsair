@@ -11,7 +11,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { endpoints } from './endpoints';
 import {
 	generatedDocEndpointMeta,
@@ -345,10 +345,10 @@ export function digicert<const T extends DigicertPluginOptions>(
 				) {
 					throw new AuthMissingError('digicert', 'api_key');
 				}
-				const accessToken = await ctx.keys.get_access_token();
-				if (!accessToken) {
-					throw new AuthMissingError('digicert', 'oauth_2');
-				}
+				const accessToken = await getOAuthAccessToken(ctx, {
+					plugin: 'digicert',
+					tokenUrl: 'https://one.digicert.com/imauth/oauth2/token',
+				});
 				return accessToken;
 			}
 			if (!ctx.keys) throw new AuthMissingError('digicert', 'api_key');

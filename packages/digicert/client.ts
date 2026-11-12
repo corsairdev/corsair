@@ -1,6 +1,6 @@
 import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export type DigicertApiFamily =
 	| 'certcentral'
@@ -58,6 +58,8 @@ export async function makeDigicertRequest<T>(
 		body?: ApiRequestOptions['body'];
 		formData?: ApiRequestOptions['formData'];
 		mediaType?: ApiRequestOptions['mediaType'];
+		/** Return the raw response bytes instead of decoding a JSON/text body. */
+		binary?: boolean;
 	} = {},
 ): Promise<T> {
 	const {
@@ -68,11 +70,12 @@ export async function makeDigicertRequest<T>(
 		authScheme = 'api_key',
 		path,
 		query,
-		headers,
+		headers: extraHeaders,
 		cookies,
 		body,
 		formData,
 		mediaType,
+		binary = false,
 	} = options;
 	const publicRoute = options.public === true;
 	if (!publicRoute && apiKey !== undefined && apiKey.length === 0) {
@@ -97,31 +100,217 @@ export async function makeDigicertRequest<T>(
 			: family === 'certcentral' || family === 'reportLibrary'
 				? 'X-DC-DEVKEY'
 				: 'x-api-key';
+	const defaultHeaders: Record<string, string> = {
+		...(formData || binary ? {} : { 'Content-Type': 'application/json' }),
+		...(apiKey && !publicRoute
+			? {
+					[authHeader]: authScheme === 'oauth_2' ? `Bearer ${apiKey}` : apiKey,
+				}
+			: {}),
+	};
+	if (binary) {
+		return requestBinary<T>({
+			base,
+			endpoint,
+			method,
+			path,
+			query,
+			headers: { ...defaultHeaders, ...stringHeaders(extraHeaders) },
+			body,
+			mediaType,
+		});
+	}
 	const config: OpenAPIConfig = {
 		BASE: base,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		HEADERS: {
-			...(formData ? {} : { 'Content-Type': 'application/json' }),
-			...(apiKey && !publicRoute
-				? {
-						[authHeader]:
-							authScheme === 'oauth_2' ? `Bearer ${apiKey}` : apiKey,
-					}
-				: {}),
-		},
+		HEADERS: defaultHeaders,
 	};
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
 		path,
 		query,
-		headers,
+		headers: extraHeaders,
 		cookies,
 		body,
 		formData,
 		mediaType,
 	};
 	return request<T>(config, requestOptions);
+}
+
+const MAX_BINARY_BYTES = 32 * 1024 * 1024;
+
+function stringHeaders(
+	headers: ApiRequestOptions['headers'],
+): Record<string, string> {
+	const normalized: Record<string, string> = {};
+	if (!headers) return normalized;
+	for (const [key, value] of Object.entries(headers)) {
+		if (value === undefined || value === null) continue;
+		normalized[key] = String(value);
+	}
+	return normalized;
+}
+
+// The shared transport decodes every non-JSON response with `response.text()`,
+// which corrupts binary downloads (for example certificate DER bytes). Binary
+// operations therefore bypass it and read `arrayBuffer()` directly.
+async function requestBinary<T>(options: {
+	base: string;
+	endpoint: string;
+	method: ApiRequestOptions['method'];
+	path?: ApiRequestOptions['path'];
+	query?: ApiRequestOptions['query'];
+	headers: Record<string, string>;
+	body?: ApiRequestOptions['body'];
+	mediaType?: ApiRequestOptions['mediaType'];
+}): Promise<T> {
+	const url = buildUrl(
+		options.base,
+		options.endpoint,
+		options.path,
+		options.query,
+	);
+	const headers = new Headers(options.headers);
+	if (options.mediaType) headers.set('Content-Type', options.mediaType);
+	if (!headers.has('Accept')) headers.set('Accept', '*/*');
+	const signal = AbortSignal.timeout(20_000);
+	const response = await fetch(url, {
+		method: options.method,
+		headers,
+		body: requestBody(options.body, options.mediaType),
+		signal,
+	});
+	if (!response.ok) {
+		const retryAfter = retryAfterMs(response);
+		const body = await readErrorBody(response);
+		const message =
+			typeof body === 'string' && body.length > 0 ? body : response.statusText;
+		throw new ApiError(
+			{ method: options.method, url: options.endpoint },
+			{
+				url,
+				ok: false,
+				status: response.status,
+				statusText: response.statusText,
+				body,
+			},
+			message,
+			retryAfter === undefined ? undefined : { retryAfter },
+		);
+	}
+	const declaredLength = Number(response.headers.get('content-length'));
+	if (Number.isFinite(declaredLength) && declaredLength > MAX_BINARY_BYTES) {
+		await response.body?.cancel().catch(() => undefined);
+		throw new Error(
+			`DigiCert binary response exceeds ${MAX_BINARY_BYTES} bytes`,
+		);
+	}
+	const contentType = response.headers.get('content-type') ?? '';
+	if (contentType.toLowerCase().includes('json')) {
+		// `unknown`: response.json() is untrusted until the operation schema parses it.
+		const parsed: unknown = await response.json();
+		return parsed as T;
+	}
+	const buffer = await response.arrayBuffer();
+	if (buffer.byteLength > MAX_BINARY_BYTES) {
+		throw new Error(
+			`DigiCert binary response exceeds ${MAX_BINARY_BYTES} bytes`,
+		);
+	}
+	return Array.from(new Uint8Array(buffer)) as T;
+}
+
+function retryAfterMs(response: Response): number | undefined {
+	const header = response.headers.get('retry-after');
+	if (!header) return undefined;
+	const seconds = Number(header);
+	if (Number.isFinite(seconds)) return seconds * 1000;
+	const date = Date.parse(header);
+	if (Number.isNaN(date)) return undefined;
+	return Math.max(0, date - Date.now());
+}
+
+async function readErrorBody(response: Response): Promise<unknown> {
+	const text = await response.text();
+	if (!text) return undefined;
+	const contentType = response.headers.get('content-type') ?? '';
+	if (!contentType.toLowerCase().includes('json')) return text;
+	try {
+		// Error payloads are untrusted provider JSON; callers only need status and message.
+		return JSON.parse(text) as unknown;
+	} catch {
+		return text;
+	}
+}
+
+function requestBody(
+	body: ApiRequestOptions['body'],
+	mediaType?: string,
+): string | Blob | FormData | URLSearchParams | ArrayBuffer | undefined {
+	if (body === undefined || body === null) return undefined;
+	if (
+		typeof body === 'string' ||
+		body instanceof Blob ||
+		body instanceof FormData ||
+		body instanceof URLSearchParams ||
+		body instanceof ArrayBuffer
+	) {
+		return body;
+	}
+	if (ArrayBuffer.isView(body)) {
+		return new Blob([
+			new Uint8Array(body.buffer, body.byteOffset, body.byteLength),
+		]);
+	}
+	if (mediaType?.includes('/json') || typeof body === 'object') {
+		return JSON.stringify(body);
+	}
+	return undefined;
+}
+
+function buildUrl(
+	base: string,
+	endpoint: string,
+	path?: ApiRequestOptions['path'],
+	query?: ApiRequestOptions['query'],
+): string {
+	// `unknown`: path values are provider-defined scalars; encodeURI only needs their string form.
+	const pathParts: Record<string, unknown> = path ?? {};
+	const resolved = endpoint.replace(/{(.*?)}/g, (match, key: string) =>
+		Object.hasOwn(pathParts, key) ? encodeURI(String(pathParts[key])) : match,
+	);
+	const baseUrl = base.endsWith('/') ? base.slice(0, -1) : base;
+	const relative = resolved.startsWith('/') ? resolved.slice(1) : resolved;
+	const queryString = serializeQuery(query);
+	return `${baseUrl}/${relative}${queryString}`;
+}
+
+function serializeQuery(query?: ApiRequestOptions['query']): string {
+	if (!query) return '';
+	const pairs: string[] = [];
+	// `unknown`: query values are provider-defined JSON scalars or arrays, stringified here.
+	const append = (key: string, value: unknown): void => {
+		pairs.push(
+			`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
+		);
+	};
+	// `unknown`: nested query objects are flattened; the operation schema already validated them.
+	const process = (key: string, value: unknown): void => {
+		if (value === undefined || value === null) return;
+		if (Array.isArray(value)) {
+			for (const item of value) process(key, item);
+		} else if (typeof value === 'object') {
+			for (const [nestedKey, nestedValue] of Object.entries(value)) {
+				process(`${key}[${nestedKey}]`, nestedValue);
+			}
+		} else {
+			append(key, value);
+		}
+	};
+	for (const [key, value] of Object.entries(query)) process(key, value);
+	return pairs.length > 0 ? `?${pairs.join('&')}` : '';
 }

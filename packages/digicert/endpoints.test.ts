@@ -415,6 +415,91 @@ describe('DigiCert endpoint requests', () => {
 		expect(await keyBuilder(oauthContext, 'endpoint')).toBe('test-oauth-token');
 	});
 
+	it('refreshes an expired Content Trust access token before using it', async () => {
+		const setAccessToken = jest.fn(() => Promise.resolve());
+		const keys = {
+			get_dek: () => Promise.resolve('dek'),
+			issue_new_dek: () => Promise.resolve('dek'),
+			get_expires_at: () => Promise.resolve('1'),
+			set_expires_at: () => Promise.resolve(),
+			get_access_token: () => Promise.resolve('expired-access-token'),
+			set_access_token: setAccessToken,
+			get_refresh_token: () => Promise.resolve('refresh-token'),
+			set_refresh_token: () => Promise.resolve(),
+			get_scope: () => Promise.resolve(null),
+			set_scope: () => Promise.resolve(),
+			get_integration_credentials: () =>
+				Promise.resolve({
+					client_id: 'client-id',
+					client_secret: 'client-secret',
+					redirect_url: 'https://example.test/callback',
+				}),
+			get_api_key: () => Promise.resolve('certcentral-key'),
+			set_api_key: () => Promise.resolve(),
+			get_digicert_one_api_key: () => Promise.resolve('one-token'),
+			set_digicert_one_api_key: () => Promise.resolve(),
+			get_webhook_signature: () => Promise.resolve(null),
+			set_webhook_signature: () => Promise.resolve(),
+		};
+		const originalFetch = global.fetch;
+		global.fetch = jest.fn(
+			async () =>
+				new Response(
+					JSON.stringify({
+						access_token: 'refreshed-access-token',
+						expires_in: 3600,
+						refresh_token: 'rotated-refresh-token',
+					}),
+					{
+						status: 200,
+						headers: { 'Content-Type': 'application/json' },
+					},
+				),
+		) as typeof fetch;
+		try {
+			const plugin = digicert();
+			const keyBuilder = plugin.keyBuilder;
+			if (!keyBuilder) throw new Error('DigiCert key builder missing');
+			await expect(
+				keyBuilder(
+					{
+						authType: 'oauth_2',
+						options: {},
+						tenantId: 'tenant-refresh',
+						meteredOperationId: generatedOpenApiOAuthOperationIds[1],
+						keys,
+					},
+					'endpoint',
+				),
+			).resolves.toBe('refreshed-access-token');
+			expect(global.fetch).toHaveBeenCalledWith(
+				'https://one.digicert.com/imauth/oauth2/token',
+				expect.objectContaining({ method: 'POST' }),
+			);
+			expect(setAccessToken).toHaveBeenCalledWith('refreshed-access-token');
+		} finally {
+			global.fetch = originalFetch;
+		}
+	});
+
+	it('downloads a private CA certificate as a byte array', async () => {
+		const bytes = [0x30, 0x82, 0x01, 0xff, 0x00];
+		call.mockResolvedValueOnce(bytes);
+		await expect(
+			endpoints.privateCAApi.getDownloadACa(ctx, { path: { id: 'ca-1' } }),
+		).resolves.toEqual(bytes);
+		expect(call).toHaveBeenCalledWith(
+			'privateCA',
+			'/certificate-authority/api/v1/ca/{id}/download',
+			'test-key',
+			expect.objectContaining({
+				method: 'GET',
+				binary: true,
+				path: { id: 'ca-1' },
+			}),
+		);
+	});
+
 	it('uses a Bearer access token for CSC routes that document OAuth2', async () => {
 		const testCase = generatedOpenApiTestCases.find(
 			(entry) => entry.id === generatedOpenApiOAuthOperationIds[1],

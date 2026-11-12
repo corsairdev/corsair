@@ -1,10 +1,13 @@
+import type { endpoints } from './endpoints';
 import {
 	generatedDocEndpointCount,
+	generatedDocEndpointMeta,
 	generatedDocEndpointSchemas,
 	generatedDocEndpoints,
 } from './endpoints/generated-docs';
 import {
 	generatedOpenApiEndpointCount,
+	generatedOpenApiEndpointMeta,
 	generatedOpenApiEndpointSchemas,
 	generatedOpenApiEndpoints,
 } from './endpoints/generated-openapi';
@@ -101,6 +104,7 @@ describe('DigiCert endpoint schemas', () => {
 		expect(generatedOpenApiEndpointCount + generatedDocEndpointCount).toBe(646);
 		for (const schemas of Object.values(generatedOpenApiEndpointSchemas)) {
 			expect(schemas).toMatchObject({
+				// Jest's expect.any is a matcher, not a TypeScript any.
 				input: expect.any(Object),
 				output: expect.any(Object),
 			});
@@ -270,15 +274,170 @@ describe('DigiCert endpoint schemas', () => {
 			{ lang: 'en-US', methods: [], authType: [] },
 			{ methods: 'not-an-array' },
 		],
-	] as const)(
-		'parses documented %s responses and rejects invalid responses',
-		(name, valid, invalid) => {
-			expect(DigicertEndpointOutputSchemas[name].safeParse(valid).success).toBe(
-				true,
-			);
+	] as const)('parses documented %s responses and rejects invalid responses', (name, valid, invalid) => {
+		expect(DigicertEndpointOutputSchemas[name].safeParse(valid).success).toBe(
+			true,
+		);
+		expect(DigicertEndpointOutputSchemas[name].safeParse(invalid).success).toBe(
+			false,
+		);
+	});
+
+	it('parses paginated list responses that contain an items array', () => {
+		const listSchemas = [
+			generatedOpenApiEndpointSchemas[
+				'privateCAApi.getGetAllCaCertificateAiaIssuerFiles'
+			].output,
+			generatedOpenApiEndpointSchemas['privateCAApi.getGetAllCrlInfos'].output,
+			generatedOpenApiEndpointSchemas['privateCAApi.getGetAllCertificates']
+				.output,
+		];
+		for (const schema of listSchemas) {
 			expect(
-				DigicertEndpointOutputSchemas[name].safeParse(invalid).success,
-			).toBe(false);
-		},
-	);
+				schema.parse({ items: [], limit: 1, offset: 0, total: 0 }),
+			).toMatchObject({
+				items: [],
+			});
+			expect(schema.safeParse({ items: { id: 'not-a-list' } }).success).toBe(
+				false,
+			);
+		}
+		expect(
+			generatedOpenApiEndpointSchemas[
+				'privateCAApi.getGetAllCaCertificateAiaIssuerFiles'
+			].output.parse({
+				items: [{ id: 'file-1', file_name: 'aia.cer' }],
+			}),
+		).toMatchObject({ items: [{ id: 'file-1' }] });
+	});
+
+	it('keeps report create and edit bodies nested', () => {
+		const nestedReport = {
+			display_name: 'Example report',
+			schedule: {
+				frequency: 'MONTHLY',
+				repeat_every: 3,
+				repeat_on: 'DATE_OF_THE_MONTH',
+				repeat_on_date: { date: 5, last_day_of_the_month: false },
+			},
+			format: ['CSV'],
+			report_metadata: {
+				report_type: 'orders',
+				columns: [{ identifier: 'order_id' }],
+			},
+		};
+		const create =
+			generatedDocEndpointSchemas['reportLibraryApi.createReport'].input;
+		const edit =
+			generatedDocEndpointSchemas['reportLibraryApi.editReport'].input;
+		expect(create.parse({ body: nestedReport })).toMatchObject({
+			body: nestedReport,
+		});
+		expect(
+			edit.parse({
+				path: { report_identifier: '00000000-0000-4000-8000-000000000001' },
+				body: nestedReport,
+			}),
+		).toMatchObject({ body: nestedReport });
+		expect(
+			create.safeParse({
+				body: {
+					display_name: 'Example report',
+					schedule: { frequency: 'ON_DEMAND' },
+					frequency: 'ON_DEMAND',
+					format: ['CSV'],
+					user_id: 1,
+					first_name: 'Jane',
+					last_name: 'Doe',
+					email: 'jane.doe@example.com',
+					report_metadata: { report_type: 'orders' },
+					report_type: 'orders',
+				},
+			}).success,
+		).toBe(false);
+		expect(
+			create.safeParse({
+				body: {
+					...nestedReport,
+					notification_emails: [{ user_id: 1 }],
+				},
+			}).success,
+		).toBe(false);
+		expect(
+			create.parse({
+				body: {
+					...nestedReport,
+					notification_emails: [
+						{
+							user_id: 1234567,
+							first_name: 'Jane',
+							last_name: 'Doe',
+							email: 'jane.doe@example.com',
+						},
+					],
+				},
+			}),
+		).toMatchObject({
+			body: {
+				notification_emails: [{ email: 'jane.doe@example.com' }],
+			},
+		});
+	});
+
+	it('classifies certificate revocation as destructive by effect', () => {
+		expect(
+			generatedOpenApiEndpointMeta['privateCAApi.putRevokeCertificate']
+				.riskLevel,
+		).toBe('destructive');
+		expect(
+			generatedOpenApiEndpointMeta['privateCAApi.postApproveCaRevokeRequest']
+				.riskLevel,
+		).toBe('destructive');
+		expect(
+			generatedOpenApiEndpointMeta['trustLifecycleApi.certRevokeBySerial']
+				.riskLevel,
+		).toBe('destructive');
+		expect(
+			generatedOpenApiEndpointMeta['contentTrustApi.revokeCredentials']
+				.riskLevel,
+		).toBe('destructive');
+		expect(
+			generatedOpenApiEndpointMeta['contentTrustApi.revokeToken'].riskLevel,
+		).toBe('destructive');
+		expect(
+			generatedDocEndpointMeta['certcentralApi.revokeCertificate'].riskLevel,
+		).toBe('destructive');
+		expect(
+			generatedDocEndpointMeta['certcentralApi.revokeOrderCertificates']
+				.riskLevel,
+		).toBe('destructive');
+		expect(
+			generatedOpenApiEndpointMeta['privateCAApi.postCreateCaRevokeRequest']
+				.riskLevel,
+		).toBe('write');
+		expect(
+			generatedOpenApiEndpointMeta['privateCAApi.getGetCaRevokeRequest']
+				.riskLevel,
+		).toBe('read');
+	});
+
+	it('infers required arguments and result fields from operation schemas', () => {
+		type CreateAccountArgs = Parameters<
+			typeof endpoints.accountManagerApi.createAccount
+		>[1];
+		type CreateAccountResult = Awaited<
+			ReturnType<typeof endpoints.accountManagerApi.createAccount>
+		>;
+		type DownloadResult = Awaited<
+			ReturnType<typeof endpoints.privateCAApi.getDownloadACa>
+		>;
+		type Assert<T extends true> = T;
+		type Checks = [
+			Assert<Record<string, never> extends CreateAccountArgs ? false : true>,
+			Assert<CreateAccountResult extends { id?: string } ? true : false>,
+			Assert<DownloadResult extends number[] ? true : false>,
+		];
+		const checks: Checks = [true, true, true];
+		expect(checks).toEqual([true, true, true]);
+	});
 });
