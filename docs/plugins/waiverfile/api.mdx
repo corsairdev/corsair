@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for WaiverFile: every `waiverfile.api.*` operation with input and output types."
+title: "WaiverFile API reference"
+sidebarTitle: "API"
+description: "API reference for the WaiverFile plugin in Corsair: every `waiverfile.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `waiverfile.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -36,9 +35,11 @@ await corsair.waiverfile.api.eventCategories.create({ name: 'Open jump', active:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Success` | `boolean \| null` | No | — |
-| `Message` | `string \| null` | No | — |
-| `WaiverEventCategoryID` | `string \| null` | No | — |
+| `ID` | `string \| null` | No | — |
+| `SiteID` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Status` | `number \| null` | No | 0 = active, 1 = disabled, 2 = deleted. |
+| `OrderNum` | `number \| null` | No | — |
 
 
 
@@ -68,9 +69,11 @@ await corsair.waiverfile.api.eventCategories.delete({ eventCategoryID: '9a3c5e3e
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Success` | `boolean \| null` | No | — |
-| `Message` | `string \| null` | No | — |
-| `WaiverEventCategoryID` | `string \| null` | No | — |
+| `ID` | `string \| null` | No | — |
+| `SiteID` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Status` | `number \| null` | No | 0 = active, 1 = disabled, 2 = deleted. |
+| `OrderNum` | `number \| null` | No | — |
 
 
 
@@ -101,31 +104,17 @@ await corsair.waiverfile.api.eventCategories.list({ includeDisabledCategories: t
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `EventCategories` | `object[] \| null` | No | — |
-| `Categories` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="EventCategories full type">
 
 ```ts
 {
-  WaiverEventCategoryID?: string | null,
+  ID?: string | null,
   SiteID?: string | null,
   Name?: string | null,
-  Status?: any | null,
-  WPObjectStatus?: any | null
-}[] | null
-```
-</Accordion>
-
-<Accordion title="Categories full type">
-
-```ts
-{
-  WaiverEventCategoryID?: string | null,
-  SiteID?: string | null,
-  Name?: string | null,
-  Status?: any | null,
-  WPObjectStatus?: any | null
+  Status?: number | null,
+  OrderNum?: number | null
 }[] | null
 ```
 </Accordion>
@@ -161,9 +150,11 @@ await corsair.waiverfile.api.eventCategories.update({ eventCategoryID: '9a3c5e3e
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Success` | `boolean \| null` | No | — |
-| `Message` | `string \| null` | No | — |
-| `WaiverEventCategoryID` | `string \| null` | No | — |
+| `ID` | `string \| null` | No | — |
+| `SiteID` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Status` | `number \| null` | No | 0 = active, 1 = disabled, 2 = deleted. |
+| `OrderNum` | `number \| null` | No | — |
 
 
 
@@ -198,7 +189,6 @@ await corsair.waiverfile.api.events.byCategory({ eventCategoryID: '9a3c5e3e-7c4f
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Events` | `object[] \| null` | No | — |
-| `WaiverEvents` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="Events full type">
@@ -223,86 +213,19 @@ await corsair.waiverfile.api.events.byCategory({ eventCategoryID: '9a3c5e3e-7c4f
   ManagerIDs?: string[] | null,
   Created?: string | null,
   LastModified?: string | null,
-  WaiverEventFormIDs?: string[] | null,
-  WaiverForms?: Record<string, any>[] | null,
-  Waivers?: {
-    WaiverID?: string | null,
-    SiteID?: string | null,
+  WaiverEventFormIDs?: (string | {
     WaiverEventID?: string | null,
-    WaiverFormID?: string | null,
-    DateSigned?: string | null,
-    SignedName?: string | null,
-    SignedNameFirst?: string | null,
-    Email?: string | null,
-    Phone?: string | null,
-    OptIn?: boolean | null,
-    FieldsXml?: string | null,
-    ValuesXml?: string | null,
-    Particpants?: {
-      WaiverParticipantID?: string | null,
-      WaiverID?: string | null,
-      ParticipantName?: string | null,
-      ParticipantNameFirst?: string | null,
-      DOB?: string | null,
-      IsCheckedIn?: boolean | null,
-      ValuesXml?: string | null,
-      IsSignee?: boolean | null
-    }[] | null
-  }[] | null,
-  Category?: Record<string, any> | null
-}[] | null
-```
-</Accordion>
-
-<Accordion title="WaiverEvents full type">
-
-```ts
-{
-  WaiverEventID?: string | null,
-  SiteID?: string | null,
-  Name?: string | null,
-  DateStart?: string | null,
-  DateEnd?: string | null,
-  IsAllDay?: boolean | null,
-  IsDeleted?: boolean | null,
-  CategoryID?: string | null,
-  TimeLabel?: string | null,
-  NumWaiverForms?: number | null,
-  NumSignedWaivers?: number | null,
-  SpotsRemaining?: number | null,
-  MaxParts?: number | null,
-  Headcount?: number | null,
-  ManagerEmailList?: string | null,
-  ManagerIDs?: string[] | null,
-  Created?: string | null,
-  LastModified?: string | null,
-  WaiverEventFormIDs?: string[] | null,
+    WaiverFormID?: string | null
+  })[] | null,
   WaiverForms?: Record<string, any>[] | null,
-  Waivers?: {
-    WaiverID?: string | null,
-    SiteID?: string | null,
-    WaiverEventID?: string | null,
-    WaiverFormID?: string | null,
-    DateSigned?: string | null,
-    SignedName?: string | null,
-    SignedNameFirst?: string | null,
-    Email?: string | null,
-    Phone?: string | null,
-    OptIn?: boolean | null,
-    FieldsXml?: string | null,
-    ValuesXml?: string | null,
-    Particpants?: {
-      WaiverParticipantID?: string | null,
-      WaiverID?: string | null,
-      ParticipantName?: string | null,
-      ParticipantNameFirst?: string | null,
-      DOB?: string | null,
-      IsCheckedIn?: boolean | null,
-      ValuesXml?: string | null,
-      IsSignee?: boolean | null
-    }[] | null
-  }[] | null,
-  Category?: Record<string, any> | null
+  Waivers?: Record<string, any>[] | null,
+  Category?: Record<string, any> | null,
+  Settings?: {
+    MaxParticipants?: number | null,
+    Location?: string | null,
+    SigningCutoff?: string | null,
+    Description?: string | null
+  } | null
 }[] | null
 ```
 </Accordion>
@@ -338,7 +261,6 @@ await corsair.waiverfile.api.events.byDateRange({ startDateUTC: '2024-06-01T00:0
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Events` | `object[] \| null` | No | — |
-| `WaiverEvents` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="Events full type">
@@ -363,86 +285,19 @@ await corsair.waiverfile.api.events.byDateRange({ startDateUTC: '2024-06-01T00:0
   ManagerIDs?: string[] | null,
   Created?: string | null,
   LastModified?: string | null,
-  WaiverEventFormIDs?: string[] | null,
-  WaiverForms?: Record<string, any>[] | null,
-  Waivers?: {
-    WaiverID?: string | null,
-    SiteID?: string | null,
+  WaiverEventFormIDs?: (string | {
     WaiverEventID?: string | null,
-    WaiverFormID?: string | null,
-    DateSigned?: string | null,
-    SignedName?: string | null,
-    SignedNameFirst?: string | null,
-    Email?: string | null,
-    Phone?: string | null,
-    OptIn?: boolean | null,
-    FieldsXml?: string | null,
-    ValuesXml?: string | null,
-    Particpants?: {
-      WaiverParticipantID?: string | null,
-      WaiverID?: string | null,
-      ParticipantName?: string | null,
-      ParticipantNameFirst?: string | null,
-      DOB?: string | null,
-      IsCheckedIn?: boolean | null,
-      ValuesXml?: string | null,
-      IsSignee?: boolean | null
-    }[] | null
-  }[] | null,
-  Category?: Record<string, any> | null
-}[] | null
-```
-</Accordion>
-
-<Accordion title="WaiverEvents full type">
-
-```ts
-{
-  WaiverEventID?: string | null,
-  SiteID?: string | null,
-  Name?: string | null,
-  DateStart?: string | null,
-  DateEnd?: string | null,
-  IsAllDay?: boolean | null,
-  IsDeleted?: boolean | null,
-  CategoryID?: string | null,
-  TimeLabel?: string | null,
-  NumWaiverForms?: number | null,
-  NumSignedWaivers?: number | null,
-  SpotsRemaining?: number | null,
-  MaxParts?: number | null,
-  Headcount?: number | null,
-  ManagerEmailList?: string | null,
-  ManagerIDs?: string[] | null,
-  Created?: string | null,
-  LastModified?: string | null,
-  WaiverEventFormIDs?: string[] | null,
+    WaiverFormID?: string | null
+  })[] | null,
   WaiverForms?: Record<string, any>[] | null,
-  Waivers?: {
-    WaiverID?: string | null,
-    SiteID?: string | null,
-    WaiverEventID?: string | null,
-    WaiverFormID?: string | null,
-    DateSigned?: string | null,
-    SignedName?: string | null,
-    SignedNameFirst?: string | null,
-    Email?: string | null,
-    Phone?: string | null,
-    OptIn?: boolean | null,
-    FieldsXml?: string | null,
-    ValuesXml?: string | null,
-    Particpants?: {
-      WaiverParticipantID?: string | null,
-      WaiverID?: string | null,
-      ParticipantName?: string | null,
-      ParticipantNameFirst?: string | null,
-      DOB?: string | null,
-      IsCheckedIn?: boolean | null,
-      ValuesXml?: string | null,
-      IsSignee?: boolean | null
-    }[] | null
-  }[] | null,
-  Category?: Record<string, any> | null
+  Waivers?: Record<string, any>[] | null,
+  Category?: Record<string, any> | null,
+  Settings?: {
+    MaxParticipants?: number | null,
+    Location?: string | null,
+    SigningCutoff?: string | null,
+    Description?: string | null
+  } | null
 }[] | null
 ```
 </Accordion>
@@ -505,39 +360,32 @@ await corsair.waiverfile.api.events.create({ eventName: 'Saturday open jump', da
 | `ManagerIDs` | `string[] \| null` | No | — |
 | `Created` | `string \| null` | No | — |
 | `LastModified` | `string \| null` | No | — |
-| `WaiverEventFormIDs` | `string[] \| null` | No | — |
+| `WaiverEventFormIDs` | `object[] \| null` | No | The forms attached to the event. |
 | `WaiverForms` | `Record<string, any>[] \| null` | No | — |
-| `Waivers` | `object[] \| null` | No | — |
+| `Waivers` | `Record<string, any>[] \| null` | No | — |
 | `Category` | `Record<string, any> \| null` | No | — |
+| `Settings` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Waivers full type">
+<Accordion title="WaiverEventFormIDs full type">
+
+```ts
+(string | {
+  WaiverEventID?: string | null,
+  WaiverFormID?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="Settings full type">
 
 ```ts
 {
-  WaiverID?: string | null,
-  SiteID?: string | null,
-  WaiverEventID?: string | null,
-  WaiverFormID?: string | null,
-  DateSigned?: string | null,
-  SignedName?: string | null,
-  SignedNameFirst?: string | null,
-  Email?: string | null,
-  Phone?: string | null,
-  OptIn?: boolean | null,
-  FieldsXml?: string | null,
-  ValuesXml?: string | null,
-  Particpants?: {
-    WaiverParticipantID?: string | null,
-    WaiverID?: string | null,
-    ParticipantName?: string | null,
-    ParticipantNameFirst?: string | null,
-    DOB?: string | null,
-    IsCheckedIn?: boolean | null,
-    ValuesXml?: string | null,
-    IsSignee?: boolean | null
-  }[] | null
-}[] | null
+  MaxParticipants?: number | null,
+  Location?: string | null,
+  SigningCutoff?: string | null,
+  Description?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -550,43 +398,12 @@ await corsair.waiverfile.api.events.create({ eventName: 'Saturday open jump', da
 
 `events.delete`
 
-Delete an event permanently; the call is a GET, so it must not be replayed on a failure
+Delete an event (marked deleted; signed waivers stay); the call is a GET, so it is not replayed on a failure
 
 **Risk:** `destructive`
 
 ```ts
 await corsair.waiverfile.api.events.delete({ eventID: 'c0a1b2c3-1111-2222-3333-444455556666' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `eventID` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `Success` | `boolean \| null` | No | — |
-| `Message` | `string \| null` | No | — |
-
-
-
----
-
-### get
-
-`events.get`
-
-Read one event with its forms, waivers and manager list
-
-**Risk:** `read`
-
-```ts
-await corsair.waiverfile.api.events.get({ eventID: 'c0a1b2c3-1111-2222-3333-444455556666' });
 ```
 
 **Input**
@@ -619,39 +436,32 @@ await corsair.waiverfile.api.events.get({ eventID: 'c0a1b2c3-1111-2222-3333-4444
 | `ManagerIDs` | `string[] \| null` | No | — |
 | `Created` | `string \| null` | No | — |
 | `LastModified` | `string \| null` | No | — |
-| `WaiverEventFormIDs` | `string[] \| null` | No | — |
+| `WaiverEventFormIDs` | `object[] \| null` | No | The forms attached to the event. |
 | `WaiverForms` | `Record<string, any>[] \| null` | No | — |
-| `Waivers` | `object[] \| null` | No | — |
+| `Waivers` | `Record<string, any>[] \| null` | No | — |
 | `Category` | `Record<string, any> \| null` | No | — |
+| `Settings` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Waivers full type">
+<Accordion title="WaiverEventFormIDs full type">
+
+```ts
+(string | {
+  WaiverEventID?: string | null,
+  WaiverFormID?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="Settings full type">
 
 ```ts
 {
-  WaiverID?: string | null,
-  SiteID?: string | null,
-  WaiverEventID?: string | null,
-  WaiverFormID?: string | null,
-  DateSigned?: string | null,
-  SignedName?: string | null,
-  SignedNameFirst?: string | null,
-  Email?: string | null,
-  Phone?: string | null,
-  OptIn?: boolean | null,
-  FieldsXml?: string | null,
-  ValuesXml?: string | null,
-  Particpants?: {
-    WaiverParticipantID?: string | null,
-    WaiverID?: string | null,
-    ParticipantName?: string | null,
-    ParticipantNameFirst?: string | null,
-    DOB?: string | null,
-    IsCheckedIn?: boolean | null,
-    ValuesXml?: string | null,
-    IsSignee?: boolean | null
-  }[] | null
-}[] | null
+  MaxParticipants?: number | null,
+  Location?: string | null,
+  SigningCutoff?: string | null,
+  Description?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -679,7 +489,7 @@ await corsair.waiverfile.api.events.inviteManagers({ eventID: 'c0a1b2c3-1111-222
 | `eventID` | `string` | Yes | — |
 | `emailAddresses` | `string` | Yes | Addresses separated by commas, spaces or line breaks. |
 | `managerEmailMessage` | `string` | No | Text added to the invitation. Invite only. |
-| `skipSendingEmailIfAccountExists` | `boolean` | No | Invite only: skip the email for people who already have an account. |
+| `skipSendingEmailIfAccountExists` | `boolean` | No | Invite only: skip the email for people who already have an account. Defaults to false, so everyone listed is emailed. |
 
 
 
@@ -687,8 +497,53 @@ await corsair.waiverfile.api.events.inviteManagers({ eventID: 'c0a1b2c3-1111-222
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Success` | `boolean \| null` | No | — |
-| `Message` | `string \| null` | No | — |
+| `WaiverEventID` | `string \| null` | No | — |
+| `SiteID` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `DateStart` | `string \| null` | No | — |
+| `DateEnd` | `string \| null` | No | — |
+| `IsAllDay` | `boolean \| null` | No | — |
+| `IsDeleted` | `boolean \| null` | No | — |
+| `CategoryID` | `string \| null` | No | — |
+| `TimeLabel` | `string \| null` | No | — |
+| `NumWaiverForms` | `number \| null` | No | — |
+| `NumSignedWaivers` | `number \| null` | No | — |
+| `SpotsRemaining` | `number \| null` | No | — |
+| `MaxParts` | `number \| null` | No | — |
+| `Headcount` | `number \| null` | No | — |
+| `ManagerEmailList` | `string \| null` | No | — |
+| `ManagerIDs` | `string[] \| null` | No | — |
+| `Created` | `string \| null` | No | — |
+| `LastModified` | `string \| null` | No | — |
+| `WaiverEventFormIDs` | `object[] \| null` | No | The forms attached to the event. |
+| `WaiverForms` | `Record<string, any>[] \| null` | No | — |
+| `Waivers` | `Record<string, any>[] \| null` | No | — |
+| `Category` | `Record<string, any> \| null` | No | — |
+| `Settings` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="WaiverEventFormIDs full type">
+
+```ts
+(string | {
+  WaiverEventID?: string | null,
+  WaiverFormID?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="Settings full type">
+
+```ts
+{
+  MaxParticipants?: number | null,
+  Location?: string | null,
+  SigningCutoff?: string | null,
+  Description?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -713,7 +568,7 @@ await corsair.waiverfile.api.events.removeManagers({ eventID: 'c0a1b2c3-1111-222
 | `eventID` | `string` | Yes | — |
 | `emailAddresses` | `string` | Yes | Addresses separated by commas, spaces or line breaks. |
 | `managerEmailMessage` | `string` | No | Text added to the invitation. Invite only. |
-| `skipSendingEmailIfAccountExists` | `boolean` | No | Invite only: skip the email for people who already have an account. |
+| `skipSendingEmailIfAccountExists` | `boolean` | No | Invite only: skip the email for people who already have an account. Defaults to false, so everyone listed is emailed. |
 
 
 
@@ -721,8 +576,53 @@ await corsair.waiverfile.api.events.removeManagers({ eventID: 'c0a1b2c3-1111-222
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Success` | `boolean \| null` | No | — |
-| `Message` | `string \| null` | No | — |
+| `WaiverEventID` | `string \| null` | No | — |
+| `SiteID` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `DateStart` | `string \| null` | No | — |
+| `DateEnd` | `string \| null` | No | — |
+| `IsAllDay` | `boolean \| null` | No | — |
+| `IsDeleted` | `boolean \| null` | No | — |
+| `CategoryID` | `string \| null` | No | — |
+| `TimeLabel` | `string \| null` | No | — |
+| `NumWaiverForms` | `number \| null` | No | — |
+| `NumSignedWaivers` | `number \| null` | No | — |
+| `SpotsRemaining` | `number \| null` | No | — |
+| `MaxParts` | `number \| null` | No | — |
+| `Headcount` | `number \| null` | No | — |
+| `ManagerEmailList` | `string \| null` | No | — |
+| `ManagerIDs` | `string[] \| null` | No | — |
+| `Created` | `string \| null` | No | — |
+| `LastModified` | `string \| null` | No | — |
+| `WaiverEventFormIDs` | `object[] \| null` | No | The forms attached to the event. |
+| `WaiverForms` | `Record<string, any>[] \| null` | No | — |
+| `Waivers` | `Record<string, any>[] \| null` | No | — |
+| `Category` | `Record<string, any> \| null` | No | — |
+| `Settings` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="WaiverEventFormIDs full type">
+
+```ts
+(string | {
+  WaiverEventID?: string | null,
+  WaiverFormID?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="Settings full type">
+
+```ts
+{
+  MaxParticipants?: number | null,
+  Location?: string | null,
+  SigningCutoff?: string | null,
+  Description?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -754,7 +654,6 @@ await corsair.waiverfile.api.events.upcoming({ startDateUTC: '2024-06-01T00:00:0
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Events` | `object[] \| null` | No | — |
-| `WaiverEvents` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="Events full type">
@@ -779,86 +678,19 @@ await corsair.waiverfile.api.events.upcoming({ startDateUTC: '2024-06-01T00:00:0
   ManagerIDs?: string[] | null,
   Created?: string | null,
   LastModified?: string | null,
-  WaiverEventFormIDs?: string[] | null,
-  WaiverForms?: Record<string, any>[] | null,
-  Waivers?: {
-    WaiverID?: string | null,
-    SiteID?: string | null,
+  WaiverEventFormIDs?: (string | {
     WaiverEventID?: string | null,
-    WaiverFormID?: string | null,
-    DateSigned?: string | null,
-    SignedName?: string | null,
-    SignedNameFirst?: string | null,
-    Email?: string | null,
-    Phone?: string | null,
-    OptIn?: boolean | null,
-    FieldsXml?: string | null,
-    ValuesXml?: string | null,
-    Particpants?: {
-      WaiverParticipantID?: string | null,
-      WaiverID?: string | null,
-      ParticipantName?: string | null,
-      ParticipantNameFirst?: string | null,
-      DOB?: string | null,
-      IsCheckedIn?: boolean | null,
-      ValuesXml?: string | null,
-      IsSignee?: boolean | null
-    }[] | null
-  }[] | null,
-  Category?: Record<string, any> | null
-}[] | null
-```
-</Accordion>
-
-<Accordion title="WaiverEvents full type">
-
-```ts
-{
-  WaiverEventID?: string | null,
-  SiteID?: string | null,
-  Name?: string | null,
-  DateStart?: string | null,
-  DateEnd?: string | null,
-  IsAllDay?: boolean | null,
-  IsDeleted?: boolean | null,
-  CategoryID?: string | null,
-  TimeLabel?: string | null,
-  NumWaiverForms?: number | null,
-  NumSignedWaivers?: number | null,
-  SpotsRemaining?: number | null,
-  MaxParts?: number | null,
-  Headcount?: number | null,
-  ManagerEmailList?: string | null,
-  ManagerIDs?: string[] | null,
-  Created?: string | null,
-  LastModified?: string | null,
-  WaiverEventFormIDs?: string[] | null,
+    WaiverFormID?: string | null
+  })[] | null,
   WaiverForms?: Record<string, any>[] | null,
-  Waivers?: {
-    WaiverID?: string | null,
-    SiteID?: string | null,
-    WaiverEventID?: string | null,
-    WaiverFormID?: string | null,
-    DateSigned?: string | null,
-    SignedName?: string | null,
-    SignedNameFirst?: string | null,
-    Email?: string | null,
-    Phone?: string | null,
-    OptIn?: boolean | null,
-    FieldsXml?: string | null,
-    ValuesXml?: string | null,
-    Particpants?: {
-      WaiverParticipantID?: string | null,
-      WaiverID?: string | null,
-      ParticipantName?: string | null,
-      ParticipantNameFirst?: string | null,
-      DOB?: string | null,
-      IsCheckedIn?: boolean | null,
-      ValuesXml?: string | null,
-      IsSignee?: boolean | null
-    }[] | null
-  }[] | null,
-  Category?: Record<string, any> | null
+  Waivers?: Record<string, any>[] | null,
+  Category?: Record<string, any> | null,
+  Settings?: {
+    MaxParticipants?: number | null,
+    Location?: string | null,
+    SigningCutoff?: string | null,
+    Description?: string | null
+  } | null
 }[] | null
 ```
 </Accordion>
@@ -872,7 +704,7 @@ await corsair.waiverfile.api.events.upcoming({ startDateUTC: '2024-06-01T00:00:0
 
 `events.update`
 
-Change an event name, dates, category and attached forms, replacing the form list
+Change an event name, dates, category and attached forms; omitting the form list attaches every active form
 
 **Risk:** `write`
 
@@ -889,8 +721,8 @@ await corsair.waiverfile.api.events.update({ eventID: 'c0a1b2c3-1111-2222-3333-4
 | `dateStart` | `string` | Yes | A date or date-time, as `yyyy-MM-dd` or ISO 8601. |
 | `dateEnd` | `string` | Yes | A date or date-time, as `yyyy-MM-dd` or ISO 8601. |
 | `isAllDay` | `boolean` | Yes | — |
-| `eventCategoryID` | `string` | Yes | To set no category, send the empty string. |
-| `waiverFormIDs` | `string[]` | No | Replaces the attached forms. Omit to leave them alone. |
+| `eventCategoryID` | `string` | Yes | To set no category, send the empty GUID 00000000-0000-0000-0000-000000000000. |
+| `waiverFormIDs` | `string[]` | No | Replaces the attached forms. Omitted or empty attaches every active form: WaiverFile cannot leave them unchanged, so pass the current IDs to keep them. |
 
 
 
@@ -916,39 +748,32 @@ await corsair.waiverfile.api.events.update({ eventID: 'c0a1b2c3-1111-2222-3333-4
 | `ManagerIDs` | `string[] \| null` | No | — |
 | `Created` | `string \| null` | No | — |
 | `LastModified` | `string \| null` | No | — |
-| `WaiverEventFormIDs` | `string[] \| null` | No | — |
+| `WaiverEventFormIDs` | `object[] \| null` | No | The forms attached to the event. |
 | `WaiverForms` | `Record<string, any>[] \| null` | No | — |
-| `Waivers` | `object[] \| null` | No | — |
+| `Waivers` | `Record<string, any>[] \| null` | No | — |
 | `Category` | `Record<string, any> \| null` | No | — |
+| `Settings` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Waivers full type">
+<Accordion title="WaiverEventFormIDs full type">
+
+```ts
+(string | {
+  WaiverEventID?: string | null,
+  WaiverFormID?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="Settings full type">
 
 ```ts
 {
-  WaiverID?: string | null,
-  SiteID?: string | null,
-  WaiverEventID?: string | null,
-  WaiverFormID?: string | null,
-  DateSigned?: string | null,
-  SignedName?: string | null,
-  SignedNameFirst?: string | null,
-  Email?: string | null,
-  Phone?: string | null,
-  OptIn?: boolean | null,
-  FieldsXml?: string | null,
-  ValuesXml?: string | null,
-  Particpants?: {
-    WaiverParticipantID?: string | null,
-    WaiverID?: string | null,
-    ParticipantName?: string | null,
-    ParticipantNameFirst?: string | null,
-    DOB?: string | null,
-    IsCheckedIn?: boolean | null,
-    ValuesXml?: string | null,
-    IsSignee?: boolean | null
-  }[] | null
-}[] | null
+  MaxParticipants?: number | null,
+  Location?: string | null,
+  SigningCutoff?: string | null,
+  Description?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -997,17 +822,20 @@ await corsair.waiverfile.api.events.waivers({ waiverEventID: 'c0a1b2c3-1111-2222
   SignedNameFirst?: string | null,
   Email?: string | null,
   Phone?: string | null,
+  DOB?: string | null,
+  Age?: number | null,
+  HasSignature?: boolean | null,
   OptIn?: boolean | null,
-  FieldsXml?: string | null,
-  ValuesXml?: string | null,
-  Particpants?: {
+  WaiverIsDeleted?: boolean | null,
+  ReferenceID1?: string | null,
+  ReferenceID2?: string | null,
+  ReferenceID3?: string | null,
+  Participants?: {
     WaiverParticipantID?: string | null,
-    WaiverID?: string | null,
     ParticipantName?: string | null,
     ParticipantNameFirst?: string | null,
     DOB?: string | null,
     IsCheckedIn?: boolean | null,
-    ValuesXml?: string | null,
     IsSignee?: boolean | null
   }[] | null
 }[] | null
@@ -1041,7 +869,6 @@ await corsair.waiverfile.api.forms.active({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `WaiverForms` | `object[] \| null` | No | — |
-| `Forms` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="WaiverForms full type">
@@ -1066,37 +893,7 @@ await corsair.waiverfile.api.forms.active({});
   FieldRequire_Address?: boolean | null,
   IncludeSignature?: boolean | null,
   AllowSigningForSomeoneElse?: boolean | null,
-  Status?: string | null,
-  Language?: string | null,
-  Created?: string | null,
-  LastModified?: string | null
-}[] | null
-```
-</Accordion>
-
-<Accordion title="Forms full type">
-
-```ts
-{
-  ID?: string | null,
-  SiteID?: string | null,
-  Name?: string | null,
-  Questions?: string | null,
-  NumParticipantsPerForm?: number | null,
-  MinAge?: number | null,
-  MaxAgeParticipant?: number | null,
-  AgreementLabelText?: string | null,
-  FieldInclude_Email?: boolean | null,
-  FieldRequire_Email?: boolean | null,
-  FieldInclude_Phone?: boolean | null,
-  FieldRequire_Phone?: boolean | null,
-  FieldInclude_DOB?: boolean | null,
-  FieldRequire_DOB?: boolean | null,
-  FieldInclude_Address?: boolean | null,
-  FieldRequire_Address?: boolean | null,
-  IncludeSignature?: boolean | null,
-  AllowSigningForSomeoneElse?: boolean | null,
-  Status?: string | null,
+  Status?: number | null,
   Language?: string | null,
   Created?: string | null,
   LastModified?: string | null
@@ -1129,7 +926,6 @@ await corsair.waiverfile.api.forms.all({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `WaiverForms` | `object[] \| null` | No | — |
-| `Forms` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="WaiverForms full type">
@@ -1154,37 +950,7 @@ await corsair.waiverfile.api.forms.all({});
   FieldRequire_Address?: boolean | null,
   IncludeSignature?: boolean | null,
   AllowSigningForSomeoneElse?: boolean | null,
-  Status?: string | null,
-  Language?: string | null,
-  Created?: string | null,
-  LastModified?: string | null
-}[] | null
-```
-</Accordion>
-
-<Accordion title="Forms full type">
-
-```ts
-{
-  ID?: string | null,
-  SiteID?: string | null,
-  Name?: string | null,
-  Questions?: string | null,
-  NumParticipantsPerForm?: number | null,
-  MinAge?: number | null,
-  MaxAgeParticipant?: number | null,
-  AgreementLabelText?: string | null,
-  FieldInclude_Email?: boolean | null,
-  FieldRequire_Email?: boolean | null,
-  FieldInclude_Phone?: boolean | null,
-  FieldRequire_Phone?: boolean | null,
-  FieldInclude_DOB?: boolean | null,
-  FieldRequire_DOB?: boolean | null,
-  FieldInclude_Address?: boolean | null,
-  FieldRequire_Address?: boolean | null,
-  IncludeSignature?: boolean | null,
-  AllowSigningForSomeoneElse?: boolean | null,
-  Status?: string | null,
+  Status?: number | null,
   Language?: string | null,
   Created?: string | null,
   LastModified?: string | null
@@ -1218,7 +984,6 @@ await corsair.waiverfile.api.ping.check({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string \| null` | No | — |
 | `Message` | `string \| null` | No | — |
 
 
@@ -1246,18 +1011,13 @@ await corsair.waiverfile.api.site.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `SiteID` | `string \| null` | No | — |
+| `ID` | `string \| null` | No | — |
 | `Name` | `string \| null` | No | — |
-| `SiteName` | `string \| null` | No | — |
-| `TimeZone` | `string \| null` | No | — |
-| `TimeZoneID` | `string \| null` | No | — |
-| `Address` | `string \| null` | No | — |
-| `City` | `string \| null` | No | — |
-| `State` | `string \| null` | No | — |
-| `Zip` | `string \| null` | No | — |
-| `Phone` | `string \| null` | No | — |
-| `Email` | `string \| null` | No | — |
-| `Website` | `string \| null` | No | — |
+| `Url` | `string \| null` | No | The site path on app.waiverfile.com. |
+| `DefaultTimezone` | `string \| null` | No | — |
+| `Status` | `number \| null` | No | — |
+| `DateAdded` | `string \| null` | No | — |
+| `ReplyToEmail` | `string \| null` | No | — |
 
 
 
@@ -1397,24 +1157,47 @@ await corsair.waiverfile.api.waivers.byReference({ refID1: 'ORDER-42' });
   SiteID?: string | null,
   WaiverEventID?: string | null,
   WaiverFormID?: string | null,
+  WaiverFormInstanceID?: string | null,
   DateSigned?: string | null,
+  DateAttending?: string | null,
   SignedName?: string | null,
   SignedNameFirst?: string | null,
   Email?: string | null,
   Phone?: string | null,
-  OptIn?: boolean | null,
+  DOB?: string | null,
+  Age?: string | null,
+  Address?: string | null,
+  Address2?: string | null,
+  City?: string | null,
+  State?: string | null,
+  Zip?: string | null,
+  OptIn?: string | null,
+  HasSignature?: string | null,
+  Expired?: string | null,
+  WaiverIsDeleted?: string | null,
+  ClientIP?: string | null,
+  ClientType?: string | null,
+  ReferenceID1?: string | null,
+  ReferenceID2?: string | null,
+  ReferenceID3?: string | null,
   FieldsXml?: string | null,
-  ValuesXml?: string | null,
+  ValuesXml?: any,
   Particpants?: {
     WaiverParticipantID?: string | null,
     WaiverID?: string | null,
     ParticipantName?: string | null,
     ParticipantNameFirst?: string | null,
     DOB?: string | null,
-    IsCheckedIn?: boolean | null,
-    ValuesXml?: string | null,
-    IsSignee?: boolean | null
-  }[] | null
+    Age?: string | null,
+    IsCheckedIn?: string | null,
+    IsSignee?: string | null,
+    ValuesXml?: any,
+    CustomFields?: Record<string, any> | null
+  }[] | null,
+  WaiverEvent?: Record<string, any> | null,
+  WaiverForm?: Record<string, any> | null,
+  WaiverText?: Record<string, any> | null,
+  CustomFields?: Record<string, any> | null
 }[] | null
 ```
 </Accordion>
@@ -1453,9 +1236,7 @@ await corsair.waiverfile.api.waivers.data({ startDate: '2024-06-01', endDate: '2
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Data` | `Record<string, any>[] \| null` | No | — |
-| `Rows` | `Record<string, any>[] \| null` | No | — |
-| `TotalCount` | `number \| null` | No | — |
+| `Table` | `Record<string, any>[] \| null` | No | — |
 
 
 
@@ -1487,8 +1268,6 @@ await corsair.waiverfile.api.waivers.dataCount({ startDate: '2024-06-01', endDat
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Count` | `number \| null` | No | — |
-| `TotalCount` | `number \| null` | No | — |
-| `PageCount` | `number \| null` | No | — |
 
 
 
@@ -1522,35 +1301,36 @@ await corsair.waiverfile.api.waivers.get({ waiverID: '4e5c5176-1238-45a3-8a87-35
 | `SiteID` | `string \| null` | No | — |
 | `WaiverEventID` | `string \| null` | No | — |
 | `WaiverFormID` | `string \| null` | No | — |
-| `DateSigned` | `string \| null` | No | — |
+| `WaiverFormInstanceID` | `string \| null` | No | — |
+| `DateSigned` | `string \| null` | No | UTC, without an offset. |
 | `DateAttending` | `string \| null` | No | — |
-| `SignedName` | `string \| null` | No | — |
+| `SignedName` | `string \| null` | No | The signer's last name. |
 | `SignedNameFirst` | `string \| null` | No | — |
 | `Email` | `string \| null` | No | — |
 | `Phone` | `string \| null` | No | — |
 | `DOB` | `string \| null` | No | — |
-| `Age` | `number \| null` | No | — |
+| `Age` | `string \| null` | No | — |
 | `Address` | `string \| null` | No | — |
 | `Address2` | `string \| null` | No | — |
 | `City` | `string \| null` | No | — |
 | `State` | `string \| null` | No | — |
 | `Zip` | `string \| null` | No | — |
-| `OptIn` | `boolean \| null` | No | — |
-| `HasSignature` | `boolean \| null` | No | — |
-| `Expired` | `boolean \| null` | No | — |
-| `WaiverIsDeleted` | `boolean \| null` | No | — |
+| `OptIn` | `string \| null` | No | "true" or "false". |
+| `HasSignature` | `string \| null` | No | "true" or "false". |
+| `Expired` | `string \| null` | No | — |
+| `WaiverIsDeleted` | `string \| null` | No | — |
 | `ClientIP` | `string \| null` | No | — |
 | `ClientType` | `string \| null` | No | — |
-| `deviceID` | `number \| null` | No | — |
+| `ReferenceID1` | `string \| null` | No | — |
+| `ReferenceID2` | `string \| null` | No | — |
+| `ReferenceID3` | `string \| null` | No | — |
 | `FieldsXml` | `string \| null` | No | — |
-| `ValuesXml` | `string \| null` | No | — |
-| `OriginalData` | `string \| null` | No | — |
-| `OriginalDataVerified` | `boolean \| null` | No | — |
+| `ValuesXml` | `any` | No | — |
 | `Particpants` | `object[] \| null` | No | WaiverFile's own spelling, with the missing i. |
 | `WaiverEvent` | `Record<string, any> \| null` | No | — |
 | `WaiverForm` | `Record<string, any> \| null` | No | — |
-| `Signatures` | `Record<string, any> \| null` | No | — |
-| `Images` | `Record<string, any> \| null` | No | — |
+| `WaiverText` | `Record<string, any> \| null` | No | — |
+| `CustomFields` | `Record<string, any> \| null` | No | GetWaiver only: each custom form field label mapped to its value. |
 
 <AccordionGroup>
 <Accordion title="Particpants full type">
@@ -1562,9 +1342,11 @@ await corsair.waiverfile.api.waivers.get({ waiverID: '4e5c5176-1238-45a3-8a87-35
   ParticipantName?: string | null,
   ParticipantNameFirst?: string | null,
   DOB?: string | null,
-  IsCheckedIn?: boolean | null,
-  ValuesXml?: string | null,
-  IsSignee?: boolean | null
+  Age?: string | null,
+  IsCheckedIn?: string | null,
+  IsSignee?: string | null,
+  ValuesXml?: any,
+  CustomFields?: Record<string, any> | null
 }[] | null
 ```
 </Accordion>
@@ -1602,15 +1384,36 @@ await corsair.waiverfile.api.waivers.getLite({ waiverID: '4e5c5176-1238-45a3-8a8
 | `SiteID` | `string \| null` | No | — |
 | `WaiverEventID` | `string \| null` | No | — |
 | `WaiverFormID` | `string \| null` | No | — |
-| `DateSigned` | `string \| null` | No | — |
-| `SignedName` | `string \| null` | No | — |
+| `WaiverFormInstanceID` | `string \| null` | No | — |
+| `DateSigned` | `string \| null` | No | UTC, without an offset. |
+| `DateAttending` | `string \| null` | No | — |
+| `SignedName` | `string \| null` | No | The signer's last name. |
 | `SignedNameFirst` | `string \| null` | No | — |
 | `Email` | `string \| null` | No | — |
 | `Phone` | `string \| null` | No | — |
-| `OptIn` | `boolean \| null` | No | — |
+| `DOB` | `string \| null` | No | — |
+| `Age` | `string \| null` | No | — |
+| `Address` | `string \| null` | No | — |
+| `Address2` | `string \| null` | No | — |
+| `City` | `string \| null` | No | — |
+| `State` | `string \| null` | No | — |
+| `Zip` | `string \| null` | No | — |
+| `OptIn` | `string \| null` | No | "true" or "false". |
+| `HasSignature` | `string \| null` | No | "true" or "false". |
+| `Expired` | `string \| null` | No | — |
+| `WaiverIsDeleted` | `string \| null` | No | — |
+| `ClientIP` | `string \| null` | No | — |
+| `ClientType` | `string \| null` | No | — |
+| `ReferenceID1` | `string \| null` | No | — |
+| `ReferenceID2` | `string \| null` | No | — |
+| `ReferenceID3` | `string \| null` | No | — |
 | `FieldsXml` | `string \| null` | No | — |
-| `ValuesXml` | `string \| null` | No | — |
-| `Particpants` | `object[] \| null` | No | — |
+| `ValuesXml` | `any` | No | — |
+| `Particpants` | `object[] \| null` | No | WaiverFile's own spelling, with the missing i. |
+| `WaiverEvent` | `Record<string, any> \| null` | No | — |
+| `WaiverForm` | `Record<string, any> \| null` | No | — |
+| `WaiverText` | `Record<string, any> \| null` | No | — |
+| `CustomFields` | `Record<string, any> \| null` | No | GetWaiver only: each custom form field label mapped to its value. |
 
 <AccordionGroup>
 <Accordion title="Particpants full type">
@@ -1622,9 +1425,11 @@ await corsair.waiverfile.api.waivers.getLite({ waiverID: '4e5c5176-1238-45a3-8a8
   ParticipantName?: string | null,
   ParticipantNameFirst?: string | null,
   DOB?: string | null,
-  IsCheckedIn?: boolean | null,
-  ValuesXml?: string | null,
-  IsSignee?: boolean | null
+  Age?: string | null,
+  IsCheckedIn?: string | null,
+  IsSignee?: string | null,
+  ValuesXml?: any,
+  CustomFields?: Record<string, any> | null
 }[] | null
 ```
 </Accordion>
@@ -1672,6 +1477,7 @@ await corsair.waiverfile.api.waivers.list({ startDate: '2024-06-01', endDate: '2
   SiteID?: string | null,
   WaiverEventID?: string | null,
   WaiverFormID?: string | null,
+  WaiverFormInstanceID?: string | null,
   DateSigned?: string | null,
   DateAttending?: string | null,
   SignedName?: string | null,
@@ -1679,37 +1485,39 @@ await corsair.waiverfile.api.waivers.list({ startDate: '2024-06-01', endDate: '2
   Email?: string | null,
   Phone?: string | null,
   DOB?: string | null,
-  Age?: number | null,
+  Age?: string | null,
   Address?: string | null,
   Address2?: string | null,
   City?: string | null,
   State?: string | null,
   Zip?: string | null,
-  OptIn?: boolean | null,
-  HasSignature?: boolean | null,
-  Expired?: boolean | null,
-  WaiverIsDeleted?: boolean | null,
+  OptIn?: string | null,
+  HasSignature?: string | null,
+  Expired?: string | null,
+  WaiverIsDeleted?: string | null,
   ClientIP?: string | null,
   ClientType?: string | null,
-  deviceID?: number | null,
+  ReferenceID1?: string | null,
+  ReferenceID2?: string | null,
+  ReferenceID3?: string | null,
   FieldsXml?: string | null,
-  ValuesXml?: string | null,
-  OriginalData?: string | null,
-  OriginalDataVerified?: boolean | null,
+  ValuesXml?: any,
   Particpants?: {
     WaiverParticipantID?: string | null,
     WaiverID?: string | null,
     ParticipantName?: string | null,
     ParticipantNameFirst?: string | null,
     DOB?: string | null,
-    IsCheckedIn?: boolean | null,
-    ValuesXml?: string | null,
-    IsSignee?: boolean | null
+    Age?: string | null,
+    IsCheckedIn?: string | null,
+    IsSignee?: string | null,
+    ValuesXml?: any,
+    CustomFields?: Record<string, any> | null
   }[] | null,
   WaiverEvent?: Record<string, any> | null,
   WaiverForm?: Record<string, any> | null,
-  Signatures?: Record<string, any> | null,
-  Images?: Record<string, any> | null
+  WaiverText?: Record<string, any> | null,
+  CustomFields?: Record<string, any> | null
 }[] | null
 ```
 </Accordion>
@@ -1757,24 +1565,47 @@ await corsair.waiverfile.api.waivers.listLite({ startDate: '2024-06-01', endDate
   SiteID?: string | null,
   WaiverEventID?: string | null,
   WaiverFormID?: string | null,
+  WaiverFormInstanceID?: string | null,
   DateSigned?: string | null,
+  DateAttending?: string | null,
   SignedName?: string | null,
   SignedNameFirst?: string | null,
   Email?: string | null,
   Phone?: string | null,
-  OptIn?: boolean | null,
+  DOB?: string | null,
+  Age?: string | null,
+  Address?: string | null,
+  Address2?: string | null,
+  City?: string | null,
+  State?: string | null,
+  Zip?: string | null,
+  OptIn?: string | null,
+  HasSignature?: string | null,
+  Expired?: string | null,
+  WaiverIsDeleted?: string | null,
+  ClientIP?: string | null,
+  ClientType?: string | null,
+  ReferenceID1?: string | null,
+  ReferenceID2?: string | null,
+  ReferenceID3?: string | null,
   FieldsXml?: string | null,
-  ValuesXml?: string | null,
+  ValuesXml?: any,
   Particpants?: {
     WaiverParticipantID?: string | null,
     WaiverID?: string | null,
     ParticipantName?: string | null,
     ParticipantNameFirst?: string | null,
     DOB?: string | null,
-    IsCheckedIn?: boolean | null,
-    ValuesXml?: string | null,
-    IsSignee?: boolean | null
-  }[] | null
+    Age?: string | null,
+    IsCheckedIn?: string | null,
+    IsSignee?: string | null,
+    ValuesXml?: any,
+    CustomFields?: Record<string, any> | null
+  }[] | null,
+  WaiverEvent?: Record<string, any> | null,
+  WaiverForm?: Record<string, any> | null,
+  WaiverText?: Record<string, any> | null,
+  CustomFields?: Record<string, any> | null
 }[] | null
 ```
 </Accordion>
@@ -1810,8 +1641,6 @@ await corsair.waiverfile.api.waivers.pageCount({ startDate: '2024-06-01', endDat
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Count` | `number \| null` | No | — |
-| `TotalCount` | `number \| null` | No | — |
-| `PageCount` | `number \| null` | No | — |
 
 
 
@@ -1821,7 +1650,7 @@ await corsair.waiverfile.api.waivers.pageCount({ startDate: '2024-06-01', endDat
 
 `waivers.pdf`
 
-Download a signed waiver as a PDF; the plugin reports the byte length rather than parsing the file
+Download a signed waiver as a PDF, returned base64-encoded in `content` with its byte length
 
 **Risk:** `read`
 
@@ -1885,24 +1714,47 @@ await corsair.waiverfile.api.waivers.search({ terms: 'Jordan Ruiz' });
   SiteID?: string | null,
   WaiverEventID?: string | null,
   WaiverFormID?: string | null,
+  WaiverFormInstanceID?: string | null,
   DateSigned?: string | null,
+  DateAttending?: string | null,
   SignedName?: string | null,
   SignedNameFirst?: string | null,
   Email?: string | null,
   Phone?: string | null,
-  OptIn?: boolean | null,
+  DOB?: string | null,
+  Age?: string | null,
+  Address?: string | null,
+  Address2?: string | null,
+  City?: string | null,
+  State?: string | null,
+  Zip?: string | null,
+  OptIn?: string | null,
+  HasSignature?: string | null,
+  Expired?: string | null,
+  WaiverIsDeleted?: string | null,
+  ClientIP?: string | null,
+  ClientType?: string | null,
+  ReferenceID1?: string | null,
+  ReferenceID2?: string | null,
+  ReferenceID3?: string | null,
   FieldsXml?: string | null,
-  ValuesXml?: string | null,
+  ValuesXml?: any,
   Particpants?: {
     WaiverParticipantID?: string | null,
     WaiverID?: string | null,
     ParticipantName?: string | null,
     ParticipantNameFirst?: string | null,
     DOB?: string | null,
-    IsCheckedIn?: boolean | null,
-    ValuesXml?: string | null,
-    IsSignee?: boolean | null
-  }[] | null
+    Age?: string | null,
+    IsCheckedIn?: string | null,
+    IsSignee?: string | null,
+    ValuesXml?: any,
+    CustomFields?: Record<string, any> | null
+  }[] | null,
+  WaiverEvent?: Record<string, any> | null,
+  WaiverForm?: Record<string, any> | null,
+  WaiverText?: Record<string, any> | null,
+  CustomFields?: Record<string, any> | null
 }[] | null
 ```
 </Accordion>
@@ -1939,7 +1791,7 @@ await corsair.waiverfile.api.webhooks.subscribe({ trigger: 'newwaiver', targetUr
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Success` | `boolean \| null` | No | — |
+| `Success` | `boolean` | Yes | — |
 | `Message` | `string \| null` | No | — |
 
 
@@ -1971,7 +1823,7 @@ await corsair.waiverfile.api.webhooks.unsubscribe({ trigger: 'newwaiver', target
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `Success` | `boolean \| null` | No | — |
+| `Success` | `boolean` | Yes | — |
 | `Message` | `string \| null` | No | — |
 
 
