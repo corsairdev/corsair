@@ -13,8 +13,8 @@ function statusOf(error: Error): number | undefined {
 export const errorHandlers = {
 	// 100 calls per second, documented on the pricing page. No Retry-After is
 	// documented, so the delay is exponential unless a header happens to arrive.
-	// A 429 was refused before it ran, so replaying it is safe even for a write,
-	// though every route here is a read or an idempotent lookup.
+	// A 429 was refused before it ran, so replaying it is safe even for
+	// links.shorten, the one route that creates something.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
@@ -55,8 +55,8 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 5xx. Every route here either reads or returns the same answer for the same
-	// input, so a retry cannot duplicate anything.
+	// 5xx. Retried only for operations that declare themselves replayable: every
+	// route except links.shorten, which creates a new short link on each call.
 	SERVER_ERROR: {
 		match: (error: Error) =>
 			error instanceof RiteKitAPIError && (error.status ?? 0) >= 500,

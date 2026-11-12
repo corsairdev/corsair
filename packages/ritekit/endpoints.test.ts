@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { RiteKitAPIError } from './client';
 import {
 	Companies,
 	Emojis,
@@ -8,6 +9,7 @@ import {
 	Person,
 	Texts,
 } from './endpoints';
+import { errorHandlers } from './error-handlers';
 import {
 	ANIMATED_IMAGE,
 	ARTICLE,
@@ -390,6 +392,20 @@ describe('links.shorten', () => {
 		await invoke(Links.shorten, { url: 'https://ritekit.com' });
 
 		expect(lastRequest(fetchMock).query.cta).toBeUndefined();
+	});
+
+	it('marks a failed shorten as not replayable, so a 5xx is not retried', async () => {
+		respond(fetchMock, { result: false, message: 'Server error' }, 503);
+
+		const error = await invoke(Links.shorten, {
+			url: 'https://ritekit.com',
+		}).catch((caught: Error) => caught);
+
+		expect(error).toBeInstanceOf(RiteKitAPIError);
+		expect((error as RiteKitAPIError).replayable).toBe(false);
+		await expect(
+			errorHandlers.SERVER_ERROR.handler(error as Error),
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 });
 

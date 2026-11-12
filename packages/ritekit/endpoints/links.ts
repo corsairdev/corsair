@@ -25,7 +25,9 @@ export const shorten: RiteKitEndpoints['linksShorten'] = (ctx, input) =>
 			method: 'GET',
 			path: '/v1/link/short-link',
 			query: { url, cta },
-			replayable: true,
+			// Each call creates a new rite.ly link and spends a credit, so a 5xx is
+			// not sent again: RiteKit may have made the link before it failed.
+			replayable: false,
 		}),
 		{
 			log: (_, result) => ({
