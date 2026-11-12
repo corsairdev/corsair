@@ -3,18 +3,22 @@ import { SmsalertError, smsalert } from './index';
 
 const api = createCorsair({ plugins: [smsalert({ key: 'secret-key' })] })
 	.smsalert.api;
-const success = (description: unknown) => ({ status: 'success', description });
+// Fixtures span the provider's distinct response shapes, so retain their inferred type.
+const success = <T>(description: T) => ({ status: 'success', description });
 const message = success('done');
 const batch = success({
 	desc: 'scheduled',
 	batchid: '1',
 	batch_dtl: [{ mobileno: '123', msgid: '2', status: 'AWAITED-DLR' }],
 });
+// Table entries cover heterogeneous endpoint results; assertions compare each
+// result to its fixture rather than accessing fields on the shared boundary.
 type Case = {
 	path: string;
 	method: string;
 	params: Record<string, string | number>;
 	result: unknown;
+	// Each case calls a different endpoint, so their Promise result types differ.
 	call: () => Promise<unknown>;
 	form?: Record<string, string>;
 	unauthenticated?: boolean;
@@ -292,7 +296,7 @@ const cases: Case[] = [
 		path: '/api/mverify.json',
 		method: 'POST',
 		params: { mobileno: '123', code: '0123' },
-		result: success({ desc: 'Code does not match.' }),
+		result: success({ desc: 'Code Matched successfully.' }),
 		call: () => api.otp.validate({ mobileno: '123', code: '0123' }),
 	},
 	{
@@ -387,6 +391,32 @@ describe('SMS Alert public API', () => {
 		).resolves.toEqual(batch);
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
+	it('rejects a mismatched OTP despite the provider success status', async () => {
+		jest
+			.spyOn(global, 'fetch')
+			.mockResolvedValue(
+				new Response(JSON.stringify(success({ desc: 'Code does not match.' }))),
+			);
+		await expect(
+			api.otp.validate({ mobileno: '123', code: '0123' }),
+		).rejects.toThrow('SMS Alert OTP code does not match');
+	});
+	it('runs a custom specific error handler before the default fallback', async () => {
+		const handler = jest.fn(async () => ({ maxRetries: 0 }));
+		const client = createCorsair({
+			plugins: [
+				smsalert({
+					key: 'secret-key',
+					errorHandlers: { AUTH_ERROR: { match: () => true, handler } },
+				}),
+			],
+		});
+		jest
+			.spyOn(global, 'fetch')
+			.mockResolvedValue(new Response('', { status: 401 }));
+		await expect(client.smsalert.api.account.balance({})).rejects.toThrow();
+		expect(handler).toHaveBeenCalledTimes(1);
+	});
 	it('allows account registration and password reset without an API key', async () => {
 		const unauthenticated = createCorsair({ plugins: [smsalert()] }).smsalert
 			.api;
@@ -416,6 +446,61 @@ describe('SMS Alert public API', () => {
 		).resolves.toEqual({ status: 'success', msg: 'sent' });
 		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
+	it('rejects absent and blank stored API keys before calling SMS Alert', async () => {
+		const fetchMock = jest.spyOn(global, 'fetch');
+		const plugin = smsalert({ authType: 'api_key' });
+		const getApiKey = jest
+			.fn()
+			.mockResolvedValueOnce(null)
+			.mockResolvedValueOnce('   ');
+		const builder = jest.fn();
+		// The public binding has no database in this test; supply its key manager at
+		// the plugin boundary to exercise the same missing-key path as stored keys.
+		const original = plugin.keyBuilder;
+		if (!original) throw new Error('Missing key builder');
+		plugin.keyBuilder = async (ctx, source) => {
+			const testContext = {
+				...ctx,
+				authType: 'api_key' as const,
+				keys: {
+					get_api_key: getApiKey,
+					set_api_key: async () => {},
+					get_webhook_signature: async () => null,
+					set_webhook_signature: async () => {},
+					get_dek: async () => '',
+					issue_new_dek: async () => '',
+				},
+			};
+			try {
+				return await original(testContext, source);
+			} catch (error) {
+				builder(error);
+				throw error;
+			}
+		};
+		const client = createCorsair({ plugins: [plugin] });
+		await expect(client.smsalert.api.account.balance({})).rejects.toMatchObject(
+			{
+				name: 'AuthMissingError',
+				pluginId: 'smsalert',
+				authType: 'api_key',
+			},
+		);
+		await expect(client.smsalert.api.account.balance({})).rejects.toMatchObject(
+			{
+				name: 'AuthMissingError',
+				pluginId: 'smsalert',
+				authType: 'api_key',
+			},
+		);
+		expect(getApiKey).toHaveBeenCalledTimes(2);
+		expect(builder).toHaveBeenCalledTimes(2);
+		expect(builder.mock.calls[0]?.[0]).toMatchObject({
+			name: 'AuthMissingError',
+			pluginId: 'smsalert',
+		});
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 	it('does not leak request values from provider errors', async () => {
 		jest.spyOn(global, 'fetch').mockResolvedValue(
 			new Response(
@@ -441,6 +526,7 @@ describe('SMS Alert public API', () => {
 				headers: { 'retry-after': '3' },
 			}),
 		);
+		// JavaScript may throw any value, so narrow it before inspecting properties.
 		let caught: unknown;
 		try {
 			await api.messages.send({

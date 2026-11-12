@@ -18,6 +18,8 @@ function endpoint<K extends keyof SmsalertEndpointInputs>(
 	SmsalertEndpointOutputs[K]
 > {
 	return async (ctx, rawInput) => {
+		// Every input schema is a flat object of string/number fields. The generic
+		// indexed schema loses that shared record type, so assert it after parsing.
 		const input = inputs[name].parse(rawInput) as Record<
 			string,
 			string | number | undefined
@@ -52,6 +54,13 @@ function endpoint<K extends keyof SmsalertEndpointInputs>(
 		const parsed = outputs[name].safeParse(response);
 		if (!parsed.success)
 			throw new SmsalertError('SMS Alert returned an invalid response');
+		if (name === 'validateOtp') {
+			const otp = outputs.validateOtp.parse(response);
+			if (otp.description.desc === 'Code does not match.')
+				throw new SmsalertError('SMS Alert OTP code does not match');
+		}
+		// Both the schema and return type are indexed by the same name; TypeScript
+		// widens the generic indexed parse result to a union despite that pairing.
 		return parsed.data as SmsalertEndpointOutputs[K];
 	};
 }

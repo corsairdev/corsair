@@ -203,7 +203,11 @@ export function smsalert(
 		webhooks: {},
 		endpointMeta: smsalertEndpointMeta,
 		endpointSchemas: smsalertEndpointSchemas,
-		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
+		errorHandlers: {
+			RATE_LIMIT_ERROR: errorHandlers.RATE_LIMIT_ERROR,
+			...options.errorHandlers,
+			DEFAULT: options.errorHandlers?.DEFAULT ?? errorHandlers.DEFAULT,
+		},
 		keyBuilder: async (ctx: SmsalertKeyBuilderContext, source) => {
 			if (
 				ctx.meteredOperationId === 'account.register' ||
@@ -211,8 +215,10 @@ export function smsalert(
 			)
 				return '';
 			if (source === 'endpoint' && options.key?.trim()) return options.key;
-			if (source === 'endpoint' && ctx.authType === 'api_key')
-				return (await ctx.keys.get_api_key()) ?? '';
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
+				const key = await ctx.keys.get_api_key();
+				if (key?.trim()) return key;
+			}
 			if (source === 'endpoint')
 				throw new AuthMissingError('smsalert', 'api_key');
 			return '';

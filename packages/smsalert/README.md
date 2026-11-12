@@ -48,6 +48,12 @@ Auth: API key. Corsair prompts your tenant for credentials on first use.
 Account registration and password reset do not require an API key. Password
 changes use a form body; the other authenticated operations send `apikey` in
 the query string, as documented by SMS Alert. Avoid logging request URLs.
+When Hub connection reporting is enabled, Corsair core may mark credentials as
+verified after registration or password reset even though neither checks the
+API key. Do not use those operations to verify a stored key.
+`otp.validate` rejects the documented `Code does not match.` response even
+though SMS Alert labels it successful. Check `description.desc` for a match;
+the provider has not documented all possible validation outcomes.
 
 ## Webhooks
 

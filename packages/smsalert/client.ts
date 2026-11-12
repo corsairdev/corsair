@@ -15,7 +15,9 @@ export class SmsalertError extends Error {
 const envelope = z.object({ status: z.string() }).loose();
 
 /** The shared transport logs JSON parse errors and does not redact `apikey`.
- * Keep URLs, parse failures, request data, and response bodies out of errors and logs. */
+ * Keep URLs, parse failures, request data, and response bodies out of errors and logs.
+ * The raw JSON is unknown because each operation has a different response shape;
+ * the caller validates it against that operation's schema before exposing it. */
 export async function smsalertRequest(
 	key: string,
 	method: 'GET' | 'POST',
@@ -66,6 +68,7 @@ export async function smsalertRequest(
 			seconds === undefined ? undefined : seconds * 1000,
 		);
 	}
+	// JSON from the provider is untrusted until the envelope and endpoint schemas parse it.
 	let result: unknown;
 	try {
 		result = await response.json();
