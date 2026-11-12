@@ -299,10 +299,9 @@ const MonitorsCreateInputSchema = z
 					})
 					.loose(),
 			)
-			.min(1)
 			.optional()
 			.describe(
-				'Who is alerted. Threshold and recurrence are required; values above 0 need a paid plan.',
+				'Who is alerted; an empty list alerts nobody. Threshold and recurrence are required; values above 0 need a paid plan.',
 			),
 		customFields: z
 			.record(z.string(), z.string())

@@ -986,3 +986,23 @@ describe('alert contacts on monitors.create', () => {
 		});
 	});
 });
+
+describe('fixes from the second 11-12 review', () => {
+	it('sends an empty alert-contact list, which creates a monitor nobody is alerted for', async () => {
+		respond(fetchMock, monitor, 201);
+
+		await invoke(Monitors.create, {
+			friendlyName: 'Acme storefront',
+			type: 'HTTP',
+			interval: 300,
+			url: 'https://shop.acme.example',
+			timeout: 30,
+			assignedAlertContacts: [],
+		});
+
+		expect(lastRequest(fetchMock).body).toMatchObject({
+			assignedAlertContacts: [],
+		});
+	});
+
+});
