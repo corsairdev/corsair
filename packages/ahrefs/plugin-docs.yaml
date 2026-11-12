@@ -20,3 +20,12 @@ examples:
       project_id: 1234567
       date_from: '2026-10-01'
       limit: 20
+  write:
+    path: management.createKeywordList
+    title: Save keywords to a new Keywords Explorer list
+    args:
+      name: Launch keywords
+      location: us
+      keywords:
+        - mcp server
+        - ai agent integrations

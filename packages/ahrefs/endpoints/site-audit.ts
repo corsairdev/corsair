@@ -1,114 +1,60 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
-import type {
-	SiteAuditIssuesResponse,
-	SiteAuditPageContentResponse,
-	SiteAuditPageExplorerResponse,
-	SiteAuditProjectsResponse,
-} from './types';
+import { callAhrefs } from './request';
 
-export const projects: AhrefsEndpoints['siteAuditProjects'] = async (
+export const projects: AhrefsEndpoints['siteAuditProjects'] = (ctx, input) =>
+	callAhrefs(
+		ctx,
+		{
+			endpoint: 'siteAuditProjects',
+			method: 'GET',
+			path: '/site-audit/projects',
+			event: 'ahrefs.siteAudit.projects',
+			logKeys: ['project_id', 'date'],
+		},
+		input,
+	);
+
+export const issues: AhrefsEndpoints['siteAuditIssues'] = (ctx, input) =>
+	callAhrefs(
+		ctx,
+		{
+			endpoint: 'siteAuditIssues',
+			method: 'GET',
+			path: '/site-audit/issues',
+			event: 'ahrefs.siteAudit.issues',
+			logKeys: ['project_id', 'date'],
+		},
+		input,
+	);
+
+export const pageExplorer: AhrefsEndpoints['siteAuditPageExplorer'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<SiteAuditProjectsResponse>(
-		'/site-audit/projects',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.siteAudit.projects',
 		{
-			project_id: input.project_id,
-			date: input.date,
-			resultCount: response.healthscores.length,
+			endpoint: 'siteAuditPageExplorer',
+			method: 'GET',
+			path: '/site-audit/page-explorer',
+			event: 'ahrefs.siteAudit.pageExplorer',
+			logKeys: ['project_id', 'date', 'issue_id'],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
-
-export const issues: AhrefsEndpoints['siteAuditIssues'] = async (
+export const pageContent: AhrefsEndpoints['siteAuditPageContent'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<SiteAuditIssuesResponse>(
-		'/site-audit/issues',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.siteAudit.issues',
 		{
-			project_id: input.project_id,
-			date: input.date,
-			resultCount: response.issues.length,
+			endpoint: 'siteAuditPageContent',
+			method: 'GET',
+			path: '/site-audit/page-content',
+			event: 'ahrefs.siteAudit.pageContent',
+			logKeys: ['project_id', 'date', 'target_url'],
 		},
-		'completed',
+		input,
 	);
-
-	return response;
-};
-
-export const pageExplorer: AhrefsEndpoints['siteAuditPageExplorer'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeAhrefsRequest<SiteAuditPageExplorerResponse>(
-		'/site-audit/page-explorer',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
-		ctx,
-		'ahrefs.siteAudit.pageExplorer',
-		{
-			project_id: input.project_id,
-			date: input.date,
-			issue_id: input.issue_id,
-			resultCount: response.pages.length,
-		},
-		'completed',
-	);
-
-	return response;
-};
-
-export const pageContent: AhrefsEndpoints['siteAuditPageContent'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeAhrefsRequest<SiteAuditPageContentResponse>(
-		'/site-audit/page-content',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
-		ctx,
-		'ahrefs.siteAudit.pageContent',
-		{
-			project_id: input.project_id,
-			date: input.date,
-			target_url: input.target_url,
-		},
-		'completed',
-	);
-
-	return response;
-};

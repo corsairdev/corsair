@@ -1,21 +1,11 @@
 import type { AhrefsEndpoints } from '../index';
 import { callAhrefs } from './request';
-import type {
-	SocialMediaActivityHistoryResponse,
-	SocialMediaAuthorsResponse,
-	SocialMediaChannelMetricsResponse,
-	SocialMediaChannelsResponse,
-	SocialMediaCreatePostResponse,
-	SocialMediaDeletePostResponse,
-	SocialMediaPostMetricsResponse,
-	SocialMediaPostsResponse,
-	SocialMediaUpdatePostResponse,
-} from './types';
 
 export const channels: AhrefsEndpoints['socialMediaChannels'] = (ctx, input) =>
-	callAhrefs<SocialMediaChannelsResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'socialMediaChannels',
 			method: 'GET',
 			path: '/social-media/channels',
 			event: 'ahrefs.socialMedia.channels',
@@ -24,9 +14,10 @@ export const channels: AhrefsEndpoints['socialMediaChannels'] = (ctx, input) =>
 	);
 
 export const authors: AhrefsEndpoints['socialMediaAuthors'] = (ctx, input) =>
-	callAhrefs<SocialMediaAuthorsResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'socialMediaAuthors',
 			method: 'GET',
 			path: '/social-media/authors',
 			event: 'ahrefs.socialMedia.authors',
@@ -35,9 +26,10 @@ export const authors: AhrefsEndpoints['socialMediaAuthors'] = (ctx, input) =>
 	);
 
 export const posts: AhrefsEndpoints['socialMediaPosts'] = (ctx, input) =>
-	callAhrefs<SocialMediaPostsResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'socialMediaPosts',
 			method: 'GET',
 			path: '/social-media/posts',
 			event: 'ahrefs.socialMedia.posts',
@@ -50,9 +42,10 @@ export const channelMetrics: AhrefsEndpoints['socialMediaChannelMetrics'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<SocialMediaChannelMetricsResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'socialMediaChannelMetrics',
 			method: 'GET',
 			path: '/social-media/channel-metrics',
 			event: 'ahrefs.socialMedia.channelMetrics',
@@ -65,9 +58,10 @@ export const postMetrics: AhrefsEndpoints['socialMediaPostMetrics'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<SocialMediaPostMetricsResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'socialMediaPostMetrics',
 			method: 'GET',
 			path: '/social-media/post-metrics',
 			event: 'ahrefs.socialMedia.postMetrics',
@@ -80,9 +74,10 @@ export const activityHistory: AhrefsEndpoints['socialMediaActivityHistory'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<SocialMediaActivityHistoryResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'socialMediaActivityHistory',
 			method: 'GET',
 			path: '/social-media/activity-history',
 			event: 'ahrefs.socialMedia.activityHistory',
@@ -95,9 +90,10 @@ export const createPost: AhrefsEndpoints['socialMediaCreatePost'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<SocialMediaCreatePostResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'socialMediaCreatePost',
 			method: 'POST',
 			path: '/social-media/post',
 			event: 'ahrefs.socialMedia.createPost',
@@ -116,9 +112,10 @@ export const updatePost: AhrefsEndpoints['socialMediaUpdatePost'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<SocialMediaUpdatePostResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'socialMediaUpdatePost',
 			method: 'PATCH',
 			path: '/social-media/post',
 			event: 'ahrefs.socialMedia.updatePost',
@@ -139,9 +136,10 @@ export const deletePost: AhrefsEndpoints['socialMediaDeletePost'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<SocialMediaDeletePostResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'socialMediaDeletePost',
 			method: 'DELETE',
 			path: '/social-media/post',
 			event: 'ahrefs.socialMedia.deletePost',

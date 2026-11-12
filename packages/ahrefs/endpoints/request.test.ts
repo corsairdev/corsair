@@ -14,9 +14,16 @@ const ctx = {
 	$getAccountId: async () => 'acct',
 	database: undefined,
 } as never;
-const endpoints = ahrefs({ key: 'test-key' }).endpoints;
+const plugin = ahrefs({ key: 'test-key' });
+if (!plugin.endpoints) throw new Error('ahrefs plugin has no endpoints');
+const endpoints = plugin.endpoints;
 
-beforeEach(() => mockedRequest.mockClear());
+let warn: jest.SpyInstance;
+beforeEach(() => {
+	mockedRequest.mockClear();
+	warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+});
+afterEach(() => warn.mockRestore());
 
 describe('callAhrefs request building', () => {
 	it('sends GET reads as query parameters only', async () => {
@@ -83,5 +90,62 @@ describe('callAhrefs request building', () => {
 			data_source: ['chatgpt'],
 			brands: [{ names: ['example'] }],
 		});
+	});
+});
+
+describe('callAhrefs schema checks', () => {
+	it('rejects invalid input before any request is sent', async () => {
+		await expect(
+			endpoints.gsc.keywords(ctx, {
+				project_id: 1,
+				date_from: '10/01/2026',
+			}),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
+	it('drops input keys the endpoint does not declare', async () => {
+		await endpoints.public.domainRatingFree(ctx, {
+			target: 'ahrefs.com',
+			...({ injected: 'x' } as object),
+		});
+		expect(mockedRequest.mock.calls[0]?.[2]?.query).toEqual({
+			target: 'ahrefs.com',
+		});
+	});
+
+	it('returns the parsed response when it matches the schema', async () => {
+		mockedRequest.mockResolvedValueOnce({
+			domain_rating: { domain_rating: 91, license: 'cc' },
+			extra_top_level: true,
+		});
+		const result = await endpoints.public.domainRatingFree(ctx, {
+			target: 'ahrefs.com',
+		});
+		expect(result).toEqual({
+			domain_rating: { domain_rating: 91, license: 'cc' },
+		});
+		expect(warn).not.toHaveBeenCalled();
+	});
+
+	it('warns once and returns the raw response when it drifts', async () => {
+		mockedRequest.mockResolvedValue({ unexpected: [] });
+		const first = await endpoints.public.crawlerIps(ctx, {});
+		await endpoints.public.crawlerIps(ctx, {});
+		expect(first).toEqual({ unexpected: [] });
+		expect(warn).toHaveBeenCalledTimes(1);
+		expect(warn.mock.calls[0]?.[0]).toContain('ahrefs.public.crawlerIps');
+		mockedRequest.mockReset();
+		mockedRequest.mockResolvedValue({ ok: true });
+	});
+
+	it('validates input on the original Site Explorer actions too', async () => {
+		await expect(
+			endpoints.siteExplorer.getDomainRating(ctx, {
+				target: 'ahrefs.com',
+				date: 'yesterday',
+			}),
+		).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 });

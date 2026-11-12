@@ -114,11 +114,15 @@ await tenant.ahrefs.api.gsc.keywords({ project_id: 1234567, date_from: '2026-10-
 ```
 
 
-**`management.addBrandRadarPrompts`**
+**Save keywords to a new Keywords Explorer list**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.ahrefs.api.management.addBrandRadarPrompts({});
+await tenant.ahrefs.api.management.createKeywordList({
+	name: 'Launch keywords',
+	location: 'us',
+	keywords: ['mcp server', 'ai agent integrations'],
+});
 ```
 
 

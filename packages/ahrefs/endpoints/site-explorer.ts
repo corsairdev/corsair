@@ -3,35 +3,13 @@ import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
 import { callAhrefs } from './request';
 import type {
-	AllBacklinksResponse,
-	AnchorsResponse,
 	BacklinksStatsResponse,
-	BrokenBacklinksResponse,
-	DomainRatingHistoryResponse,
 	DomainRatingResponse,
-	KeywordsHistoryResponse,
-	LinkedDomainsResponse,
-	MetricsHistoryResponse,
-	OrganicCompetitorsResponse,
 	OrganicKeywordsResponse,
-	PagesByBacklinksResponse,
-	PagesByTrafficResponse,
-	RefdomainsHistoryResponse,
 	RefdomainsResponse,
-	SiteExplorerAiResponsesCountResponse,
-	SiteExplorerCrawledPagesResponse,
-	SiteExplorerLinkedAnchorsExternalResponse,
-	SiteExplorerLinkedAnchorsInternalResponse,
-	SiteExplorerMetricsByCountryResponse,
-	SiteExplorerOutlinksStatsResponse,
-	SiteExplorerPagesByInternalLinksResponse,
-	SiteExplorerPagesHistoryResponse,
-	SiteExplorerPaidPagesResponse,
-	SiteExplorerTotalSearchVolumeHistoryResponse,
-	SiteExplorerUrlRatingHistoryResponse,
-	SiteMetricsResponse,
 	TopPagesResponse,
 } from './types';
+import { AhrefsEndpointInputSchemas } from './types';
 
 export const getDomainRating: AhrefsEndpoints['getDomainRating'] = async (
 	ctx,
@@ -40,7 +18,7 @@ export const getDomainRating: AhrefsEndpoints['getDomainRating'] = async (
 	const response = await makeAhrefsRequest<DomainRatingResponse>(
 		'/site-explorer/domain-rating',
 		ctx.key,
-		{ query: input },
+		{ query: AhrefsEndpointInputSchemas.getDomainRating.parse(input) },
 	);
 
 	try {
@@ -76,7 +54,7 @@ export const backlinksStats: AhrefsEndpoints['backlinksStats'] = async (
 	const response = await makeAhrefsRequest<BacklinksStatsResponse>(
 		'/site-explorer/backlinks-stats',
 		ctx.key,
-		{ query: input },
+		{ query: AhrefsEndpointInputSchemas.backlinksStats.parse(input) },
 	);
 
 	try {
@@ -115,7 +93,7 @@ export const organicKeywords: AhrefsEndpoints['organicKeywords'] = async (
 	const response = await makeAhrefsRequest<OrganicKeywordsResponse>(
 		'/site-explorer/organic-keywords',
 		ctx.key,
-		{ query: input },
+		{ query: AhrefsEndpointInputSchemas.organicKeywords.parse(input) },
 	);
 
 	for (const keyword of response.keywords) {
@@ -163,7 +141,7 @@ export const refdomains: AhrefsEndpoints['refdomains'] = async (ctx, input) => {
 	const response = await makeAhrefsRequest<RefdomainsResponse>(
 		'/site-explorer/refdomains',
 		ctx.key,
-		{ query: input },
+		{ query: AhrefsEndpointInputSchemas.refdomains.parse(input) },
 	);
 
 	for (const refdomain of response.refdomains) {
@@ -201,7 +179,7 @@ export const topPages: AhrefsEndpoints['topPages'] = async (ctx, input) => {
 	const response = await makeAhrefsRequest<TopPagesResponse>(
 		'/site-explorer/top-pages',
 		ctx.key,
-		{ query: input },
+		{ query: AhrefsEndpointInputSchemas.topPages.parse(input) },
 	);
 
 	for (const page of response.pages) {
@@ -240,338 +218,200 @@ export const topPages: AhrefsEndpoints['topPages'] = async (ctx, input) => {
 	return response;
 };
 
-export const metrics: AhrefsEndpoints['siteMetrics'] = async (ctx, input) => {
-	const response = await makeAhrefsRequest<SiteMetricsResponse>(
-		'/site-explorer/metrics',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+export const metrics: AhrefsEndpoints['siteMetrics'] = (ctx, input) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.siteExplorer.metrics',
 		{
-			portfolio_id: input.portfolio_id,
-			target: input.target,
-			country: input.country,
-			date: input.date,
-			mode: input.mode,
+			endpoint: 'siteMetrics',
+			method: 'GET',
+			path: '/site-explorer/metrics',
+			event: 'ahrefs.siteExplorer.metrics',
+			logKeys: ['portfolio_id', 'target', 'country', 'date', 'mode'],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
+export const metricsHistory: AhrefsEndpoints['metricsHistory'] = (ctx, input) =>
+	callAhrefs(
+		ctx,
+		{
+			endpoint: 'metricsHistory',
+			method: 'GET',
+			path: '/site-explorer/metrics-history',
+			event: 'ahrefs.siteExplorer.metricsHistory',
+			logKeys: [
+				'portfolio_id',
+				'target',
+				'country',
+				'date_from',
+				'date_to',
+				'mode',
+			],
+		},
+		input,
+	);
 
-export const metricsHistory: AhrefsEndpoints['metricsHistory'] = async (
+export const domainRatingHistory: AhrefsEndpoints['domainRatingHistory'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<MetricsHistoryResponse>(
-		'/site-explorer/metrics-history',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.siteExplorer.metricsHistory',
 		{
-			portfolio_id: input.portfolio_id,
-			target: input.target,
-			country: input.country,
-			date_from: input.date_from,
-			date_to: input.date_to,
-			mode: input.mode,
-			resultCount: response.metrics.length,
+			endpoint: 'domainRatingHistory',
+			method: 'GET',
+			path: '/site-explorer/domain-rating-history',
+			event: 'ahrefs.siteExplorer.domainRatingHistory',
+			logKeys: ['target', 'date_from', 'date_to'],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
+export const allBacklinks: AhrefsEndpoints['allBacklinks'] = (ctx, input) =>
+	callAhrefs(
+		ctx,
+		{
+			endpoint: 'allBacklinks',
+			method: 'GET',
+			path: '/site-explorer/all-backlinks',
+			event: 'ahrefs.siteExplorer.allBacklinks',
+			logKeys: ['portfolio_id', 'target', 'mode'],
+		},
+		input,
+	);
 
-export const domainRatingHistory: AhrefsEndpoints['domainRatingHistory'] =
-	async (ctx, input) => {
-		const response = await makeAhrefsRequest<DomainRatingHistoryResponse>(
-			'/site-explorer/domain-rating-history',
-			ctx.key,
-			{
-				query: input,
-			},
-		);
-
-		await logEventFromContext(
-			ctx,
-			'ahrefs.siteExplorer.domainRatingHistory',
-			{
-				target: input.target,
-				date_from: input.date_from,
-				date_to: input.date_to,
-				resultCount: response.domain_ratings.length,
-			},
-			'completed',
-		);
-
-		return response;
-	};
-
-export const allBacklinks: AhrefsEndpoints['allBacklinks'] = async (
+export const brokenBacklinks: AhrefsEndpoints['brokenBacklinks'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<AllBacklinksResponse>(
-		'/site-explorer/all-backlinks',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.siteExplorer.allBacklinks',
 		{
-			portfolio_id: input.portfolio_id,
-			target: input.target,
-			mode: input.mode,
-			resultCount: response.backlinks.length,
+			endpoint: 'brokenBacklinks',
+			method: 'GET',
+			path: '/site-explorer/broken-backlinks',
+			event: 'ahrefs.siteExplorer.brokenBacklinks',
+			logKeys: ['portfolio_id', 'target', 'mode'],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
+export const anchors: AhrefsEndpoints['anchors'] = (ctx, input) =>
+	callAhrefs(
+		ctx,
+		{
+			endpoint: 'anchors',
+			method: 'GET',
+			path: '/site-explorer/anchors',
+			event: 'ahrefs.siteExplorer.anchors',
+			logKeys: ['portfolio_id', 'target', 'mode'],
+		},
+		input,
+	);
 
-export const brokenBacklinks: AhrefsEndpoints['brokenBacklinks'] = async (
+export const organicCompetitors: AhrefsEndpoints['organicCompetitors'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<BrokenBacklinksResponse>(
-		'/site-explorer/broken-backlinks',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.siteExplorer.brokenBacklinks',
 		{
-			portfolio_id: input.portfolio_id,
-			target: input.target,
-			mode: input.mode,
-			resultCount: response.backlinks.length,
+			endpoint: 'organicCompetitors',
+			method: 'GET',
+			path: '/site-explorer/organic-competitors',
+			event: 'ahrefs.siteExplorer.organicCompetitors',
+			logKeys: ['portfolio_id', 'target', 'country', 'date', 'mode'],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
-
-export const anchors: AhrefsEndpoints['anchors'] = async (ctx, input) => {
-	const response = await makeAhrefsRequest<AnchorsResponse>(
-		'/site-explorer/anchors',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+export const pagesByTraffic: AhrefsEndpoints['pagesByTraffic'] = (ctx, input) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.siteExplorer.anchors',
 		{
-			portfolio_id: input.portfolio_id,
-			target: input.target,
-			mode: input.mode,
-			resultCount: response.anchors.length,
+			endpoint: 'pagesByTraffic',
+			method: 'GET',
+			path: '/site-explorer/pages-by-traffic',
+			event: 'ahrefs.siteExplorer.pagesByTraffic',
+			logKeys: ['portfolio_id', 'target', 'country', 'mode'],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
-
-export const organicCompetitors: AhrefsEndpoints['organicCompetitors'] = async (
+export const refdomainsHistory: AhrefsEndpoints['refdomainsHistory'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<OrganicCompetitorsResponse>(
-		'/site-explorer/organic-competitors',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.siteExplorer.organicCompetitors',
 		{
-			portfolio_id: input.portfolio_id,
-			target: input.target,
-			country: input.country,
-			date: input.date,
-			mode: input.mode,
-			resultCount: response.competitors.length,
+			endpoint: 'refdomainsHistory',
+			method: 'GET',
+			path: '/site-explorer/refdomains-history',
+			event: 'ahrefs.siteExplorer.refdomainsHistory',
+			logKeys: ['portfolio_id', 'target', 'date_from', 'date_to', 'mode'],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
-
-export const pagesByTraffic: AhrefsEndpoints['pagesByTraffic'] = async (
+export const keywordsHistory: AhrefsEndpoints['keywordsHistory'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<PagesByTrafficResponse>(
-		'/site-explorer/pages-by-traffic',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.siteExplorer.pagesByTraffic',
 		{
-			portfolio_id: input.portfolio_id,
-			target: input.target,
-			country: input.country,
-			mode: input.mode,
+			endpoint: 'keywordsHistory',
+			method: 'GET',
+			path: '/site-explorer/keywords-history',
+			event: 'ahrefs.siteExplorer.keywordsHistory',
+			logKeys: [
+				'portfolio_id',
+				'target',
+				'country',
+				'date_from',
+				'date_to',
+				'mode',
+			],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
+export const linkedDomains: AhrefsEndpoints['linkedDomains'] = (ctx, input) =>
+	callAhrefs(
+		ctx,
+		{
+			endpoint: 'linkedDomains',
+			method: 'GET',
+			path: '/site-explorer/linkeddomains',
+			event: 'ahrefs.siteExplorer.linkedDomains',
+			logKeys: ['portfolio_id', 'target', 'mode'],
+		},
+		input,
+	);
 
-export const refdomainsHistory: AhrefsEndpoints['refdomainsHistory'] = async (
+export const pagesByBacklinks: AhrefsEndpoints['pagesByBacklinks'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<RefdomainsHistoryResponse>(
-		'/site-explorer/refdomains-history',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.siteExplorer.refdomainsHistory',
 		{
-			portfolio_id: input.portfolio_id,
-			target: input.target,
-			date_from: input.date_from,
-			date_to: input.date_to,
-			mode: input.mode,
-			resultCount: response.refdomains.length,
+			endpoint: 'pagesByBacklinks',
+			method: 'GET',
+			path: '/site-explorer/pages-by-backlinks',
+			event: 'ahrefs.siteExplorer.pagesByBacklinks',
+			logKeys: ['portfolio_id', 'target', 'mode'],
 		},
-		'completed',
+		input,
 	);
-
-	return response;
-};
-
-export const keywordsHistory: AhrefsEndpoints['keywordsHistory'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeAhrefsRequest<KeywordsHistoryResponse>(
-		'/site-explorer/keywords-history',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
-		ctx,
-		'ahrefs.siteExplorer.keywordsHistory',
-		{
-			portfolio_id: input.portfolio_id,
-			target: input.target,
-			country: input.country,
-			date_from: input.date_from,
-			date_to: input.date_to,
-			mode: input.mode,
-			resultCount: response.keywords.length,
-		},
-		'completed',
-	);
-
-	return response;
-};
-
-export const linkedDomains: AhrefsEndpoints['linkedDomains'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeAhrefsRequest<LinkedDomainsResponse>(
-		'/site-explorer/linkeddomains',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
-		ctx,
-		'ahrefs.siteExplorer.linkedDomains',
-		{
-			portfolio_id: input.portfolio_id,
-			target: input.target,
-			mode: input.mode,
-			resultCount: response.linkeddomains.length,
-		},
-		'completed',
-	);
-
-	return response;
-};
-
-export const pagesByBacklinks: AhrefsEndpoints['pagesByBacklinks'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeAhrefsRequest<PagesByBacklinksResponse>(
-		'/site-explorer/pages-by-backlinks',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
-		ctx,
-		'ahrefs.siteExplorer.pagesByBacklinks',
-		{
-			portfolio_id: input.portfolio_id,
-			target: input.target,
-			mode: input.mode,
-			resultCount: response.pages.length,
-		},
-		'completed',
-	);
-
-	return response;
-};
 
 export const aiResponsesCount: AhrefsEndpoints['siteExplorerAiResponsesCount'] =
 	(ctx, input) =>
-		callAhrefs<SiteExplorerAiResponsesCountResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'siteExplorerAiResponsesCount',
 				method: 'GET',
 				path: '/site-explorer/ai-responses-count',
 				event: 'ahrefs.siteExplorer.aiResponsesCount',
@@ -584,9 +424,10 @@ export const crawledPages: AhrefsEndpoints['siteExplorerCrawledPages'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<SiteExplorerCrawledPagesResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'siteExplorerCrawledPages',
 			method: 'GET',
 			path: '/site-explorer/crawled-pages',
 			event: 'ahrefs.siteExplorer.crawledPages',
@@ -597,9 +438,10 @@ export const crawledPages: AhrefsEndpoints['siteExplorerCrawledPages'] = (
 
 export const linkedAnchorsExternal: AhrefsEndpoints['siteExplorerLinkedAnchorsExternal'] =
 	(ctx, input) =>
-		callAhrefs<SiteExplorerLinkedAnchorsExternalResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'siteExplorerLinkedAnchorsExternal',
 				method: 'GET',
 				path: '/site-explorer/linked-anchors-external',
 				event: 'ahrefs.siteExplorer.linkedAnchorsExternal',
@@ -610,9 +452,10 @@ export const linkedAnchorsExternal: AhrefsEndpoints['siteExplorerLinkedAnchorsEx
 
 export const linkedAnchorsInternal: AhrefsEndpoints['siteExplorerLinkedAnchorsInternal'] =
 	(ctx, input) =>
-		callAhrefs<SiteExplorerLinkedAnchorsInternalResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'siteExplorerLinkedAnchorsInternal',
 				method: 'GET',
 				path: '/site-explorer/linked-anchors-internal',
 				event: 'ahrefs.siteExplorer.linkedAnchorsInternal',
@@ -623,9 +466,10 @@ export const linkedAnchorsInternal: AhrefsEndpoints['siteExplorerLinkedAnchorsIn
 
 export const metricsByCountry: AhrefsEndpoints['siteExplorerMetricsByCountry'] =
 	(ctx, input) =>
-		callAhrefs<SiteExplorerMetricsByCountryResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'siteExplorerMetricsByCountry',
 				method: 'GET',
 				path: '/site-explorer/metrics-by-country',
 				event: 'ahrefs.siteExplorer.metricsByCountry',
@@ -638,9 +482,10 @@ export const outlinksStats: AhrefsEndpoints['siteExplorerOutlinksStats'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<SiteExplorerOutlinksStatsResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'siteExplorerOutlinksStats',
 			method: 'GET',
 			path: '/site-explorer/outlinks-stats',
 			event: 'ahrefs.siteExplorer.outlinksStats',
@@ -651,9 +496,10 @@ export const outlinksStats: AhrefsEndpoints['siteExplorerOutlinksStats'] = (
 
 export const pagesByInternalLinks: AhrefsEndpoints['siteExplorerPagesByInternalLinks'] =
 	(ctx, input) =>
-		callAhrefs<SiteExplorerPagesByInternalLinksResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'siteExplorerPagesByInternalLinks',
 				method: 'GET',
 				path: '/site-explorer/pages-by-internal-links',
 				event: 'ahrefs.siteExplorer.pagesByInternalLinks',
@@ -666,9 +512,10 @@ export const pagesHistory: AhrefsEndpoints['siteExplorerPagesHistory'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<SiteExplorerPagesHistoryResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'siteExplorerPagesHistory',
 			method: 'GET',
 			path: '/site-explorer/pages-history',
 			event: 'ahrefs.siteExplorer.pagesHistory',
@@ -681,9 +528,10 @@ export const paidPages: AhrefsEndpoints['siteExplorerPaidPages'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<SiteExplorerPaidPagesResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'siteExplorerPaidPages',
 			method: 'GET',
 			path: '/site-explorer/paid-pages',
 			event: 'ahrefs.siteExplorer.paidPages',
@@ -694,9 +542,10 @@ export const paidPages: AhrefsEndpoints['siteExplorerPaidPages'] = (
 
 export const totalSearchVolumeHistory: AhrefsEndpoints['siteExplorerTotalSearchVolumeHistory'] =
 	(ctx, input) =>
-		callAhrefs<SiteExplorerTotalSearchVolumeHistoryResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'siteExplorerTotalSearchVolumeHistory',
 				method: 'GET',
 				path: '/site-explorer/total-search-volume-history',
 				event: 'ahrefs.siteExplorer.totalSearchVolumeHistory',
@@ -707,9 +556,10 @@ export const totalSearchVolumeHistory: AhrefsEndpoints['siteExplorerTotalSearchV
 
 export const urlRatingHistory: AhrefsEndpoints['siteExplorerUrlRatingHistory'] =
 	(ctx, input) =>
-		callAhrefs<SiteExplorerUrlRatingHistoryResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'siteExplorerUrlRatingHistory',
 				method: 'GET',
 				path: '/site-explorer/url-rating-history',
 				event: 'ahrefs.siteExplorer.urlRatingHistory',

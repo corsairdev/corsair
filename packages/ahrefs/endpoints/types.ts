@@ -2,6 +2,20 @@ import { z } from 'zod';
 
 const isoDateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
+// Keywords Explorer takes a two-letter country code, or `all` for every
+// location.
+const countryOrAll = z.union([z.string().length(2), z.literal('all')]);
+
+// Nested values inside Ahrefs rows (per-platform post metrics, intent flags,
+// lists of linked objects) change with `select` and the data source, and the
+// API spec gives them no fixed shape, so they stay open records and lists.
+const AhrefsOpenObject = z.record(z.string(), z.unknown());
+const AhrefsOpenList = z.array(z.unknown());
+
+// Ahrefs filter expressions are nested and/or/not trees over fields that
+// differ per endpoint; the API validates them, so the body keeps them open.
+const AhrefsFilterExpression = z.record(z.string(), z.unknown());
+
 export const AHREFS_PROTOCOLS = ['both', 'http', 'https'] as const;
 export const AHREFS_TARGET_MODES = [
 	'exact',
@@ -80,7 +94,7 @@ export const KeywordsOverviewInputSchema = z
 		target_mode: z.enum(AHREFS_TARGET_MODES).optional(),
 		target: z.string().min(1).optional(),
 		target_position: z.enum(AHREFS_TARGET_POSITIONS).optional(),
-		country: z.string().length(2),
+		country: countryOrAll,
 		keywords: z
 			.union([z.string().min(1), z.array(z.string().min(1)).min(1)])
 			.optional(),
@@ -1259,12 +1273,9 @@ export const MatchingTermsInputSchema = z
 			.string()
 			.optional()
 			.describe('A comma-separated list of keywords to show metrics for.'),
-		country: z
-			.string()
-			.length(2)
-			.describe(
-				'A country code, or all for matching terms across all locations.',
-			),
+		country: countryOrAll.describe(
+			'A country code, or all for matching terms across all locations.',
+		),
 		terms: z
 			.enum(['all', 'questions', 'global'])
 			.optional()
@@ -1292,7 +1303,7 @@ export const MatchingTermsRowSchema = z
 		first_seen: z.string().nullable().optional(),
 		global_traffic_potential: z.number().nullable().optional(),
 		global_volume: z.number().nullable().optional(),
-		intents: z.record(z.string(), z.unknown()).nullable().optional(),
+		intents: AhrefsOpenObject.nullable().optional(),
 		keyword: z.string().nullable().optional(),
 		parent_topic: z.string().nullable().optional(),
 		serp_features: z.array(z.string()).nullable().optional(),
@@ -1373,7 +1384,7 @@ export const RelatedTermsRowSchema = z
 		first_seen: z.string().nullable().optional(),
 		global_traffic_potential: z.number().nullable().optional(),
 		global_volume: z.number().nullable().optional(),
-		intents: z.record(z.string(), z.unknown()).nullable().optional(),
+		intents: AhrefsOpenObject.nullable().optional(),
 		keyword: z.string().nullable().optional(),
 		parent_topic: z.string().nullable().optional(),
 		serp_features: z.array(z.string()).nullable().optional(),
@@ -1444,7 +1455,7 @@ export const SearchSuggestionsRowSchema = z
 		first_seen: z.string().nullable().optional(),
 		global_traffic_potential: z.number().nullable().optional(),
 		global_volume: z.number().nullable().optional(),
-		intents: z.record(z.string(), z.unknown()).nullable().optional(),
+		intents: AhrefsOpenObject.nullable().optional(),
 		keyword: z.string().nullable().optional(),
 		parent_topic: z.string().nullable().optional(),
 		serp_features: z.array(z.string()).nullable().optional(),
@@ -1463,10 +1474,7 @@ export const SearchSuggestionsResponseSchema = z.object({
 
 export const VolumeHistoryInputSchema = z.object({
 	keyword: z.string().min(1).describe('The keyword to show metrics for.'),
-	country: z
-		.string()
-		.length(2)
-		.describe('A country code, or all for all locations.'),
+	country: countryOrAll.describe('A country code, or all for all locations.'),
 	date_from: isoDateString
 		.optional()
 		.describe('The start date of the historical period in YYYY-MM-DD format.'),
@@ -1555,7 +1563,7 @@ export const VolumeByCountryRowSchema = z
 		top_page_title: z.string().nullable().optional(),
 		traffic_potential: z.number().nullable().optional(),
 		volume: z.number().nullable().optional(),
-		volume_monthly_history: z.array(z.unknown()).nullable().optional(),
+		volume_monthly_history: AhrefsOpenList.nullable().optional(),
 	})
 	.loose();
 
@@ -2582,7 +2590,7 @@ export const RankTrackerCompetitorsOverviewInputSchema = z.object({
 
 export const RankTrackerCompetitorsOverviewRowSchema = z
 	.object({
-		competitors_list: z.array(z.unknown()).nullable().optional(),
+		competitors_list: AhrefsOpenList.nullable().optional(),
 		country: z.string().nullable().optional(),
 		keyword: z.string().nullable().optional(),
 		keyword_difficulty: z.number().nullable().optional(),
@@ -2621,7 +2629,7 @@ export const ManagementProjectsInputSchema = z.object({
 export const ManagementProjectsRowSchema = z
 	.object({
 		access: z.string().nullable().optional(),
-		folder: z.record(z.string(), z.unknown()).nullable().optional(),
+		folder: AhrefsOpenObject.nullable().optional(),
 		keyword_count: z.number().nullable().optional(),
 		mode: z.string().nullable().optional(),
 		owned_by: z.string().nullable().optional(),
@@ -2718,8 +2726,8 @@ export const ManagementLocationsResponseSchema = z.object({
 	location: z
 		.object({
 			country_code: z.string().nullable().optional(),
-			languages: z.array(z.unknown()).nullable().optional(),
-			locations: z.array(z.unknown()).nullable().optional(),
+			languages: AhrefsOpenList.nullable().optional(),
+			locations: AhrefsOpenList.nullable().optional(),
 		})
 		.loose(),
 });
@@ -3589,22 +3597,13 @@ export const BrandRadarAiResponsesInputSchema = z.object({
 		.optional()
 		.describe('A comma-separated list of competitors of your brands.'),
 	data_source: z
-		.enum([
-			'chatgpt',
-			'google_ai_overviews',
-			'google_ai_mode',
-			'gemini',
-			'perplexity',
-			'copilot',
-			'claude',
-			'grok',
-			'google_ai_overviews_keywords',
-			'google_ai_mode_keywords',
-		])
-		.describe('A comma-separated list of chatbot models.'),
+		.string()
+		.min(1)
+		.describe(
+			'Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords.',
+		),
 	country: z
 		.string()
-		.length(2)
 		.optional()
 		.describe(
 			'A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2).',
@@ -3634,13 +3633,13 @@ export const BrandRadarAiResponsesInputSchema = z.object({
 
 export const BrandRadarAiResponsesRowSchema = z
 	.object({
-		brand_sentiment: z.array(z.unknown()).nullable().optional(),
+		brand_sentiment: AhrefsOpenList.nullable().optional(),
 		country: z.string().nullable().optional(),
 		data_source: z.string().nullable().optional(),
 		funnel_stage: z.string().nullable().optional(),
 		intent: z.array(z.string()).nullable().optional(),
 		last_updated: z.string().nullable().optional(),
-		links: z.array(z.unknown()).nullable().optional(),
+		links: AhrefsOpenList.nullable().optional(),
 		question: z.string().nullable().optional(),
 		response: z.string().nullable().optional(),
 		search_queries: z.array(z.string()).nullable().optional(),
@@ -3667,12 +3666,9 @@ export type BrandRadarAiResponsesResponse = z.infer<
 
 export const BrandRadarAiResponsesEntitiesInputSchema = z.object({
 	select: z.array(z.string().min(1)).describe('A list of fields to return.'),
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brands: z
 		.array(
@@ -3778,16 +3774,12 @@ export const BrandRadarAiResponsesEntitiesInputSchema = z.object({
 		.describe(
 			'How to order the results: a column, or how the responses talk about one brand, as the Sentiment page in Brand Radar can.',
 		),
-	tags_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe('A filter expression for prompt tags.'),
-	brand_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'A filter expression for your brand\'s visibility, mirroring the "Your brand" filter.',
-		),
+	tags_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for prompt tags.',
+	),
+	brand_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for your brand\'s visibility, mirroring the "Your brand" filter.',
+	),
 	volume_range: z
 		.object({
 			from: z.number().int().optional(),
@@ -3803,12 +3795,9 @@ export const BrandRadarAiResponsesEntitiesInputSchema = z.object({
 		})
 		.optional()
 		.describe('Requires date_compared.'),
-	sentiment_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'A filter on how the responses talk about your brands and competitors, like the Sentiment filter in Brand Radar.',
-		),
+	sentiment_filter: AhrefsFilterExpression.optional().describe(
+		'A filter on how the responses talk about your brands and competitors, like the Sentiment filter in Brand Radar.',
+	),
 	opinions_first: z
 		.boolean()
 		.optional()
@@ -3820,13 +3809,13 @@ export const BrandRadarAiResponsesEntitiesInputSchema = z.object({
 
 export const BrandRadarAiResponsesEntitiesRowSchema = z
 	.object({
-		brand_sentiment: z.array(z.unknown()).nullable().optional(),
+		brand_sentiment: AhrefsOpenList.nullable().optional(),
 		country: z.string().nullable().optional(),
 		data_source: z.string().nullable().optional(),
 		funnel_stage: z.string().nullable().optional(),
 		intent: z.array(z.string()).nullable().optional(),
 		last_updated: z.string().nullable().optional(),
-		links: z.array(z.unknown()).nullable().optional(),
+		links: AhrefsOpenList.nullable().optional(),
 		question: z.string().nullable().optional(),
 		response: z.string().nullable().optional(),
 		search_queries: z.array(z.string()).nullable().optional(),
@@ -3852,12 +3841,9 @@ export type BrandRadarAiResponsesEntitiesResponse = z.infer<
 >;
 
 export const BrandRadarCitationsHistoryEntitiesInputSchema = z.object({
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brands: z
 		.array(
@@ -3914,10 +3900,9 @@ export const BrandRadarCitationsHistoryEntitiesInputSchema = z.object({
 	date_to: isoDateString
 		.optional()
 		.describe('The end date of the historical period in YYYY-MM-DD format.'),
-	tags_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe('A filter expression for prompt tags.'),
+	tags_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for prompt tags.',
+	),
 	output: z.enum(AHREFS_OUTPUT_FORMATS).optional(),
 });
 
@@ -3945,12 +3930,9 @@ export type BrandRadarCitationsHistoryEntitiesResponse = z.infer<
 
 export const BrandRadarCitationsOverviewEntitiesInputSchema = z.object({
 	select: z.array(z.string().min(1)).describe('A list of fields to return.'),
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brands: z
 		.array(
@@ -4017,10 +3999,9 @@ export const BrandRadarCitationsOverviewEntitiesInputSchema = z.object({
 		.enum(['ahrefs', 'custom'])
 		.optional()
 		.describe('The type of prompts to use.'),
-	tags_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe('A filter expression for prompt tags.'),
+	tags_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for prompt tags.',
+	),
 	output: z.enum(AHREFS_OUTPUT_FORMATS).optional(),
 });
 
@@ -4072,22 +4053,13 @@ export const BrandRadarCitedDomainsInputSchema = z.object({
 		.optional()
 		.describe('A comma-separated list of competitors of your brands.'),
 	data_source: z
-		.enum([
-			'chatgpt',
-			'google_ai_overviews',
-			'google_ai_mode',
-			'gemini',
-			'perplexity',
-			'copilot',
-			'claude',
-			'grok',
-			'google_ai_overviews_keywords',
-			'google_ai_mode_keywords',
-		])
-		.describe('A comma-separated list of chatbot models.'),
+		.string()
+		.min(1)
+		.describe(
+			'Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords.',
+		),
 	country: z
 		.string()
-		.length(2)
 		.optional()
 		.describe(
 			'A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2).',
@@ -4111,7 +4083,7 @@ export const BrandRadarCitedDomainsInputSchema = z.object({
 export const BrandRadarCitedDomainsRowSchema = z
 	.object({
 		domain: z.string().nullable().optional(),
-		mentions: z.array(z.unknown()).nullable().optional(),
+		mentions: AhrefsOpenList.nullable().optional(),
 		pages: z.number().nullable().optional(),
 		responses: z.number().nullable().optional(),
 		volume: z.number().nullable().optional(),
@@ -4135,12 +4107,9 @@ export type BrandRadarCitedDomainsResponse = z.infer<
 
 export const BrandRadarCitedDomainsEntitiesInputSchema = z.object({
 	select: z.array(z.string().min(1)).describe('A list of fields to return.'),
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brands: z
 		.array(
@@ -4216,16 +4185,12 @@ export const BrandRadarCitedDomainsEntitiesInputSchema = z.object({
 	date: isoDateString
 		.optional()
 		.describe('The date to search for in YYYY-MM-DD format.'),
-	tags_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe('A filter expression for prompt tags.'),
-	brand_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'A filter expression for your brand\'s visibility, mirroring the "Your brand" filter.',
-		),
+	tags_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for prompt tags.',
+	),
+	brand_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for your brand\'s visibility, mirroring the "Your brand" filter.',
+	),
 	volume_range: z
 		.object({
 			from: z.number().int().optional(),
@@ -4239,7 +4204,7 @@ export const BrandRadarCitedDomainsEntitiesInputSchema = z.object({
 export const BrandRadarCitedDomainsEntitiesRowSchema = z
 	.object({
 		domain: z.string().nullable().optional(),
-		mentions: z.array(z.unknown()).nullable().optional(),
+		mentions: AhrefsOpenList.nullable().optional(),
 		pages: z.number().nullable().optional(),
 		responses: z.number().nullable().optional(),
 		volume: z.number().nullable().optional(),
@@ -4282,22 +4247,13 @@ export const BrandRadarCitedPagesInputSchema = z.object({
 		.optional()
 		.describe('A comma-separated list of competitors of your brands.'),
 	data_source: z
-		.enum([
-			'chatgpt',
-			'google_ai_overviews',
-			'google_ai_mode',
-			'gemini',
-			'perplexity',
-			'copilot',
-			'claude',
-			'grok',
-			'google_ai_overviews_keywords',
-			'google_ai_mode_keywords',
-		])
-		.describe('A comma-separated list of chatbot models.'),
+		.string()
+		.min(1)
+		.describe(
+			'Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords.',
+		),
 	country: z
 		.string()
-		.length(2)
 		.optional()
 		.describe(
 			'A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2).',
@@ -4324,7 +4280,7 @@ export const BrandRadarCitedPagesInputSchema = z.object({
 
 export const BrandRadarCitedPagesRowSchema = z
 	.object({
-		mentions: z.array(z.unknown()).nullable().optional(),
+		mentions: AhrefsOpenList.nullable().optional(),
 		responses: z.number().nullable().optional(),
 		title: z.string().nullable().optional(),
 		url: z.string().nullable().optional(),
@@ -4349,12 +4305,9 @@ export type BrandRadarCitedPagesResponse = z.infer<
 
 export const BrandRadarCitedPagesEntitiesInputSchema = z.object({
 	select: z.array(z.string().min(1)).describe('A list of fields to return.'),
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brands: z
 		.array(
@@ -4434,16 +4387,12 @@ export const BrandRadarCitedPagesEntitiesInputSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('A list of tracked page URLs.'),
-	tags_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe('A filter expression for prompt tags.'),
-	brand_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'A filter expression for your brand\'s visibility, mirroring the "Your brand" filter.',
-		),
+	tags_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for prompt tags.',
+	),
+	brand_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for your brand\'s visibility, mirroring the "Your brand" filter.',
+	),
 	volume_range: z
 		.object({
 			from: z.number().int().optional(),
@@ -4456,7 +4405,7 @@ export const BrandRadarCitedPagesEntitiesInputSchema = z.object({
 
 export const BrandRadarCitedPagesEntitiesRowSchema = z
 	.object({
-		mentions: z.array(z.unknown()).nullable().optional(),
+		mentions: AhrefsOpenList.nullable().optional(),
 		responses: z.number().nullable().optional(),
 		title: z.string().nullable().optional(),
 		url: z.string().nullable().optional(),
@@ -4489,22 +4438,13 @@ export const BrandRadarImpressionsHistoryInputSchema = z.object({
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brand: z.string().describe('The brand to search for.'),
 	data_source: z
-		.enum([
-			'chatgpt',
-			'google_ai_overviews',
-			'google_ai_mode',
-			'gemini',
-			'perplexity',
-			'copilot',
-			'claude',
-			'grok',
-			'google_ai_overviews_keywords',
-			'google_ai_mode_keywords',
-		])
-		.describe('A comma-separated list of chatbot models.'),
+		.string()
+		.min(1)
+		.describe(
+			'Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords.',
+		),
 	country: z
 		.string()
-		.length(2)
 		.optional()
 		.describe(
 			'A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2).',
@@ -4545,12 +4485,9 @@ export type BrandRadarImpressionsHistoryResponse = z.infer<
 >;
 
 export const BrandRadarImpressionsHistoryEntitiesInputSchema = z.object({
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brands: z
 		.array(
@@ -4607,10 +4544,9 @@ export const BrandRadarImpressionsHistoryEntitiesInputSchema = z.object({
 	date_to: isoDateString
 		.optional()
 		.describe('The end date of the historical period in YYYY-MM-DD format.'),
-	tags_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe('A filter expression for prompt tags.'),
+	tags_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for prompt tags.',
+	),
 	output: z.enum(AHREFS_OUTPUT_FORMATS).optional(),
 });
 
@@ -4657,22 +4593,13 @@ export const BrandRadarImpressionsOverviewInputSchema = z.object({
 		.optional()
 		.describe('A comma-separated list of competitors of your brands.'),
 	data_source: z
-		.enum([
-			'chatgpt',
-			'google_ai_overviews',
-			'google_ai_mode',
-			'gemini',
-			'perplexity',
-			'copilot',
-			'claude',
-			'grok',
-			'google_ai_overviews_keywords',
-			'google_ai_mode_keywords',
-		])
-		.describe('A comma-separated list of chatbot models.'),
+		.string()
+		.min(1)
+		.describe(
+			'Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords.',
+		),
 	country: z
 		.string()
-		.length(2)
 		.optional()
 		.describe(
 			'A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2).',
@@ -4713,12 +4640,9 @@ export type BrandRadarImpressionsOverviewResponse = z.infer<
 
 export const BrandRadarImpressionsOverviewEntitiesInputSchema = z.object({
 	select: z.array(z.string().min(1)).describe('A list of fields to return.'),
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brands: z
 		.array(
@@ -4785,10 +4709,9 @@ export const BrandRadarImpressionsOverviewEntitiesInputSchema = z.object({
 		.enum(['ahrefs', 'custom'])
 		.optional()
 		.describe('The type of prompts to use.'),
-	tags_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe('A filter expression for prompt tags.'),
+	tags_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for prompt tags.',
+	),
 	output: z.enum(AHREFS_OUTPUT_FORMATS).optional(),
 });
 
@@ -4829,22 +4752,13 @@ export const BrandRadarMentionsHistoryInputSchema = z.object({
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brand: z.string().describe('The brand to search for.'),
 	data_source: z
-		.enum([
-			'chatgpt',
-			'google_ai_overviews',
-			'google_ai_mode',
-			'gemini',
-			'perplexity',
-			'copilot',
-			'claude',
-			'grok',
-			'google_ai_overviews_keywords',
-			'google_ai_mode_keywords',
-		])
-		.describe('A comma-separated list of chatbot models.'),
+		.string()
+		.min(1)
+		.describe(
+			'Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords.',
+		),
 	country: z
 		.string()
-		.length(2)
 		.optional()
 		.describe(
 			'A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2).',
@@ -4885,12 +4799,9 @@ export type BrandRadarMentionsHistoryResponse = z.infer<
 >;
 
 export const BrandRadarMentionsHistoryEntitiesInputSchema = z.object({
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brands: z
 		.array(
@@ -4947,10 +4858,9 @@ export const BrandRadarMentionsHistoryEntitiesInputSchema = z.object({
 	date_to: isoDateString
 		.optional()
 		.describe('The end date of the historical period in YYYY-MM-DD format.'),
-	tags_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe('A filter expression for prompt tags.'),
+	tags_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for prompt tags.',
+	),
 	output: z.enum(AHREFS_OUTPUT_FORMATS).optional(),
 });
 
@@ -4997,22 +4907,13 @@ export const BrandRadarMentionsOverviewInputSchema = z.object({
 		.optional()
 		.describe('A comma-separated list of competitors of your brands.'),
 	data_source: z
-		.enum([
-			'chatgpt',
-			'google_ai_overviews',
-			'google_ai_mode',
-			'gemini',
-			'perplexity',
-			'copilot',
-			'claude',
-			'grok',
-			'google_ai_overviews_keywords',
-			'google_ai_mode_keywords',
-		])
-		.describe('A comma-separated list of chatbot models.'),
+		.string()
+		.min(1)
+		.describe(
+			'Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords.',
+		),
 	country: z
 		.string()
-		.length(2)
 		.optional()
 		.describe(
 			'A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2).',
@@ -5053,12 +4954,9 @@ export type BrandRadarMentionsOverviewResponse = z.infer<
 
 export const BrandRadarMentionsOverviewEntitiesInputSchema = z.object({
 	select: z.array(z.string().min(1)).describe('A list of fields to return.'),
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brands: z
 		.array(
@@ -5125,10 +5023,9 @@ export const BrandRadarMentionsOverviewEntitiesInputSchema = z.object({
 		.enum(['ahrefs', 'custom'])
 		.optional()
 		.describe('The type of prompts to use.'),
-	tags_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe('A filter expression for prompt tags.'),
+	tags_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for prompt tags.',
+	),
 	output: z.enum(AHREFS_OUTPUT_FORMATS).optional(),
 });
 
@@ -5176,22 +5073,13 @@ export const BrandRadarSovHistoryInputSchema = z.object({
 		.optional()
 		.describe('A comma-separated list of competitors of your brands.'),
 	data_source: z
-		.enum([
-			'chatgpt',
-			'google_ai_overviews',
-			'google_ai_mode',
-			'gemini',
-			'perplexity',
-			'copilot',
-			'claude',
-			'grok',
-			'google_ai_overviews_keywords',
-			'google_ai_mode_keywords',
-		])
-		.describe('A comma-separated list of chatbot models.'),
+		.string()
+		.min(1)
+		.describe(
+			'Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords.',
+		),
 	country: z
 		.string()
-		.length(2)
 		.optional()
 		.describe(
 			'A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2).',
@@ -5212,7 +5100,7 @@ export const BrandRadarSovHistoryInputSchema = z.object({
 export const BrandRadarSovHistoryRowSchema = z
 	.object({
 		date: z.string().nullable().optional(),
-		share_of_voice: z.array(z.unknown()).nullable().optional(),
+		share_of_voice: AhrefsOpenList.nullable().optional(),
 	})
 	.loose();
 
@@ -5232,12 +5120,9 @@ export type BrandRadarSovHistoryResponse = z.infer<
 >;
 
 export const BrandRadarSovHistoryEntitiesInputSchema = z.object({
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brands: z
 		.array(
@@ -5310,17 +5195,16 @@ export const BrandRadarSovHistoryEntitiesInputSchema = z.object({
 	date_to: isoDateString
 		.optional()
 		.describe('The end date of the historical period in YYYY-MM-DD format.'),
-	tags_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe('A filter expression for prompt tags.'),
+	tags_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for prompt tags.',
+	),
 	output: z.enum(AHREFS_OUTPUT_FORMATS).optional(),
 });
 
 export const BrandRadarSovHistoryEntitiesRowSchema = z
 	.object({
 		date: z.string().nullable().optional(),
-		share_of_voice: z.array(z.unknown()).nullable().optional(),
+		share_of_voice: AhrefsOpenList.nullable().optional(),
 	})
 	.loose();
 
@@ -5356,22 +5240,13 @@ export const BrandRadarSovOverviewInputSchema = z.object({
 		.optional()
 		.describe('A comma-separated list of competitors of your brands.'),
 	data_source: z
-		.enum([
-			'chatgpt',
-			'google_ai_overviews',
-			'google_ai_mode',
-			'gemini',
-			'perplexity',
-			'copilot',
-			'claude',
-			'grok',
-			'google_ai_overviews_keywords',
-			'google_ai_mode_keywords',
-		])
-		.describe('A comma-separated list of chatbot models.'),
+		.string()
+		.min(1)
+		.describe(
+			'Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords.',
+		),
 	country: z
 		.string()
-		.length(2)
 		.optional()
 		.describe(
 			'A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2).',
@@ -5407,12 +5282,9 @@ export type BrandRadarSovOverviewResponse = z.infer<
 >;
 
 export const BrandRadarSovOverviewEntitiesInputSchema = z.object({
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	report_id: z.string().optional().describe('The ID of the report to use.'),
 	brands: z
 		.array(
@@ -5479,10 +5351,9 @@ export const BrandRadarSovOverviewEntitiesInputSchema = z.object({
 		.enum(['ahrefs', 'custom'])
 		.optional()
 		.describe('The type of prompts to use.'),
-	tags_filter: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe('A filter expression for prompt tags.'),
+	tags_filter: AhrefsFilterExpression.optional().describe(
+		'A filter expression for prompt tags.',
+	),
 	output: z.enum(AHREFS_OUTPUT_FORMATS).optional(),
 });
 
@@ -5617,7 +5488,7 @@ export const SocialMediaPostsRowSchema = z
 		author_id: z.string().nullable().optional(),
 		author_name: z.string().nullable().optional(),
 		auto_comment: z.string().nullable().optional(),
-		channels: z.array(z.unknown()).nullable().optional(),
+		channels: AhrefsOpenList.nullable().optional(),
 		created_at: z.string().nullable().optional(),
 		external_post_id: z.string().nullable().optional(),
 		permalink: z.string().nullable().optional(),
@@ -5689,17 +5560,17 @@ export const SocialMediaPostMetricsInputSchema = z.object({
 
 export const SocialMediaPostMetricsRowSchema = z
 	.object({
-		facebook_metrics: z.record(z.string(), z.unknown()).nullable().optional(),
-		instagram_metrics: z.record(z.string(), z.unknown()).nullable().optional(),
+		facebook_metrics: AhrefsOpenObject.nullable().optional(),
+		instagram_metrics: AhrefsOpenObject.nullable().optional(),
 		likes: z.number().nullable().optional(),
-		linkedin_metrics: z.record(z.string(), z.unknown()).nullable().optional(),
+		linkedin_metrics: AhrefsOpenObject.nullable().optional(),
 		retrieved_at: z.string().nullable().optional(),
-		threads_metrics: z.record(z.string(), z.unknown()).nullable().optional(),
-		tiktok_metrics: z.record(z.string(), z.unknown()).nullable().optional(),
-		twitter_metrics: z.record(z.string(), z.unknown()).nullable().optional(),
+		threads_metrics: AhrefsOpenObject.nullable().optional(),
+		tiktok_metrics: AhrefsOpenObject.nullable().optional(),
+		twitter_metrics: AhrefsOpenObject.nullable().optional(),
 		unique_views: z.number().nullable().optional(),
 		views: z.number().nullable().optional(),
-		youtube_metrics: z.record(z.string(), z.unknown()).nullable().optional(),
+		youtube_metrics: AhrefsOpenObject.nullable().optional(),
 	})
 	.loose();
 
@@ -5780,7 +5651,7 @@ export const SocialMediaCreatePostResponseSchema = z.object({
 			author_id: z.string().nullable().optional(),
 			author_name: z.string().nullable().optional(),
 			auto_comment: z.string().nullable().optional(),
-			channels: z.array(z.unknown()).nullable().optional(),
+			channels: AhrefsOpenList.nullable().optional(),
 			created_at: z.string().nullable().optional(),
 			external_post_id: z.string().nullable().optional(),
 			permalink: z.string().nullable().optional(),
@@ -5836,7 +5707,7 @@ export const SocialMediaUpdatePostResponseSchema = z.object({
 			author_id: z.string().nullable().optional(),
 			author_name: z.string().nullable().optional(),
 			auto_comment: z.string().nullable().optional(),
-			channels: z.array(z.unknown()).nullable().optional(),
+			channels: AhrefsOpenList.nullable().optional(),
 			created_at: z.string().nullable().optional(),
 			external_post_id: z.string().nullable().optional(),
 			permalink: z.string().nullable().optional(),
@@ -5869,7 +5740,7 @@ export const SocialMediaDeletePostResponseSchema = z.object({
 			author_id: z.string().nullable().optional(),
 			author_name: z.string().nullable().optional(),
 			auto_comment: z.string().nullable().optional(),
-			channels: z.array(z.unknown()).nullable().optional(),
+			channels: AhrefsOpenList.nullable().optional(),
 			created_at: z.string().nullable().optional(),
 			external_post_id: z.string().nullable().optional(),
 			permalink: z.string().nullable().optional(),
@@ -5913,7 +5784,7 @@ export const ManagementCreateProjectInputSchema = z.object({
 export const ManagementCreateProjectRowSchema = z
 	.object({
 		access: z.string().nullable().optional(),
-		folder: z.record(z.string(), z.unknown()).nullable().optional(),
+		folder: AhrefsOpenObject.nullable().optional(),
 		keyword_count: z.number().nullable().optional(),
 		mode: z.string().nullable().optional(),
 		owned_by: z.string().nullable().optional(),
@@ -5968,7 +5839,7 @@ export const ManagementUpdateProjectResponseSchema = z.object({
 	project: z
 		.object({
 			access: z.string().nullable().optional(),
-			folder: z.record(z.string(), z.unknown()).nullable().optional(),
+			folder: AhrefsOpenObject.nullable().optional(),
 			mode: z.string().nullable().optional(),
 			project_id: z.string().nullable().optional(),
 			project_name: z.string().nullable().optional(),
@@ -5997,7 +5868,7 @@ export const ManagementDeleteProjectsInputSchema = z.object({
 export const ManagementDeleteProjectsRowSchema = z
 	.object({
 		access: z.string().nullable().optional(),
-		folder: z.record(z.string(), z.unknown()).nullable().optional(),
+		folder: AhrefsOpenObject.nullable().optional(),
 		keyword_count: z.number().nullable().optional(),
 		mode: z.string().nullable().optional(),
 		owned_by: z.string().nullable().optional(),
@@ -6485,10 +6356,10 @@ export const ManagementBrandRadarReportsRowSchema = z
 	.object({
 		created_at: z.string().nullable().optional(),
 		project_id: z.number().nullable().optional(),
-		prompts_frequency: z.array(z.unknown()).nullable().optional(),
+		prompts_frequency: AhrefsOpenList.nullable().optional(),
 		report_id: z.string().nullable().optional(),
 		report_name: z.string().nullable().optional(),
-		settings: z.record(z.string(), z.unknown()).nullable().optional(),
+		settings: AhrefsOpenObject.nullable().optional(),
 		updated_at: z.string().nullable().optional(),
 	})
 	.loose();
@@ -6563,12 +6434,9 @@ export const ManagementCreateBrandRadarReportInputSchema = z.object({
 		.array(z.string().length(2))
 		.optional()
 		.describe('Saved countries.'),
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	content_filter: z
 		.object({
 			include: z.array(z.string()).optional(),
@@ -6602,10 +6470,10 @@ export const ManagementCreateBrandRadarReportRowSchema = z
 	.object({
 		created_at: z.string().nullable().optional(),
 		project_id: z.number().nullable().optional(),
-		prompts_frequency: z.array(z.unknown()).nullable().optional(),
+		prompts_frequency: AhrefsOpenList.nullable().optional(),
 		report_id: z.string().nullable().optional(),
 		report_name: z.string().nullable().optional(),
-		settings: z.record(z.string(), z.unknown()).nullable().optional(),
+		settings: AhrefsOpenObject.nullable().optional(),
 		updated_at: z.string().nullable().optional(),
 	})
 	.loose();
@@ -6664,12 +6532,9 @@ export const ManagementUpdateBrandRadarReportInputSchema = z.object({
 		.array(z.string().length(2))
 		.optional()
 		.describe('Replaces the saved countries.'),
-	where: z
-		.record(z.string(), z.unknown())
-		.optional()
-		.describe(
-			'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
-		),
+	where: AhrefsFilterExpression.optional().describe(
+		'Filter expression as a JSON object; see the Ahrefs API docs for the fields this endpoint accepts.',
+	),
 	content_filter: z
 		.object({
 			include: z.array(z.string()).optional(),
@@ -6702,10 +6567,10 @@ export const ManagementUpdateBrandRadarReportRowSchema = z
 	.object({
 		created_at: z.string().nullable().optional(),
 		project_id: z.number().nullable().optional(),
-		prompts_frequency: z.array(z.unknown()).nullable().optional(),
+		prompts_frequency: AhrefsOpenList.nullable().optional(),
 		report_id: z.string().nullable().optional(),
 		report_name: z.string().nullable().optional(),
-		settings: z.record(z.string(), z.unknown()).nullable().optional(),
+		settings: AhrefsOpenObject.nullable().optional(),
 		updated_at: z.string().nullable().optional(),
 	})
 	.loose();
@@ -6909,25 +6774,16 @@ export const SiteExplorerAiResponsesCountInputSchema = z.object({
 export const SiteExplorerAiResponsesCountResponseSchema = z.object({
 	ai_responses_count: z
 		.object({
-			all_platforms: z.record(z.string(), z.unknown()).nullable().optional(),
-			chatgpt: z.record(z.string(), z.unknown()).nullable().optional(),
-			copilot: z.record(z.string(), z.unknown()).nullable().optional(),
-			gemini: z.record(z.string(), z.unknown()).nullable().optional(),
-			google_ai_mode: z.record(z.string(), z.unknown()).nullable().optional(),
-			google_ai_mode_keywords: z
-				.record(z.string(), z.unknown())
-				.nullable()
-				.optional(),
-			google_ai_overviews: z
-				.record(z.string(), z.unknown())
-				.nullable()
-				.optional(),
-			google_ai_overviews_keywords: z
-				.record(z.string(), z.unknown())
-				.nullable()
-				.optional(),
-			grok: z.record(z.string(), z.unknown()).nullable().optional(),
-			perplexity: z.record(z.string(), z.unknown()).nullable().optional(),
+			all_platforms: AhrefsOpenObject.nullable().optional(),
+			chatgpt: AhrefsOpenObject.nullable().optional(),
+			copilot: AhrefsOpenObject.nullable().optional(),
+			gemini: AhrefsOpenObject.nullable().optional(),
+			google_ai_mode: AhrefsOpenObject.nullable().optional(),
+			google_ai_mode_keywords: AhrefsOpenObject.nullable().optional(),
+			google_ai_overviews: AhrefsOpenObject.nullable().optional(),
+			google_ai_overviews_keywords: AhrefsOpenObject.nullable().optional(),
+			grok: AhrefsOpenObject.nullable().optional(),
+			perplexity: AhrefsOpenObject.nullable().optional(),
 		})
 		.loose(),
 });
@@ -7941,7 +7797,7 @@ export const BatchAnalysisAnalyzeRowSchema = z
 		org_keywords_21_50: z.number().nullable().optional(),
 		org_keywords_51_plus: z.number().nullable().optional(),
 		org_traffic: z.number().nullable().optional(),
-		org_traffic_top_by_country: z.array(z.unknown()).nullable().optional(),
+		org_traffic_top_by_country: AhrefsOpenList.nullable().optional(),
 		outgoing_links: z.number().nullable().optional(),
 		outgoing_links_dofollow: z.number().nullable().optional(),
 		paid_ads: z.number().nullable().optional(),
@@ -8000,10 +7856,10 @@ export const ContentHelperTopicsRowSchema = z
 	.object({
 		avg_score: z.number().nullable().optional(),
 		description: z.string().nullable().optional(),
-		pages: z.array(z.unknown()).nullable().optional(),
+		pages: AhrefsOpenList.nullable().optional(),
 		pages_covering: z.number().nullable().optional(),
 		serp_date: z.string().nullable().optional(),
-		target: z.record(z.string(), z.unknown()).nullable().optional(),
+		target: AhrefsOpenObject.nullable().optional(),
 		topic: z.string().nullable().optional(),
 	})
 	.loose();
@@ -8112,7 +7968,7 @@ export const PublicDomainRatingFreeBatchResponseSchema = z.object({
 	domain_rating: z
 		.object({
 			license: z.string().nullable().optional(),
-			targets: z.array(z.unknown()).nullable().optional(),
+			targets: AhrefsOpenList.nullable().optional(),
 		})
 		.loose(),
 });

@@ -62,6 +62,8 @@ describe('Ahrefs schemas', () => {
 // a verified project; Site Explorer on ahrefs.com/wordcount.com and Keywords
 // Explorer on "ahrefs", Ahrefs' free test targets; management writes on
 // throwaway objects), trimmed to three rows and anonymised.
+// Fixture inputs and responses are raw JSON; the schemas under test decide
+// whether they are valid, so they stay unknown here.
 type LiveFixture = { input: unknown; response: unknown };
 const readFixtures = (file: string) =>
 	JSON.parse(
@@ -73,6 +75,8 @@ const liveFixtures = readFixtures('live-responses.json');
 const specSamples = readFixtures('spec-samples.json');
 const allFixtures = { ...liveFixtures, ...specSamples };
 
+// The schema map is indexed by a runtime string, so each entry is read through
+// the one method these tests call, on raw (unknown) JSON.
 type EndpointSchemaEntry = {
 	input: { safeParse(value: unknown): { success: boolean } };
 	output: { safeParse(value: unknown): { success: boolean } };
@@ -102,6 +106,7 @@ describe('Ahrefs recorded responses', () => {
 
 	it('registers every endpoint in the nested endpoint map', () => {
 		const plugin = ahrefs({ key: 'test' });
+		// Only the presence of each function is checked, not its signature.
 		const endpoints = plugin.endpoints as Record<
 			string,
 			Record<string, unknown>
@@ -149,6 +154,57 @@ describe('Ahrefs endpoint risk levels', () => {
 });
 
 describe('Ahrefs input validation', () => {
+	it('accepts all as the country for Keywords Explorer', () => {
+		expect(
+			AhrefsEndpointInputSchemas.matchingTerms.safeParse({
+				keywords: 'ahrefs',
+				country: 'all',
+				select: 'keyword,volume',
+			}).success,
+		).toBe(true);
+		expect(
+			AhrefsEndpointInputSchemas.volumeHistory.safeParse({
+				keyword: 'ahrefs',
+				country: 'all',
+			}).success,
+		).toBe(true);
+		expect(
+			AhrefsEndpointInputSchemas.keywordsOverview.safeParse({
+				keywords: 'ahrefs',
+				country: 'all',
+				select: 'keyword,volume',
+			}).success,
+		).toBe(true);
+		expect(
+			AhrefsEndpointInputSchemas.volumeHistory.safeParse({
+				keyword: 'ahrefs',
+				country: 'usa',
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts comma-separated models and countries on Brand Radar reads', () => {
+		expect(
+			AhrefsEndpointInputSchemas.brandRadarSovOverview.safeParse({
+				brand: 'ahrefs,ahrefs seo',
+				data_source: 'chatgpt,perplexity',
+				country: 'us,gb',
+			}).success,
+		).toBe(true);
+		expect(
+			AhrefsEndpointInputSchemas.brandRadarAiResponses.safeParse({
+				select: 'question,volume',
+				data_source: 'chatgpt,gemini',
+				country: 'us,de,fr',
+			}).success,
+		).toBe(true);
+		expect(
+			AhrefsEndpointInputSchemas.brandRadarSovOverview.safeParse({
+				data_source: '',
+			}).success,
+		).toBe(false);
+	});
+
 	it('accepts Web Analytics counts sent as numeric strings', () => {
 		expect(
 			AhrefsEndpointOutputSchemas.webAnalyticsStats.safeParse({

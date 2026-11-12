@@ -1,153 +1,84 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
 import { callAhrefs } from './request';
-import type {
-	ManagementAddBrandRadarPromptsResponse,
-	ManagementAddKeywordListKeywordsResponse,
-	ManagementAddProjectCompetitorsResponse,
-	ManagementAddProjectKeywordsResponse,
-	ManagementAddProjectKeywordTagsResponse,
-	ManagementBrandRadarPromptsResponse,
-	ManagementBrandRadarReportsResponse,
-	ManagementCreateBrandRadarReportResponse,
-	ManagementCreateKeywordListResponse,
-	ManagementCreateProjectResponse,
-	ManagementDeleteBrandRadarPromptsResponse,
-	ManagementDeleteKeywordListKeywordsResponse,
-	ManagementDeleteKeywordListsResponse,
-	ManagementDeleteProjectCompetitorsResponse,
-	ManagementDeleteProjectKeywordsResponse,
-	ManagementDeleteProjectKeywordTagsResponse,
-	ManagementDeleteProjectsResponse,
-	ManagementKeywordListKeywordsResponse,
-	ManagementKeywordListsResponse,
-	ManagementLocationsResponse,
-	ManagementProjectCompetitorsResponse,
-	ManagementProjectKeywordsResponse,
-	ManagementProjectsResponse,
-	ManagementUpdateBrandRadarPromptsResponse,
-	ManagementUpdateBrandRadarReportResponse,
-	ManagementUpdateProjectResponse,
-} from './types';
 
-export const projects: AhrefsEndpoints['managementProjects'] = async (
+export const projects: AhrefsEndpoints['managementProjects'] = (ctx, input) =>
+	callAhrefs(
+		ctx,
+		{
+			endpoint: 'managementProjects',
+			method: 'GET',
+			path: '/management/projects',
+			event: 'ahrefs.management.projects',
+			logKeys: ['project_id'],
+		},
+		input,
+	);
+
+export const projectKeywords: AhrefsEndpoints['managementProjectKeywords'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<ManagementProjectsResponse>(
-		'/management/projects',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.management.projects',
-		{ project_id: input.project_id, resultCount: response.projects.length },
-		'completed',
+		{
+			endpoint: 'managementProjectKeywords',
+			method: 'GET',
+			path: '/management/project-keywords',
+			event: 'ahrefs.management.projectKeywords',
+			logKeys: ['project_id'],
+		},
+		input,
 	);
 
-	return response;
-};
-
-export const projectKeywords: AhrefsEndpoints['managementProjectKeywords'] =
-	async (ctx, input) => {
-		const response = await makeAhrefsRequest<ManagementProjectKeywordsResponse>(
-			'/management/project-keywords',
-			ctx.key,
-			{
-				query: input,
-			},
-		);
-
-		await logEventFromContext(
-			ctx,
-			'ahrefs.management.projectKeywords',
-			{ project_id: input.project_id, resultCount: response.keywords.length },
-			'completed',
-		);
-
-		return response;
-	};
-
-export const keywordLists: AhrefsEndpoints['managementKeywordLists'] = async (
+export const keywordLists: AhrefsEndpoints['managementKeywordLists'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<ManagementKeywordListsResponse>(
-		'/management/keyword-lists',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.management.keywordLists',
-		{ resultCount: response.keyword_lists.length },
-		'completed',
+		{
+			endpoint: 'managementKeywordLists',
+			method: 'GET',
+			path: '/management/keyword-lists',
+			event: 'ahrefs.management.keywordLists',
+		},
+		input,
 	);
-
-	return response;
-};
 
 export const keywordListKeywords: AhrefsEndpoints['managementKeywordListKeywords'] =
-	async (ctx, input) => {
-		const response =
-			await makeAhrefsRequest<ManagementKeywordListKeywordsResponse>(
-				'/management/keyword-list-keywords',
-				ctx.key,
-				{
-					query: input,
-				},
-			);
-
-		await logEventFromContext(
+	(ctx, input) =>
+		callAhrefs(
 			ctx,
-			'ahrefs.management.keywordListKeywords',
 			{
-				keyword_list_id: input.keyword_list_id,
-				resultCount: response.keywords.length,
+				endpoint: 'managementKeywordListKeywords',
+				method: 'GET',
+				path: '/management/keyword-list-keywords',
+				event: 'ahrefs.management.keywordListKeywords',
+				logKeys: ['keyword_list_id'],
 			},
-			'completed',
+			input,
 		);
 
-		return response;
-	};
-
-export const locations: AhrefsEndpoints['managementLocations'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeAhrefsRequest<ManagementLocationsResponse>(
-		'/management/locations',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+export const locations: AhrefsEndpoints['managementLocations'] = (ctx, input) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.management.locations',
-		{},
-		'completed',
+		{
+			endpoint: 'managementLocations',
+			method: 'GET',
+			path: '/management/locations',
+			event: 'ahrefs.management.locations',
+		},
+		input,
 	);
-
-	return response;
-};
 
 export const createProject: AhrefsEndpoints['managementCreateProject'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<ManagementCreateProjectResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'managementCreateProject',
 			method: 'POST',
 			path: '/management/projects',
 			event: 'ahrefs.management.createProject',
@@ -168,9 +99,10 @@ export const updateProject: AhrefsEndpoints['managementUpdateProject'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<ManagementUpdateProjectResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'managementUpdateProject',
 			method: 'PATCH',
 			path: '/management/update-project',
 			event: 'ahrefs.management.updateProject',
@@ -184,9 +116,10 @@ export const deleteProjects: AhrefsEndpoints['managementDeleteProjects'] = (
 	ctx,
 	input,
 ) =>
-	callAhrefs<ManagementDeleteProjectsResponse>(
+	callAhrefs(
 		ctx,
 		{
+			endpoint: 'managementDeleteProjects',
 			method: 'DELETE',
 			path: '/management/projects',
 			event: 'ahrefs.management.deleteProjects',
@@ -197,9 +130,10 @@ export const deleteProjects: AhrefsEndpoints['managementDeleteProjects'] = (
 
 export const addProjectKeywords: AhrefsEndpoints['managementAddProjectKeywords'] =
 	(ctx, input) =>
-		callAhrefs<ManagementAddProjectKeywordsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementAddProjectKeywords',
 				method: 'PUT',
 				path: '/management/project-keywords',
 				event: 'ahrefs.management.addProjectKeywords',
@@ -211,9 +145,10 @@ export const addProjectKeywords: AhrefsEndpoints['managementAddProjectKeywords']
 
 export const deleteProjectKeywords: AhrefsEndpoints['managementDeleteProjectKeywords'] =
 	(ctx, input) =>
-		callAhrefs<ManagementDeleteProjectKeywordsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementDeleteProjectKeywords',
 				method: 'PUT',
 				path: '/management/project-keywords-delete',
 				event: 'ahrefs.management.deleteProjectKeywords',
@@ -225,9 +160,10 @@ export const deleteProjectKeywords: AhrefsEndpoints['managementDeleteProjectKeyw
 
 export const addProjectKeywordTags: AhrefsEndpoints['managementAddProjectKeywordTags'] =
 	(ctx, input) =>
-		callAhrefs<ManagementAddProjectKeywordTagsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementAddProjectKeywordTags',
 				method: 'PUT',
 				path: '/management/project-keywords-tags',
 				event: 'ahrefs.management.addProjectKeywordTags',
@@ -239,9 +175,10 @@ export const addProjectKeywordTags: AhrefsEndpoints['managementAddProjectKeyword
 
 export const deleteProjectKeywordTags: AhrefsEndpoints['managementDeleteProjectKeywordTags'] =
 	(ctx, input) =>
-		callAhrefs<ManagementDeleteProjectKeywordTagsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementDeleteProjectKeywordTags',
 				method: 'PUT',
 				path: '/management/project-keywords-tags-delete',
 				event: 'ahrefs.management.deleteProjectKeywordTags',
@@ -253,9 +190,10 @@ export const deleteProjectKeywordTags: AhrefsEndpoints['managementDeleteProjectK
 
 export const projectCompetitors: AhrefsEndpoints['managementProjectCompetitors'] =
 	(ctx, input) =>
-		callAhrefs<ManagementProjectCompetitorsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementProjectCompetitors',
 				method: 'GET',
 				path: '/management/project-competitors',
 				event: 'ahrefs.management.projectCompetitors',
@@ -266,9 +204,10 @@ export const projectCompetitors: AhrefsEndpoints['managementProjectCompetitors']
 
 export const addProjectCompetitors: AhrefsEndpoints['managementAddProjectCompetitors'] =
 	(ctx, input) =>
-		callAhrefs<ManagementAddProjectCompetitorsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementAddProjectCompetitors',
 				method: 'POST',
 				path: '/management/project-competitors',
 				event: 'ahrefs.management.addProjectCompetitors',
@@ -280,9 +219,10 @@ export const addProjectCompetitors: AhrefsEndpoints['managementAddProjectCompeti
 
 export const deleteProjectCompetitors: AhrefsEndpoints['managementDeleteProjectCompetitors'] =
 	(ctx, input) =>
-		callAhrefs<ManagementDeleteProjectCompetitorsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementDeleteProjectCompetitors',
 				method: 'POST',
 				path: '/management/project-competitors-delete',
 				event: 'ahrefs.management.deleteProjectCompetitors',
@@ -294,9 +234,10 @@ export const deleteProjectCompetitors: AhrefsEndpoints['managementDeleteProjectC
 
 export const createKeywordList: AhrefsEndpoints['managementCreateKeywordList'] =
 	(ctx, input) =>
-		callAhrefs<ManagementCreateKeywordListResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementCreateKeywordList',
 				method: 'POST',
 				path: '/management/keyword-lists',
 				event: 'ahrefs.management.createKeywordList',
@@ -315,9 +256,10 @@ export const createKeywordList: AhrefsEndpoints['managementCreateKeywordList'] =
 
 export const deleteKeywordLists: AhrefsEndpoints['managementDeleteKeywordLists'] =
 	(ctx, input) =>
-		callAhrefs<ManagementDeleteKeywordListsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementDeleteKeywordLists',
 				method: 'DELETE',
 				path: '/management/keyword-lists',
 				event: 'ahrefs.management.deleteKeywordLists',
@@ -328,9 +270,10 @@ export const deleteKeywordLists: AhrefsEndpoints['managementDeleteKeywordLists']
 
 export const addKeywordListKeywords: AhrefsEndpoints['managementAddKeywordListKeywords'] =
 	(ctx, input) =>
-		callAhrefs<ManagementAddKeywordListKeywordsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementAddKeywordListKeywords',
 				method: 'PUT',
 				path: '/management/keyword-list-keywords',
 				event: 'ahrefs.management.addKeywordListKeywords',
@@ -342,9 +285,10 @@ export const addKeywordListKeywords: AhrefsEndpoints['managementAddKeywordListKe
 
 export const deleteKeywordListKeywords: AhrefsEndpoints['managementDeleteKeywordListKeywords'] =
 	(ctx, input) =>
-		callAhrefs<ManagementDeleteKeywordListKeywordsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementDeleteKeywordListKeywords',
 				method: 'PUT',
 				path: '/management/keyword-list-keywords-delete',
 				event: 'ahrefs.management.deleteKeywordListKeywords',
@@ -356,9 +300,10 @@ export const deleteKeywordListKeywords: AhrefsEndpoints['managementDeleteKeyword
 
 export const brandRadarReports: AhrefsEndpoints['managementBrandRadarReports'] =
 	(ctx, input) =>
-		callAhrefs<ManagementBrandRadarReportsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementBrandRadarReports',
 				method: 'GET',
 				path: '/management/brand-radar-reports',
 				event: 'ahrefs.management.brandRadarReports',
@@ -368,9 +313,10 @@ export const brandRadarReports: AhrefsEndpoints['managementBrandRadarReports'] =
 
 export const createBrandRadarReport: AhrefsEndpoints['managementCreateBrandRadarReport'] =
 	(ctx, input) =>
-		callAhrefs<ManagementCreateBrandRadarReportResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementCreateBrandRadarReport',
 				method: 'POST',
 				path: '/management/brand-radar-reports',
 				event: 'ahrefs.management.createBrandRadarReport',
@@ -391,9 +337,10 @@ export const createBrandRadarReport: AhrefsEndpoints['managementCreateBrandRadar
 
 export const updateBrandRadarReport: AhrefsEndpoints['managementUpdateBrandRadarReport'] =
 	(ctx, input) =>
-		callAhrefs<ManagementUpdateBrandRadarReportResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementUpdateBrandRadarReport',
 				method: 'PATCH',
 				path: '/management/brand-radar-reports',
 				event: 'ahrefs.management.updateBrandRadarReport',
@@ -413,9 +360,10 @@ export const updateBrandRadarReport: AhrefsEndpoints['managementUpdateBrandRadar
 
 export const brandRadarPrompts: AhrefsEndpoints['managementBrandRadarPrompts'] =
 	(ctx, input) =>
-		callAhrefs<ManagementBrandRadarPromptsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementBrandRadarPrompts',
 				method: 'GET',
 				path: '/management/brand-radar-prompts',
 				event: 'ahrefs.management.brandRadarPrompts',
@@ -426,9 +374,10 @@ export const brandRadarPrompts: AhrefsEndpoints['managementBrandRadarPrompts'] =
 
 export const addBrandRadarPrompts: AhrefsEndpoints['managementAddBrandRadarPrompts'] =
 	(ctx, input) =>
-		callAhrefs<ManagementAddBrandRadarPromptsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementAddBrandRadarPrompts',
 				method: 'POST',
 				path: '/management/brand-radar-prompts',
 				event: 'ahrefs.management.addBrandRadarPrompts',
@@ -440,9 +389,10 @@ export const addBrandRadarPrompts: AhrefsEndpoints['managementAddBrandRadarPromp
 
 export const updateBrandRadarPrompts: AhrefsEndpoints['managementUpdateBrandRadarPrompts'] =
 	(ctx, input) =>
-		callAhrefs<ManagementUpdateBrandRadarPromptsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementUpdateBrandRadarPrompts',
 				method: 'PATCH',
 				path: '/management/brand-radar-prompts',
 				event: 'ahrefs.management.updateBrandRadarPrompts',
@@ -454,9 +404,10 @@ export const updateBrandRadarPrompts: AhrefsEndpoints['managementUpdateBrandRada
 
 export const deleteBrandRadarPrompts: AhrefsEndpoints['managementDeleteBrandRadarPrompts'] =
 	(ctx, input) =>
-		callAhrefs<ManagementDeleteBrandRadarPromptsResponse>(
+		callAhrefs(
 			ctx,
 			{
+				endpoint: 'managementDeleteBrandRadarPrompts',
 				method: 'PUT',
 				path: '/management/brand-radar-prompts-delete',
 				event: 'ahrefs.management.deleteBrandRadarPrompts',

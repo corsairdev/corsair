@@ -1,352 +1,242 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
-import type {
-	GscAnonymousQueriesResponse,
-	GscCtrByPositionResponse,
-	GscKeywordHistoryResponse,
-	GscKeywordsResponse,
-	GscMetricsByCountryResponse,
-	GscPageHistoryResponse,
-	GscPagesHistoryResponse,
-	GscPagesResponse,
-	GscPerformanceByDeviceResponse,
-	GscPerformanceByPositionResponse,
-	GscPerformanceHistoryResponse,
-	GscPositionsHistoryResponse,
-} from './types';
+import { callAhrefs } from './request';
 
-export const keywords: AhrefsEndpoints['gscKeywords'] = async (ctx, input) => {
-	const response = await makeAhrefsRequest<GscKeywordsResponse>(
-		'/gsc/keywords',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+export const keywords: AhrefsEndpoints['gscKeywords'] = (ctx, input) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.gsc.keywords',
 		{
-			project_id: input.project_id,
-			portfolio_id: input.portfolio_id,
-			country: input.country,
-			date_from: input.date_from,
-			date_to: input.date_to,
-			keyword_list_id: input.keyword_list_id,
-			resultCount: response.keywords.length,
+			endpoint: 'gscKeywords',
+			method: 'GET',
+			path: '/gsc/keywords',
+			event: 'ahrefs.gsc.keywords',
+			logKeys: [
+				'project_id',
+				'portfolio_id',
+				'country',
+				'date_from',
+				'date_to',
+				'keyword_list_id',
+			],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
-
-export const pages: AhrefsEndpoints['gscPages'] = async (ctx, input) => {
-	const response = await makeAhrefsRequest<GscPagesResponse>(
-		'/gsc/pages',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+export const pages: AhrefsEndpoints['gscPages'] = (ctx, input) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.gsc.pages',
 		{
-			project_id: input.project_id,
-			portfolio_id: input.portfolio_id,
-			country: input.country,
-			date_from: input.date_from,
-			date_to: input.date_to,
-			resultCount: response.pages.length,
+			endpoint: 'gscPages',
+			method: 'GET',
+			path: '/gsc/pages',
+			event: 'ahrefs.gsc.pages',
+			logKeys: [
+				'project_id',
+				'portfolio_id',
+				'country',
+				'date_from',
+				'date_to',
+			],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
-
-export const performanceHistory: AhrefsEndpoints['gscPerformanceHistory'] =
-	async (ctx, input) => {
-		const response = await makeAhrefsRequest<GscPerformanceHistoryResponse>(
-			'/gsc/performance-history',
-			ctx.key,
-			{
-				query: input,
-			},
-		);
-
-		await logEventFromContext(
-			ctx,
-			'ahrefs.gsc.performanceHistory',
-			{
-				project_id: input.project_id,
-				portfolio_id: input.portfolio_id,
-				country: input.country,
-				date_from: input.date_from,
-				date_to: input.date_to,
-				resultCount: response.metrics.length,
-			},
-			'completed',
-		);
-
-		return response;
-	};
-
-export const keywordHistory: AhrefsEndpoints['gscKeywordHistory'] = async (
+export const performanceHistory: AhrefsEndpoints['gscPerformanceHistory'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<GscKeywordHistoryResponse>(
-		'/gsc/keyword-history',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.gsc.keywordHistory',
 		{
-			project_id: input.project_id,
-			portfolio_id: input.portfolio_id,
-			keywords: input.keywords,
-			country: input.country,
-			date_from: input.date_from,
-			date_to: input.date_to,
-			resultCount: response.metrics.length,
+			endpoint: 'gscPerformanceHistory',
+			method: 'GET',
+			path: '/gsc/performance-history',
+			event: 'ahrefs.gsc.performanceHistory',
+			logKeys: [
+				'project_id',
+				'portfolio_id',
+				'country',
+				'date_from',
+				'date_to',
+			],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
-
-export const pageHistory: AhrefsEndpoints['gscPageHistory'] = async (
+export const keywordHistory: AhrefsEndpoints['gscKeywordHistory'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<GscPageHistoryResponse>(
-		'/gsc/page-history',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.gsc.pageHistory',
 		{
-			project_id: input.project_id,
-			portfolio_id: input.portfolio_id,
-			country: input.country,
-			date_from: input.date_from,
-			date_to: input.date_to,
-			resultCount: response.metrics.length,
+			endpoint: 'gscKeywordHistory',
+			method: 'GET',
+			path: '/gsc/keyword-history',
+			event: 'ahrefs.gsc.keywordHistory',
+			logKeys: [
+				'project_id',
+				'portfolio_id',
+				'keywords',
+				'country',
+				'date_from',
+				'date_to',
+			],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
+export const pageHistory: AhrefsEndpoints['gscPageHistory'] = (ctx, input) =>
+	callAhrefs(
+		ctx,
+		{
+			endpoint: 'gscPageHistory',
+			method: 'GET',
+			path: '/gsc/page-history',
+			event: 'ahrefs.gsc.pageHistory',
+			logKeys: [
+				'project_id',
+				'portfolio_id',
+				'country',
+				'date_from',
+				'date_to',
+			],
+		},
+		input,
+	);
 
-export const pagesHistory: AhrefsEndpoints['gscPagesHistory'] = async (
+export const pagesHistory: AhrefsEndpoints['gscPagesHistory'] = (ctx, input) =>
+	callAhrefs(
+		ctx,
+		{
+			endpoint: 'gscPagesHistory',
+			method: 'GET',
+			path: '/gsc/pages-history',
+			event: 'ahrefs.gsc.pagesHistory',
+			logKeys: [
+				'project_id',
+				'portfolio_id',
+				'country',
+				'date_from',
+				'date_to',
+			],
+		},
+		input,
+	);
+
+export const positionsHistory: AhrefsEndpoints['gscPositionsHistory'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<GscPagesHistoryResponse>(
-		'/gsc/pages-history',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.gsc.pagesHistory',
 		{
-			project_id: input.project_id,
-			portfolio_id: input.portfolio_id,
-			country: input.country,
-			date_from: input.date_from,
-			date_to: input.date_to,
-			resultCount: response.metrics.length,
+			endpoint: 'gscPositionsHistory',
+			method: 'GET',
+			path: '/gsc/positions-history',
+			event: 'ahrefs.gsc.positionsHistory',
+			logKeys: [
+				'project_id',
+				'portfolio_id',
+				'country',
+				'date_from',
+				'date_to',
+			],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
-
-export const positionsHistory: AhrefsEndpoints['gscPositionsHistory'] = async (
+export const ctrByPosition: AhrefsEndpoints['gscCtrByPosition'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<GscPositionsHistoryResponse>(
-		'/gsc/positions-history',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.gsc.positionsHistory',
 		{
-			project_id: input.project_id,
-			portfolio_id: input.portfolio_id,
-			country: input.country,
-			date_from: input.date_from,
-			date_to: input.date_to,
-			resultCount: response.metrics.length,
+			endpoint: 'gscCtrByPosition',
+			method: 'GET',
+			path: '/gsc/ctr-by-position',
+			event: 'ahrefs.gsc.ctrByPosition',
+			logKeys: [
+				'project_id',
+				'portfolio_id',
+				'country',
+				'date_from',
+				'date_to',
+			],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
-
-export const ctrByPosition: AhrefsEndpoints['gscCtrByPosition'] = async (
+export const performanceByDevice: AhrefsEndpoints['gscPerformanceByDevice'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<GscCtrByPositionResponse>(
-		'/gsc/ctr-by-position',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.gsc.ctrByPosition',
 		{
-			project_id: input.project_id,
-			portfolio_id: input.portfolio_id,
-			country: input.country,
-			date_from: input.date_from,
-			date_to: input.date_to,
-			resultCount: response.metrics.length,
+			endpoint: 'gscPerformanceByDevice',
+			method: 'GET',
+			path: '/gsc/performance-by-device',
+			event: 'ahrefs.gsc.performanceByDevice',
+			logKeys: [
+				'project_id',
+				'portfolio_id',
+				'country',
+				'date_from',
+				'date_to',
+			],
 		},
-		'completed',
+		input,
 	);
-
-	return response;
-};
-
-export const performanceByDevice: AhrefsEndpoints['gscPerformanceByDevice'] =
-	async (ctx, input) => {
-		const response = await makeAhrefsRequest<GscPerformanceByDeviceResponse>(
-			'/gsc/performance-by-device',
-			ctx.key,
-			{
-				query: input,
-			},
-		);
-
-		await logEventFromContext(
-			ctx,
-			'ahrefs.gsc.performanceByDevice',
-			{
-				project_id: input.project_id,
-				portfolio_id: input.portfolio_id,
-				country: input.country,
-				date_from: input.date_from,
-				date_to: input.date_to,
-				resultCount: response.metrics.length,
-			},
-			'completed',
-		);
-
-		return response;
-	};
 
 export const performanceByPosition: AhrefsEndpoints['gscPerformanceByPosition'] =
-	async (ctx, input) => {
-		const response = await makeAhrefsRequest<GscPerformanceByPositionResponse>(
-			'/gsc/performance-by-position',
-			ctx.key,
-			{
-				query: input,
-			},
-		);
-
-		await logEventFromContext(
+	(ctx, input) =>
+		callAhrefs(
 			ctx,
-			'ahrefs.gsc.performanceByPosition',
 			{
-				project_id: input.project_id,
-				portfolio_id: input.portfolio_id,
-				country: input.country,
-				date_from: input.date_from,
-				date_to: input.date_to,
-				resultCount: response.metrics.length,
+				endpoint: 'gscPerformanceByPosition',
+				method: 'GET',
+				path: '/gsc/performance-by-position',
+				event: 'ahrefs.gsc.performanceByPosition',
+				logKeys: [
+					'project_id',
+					'portfolio_id',
+					'country',
+					'date_from',
+					'date_to',
+				],
 			},
-			'completed',
+			input,
 		);
 
-		return response;
-	};
-
-export const metricsByCountry: AhrefsEndpoints['gscMetricsByCountry'] = async (
+export const metricsByCountry: AhrefsEndpoints['gscMetricsByCountry'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<GscMetricsByCountryResponse>(
-		'/gsc/metrics-by-country',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.gsc.metricsByCountry',
 		{
-			project_id: input.project_id,
-			portfolio_id: input.portfolio_id,
-			date_from: input.date_from,
-			date_to: input.date_to,
-			resultCount: response.metrics.length,
+			endpoint: 'gscMetricsByCountry',
+			method: 'GET',
+			path: '/gsc/metrics-by-country',
+			event: 'ahrefs.gsc.metricsByCountry',
+			logKeys: ['project_id', 'portfolio_id', 'date_from', 'date_to'],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
-
-export const anonymousQueries: AhrefsEndpoints['gscAnonymousQueries'] = async (
+export const anonymousQueries: AhrefsEndpoints['gscAnonymousQueries'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<GscAnonymousQueriesResponse>(
-		'/gsc/anonymous-queries',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.gsc.anonymousQueries',
 		{
-			project_id: input.project_id,
-			country: input.country,
-			date_from: input.date_from,
-			resultCount: response.keywords.length,
+			endpoint: 'gscAnonymousQueries',
+			method: 'GET',
+			path: '/gsc/anonymous-queries',
+			event: 'ahrefs.gsc.anonymousQueries',
+			logKeys: ['project_id', 'country', 'date_from'],
 		},
-		'completed',
+		input,
 	);
-
-	return response;
-};

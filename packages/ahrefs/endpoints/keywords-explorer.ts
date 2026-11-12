@@ -1,14 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
-import type {
-	KeywordsOverviewResponse,
-	MatchingTermsResponse,
-	RelatedTermsResponse,
-	SearchSuggestionsResponse,
-	VolumeByCountryResponse,
-	VolumeHistoryResponse,
-} from './types';
+import { callAhrefs } from './request';
+import type { KeywordsOverviewResponse } from './types';
+import { AhrefsEndpointInputSchemas } from './types';
 
 export const overview: AhrefsEndpoints['keywordsOverview'] = async (
 	ctx,
@@ -23,7 +18,7 @@ export const overview: AhrefsEndpoints['keywordsOverview'] = async (
 		ctx.key,
 		{
 			query: {
-				...input,
+				...AhrefsEndpointInputSchemas.keywordsOverview.parse(input),
 				keywords,
 			},
 		},
@@ -71,137 +66,73 @@ export const overview: AhrefsEndpoints['keywordsOverview'] = async (
 	return response;
 };
 
-export const matchingTerms: AhrefsEndpoints['matchingTerms'] = async (
+export const matchingTerms: AhrefsEndpoints['matchingTerms'] = (ctx, input) =>
+	callAhrefs(
+		ctx,
+		{
+			endpoint: 'matchingTerms',
+			method: 'GET',
+			path: '/keywords-explorer/matching-terms',
+			event: 'ahrefs.keywordsExplorer.matchingTerms',
+			logKeys: ['keywords', 'country', 'keyword_list_id'],
+		},
+		input,
+	);
+
+export const relatedTerms: AhrefsEndpoints['relatedTerms'] = (ctx, input) =>
+	callAhrefs(
+		ctx,
+		{
+			endpoint: 'relatedTerms',
+			method: 'GET',
+			path: '/keywords-explorer/related-terms',
+			event: 'ahrefs.keywordsExplorer.relatedTerms',
+			logKeys: ['keywords', 'country', 'keyword_list_id'],
+		},
+		input,
+	);
+
+export const searchSuggestions: AhrefsEndpoints['searchSuggestions'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<MatchingTermsResponse>(
-		'/keywords-explorer/matching-terms',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.keywordsExplorer.matchingTerms',
 		{
-			keywords: input.keywords,
-			country: input.country,
-			keyword_list_id: input.keyword_list_id,
-			resultCount: response.keywords.length,
+			endpoint: 'searchSuggestions',
+			method: 'GET',
+			path: '/keywords-explorer/search-suggestions',
+			event: 'ahrefs.keywordsExplorer.searchSuggestions',
+			logKeys: ['keywords', 'country', 'keyword_list_id'],
 		},
-		'completed',
+		input,
 	);
 
-	return response;
-};
+export const volumeHistory: AhrefsEndpoints['volumeHistory'] = (ctx, input) =>
+	callAhrefs(
+		ctx,
+		{
+			endpoint: 'volumeHistory',
+			method: 'GET',
+			path: '/keywords-explorer/volume-history',
+			event: 'ahrefs.keywordsExplorer.volumeHistory',
+			logKeys: ['keyword', 'country', 'date_from', 'date_to'],
+		},
+		input,
+	);
 
-export const relatedTerms: AhrefsEndpoints['relatedTerms'] = async (
+export const volumeByCountry: AhrefsEndpoints['volumeByCountry'] = (
 	ctx,
 	input,
-) => {
-	const response = await makeAhrefsRequest<RelatedTermsResponse>(
-		'/keywords-explorer/related-terms',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
+) =>
+	callAhrefs(
 		ctx,
-		'ahrefs.keywordsExplorer.relatedTerms',
 		{
-			keywords: input.keywords,
-			country: input.country,
-			keyword_list_id: input.keyword_list_id,
-			resultCount: response.keywords.length,
+			endpoint: 'volumeByCountry',
+			method: 'GET',
+			path: '/keywords-explorer/volume-by-country',
+			event: 'ahrefs.keywordsExplorer.volumeByCountry',
+			logKeys: ['keyword', 'keyword_list_id'],
 		},
-		'completed',
+		input,
 	);
-
-	return response;
-};
-
-export const searchSuggestions: AhrefsEndpoints['searchSuggestions'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeAhrefsRequest<SearchSuggestionsResponse>(
-		'/keywords-explorer/search-suggestions',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
-		ctx,
-		'ahrefs.keywordsExplorer.searchSuggestions',
-		{
-			keywords: input.keywords,
-			country: input.country,
-			keyword_list_id: input.keyword_list_id,
-			resultCount: response.keywords.length,
-		},
-		'completed',
-	);
-
-	return response;
-};
-
-export const volumeHistory: AhrefsEndpoints['volumeHistory'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeAhrefsRequest<VolumeHistoryResponse>(
-		'/keywords-explorer/volume-history',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
-		ctx,
-		'ahrefs.keywordsExplorer.volumeHistory',
-		{
-			keyword: input.keyword,
-			country: input.country,
-			date_from: input.date_from,
-			date_to: input.date_to,
-			resultCount: response.metrics.length,
-		},
-		'completed',
-	);
-
-	return response;
-};
-
-export const volumeByCountry: AhrefsEndpoints['volumeByCountry'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeAhrefsRequest<VolumeByCountryResponse>(
-		'/keywords-explorer/volume-by-country',
-		ctx.key,
-		{
-			query: input,
-		},
-	);
-
-	await logEventFromContext(
-		ctx,
-		'ahrefs.keywordsExplorer.volumeByCountry',
-		{
-			keyword: input.keyword,
-			keyword_list_id: input.keyword_list_id,
-			resultCount: response.countries.length,
-		},
-		'completed',
-	);
-
-	return response;
-};

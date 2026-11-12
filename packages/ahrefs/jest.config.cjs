@@ -29,6 +29,7 @@ module.exports = {
 					verbatimModuleSyntax: false,
 					module: 'ESNext',
 					moduleResolution: 'Bundler',
+					types: ['node', 'jest'],
 				},
 			},
 		],

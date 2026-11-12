@@ -127,7 +127,7 @@ await corsair.ahrefs.api.brandRadar.aiResponses({});
 | `report_id` | `string` | No | The ID of the report to use. |
 | `brand` | `string` | No | A comma-separated list of brands to search for. |
 | `competitors` | `string` | No | A comma-separated list of competitors of your brands. |
-| `data_source` | `chatgpt \| google_ai_overviews \| google_ai_mode \| gemini \| perplexity \| copilot \| claude \| grok \| google_ai_overviews_keywords \| google_ai_mode_keywords` | Yes | A comma-separated list of chatbot models. |
+| `data_source` | `string` | Yes | Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords. |
 | `country` | `string` | No | A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2). |
 | `prompts` | `ahrefs \| custom` | No | The type of prompts to use. |
 | `limit` | `number` | No | The number of results to return. |
@@ -506,7 +506,7 @@ await corsair.ahrefs.api.brandRadar.citedDomains({});
 | `report_id` | `string` | No | The ID of the report to use. |
 | `brand` | `string` | No | A comma-separated list of brands to search for. |
 | `competitors` | `string` | No | A comma-separated list of competitors of your brands. |
-| `data_source` | `chatgpt \| google_ai_overviews \| google_ai_mode \| gemini \| perplexity \| copilot \| claude \| grok \| google_ai_overviews_keywords \| google_ai_mode_keywords` | Yes | A comma-separated list of chatbot models. |
+| `data_source` | `string` | Yes | Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords. |
 | `country` | `string` | No | A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2). |
 | `prompts` | `ahrefs \| custom` | No | The type of prompts to use. |
 | `limit` | `number` | No | The number of results to return. |
@@ -668,7 +668,7 @@ await corsair.ahrefs.api.brandRadar.citedPages({});
 | `report_id` | `string` | No | The ID of the report to use. |
 | `brand` | `string` | No | A comma-separated list of brands to search for. |
 | `competitors` | `string` | No | A comma-separated list of competitors of your brands. |
-| `data_source` | `chatgpt \| google_ai_overviews \| google_ai_mode \| gemini \| perplexity \| copilot \| claude \| grok \| google_ai_overviews_keywords \| google_ai_mode_keywords` | Yes | A comma-separated list of chatbot models. |
+| `data_source` | `string` | Yes | Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords. |
 | `country` | `string` | No | A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2). |
 | `prompts` | `ahrefs \| custom` | No | The type of prompts to use. |
 | `limit` | `number` | No | The number of results to return. |
@@ -830,7 +830,7 @@ await corsair.ahrefs.api.brandRadar.impressionsHistory({});
 | `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
 | `report_id` | `string` | No | The ID of the report to use. |
 | `brand` | `string` | Yes | The brand to search for. |
-| `data_source` | `chatgpt \| google_ai_overviews \| google_ai_mode \| gemini \| perplexity \| copilot \| claude \| grok \| google_ai_overviews_keywords \| google_ai_mode_keywords` | Yes | A comma-separated list of chatbot models. |
+| `data_source` | `string` | Yes | Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords. |
 | `country` | `string` | No | A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2). |
 | `prompts` | `ahrefs \| custom` | No | The type of prompts to use. |
 | `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
@@ -959,7 +959,7 @@ await corsair.ahrefs.api.brandRadar.impressionsOverview({});
 | `report_id` | `string` | No | The ID of the report to use. |
 | `brand` | `string` | No | A comma-separated list of brands to search for. |
 | `competitors` | `string` | No | A comma-separated list of competitors of your brands. |
-| `data_source` | `chatgpt \| google_ai_overviews \| google_ai_mode \| gemini \| perplexity \| copilot \| claude \| grok \| google_ai_overviews_keywords \| google_ai_mode_keywords` | Yes | A comma-separated list of chatbot models. |
+| `data_source` | `string` | Yes | Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords. |
 | `country` | `string` | No | A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2). |
 | `prompts` | `ahrefs \| custom` | No | The type of prompts to use. |
 | `output` | `json` | No | — |
@@ -1107,7 +1107,7 @@ await corsair.ahrefs.api.brandRadar.mentionsHistory({});
 | `where` | `string` | No | Filter expression as a JSON string; see the Ahrefs API docs for the fields this endpoint accepts. |
 | `report_id` | `string` | No | The ID of the report to use. |
 | `brand` | `string` | Yes | The brand to search for. |
-| `data_source` | `chatgpt \| google_ai_overviews \| google_ai_mode \| gemini \| perplexity \| copilot \| claude \| grok \| google_ai_overviews_keywords \| google_ai_mode_keywords` | Yes | A comma-separated list of chatbot models. |
+| `data_source` | `string` | Yes | Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords. |
 | `country` | `string` | No | A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2). |
 | `prompts` | `ahrefs \| custom` | No | The type of prompts to use. |
 | `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
@@ -1236,7 +1236,7 @@ await corsair.ahrefs.api.brandRadar.mentionsOverview({});
 | `report_id` | `string` | No | The ID of the report to use. |
 | `brand` | `string` | No | A comma-separated list of brands to search for. |
 | `competitors` | `string` | No | A comma-separated list of competitors of your brands. |
-| `data_source` | `chatgpt \| google_ai_overviews \| google_ai_mode \| gemini \| perplexity \| copilot \| claude \| grok \| google_ai_overviews_keywords \| google_ai_mode_keywords` | Yes | A comma-separated list of chatbot models. |
+| `data_source` | `string` | Yes | Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords. |
 | `country` | `string` | No | A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2). |
 | `prompts` | `ahrefs \| custom` | No | The type of prompts to use. |
 | `output` | `json` | No | — |
@@ -1385,7 +1385,7 @@ await corsair.ahrefs.api.brandRadar.sovHistory({});
 | `report_id` | `string` | No | The ID of the report to use. |
 | `brand` | `string` | No | A comma-separated list of brands to search for. |
 | `competitors` | `string` | No | A comma-separated list of competitors of your brands. |
-| `data_source` | `chatgpt \| google_ai_overviews \| google_ai_mode \| gemini \| perplexity \| copilot \| claude \| grok \| google_ai_overviews_keywords \| google_ai_mode_keywords` | Yes | A comma-separated list of chatbot models. |
+| `data_source` | `string` | Yes | Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords. |
 | `country` | `string` | No | A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2). |
 | `prompts` | `ahrefs \| custom` | No | The type of prompts to use. |
 | `date_from` | `string` | Yes | The start date of the historical period in YYYY-MM-DD format. |
@@ -1527,7 +1527,7 @@ await corsair.ahrefs.api.brandRadar.sovOverview({});
 | `report_id` | `string` | No | The ID of the report to use. |
 | `brand` | `string` | No | A comma-separated list of brands to search for. |
 | `competitors` | `string` | No | A comma-separated list of competitors of your brands. |
-| `data_source` | `chatgpt \| google_ai_overviews \| google_ai_mode \| gemini \| perplexity \| copilot \| claude \| grok \| google_ai_overviews_keywords \| google_ai_mode_keywords` | Yes | A comma-separated list of chatbot models. |
+| `data_source` | `string` | Yes | Comma-separated chatbot models: chatgpt, google_ai_overviews, google_ai_mode, gemini, perplexity, copilot, claude (custom prompts only), grok, google_ai_overviews_keywords, google_ai_mode_keywords. |
 | `country` | `string` | No | A comma-separated list of two-letter country codes (ISO 3166-1 alpha-2). |
 | `prompts` | `ahrefs \| custom` | No | The type of prompts to use. |
 | `output` | `json` | No | — |
@@ -2376,7 +2376,7 @@ await corsair.ahrefs.api.keywordsExplorer.matchingTerms({});
 | `timeout` | `number` | No | A manual timeout duration in seconds. |
 | `keyword_list_id` | `number` | No | The id of an existing keyword list. |
 | `keywords` | `string` | No | A comma-separated list of keywords to show metrics for. |
-| `country` | `string` | Yes | A country code, or all for matching terms across all locations. |
+| `country` | `string \| all` | Yes | A country code, or all for matching terms across all locations. |
 | `terms` | `all \| questions \| global` | No | All keyword ideas (all), questions (questions), or global terms including translations (global). |
 | `match_mode` | `terms \| phrase` | No | Keyword ideas contain the words from your query in any order (terms) or in the exact order they are written (phrase). |
 | `output` | `json` | No | — |
@@ -2446,7 +2446,7 @@ await corsair.ahrefs.api.keywordsExplorer.overview({});
 | `target_mode` | `exact \| prefix \| domain \| subdomains` | No | — |
 | `target` | `string` | No | — |
 | `target_position` | `in_top10 \| in_top100` | No | — |
-| `country` | `string` | Yes | — |
+| `country` | `string \| all` | Yes | — |
 | `keywords` | `string \| string[]` | No | — |
 | `keyword_list_id` | `number` | No | — |
 | `output` | `json` | No | Defaults to "json". |
@@ -2710,7 +2710,7 @@ await corsair.ahrefs.api.keywordsExplorer.volumeHistory({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `keyword` | `string` | Yes | The keyword to show metrics for. |
-| `country` | `string` | Yes | A country code, or all for all locations. |
+| `country` | `string \| all` | Yes | A country code, or all for all locations. |
 | `date_from` | `string` | No | The start date of the historical period in YYYY-MM-DD format. |
 | `date_to` | `string` | No | The end date of the historical period in YYYY-MM-DD format. |
 | `output` | `json` | No | — |

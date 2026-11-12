@@ -2,12 +2,13 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
 import type { SerpOverviewResponse } from './types';
+import { AhrefsEndpointInputSchemas } from './types';
 
 export const overview: AhrefsEndpoints['serpOverview'] = async (ctx, input) => {
 	const response = await makeAhrefsRequest<SerpOverviewResponse>(
 		'/serp-overview/serp-overview',
 		ctx.key,
-		{ query: input },
+		{ query: AhrefsEndpointInputSchemas.serpOverview.parse(input) },
 	);
 
 	for (const position of response.positions) {
