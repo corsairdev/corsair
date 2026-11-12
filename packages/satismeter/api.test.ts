@@ -50,7 +50,10 @@ if (missing.length > 0) {
 const describeIfConfigured = missing.length === 0 ? describe : describe.skip;
 
 // Writing is opt-in, and says so rather than skipping silently.
-const describeIfWritable = WRITE_API_KEY ? describe : describe.skip;
+// Writes also need the project: without it they would go out with an empty
+// `project`, so they skip whenever the read suite does.
+const describeIfWritable =
+	WRITE_API_KEY && missing.length === 0 ? describe : describe.skip;
 if (!WRITE_API_KEY && missing.length === 0) {
 	console.warn(
 		'satismeter live write smoke skipped: set SATISMETER_WRITE_API_KEY to run it',
@@ -171,6 +174,7 @@ describeIfWritable('live SatisMeter writes', () => {
 	}
 
 	afterEach(async () => {
+		const failed: string[] = [];
 		for (const userId of created.splice(0)) {
 			try {
 				const text = await listUser(userId);
@@ -183,10 +187,20 @@ describeIfWritable('live SatisMeter writes', () => {
 					method: 'DELETE',
 					path: `/users/${internalId}`,
 				});
-			} catch {
-				// A cleanup failure must not mask the test's own result; the next
-				// run's list would show a leftover, which is what this prevents.
+			} catch (error) {
+				// Every created user is still tried; the ones that failed are
+				// reported below with their userId, which the next run cannot
+				// recover because it generates new ones.
+				failed.push(
+					`${userId}: ${error instanceof Error ? error.message : String(error)}`,
+				);
 			}
+		}
+		// Jest reports this beside the test's own result rather than instead of it.
+		if (failed.length > 0) {
+			throw new Error(
+				`Could not remove ${failed.length} SatisMeter test user(s): ${failed.join('; ')}`,
+			);
 		}
 	});
 
