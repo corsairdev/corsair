@@ -190,7 +190,9 @@ const CandidatesCreateInputSchema = z.object({
 		.number()
 		.int()
 		.optional()
-		.describe('The offer the candidate is assigned to at its default stage.'),
+		.describe(
+			'The offer the candidate is assigned to at its default stage. Recruitee skips the assignment, without an error, when the offer is a draft.',
+		),
 });
 
 export type CandidatesCreateInput = z.input<typeof CandidatesCreateInputSchema>;

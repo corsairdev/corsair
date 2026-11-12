@@ -172,7 +172,7 @@ const recruiteeEndpointMeta = {
 	'candidates.create': {
 		riskLevel: 'write',
 		description:
-			'Add a candidate manually and assign them to an offer at its default stage',
+			'Add a candidate manually and assign them to a published or internal offer at its default stage',
 	},
 	'candidates.update': {
 		riskLevel: 'write',
@@ -181,8 +181,8 @@ const recruiteeEndpointMeta = {
 	},
 	'candidates.delete': {
 		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Delete a candidate permanently',
+		description:
+			'Delete a candidate. Recruitee keeps them restorable in its deleted list for 7 days, then removes them',
 	},
 	'offers.list': {
 		riskLevel: 'read',

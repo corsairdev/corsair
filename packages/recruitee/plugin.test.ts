@@ -118,6 +118,17 @@ describe('recruitee plugin', () => {
 		);
 	});
 
+	it('does not call the candidate delete irreversible, since Recruitee keeps it restorable for 7 days', () => {
+		const plugin = internalsOf(recruitee());
+		const meta = required(plugin.endpointMeta, 'candidates.delete') as {
+			irreversible?: boolean;
+			description: string;
+		};
+
+		expect(meta.irreversible).not.toBe(true);
+		expect(meta.description).toContain('7 days');
+	});
+
 	it('marks the creates and updates as writes', () => {
 		const plugin = internalsOf(recruitee());
 

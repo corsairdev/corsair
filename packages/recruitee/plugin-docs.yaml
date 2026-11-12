@@ -13,6 +13,8 @@ overviewNote: |
   - **Creates and updates wrap the record.** A candidate or offer goes in under a `candidate` or `offer` key, and a candidate's offer assignments sit **beside** that key as an `offers` array rather than inside it.
   - **Paging is `page` and `limit`.** Candidates, offers and locations return `total` and `next_page` (null on the last page). Departments come back in one answer.
   - **A new offer is a draft.** The create and update routes take no status; publishing is a separate step in Recruitee. A job needs `description`, `requirements` and at least one of `location_ids`.
+  - **Drafts take no candidates.** `candidates.create` with the `offer_id` of a draft offer creates the candidate but places them nowhere, and Recruitee returns no error. Publish the offer first, or assign the candidate later.
+  - **A candidate delete is restorable for 7 days.** Recruitee sets `deleted_at` a week ahead and keeps the candidate in its deleted list until then.
   - **Stages live on placements.** `candidates.update` edits the profile; moving a candidate to another stage or disqualifying them happens on their placement for an offer, which this plugin does not cover yet.
   - **Rate limit.** 1000 requests per minute per token. Recruitee documents no `Retry-After`, so a 429 is retried three times with backoff.
 examples:
