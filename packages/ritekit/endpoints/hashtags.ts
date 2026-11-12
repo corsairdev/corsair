@@ -17,7 +17,8 @@ export const stats: RiteKitEndpoints['hashtagsStats'] = (ctx, input) =>
 		({ tags }) => ({
 			method: 'GET',
 			path: '/v1/stats/multiple-hashtags',
-			query: { tags: tagList(tags) },
+			// RiteKit wants the tags without their #, which the input allows.
+			query: { tags: tagList(tags.map((tag) => tag.replace(/^#+/, ''))) },
 			replayable: true,
 		}),
 		{

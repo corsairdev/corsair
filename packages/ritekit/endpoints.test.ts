@@ -72,6 +72,14 @@ describe('hashtags.stats', () => {
 		expect(request.query.tags).toBe('jobs,Chello');
 	});
 
+	it('drops a leading # from each tag, which RiteKit expects without it', async () => {
+		respond(fetchMock, HASHTAGS_STATS);
+
+		await invoke(Hashtags.stats, { tags: ['#jobs', 'Chello'] });
+
+		expect(lastRequest(fetchMock).query.tags).toBe('jobs,Chello');
+	});
+
 	it('parses the stats and the color legend', async () => {
 		respond(fetchMock, HASHTAGS_STATS);
 
