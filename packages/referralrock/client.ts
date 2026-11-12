@@ -10,13 +10,21 @@ import { ApiError, request } from 'corsair/http';
 export const REFERRALROCK_API_BASE = 'https://api.referralrock.com';
 
 /**
- * Referral Rock authenticates with **HTTP Basic**, using the account's API key as
- * the username and an empty password. `corsair/http` only sends a Basic header
- * when both fields are non-empty, so the header is built here as a literal
- * `Authorization: Basic …` value.
+ * Referral Rock authenticates with **HTTP Basic**: the account's **public** API
+ * key is the username and its **private** key the password. The dashboard shows
+ * both keys and a ready-made "Basic Auth Key" (`Basic <base64>`).
+ *
+ * The plugin stores one secret, so it takes either form:
+ * - `publicKey:privateKey`, which is base64-encoded here, or
+ * - the Basic Auth Key as shown, with or without the leading `Basic `.
  */
 export function basicAuthHeader(apiKey: string): string {
-	return `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`;
+	const key = apiKey.trim();
+	if (/^basic\s+/i.test(key)) return `Basic ${key.replace(/^basic\s+/i, '')}`;
+	if (key.includes(':')) {
+		return `Basic ${Buffer.from(key).toString('base64')}`;
+	}
+	return `Basic ${key}`;
 }
 
 /**
@@ -29,8 +37,8 @@ export function basicAuthHeader(apiKey: string): string {
  *
  * A 404 for a path the router does not know is `{ Message: "No HTTP resource was
  * found …" }`. A successful collection also carries a `message` field, which the
- * docs say to read for error information, so a 200 with a non-empty `message`
- * can still describe a failure.
+ * docs say to read for error information. A refused create (a duplicate email,
+ * an unknown referral code) answers **400** with `{ message, <key>: null }`.
  */
 export class ReferralrockAPIError extends Error {
 	readonly status?: number;
@@ -83,9 +91,8 @@ export class ReferralrockAPIError extends Error {
 	}
 
 	/**
-	 * The body says the request was understood but refused, such as a duplicate
-	 * referral code. It arrives as a 200 with a `message`, so this is read from
-	 * the payload rather than the status.
+	 * A reward create Referral Rock refused. That route answers 200 with
+	 * `resultInfo.Status: "Failed"`, so the status alone does not show it.
 	 */
 	get isRejected(): boolean {
 		return (

@@ -25,11 +25,17 @@ afterEach(() => {
 });
 
 describe('basic auth', () => {
-	it('encodes the key as the username with an empty password', () => {
-		// `corsair/http` only sends Basic when BOTH fields are non-empty, so the
-		// header is built here rather than through USERNAME/PASSWORD.
-		const expected = Buffer.from('rr-key:').toString('base64');
-		expect(basicAuthHeader('rr-key')).toBe(`Basic ${expected}`);
+	it('encodes public:private as the Basic username and password', () => {
+		// Referral Rock answers 401 to `<key>:` with an empty password; only the
+		// public key as username and the private key as password is accepted.
+		const expected = Buffer.from('pub-key:priv-key').toString('base64');
+		expect(basicAuthHeader('pub-key:priv-key')).toBe(`Basic ${expected}`);
+	});
+
+	it('passes the dashboard Basic Auth Key through, with or without its prefix', () => {
+		const token = Buffer.from('pub-key:priv-key').toString('base64');
+		expect(basicAuthHeader(`Basic ${token}`)).toBe(`Basic ${token}`);
+		expect(basicAuthHeader(token)).toBe(`Basic ${token}`);
 	});
 
 	it('sends the header on a request', async () => {
