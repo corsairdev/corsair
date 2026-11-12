@@ -94,7 +94,7 @@ export const list: U301Endpoints['linkList'] = (ctx, input) =>
 			replayable: true,
 		}),
 		{
-			log: (_, result) => ({ links: result.links?.length ?? 0 }),
+			log: (_, result) => ({ links: result.links.length }),
 		},
 	);
 

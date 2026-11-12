@@ -175,6 +175,23 @@ describe('links.list', () => {
 		expect(result.links?.[0]?.statsClicks).toBe(42);
 	});
 
+	it('rejects a 200 answer with no links key', async () => {
+		respond(fetchMock, {});
+
+		await expect(invoke(Api.list, {})).rejects.toThrow();
+	});
+
+	it('accepts an empty page', async () => {
+		respond(fetchMock, {
+			links: [],
+			metadata: { total: 0, perPage: 10, page: 1 },
+		});
+
+		const result = (await invoke(Api.list, {})) as { links?: unknown[] };
+
+		expect(result.links).toEqual([]);
+	});
+
 	it('types the paging metadata the list returns', async () => {
 		respond(fetchMock, LINKS);
 

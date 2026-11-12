@@ -185,8 +185,10 @@ const LinkListMetadataSchema = z
 /** The list answers `{links, metadata}`. */
 const LinkListResponseSchema = z
 	.object({
-		links: z.array(LinkSchema).nullish(),
-		metadata: LinkListMetadataSchema.nullish(),
+		// Required: a 200 without them is not a page of links. An empty page still
+		// answers `links: []`.
+		links: z.array(LinkSchema),
+		metadata: LinkListMetadataSchema,
 	})
 	.loose();
 
