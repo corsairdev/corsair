@@ -554,7 +554,7 @@ describe('libraries.publish', () => {
 		})) as { published?: boolean };
 
 		const request = lastRequest(fetchMock);
-		expect(request.path).toBe('/libraries/publish');
+		expect(request.path).toBe('/transformations/libraries/publish');
 		expect(request.bodyRecord?.transformations).toHaveLength(1);
 		expect(result.published).toBe(true);
 	});

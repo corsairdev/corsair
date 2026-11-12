@@ -213,7 +213,10 @@ export const publish: RudderStackTransformationEndpoints['librariesPublish'] = (
 		input,
 		({ transformations, libraries }) => ({
 			method: 'POST',
-			path: '/libraries/publish',
+			// The docs say /libraries/publish, but the live API routes that to the
+			// library update and answers "Library not found". RudderStack's own
+			// GitHub Action and rudder-iac call this path, which publishes.
+			path: '/transformations/libraries/publish',
 			body: { transformations, libraries },
 			// Publishing is idempotent once a revision is live, so a retry cannot
 			// duplicate anything.

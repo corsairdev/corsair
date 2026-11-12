@@ -397,7 +397,7 @@ const PublishLibraryEntrySchema = z.object({
 });
 
 /**
- * The route is `/libraries/publish`, but it publishes transformations as well as
+ * The route is `/transformations/libraries/publish`, and it publishes transformations as well as
  * libraries; RudderStack documents at least one of the two arrays and runs the
  * code on its servers before anything goes live, so a failing test rejects the
  * whole call.
