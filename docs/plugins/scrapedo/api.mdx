@@ -61,7 +61,7 @@ Reads `/info`. A bad token answers HTTP 200 with `IsActive: false`, which this t
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `is_active` | `boolean` | Yes | False when the token is rejected. The API answers HTTP 200 in that case, so this is the only signal. |
+| `is_active` | `boolean` | Yes | Always true on a result: a rejected token makes `account.info` throw a 401 `ScrapeDoAPIError` instead. |
 | `concurrent_request` | `number` | Yes | The plan's concurrency limit. |
 | `max_monthly_request` | `number` | Yes | Requests the plan allows per month. |
 | `remaining_concurrent_request` | `number` | Yes | Concurrency slots free right now. |

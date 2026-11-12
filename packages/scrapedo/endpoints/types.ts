@@ -384,7 +384,7 @@ const AccountInfoResponseSchema = z
 		is_active: z
 			.boolean()
 			.describe(
-				'False when the token is rejected. The API answers HTTP 200 in that case, so this is the only signal.',
+				'Always true on a result: a rejected token makes `account.info` throw a 401 `ScrapeDoAPIError` instead.',
 			),
 		concurrent_request: z
 			.number()
