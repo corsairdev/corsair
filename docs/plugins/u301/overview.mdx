@@ -6,16 +6,16 @@ description: "Create and manage branded short links, configure custom domains an
 
 Use **U301** through Corsair: one client, typed API calls.
 
-U301 needs **two** credentials on every call: an API key in `Authorization: Bearer`, and a **workspace ID** that goes in the `workspaceId` query parameter. Find both in your U301 dashboard.
+U301 needs an **API key** (Developer > API Keys in your U301 dashboard), sent in `Authorization: Bearer`. On its own, the key reaches its own workspace. To reach another workspace, add its **workspace ID**, which goes in the `workspaceId` query parameter.
 
-There is one key slot, so set the key to both values with a newline between them:
+There is one key slot, so to add a workspace, set the key to both values with a newline between them:
 
 ```text
 <api key>
 <workspace id>
 ```
 
-Or pass them as the `apiKey` and `workspaceId` options, which is clearer. A key without a workspace is reported as a configuration error before any request goes out, rather than as a `401` that looks like a bad key.
+Or pass them as the `apiKey` and `workspaceId` options, which is clearer.
 
 **The plugin options are shared by every tenant and are read before the tenant's stored key.** Set `apiKey` and `workspaceId` only when every tenant really should reach the same U301 workspace; otherwise store the credential per account so each tenant gets its own. A stored bare key is composed with a configured `workspaceId` when one is present.
 
@@ -25,7 +25,7 @@ Things worth knowing before you rely on an answer:
 - **A link looks different on create than on read.** A create answers `shortLink`, `url` and `isReused`; a read answers `shortUrl`, `originalUrl` and `statsClicks`. The two shapes are modelled as they are rather than merged.
 - **Links and domains are addressed by their own name, not an internal id.** `links.get` takes the short form, `u301.co/abc123`, and it is sent as a path with its slash rather than an encoded `%2F`. A `https://` prefix is stripped for you.
 - **A custom domain is not live when it is created.** `domains.create` adds it, then you create the CNAME from `dnsSettings.cnameValue` and poll `domains.active` until `actived` is true — that is U301's own spelling of the field. A domain that is still verifying answers `actived: false` with a message such as "Challenge not ready".
-- **The three domain settings share one PATCH** but are separate operations, so each sends exactly one field: `domains.pathLength` (`randomCodeLength`, 3 to 10), `domains.homeRedirect` and `domains.notFoundRedirect`.
+- **The three domain settings share one PATCH** but are separate operations, so each sends exactly one field: `domains.pathLength` (`randomCodeLength`, 3 to 10), `domains.homeRedirect` and `domains.notFoundRedirect`. The two redirects are Pro plan features: a free workspace gets `403` "This feature is only available for Pro Plan".
 - **Analytics separate range from granularity.** `range` is how far back (`24h`, `1d`, `3d`, `7d`, `14d`, `30d`, `60d`, `1m`) and `granularity` is how the buckets are cut (`day`, `hour`). Give `timezone` when the day boundary matters.
 - **The audience breakdown puts the dimension in the path.** `analytics.audience` takes `countries`, `cities`, `referers`, `browsers`, `operating-systems` or `device-types` and calls the matching `top-<dimension>` route. Three of those are the provider's own spellings, so they are not the words you might guess.
 

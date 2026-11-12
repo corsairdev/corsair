@@ -161,6 +161,7 @@ await corsair.u301.api.domains.create({ domain: 'go.example.com', shortCodeLengt
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `message` | `string \| null` | No | "Domain created" on success. |
 | `success` | `boolean \| null` | No | — |
 
 
@@ -191,6 +192,7 @@ await corsair.u301.api.domains.delete({ domain: 'go.example.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `message` | `string \| null` | No | "success" on deletion. |
 | `success` | `boolean \| null` | No | — |
 
 
@@ -259,7 +261,7 @@ await corsair.u301.api.domains.get({ domain: 'go.example.com' });
 
 `domains.homeRedirect`
 
-Set where a domain's root redirects to
+Set where a domain's root redirects to; U301 allows it on the Pro plan only and answers 403 on the free plan
 
 **Risk:** `write`
 
@@ -324,7 +326,7 @@ await corsair.u301.api.domains.list({});
 
 `domains.notFoundRedirect`
 
-Set where an unknown slug on a domain redirects to
+Set where an unknown slug on a domain redirects to; U301 allows it on the Pro plan only and answers 403 on the free plan
 
 **Risk:** `write`
 
@@ -519,7 +521,7 @@ await corsair.u301.api.links.list({ page: 1, perPage: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | 1-based page number. |
-| `perPage` | `number` | No | Items per page. Defaults to 10. |
+| `perPage` | `number` | No | Items per page, 10 to 200. Defaults to 20. |
 
 
 
