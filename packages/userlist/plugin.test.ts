@@ -76,21 +76,18 @@ describe('userlist plugin definition', () => {
 		expect(reads).toEqual([]);
 	});
 
-	it('marks only the two deletes as destructive', () => {
+	it('marks the three deletes as destructive', () => {
 		const meta = plugin.endpointMeta ?? {};
 		const destructive = operations.filter(
 			(operation) =>
 				meta[operation as keyof typeof meta]?.riskLevel === 'destructive',
 		);
 
-		expect(destructive.sort()).toEqual(['companies.delete', 'users.delete']);
-	});
-
-	it('marks unlinking a relationship as a write, since both sides survive', () => {
-		const meta = plugin.endpointMeta ?? {};
-		expect(meta['relationships.delete' as keyof typeof meta]?.riskLevel).toBe(
-			'write',
-		);
+		expect(destructive.sort()).toEqual([
+			'companies.delete',
+			'relationships.delete',
+			'users.delete',
+		]);
 	});
 
 	it('matches a webhook body that names a handled topic', () => {

@@ -182,9 +182,9 @@ const userlistEndpointMeta = {
 			'Tie a user to a company, with properties on the relationship such as a role',
 	},
 	'relationships.delete': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Unlink one user from one company, leaving both objects in place',
+			'Unlink one user from one company, leaving both objects in place; the relationship properties, such as a role, are lost',
 	},
 	'events.create': {
 		riskLevel: 'write',
