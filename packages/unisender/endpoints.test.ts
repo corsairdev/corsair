@@ -8,6 +8,7 @@ import {
 	CONTACT_INVITED,
 	EMAIL_CREATED,
 	EMAIL_SENT,
+	EMAIL_SENT_WITH_CC,
 	EMAIL_STATUSES,
 	EXCLUDED,
 	EXPORT_REQUESTED,
@@ -369,6 +370,28 @@ describe('messages', () => {
 		expect(result.result[0]?.email_id).toBe(8811223);
 	});
 
+	it('reads the string id a send with cc returns', async () => {
+		respond(fetchMock, EMAIL_SENT_WITH_CC);
+
+		const result = (await invoke(Api.sendEmail, {
+			email: 'test@example.org',
+			sender_name: 'Example',
+			sender_email: 'news@example.org',
+			subject: 'Your order',
+			body: '<p>Shipped</p>',
+			list_id: 55688,
+			cc: 'copy@example.org',
+		})) as { result: { id?: string }[] };
+
+		expect(result.result[0]?.id).toBe('1p5Ktm-0007Ab-3C');
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'unisender.messages.sendEmail',
+			{ sent: 2, emailId: '1p5Ktm-0007Ab-3C' },
+			'completed',
+		);
+	});
+
 	it('carries metadata as bracketed keys', async () => {
 		respond(fetchMock, EMAIL_SENT);
 
@@ -421,6 +444,16 @@ describe('messages', () => {
 			'unisender.messages.status',
 			{ checked: 3, failed: 1 },
 			'completed',
+		);
+	});
+
+	it('takes the string ids a send with cc returns', async () => {
+		respond(fetchMock, EMAIL_STATUSES);
+
+		await invoke(Api.status, { email_id: ['1p5Ktm-0007Ab-3C', 8811223] });
+
+		expect(lastRequest(fetchMock).form.email_id).toBe(
+			'1p5Ktm-0007Ab-3C,8811223',
 		);
 	});
 

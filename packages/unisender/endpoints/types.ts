@@ -494,6 +494,12 @@ const MessagesSendEmailResultSchema = z
 			.union([z.number(), z.string()])
 			.nullish()
 			.describe('Pass this to messages.status.'),
+		// With `cc` (or error_checking) each entry carries `id`, a string of up to 64
+		// characters, instead of `email_id`; it is what messages.status takes then.
+		id: z
+			.union([z.string(), z.number()])
+			.nullish()
+			.describe('Pass this to messages.status when present.'),
 		email: z.string().nullish(),
 		message_id: z.number().nullish(),
 		message: z.string().nullish(),
@@ -524,10 +530,12 @@ export type MessagesSendEmailResponse = z.infer<
 
 const MessagesStatusInputSchema = z.object({
 	email_id: z
-		.array(z.number().int())
+		.array(z.union([z.number().int(), z.string().min(1)]))
 		.min(1)
 		.max(500)
-		.describe('Up to 500 email_id values from messages.sendEmail.'),
+		.describe(
+			'Up to 500 ids from messages.sendEmail: its email_id, or the string id a send with cc returns.',
+		),
 });
 
 export type MessagesStatusInput = z.infer<typeof MessagesStatusInputSchema>;

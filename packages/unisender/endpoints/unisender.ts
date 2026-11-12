@@ -434,7 +434,7 @@ export const sendEmail: UnisenderEndpoints['messagesSendEmail'] = (
 			log: (_, result) => {
 				const answer = result.result;
 				const rows = Array.isArray(answer) ? answer : [answer];
-				const first = rows[0]?.email_id;
+				const first = rows[0]?.email_id ?? rows[0]?.id;
 				return {
 					sent: rows.length,
 					emailId:

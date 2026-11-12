@@ -172,3 +172,11 @@ export const RETRY_LATER = {
 	error: 'Error ID:mno. Temporary failure, try again later.',
 	code: 'retry_later',
 };
+
+/** sendEmail with `cc`: an array whose entries carry a string `id`, not `email_id`. */
+export const EMAIL_SENT_WITH_CC = {
+	result: [
+		{ index: 0, email: 'test@example.org', id: '1p5Ktm-0007Ab-3C' },
+		{ index: 1, email: 'copy@example.org', id: '1p5Ktm-0007Ab-3D' },
+	],
+};
