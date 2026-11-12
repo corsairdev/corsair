@@ -8,6 +8,7 @@
  * calls, spaced at least 15 s apart, and does not submit new scans or post
  * comments.
  */
+import { urlId } from './client';
 import { Comments, Domains, Files, Urls } from './endpoints';
 import type { VirustotalContext } from './index';
 
@@ -82,10 +83,9 @@ describeIfKey('live VirusTotal API', () => {
 	});
 
 	it('reads a URL report through the output schema', async () => {
-		// The URL id is the unpadded base64url of the URL itself.
-		const id = Buffer.from('https://www.virustotal.com')
-			.toString('base64url')
-			.replace(/=+$/, '');
+		// The URL id is the unpadded base64url of the URL, exactly as VirusTotal
+		// stored it: without the trailing slash this one is a 404.
+		const id = urlId('https://example.com/');
 		const result = await paced(() =>
 			Urls.get(liveContext() as never, { id } as never),
 		);
