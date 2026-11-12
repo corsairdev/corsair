@@ -7,6 +7,11 @@ import {
 	WorksnapsEndpointOutputSchemas as Outputs,
 } from './types';
 
+/** The API reads this flag as 1 or 0, not true or false. */
+function asFlag(value: boolean | undefined): 1 | 0 | undefined {
+	return value === undefined ? undefined : value ? 1 : 0;
+}
+
 /** Which user is assigned to which task, within a project. */
 export const taskList: WorksnapsEndpoints['taskAssignmentsList'] = (
 	ctx,
@@ -151,7 +156,7 @@ export const userCreate: WorksnapsEndpoints['userAssignmentsCreate'] = (
 				user_id,
 				role,
 				hourly_rate,
-				flag_allow_logging_time,
+				flag_allow_logging_time: asFlag(flag_allow_logging_time),
 				window_for_deleting_time,
 				window_for_adding_offline_time,
 			}),
@@ -191,7 +196,7 @@ export const userUpdate: WorksnapsEndpoints['userAssignmentsUpdate'] = (
 			body: toXml('user_assignment', {
 				role,
 				hourly_rate,
-				flag_allow_logging_time,
+				flag_allow_logging_time: asFlag(flag_allow_logging_time),
 				window_for_deleting_time,
 				window_for_adding_offline_time,
 			}),

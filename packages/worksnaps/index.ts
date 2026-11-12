@@ -278,7 +278,7 @@ const worksnapsEndpointMeta = {
 	'projects.delete': {
 		riskLevel: 'destructive',
 		description:
-			'Delete a project with its tasks and logged time; this cannot be undone',
+			'Archive a project; Worksnaps marks it archived rather than erasing it',
 	},
 	'tasks.list': {
 		riskLevel: 'read',
@@ -304,11 +304,12 @@ const worksnapsEndpointMeta = {
 	'timeEntries.list': {
 		riskLevel: 'read',
 		description:
-			'List the time logged on a project, optionally within a date range',
+			'List the time some users logged on a project between two Unix timestamps',
 	},
 	'timeEntries.byUser': {
 		riskLevel: 'read',
-		description: 'List the time one user logged on a project',
+		description:
+			'List the time one user logged on a project between two Unix timestamps',
 	},
 	'timeEntries.get': {
 		riskLevel: 'read',
@@ -318,11 +319,11 @@ const worksnapsEndpointMeta = {
 	'timeEntries.create': {
 		riskLevel: 'write',
 		description:
-			'Log work against a task with its start time and duration in minutes',
+			'Log offline time for yourself on an assigned task, from a Unix start time and a duration in minutes',
 	},
 	'timeEntries.update': {
 		riskLevel: 'write',
-		description: 'Change a time entry task, start, duration or comment',
+		description: 'Move a time entry to another task or change its comment',
 	},
 	'timeEntries.delete': {
 		riskLevel: 'destructive',
@@ -377,15 +378,17 @@ const worksnapsEndpointMeta = {
 	'users.me': {
 		riskLevel: 'read',
 		description:
-			'Read the account behind the token, which is the cheapest way to check it',
+			'Read the account behind the token (without the token itself), which is the cheapest way to check it',
 	},
 	'reports.project': {
 		riskLevel: 'read',
-		description: 'Read totals for one project over a period',
+		description:
+			'Read time per user and task in one project over at most 30 days',
 	},
 	'reports.summary': {
 		riskLevel: 'read',
-		description: 'Read totals across every project over a period',
+		description:
+			'Read time by user, project, task and day across the projects you manage, over at most 30 days',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof worksnapsEndpointsNested

@@ -6,11 +6,10 @@ function statusOf(error: Error): number | undefined {
 }
 
 /**
- * The API has no error body — a 401 is a bare status — so the handlers work
- * from the status alone. The one distinction worth making is 403 against 401:
- * the docs say privileged calls such as user creation need a **partner token**,
- * so a 403 usually means a normal user's key was used rather than that the key
- * is bad.
+ * The handlers work from the status. The one distinction worth making is 403
+ * against 401: the docs say privileged calls such as user creation need a
+ * **partner token**, so a 403 there means a normal user's key was used rather
+ * than that the key is bad. None of the 4xx cases is retried.
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {

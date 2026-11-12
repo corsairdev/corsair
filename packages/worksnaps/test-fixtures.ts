@@ -1,5 +1,6 @@
 // XML bodies in the shapes Worksnaps sends, with made-up ids and names.
-// They were not captured from the live API.
+// The report shapes and the Unix timestamps match what the live API sent on
+// 11-12; live-shapes.test.ts has the create, update and empty-list shapes.
 
 export const projectsXml =
 	'<?xml version="1.0" encoding="UTF-8"?>\n' +
@@ -50,7 +51,7 @@ export const timeEntriesXml =
 	'    <id type="integer">901</id>\n' +
 	'    <task_id type="integer">78</task_id>\n' +
 	'    <user_id type="integer">12</user_id>\n' +
-	'    <from_timestamp>2024-06-01T09:00:00Z</from_timestamp>\n' +
+	'    <from_timestamp>1717232400</from_timestamp>\n' +
 	'    <duration_in_minutes type="integer">90</duration_in_minutes>\n' +
 	'    <user_comment>Worked on the cart</user_comment>\n' +
 	'  </time_entry>\n' +
@@ -58,7 +59,7 @@ export const timeEntriesXml =
 	'    <id type="integer">902</id>\n' +
 	'    <task_id type="integer">78</task_id>\n' +
 	'    <user_id type="integer">12</user_id>\n' +
-	'    <from_timestamp>2024-06-01T11:00:00Z</from_timestamp>\n' +
+	'    <from_timestamp>1717239600</from_timestamp>\n' +
 	'    <duration_in_minutes type="integer">30</duration_in_minutes>\n' +
 	'    <user_comment></user_comment>\n' +
 	'  </time_entry>\n' +
@@ -69,7 +70,7 @@ export const timeEntryXml =
 	'<time_entry>\n' +
 	'  <id type="integer">901</id>\n' +
 	'  <task_id type="integer">78</task_id>\n' +
-	'  <from_timestamp>2024-06-01T09:00:00Z</from_timestamp>\n' +
+	'  <from_timestamp>1717232400</from_timestamp>\n' +
 	'  <duration_in_minutes type="integer">90</duration_in_minutes>\n' +
 	'  <user_comment>Worked on the cart</user_comment>\n' +
 	'</time_entry>\n';
@@ -149,15 +150,26 @@ export const meXml =
 
 export const projectReportXml =
 	'<?xml version="1.0" encoding="UTF-8"?>\n' +
-	'<report>\n' +
-	'  <total_minutes type="integer">2400</total_minutes>\n' +
-	'  <total_hours type="float">40.0</total_hours>\n' +
-	'  <user_count type="integer">3</user_count>\n' +
-	'</report>\n';
+	'<time_summary>\n' +
+	'  <time_entry>\n' +
+	'    <project_id>3456</project_id>\n' +
+	'    <user_id>12</user_id>\n' +
+	'    <task_id>78</task_id>\n' +
+	'    <task_name>Build the cart</task_name>\n' +
+	'    <time_entry_type>online</time_entry_type>\n' +
+	'    <duration_in_minutes>2400</duration_in_minutes>\n' +
+	'  </time_entry>\n' +
+	'</time_summary>\n';
 
 export const summaryReportXml =
 	'<?xml version="1.0" encoding="UTF-8"?>\n' +
-	'<summary_report>\n' +
-	'  <total_minutes type="integer">9800</total_minutes>\n' +
-	'  <project_count type="integer">4</project_count>\n' +
-	'</summary_report>\n';
+	'<manager_report>\n' +
+	'  <line_item>\n' +
+	'    <user_id>12</user_id>\n' +
+	'    <project_id>3456</project_id>\n' +
+	'    <date>2024-06-01</date>\n' +
+	'    <task_id>78</task_id>\n' +
+	'    <type>online</type>\n' +
+	'    <duration_in_minutes>9800</duration_in_minutes>\n' +
+	'  </line_item>\n' +
+	'</manager_report>\n';

@@ -198,7 +198,12 @@ describe('time entries', () => {
 	it('lists the time on a project, summing the minutes', async () => {
 		respondText(fetchMock, timeEntriesXml);
 
-		const result = (await invoke(TimeEntries.list, { project_id: 3456 })) as {
+		const result = (await invoke(TimeEntries.list, {
+			project_id: 3456,
+			user_ids: [12],
+			from_timestamp: 1717232400,
+			to_timestamp: 1717318800,
+		})) as {
 			time_entries?: { id: number; duration_in_minutes: number }[];
 		};
 
@@ -213,24 +218,42 @@ describe('time entries', () => {
 		);
 	});
 
-	it('sends the date range', async () => {
+	it('sends the time range as Unix seconds', async () => {
 		respondText(fetchMock, timeEntriesXml);
 
 		await invoke(TimeEntries.list, {
 			project_id: 3456,
-			from_timestamp: '2024-06-01',
-			to_timestamp: '2024-06-30',
+			user_ids: [12],
+			from_timestamp: 1717232400,
+			to_timestamp: 1717318800,
 		});
 
 		const sent = lastRequest(fetchMock);
-		expect(sent.query.from_timestamp).toBe('2024-06-01');
-		expect(sent.query.to_timestamp).toBe('2024-06-30');
+		expect(sent.query.from_timestamp).toBe('1717232400');
+		expect(sent.query.to_timestamp).toBe('1717318800');
+	});
+
+	it('refuses a timestamp off the 10-minute grid', async () => {
+		await expect(
+			invoke(TimeEntries.list, {
+				project_id: 3456,
+				user_ids: [12],
+				from_timestamp: 1717232700,
+				to_timestamp: 1717318800,
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('lists one user time on a project', async () => {
 		respondText(fetchMock, timeEntriesXml);
 
-		await invoke(TimeEntries.byUser, { project_id: 3456, user_id: 12 });
+		await invoke(TimeEntries.byUser, {
+			project_id: 3456,
+			user_id: 12,
+			from_timestamp: 1717232400,
+			to_timestamp: 1717318800,
+		});
 
 		expect(lastRequest(fetchMock).path).toBe(
 			'/api/projects/3456/users/12/time_entries.xml',
@@ -255,12 +278,12 @@ describe('time entries', () => {
 	});
 
 	it('logs time with an XML body', async () => {
-		respondText(fetchMock, timeEntryXml);
+		respondText(fetchMock, timeEntriesXml, 201);
 
 		await invoke(TimeEntries.create, {
 			project_id: 3456,
 			task_id: 78,
-			from_timestamp: '2024-06-01T09:00:00Z',
+			from_timestamp: 1717232400,
 			duration_in_minutes: 90,
 			user_comment: 'Worked on the cart',
 		});
@@ -269,7 +292,7 @@ describe('time entries', () => {
 		expect(sent.method).toBe('POST');
 		expect(sent.path).toBe('/api/projects/3456/time_entries.xml');
 		expect(sent.rawBody).toBe(
-			'<time_entry><task_id>78</task_id><from_timestamp>2024-06-01T09:00:00Z</from_timestamp><duration_in_minutes>90</duration_in_minutes><user_comment>Worked on the cart</user_comment></time_entry>',
+			'<time_entry><task_id>78</task_id><from_timestamp>1717232400</from_timestamp><duration_in_minutes>90</duration_in_minutes><user_comment>Worked on the cart</user_comment></time_entry>',
 		);
 	});
 
@@ -278,27 +301,25 @@ describe('time entries', () => {
 			invoke(TimeEntries.create, {
 				project_id: 3456,
 				task_id: 78,
-				from_timestamp: '2024-06-01T09:00:00Z',
+				from_timestamp: 1717232400,
 				duration_in_minutes: 0,
 			}),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('updates a time entry', async () => {
-		respondText(fetchMock, timeEntryXml);
+	it('moves a time entry to another task', async () => {
+		respondText(fetchMock, timeEntriesXml);
 
 		await invoke(TimeEntries.update, {
 			project_id: 3456,
 			time_entry_id: 901,
-			duration_in_minutes: 120,
+			task_id: 79,
 		});
 
 		const sent = lastRequest(fetchMock);
 		expect(sent.method).toBe('PUT');
-		expect(sent.rawBody).toBe(
-			'<time_entry><duration_in_minutes>120</duration_in_minutes></time_entry>',
-		);
+		expect(sent.rawBody).toBe('<time_entry><task_id>79</task_id></time_entry>');
 	});
 
 	it('deletes a time entry', async () => {
@@ -398,7 +419,7 @@ describe('assignments', () => {
 		expect(sent.rawBody).toContain('<role>member</role>');
 		expect(sent.rawBody).toContain('<hourly_rate>45.5</hourly_rate>');
 		expect(sent.rawBody).toContain(
-			'<flag_allow_logging_time>true</flag_allow_logging_time>',
+			'<flag_allow_logging_time>1</flag_allow_logging_time>',
 		);
 	});
 
@@ -491,20 +512,24 @@ describe('users and reports', () => {
 
 		const result = (await invoke(Users.projectReport, {
 			project_id: 3456,
-		})) as { report?: { total_minutes?: string } };
+			user_ids: [12],
+			from_timestamp: 1717232400,
+			to_timestamp: 1717318800,
+		})) as { time_summary?: { duration_in_minutes?: number }[] };
 
-		expect(result.report?.total_minutes).toBe('2400');
+		expect(result.time_summary?.[0]?.duration_in_minutes).toBe(2400);
 		expect(lastRequest(fetchMock).path).toBe('/api/projects/3456/reports');
 	});
 
 	it('reads a summary report', async () => {
 		respondText(fetchMock, summaryReportXml);
 
-		const result = (await invoke(Users.summaryReport, {})) as {
-			summary_report?: { total_minutes?: string };
-		};
+		const result = (await invoke(Users.summaryReport, {
+			from_date: '2024-06-01',
+			to_date: '2024-06-07',
+		})) as { manager_report?: { duration_in_minutes?: number }[] };
 
-		expect(result.summary_report?.total_minutes).toBe('9800');
+		expect(result.manager_report?.[0]?.duration_in_minutes).toBe(9800);
 		expect(lastRequest(fetchMock).path).toBe('/api/summary_reports');
 	});
 });

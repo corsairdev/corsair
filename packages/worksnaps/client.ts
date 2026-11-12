@@ -4,6 +4,8 @@ import type {
 	RateLimitConfig,
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { XmlNode } from './xml';
+import { parseXml } from './xml';
 
 /** The API base: `/api` on the host, with `.xml` on each resource. */
 export const WORKSNAPS_BASE = 'https://api.worksnaps.com/api';
@@ -25,9 +27,9 @@ const WORKSNAPS_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * The API has **no error body**: a 401 is a bare status with an empty
- * response, which is why there is no message to parse here. The status is the
- * whole diagnosis, so it is what the error carries.
+ * A 401 is a bare status with an empty body; other failures carry an XML
+ * `<reply>` whose error string ends up in the message (see
+ * describeWorksnapsError). The raw body stays on `body`.
  */
 export class WorksnapsAPIError extends Error {
 	readonly status?: number;
@@ -37,7 +39,7 @@ export class WorksnapsAPIError extends Error {
 	readonly method?: string;
 	/** The name of the operation that failed, e.g. `projects.list`. */
 	readonly operation?: string;
-	// unknown: usually empty, but a proxy can answer with HTML or text.
+	// unknown: an XML error document, empty on a 401, or a proxy's HTML or text.
 	readonly body?: unknown;
 
 	constructor(
@@ -83,15 +85,41 @@ export class WorksnapsAPIError extends Error {
 	}
 }
 
-// unknown: the body, read for a message if one ever appears.
+/**
+ * Errors arrive as `<reply><status>0</status><error_code>…</error_code>
+ * <error_string>…</error_string><extra_info>…</extra_info></reply>`, where
+ * extra_info holds the reasons (for example "user_ids parameter has to be
+ * specified"). The message carries the error string and those reasons; the raw
+ * body stays on the error for diagnostics.
+ */
 export function describeWorksnapsError(
 	status: number | undefined,
-	// unknown: usually empty.
+	// unknown: an XML string from the API, empty on a bare 401, or whatever a
+	// proxy sends.
 	body: unknown,
 	fallback: string,
 ): string {
-	const text = typeof body === 'string' && body.length > 0 ? body : fallback;
-	return status ? `Worksnaps ${status}: ${text}` : text;
+	const text = typeof body === 'string' ? body.trim() : '';
+	const root = text.startsWith('<') ? parseXml(text) : undefined;
+	let detail = text.length > 0 ? text : fallback;
+	if (root) {
+		const errorString = root.children.find(
+			(child) => child.name === 'error_string',
+		)?.text;
+		const reasons = collectMessages(root);
+		if (errorString) {
+			detail =
+				reasons.length > 0
+					? `${errorString} (${reasons.join('; ')})`
+					: errorString;
+		}
+	}
+	return status ? `Worksnaps ${status}: ${detail}` : detail;
+}
+
+function collectMessages(node: XmlNode): string[] {
+	const own = node.name === 'message' && node.text ? [node.text] : [];
+	return own.concat(node.children.flatMap(collectMessages));
 }
 
 export type WorksnapsQuery = Record<

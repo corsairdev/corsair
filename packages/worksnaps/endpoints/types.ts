@@ -31,6 +31,8 @@ const ProjectSchema = z
 		id: NumericString.nullish(),
 		name: z.string().nullish(),
 		description: z.string().nullish(),
+		// open string: `active` or `archived` today.
+		status: z.string().nullish(),
 	})
 	.loose();
 
@@ -58,8 +60,13 @@ const TimeEntrySchema = z
 		user_id: NumericString.nullish(),
 		project_id: NumericString.nullish(),
 		user_comment: z.string().nullish(),
+		// Unix seconds, as a string.
 		from_timestamp: z.string().nullish(),
+		logged_timestamp: z.string().nullish(),
 		duration_in_minutes: NumericString.nullish(),
+		// open string: `online` or `offline` today.
+		type: z.string().nullish(),
+		task_name: z.string().nullish(),
 	})
 	.loose();
 
@@ -119,8 +126,7 @@ const MeResponseSchema = z
 				email: z.string().nullish(),
 				timezone_id: NumericString.nullish(),
 			})
-			.loose()
-			.nullish(),
+			.loose(),
 	})
 	.loose();
 
@@ -129,16 +135,21 @@ export type MeResponse = z.infer<typeof MeResponseSchema>;
 /**
  * Rails writes a collection as an element whose children share a name, so
  * `<projects><project>…</project></projects>` becomes `{ projects: [...] }`
- * once the root name is kept. An empty collection may arrive as an object
- * rather than an array, so both are accepted.
+ * once the root name is kept. An empty collection arrives as an empty
+ * element, so that is accepted too.
  */
 function collection<T extends z.ZodType>(item: T) {
-	return z.union([z.array(item), z.object({}).loose()]).transform((value) => {
-		if (Array.isArray(value)) return value;
-		// unknown: an empty or single-child object, read for its array.
-		const first = Object.values(value).find((entry) => Array.isArray(entry));
-		return Array.isArray(first) ? first : [];
-	});
+	// The live API writes an empty collection as a bare `<projects/>`, with no
+	// type attribute, which the parser reads as an empty string.
+	return z
+		.union([z.array(item), z.object({}).loose(), z.literal('')])
+		.transform((value) => {
+			if (value === '') return [];
+			if (Array.isArray(value)) return value;
+			// unknown: an empty or single-child object, read for its array.
+			const first = Object.values(value).find((entry) => Array.isArray(entry));
+			return Array.isArray(first) ? first : [];
+		});
 }
 
 // ── projects ──────────────────────────────────────────────────────────────
@@ -156,7 +167,7 @@ export type ProjectsListInput = z.infer<typeof ProjectsListInputSchema>;
 
 const ProjectsListResponseSchema = z.object({
 	// Rails names the wrapper after the resource, and the parser keeps it.
-	projects: collection(ProjectSchema).nullish(),
+	projects: collection(ProjectSchema),
 });
 
 export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
@@ -166,7 +177,7 @@ const ProjectsGetInputSchema = z.object({ project_id: z.number().int() });
 export type ProjectsGetInput = z.infer<typeof ProjectsGetInputSchema>;
 
 const ProjectResponseSchema = z.object({
-	project: ProjectSchema.nullish(),
+	project: ProjectSchema,
 });
 
 export type ProjectResponse = z.infer<typeof ProjectResponseSchema>;
@@ -178,11 +189,16 @@ const ProjectsCreateInputSchema = z.object({
 
 export type ProjectsCreateInput = z.infer<typeof ProjectsCreateInputSchema>;
 
-const ProjectsUpdateInputSchema = z.object({
-	project_id: z.number().int(),
-	name: z.string().min(1).optional(),
-	description: z.string().optional(),
-});
+const ProjectsUpdateInputSchema = z
+	.object({
+		project_id: z.number().int(),
+		name: z.string().min(1).optional(),
+		description: z.string().optional(),
+	})
+	.refine(
+		(input) => input.name !== undefined || input.description !== undefined,
+		'Give a name or a description to change.',
+	);
 
 export type ProjectsUpdateInput = z.infer<typeof ProjectsUpdateInputSchema>;
 
@@ -205,7 +221,7 @@ const TasksListInputSchema = z.object({ project_id: z.number().int() });
 export type TasksListInput = z.infer<typeof TasksListInputSchema>;
 
 const TasksListResponseSchema = z.object({
-	tasks: collection(TaskSchema).nullish(),
+	tasks: collection(TaskSchema),
 });
 
 export type TasksListResponse = z.infer<typeof TasksListResponseSchema>;
@@ -217,7 +233,7 @@ const TasksGetInputSchema = z.object({
 
 export type TasksGetInput = z.infer<typeof TasksGetInputSchema>;
 
-const TaskResponseSchema = z.object({ task: TaskSchema.nullish() });
+const TaskResponseSchema = z.object({ task: TaskSchema });
 
 export type TaskResponse = z.infer<typeof TaskResponseSchema>;
 
@@ -229,12 +245,17 @@ const TasksCreateInputSchema = z.object({
 
 export type TasksCreateInput = z.infer<typeof TasksCreateInputSchema>;
 
-const TasksUpdateInputSchema = z.object({
-	project_id: z.number().int(),
-	task_id: z.number().int(),
-	name: z.string().min(1).optional(),
-	description: z.string().optional(),
-});
+const TasksUpdateInputSchema = z
+	.object({
+		project_id: z.number().int(),
+		task_id: z.number().int(),
+		name: z.string().min(1).optional(),
+		description: z.string().optional(),
+	})
+	.refine(
+		(input) => input.name !== undefined || input.description !== undefined,
+		'Give a name or a description to change.',
+	);
 
 export type TasksUpdateInput = z.infer<typeof TasksUpdateInputSchema>;
 
@@ -247,32 +268,43 @@ export type TasksDeleteInput = z.infer<typeof TasksDeleteInputSchema>;
 
 // ── time entries ──────────────────────────────────────────────────────────
 
+/** Unix seconds; the API only accepts values on a 10-minute boundary. */
+const UnixTimestamp = z.number().int().positive().multipleOf(600);
+
+/** Ids the API takes as one semicolon-separated query value. */
+const IdList = z.array(z.number().int()).min(1);
+
+const TimeRange = {
+	from_timestamp: UnixTimestamp.describe(
+		'Start of the range in Unix seconds, on a 10-minute boundary (a multiple of 600).',
+	),
+	to_timestamp: UnixTimestamp.describe(
+		'End of the range in Unix seconds, on a 10-minute boundary.',
+	),
+};
+
 const TimeEntriesListInputSchema = z.object({
 	project_id: z.number().int(),
-	from_timestamp: z
-		.string()
-		.optional()
-		.describe(
-			'ISO 8601 or the API’s own format: only entries at or after this.',
-		),
-	to_timestamp: z
-		.string()
-		.optional()
-		.describe('Only entries at or before this.'),
+	user_ids: IdList.describe(
+		'The users whose time to list; the API requires at least one.',
+	),
+	...TimeRange,
 });
 
 export type TimeEntriesListInput = z.infer<typeof TimeEntriesListInputSchema>;
 
 const TimeEntriesListResponseSchema = z.object({
-	time_entries: collection(TimeEntrySchema).nullish(),
+	time_entries: collection(TimeEntrySchema),
 });
 
 export type TimeEntriesListResponse = z.infer<
 	typeof TimeEntriesListResponseSchema
 >;
 
-const TimeEntriesByUserInputSchema = TimeEntriesListInputSchema.extend({
+const TimeEntriesByUserInputSchema = z.object({
+	project_id: z.number().int(),
 	user_id: z.number().int(),
+	...TimeRange,
 });
 
 export type TimeEntriesByUserInput = z.infer<
@@ -293,8 +325,17 @@ const TimeEntriesGetInputSchema = z.object({
 export type TimeEntriesGetInput = z.infer<typeof TimeEntriesGetInputSchema>;
 
 const TimeEntryResponseSchema = z.object({
-	time_entry: TimeEntrySchema.nullish(),
+	time_entry: TimeEntrySchema,
 });
+
+/** A create or update answers with every 10-minute entry it touched. */
+const TimeEntriesWriteResponseSchema = z.object({
+	time_entries: collection(TimeEntrySchema),
+});
+
+export type TimeEntriesWriteResponse = z.infer<
+	typeof TimeEntriesWriteResponseSchema
+>;
 
 export type TimeEntryResponse = z.infer<typeof TimeEntryResponseSchema>;
 
@@ -305,8 +346,14 @@ export type TimeEntryResponse = z.infer<typeof TimeEntryResponseSchema>;
 const TimeEntriesCreateInputSchema = z.object({
 	project_id: z.number().int(),
 	task_id: z.number().int(),
-	from_timestamp: z.string().min(1).describe('When the work started.'),
-	duration_in_minutes: z.number().int().positive(),
+	from_timestamp: UnixTimestamp.describe(
+		'When the work started, in Unix seconds on a 10-minute boundary.',
+	),
+	duration_in_minutes: z
+		.number()
+		.int()
+		.positive()
+		.describe('Worksnaps splits the time into 10-minute entries.'),
 	user_comment: z.string().optional(),
 });
 
@@ -314,14 +361,22 @@ export type TimeEntriesCreateInput = z.infer<
 	typeof TimeEntriesCreateInputSchema
 >;
 
-const TimeEntriesUpdateInputSchema = z.object({
-	project_id: z.number().int(),
-	time_entry_id: z.number().int(),
-	task_id: z.number().int().optional(),
-	from_timestamp: z.string().optional(),
-	duration_in_minutes: z.number().int().positive().optional(),
-	user_comment: z.string().optional(),
-});
+/**
+ * The API only changes the task and the comment of an entry; a start or a
+ * duration in the body is answered with a 400, so they are not accepted here.
+ */
+const TimeEntriesUpdateInputSchema = z
+	.object({
+		project_id: z.number().int(),
+		time_entry_id: z.number().int(),
+		task_id: z.number().int().optional(),
+		user_comment: z.string().optional(),
+	})
+	.strict()
+	.refine(
+		(input) => input.task_id !== undefined || input.user_comment !== undefined,
+		'Give a task_id or a user_comment to change.',
+	);
 
 export type TimeEntriesUpdateInput = z.infer<
 	typeof TimeEntriesUpdateInputSchema
@@ -347,7 +402,7 @@ export type TaskAssignmentsListInput = z.infer<
 >;
 
 const TaskAssignmentsListResponseSchema = z.object({
-	task_assignments: collection(TaskAssignmentSchema).nullish(),
+	task_assignments: collection(TaskAssignmentSchema),
 });
 
 export type TaskAssignmentsListResponse = z.infer<
@@ -365,7 +420,7 @@ export type TaskAssignmentsCreateInput = z.infer<
 >;
 
 const TaskAssignmentResponseSchema = z.object({
-	task_assignment: TaskAssignmentSchema.nullish(),
+	task_assignment: TaskAssignmentSchema,
 });
 
 export type TaskAssignmentResponse = z.infer<
@@ -390,7 +445,7 @@ export type UserAssignmentsListInput = z.infer<
 >;
 
 const UserAssignmentsListResponseSchema = z.object({
-	user_assignments: collection(UserAssignmentSchema).nullish(),
+	user_assignments: collection(UserAssignmentSchema),
 });
 
 export type UserAssignmentsListResponse = z.infer<
@@ -407,7 +462,7 @@ export type UserAssignmentsGetInput = z.infer<
 >;
 
 const UserAssignmentResponseSchema = z.object({
-	user_assignment: UserAssignmentSchema.nullish(),
+	user_assignment: UserAssignmentSchema,
 });
 
 export type UserAssignmentResponse = z.infer<
@@ -451,7 +506,7 @@ const UsersListInputSchema = z.object({});
 export type UsersListInput = z.infer<typeof UsersListInputSchema>;
 
 const UsersListResponseSchema = z.object({
-	users: collection(UserSchema).nullish(),
+	users: collection(UserSchema),
 });
 
 export type UsersListResponse = z.infer<typeof UsersListResponseSchema>;
@@ -460,7 +515,7 @@ const UsersGetInputSchema = z.object({ user_id: z.number().int() });
 
 export type UsersGetInput = z.infer<typeof UsersGetInputSchema>;
 
-const UserResponseSchema = z.object({ user: UserSchema.nullish() });
+const UserResponseSchema = z.object({ user: UserSchema });
 
 export type UserResponse = z.infer<typeof UserResponseSchema>;
 
@@ -494,39 +549,94 @@ const MeInputSchema = z.object({});
 
 export type MeInput = z.infer<typeof MeInputSchema>;
 
-/** The project report: totals per task and user over a period. */
+/** The project report: time per user and task over at most 30 days. */
 const ProjectReportInputSchema = z.object({
 	project_id: z.number().int(),
-	from_timestamp: z.string().optional(),
-	to_timestamp: z.string().optional(),
+	name: z
+		.enum(['time_summary', 'time_entries'])
+		.optional()
+		.describe(
+			'time_summary (the default) totals time per user and task; time_entries lists each entry.',
+		),
+	user_ids: IdList.describe('The users to report on.'),
+	...TimeRange,
 });
 
 export type ProjectReportInput = z.infer<typeof ProjectReportInputSchema>;
 
-/**
- * The report shape is defined by the API and varies by period, so it is passed
- * through under its root key rather than modelled field by field.
- */
-const ProjectReportResponseSchema = z
+/** One row of a time summary. */
+const TimeSummaryLineSchema = z
 	.object({
-		report: z.record(z.string(), z.unknown()).nullish(),
+		project_id: NumericString.nullish(),
+		user_id: NumericString.nullish(),
+		task_id: NumericString.nullish(),
+		task_name: z.string().nullish(),
+		user_comment: z.string().nullish(),
+		// open string: `online` or `offline` today.
+		time_entry_type: z.string().nullish(),
+		duration_in_minutes: NumericString.nullish(),
 	})
 	.loose();
 
+/**
+ * The root is named after the report: `<time_summary>` or `<time_entries>`.
+ */
+const ProjectReportResponseSchema = z
+	.object({
+		time_summary: collection(TimeSummaryLineSchema).optional(),
+		time_entries: collection(TimeEntrySchema).optional(),
+	})
+	.refine(
+		(report) =>
+			report.time_summary !== undefined || report.time_entries !== undefined,
+		'Expected a <time_summary> or <time_entries> report.',
+	);
+
 export type ProjectReportResponse = z.infer<typeof ProjectReportResponseSchema>;
 
+const IsoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use YYYY-MM-DD.');
+
+/** The manager report: time in the projects you manage, at most 30 days. */
 const SummaryReportInputSchema = z.object({
-	from_timestamp: z.string().optional(),
-	to_timestamp: z.string().optional(),
+	from_date: IsoDate.describe('First day, YYYY-MM-DD.'),
+	to_date: IsoDate.describe(
+		'Last day, YYYY-MM-DD; at most 30 days after from_date.',
+	),
+	timezone_offset: z
+		.number()
+		.optional()
+		.describe(
+			'Hours from UTC for the day boundaries, e.g. -8 or 5.5; defaults to the user timezone.',
+		),
+	project_ids: IdList.optional().describe(
+		'Defaults to every project you manage.',
+	),
+	user_ids: IdList.optional().describe(
+		'Defaults to every user in those projects.',
+	),
 });
 
 export type SummaryReportInput = z.infer<typeof SummaryReportInputSchema>;
 
-const SummaryReportResponseSchema = z
+/** One row of the manager report: a user, project, task, day and type. */
+const ManagerReportLineSchema = z
 	.object({
-		summary_report: z.record(z.string(), z.unknown()).nullish(),
+		user_id: NumericString.nullish(),
+		user_name: z.string().nullish(),
+		project_id: NumericString.nullish(),
+		project_name: z.string().nullish(),
+		date: z.string().nullish(),
+		task_id: NumericString.nullish(),
+		task_name: z.string().nullish(),
+		// open string: `online` or `offline` today.
+		type: z.string().nullish(),
+		duration_in_minutes: NumericString.nullish(),
 	})
 	.loose();
+
+const SummaryReportResponseSchema = z.object({
+	manager_report: collection(ManagerReportLineSchema),
+});
 
 export type SummaryReportResponse = z.infer<typeof SummaryReportResponseSchema>;
 
@@ -579,8 +689,8 @@ export type WorksnapsEndpointOutputs = {
 	timeEntriesList: TimeEntriesListResponse;
 	timeEntriesByUser: TimeEntriesListResponse;
 	timeEntriesGet: TimeEntryResponse;
-	timeEntriesCreate: TimeEntryResponse;
-	timeEntriesUpdate: TimeEntryResponse;
+	timeEntriesCreate: TimeEntriesWriteResponse;
+	timeEntriesUpdate: TimeEntriesWriteResponse;
 	timeEntriesDelete: DeleteResponse;
 	taskAssignmentsList: TaskAssignmentsListResponse;
 	taskAssignmentsCreate: TaskAssignmentResponse;
@@ -645,8 +755,8 @@ export const WorksnapsEndpointOutputSchemas = {
 	timeEntriesList: TimeEntriesListResponseSchema,
 	timeEntriesByUser: TimeEntriesListResponseSchema,
 	timeEntriesGet: TimeEntryResponseSchema,
-	timeEntriesCreate: TimeEntryResponseSchema,
-	timeEntriesUpdate: TimeEntryResponseSchema,
+	timeEntriesCreate: TimeEntriesWriteResponseSchema,
+	timeEntriesUpdate: TimeEntriesWriteResponseSchema,
 	timeEntriesDelete: DeleteResponseSchema,
 	taskAssignmentsList: TaskAssignmentsListResponseSchema,
 	taskAssignmentsCreate: TaskAssignmentResponseSchema,

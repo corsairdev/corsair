@@ -3,9 +3,26 @@ import type { z } from 'zod';
 import type { WorksnapsContext } from '..';
 import type { WorksnapsRequest } from '../client';
 import { makeWorksnapsRequest } from '../client';
+import type { XmlValue } from '../xml';
 import { parseXmlDocument } from '../xml';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
+
+/**
+ * Creates and updates answer `<reply><status>1</status><project>…</project></reply>`
+ * rather than the bare record a read returns, so the envelope is dropped here
+ * and every operation sees the record under its own name.
+ */
+function unwrapReply(
+	document: Record<string, XmlValue> | undefined,
+): Record<string, XmlValue> | undefined {
+	const reply = document?.reply;
+	if (!reply || typeof reply !== 'object' || Array.isArray(reply)) {
+		return document;
+	}
+	const { status: _status, ...record } = reply;
+	return record;
+}
 
 /**
  * Validates the input, sends the XML request, parses the XML answer into a
@@ -36,7 +53,9 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	// An empty body — a delete, or a 200 with nothing in it — becomes undefined
 	// rather than an empty document, so a `shape` can supply what it knows.
 	const asText = typeof raw === 'string' ? raw.trim() : '';
-	const document = asText.length > 0 ? parseXmlDocument(asText) : undefined;
+	const document = unwrapReply(
+		asText.length > 0 ? parseXmlDocument(asText) : undefined,
+	);
 
 	const result = operation.output.parse(
 		options.shape ? options.shape(document, parsed) : document,

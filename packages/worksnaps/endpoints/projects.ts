@@ -97,7 +97,10 @@ export const update: WorksnapsEndpoints['projectsUpdate'] = (ctx, input) =>
 		},
 	);
 
-/** Deleting a project removes its tasks and time entries with it. */
+/**
+ * The API archives the project rather than deleting it: it is marked
+ * archived and stops showing as active.
+ */
 export const remove: WorksnapsEndpoints['projectsDelete'] = (ctx, input) =>
 	call(
 		ctx,

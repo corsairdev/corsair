@@ -7,7 +7,7 @@ import {
 	WorksnapsEndpointOutputSchemas as Outputs,
 } from './types';
 
-/** The time logged on a project, optionally bounded by a date range. */
+/** The time some users logged on a project within a range. */
 export const list: WorksnapsEndpoints['timeEntriesList'] = (ctx, input) =>
 	call(
 		ctx,
@@ -17,21 +17,21 @@ export const list: WorksnapsEndpoints['timeEntriesList'] = (ctx, input) =>
 			output: Outputs.timeEntriesList,
 		},
 		input,
-		({ project_id, from_timestamp, to_timestamp }) => ({
+		({ project_id, user_ids, from_timestamp, to_timestamp }) => ({
 			method: 'GET',
 			path: `/projects/${segment(project_id)}/time_entries.xml`,
-			query: { from_timestamp, to_timestamp },
+			// The API answers 400 without user_ids and both timestamps.
+			query: { user_ids: user_ids.join(';'), from_timestamp, to_timestamp },
 		}),
 		{
 			log: (_, result) => ({
-				count: result.time_entries?.length ?? 0,
+				count: result.time_entries.length,
 				// The sum, which is what a report cares about; not the per-entry
 				// comments, which are the worker's own notes.
-				minutes:
-					result.time_entries?.reduce(
-						(total, entry) => total + (entry.duration_in_minutes ?? 0),
-						0,
-					) ?? 0,
+				minutes: result.time_entries.reduce(
+					(total, entry) => total + (entry.duration_in_minutes ?? 0),
+					0,
+				),
 			}),
 		},
 	);
@@ -54,7 +54,7 @@ export const byUser: WorksnapsEndpoints['timeEntriesByUser'] = (ctx, input) =>
 		{
 			log: (parsed, result) => ({
 				user: parsed.user_id,
-				count: result.time_entries?.length ?? 0,
+				count: result.time_entries.length,
 			}),
 		},
 	);
@@ -84,9 +84,8 @@ export const get: WorksnapsEndpoints['timeEntriesGet'] = (ctx, input) =>
 	);
 
 /**
- * Logs time against a task. `from_timestamp` and `duration_in_minutes` are both
- * required because Worksnaps totals the duration rather than deriving it from a
- * start and end.
+ * Logs offline time for yourself against a task you are assigned to. The API
+ * splits it into 10-minute entries and answers with all of them.
  */
 export const create: WorksnapsEndpoints['timeEntriesCreate'] = (ctx, input) =>
 	call(
@@ -115,7 +114,7 @@ export const create: WorksnapsEndpoints['timeEntriesCreate'] = (ctx, input) =>
 		}),
 		{
 			log: (parsed, result) => ({
-				id: result.time_entry?.id ?? undefined,
+				count: result.time_entries.length,
 				task: parsed.task_id,
 				minutes: parsed.duration_in_minutes,
 			}),
@@ -131,27 +130,15 @@ export const update: WorksnapsEndpoints['timeEntriesUpdate'] = (ctx, input) =>
 			output: Outputs.timeEntriesUpdate,
 		},
 		input,
-		({
-			project_id,
-			time_entry_id,
-			task_id,
-			from_timestamp,
-			duration_in_minutes,
-			user_comment,
-		}) => ({
+		({ project_id, time_entry_id, task_id, user_comment }) => ({
 			method: 'PUT',
 			path: `/projects/${segment(project_id)}/time_entries/${segment(time_entry_id)}.xml`,
-			body: toXml('time_entry', {
-				task_id,
-				from_timestamp,
-				duration_in_minutes,
-				user_comment,
-			}),
+			body: toXml('time_entry', { task_id, user_comment }),
 		}),
 		{
 			log: (parsed, result) => ({
-				id: result.time_entry?.id ?? parsed.time_entry_id,
-				minutes: result.time_entry?.duration_in_minutes ?? undefined,
+				id: parsed.time_entry_id,
+				count: result.time_entries.length,
 			}),
 		},
 	);

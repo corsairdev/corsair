@@ -7,6 +7,15 @@ import {
 	WorksnapsEndpointOutputSchemas as Outputs,
 } from './types';
 
+// unknown: the parsed document, before the output schema sees it.
+function withoutApiToken(raw: unknown): unknown {
+	if (!raw || typeof raw !== 'object' || !('user' in raw)) return raw;
+	const user = raw.user;
+	if (!user || typeof user !== 'object' || Array.isArray(user)) return raw;
+	const { api_token: _token, ...rest } = user as Record<string, unknown>;
+	return { ...raw, user: rest };
+}
+
 export const me: WorksnapsEndpoints['meGet'] = (ctx, input) =>
 	call(
 		ctx,
@@ -14,6 +23,10 @@ export const me: WorksnapsEndpoints['meGet'] = (ctx, input) =>
 		input,
 		() => ({ method: 'GET', path: '/me.xml' }),
 		{
+			// /me.xml also returns the account's own api_token. It is the
+			// credential this plugin already holds, so it is dropped rather than
+			// handed to the caller.
+			shape: (raw) => withoutApiToken(raw),
 			log: (_, result) => ({
 				id: result.user?.id ?? undefined,
 				login: result.user?.login ?? undefined,
@@ -107,7 +120,7 @@ export const update: WorksnapsEndpoints['usersUpdate'] = (ctx, input) =>
 		},
 	);
 
-/** Totals for one project over a period. */
+/** Time per user and task in one project, over at most 30 days. */
 export const projectReport: WorksnapsEndpoints['projectReport'] = (
 	ctx,
 	input,
@@ -120,21 +133,25 @@ export const projectReport: WorksnapsEndpoints['projectReport'] = (
 			output: Outputs.projectReport,
 		},
 		input,
-		({ project_id, from_timestamp, to_timestamp }) => ({
+		({ project_id, name, user_ids, from_timestamp, to_timestamp }) => ({
 			method: 'GET',
 			path: `/projects/${segment(project_id)}/reports`,
-			query: { from_timestamp, to_timestamp },
+			query: {
+				name: name ?? 'time_summary',
+				user_ids: user_ids.join(';'),
+				from_timestamp,
+				to_timestamp,
+			},
 		}),
 		{
-			// The report shape is defined by the API and varies by period, so the
-			// fields are reported rather than assumed.
-			log: (_, result) => ({
-				fields: Object.keys(result.report ?? {}).length,
+			log: (parsed, result) => ({
+				name: parsed.name ?? 'time_summary',
+				count: (result.time_summary ?? result.time_entries ?? []).length,
 			}),
 		},
 	);
 
-/** Totals across every project. */
+/** Time across the projects you manage, by user, project, task and day. */
 export const summaryReport: WorksnapsEndpoints['summaryReport'] = (
 	ctx,
 	input,
@@ -147,14 +164,20 @@ export const summaryReport: WorksnapsEndpoints['summaryReport'] = (
 			output: Outputs.summaryReport,
 		},
 		input,
-		({ from_timestamp, to_timestamp }) => ({
+		({ from_date, to_date, timezone_offset, project_ids, user_ids }) => ({
 			method: 'GET',
 			path: '/summary_reports',
-			query: { from_timestamp, to_timestamp },
+			// `name` is a constant the API requires; without it the call is a 403.
+			query: {
+				name: 'manager_report',
+				from_date,
+				to_date,
+				timezone_offset,
+				project_ids: project_ids?.join(';'),
+				user_ids: user_ids?.join(';'),
+			},
 		}),
 		{
-			log: (_, result) => ({
-				fields: Object.keys(result.summary_report ?? {}).length,
-			}),
+			log: (_, result) => ({ count: result.manager_report.length }),
 		},
 	);
