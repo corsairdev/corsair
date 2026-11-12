@@ -190,6 +190,25 @@ describe('orders.list', () => {
 		expect(result.orders[0]?.address_alias).toBe('Canal stop');
 	});
 
+	it('keeps an order whose custom_data comes back as a map', async () => {
+		respond(fetchMock, {
+			...ORDER_PAGE,
+			data: [
+				{ ...ORDER_PAGE.data[0], custom_data: { gate_code: '4411' } },
+				{ ...ORDER_PAGE.data[0], custom_data: ['gate_code: 4411'] },
+			],
+		});
+
+		const result = (await invoke(Dispatch.ordersList, {})) as Awaited<
+			ReturnType<typeof Dispatch.ordersList>
+		>;
+
+		expect(result.orders.map((order) => order.custom_data)).toEqual([
+			{ gate_code: '4411' },
+			['gate_code: 4411'],
+		]);
+	});
+
 	it('fails rather than inventing an empty page when data is missing', async () => {
 		respond(fetchMock, { meta: { current_page: 1, last_page: 1 } });
 

@@ -395,8 +395,9 @@ const OrderSchema = z
 		local_time_window_end: z.number().nullish(),
 		local_timezone_string: z.string().nullish(),
 		territory_ids: z.array(z.string()).nullish(),
-		// A caller-defined list of `key: value` strings.
-		custom_data: z.array(z.string()).nullish(),
+		// The v5 reference lists `key: value` strings, but Route4Me's SDKs read it
+		// as an object, so a map is accepted too rather than failing the page.
+		custom_data: CustomDataOutputSchema.nullish(),
 		workflow_uuid: z.array(z.string()).nullish(),
 	})
 	.loose();
