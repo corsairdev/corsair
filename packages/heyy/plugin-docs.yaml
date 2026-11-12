@@ -1,0 +1,59 @@
+displayName: Heyy
+description: Customer messaging over WhatsApp, SMS and Instagram from Heyy - search and create contacts, define custom attributes and labels, and manage the webhook endpoints that deliver message events.
+domain: heyy.io
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in the Heyy app under Settings, API keys, then send it as a bearer token. This plugin targets API v3 at `https://api.heyy.io/v3`.
+
+  Things that shape the calls:
+
+  - **Search replaces the old list calls.** v2's `GET` lists became `POST .../search` with a body in v3, and v2 was sunset on 1 November 2026. Every read here is a search.
+  - **`query` is a filter expression, not keywords.** Use `equals(...)`, `contains(...)`, `and(...)`, `or(...)`, `not(...)` on the fields each search lists in its `query` description; contacts filter on `firstName`, `lastName`, `email` and the like, not `name`. For free-text matching use the separate `search` field. The two can be sent together and each narrows the rows.
+  - **Sorting uses function syntax.** `sortBy` is `desc(createdAt)` or `asc(name)`, optionally with `'nulls last'`.
+  - **Paging is zero-based.** `pagination.page` starts at 0, `limit` is 1 to 100, and the default is 10. Replies carry `pagination.total` so a caller knows how many rows matched.
+  - **Deletes report partial success.** The label and webhook deletes answer 200 with `deletedIds` and `notFoundIds`; an id that did not exist is not an error there, so check `notFoundIds`. `attributes.remove` is the exception: an unknown attribute id fails with 404 `attribute_not_found`.
+  - **Ids are UUIDs, and a malformed one is a 500.** Heyy answers 500 `internal_error`, not 400, to a path id that is not a UUID and to a `query` that compares an id field with a non-UUID or an enum field with a value outside its list (template `status` is `in_review`, `active`, `rejected` or `unavailable`). This plugin refuses a malformed path id before sending; inside `query`, use real ids and values.
+  - **Select attributes need options.** A `single_select` or `multi_select` attribute without options is rejected, and options on a text attribute are rejected too.
+  - **Webhook URLs must be https.** Heyy only delivers to `https://`, so a plain http URL is refused before the request.
+  - **Rate limits are per minute per tenant**: 100 on Hobby, 500 on Pro, 1,000 on Ultra. A 429 carries `X-RateLimit-Reset`, which this plugin turns into a delay, and retries are capped at three.
+examples:
+  read:
+    path: contacts.search
+    title: Find a contact by email
+    args:
+      query: "equals(email, 'jordan@acme.com')"
+  write:
+    path: labels.create
+    title: Create a label
+    args:
+      name: Priority
+      color: '#EF4444'
+apiExamples:
+  contacts.search:
+    call: "{ query: \"contains(firstName, 'Jordan')\", pagination: { page: 0, limit: 25 } }"
+  contacts.create:
+    call: "{ firstName: 'Jordan', lastName: 'Reyes', email: 'jordan@acme.com' }"
+  attributes.search: {}
+  attributes.create:
+    call: "{ type: 'single_select', displayName: 'Plan', visibility: { inbox: true, contacts: true, create: true }, details: { options: [{ value: 'pro', color: '#3B82F6' }] } }"
+  attributes.remove:
+    call: "{ attributeId: 'b1a2c3d4-0000-4000-8000-000000000000' }"
+  labels.search: {}
+  labels.create:
+    call: "{ name: 'Priority', color: '#EF4444' }"
+  labels.remove:
+    call: "{ labelId: 'b1a2c3d4-0000-4000-8000-000000000000' }"
+  apiWebhooks.create:
+    call: "{ url: 'https://example.com/heyy/events', events: [{ type: 'message.received', scopes: [{ type: 'channel', ids: ['b1a2c3d4-0000-4000-8000-000000000000'] }] }] }"
+  apiWebhooks.search: {}
+  apiWebhooks.update:
+    call: "{ webhookId: 'b1a2c3d4-0000-4000-8000-000000000000', status: 'inactive' }"
+  apiWebhooks.remove:
+    call: "{ webhookId: 'b1a2c3d4-0000-4000-8000-000000000000' }"
+  channels.search: {}
+  automations.search: {}
+  messageTemplates.search: {}
+apiNotes:
+  contacts.search: '`query` is a structured expression such as `equals(email, ''a@b.com'')` over `firstName`, `lastName`, `email`, `phoneNumber`, `isSubscribed`, `labels` and the other listed fields; `search` is free text over name, phone and email. They can be combined.'
+  attributes.create: 'A single_select or multi_select attribute needs `details.options`; any other type must omit it.'
+  apiWebhooks.create: 'The URL must be https. Events are `message.received`, `message.sent`, `message.updated`, `whatsapp_message_received` or `whatsapp_message_status`, each scoped to at least one channel id from `channels.search`. Heyy then POSTs every matching message, with its content and sender, to that URL.'
