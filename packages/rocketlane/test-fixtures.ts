@@ -119,7 +119,13 @@ export const PROJECT = {
 	visibility: 'EVERYONE',
 	// The reference's status is an object, not a string.
 	status: { value: 2, label: 'In progress' },
-	currency: 'USD',
+	// The live API returns the currency as an object (11-12), not the
+	// reference's bare code.
+	currency: {
+		currencyCode: 'USD',
+		currencyName: 'US Dollar',
+		currencySymbol: '$',
+	},
 	annualizedRecurringRevenue: 120000,
 	projectFee: 45000,
 	budgetedHours: 320,

@@ -310,6 +310,21 @@ export const FieldValueSchema = z
 	})
 	.loose();
 
+/**
+ * A currency. The reference types it as a bare code, but the live API returns
+ * an object (seen on a trial account, 11-12), so both forms parse.
+ */
+const CurrencySchema = z.union([
+	z.string(),
+	z
+		.object({
+			currencyCode: z.string().nullish(),
+			currencyName: z.string().nullish(),
+			currencySymbol: z.string().nullish(),
+		})
+		.loose(),
+]);
+
 /** A status or priority: a numeric value and its display label. */
 const ValueLabelSchema = z
 	.object({
@@ -586,7 +601,7 @@ const ProjectSchema = z
 		updatedAt: z.number().nullish(),
 		visibility: z.string().nullish(),
 		externalReferenceId: z.string().nullish(),
-		currency: z.string().nullish(),
+		currency: CurrencySchema.nullish(),
 		annualizedRecurringRevenue: z.number().nullish(),
 		projectFee: z.number().nullish(),
 		budgetedHours: z.number().nullish(),

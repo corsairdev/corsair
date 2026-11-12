@@ -350,6 +350,11 @@ describe('projects.get', () => {
 		expect(result.project.inferredProgress).toBe('RUNNING_LATE');
 		expect(result.project.teamMembers?.members?.[0]?.userId).toBe(USER_ID);
 		expect(result.project.financials?.contractType).toBe('FIXED_FEE');
+		expect(result.project.currency).toEqual({
+			currencyCode: 'USD',
+			currencyName: 'US Dollar',
+			currencySymbol: '$',
+		});
 	});
 });
 

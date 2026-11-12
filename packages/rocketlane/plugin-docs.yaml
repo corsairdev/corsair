@@ -13,6 +13,8 @@ overviewNote: |
   - **Ids live in the path, never the body.** `tasks.update`, `projects.update` and `companies.update` send the id in the URL and the changed fields in the body. The update calls take fewer fields than create: a task's project, phase, assignees and followers, and a project's customer and members, are not part of an update and are rejected.
   - **Deletes answer 204.** `tasks.delete`, `projects.delete`, `companies.delete` and `timeEntries.delete` return no body, so the plugin reports `{ success: true, id }` from the id you sent. **These are permanent**, which is why they are marked destructive.
   - **Archiving is not deleting.** `projects.archive` posts to the project's `/archive` action and keeps the records, so it is a write rather than a destructive call.
+  - **An unknown id answers 403, not 404.** A get or delete on an id that does not exist on the instance comes back as `403 Forbidden`, so it is not retried.
+  - **Lists trail writes by a few seconds.** A list right after a create can miss the new record, so poll rather than read once.
   - **Time entries are capped per day.** Rocketlane rejects entries that would push a single day past 1440 minutes; the plugin requires at least one minute per entry but cannot see the other entries already logged for that day.
   - **Retries.** Rocketlane documents no throughput window and no `Retry-After`, so a 429 is retried three times with exponential backoff. A 5xx is retried only for a call the plugin declared read-only, never for a create.
 examples:
