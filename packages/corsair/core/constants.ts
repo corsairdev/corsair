@@ -509,6 +509,7 @@ export const BaseProviders = [
 	'waiverfile',
 	'wakatime',
 	'wati',
+	'webex',
 	'webflow',
 	'webscrapingai',
 	'webvizio',
@@ -1040,6 +1041,7 @@ export const ProviderDisplayNames = {
 	waiverfile: 'WaiverFile',
 	wakatime: 'WakaTime',
 	wati: 'Wati',
+	webex: 'Webex',
 	webflow: 'Webflow',
 	webscrapingai: 'WebScraping.AI',
 	webvizio: 'Webvizio',
@@ -1578,6 +1580,7 @@ export type AllProviders =
 	| 'waiverfile'
 	| 'wakatime'
 	| 'wati'
+	| 'webex'
 	| 'webflow'
 	| 'webscrapingai'
 	| 'webvizio'
