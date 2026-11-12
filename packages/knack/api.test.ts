@@ -63,14 +63,25 @@ describeIfKey('Knack live API', () => {
 	});
 
 	// A created record left behind would pollute the app, so it is removed even
-	// when a later assertion failed.
+	// when a later assertion failed. Every deletion is attempted, and any that
+	// fails is reported so a record left in the app does not go unnoticed.
 	afterAll(async () => {
+		const failed: string[] = [];
 		for (const id of created) {
 			await corsair.knack.api.records
 				.delete({ object_key: OBJECT_KEY, record_id: id })
-				.catch(() => undefined);
+				.catch((error: unknown) => {
+					failed.push(
+						`${id}: ${error instanceof Error ? error.message : String(error)}`,
+					);
+				});
 		}
 		testDb?.cleanup();
+		if (failed.length > 0) {
+			throw new Error(
+				`Could not delete ${failed.length} Knack record(s) in ${OBJECT_KEY}: ${failed.join('; ')}`,
+			);
+		}
 	});
 
 	// Every answer is passed through its published output schema, so a field
