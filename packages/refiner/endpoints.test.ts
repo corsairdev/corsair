@@ -150,6 +150,20 @@ describe('users.identify', () => {
 		});
 	});
 
+	it('rejects an account object without an id before sending', async () => {
+		await expect(
+			invoke(Users.identify, { id: 'user-1', account: { name: 'Acme' } }),
+		).rejects.toThrow(/account/);
+		await expect(
+			invoke(Responses.store, {
+				id: 'u',
+				form_uuid: 'FORM_UUID',
+				account: { id: '' },
+			}),
+		).rejects.toThrow(/account/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects a call with neither an id nor an email', async () => {
 		await expect(
 			invoke(Users.identify, { some_attribute: 'Manager' }),

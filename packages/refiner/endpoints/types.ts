@@ -175,6 +175,19 @@ const AccountGetResponseSchema = z
 
 export type AccountGetResponse = z.infer<typeof AccountGetResponseSchema>;
 
+/**
+ * The `account` object on identify and store. Refiner groups users by its `id`, so
+ * an object without one is refused here rather than sent.
+ */
+const AccountInputSchema = z
+	.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+	.refine(
+		(account) =>
+			(typeof account.id === 'string' && account.id.length > 0) ||
+			typeof account.id === 'number',
+		{ message: 'account needs an id; Refiner groups users by it.' },
+	);
+
 // ── identifyUser ──────────────────────────────────────────────────────────
 
 /**
@@ -194,12 +207,9 @@ const IdentifyInputSchema = z
 			.optional()
 			.describe('Your user ID. One of id, email is required.'),
 		email: z.string().min(1).optional().describe('Instead of an id.'),
-		account: z
-			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-			.optional()
-			.describe(
-				'A nested account object, with at least an id, to group users under one account.',
-			),
+		account: AccountInputSchema.optional().describe(
+			'A nested account object, with at least an id, to group users under one account.',
+		),
 	})
 	.loose()
 	.superRefine((value, ctx) => {
@@ -391,9 +401,9 @@ const ResponsesStoreInputSchema = z
 			.max(20)
 			.optional()
 			.describe('Up to 20 tags for the response.'),
-		account: z
-			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-			.optional(),
+		account: AccountInputSchema.optional().describe(
+			'A nested account object, with at least an id, to group the contact under one account.',
+		),
 	})
 	.loose()
 	.superRefine((value, ctx) => {
