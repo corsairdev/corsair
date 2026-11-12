@@ -18,8 +18,12 @@ type LogFields = Record<string, string | number | boolean | undefined>;
 export function resolveBase(ctx: WatiContext): string {
 	const custom = ctx.options?.apiHost?.trim().replace(/\/+$/, '');
 	if (custom) {
+		// The token travels in a header, so a plain-http host is refused.
+		if (/^http:\/\//i.test(custom)) {
+			throw new Error('WATI apiHost must use https.');
+		}
 		// A bare host is accepted with or without a scheme.
-		const withScheme = /^https?:\/\//i.test(custom)
+		const withScheme = /^https:\/\//i.test(custom)
 			? custom
 			: `https://${custom}`;
 		return `${withScheme}/api/ext/v3`;

@@ -9,6 +9,7 @@ import {
 	WATI_REGIONS,
 	WatiAPIError,
 } from './client';
+import { resolveBase } from './endpoints/call';
 import {
 	badRequest,
 	invalidToken,
@@ -200,6 +201,28 @@ describe('the regional hosts', () => {
 	it('keeps the three hosts distinct, since a token cannot move between them', () => {
 		const hosts = new Set(Object.values(WATI_REGIONS));
 		expect(hosts.size).toBe(3);
+	});
+});
+
+describe('resolveBase', () => {
+	const ctx = (options: object) => ({ options }) as never;
+
+	it('appends the V3 path to a dedicated host', () => {
+		expect(resolveBase(ctx({ apiHost: 'acme.wati.io/' }))).toBe(
+			'https://acme.wati.io/api/ext/v3',
+		);
+	});
+
+	it('refuses a plain-http host, since the token is in a header', () => {
+		expect(() => resolveBase(ctx({ apiHost: 'http://acme.wati.io' }))).toThrow(
+			'https',
+		);
+	});
+
+	it('uses the region host when no apiHost is set', () => {
+		expect(resolveBase(ctx({ region: 'ksa' }))).toBe(
+			'https://ksa-api.wati.io/api/ext/v3',
+		);
 	});
 });
 
