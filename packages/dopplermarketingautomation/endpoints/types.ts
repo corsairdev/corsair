@@ -231,7 +231,17 @@ const paging = {
 const subscriberOrigin = {
 	'X-Doppler-Subscriber-Origin': z.string().optional(),
 };
-const email = { email: PathSegmentSchema };
+// Doppler defines email path parameters as strings; allow apostrophes while
+// retaining path-segment safeguards and leaving address validation to Doppler.
+const email = {
+	email: z
+		.string()
+		.min(1)
+		.refine(
+			(value) => value !== '.' && value !== '..' && !/[\\/\"]/.test(value),
+			'Invalid email path segment',
+		),
+};
 export const ImportSubscribersSchema = z
 	.object({
 		items: z

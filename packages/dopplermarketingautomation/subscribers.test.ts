@@ -11,6 +11,77 @@ describe('Doppler subscriber endpoints', () => {
 
 	it.each([
 		[
+			'get',
+			'GET',
+			"/accounts/team/subscribers/o'connor%40example.com",
+			{ email: "o'connor@example.com" },
+		],
+		[
+			'exists',
+			'HEAD',
+			"/accounts/team/subscribers/o'connor%40example.com",
+			undefined,
+		],
+		[
+			'archive',
+			'POST',
+			"/accounts/team/subscribers/o'connor%40example.com/archive",
+			{ message: 'ok' },
+		],
+		[
+			'removeFromList',
+			'DELETE',
+			"/accounts/team/lists/7/subscribers/o'connor%40example.com",
+			{ message: 'ok' },
+		],
+		[
+			'permissionsHistory',
+			'GET',
+			"/accounts/team/subscribers/o'connor%40example.com/permissions-history/permission",
+			{ items: [] },
+		],
+		[
+			'deliveries',
+			'GET',
+			"/accounts/team/subscribers/o'connor%40example.com/deliveries",
+			{ items: [] },
+		],
+	] as const)(
+		'%s accepts an apostrophe in the subscriber email',
+		async (operation, method, path, response) => {
+			fetchMock.mockResolvedValueOnce(
+				new Response(response === undefined ? null : JSON.stringify(response)),
+			);
+			const input = {
+				accountName: 'team',
+				email: "o'connor@example.com",
+				listId: 7,
+				fieldName: 'permission',
+			};
+			await subscribers[operation](context, input);
+			const [url, init] = fetchMock.mock.calls[0]!;
+			expect(String(url)).toBe(`https://restapi.fromdoppler.com${path}`);
+			expect(init?.method).toBe(method);
+		},
+	);
+
+	it.each([
+		'',
+		'.',
+		'..',
+		'../other',
+		'a/b@example.com',
+		'a\\b@example.com',
+		'a"b@example.com',
+	])('rejects unsafe email path segment %s', async (email) => {
+		await expect(
+			subscribers.get(context, { accountName: 'team', email }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it.each([
+		[
 			'list',
 			{ accountName: 'team', page: 2, per_page: 3 },
 			'GET',
@@ -171,6 +242,8 @@ describe('Doppler subscriber endpoints', () => {
 					headers: { 'Content-Type': 'application/json' },
 				}),
 			);
+			// The table selects endpoints with different output shapes at runtime;
+			// no single stricter result type describes every row.
 			const call = subscribers[operation] as (
 				ctx: DopplerMarketingAutomationContext,
 				args: typeof input,

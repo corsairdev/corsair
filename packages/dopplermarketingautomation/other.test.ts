@@ -175,6 +175,8 @@ describe('Doppler automation and account endpoints', () => {
 					headers: { 'Content-Type': 'application/json' },
 				}),
 			);
+			// Family and operation vary together by row; TypeScript cannot retain
+			// their correlation, and their endpoint output shapes also differ.
 			const familyEndpoints = endpoints[family] as unknown as Record<
 				string,
 				(

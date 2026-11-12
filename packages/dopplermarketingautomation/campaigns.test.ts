@@ -182,6 +182,8 @@ describe('Doppler campaign endpoints', () => {
 					headers: { 'Content-Type': 'application/json' },
 				}),
 			);
+			// The table selects endpoints with different output shapes at runtime;
+			// no single stricter result type describes every row.
 			const call = campaigns[operation] as (
 				ctx: DopplerMarketingAutomationContext,
 				value: typeof input,

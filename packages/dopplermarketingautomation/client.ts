@@ -8,6 +8,8 @@ export type DopplerRequestOptions = {
 	method: ApiRequestOptions['method'];
 	query?: Record<string, string | number | boolean | undefined>;
 	headers?: Record<string, string | undefined>;
+	// Bodies have different endpoint-validated JSON shapes or raw text; no single
+	// stricter type covers all provider payloads without duplicating those schemas.
 	body?: unknown;
 	mediaType?: string;
 	responseType?: 'json' | 'text' | 'bytes' | 'void';
@@ -41,6 +43,8 @@ export async function makeDopplerMarketingAutomationRequest<T>(
 	const response = await fetch(url, { method: options.method, headers, body });
 	if (!response.ok) {
 		const text = await response.text();
+		// Provider errors can be arbitrary JSON or plain text, so their shape is
+		// not known until inspected by the caller.
 		let payload: unknown = text;
 		try {
 			payload = JSON.parse(text);

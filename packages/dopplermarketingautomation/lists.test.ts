@@ -75,6 +75,8 @@ describe('Doppler lists public endpoint seam', () => {
 					headers: { 'Content-Type': 'application/json' },
 				}),
 			);
+			// The table selects endpoints with different output shapes at runtime;
+			// no single stricter result type describes every row.
 			const call = endpoints[operation] as (
 				ctx: DopplerMarketingAutomationContext,
 				value: typeof input,
