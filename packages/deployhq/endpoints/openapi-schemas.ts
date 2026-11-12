@@ -1721,17 +1721,17 @@ export const DeploymentSchema = z
 			})
 			.strict()
 			.optional(),
+		// The OpenAPI document uses one sample UUID property; runtime entries are keyed by actual server identifiers.
 		files: z
-			.object({
-				'e12cdd12-a7ea-4939-82b4-227ff1865199': z
+			.record(
+				z.string(),
+				z
 					.object({
 						changed: z.array(z.json()).optional(),
 						removed: z.array(z.json()).optional(),
 					})
-					.strict()
-					.optional(),
-			})
-			.strict()
+					.strict(),
+			)
 			.optional(),
 		configuration: z
 			.object({
@@ -1889,17 +1889,17 @@ export const PaginationRecordsObjectSchema = z
 							})
 							.strict()
 							.optional(),
+						// The OpenAPI document uses one sample UUID property; runtime entries are keyed by actual server identifiers.
 						files: z
-							.object({
-								'e12cdd12-a7ea-4939-82b4-227ff1865199': z
+							.record(
+								z.string(),
+								z
 									.object({
 										changed: z.array(z.json()).optional(),
 										removed: z.array(z.json()).optional(),
 									})
-									.strict()
-									.optional(),
-							})
-							.strict()
+									.strict(),
+							)
 							.optional(),
 						configuration: z
 							.object({

@@ -61,6 +61,51 @@ describe('DeployHQ client', () => {
 		expect(new Headers(call[1]?.headers).has('authorization')).toBe(false);
 	});
 
+	it('preserves invoice PDF bytes in a validated base64 envelope', async () => {
+		const bytes = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x00, 0xff, 0x80]);
+		mockedFetch.mockResolvedValueOnce(
+			new Response(bytes, {
+				status: 200,
+				headers: { 'Content-Type': 'application/pdf' },
+			}),
+		);
+		const response = await makeDeployHQRequest(
+			'/account/invoices/42',
+			{
+				accountSubdomain: 'demo-account',
+				username: 'agent@example.com',
+				apiKey: 'secret-api-key',
+			},
+			{ binary: true },
+		);
+		expect(response).toEqual({
+			kind: 'binary',
+			contentType: 'application/pdf',
+			base64: btoa(String.fromCharCode(...bytes)),
+			sizeBytes: bytes.byteLength,
+		});
+	});
+
+	it('rejects invoice bodies over the local binary safety cap', async () => {
+		mockedFetch.mockResolvedValueOnce(
+			new Response(new Uint8Array(10 * 1024 * 1024 + 1), {
+				status: 200,
+				headers: { 'Content-Type': 'application/pdf' },
+			}),
+		);
+		await expect(
+			makeDeployHQRequest(
+				'/account/invoices/42',
+				{
+					accountSubdomain: 'demo-account',
+					username: 'agent@example.com',
+					apiKey: 'secret-api-key',
+				},
+				{ binary: true },
+			),
+		).rejects.toThrow('plugin safety cap');
+	});
+
 	it('fails explicitly when the API key or username is missing', async () => {
 		await expect(
 			makeDeployHQRequest('/account', {
@@ -151,6 +196,46 @@ describe('DeployHQ client', () => {
 			apiKey: 'secret-api-key',
 		});
 		expect(mockedFetch).toHaveBeenCalledTimes(2);
+	});
+
+	it('retries safe reads on DeployHQ 503 and honors Retry-After', async () => {
+		mockedFetch
+			.mockResolvedValueOnce(
+				jsonResponse({ error_code: 'service_unavailable' }, 503, {
+					'Retry-After': '0',
+				}),
+			)
+			.mockResolvedValueOnce(jsonResponse({ account: {} }));
+		await makeDeployHQRequest('/account', {
+			accountSubdomain: 'demo-account',
+			username: 'agent@example.com',
+			apiKey: 'secret-api-key',
+		});
+		expect(mockedFetch).toHaveBeenCalledTimes(2);
+	});
+
+	it('preserves 503 Retry-After on writes without retrying them', async () => {
+		mockedFetch.mockResolvedValueOnce(
+			jsonResponse({ error_code: 'service_unavailable' }, 503, {
+				'Retry-After': '4',
+			}),
+		);
+		// `unknown` because a rejected HTTP request may produce any JavaScript value.
+		const error: unknown = await makeDeployHQRequest(
+			'/projects',
+			{
+				accountSubdomain: 'demo-account',
+				username: 'agent@example.com',
+				apiKey: 'secret-api-key',
+			},
+			{ method: 'POST', body: { project: { name: 'test' } } },
+		).catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(DeployHQAPIError);
+		if (error instanceof DeployHQAPIError) {
+			expect(error.status).toBe(503);
+			expect(error.retryAfter).toBe(4_000);
+		}
+		expect(mockedFetch).toHaveBeenCalledTimes(1);
 	});
 
 	it('applies the bounded 20-second timeout to requests', async () => {

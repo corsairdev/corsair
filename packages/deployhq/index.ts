@@ -126,12 +126,14 @@ export function deployhq<const T extends DeployHQPluginOptions>(
 		keyBuilder: async (context: DeployHQKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
 			if (publicOperations.has(context.meteredOperationId ?? '')) return '';
-			if (!context.keys) throw new AuthMissingError('deployhq', 'api_key');
 			const accountSubdomain =
 				options.accountSubdomain ??
-				(await context.keys.get_account_subdomain());
-			const apiKey = options.key ?? (await context.keys.get_api_key());
-			const username = options.username ?? (await context.keys.get_username());
+				(await context.keys?.get_account_subdomain()) ??
+				undefined;
+			const apiKey =
+				options.key ?? (await context.keys?.get_api_key()) ?? undefined;
+			const username =
+				options.username ?? (await context.keys?.get_username()) ?? undefined;
 			if (!accountSubdomain || !apiKey || !username) {
 				throw new AuthMissingError('deployhq', 'api_key');
 			}

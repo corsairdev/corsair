@@ -1127,7 +1127,7 @@ await corsair.deployhq.api.buildConfigurations.getProjectBuildConfiguration({ pr
 |------|------|----------|-------------|
 | `project_id` | `string` | Yes | — |
 
-The OpenAPI URL contains only {project_id}, but its parameter list also declares an id path parameter. The extra parameter is omitted because it is not present in the URL template; confirm with DeployHQ.
+The OpenAPI URL `/projects/{project_id}/build_configuration` contains only the `{project_id}` path token, but its parameter list also declares an id path parameter. The extra parameter is omitted because it is not present in the URL template; confirm with DeployHQ.
 
 
 
@@ -2740,12 +2740,10 @@ await corsair.deployhq.api.deployments.createProjectDeployment({
 <Accordion title="files full type">
 
 ```ts
-{
-  e12cdd12-a7ea-4939-82b4-227ff1865199?: {
-    changed?: JsonValue[],
-    removed?: JsonValue[]
-  }
-}
+Record<string, {
+  changed?: JsonValue[],
+  removed?: JsonValue[]
+}>
 ```
 </Accordion>
 
@@ -2946,12 +2944,10 @@ await corsair.deployhq.api.deployments.getProjectDeploymentById({ project_id: 't
 <Accordion title="files full type">
 
 ```ts
-{
-  e12cdd12-a7ea-4939-82b4-227ff1865199?: {
-    changed?: JsonValue[],
-    removed?: JsonValue[]
-  }
-}
+Record<string, {
+  changed?: JsonValue[],
+  removed?: JsonValue[]
+}>
 ```
 </Accordion>
 
@@ -3130,12 +3126,10 @@ await corsair.deployhq.api.deployments.listProjectDeployments({
     duration?: null | string,
     runs_at?: string
   },
-  files?: {
-    e12cdd12-a7ea-4939-82b4-227ff1865199?: {
-      changed?: JsonValue[],
-      removed?: JsonValue[]
-    }
-  },
+  files?: Record<string, {
+    changed?: JsonValue[],
+    removed?: JsonValue[]
+  }>,
   configuration?: {
     copy_config_files?: boolean,
     notification_addresses?: string,
@@ -3362,12 +3356,10 @@ await corsair.deployhq.api.deployments.retryProjectDeploymentRetry({ project_id:
 <Accordion title="files full type">
 
 ```ts
-{
-  e12cdd12-a7ea-4939-82b4-227ff1865199?: {
-    changed?: JsonValue[],
-    removed?: JsonValue[]
-  }
-}
+Record<string, {
+  changed?: JsonValue[],
+  removed?: JsonValue[]
+}>
 ```
 </Accordion>
 
@@ -3577,12 +3569,10 @@ await corsair.deployhq.api.deployments.rollbackProjectDeployment({
 <Accordion title="files full type">
 
 ```ts
-{
-  e12cdd12-a7ea-4939-82b4-227ff1865199?: {
-    changed?: JsonValue[],
-    removed?: JsonValue[]
-  }
-}
+Record<string, {
+  changed?: JsonValue[],
+  removed?: JsonValue[]
+}>
 ```
 </Accordion>
 
@@ -7316,9 +7306,25 @@ await corsair.deployhq.api.invoices.getAccountInvoice({ id: 'test' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 
+The route summary says this downloads an invoice PDF, while the OpenAPI response schema declares a JSON string. JSON responses are returned as strings; non-JSON PDF bytes are preserved in a `kind: 'binary'` base64 envelope. The `kind` discriminator is the string literal `'binary'`. Binary responses are capped at 10 MiB by this plugin as a local memory-safety limit, not as a DeployHQ limit.
 
 
-**Output:** `string`
+
+**Output:** `string \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string | {
+  kind: binary,
+  contentType: string,
+  base64: string,
+  sizeBytes: number
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -8579,7 +8585,7 @@ await corsair.deployhq.api.projects.listProjectInsights({ id: 'test', period: 't
 | `id` | `string` | Yes | — |
 | `period` | `string` | No | — |
 
-The OpenAPI URL contains {id}, while its path-parameter list includes both project_id and id. This implementation follows the URL template and uses its id placeholder; confirm the intended identifier with DeployHQ.
+The OpenAPI URL `/projects/{id}/insights` contains the path token `{id}`, while its parameter list includes both project_id and id. This implementation follows the URL template and uses its id field; confirm the intended identifier with DeployHQ.
 
 
 
@@ -10268,7 +10274,7 @@ await corsair.deployhq.api.security.deleteSecurityApiKey({ id: 'test' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 
-The OpenAPI URL contains {id}, but its parameter list declares both identifier and id as path parameters. This implementation uses the URL's id placeholder; confirm the intended identifier with DeployHQ.
+The OpenAPI URL `/security/api_keys/{id}` contains the `{id}` path token, but its parameter list declares both identifier and id as path parameters. This implementation uses the URL's id field; confirm the intended identifier with DeployHQ.
 
 
 
@@ -13395,7 +13401,7 @@ await corsair.deployhq.api.templates.showPublicTemplateTemplatePublic({ id: 'tes
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 
-The OpenAPI URL repeats the {id} placeholder but defines a single id parameter. The same value is used for both URL occurrences; confirm with DeployHQ whether distinct identifiers are intended.
+The OpenAPI URL `/templates/{id}/public/{id}` repeats the `{id}` path token but defines a single id parameter. The same value is used for both URL occurrences; confirm with DeployHQ whether distinct identifiers are intended.
 
 
 

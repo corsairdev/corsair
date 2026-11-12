@@ -93,7 +93,11 @@ describe('DeployHQ REST operations', () => {
 			}
 
 			const requestHeaders = new Headers(requestInit?.headers);
-			expect(requestHeaders.get('accept')).toBe('application/json');
+			expect(requestHeaders.get('accept')).toBe(
+				operationKey === 'invoices.getAccountInvoice'
+					? 'application/pdf, application/octet-stream, application/json'
+					: 'application/json',
+			);
 			if (operation.public) {
 				expect(requestHeaders.has('authorization')).toBe(false);
 			} else {
@@ -167,6 +171,29 @@ describe('DeployHQ REST operations', () => {
 		await expect(
 			runDeployHQOperation(operationKey, input, credentials),
 		).resolves.toBe(svg);
+	});
+
+	it('returns invoice downloads as a byte-preserving base64 response', async () => {
+		const operationKey = 'invoices.getAccountInvoice';
+		const operation = deployHQOperations[operationKey];
+		const input = operation.inputSchema.parse(
+			deployHQOperationFixtures[operationKey].input,
+		);
+		const bytes = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x00, 0xff]);
+		mockedFetch.mockResolvedValueOnce(
+			new Response(bytes, {
+				status: 200,
+				headers: { 'Content-Type': 'application/pdf' },
+			}),
+		);
+		await expect(
+			runDeployHQOperation(operationKey, input, credentials),
+		).resolves.toEqual({
+			kind: 'binary',
+			contentType: 'application/pdf',
+			base64: btoa(String.fromCharCode(...bytes)),
+			sizeBytes: bytes.byteLength,
+		});
 	});
 
 	it('logs only the safe operation and method, never endpoint input or credentials', async () => {

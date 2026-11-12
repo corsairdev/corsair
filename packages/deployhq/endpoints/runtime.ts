@@ -86,6 +86,7 @@ export async function runDeployHQOperation<Key extends DeployHQOperationKey>(
 	const response: unknown = await makeDeployHQRequest(path, credentials, {
 		method: operation.method,
 		query,
+		binary: operationKey === 'invoices.getAccountInvoice',
 		...(operation.bodyKind === 'form'
 			? { formData }
 			: requestBody !== undefined

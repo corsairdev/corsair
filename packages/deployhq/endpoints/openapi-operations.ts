@@ -3,6 +3,16 @@
 import { z } from 'zod';
 import * as OpenAPI from './openapi-schemas';
 
+// The invoice route summary specifies a PDF download; raw bytes use this strict, lossless wrapper.
+const DeployHQBinaryResponseSchema = z
+	.object({
+		kind: z.literal('binary'),
+		contentType: z.string(),
+		base64: z.string(),
+		sizeBytes: z.number().int().nonnegative(),
+	})
+	.strict();
+
 export const deployHQOperations = {
 	'account.getAccount': {
 		group: 'account',
@@ -100,7 +110,10 @@ export const deployHQOperations = {
 		source:
 			'https://api.deployhq.com/docs.json#/paths/~1account~1invoices~1{id}/get',
 		inputSchema: z.object({ id: z.string() }).strict(),
-		outputSchema: OpenAPI.StringValueSchema,
+		outputSchema: z.union([
+			OpenAPI.StringValueSchema,
+			DeployHQBinaryResponseSchema,
+		]),
 	},
 	'networkAgents.listAgents': {
 		group: 'networkAgents',

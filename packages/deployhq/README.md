@@ -12,6 +12,8 @@ deployhq({ accountSubdomain: 'your-account', username: 'you@example.com' })
 
 The API key is available in DeployHQ account settings and is documented as a 40-character value. Store username and account_subdomain in the plugin's `api_key` account auth fields for tenant-specific setups; plugin options may override them. Only `api_key` auth is officially documented; DeployHQ does not document OAuth 2 for this API.
 
+For a client without a database or KEK, supply `key`, `username`, and `accountSubdomain` as plugin options. Keep real credentials in a secret manager rather than source control.
+
 All account requests use `https://<accountSubdomain>.deployhq.com/`. Public routes do not send credentials, but use the configured account subdomain server. Input and output are validated with operation-specific strict Zod schemas generated from DeployHQ's official OpenAPI document.
 
 ## Behavior and limitations
@@ -19,6 +21,7 @@ All account requests use `https://<accountSubdomain>.deployhq.com/`. Public rout
 - The 216 supported operations below reflect the REST operations in the published OpenAPI document. Every row links to the official operation in that document.
 - Query and body fields follow the operation schema; the plugin does not invent pagination parameters or automatically follow pages.
 - Safe `GET` calls use the shared HTTP transport's bounded retry behavior and honor `Retry-After` when returned. Writes are not automatically retried to avoid duplicating deployments, invitations, credentials, or other side effects. The API guide documents `503` and `Retry-After`.
+- Invoice downloads preserve non-JSON response bytes as `{ kind: 'binary', contentType, base64, sizeBytes }`; JSON string responses are also accepted because the OpenAPI response schema documents a string. Binary reads have a 20-second per-request timeout and a 10 MiB plugin safety cap (not a DeployHQ limit).
 - Public routes include account signup, password reset, deployment IP ranges, packages/prices, public templates, and status badges.
 - The API reference does not define an inbound webhook contract; this plugin exposes no webhooks.
 - The OpenAPI document has inconsistent path parameter declarations for several routes. The URL template is used as the path source of truth: the build-language routes put `override_build_configuration_id` in the path but describe it as an optional query parameter; `/projects/{id}/insights` declares both `project_id` and `id` as path parameters; `/projects/{project_id}/build_configuration` and `/security/api_keys/{id}` declare extra path parameters absent from their URL templates; and `/templates/{id}/public/{id}` repeats the `id` placeholder. Confirm these conflicts with DeployHQ before relying on the affected operations.

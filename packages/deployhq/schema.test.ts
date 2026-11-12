@@ -9,6 +9,10 @@ import {
 	deployHQOperationKeys,
 	deployHQOperations,
 } from './endpoints/openapi-operations';
+import {
+	DeploymentSchema,
+	PaginationRecordsObjectSchema,
+} from './endpoints/openapi-schemas';
 import type { DeployHQKeyBuilderContext, DeployHQPluginOptions } from './index';
 import { deployHQAuthConfig, deployhq } from './index';
 
@@ -79,6 +83,21 @@ describe('DeployHQ OpenAPI schemas and registry', () => {
 		}
 	});
 
+	it('accepts deployment file maps keyed by UUIDs other than the OpenAPI example', () => {
+		const files = {
+			'4a4b83ad-1786-4d43-a8b8-8eeea3490f2c': {
+				changed: [],
+				removed: [],
+			},
+		};
+		expect(DeploymentSchema.parse({ files })).toEqual({ files });
+		expect(
+			PaginationRecordsObjectSchema.parse({ records: [{ files }] }),
+		).toEqual({
+			records: [{ files }],
+		});
+	});
+
 	it('includes only the documented API-key auth type and username field', () => {
 		expect(Object.keys(deployHQAuthConfig)).toEqual(['api_key']);
 		expect(deployHQAuthConfig.api_key?.account).toEqual([
@@ -112,5 +131,27 @@ describe('DeployHQ OpenAPI schemas and registry', () => {
 				'endpoint',
 			),
 		).rejects.toBeInstanceOf(AuthMissingError);
+
+		const directPlugin = deployhq<DeployHQPluginOptions>({
+			accountSubdomain: 'direct-account',
+			username: 'direct@example.com',
+			key: 'direct-api-key',
+		});
+		const directKeyBuilder = directPlugin.keyBuilder;
+		expect(directKeyBuilder).toBeDefined();
+		if (!directKeyBuilder) return;
+		const context = makeKeyBuilderContext('account.getAccount');
+		context.keys.get_api_key = async () => {
+			throw new Error('stored API key should not be read');
+		};
+		context.keys.get_username = async () => {
+			throw new Error('stored username should not be read');
+		};
+		context.keys.get_account_subdomain = async () => {
+			throw new Error('stored account should not be read');
+		};
+		await expect(directKeyBuilder(context, 'endpoint')).resolves.toBe(
+			'direct-api-key',
+		);
 	});
 });

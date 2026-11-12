@@ -27,6 +27,7 @@ export type DeployHQRequestOptions = {
 	body?: DeployHQJsonValue;
 	query?: Record<string, DeployHQQueryValue>;
 	formData?: Record<string, string | boolean>;
+	binary?: boolean;
 	public?: boolean;
 };
 
@@ -43,6 +44,8 @@ export class DeployHQAPIError extends Error {
 
 const DEPLOYHQ_API_VERSION = '1.0.0';
 const DEPLOYHQ_TIMEOUT_MS = 20_000;
+const MAX_BINARY_RESPONSE_BYTES = 10 * 1024 * 1024;
+const MAX_BINARY_RETRIES = 3;
 
 const SAFE_READ_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -50,6 +53,7 @@ const SAFE_READ_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	initialRetryDelay: 1_000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'Retry-After' },
+	isRateLimitError: (status) => status === 503,
 };
 
 const WRITE_RATE_LIMIT_CONFIG: RateLimitConfig = {
@@ -58,6 +62,7 @@ const WRITE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	initialRetryDelay: 0,
 	backoffMultiplier: 1,
 	headerNames: { retryAfter: 'Retry-After' },
+	isRateLimitError: (status) => status === 503,
 };
 
 function parseRetryAfter(response: Response): number | undefined {
@@ -83,6 +88,170 @@ function resolveAccountSubdomain(accountSubdomain: string | undefined): string {
 
 function basicAuthorization(username: string, apiKey: string): string {
 	return `Basic ${btoa(`${username}:${apiKey}`)}`;
+}
+
+function encodeBase64(bytes: Uint8Array): string {
+	let binary = '';
+	const chunkSize = 32_768;
+	for (let offset = 0; offset < bytes.length; offset += chunkSize) {
+		const chunk = bytes.subarray(
+			offset,
+			Math.min(offset + chunkSize, bytes.length),
+		);
+		binary += String.fromCharCode(...chunk);
+	}
+	return btoa(binary);
+}
+
+async function readBoundedBytes(response: Response): Promise<Uint8Array> {
+	const contentLength = Number(response.headers.get('Content-Length'));
+	if (
+		Number.isFinite(contentLength) &&
+		contentLength > MAX_BINARY_RESPONSE_BYTES
+	) {
+		await response.body?.cancel().catch(() => undefined);
+		throw new DeployHQAPIError(
+			`DeployHQ binary response exceeded the ${MAX_BINARY_RESPONSE_BYTES}-byte plugin safety cap.`,
+		);
+	}
+	const reader = response.body?.getReader();
+	if (!reader) return new Uint8Array();
+	const chunks: Uint8Array[] = [];
+	let byteCount = 0;
+	try {
+		while (true) {
+			const chunk = await reader.read();
+			if (chunk.done) break;
+			byteCount += chunk.value.byteLength;
+			if (byteCount > MAX_BINARY_RESPONSE_BYTES) {
+				await reader.cancel();
+				throw new DeployHQAPIError(
+					`DeployHQ binary response exceeded the ${MAX_BINARY_RESPONSE_BYTES}-byte plugin safety cap.`,
+				);
+			}
+			chunks.push(chunk.value);
+		}
+	} finally {
+		reader.releaseLock();
+	}
+	const bytes = new Uint8Array(byteCount);
+	let offset = 0;
+	for (const chunk of chunks) {
+		bytes.set(chunk, offset);
+		offset += chunk.byteLength;
+	}
+	return bytes;
+}
+
+function readErrorField(body: unknown, key: string): unknown {
+	// `unknown` because parsed provider error JSON is untrusted until the specific field is narrowed.
+	if (typeof body !== 'object' || body === null || Array.isArray(body))
+		return undefined;
+	return Object.getOwnPropertyDescriptor(body, key)?.value;
+}
+
+function redactProviderText(
+	text: string,
+	credentials: DeployHQCredentials,
+): string {
+	let safeText = text;
+	for (const secret of [credentials.apiKey, credentials.username]) {
+		if (secret) safeText = safeText.split(secret).join('[redacted]');
+	}
+	return safeText;
+}
+
+async function readProviderErrorHint(
+	response: Response,
+	credentials: DeployHQCredentials,
+): Promise<string | undefined> {
+	const contentType = response.headers.get('Content-Type')?.toLowerCase() ?? '';
+	if (!contentType.startsWith('application/json')) {
+		await response.body?.cancel().catch(() => undefined);
+		return undefined;
+	}
+	try {
+		// `unknown` because the provider error JSON is arbitrary until its documented fields are narrowed.
+		const body: unknown = await response.json();
+		const hint = readErrorField(body, 'hint');
+		const errorCode = readErrorField(body, 'error_code');
+		if (typeof hint === 'string') return redactProviderText(hint, credentials);
+		if (typeof errorCode === 'string')
+			return redactProviderText(errorCode, credentials);
+		return undefined;
+	} catch {
+		// Invalid or unreadable provider error bodies are not propagated to callers.
+		return undefined;
+	}
+}
+
+async function makeBinaryDeployHQRequest(
+	endpoint: string,
+	baseUrl: string,
+	credentials: DeployHQCredentials,
+	options: DeployHQRequestOptions,
+	authorization: string,
+): Promise<unknown> {
+	const url = new URL(endpoint, baseUrl);
+	for (const [name, value] of Object.entries(options.query ?? {})) {
+		if (value !== undefined) url.searchParams.set(name, String(value));
+	}
+	try {
+		for (let attempt = 0; attempt <= MAX_BINARY_RETRIES; attempt += 1) {
+			const response = await fetch(url, {
+				method: options.method ?? 'GET',
+				headers: {
+					Accept: 'application/pdf, application/octet-stream, application/json',
+					Authorization: authorization,
+				},
+				signal: AbortSignal.timeout(DEPLOYHQ_TIMEOUT_MS),
+			});
+			const retryAfter = parseRetryAfter(response);
+			if (!response.ok) {
+				if (
+					(response.status === 429 || response.status === 503) &&
+					attempt < MAX_BINARY_RETRIES
+				) {
+					await response.body?.cancel().catch(() => undefined);
+					const backoff = Math.min(1_000 * 2 ** attempt, 60_000);
+					const boundedDelay = Math.min(retryAfter ?? backoff, 60_000);
+					await new Promise((resolve) => setTimeout(resolve, boundedDelay));
+					continue;
+				}
+				const hint = await readProviderErrorHint(response, credentials);
+				throw new DeployHQAPIError(
+					hint
+						? `DeployHQ invoice request failed with HTTP ${response.status}: ${hint}`
+						: `DeployHQ invoice request failed with HTTP ${response.status}.`,
+					response.status,
+					retryAfter,
+				);
+			}
+			const contentType =
+				response.headers.get('Content-Type') ?? 'application/pdf';
+			if (contentType.toLowerCase().startsWith('application/json')) {
+				// `unknown` because a JSON response is untrusted until the operation output schema validates it.
+				const jsonResponse: unknown = await response.json();
+				return jsonResponse;
+			}
+			const bytes = await readBoundedBytes(response);
+			return {
+				kind: 'binary',
+				contentType,
+				base64: encodeBase64(bytes),
+				sizeBytes: bytes.byteLength,
+			};
+		}
+		throw new DeployHQAPIError(
+			'DeployHQ invoice request exceeded its retry budget.',
+		);
+	} catch (error: unknown) {
+		// `unknown` because fetch, timeout, and response decoding failures may reject with arbitrary values.
+		if (error instanceof DeployHQAPIError) throw error;
+		throw new DeployHQAPIError(
+			'DeployHQ invoice request failed before a valid response was received.',
+		);
+	}
 }
 
 // `unknown` because each caller must validate untrusted provider JSON with its operation output schema.
@@ -115,6 +284,17 @@ export async function makeDeployHQRequest(
 				credentials.apiKey,
 			),
 		};
+	}
+	if (options.binary) {
+		const authorization = headers.Authorization;
+		if (!authorization) throw new AuthMissingError('deployhq', 'api_key');
+		return makeBinaryDeployHQRequest(
+			endpoint,
+			baseUrl,
+			credentials,
+			options,
+			authorization,
+		);
 	}
 
 	if (options.formData) {
