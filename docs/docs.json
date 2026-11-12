@@ -4170,6 +4170,14 @@
                 ]
               },
               {
+                "group": "Worksnaps",
+                "pages": [
+                  "plugins/worksnaps/overview",
+                  "plugins/worksnaps/api",
+                  "plugins/worksnaps/database"
+                ]
+              },
+              {
                 "group": "World News API",
                 "pages": [
                   "plugins/worldnewsapi/overview",
