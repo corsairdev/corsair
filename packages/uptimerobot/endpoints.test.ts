@@ -875,4 +875,19 @@ describe('fixes from the 11-12 review and live run', () => {
 		expect(request.body).toEqual({});
 		expect(request.headers['content-type']).toContain('application/json');
 	});
+
+	it('accepts the empty 201 UptimeRobot answers when a comment is added', async () => {
+		respondEmpty(fetchMock, 201);
+
+		const result = await invoke(Incidents.addComment, {
+			id: incident.id,
+			content: 'Rolled back the deployment.',
+		});
+
+		// The answer has no body, so the plugin echoes what it posted.
+		expect(result).toEqual({
+			comment: 'Rolled back the deployment.',
+			publishOnStatusPage: false,
+		});
+	});
 });

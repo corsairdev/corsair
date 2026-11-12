@@ -101,6 +101,13 @@ export const addComment: UptimeRobotEndpoints['incidentsAddComment'] = (
 			body: { content, publishOnStatusPage },
 		}),
 		{
+			// The spec documents 201 with no body; echo what was posted then, so the
+			// output schema has an object to check.
+			shape: (raw, parsed) =>
+				raw ?? {
+					comment: parsed.content,
+					publishOnStatusPage: parsed.publishOnStatusPage ?? false,
+				},
 			log: (parsed, result) => ({
 				incident: parsed.id,
 				id: result.id ?? undefined,
