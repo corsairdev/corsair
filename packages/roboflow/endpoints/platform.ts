@@ -270,10 +270,11 @@ export const upload: RoboflowEndpoints['imageUpload'] = async (ctx, input) => {
 		({ image, name, batch, tag }) => ({
 			method: 'POST',
 			path: `/dataset/${segment(slug)}/upload`,
+			timeoutMs: 120_000,
 			query: {
 				name,
 				batch,
-				tag: tag?.join(','),
+				tag,
 				image: /^https?:\/\//i.test(image) ? image : undefined,
 			},
 			body: /^https?:\/\//i.test(image) ? undefined : image,
@@ -284,6 +285,13 @@ export const upload: RoboflowEndpoints['imageUpload'] = async (ctx, input) => {
 			replayable: false,
 		}),
 		{
+			shape: (raw) => {
+				const result = Outputs.imageUpload.parse(raw);
+				if (result.success === false && result.duplicate !== true) {
+					throw new RoboflowAPIError('Roboflow rejected the image upload');
+				}
+				return result;
+			},
 			log: (_, result) => ({
 				imageId: result.id ?? undefined,
 				duplicate: result.duplicate ?? false,

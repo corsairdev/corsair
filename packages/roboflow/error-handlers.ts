@@ -81,8 +81,11 @@ export function mergeErrorHandlers(
 	if (!user) return builtin;
 	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
 	const { DEFAULT: userDefault, ...userRest } = user;
+	const remainingBuiltins = Object.fromEntries(
+		Object.entries(builtinRest).filter(([name]) => !(name in userRest)),
+	);
 	const fallback = userDefault ?? builtinDefault;
 	return fallback
-		? { ...builtinRest, ...userRest, DEFAULT: fallback }
-		: { ...builtinRest, ...userRest };
+		? { ...userRest, ...remainingBuiltins, DEFAULT: fallback }
+		: { ...userRest, ...remainingBuiltins };
 }

@@ -144,3 +144,17 @@ describe('Roboflow error handlers', () => {
 		expect(mergeErrorHandlers(errorHandlers, undefined)).toBe(errorHandlers);
 	});
 });
+
+it('runs custom handlers before built-ins and preserves named overrides', () => {
+	const custom = {
+		match: () => true,
+		handler: async () => ({ maxRetries: 0 }),
+	};
+	const merged = mergeErrorHandlers(errorHandlers, {
+		CUSTOM: custom,
+		SERVER_ERROR: custom,
+	});
+	expect(Object.keys(merged)[0]).toBe('CUSTOM');
+	expect(merged.SERVER_ERROR).toBe(custom);
+	expect(Object.keys(merged).at(-1)).toBe('DEFAULT');
+});

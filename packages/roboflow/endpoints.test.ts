@@ -15,7 +15,7 @@ import {
 	VERSION,
 	WORKSPACE,
 } from './test-fixtures';
-import { invoke, lastRequest, respond } from './test-support';
+import { invoke, lastRequest, respond, testContext } from './test-support';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -613,4 +613,67 @@ describe('error propagation', () => {
 			invoke(Platform.workspace, { workspace: 'roboflow' }),
 		).rejects.toThrow('Roboflow Dashboard');
 	});
+});
+
+describe('review regressions', () => {
+	it('rejects invalid encryption before an upload', async () => {
+		const ctx = { ...testContext(), encryptDataAtRest: true, kek: '' };
+		respond(fetchMock, IMAGE_UPLOADED);
+		await expect(
+			Platform.upload(ctx as never, {
+				project: 'p',
+				image: 'https://example.com/a.jpg',
+			}),
+		).rejects.toThrow('encryptDataAtRest requires kek');
+		expect(fetchMock).not.toHaveBeenCalled();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+	it('sends each upload tag separately', async () => {
+		respond(fetchMock, IMAGE_UPLOADED);
+		await invoke(Platform.upload, {
+			project: 'p',
+			image: 'https://example.com/a.jpg',
+			tag: ['chess', 'pieces'],
+		});
+		expect(
+			new URL(fetchMock.mock.calls[0][0]).searchParams.getAll('tag'),
+		).toEqual(['chess', 'pieces']);
+	});
+	it('rejects an unsuccessful upload before completion logging', async () => {
+		respond(fetchMock, { success: false });
+		await expect(
+			invoke(Platform.upload, {
+				project: 'p',
+				image: 'https://example.com/a.jpg',
+			}),
+		).rejects.toThrow('Roboflow rejected the image upload');
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+	it('accepts an unsuccessful upload marked as a duplicate', async () => {
+		respond(fetchMock, { success: false, duplicate: true });
+		await expect(
+			invoke(Platform.upload, {
+				project: 'p',
+				image: 'https://example.com/a.jpg',
+			}),
+		).resolves.toMatchObject({ duplicate: true });
+	});
+	it.each(['upload', 'infer'])(
+		'allows two minutes for %s',
+		async (operation) => {
+			const timeout = jest.spyOn(AbortSignal, 'timeout');
+			try {
+				respond(fetchMock, operation === 'upload' ? IMAGE_UPLOADED : INFERENCE);
+				await invoke(
+					operation === 'upload' ? Platform.upload : Inference.infer,
+					operation === 'upload'
+						? { project: 'p', image: 'https://example.com/a.jpg' }
+						: { modelId: 'p/1', image: 'https://example.com/a.jpg' },
+				);
+				expect(timeout).toHaveBeenCalledWith(120_000);
+			} finally {
+				timeout.mockRestore();
+			}
+		},
+	);
 });

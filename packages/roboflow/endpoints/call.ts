@@ -28,6 +28,9 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
+	if (ctx.encryptDataAtRest && !ctx.kek) {
+		throw new Error('encryptDataAtRest requires kek');
+	}
 	const raw = await makeRoboflowRequest(ctx.key, toRequest(parsed));
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,

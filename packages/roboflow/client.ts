@@ -134,10 +134,10 @@ export function describeRoboflowError(
 	return hint ? `${head} (${hint})` : head;
 }
 
-/** A query value. The inference route takes only scalars. */
+/** A query value. Arrays become repeated query parameters. */
 export type RoboflowQuery = Record<
 	string,
-	string | number | boolean | undefined
+	string | number | boolean | string[] | undefined
 >;
 
 export type RoboflowRequest = {
@@ -153,6 +153,8 @@ export type RoboflowRequest = {
 	replayable: boolean;
 	/** Which host the call goes to; defaults to the management host. */
 	host?: 'api' | 'inference';
+	/** Request deadline in milliseconds; omitted uses the shared default. */
+	timeoutMs?: number;
 };
 
 /**
@@ -173,10 +175,15 @@ const ROBOFLOW_RATE_LIMIT_CONFIG: RateLimitConfig = {
  * transport; `api_key` as a query parameter is the legacy channel and is never
  * used, since it puts the key in URLs and logs.
  */
-function configWith(apiKey: string, host: 'api' | 'inference'): OpenAPIConfig {
+function configWith(
+	apiKey: string,
+	host: 'api' | 'inference',
+	timeoutMs?: number,
+): OpenAPIConfig {
 	return {
 		BASE: host === 'inference' ? ROBOFLOW_INFERENCE_BASE : ROBOFLOW_API_BASE,
 		VERSION: 'v1',
+		TIMEOUT: timeoutMs,
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
@@ -197,6 +204,7 @@ export async function makeRoboflowRequest(
 		mediaType,
 		replayable,
 		host = 'api',
+		timeoutMs,
 	}: RoboflowRequest,
 ): Promise<unknown> {
 	const requestOptions: ApiRequestOptions = {
@@ -211,9 +219,13 @@ export async function makeRoboflowRequest(
 	try {
 		// unknown: the body is provider JSON until the caller's output schema
 		// parses it; `request` cannot know the operation's shape.
-		return await request<unknown>(configWith(apiKey, host), requestOptions, {
-			rateLimitConfig: ROBOFLOW_RATE_LIMIT_CONFIG,
-		});
+		return await request<unknown>(
+			configWith(apiKey, host, timeoutMs),
+			requestOptions,
+			{
+				rateLimitConfig: ROBOFLOW_RATE_LIMIT_CONFIG,
+			},
+		);
 	} catch (error) {
 		if (error instanceof ApiError) {
 			const fields = failure(error.body);

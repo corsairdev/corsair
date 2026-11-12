@@ -34,7 +34,11 @@ export type RoboflowPluginOptions = {
 export type RoboflowContext = CorsairPluginContext<
 	typeof RoboflowSchema,
 	RoboflowPluginOptions
->;
+> & {
+	/** Event encryption settings supplied by the host at runtime. */
+	encryptDataAtRest?: boolean;
+	kek?: string;
+};
 
 export type RoboflowKeyBuilderContext =
 	KeyBuilderContext<RoboflowPluginOptions>;

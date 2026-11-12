@@ -56,6 +56,7 @@ export const infer: RoboflowEndpoints['infer'] = (ctx, input) =>
 				body: resolvedType === 'base64' ? image : undefined,
 				mediaType: 'application/x-www-form-urlencoded',
 				host: 'inference' as const,
+				timeoutMs: 120_000,
 				replayable: false,
 			};
 		},
