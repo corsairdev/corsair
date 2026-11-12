@@ -29,10 +29,12 @@ const describeIfKey = missing.length === 0 ? describe : describe.skip;
 describeIfKey('Knack live API', () => {
 	let testDb: ReturnType<typeof createTestDatabase> | undefined;
 	let corsair: ReturnType<typeof createCorsair>;
-	// The field the plugin writes in these tests, taken from the object's own
-	// definition rather than assumed.
-	let writableField: string | undefined;
-	let createdId: string | undefined;
+	// The field the plugin writes in these tests, read from the object's own
+	// definition in beforeAll so no test depends on another having run.
+	let writableField: string;
+	// Every record a test creates, until its delete is confirmed. A failed
+	// assertion leaves the id here and afterAll removes it.
+	const created = new Set<string>();
 
 	beforeAll(async () => {
 		testDb = createTestDatabase();
@@ -45,14 +47,27 @@ describeIfKey('Knack live API', () => {
 		await corsair.knack.keys.issue_new_dek();
 		await corsair.knack.keys.set_api_key(APPLICATION_ID ?? '');
 		await corsair.knack.keys.set_api_secret(API_KEY ?? '');
+
+		const detail = KnackEndpointOutputSchemas.objectsGet.parse(
+			await corsair.knack.api.objects.get({ object_key: OBJECT_KEY }),
+		);
+		// A short-text field is the one this suite can write to safely; system
+		// fields and connections are not.
+		const field = detail.object?.fields?.find(
+			(entry) => entry.type === 'short_text',
+		)?.key;
+		if (!field) {
+			throw new Error(`${OBJECT_KEY} has no short-text field to write to`);
+		}
+		writableField = field;
 	});
 
 	// A created record left behind would pollute the app, so it is removed even
 	// when a later assertion failed.
 	afterAll(async () => {
-		if (createdId) {
+		for (const id of created) {
 			await corsair.knack.api.records
-				.delete({ object_key: OBJECT_KEY, record_id: createdId })
+				.delete({ object_key: OBJECT_KEY, record_id: id })
 				.catch(() => undefined);
 		}
 		testDb?.cleanup();
@@ -75,18 +90,15 @@ describeIfKey('Knack live API', () => {
 		expect(target).toBeDefined();
 	});
 
-	it("reads the target object's definition and finds a writable field", async () => {
+	it("reads the target object's definition", async () => {
 		const detail = KnackEndpointOutputSchemas.objectsGet.parse(
 			await corsair.knack.api.objects.get({ object_key: OBJECT_KEY }),
 		);
 
 		expect(detail.object?.key).toBe(OBJECT_KEY);
-		// A short-text field is the one this suite can write to safely; system
-		// fields and connections are not.
-		writableField = detail.object?.fields?.find(
-			(field) => field.type === 'short_text' && field.key !== 'field_24',
-		)?.key;
-		expect(writableField).toBeDefined();
+		expect(detail.object?.fields?.some((f) => f.key === writableField)).toBe(
+			true,
+		);
 	});
 
 	it('lists records and reports the paging counts', async () => {
@@ -103,8 +115,8 @@ describeIfKey('Knack live API', () => {
 	// first, which makes "unfiltered returns more than zero" a real assertion
 	// rather than one an empty table would satisfy either way.
 	it('applies a filter rather than ignoring it', async () => {
-		const field = writableField ?? 'field_23';
-		const marker = `corsair filter control ${Date.now()}`;
+		const field = writableField;
+		const marker = `corsair-plugin-test filter ${Date.now()}`;
 
 		const control = KnackEndpointOutputSchemas.recordsCreate.parse(
 			await corsair.knack.api.records.create({
@@ -112,7 +124,7 @@ describeIfKey('Knack live API', () => {
 				fields: { [field]: marker },
 			}),
 		);
-		createdId = control.id;
+		created.add(control.id);
 
 		const all = KnackEndpointOutputSchemas.recordsList.parse(
 			await corsair.knack.api.records.list({ object_key: OBJECT_KEY }),
@@ -147,35 +159,35 @@ describeIfKey('Knack live API', () => {
 			}),
 		);
 		expect(removed.delete).toBe(true);
-		createdId = undefined;
+		created.delete(control.id);
 	});
 
 	it('creates a record, reads it back, updates it, then deletes it', async () => {
-		const field = writableField ?? 'field_23';
-		const marker = `corsair live ${Date.now()}`;
+		const field = writableField;
+		const marker = `corsair-plugin-test ${Date.now()}`;
 
-		const created = KnackEndpointOutputSchemas.recordsCreate.parse(
+		const record = KnackEndpointOutputSchemas.recordsCreate.parse(
 			await corsair.knack.api.records.create({
 				object_key: OBJECT_KEY,
 				fields: { [field]: marker },
 			}),
 		);
-		createdId = created.id;
-		expect(created.id).toBeTruthy();
+		created.add(record.id);
+		expect(record.id).toBeTruthy();
 
 		const read = KnackEndpointOutputSchemas.recordsGet.parse(
 			await corsair.knack.api.records.get({
 				object_key: OBJECT_KEY,
-				record_id: created.id,
+				record_id: record.id,
 			}),
 		);
-		expect(read.id).toBe(created.id);
+		expect(read.id).toBe(record.id);
 		expect(read[field]).toBe(marker);
 
 		const updated = KnackEndpointOutputSchemas.recordsUpdate.parse(
 			await corsair.knack.api.records.update({
 				object_key: OBJECT_KEY,
-				record_id: created.id,
+				record_id: record.id,
 				fields: { [field]: `${marker} updated` },
 			}),
 		);
@@ -184,11 +196,11 @@ describeIfKey('Knack live API', () => {
 		const removed = KnackEndpointOutputSchemas.recordsDelete.parse(
 			await corsair.knack.api.records.delete({
 				object_key: OBJECT_KEY,
-				record_id: created.id,
+				record_id: record.id,
 			}),
 		);
 		expect(removed.delete).toBe(true);
-		// Cleared here so the cleanup hook does not try again.
-		createdId = undefined;
+		// Removed here so the cleanup hook does not try again.
+		created.delete(record.id);
 	});
 });
