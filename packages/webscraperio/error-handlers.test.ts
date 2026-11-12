@@ -5,6 +5,7 @@ import {
 	badRequest,
 	invalidToken,
 	routeNotFound,
+	sitemapForbidden,
 	sitemapNotFound,
 } from './test-fixtures';
 
@@ -54,6 +55,13 @@ describe('Web Scraper Cloud error handlers', () => {
 
 	it('does not retry a 403', async () => {
 		expect(classify(apiError(403, {}))).toBe('PERMISSION_ERROR');
+	});
+
+	it('treats the live 403 for a missing sitemap as permission, not a bad key', async () => {
+		const error = apiError(403, sitemapForbidden);
+		expect(error.isInvalidToken).toBe(false);
+		expect(classify(error)).toBe('PERMISSION_ERROR');
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('reports a mistyped route as its own case, not as a missing sitemap', async () => {

@@ -81,7 +81,8 @@ export class WebscraperioAPIError extends Error {
 
 	/**
 	 * True when the token itself is wrong. A 403 means a working token without
-	 * the plan for this call, which is the permission case rather than this one.
+	 * access to the resource (the API's answer for a missing or foreign sitemap),
+	 * which is the permission case rather than this one.
 	 */
 	get isInvalidToken(): boolean {
 		if (this.status === 401) return true;

@@ -57,7 +57,13 @@ export const routeNotFound = {
 	message: 'The route api/v1/nope could not be found.',
 };
 
-/** A sitemap that genuinely does not exist. */
+/**
+ * What the live API answers for a sitemap id that is missing or belongs to
+ * another account: a 403, not a 404 (captured 11-12).
+ */
+export const sitemapForbidden = { success: false, error: 'Forbidden' };
+
+/** A 404 that is not a routing error, kept for the NOT_FOUND handler. */
 export const sitemapNotFound = {
 	success: false,
 	error: 'Sitemap not found.',

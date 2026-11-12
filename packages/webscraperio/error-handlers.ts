@@ -23,14 +23,15 @@ export const errorHandlers = {
 		}),
 	},
 	// 401, or the invalid-token message: the key is wrong or missing. A 403 is
-	// deliberately not matched here, because a working token without the plan
+	// deliberately not matched here, because a working token without access
 	// is a permission problem rather than a credential one.
 	AUTH_ERROR: {
 		match: (error: Error) =>
 			error instanceof WebscraperioAPIError && error.isInvalidToken,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 403: the key is valid but the plan does not include the call.
+	// 403: the key is valid but cannot reach the resource. The live API answers
+	// 403 `Forbidden`, not 404, for a sitemap id that is missing or not ours.
 	PERMISSION_ERROR: {
 		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
