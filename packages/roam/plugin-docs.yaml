@@ -1,0 +1,62 @@
+displayName: Roam HQ
+description: Virtual office with Roam HQ - read the token's own identity, directory users, chats, groups and meetings, read a chat history and a meeting transcript, and post or edit a message and add a reaction.
+domain: ro.am
+recommendedAuth: api_key
+overviewNote: |
+  Create an API client in **Roam Administration → Developer** to get your credentials. Send the key as `Authorization: Bearer <key>`. Things to know before you call:
+
+  - **The version header matters.** Every response is rendered against a dated API version, and the plugin pins `Roam-Version: 2026-08-25` on every request so a body's shape cannot change under it. Omitting the header would use the integration's default, which Roam moves between releases.
+  - **Errors are labelled `text/plain`.** Roam's error envelope is JSON but the response's content type makes generic clients hand it over as a raw string. The plugin parses it, so `RoamAPIError.code` is the catalog code such as `invalid_token` — not a string containing the whole body.
+  - **Branch on the code, not the status.** A 401 can be `not_authed`, `invalid_token` or `token_revoked`, and a 403 can be `missing_scope` or `approval_pending`. A revoked token is permanent: discard it rather than retrying. A `missing_scope` body names the scopes that would work in `needed`, any one of which is enough.
+  - **`chat.post` content rules.** `text`, `items` and `asset_ids` combine; `blocks` and `poll` each stand alone. A body with no content, or `blocks`/`poll` mixed with anything else, is refused before the request.
+  - **Pass `sync: true` to get the message `timestamp`.** Without it Roam posts in the background and the answer has only `chatId`, so there is nothing to hand to `chat.update`, `reactions.add` or a thread reply.
+  - **A post needs one destination.** Exactly one of `chat_id`, `group_id` or `user_ids`: the last one opens a direct conversation.
+  - **Scheduling a post returns a different shape.** Passing `send_at` returns `scheduledMessageId` instead of a `timestamp`. The time must be in the future, within 30 days and on a 15-minute UTC boundary, and cannot be combined with `sync`, `poll`, `thread_key` or `reply_timestamp`.
+  - **`chat.history` needs one target.** Exactly one of `chat_id`, `group_id` or `user_ids` (the direct chat with those people); Roam refuses none or more than one.
+  - **Messages are edited, not replaced.** `chat.update` takes the chat and the message `timestamp`, and needs `text` (with optional `items` or `asset_ids`) or `blocks`. A bot can edit only its own messages.
+  - **Paging is a cursor.** `users.list`, `chat.list`, `chat.history`, `groups.list` and `meetings.list` answer Roam's `nextCursor`, which the plugin returns as `next_cursor` with `has_more`. Pass it back as `cursor` for the next page; `next_cursor: null` is the last page, and a call without a cursor starts at the first. `reactions.list` is not paged, and `users.list` with `ids` returns every match in one answer.
+examples:
+  read:
+    path: chat.history
+    title: Read the last messages in a chat
+    args:
+      chat_id: 757dfe66-37b4-4772-baa5-8c86ec68c176
+      limit: 50
+  write:
+    path: chat.post
+    title: Post a message to a chat
+    args:
+      chat_id: 757dfe66-37b4-4772-baa5-8c86ec68c176
+      text: Standup in five
+      sync: true
+apiExamples:
+  token.info: {}
+  users.info:
+    call: "{ email: 'sam@example.com' }"
+  users.list:
+    call: "{ limit: 50, q: 'sam' }"
+  chat.list:
+    call: "{ limit: 20 }"
+  chat.history:
+    call: "{ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', limit: 100, ascending: false }"
+  chat.post:
+    call: "{ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', text: 'Standup in five', sync: true }"
+  chat.update:
+    call: "{ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', timestamp: 1765602474760032, text: 'Standup in ten' }"
+  reactions.add:
+    call: "{ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', timestamp: 1765602474760032, name: 'thumbsup' }"
+  reactions.list:
+    call: "{ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', timestamp: 1765602474760032 }"
+  groups.list:
+    call: "{ limit: 20, type: 'standard' }"
+  meetings.list:
+    call: "{ after: '2026-11-01T00:00:00.000Z', limit: 10 }"
+  meetings.transcript:
+    call: "{ meeting_id: '11111111-2222-3333-4444-555555555555' }"
+apiNotes:
+  'token.info': 'Also reports the API client id, the bot the token posts as, the workspace and the granted scopes.'
+  'chat.history': 'Needs exactly one of `chat_id`, `group_id` or `user_ids`. Poll options come back as `{ id, text }` objects.'
+  'chat.post': 'Pass `sync: true` to get the `timestamp` back. `text`, `items` and `asset_ids` combine; `blocks` and `poll` stand alone; `send_at` schedules instead of sending.'
+  'chat.update': 'Needs `text` or `blocks`, and identifies the message by chat and timestamp.'
+  'reactions.add': 'The `name` is an emoji name such as `thumbsup`, not the emoji character.'
+  'meetings.transcript': 'Returns `cues` with the speaker''s user id, start and end; the plugin asks for JSON rather than WebVTT.'
