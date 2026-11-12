@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MAX_BINARY_DOWNLOAD_SIZE_LABEL } from '../limits';
 
 // Request and response shapes follow the provider references:
 // https://api.conversiontools.io/openapi.yaml
@@ -243,7 +244,9 @@ export const FilesDownloadOutputSchema = z
 	.object({
 		contentBase64: z
 			.base64()
-			.describe('Raw file bytes encoded as base64 for JSON-safe output'),
+			.describe(
+				`Raw file bytes encoded as base64 for JSON-safe output; downloads are limited to ${MAX_BINARY_DOWNLOAD_SIZE_LABEL}. Use a temporary download link for larger files.`,
+			),
 		contentType: z.string().min(1).describe('The response Content-Type'),
 		contentDisposition: z
 			.string()

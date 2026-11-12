@@ -4,8 +4,13 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import type { FilesDownloadOutput, JsonObject } from './endpoints/types';
+import {
+	DEFAULT_TRANSFER_TIMEOUT_MS,
+	MAX_BINARY_DOWNLOAD_BYTES,
+	MAX_BINARY_DOWNLOAD_SIZE_LABEL,
+} from './limits';
 
 export class ConversiontoolsAPIError extends Error {
 	constructor(
@@ -18,14 +23,112 @@ export class ConversiontoolsAPIError extends Error {
 }
 
 export class ConversiontoolsDownloadError extends Error {
-	constructor(public readonly status?: number) {
+	constructor(
+		public readonly status?: number,
+		message?: string,
+	) {
 		super(
-			status === undefined
-				? 'Conversion Tools download request failed'
-				: `Conversion Tools download failed with HTTP ${status}`,
+			message ??
+				(status === undefined
+					? 'Conversion Tools download request failed'
+					: `Conversion Tools download failed with HTTP ${status}`),
 		);
 		this.name = 'ConversiontoolsDownloadError';
 	}
+}
+
+const UPLOAD_SESSION_PATH_PREFIX = '/v1/upload-sessions/';
+const REDACTED_UPLOAD_SESSION_PATH = `${UPLOAD_SESSION_PATH_PREFIX}[REDACTED]`;
+
+function redactUploadSessionText(
+	value: string,
+	sessionUrl: string,
+	sessionIds: readonly string[],
+): string {
+	let redacted = value.replaceAll(sessionUrl, '[REDACTED_UPLOAD_SESSION_URL]');
+	for (const sessionId of sessionIds) {
+		if (sessionId) redacted = redacted.replaceAll(sessionId, '[REDACTED]');
+	}
+	return redacted;
+}
+
+function redactUploadSessionValue(
+	value: unknown,
+	sessionUrl: string,
+	sessionIds: readonly string[],
+): unknown {
+	if (typeof value === 'string') {
+		return redactUploadSessionText(value, sessionUrl, sessionIds);
+	}
+	if (Array.isArray(value)) {
+		return value.map((entry) =>
+			redactUploadSessionValue(entry, sessionUrl, sessionIds),
+		);
+	}
+	if (typeof value === 'object' && value !== null) {
+		return Object.fromEntries(
+			Object.entries(value).map(([key, entry]) => [
+				redactUploadSessionText(key, sessionUrl, sessionIds),
+				redactUploadSessionValue(entry, sessionUrl, sessionIds),
+			]),
+		);
+	}
+	return value;
+}
+
+function sanitizeUploadSessionError(
+	error: unknown,
+	endpoint: string,
+	baseUrl: string,
+): Error {
+	const sessionId = endpoint.slice(UPLOAD_SESSION_PATH_PREFIX.length);
+	let decodedSessionId = sessionId;
+	try {
+		decodedSessionId = decodeURIComponent(sessionId);
+	} catch {
+		// Keep the encoded path segment if it is not valid percent-encoding.
+	}
+	const sessionIds = [...new Set([sessionId, decodedSessionId])];
+	const sessionUrl = new URL(endpoint, `${baseUrl}/`).toString();
+	const safeUrl = `${baseUrl}${REDACTED_UPLOAD_SESSION_PATH}`;
+
+	if (error instanceof ApiError) {
+		return new ApiError(
+			{ ...error.request, url: REDACTED_UPLOAD_SESSION_PATH },
+			{
+				url: safeUrl,
+				ok: false,
+				status: error.status,
+				statusText: redactUploadSessionText(
+					error.statusText,
+					sessionUrl,
+					sessionIds,
+				),
+				body: redactUploadSessionValue(error.body, sessionUrl, sessionIds),
+			},
+			redactUploadSessionText(error.message, sessionUrl, sessionIds),
+			{
+				retryAfter: error.retryAfter,
+				rateLimitReset: error.rateLimitReset,
+				rateLimitRemaining: error.rateLimitRemaining,
+				rateLimitLimit: error.rateLimitLimit,
+			},
+		);
+	}
+
+	if (error instanceof Error) {
+		const sanitized = new Error(
+			redactUploadSessionText(error.message, sessionUrl, sessionIds),
+		);
+		sanitized.name = redactUploadSessionText(
+			error.name,
+			sessionUrl,
+			sessionIds,
+		);
+		return sanitized;
+	}
+
+	return new ConversiontoolsAPIError('Unexpected non-Error failure');
 }
 
 /**
@@ -84,6 +187,8 @@ export async function makeConversiontoolsRequest<T>(
 		baseUrl = CONVERSIONTOOLS_API_BASE,
 		timeoutMs = 20_000,
 	} = options;
+	const isUploadSessionPut =
+		method === 'PUT' && endpoint.startsWith(UPLOAD_SESSION_PATH_PREFIX);
 
 	if (apiKey !== undefined && apiKey.length === 0) {
 		throw new AuthMissingError('conversiontools', 'api_key');
@@ -127,6 +232,9 @@ export async function makeConversiontoolsRequest<T>(
 			rateLimitConfig: NO_RETRY_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
+		if (isUploadSessionPut) {
+			throw sanitizeUploadSessionError(error, endpoint, baseUrl);
+		}
 		// ApiError carries the status and retryAfter the error handlers route
 		// on, so it is rethrown untouched.
 		if (error instanceof Error) {
@@ -139,6 +247,7 @@ export async function makeConversiontoolsRequest<T>(
 async function makeConversiontoolsBinaryDownloadRequest(
 	path: string,
 	apiKey?: string,
+	timeoutMs = DEFAULT_TRANSFER_TIMEOUT_MS,
 ): Promise<FilesDownloadOutput> {
 	if (apiKey !== undefined && apiKey.length === 0) {
 		throw new AuthMissingError('conversiontools', 'api_key');
@@ -157,7 +266,7 @@ async function makeConversiontoolsBinaryDownloadRequest(
 			method: 'GET',
 			headers,
 			credentials: 'omit',
-			signal: AbortSignal.timeout(20_000),
+			signal: AbortSignal.timeout(timeoutMs),
 		});
 	} catch {
 		// Do not forward fetch errors: they can include the secret temporary URL.
@@ -169,14 +278,49 @@ async function makeConversiontoolsBinaryDownloadRequest(
 		throw new ConversiontoolsDownloadError(response.status);
 	}
 
-	let bytes: ArrayBuffer;
-	try {
-		bytes = await response.arrayBuffer();
-	} catch {
-		throw new ConversiontoolsDownloadError();
+	const contentLength = response.headers.get('content-length');
+	if (
+		contentLength !== null &&
+		/^\d+$/.test(contentLength) &&
+		Number(contentLength) > MAX_BINARY_DOWNLOAD_BYTES
+	) {
+		await response.body?.cancel().catch(() => undefined);
+		throw new ConversiontoolsDownloadError(
+			413,
+			`Conversion Tools download exceeds the ${MAX_BINARY_DOWNLOAD_SIZE_LABEL} base64 response limit. Create a temporary download link and download larger files directly.`,
+		);
 	}
 
-	const fileBytes = Buffer.from(bytes);
+	const reader = response.body?.getReader();
+	let fileBytes: Buffer;
+	if (!reader) {
+		fileBytes = Buffer.alloc(0);
+	} else {
+		const chunks: Uint8Array[] = [];
+		let size = 0;
+		try {
+			for (;;) {
+				const { done, value } = await reader.read();
+				if (done) break;
+				size += value.byteLength;
+				if (size > MAX_BINARY_DOWNLOAD_BYTES) {
+					await reader.cancel().catch(() => undefined);
+					throw new ConversiontoolsDownloadError(
+						413,
+						`Conversion Tools download exceeds the ${MAX_BINARY_DOWNLOAD_SIZE_LABEL} base64 response limit. Create a temporary download link and download larger files directly.`,
+					);
+				}
+				chunks.push(value);
+			}
+			fileBytes = Buffer.concat(chunks, size);
+			chunks.length = 0;
+		} catch (error) {
+			await reader.cancel().catch(() => undefined);
+			if (error instanceof ConversiontoolsDownloadError) throw error;
+			throw new ConversiontoolsDownloadError();
+		}
+	}
+
 	return {
 		contentBase64: fileBytes.toString('base64'),
 		contentType:
@@ -190,17 +334,22 @@ async function makeConversiontoolsBinaryDownloadRequest(
 export function makeConversiontoolsDownloadByIdRequest(
 	fileId: string,
 	apiKey: string,
+	timeoutMs = DEFAULT_TRANSFER_TIMEOUT_MS,
 ): Promise<FilesDownloadOutput> {
 	return makeConversiontoolsBinaryDownloadRequest(
 		`/files/${encodeURIComponent(fileId)}`,
 		apiKey,
+		timeoutMs,
 	);
 }
 
 export function makeConversiontoolsDownloadFromLinkRequest(
 	downloadId: string,
+	timeoutMs = DEFAULT_TRANSFER_TIMEOUT_MS,
 ): Promise<FilesDownloadOutput> {
 	return makeConversiontoolsBinaryDownloadRequest(
 		`/files/${encodeURIComponent(downloadId)}/download`,
+		undefined,
+		timeoutMs,
 	);
 }

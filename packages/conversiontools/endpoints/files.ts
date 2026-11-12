@@ -6,6 +6,7 @@ import {
 	makeConversiontoolsDownloadFromLinkRequest,
 	makeConversiontoolsRequest,
 } from '../client';
+import { DEFAULT_TRANSFER_TIMEOUT_MS } from '../limits';
 import type {
 	FilesCreateDownloadLinkResponse,
 	FilesCreateUploadSessionResponse,
@@ -27,7 +28,11 @@ const upload: ConversiontoolsEndpoints['files']['upload'] = async (
 	const response = await makeConversiontoolsRequest<FilesUploadResponse>(
 		'/files',
 		ctx.key,
-		{ method: 'POST', formData: { file: parsedInput.file } },
+		{
+			method: 'POST',
+			formData: { file: parsedInput.file },
+			timeoutMs: ctx.options?.transferTimeoutMs ?? DEFAULT_TRANSFER_TIMEOUT_MS,
+		},
 	);
 	const parsed =
 		ConversiontoolsEndpointOutputSchemas.filesUpload.parse(response);
@@ -95,6 +100,7 @@ const downloadById: ConversiontoolsEndpoints['files']['downloadById'] = async (
 	const response = await makeConversiontoolsDownloadByIdRequest(
 		parsedInput.file_id,
 		ctx.key,
+		ctx.options?.transferTimeoutMs ?? DEFAULT_TRANSFER_TIMEOUT_MS,
 	);
 	const parsed =
 		ConversiontoolsEndpointOutputSchemas.filesDownloadById.parse(response);
@@ -113,6 +119,7 @@ const downloadFromLink: ConversiontoolsEndpoints['files']['downloadFromLink'] =
 			ConversiontoolsEndpointInputSchemas.filesDownloadFromLink.parse(input);
 		const response = await makeConversiontoolsDownloadFromLinkRequest(
 			parsedInput.download_id,
+			ctx.options?.transferTimeoutMs ?? DEFAULT_TRANSFER_TIMEOUT_MS,
 		);
 		const parsed =
 			ConversiontoolsEndpointOutputSchemas.filesDownloadFromLink.parse(
@@ -181,6 +188,8 @@ const uploadToSession: ConversiontoolsEndpoints['files']['uploadToSession'] =
 					method: 'PUT',
 					body: parsedInput.file,
 					baseUrl: uploadUrl.origin,
+					timeoutMs:
+						ctx.options?.transferTimeoutMs ?? DEFAULT_TRANSFER_TIMEOUT_MS,
 				},
 			);
 		const parsed =

@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Account, Conversions, Files, Tasks } from './endpoints';
 import type {
 	ConversiontoolsEndpointInputs,
@@ -22,11 +23,24 @@ import {
 	ConversiontoolsEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { MAX_TRANSFER_TIMEOUT_MS, MIN_TRANSFER_TIMEOUT_MS } from './limits';
 import { ConversiontoolsSchema } from './schema';
+
+const PUBLIC_ENDPOINTS = new Set([
+	'conversions.list',
+	'conversions.get',
+	'files.downloadFromLink',
+	'files.uploadToSession',
+]);
 
 export type ConversiontoolsPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/**
+	 * Timeout for file uploads and downloads in milliseconds. Defaults to five
+	 * minutes; valid values are 20 seconds through 10 minutes.
+	 */
+	transferTimeoutMs?: number;
 	hooks?: InternalConversiontoolsPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof conversiontoolsEndpointsNested>;
@@ -301,6 +315,16 @@ export function conversiontools<const T extends ConversiontoolsPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	if (
+		options.transferTimeoutMs !== undefined &&
+		(!Number.isInteger(options.transferTimeoutMs) ||
+			options.transferTimeoutMs < MIN_TRANSFER_TIMEOUT_MS ||
+			options.transferTimeoutMs > MAX_TRANSFER_TIMEOUT_MS)
+	) {
+		throw new RangeError(
+			`transferTimeoutMs must be an integer between ${MIN_TRANSFER_TIMEOUT_MS} and ${MAX_TRANSFER_TIMEOUT_MS} milliseconds`,
+		);
+	}
 
 	return {
 		id: 'conversiontools',
@@ -318,11 +342,15 @@ export function conversiontools<const T extends ConversiontoolsPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ConversiontoolsKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) return options.key;
-			if (source === 'endpoint') {
-				return (await ctx.keys.get_api_key()) ?? '';
+			if (source !== 'endpoint') return '';
+			if (options.key) return options.key;
+			if (PUBLIC_ENDPOINTS.has(ctx.meteredOperationId ?? '')) return '';
+			if (!ctx.keys) {
+				throw new AuthMissingError('conversiontools', 'api_key');
 			}
-			return '';
+			const apiKey = await ctx.keys.get_api_key();
+			if (!apiKey) throw new AuthMissingError('conversiontools', 'api_key');
+			return apiKey;
 		},
 	} satisfies InternalConversiontoolsPlugin;
 }

@@ -46,6 +46,14 @@ Auth: API key. Obtain the token from the provider profile page and send it as `A
 
 `files.downloadById` and `files.downloadFromLink` preserve raw response bytes and return them as `contentBase64`, along with `contentType`, optional `contentDisposition`, and byte `size`. The temporary `download_id` is a bearer-like secret: it is not included in event logs. `files.downloadFromLink` intentionally sends no API-key Authorization header.
 
+Because the endpoint returns base64 inside JSON, downloads are limited to 10 MiB of raw bytes to bound memory use during reading, encoding, and JSON serialization. For larger files, create a temporary download link and have the consumer `GET https://api.conversiontools.io/v1/files/{download_id}/download` directly without an Authorization header.
+
+File uploads and downloads use a five-minute timeout by default, matching the Conversion Tools Node client. Configure `transferTimeoutMs` when constructing the plugin to use a value from 20 seconds to 10 minutes:
+
+```ts
+conversiontools({ transferTimeoutMs: 600_000 })
+```
+
 ## Webhooks
 
 No inbound webhooks are handled by this plugin.

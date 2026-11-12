@@ -8,6 +8,7 @@ import {
 	makeConversiontoolsRequest,
 } from './client';
 import { errorHandlers } from './error-handlers';
+import { MAX_BINARY_DOWNLOAD_BYTES } from './limits';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -73,6 +74,23 @@ describe('makeConversiontoolsRequest', () => {
 		expect(mockedRequest.mock.calls[0]?.[2]).toMatchObject({
 			rateLimitConfig: { enabled: true, maxRetries: 0 },
 		});
+	});
+
+	it('accepts a transfer timeout without changing the short JSON default', async () => {
+		mockedRequest.mockResolvedValue({ error: null });
+
+		await makeConversiontoolsRequest('/files', 'test-key', {
+			method: 'POST',
+			formData: { file: new Blob(['xml']) },
+			timeoutMs: 42_000,
+		});
+
+		expect(mockedRequest.mock.calls[0]?.[0]?.TIMEOUT).toBe(42_000);
+
+		mockedRequest.mockReset();
+		mockedRequest.mockResolvedValue({ error: null });
+		await makeConversiontoolsRequest('/tasks', 'test-key', { method: 'GET' });
+		expect(mockedRequest.mock.calls[0]?.[0]?.TIMEOUT).toBe(20_000);
 	});
 
 	it('omits Authorization for public endpoints', async () => {
@@ -170,6 +188,65 @@ describe('makeConversiontoolsRequest', () => {
 			errorHandlers.RATE_LIMIT_ERROR.handler(rateLimited),
 		).resolves.toEqual({ maxRetries: 0, headersRetryAfterMs: 2500 });
 	});
+
+	it('redacts upload-session URLs and IDs from propagated ApiErrors', async () => {
+		const sessionId = 'one-time-session-secret';
+		const sessionPath = `/v1/upload-sessions/${sessionId}`;
+		const sessionUrl = `https://api.conversiontools.io${sessionPath}`;
+		const rawError = new ApiError(
+			{ method: 'PUT', url: sessionPath },
+			{
+				url: sessionUrl,
+				ok: false,
+				status: 500,
+				statusText: `Failure at ${sessionId}`,
+				body: { error: `Could not upload to ${sessionUrl}` },
+			},
+			`Request to ${sessionUrl} failed`,
+		);
+		mockedRequest.mockRejectedValue(rawError);
+
+		const error = await makeConversiontoolsRequest(sessionPath, undefined, {
+			method: 'PUT',
+			body: new Blob(['xml']),
+			baseUrl: 'https://api.conversiontools.io',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (error instanceof ApiError) {
+			expect(error.status).toBe(500);
+			expect(error.url).toBe(
+				'https://api.conversiontools.io/v1/upload-sessions/[REDACTED]',
+			);
+			expect(error.request.url).toBe('/v1/upload-sessions/[REDACTED]');
+			expect(error.body).toEqual({
+				error: 'Could not upload to [REDACTED_UPLOAD_SESSION_URL]',
+			});
+			expect(JSON.stringify(error)).not.toContain(sessionId);
+			expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
+		}
+	});
+
+	it('redacts upload-session URLs from non-ApiError network failures', async () => {
+		const sessionId = 'one-time-session-secret';
+		const sessionPath = `/v1/upload-sessions/${sessionId}`;
+		const sessionUrl = `https://api.conversiontools.io${sessionPath}`;
+		mockedRequest.mockRejectedValue(
+			new Error(`Network failure at ${sessionUrl}`),
+		);
+
+		const error = await makeConversiontoolsRequest(sessionPath, undefined, {
+			method: 'PUT',
+			body: new Blob(['xml']),
+			baseUrl: 'https://api.conversiontools.io',
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(Error);
+		if (error instanceof Error) {
+			expect(error.message).not.toContain(sessionId);
+			expect(error.message).toContain('[REDACTED_UPLOAD_SESSION_URL]');
+		}
+	});
 });
 
 describe('binary download requests', () => {
@@ -203,6 +280,64 @@ describe('binary download requests', () => {
 			contentDisposition: 'attachment; filename="result.pdf"',
 			size: 3,
 		});
+	});
+
+	it('uses the configurable transfer timeout for binary downloads', async () => {
+		const fetchSpy = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(new Response(new Uint8Array([0x41])));
+		const timeoutSpy = jest.spyOn(AbortSignal, 'timeout');
+
+		await makeConversiontoolsDownloadByIdRequest(
+			'0123456789abcdef0123456789abcdef',
+			'test-download-key',
+			42_000,
+		);
+
+		expect(timeoutSpy).toHaveBeenCalledWith(42_000);
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
+	});
+
+	it('rejects a response over the documented base64-output bound', async () => {
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(new Uint8Array(MAX_BINARY_DOWNLOAD_BYTES + 1), {
+				headers: {
+					'content-length': String(MAX_BINARY_DOWNLOAD_BYTES + 1),
+				},
+			}),
+		);
+
+		const error = await makeConversiontoolsDownloadByIdRequest(
+			'0123456789abcdef0123456789abcdef',
+			'test-download-key',
+		).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ConversiontoolsDownloadError);
+		if (error instanceof ConversiontoolsDownloadError) {
+			expect(error.status).toBe(413);
+			expect(error.message).toContain('10 MiB');
+		}
+	});
+
+	it('counts streamed bytes when Content-Length is absent', async () => {
+		const chunkSize = Math.floor(MAX_BINARY_DOWNLOAD_BYTES / 2) + 1;
+		const body = new ReadableStream<Uint8Array>({
+			start(controller) {
+				controller.enqueue(new Uint8Array(chunkSize));
+				controller.enqueue(new Uint8Array(chunkSize));
+				controller.close();
+			},
+		});
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(body));
+
+		const error = await makeConversiontoolsDownloadFromLinkRequest(
+			'abcdef0123456789abcdef0123456789',
+		).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ConversiontoolsDownloadError);
+		if (error instanceof ConversiontoolsDownloadError) {
+			expect(error.status).toBe(413);
+		}
 	});
 
 	it('follows a temporary download ID without Authorization', async () => {

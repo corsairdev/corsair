@@ -1,9 +1,10 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import { CONVERSIONTOOLS_API_BASE } from './client';
 import { Account, Conversions, Files, Tasks } from './endpoints';
 import type { ConversiontoolsContext } from './index';
 import { conversiontools, conversiontoolsEndpointSchemas } from './index';
+import { DEFAULT_TRANSFER_TIMEOUT_MS } from './limits';
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
@@ -175,6 +176,7 @@ describe('file endpoints', () => {
 		expect(mockedRequest).toHaveBeenCalledWith('/files', 'test-api-key', {
 			method: 'POST',
 			formData: { file },
+			timeoutMs: DEFAULT_TRANSFER_TIMEOUT_MS,
 		});
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
@@ -359,6 +361,7 @@ describe('file endpoints', () => {
 				method: 'PUT',
 				body: file,
 				baseUrl: 'https://api.conversiontools.io',
+				timeoutMs: DEFAULT_TRANSFER_TIMEOUT_MS,
 			},
 		);
 		expect(mockedLogEvent).toHaveBeenCalledWith(
@@ -537,6 +540,57 @@ describe('conversiontools plugin shape', () => {
 		expect(plugin.endpoints?.tasks.remove).toBeDefined();
 		expect(plugin.authConfig).toEqual({ api_key: {} });
 		expect(plugin.webhooks).toEqual({});
+	});
+
+	it('allows token-free operations without a credential store', async () => {
+		const plugin = conversiontools({});
+		const keyBuilder = plugin.keyBuilder;
+		if (!keyBuilder) throw new Error('Conversion Tools keyBuilder is missing');
+		for (const operation of [
+			'conversions.list',
+			'conversions.get',
+			'files.downloadFromLink',
+			'files.uploadToSession',
+		]) {
+			// Core omits ctx.keys when no database and KEK are configured.
+			const context = {
+				authType: 'api_key',
+				options: {},
+				tenantId: 'acme',
+				meteredOperationId: operation,
+			};
+			await expect(
+				Reflect.apply(keyBuilder, undefined, [context, 'endpoint']),
+			).resolves.toBe('');
+		}
+	});
+
+	it('keeps authenticated operations on the connect flow without a credential store', async () => {
+		const plugin = conversiontools({});
+		const keyBuilder = plugin.keyBuilder;
+		if (!keyBuilder) throw new Error('Conversion Tools keyBuilder is missing');
+		// Core omits ctx.keys when no database and KEK are configured.
+		const context = {
+			authType: 'api_key',
+			options: {},
+			tenantId: 'acme',
+			meteredOperationId: 'tasks.create',
+		};
+
+		await expect(
+			Reflect.apply(keyBuilder, undefined, [context, 'endpoint']),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('bounds the configurable transfer timeout', () => {
+		expect(() => conversiontools({ transferTimeoutMs: 20_000 })).not.toThrow();
+		expect(() => conversiontools({ transferTimeoutMs: 600_000 })).not.toThrow();
+		expect(() => conversiontools({ transferTimeoutMs: 19_999 })).toThrow(
+			RangeError,
+		);
+		expect(() => conversiontools({ transferTimeoutMs: 600_001 })).toThrow(
+			RangeError,
+		);
 	});
 
 	it('registers input and output schemas for all implemented operations', () => {

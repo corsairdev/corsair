@@ -1,6 +1,19 @@
-import type { CorsairErrorHandler } from 'corsair/core';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { ConversiontoolsDownloadError } from './client';
+
+const SAFE_READ_OPERATIONS = new Set([
+	'account.verify',
+	'account.getInfo',
+	'account.getConfig',
+	'conversions.list',
+	'conversions.get',
+	'files.getInfo',
+	'files.downloadById',
+	'files.downloadFromLink',
+	'tasks.list',
+	'tasks.get',
+]);
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
@@ -68,10 +81,10 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			(error instanceof ApiError && error.status === 500) ||
 			(error instanceof ConversiontoolsDownloadError && error.status === 500),
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff',
-		}),
+		handler: async (_error: Error, context: ErrorContext) =>
+			SAFE_READ_OPERATIONS.has(context.operation)
+				? { maxRetries: 2, retryStrategy: 'exponential_backoff' }
+				: { maxRetries: 0 },
 	},
 	DEFAULT: {
 		match: () => true,

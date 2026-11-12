@@ -24,6 +24,8 @@ await corsair.conversiontools.api.account.getConfig({});
 
 **Input:** _empty object_
 
+These snippets use a single-tenant client. With `multiTenancy: true`, bind a tenant first (`const tenant = corsair.withTenant('acme')`) and replace `corsair` with `tenant` in the API calls.
+
 
 **Output**
 
@@ -326,13 +328,15 @@ await corsair.conversiontools.api.files.downloadById({ file_id: '0123456789abcde
 |------|------|----------|-------------|
 | `file_id` | `string` | Yes | 32-character lowercase hexadecimal file ID |
 
+The JSON/base64 download response is capped at 10 MiB of raw file bytes. For larger files, create a temporary download link and have the consumer GET `https://api.conversiontools.io/v1/files/{download_id}/download` directly without an Authorization header.
+
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contentBase64` | `string` | Yes | Raw file bytes encoded as base64 for JSON-safe output |
+| `contentBase64` | `string` | Yes | Raw file bytes encoded as base64 for JSON-safe output; downloads are limited to 10 MiB. Use a temporary download link for larger files. |
 | `contentType` | `string` | Yes | The response Content-Type |
 | `contentDisposition` | `string` | No | The response Content-Disposition, when provided |
 | `size` | `number` | Yes | Downloaded byte length |
@@ -359,13 +363,15 @@ await corsair.conversiontools.api.files.downloadFromLink({ download_id: 'abcdef0
 |------|------|----------|-------------|
 | `download_id` | `string` | Yes | 32-character lowercase hexadecimal temporary download ID |
 
+The JSON/base64 download response is capped at 10 MiB of raw file bytes. For larger files, create a temporary download link and have the consumer GET `https://api.conversiontools.io/v1/files/{download_id}/download` directly without an Authorization header.
+
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `contentBase64` | `string` | Yes | Raw file bytes encoded as base64 for JSON-safe output |
+| `contentBase64` | `string` | Yes | Raw file bytes encoded as base64 for JSON-safe output; downloads are limited to 10 MiB. Use a temporary download link for larger files. |
 | `contentType` | `string` | Yes | The response Content-Type |
 | `contentDisposition` | `string` | No | The response Content-Disposition, when provided |
 | `size` | `number` | Yes | Downloaded byte length |
@@ -491,6 +497,8 @@ await corsair.conversiontools.api.tasks.create({ type: 'convert.xml_to_json', op
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 | `options` | `Record<string, JsonValue>` | Yes | — |
+
+Provide exactly one of `file_id` or `url` inside `options`; the plugin rejects requests with both or neither. `callbackUrl` is not accepted because this plugin does not implement callbacks. The options type remains `Record<string, JsonValue>` so converter-specific options stay open-ended.
 
 
 

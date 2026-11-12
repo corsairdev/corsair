@@ -1,5 +1,10 @@
 displayName: "Conversion Tools"
 description: "Create and manage Conversion Tools file-conversion tasks, uploads, binary downloads, converter discovery, task status, and retention through its REST API."
+overviewNote: >-
+  Connect each tenant through the connect-link step below before making
+  authenticated API calls. The API-key flow does not prompt for credentials on
+  a tenant's first request. Base64 download operations return files up to 10
+  MiB; use a temporary download link for larger files.
 examples:
   read:
     path: files.downloadById
@@ -42,3 +47,23 @@ apiExamples:
     call: "{ task_id: 'fedcba9876543210fedcba9876543210', retentionMode: 'standard_24h' }"
   tasks.remove:
     call: "{ task_id: 'fedcba9876543210fedcba9876543210' }"
+apiNotes:
+  account.getConfig: >-
+    These snippets use a single-tenant client. With `multiTenancy: true`, bind a
+    tenant first (`const tenant = corsair.withTenant('acme')`) and replace
+    `corsair` with `tenant` in the API calls.
+  files.downloadById: >-
+    The JSON/base64 download response is capped at 10 MiB of raw file bytes.
+    For larger files, create a temporary download link and have the consumer
+    GET `https://api.conversiontools.io/v1/files/{download_id}/download`
+    directly without an Authorization header.
+  files.downloadFromLink: >-
+    The JSON/base64 download response is capped at 10 MiB of raw file bytes.
+    For larger files, create a temporary download link and have the consumer
+    GET `https://api.conversiontools.io/v1/files/{download_id}/download`
+    directly without an Authorization header.
+  tasks.create: >-
+    Provide exactly one of `file_id` or `url` inside `options`; the plugin
+    rejects requests with both or neither. `callbackUrl` is not accepted because
+    this plugin does not implement callbacks. The options type remains
+    `Record<string, JsonValue>` so converter-specific options stay open-ended.

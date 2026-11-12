@@ -1,3 +1,4 @@
+import type { ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { ConversiontoolsDownloadError } from './client';
 import { errorHandlers } from './error-handlers';
@@ -75,13 +76,41 @@ describe('Conversion Tools error handlers', () => {
 		});
 	});
 
-	it('retries documented server errors at most twice', async () => {
+	it('retries safe GET server errors at most twice', async () => {
 		const error = apiError(500, 'Internal server error');
+		const context: ErrorContext = {
+			pluginId: 'conversiontools',
+			operation: 'tasks.get',
+			input: {},
+			originalError: error,
+		};
 		expect(route(error)).toBe('SERVER_ERROR');
-		await expect(errorHandlers.SERVER_ERROR.handler()).resolves.toEqual({
+		await expect(
+			errorHandlers.SERVER_ERROR.handler(error, context),
+		).resolves.toEqual({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
 		});
+	});
+
+	it('never retries conversion task creation or other write operations', async () => {
+		const error = apiError(500, 'Internal server error');
+		const context: ErrorContext = {
+			pluginId: 'conversiontools',
+			operation: 'tasks.create',
+			input: {},
+			originalError: error,
+		};
+
+		await expect(
+			errorHandlers.SERVER_ERROR.handler(error, context),
+		).resolves.toEqual({ maxRetries: 0 });
+		await expect(
+			errorHandlers.SERVER_ERROR.handler(error, {
+				...context,
+				operation: 'files.upload',
+			}),
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 
 	it('routes other provider errors to DEFAULT without retries', async () => {
