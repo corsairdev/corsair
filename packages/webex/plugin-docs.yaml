@@ -3,14 +3,15 @@ description: Cisco Webex messaging - manage spaces, post and read messages and t
 domain: webex.com
 recommendedAuth: api_key
 overviewNote: |
-  Create a personal access token or a bot token in the Webex developer portal, or integrate an OAuth app. It goes in `Authorization: Bearer` and every call is against `https://webexapis.com/v1`.
+  Create a bot in the Webex developer portal and use its access token, or a personal access token for a quick test. A personal access token expires 12 hours after it is issued; a bot token does not, so use a bot for anything that runs unattended. The bot only sees spaces it has been added to. The token goes in `Authorization: Bearer` and every call is against `https://webexapis.com/v1`.
 
   - **Errors carry a `trackingId`, not a code.** A failure is `{ message, errors: [{ description }], trackingId }`. Cisco support asks for that `trackingId`, so the plugin keeps it on the error and appends it to the message rather than discarding it. The per-field `description` is preferred over the summary `message`, because it says which field failed.
   - **401 and 403 mean different things.** A 401 is a missing, expired or revoked token; a 403 is a working token without the scope for this call. The plugin maps them to an auth error and a permission error respectively, since only the first needs a new credential.
-  - **Lists page by a `Link` header.** Webex returns `{ items: [...] }` and puts the next page in a `Link` header with `rel="next"`, not a cursor in the body — so `nextPageFromLink` parses it and the plugin does not pretend there is an offset.
+  - **Lists page by a `Link` header.** Webex returns `{ items: [...] }` and puts the next page in a `Link` header with `rel="next"`, not a cursor in the body. Each list returns that URL as `nextLink`; pass it back as `nextLink` to read the next page. The plugin only follows a `nextLink` on `https://webexapis.com` for the same list, since the token is sent with it.
   - **`max` caps at 1,000.** A larger value is rejected before the request rather than silently clamped.
-  - **A message list needs a room or a thread.** Without `roomId` or `parentId`, the API would answer with the whole organization's messages, so the input schema refuses that combination outright.
-  - **A message needs both a destination and content.** `roomId`, `toPersonId` or `toPersonEmail` for where, and `text`, `markdown`, `html` or `files` for what — the schema checks each, so neither an empty message nor an undirected one is sent.
+  - **A message list needs a room.** Webex requires `roomId`; add `parentId` to read the replies in one thread of that room.
+  - **A message needs both a destination and content.** `roomId`, `toPersonId` or `toPersonEmail` for where, and `text`, `markdown` or one file URL in `files` for what. Webex returns `html` on messages but does not accept it when sending.
+  - **Updates send the required fields again.** Webex requires `title` on a room update, `roomId` plus `text` or `markdown` on a message edit, and `name` plus `targetUrl` on a webhook update, even when they do not change. A message can be edited at most 10 times, and a message with a file cannot be edited.
   - **A webhook's `secret` is the HMAC key Webex signs deliveries with.** It is the value worth capturing at creation, but it never reaches the event log: only `hasSecret` is recorded.
   - **`status: 'inactive'` pauses a webhook** without deleting it, which is usually what a temporary stop wants.
   - **Deletes answer 204 with no body**, so each one states what it did rather than returning an empty object.
@@ -45,7 +46,7 @@ apiExamples:
   messages.create:
     call: "{ roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY', text: 'Your order shipped.' }"
   messages.update:
-    call: "{ id: 'message-1', text: 'Corrected text' }"
+    call: "{ id: 'message-1', roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYTJjNDY', text: 'Corrected text' }"
   messages.delete:
     call: "{ id: 'message-1' }"
   people.list:
