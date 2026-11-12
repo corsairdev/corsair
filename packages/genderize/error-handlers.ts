@@ -1,0 +1,95 @@
+import type { CorsairErrorHandler } from 'corsair/core';
+import { GenderizeAPIError } from './client';
+
+function statusOf(error: Error): number | undefined {
+	return error instanceof GenderizeAPIError ? error.status : undefined;
+}
+
+// Genderize documents 401, 402, 422 and 429, and carries a JSON `error` string
+// on each. Reference: https://genderize.io/documentation/api
+export const errorHandlers = {
+	// The monthly quota and the short-term throttle both answer 429. A retry with
+	// the same body either waits out the window or fails again, so the handler
+	// honours Retry-After when Genderize sends one and otherwise backs off.
+	RATE_LIMIT_ERROR: {
+		match: (error: Error) =>
+			error instanceof GenderizeAPIError && error.isRateLimit,
+		handler: async (error: Error) => ({
+			maxRetries: 2,
+			headersRetryAfterMs:
+				error instanceof GenderizeAPIError ? error.retryAfter : undefined,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
+	// A key the account refused. Retrying sends the same key.
+	AUTH_ERROR: {
+		match: (error: Error) =>
+			error instanceof GenderizeAPIError && error.isAuthError,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// 402 is a paused, expired or unpaid subscription. It sits after AUTH_ERROR
+	// because the key itself is valid, and no retry fixes a billing state.
+	SUBSCRIPTION_ERROR: {
+		match: (error: Error) =>
+			error instanceof GenderizeAPIError && error.isSubscriptionError,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// 422 is a missing, empty or malformed name. A retry sends the same name.
+	VALIDATION_ERROR: {
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return error.name === 'ZodError' || status === 422;
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// A 5xx on a read never changed anything, so it is safe to replay.
+	SERVER_ERROR: {
+		match: (error: Error) =>
+			error instanceof GenderizeAPIError && (error.status ?? 0) >= 500,
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
+	// A timeout is also a transport failure, so it is matched first.
+	TIMEOUT_ERROR: {
+		match: (error: Error) =>
+			error instanceof GenderizeAPIError && error.timedOut,
+		handler: async () => ({
+			maxRetries: 1,
+			retryStrategy: 'linear_2s' as const,
+		}),
+	},
+	NETWORK_ERROR: {
+		match: (error: Error) =>
+			error instanceof GenderizeAPIError && error.transport,
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
+	DEFAULT: {
+		match: () => true,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+} satisfies CorsairErrorHandler;
+
+// Handlers match in key order and DEFAULT matches everything, so caller
+// handlers go first, every builtin the caller did not name follows, and the
+// fallback stays last. A plain spread would keep the caller's handler but the
+// builtin's position, letting DEFAULT claim a status no builtin covers.
+export function mergeErrorHandlers(
+	builtin: CorsairErrorHandler,
+	user: CorsairErrorHandler | undefined,
+): CorsairErrorHandler {
+	if (!user) return builtin;
+	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
+	const { DEFAULT: userDefault, ...userRest } = user;
+	const merged: CorsairErrorHandler = { ...userRest };
+	for (const [name, entry] of Object.entries(builtinRest)) {
+		if (!(name in merged)) merged[name] = entry;
+	}
+	const fallback = userDefault ?? builtinDefault;
+	if (fallback) merged.DEFAULT = fallback;
+	return merged;
+}
