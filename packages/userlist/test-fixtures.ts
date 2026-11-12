@@ -26,14 +26,21 @@ export const userUpdated = { ...envelope, name: 'user_updated', user };
 export const userSubscribed = {
 	...envelope,
 	name: 'user_subscribed',
+	// The topic travels in the event's own properties, not at the top level.
+	properties: {
+		topic_id: '6f1c2b8e-0a4d-4b7e-9c33-2d5e8f7a1b90',
+		topic_name: 'Product updates',
+	},
 	user,
-	topic: 'product_updates',
 };
 export const userUnsubscribed = {
 	...envelope,
 	name: 'user_unsubscribed',
+	properties: {
+		topic_id: '6f1c2b8e-0a4d-4b7e-9c33-2d5e8f7a1b90',
+		topic_name: 'Product updates',
+	},
 	user,
-	topic: 'product_updates',
 };
 
 export const company = {
@@ -49,61 +56,77 @@ export const company = {
 export const companyCreated = { ...envelope, name: 'company_created', company };
 export const companyUpdated = { ...envelope, name: 'company_updated', company };
 
+/** The relationship itself carries only its id and properties. */
 export const relationship = {
 	id: 'a1b2c3d4-1111-2222-3333-444455556666',
 	properties: { role: 'admin' },
-	user,
-	company,
 	created_at: '2024-03-01T08:00:00Z',
 	updated_at: '2024-03-01T08:00:00Z',
 };
 
+// The user and the company sit beside the relationship, at the top level.
 export const relationshipCreated = {
 	...envelope,
 	name: 'relationship_created',
+	user,
+	company,
 	relationship,
 };
 export const relationshipUpdated = {
 	...envelope,
 	name: 'relationship_updated',
+	user,
+	company,
 	relationship,
 };
 
+/** The answers are the event's properties. */
 export const formSubmitted = {
 	...envelope,
 	name: 'form_submitted',
-	form: { id: 'form-1', identifier: 'signup', name: 'Signup form' },
 	user,
 	properties: { company_size: '11-50', role: 'engineering' },
 };
 
-export const message = {
-	id: 'msg-1',
-	identifier: 'welcome_email',
+/** Message events name the message in `properties` and carry the recipient. */
+const messageProperties = {
+	message_id: '019eff22-ab1d-7ba2-854e-5d32fae11e60',
 	subject: 'Welcome to Acme',
-	status: 'enqueued',
-	user,
-	created_at: '2024-12-04T14:20:00Z',
-	updated_at: '2024-12-04T14:20:00Z',
 };
 
 export const messageEnqueued = {
 	...envelope,
 	name: 'message_enqueued',
-	message,
+	properties: messageProperties,
+	user,
 };
-export const messageOpened = { ...envelope, name: 'message_opened', message };
+export const messageOpened = {
+	...envelope,
+	name: 'message_opened',
+	properties: messageProperties,
+	user,
+};
 export const messageClicked = {
 	...envelope,
 	name: 'message_clicked',
-	message,
-	url: 'https://acme.example/pricing',
+	properties: { ...messageProperties, url: 'https://acme.example/pricing' },
+	user,
 };
-export const messageBounced = { ...envelope, name: 'message_bounced', message };
+export const messageBounced = {
+	...envelope,
+	name: 'message_bounced',
+	properties: {
+		...messageProperties,
+		bounce_type: 'hard',
+		bounce_reason: 'Mailbox does not exist',
+	},
+	user,
+};
 export const messageReported = {
 	...envelope,
 	name: 'message_reported',
-	message,
+	properties: messageProperties,
+	user,
 };
 
 /** A payload that matches an event name but lacks the required object. */

@@ -274,6 +274,51 @@ describe('webhook handlers', () => {
 		});
 	});
 
+	it('keeps the fields Userlist documents for each payload', async () => {
+		const subscribed = await UserlistWebhooks.userSubscribed.handler(
+			context,
+			request(userSubscribed) as never,
+		);
+		expect(subscribed).toMatchObject({
+			success: true,
+			data: { properties: userSubscribed.properties },
+		});
+
+		const related = await UserlistWebhooks.relationshipCreated.handler(
+			context,
+			request(relationshipCreated) as never,
+		);
+		expect(related).toMatchObject({
+			success: true,
+			data: {
+				user: { identifier: 'user-123' },
+				company: { identifier: 'company-42' },
+				relationship: { properties: { role: 'admin' } },
+			},
+		});
+
+		const clicked = await UserlistWebhooks.messageClicked.handler(
+			context,
+			request(messageClicked) as never,
+		);
+		expect(clicked).toMatchObject({
+			success: true,
+			data: {
+				properties: messageClicked.properties,
+				user: { identifier: 'user-123' },
+			},
+		});
+
+		const bounced = await UserlistWebhooks.messageBounced.handler(
+			context,
+			request(messageBounced) as never,
+		);
+		expect(bounced).toMatchObject({
+			success: true,
+			data: { properties: { bounce_type: 'hard' } },
+		});
+	});
+
 	it('rejects a payload missing the object it promises', async () => {
 		const result = await UserlistWebhooks.userCreated.handler(
 			context,

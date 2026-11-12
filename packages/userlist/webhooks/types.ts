@@ -42,22 +42,32 @@ const RelationshipSchema = z
 	.object({
 		id: z.string().nullish(),
 		properties: z.record(z.string(), z.unknown()).nullish(),
-		user: UserSchema.nullish(),
-		company: CompanySchema.nullish(),
 		created_at: z.string().nullish(),
 		updated_at: z.string().nullish(),
 	})
 	.loose();
 
-const MessageSchema = z
+/**
+ * Message events name the message in the event's own `properties`; there is
+ * no message object in the payload.
+ */
+const MessagePropertiesSchema = z
 	.object({
-		id: z.string().nullish(),
-		identifier: z.string().nullish(),
+		message_id: z.string().nullish(),
 		subject: z.string().nullish(),
-		status: z.string().nullish(),
-		user: UserSchema.nullish(),
-		created_at: z.string().nullish(),
-		updated_at: z.string().nullish(),
+		/** `message_clicked` only: the link that was followed. */
+		url: z.string().nullish(),
+		/** `message_bounced` only. */
+		bounce_type: z.string().nullish(),
+		bounce_reason: z.string().nullish(),
+	})
+	.loose();
+
+/** Subscription events name the topic in the event's own `properties`. */
+const TopicPropertiesSchema = z
+	.object({
+		topic_id: z.string().nullish(),
+		topic_name: z.string().nullish(),
 	})
 	.loose();
 
@@ -69,6 +79,8 @@ const EnvelopeSchema = z.object({
 	occurred_at: z.string().nullish(),
 	created_at: z.string().nullish(),
 	updated_at: z.string().nullish(),
+	// unknown: event properties are free-form; each topic narrows them below.
+	properties: z.record(z.string(), z.unknown()).nullish(),
 });
 
 export const UserCreatedPayloadSchema = EnvelopeSchema.extend({
@@ -81,17 +93,17 @@ export const UserUpdatedPayloadSchema = EnvelopeSchema.extend({
 	user: UserSchema,
 });
 
-/** Carries the topic whose subscription changed. */
+/** Carries the topic whose subscription changed, in `properties`. */
 export const UserSubscribedPayloadSchema = EnvelopeSchema.extend({
 	name: z.literal('user_subscribed'),
 	user: UserSchema,
-	topic: z.string().nullish(),
+	properties: TopicPropertiesSchema.nullish(),
 });
 
 export const UserUnsubscribedPayloadSchema = EnvelopeSchema.extend({
 	name: z.literal('user_unsubscribed'),
 	user: UserSchema,
-	topic: z.string().nullish(),
+	properties: TopicPropertiesSchema.nullish(),
 });
 
 export const CompanyCreatedPayloadSchema = EnvelopeSchema.extend({
@@ -106,53 +118,54 @@ export const CompanyUpdatedPayloadSchema = EnvelopeSchema.extend({
 
 export const RelationshipCreatedPayloadSchema = EnvelopeSchema.extend({
 	name: z.literal('relationship_created'),
+	user: UserSchema.nullish(),
+	company: CompanySchema.nullish(),
 	relationship: RelationshipSchema,
 });
 
 export const RelationshipUpdatedPayloadSchema = EnvelopeSchema.extend({
 	name: z.literal('relationship_updated'),
+	user: UserSchema.nullish(),
+	company: CompanySchema.nullish(),
 	relationship: RelationshipSchema,
 });
 
 /** A hosted form was submitted; the answers are in `properties`. */
 export const FormSubmittedPayloadSchema = EnvelopeSchema.extend({
 	name: z.literal('form_submitted'),
-	form: z
-		.object({
-			id: z.string().nullish(),
-			identifier: z.string().nullish(),
-			name: z.string().nullish(),
-		})
-		.loose()
-		.nullish(),
 	user: UserSchema.nullish(),
+	// unknown: a form may collect any field, so its answers are free-form.
 	properties: z.record(z.string(), z.unknown()).nullish(),
 });
 
 export const MessageEnqueuedPayloadSchema = EnvelopeSchema.extend({
 	name: z.literal('message_enqueued'),
-	message: MessageSchema.nullish(),
+	properties: MessagePropertiesSchema.nullish(),
+	user: UserSchema.nullish(),
 });
 
 export const MessageOpenedPayloadSchema = EnvelopeSchema.extend({
 	name: z.literal('message_opened'),
-	message: MessageSchema.nullish(),
+	properties: MessagePropertiesSchema.nullish(),
+	user: UserSchema.nullish(),
 });
 
 export const MessageClickedPayloadSchema = EnvelopeSchema.extend({
 	name: z.literal('message_clicked'),
-	message: MessageSchema.nullish(),
-	url: z.string().nullish(),
+	properties: MessagePropertiesSchema.nullish(),
+	user: UserSchema.nullish(),
 });
 
 export const MessageBouncedPayloadSchema = EnvelopeSchema.extend({
 	name: z.literal('message_bounced'),
-	message: MessageSchema.nullish(),
+	properties: MessagePropertiesSchema.nullish(),
+	user: UserSchema.nullish(),
 });
 
 export const MessageReportedPayloadSchema = EnvelopeSchema.extend({
 	name: z.literal('message_reported'),
-	message: MessageSchema.nullish(),
+	properties: MessagePropertiesSchema.nullish(),
+	user: UserSchema.nullish(),
 });
 
 export type UserCreatedPayload = z.infer<typeof UserCreatedPayloadSchema>;

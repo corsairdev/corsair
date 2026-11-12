@@ -47,8 +47,8 @@ export const relationshipCreated: UserlistWebhookHandlers['relationshipCreated']
 				ctx,
 				'userlist.webhook.relationship_created',
 				{
-					user: parsed.data.relationship.user?.identifier ?? undefined,
-					company: parsed.data.relationship.company?.identifier ?? undefined,
+					user: parsed.data.user?.identifier ?? undefined,
+					company: parsed.data.company?.identifier ?? undefined,
 				},
 				'completed',
 			);
@@ -85,8 +85,8 @@ export const relationshipUpdated: UserlistWebhookHandlers['relationshipUpdated']
 				ctx,
 				'userlist.webhook.relationship_updated',
 				{
-					user: parsed.data.relationship.user?.identifier ?? undefined,
-					company: parsed.data.relationship.company?.identifier ?? undefined,
+					user: parsed.data.user?.identifier ?? undefined,
+					company: parsed.data.company?.identifier ?? undefined,
 				},
 				'completed',
 			);
@@ -122,7 +122,7 @@ export const formSubmitted: UserlistWebhookHandlers['formSubmitted'] = {
 			ctx,
 			'userlist.webhook.form_submitted',
 			{
-				form: parsed.data.form?.identifier ?? undefined,
+				user: parsed.data.user?.identifier ?? undefined,
 				answers: parsed.data.properties
 					? Object.keys(parsed.data.properties).length
 					: 0,
@@ -186,13 +186,12 @@ function messageHandler(
 				};
 			}
 
-			const message = parsed.data.message;
 			await logEventFromContext(
 				ctx as never,
 				`userlist.webhook.${event}`,
 				{
-					id: message?.identifier ?? undefined,
-					status: message?.status ?? undefined,
+					id: parsed.data.properties?.message_id ?? undefined,
+					user: parsed.data.user?.identifier ?? undefined,
 				},
 				'completed',
 			);

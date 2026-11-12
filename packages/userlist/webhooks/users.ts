@@ -107,7 +107,7 @@ export const userSubscribed: UserlistWebhookHandlers['userSubscribed'] = {
 			'user_subscribed',
 			(payload) => ({
 				id: payload.user.identifier ?? undefined,
-				topic: payload.topic ?? undefined,
+				topic: payload.properties?.topic_id ?? undefined,
 			}),
 		),
 };
@@ -122,7 +122,7 @@ export const userUnsubscribed: UserlistWebhookHandlers['userUnsubscribed'] = {
 			'user_unsubscribed',
 			(payload) => ({
 				id: payload.user.identifier ?? undefined,
-				topic: payload.topic ?? undefined,
+				topic: payload.properties?.topic_id ?? undefined,
 			}),
 		),
 };
