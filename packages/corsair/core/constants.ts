@@ -391,6 +391,7 @@ export const BaseProviders = [
 	'resend',
 	'retailed',
 	'retellai',
+	'retently',
 	'revai',
 	'rocketlane',
 	'rootly',
@@ -886,6 +887,7 @@ export const ProviderDisplayNames = {
 	resend: 'Resend',
 	retailed: 'Retailed',
 	retellai: 'Retell AI',
+	retently: 'Retently',
 	revai: 'RevAI',
 	rocketlane: 'Rocketlane',
 	rootly: 'Rootly',
@@ -1388,6 +1390,7 @@ export type AllProviders =
 	| 'resend'
 	| 'retailed'
 	| 'retellai'
+	| 'retently'
 	| 'revai'
 	| 'rocketlane'
 	| 'rootly'
