@@ -261,6 +261,7 @@ const webexEndpointMeta = {
 	},
 	'rooms.delete': {
 		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Delete a space and its message history; this cannot be undone',
 	},
@@ -285,6 +286,7 @@ const webexEndpointMeta = {
 	},
 	'messages.delete': {
 		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Delete one message permanently',
 	},
 	'people.list': {

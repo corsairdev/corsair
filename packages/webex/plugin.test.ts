@@ -107,6 +107,17 @@ describe('webex plugin definition', () => {
 		]);
 	});
 
+	it('flags the deletes that cannot be undone as irreversible', () => {
+		const meta = plugin.endpointMeta ?? {};
+		const irreversible = operations.filter(
+			(operation) =>
+				(meta[operation as keyof typeof meta] as { irreversible?: boolean })
+					?.irreversible === true,
+		);
+
+		expect(irreversible.sort()).toEqual(['messages.delete', 'rooms.delete']);
+	});
+
 	it('marks posting a message as a write, since it reaches people', () => {
 		const meta = plugin.endpointMeta ?? {};
 		expect(meta['messages.create' as keyof typeof meta]?.riskLevel).toBe(
