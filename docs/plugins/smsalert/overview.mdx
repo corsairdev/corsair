@@ -10,7 +10,7 @@ SMS Alert's [API reference](https://kb.smsalert.co.in/developers-api/) documents
 
 With Hub connection reporting enabled, Corsair core currently reports any successful endpoint as credential-verified, including registration and password reset. Those two operations do not check the API key; do not treat their success as API-key verification.
 
-`otp.validate` rejects the documented `Code does not match.` response even though SMS Alert labels it successful. Check `description.desc` for a match; the provider has not documented all possible validation outcomes.
+`otp.validate` throws an error with the message `SMS Alert OTP code does not match` for the documented `Code does not match.` response, even though SMS Alert labels it successful. Catch that error to handle a rejected code. For other responses, inspect `description.desc` rather than assuming `status: "success"` means the code matched; the provider has not documented all possible validation outcomes.
 
 Use `messages.send` with `schedule` for scheduled messages, or `dlrurl` and `reference` to request delivery callbacks. Corsair does not provide an inbound webhook handler for those callbacks; secure them in your own application. XML contact import and XML push are excluded because their credential or payload contracts are incomplete. Requests are not automatically retried.
 

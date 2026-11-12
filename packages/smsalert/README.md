@@ -51,9 +51,11 @@ the query string, as documented by SMS Alert. Avoid logging request URLs.
 When Hub connection reporting is enabled, Corsair core may mark credentials as
 verified after registration or password reset even though neither checks the
 API key. Do not use those operations to verify a stored key.
-`otp.validate` rejects the documented `Code does not match.` response even
-though SMS Alert labels it successful. Check `description.desc` for a match;
-the provider has not documented all possible validation outcomes.
+`otp.validate` throws an error with the message `SMS Alert OTP code does not match`
+for the documented `Code does not match.` response, even though SMS Alert labels
+it successful. Catch that error to handle a rejected code. For other responses,
+inspect `description.desc` rather than assuming `status: "success"` means the
+code matched; the provider has not documented all possible validation outcomes.
 
 ## Webhooks
 
