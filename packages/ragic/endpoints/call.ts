@@ -52,8 +52,11 @@ export function sheetPath(
 	sheetIndex: number,
 ): string {
 	// The path already starts with a slash in every documented URL, but a caller
-	// may omit it; both forms resolve to the same place.
-	const normalised = path.startsWith('/') ? path : `/${path}`;
+	// may omit it; both forms resolve to the same place. Each folder is escaped on
+	// its own so a `?` or `#` in the input cannot leave the sheet's URL; the input
+	// schema already refuses `.` and `..`.
+	const folders = path.split('/').filter((part) => part.length > 0);
+	const normalised = folders.map((part) => `/${segment(part)}`).join('');
 	return `/${segment(account)}${normalised}/${segment(sheetIndex)}`;
 }
 

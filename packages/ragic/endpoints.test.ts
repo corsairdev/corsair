@@ -39,6 +39,33 @@ afterEach(() => {
 	fetchMock.mockRestore();
 });
 
+describe('sheet path', () => {
+	it('escapes each folder, so a ? or # cannot change the request', async () => {
+		respond(fetchMock, RECORDS);
+
+		await invoke(Records.list, { ...SHEET, path: '/sales?x=1#y' });
+
+		const request = lastRequest(fetchMock);
+		expect(request.path).toBe('/demo/sales%3Fx%3D1%23y/1');
+		expect(request.query.x).toBeUndefined();
+	});
+
+	it('keeps a nested folder path and adds a missing leading slash', async () => {
+		respond(fetchMock, RECORDS);
+
+		await invoke(Records.list, { ...SHEET, path: 'crm/sales' });
+
+		expect(lastRequest(fetchMock).path).toBe('/demo/crm/sales/1');
+	});
+
+	it('refuses a .. segment before sending anything', async () => {
+		await expect(
+			invoke(Records.list, { ...SHEET, path: '/../other' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
 describe('records.list', () => {
 	it('lists records from a sheet', async () => {
 		respond(fetchMock, RECORDS);

@@ -74,6 +74,16 @@ const SheetSchema = z.object({
 	path: z
 		.string()
 		.min(1)
+		.refine(
+			(value) => {
+				const folders = value.split('/').filter((part) => part.length > 0);
+				return (
+					folders.length > 0 &&
+					folders.every((part) => part !== '.' && part !== '..')
+				);
+			},
+			{ message: 'A folder path such as /sales, without . or .. segments.' },
+		)
 		.describe(
 			'The folder path from your URL, starting with a slash, such as /sales.',
 		),
