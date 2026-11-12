@@ -1,0 +1,137 @@
+---
+title: "ImageKit plugin"
+sidebarTitle: "Overview"
+description: "Image and video media library and CDN with ImageKit - upload files, list and search assets, organize folders, tag files, read versions and metadata, run folder jobs and purge CDN cache."
+---
+
+Use **ImageKit** through Corsair: one client, typed API calls.
+
+Create a private API key in the ImageKit dashboard under Developer options, API keys. Things to know before you call:
+
+- **Uploads accept a URL or base64.** `files.upload` takes an https URL ImageKit fetches, or base64-encoded content. It is exempt from rate limits but the largest payloads take a while, so the client allows 120 seconds.
+- **Deletes are permanent.** `files.delete`, `files.bulkDelete`, `fileVersions.delete` and `folders.delete` cannot be undone; ImageKit keeps no trash. Version restore works only while the version still exists.
+- **Bulk calls can partly succeed.** The three bulk tag calls cap at 50 files per request; `files.bulkDelete` and the bulk tag calls answer 207 with per-file errors when some targets failed, which this plugin parses as a result, not as a thrown error.
+- **Folder operations run as jobs.** `folders.copy`, `folders.move` and `folders.rename` answer a `jobId` at once; poll `folders.getJobStatus` until status is `Completed`. `cache.purge` does the same with a `requestId` and `cache.getPurgeStatus`.
+- **Rate limits.** Every endpoint except upload is rate limited per account; a 429 carries `X-RateLimit-Reset` in milliseconds. The plugin retries 429s up to three times with backoff starting at one second.
+- **Paging.** `files.list` pages with `limit` (up to 1000) and `skip`; there is no cursor, so pages past a concurrent change can overlap.
+- **Search.** `files.list` narrows with a `searchQuery` expression over name, tags, type, size and createdAt, e.g. `name = "summer" AND tags IN ["sale"]`. In a query, `type` is `file`, `file-version` or `folder`; to keep only images, also pass `fileType: 'image'`.
+
+**What you get:**
+
+- 26 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/imagekit better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/imagekit better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/imagekit better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/imagekit better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { imagekit } from '@corsair-dev/imagekit';
+
+export const corsair = createCorsair({
+	plugins: [
+		imagekit(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+imagekit()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'imagekit',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List files in a folder**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.imagekit.api.files.list({ path: '/products/', limit: 25 });
+```
+
+
+**Upload a file into the media library**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.imagekit.api.files.upload({ file: 'https://example.com/product-photo.jpg', fileName: 'product-photo.jpg', folder: '/products/' });
+```
+
+
+See the full list on the [API](/plugins/imagekit/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/imagekit/api">
+    Every `imagekit.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

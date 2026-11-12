@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "BetterContact plugin"
+sidebarTitle: "Overview"
 description: "Waterfall enrichment API for finding verified B2B emails and mobile phone numbers."
 ---
 
@@ -24,16 +25,20 @@ bettercontact({ key: process.env.BETTERCONTACT_API_KEY })
 <Step title="Install">
 <CodeGroup>
 ```bash npm
-npm install corsair @corsair-dev/bettercontact
+npm install corsair @corsair-dev/bettercontact better-sqlite3
+npm install --save-dev @types/better-sqlite3
 ```
 ```bash yarn
-yarn add corsair @corsair-dev/bettercontact
+yarn add corsair @corsair-dev/bettercontact better-sqlite3
+yarn add --dev @types/better-sqlite3
 ```
 ```bash pnpm
-pnpm install corsair @corsair-dev/bettercontact
+pnpm install corsair @corsair-dev/bettercontact better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
 ```
 ```bash bun
-bun add corsair @corsair-dev/bettercontact
+bun add corsair @corsair-dev/bettercontact better-sqlite3
+bun add --dev @types/better-sqlite3
 ```
 </CodeGroup>
 
