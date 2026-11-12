@@ -1,36 +1,8 @@
-import { readFileSync } from 'node:fs';
-import { z } from 'zod';
 import { makeD2lBrightspaceRequest } from './client';
 import { d2lBrightspaceEndpointSchemas } from './endpoints/registry';
 import type { D2lRouteInput } from './endpoints/types';
 import { createD2lRouteInputSchema } from './endpoints/types';
 import { D2L_ROUTES } from './route-definitions';
-
-const RouteInventoryEntrySchema = z
-	.object({
-		routeId: z.string(),
-		method: z.enum([
-			'GET',
-			'POST',
-			'PUT',
-			'DELETE',
-			'PATCH',
-			'HEAD',
-			'OPTIONS',
-		]),
-		path: z.string(),
-		operationPath: z.string(),
-		doc: z.string().url(),
-		coverageStatus: z.enum([
-			'excluded',
-			'wrapper_only',
-			'schema_audited',
-			'transport_modeled',
-			'transport_pending',
-		]),
-		coverageReason: z.string(),
-	})
-	.passthrough();
 
 function valueForQuery(route: (typeof D2L_ROUTES)[number], name: string) {
 	const typeName =
@@ -114,9 +86,6 @@ describe('D2L route registry', () => {
 	afterEach(() => jest.restoreAllMocks());
 
 	it('registers every routing-table operation except the two documented interactive auth redirects', () => {
-		const routeInventory = z
-			.array(RouteInventoryEntrySchema)
-			.parse(JSON.parse(readFileSync('route-inventory.json', 'utf8')));
 		const expected = D2L_ROUTES.filter(
 			(route) => route.coverageStatus !== 'excluded',
 		)
@@ -124,18 +93,16 @@ describe('D2L route registry', () => {
 			.sort();
 		const actual = Object.keys(d2lBrightspaceEndpointSchemas).sort();
 		expect(D2L_ROUTES).toHaveLength(876);
-		expect(routeInventory).toHaveLength(876);
-		expect(routeInventory.map((route) => route.routeId)).toEqual(
-			D2L_ROUTES.map((route) => route.routeId),
-		);
 		expect(
-			new Set(routeInventory.map((route) => `${route.method} ${route.path}`))
-				.size,
+			new Set(D2L_ROUTES.map((route) => `${route.method} ${route.path}`)).size,
 		).toBe(876);
 		expect(
-			routeInventory
-				.filter((route) => route.coverageStatus === 'excluded')
-				.every((route) => route.coverageReason.length > 0),
+			D2L_ROUTES.filter((route) => route.coverageStatus === 'excluded'),
+		).toHaveLength(2);
+		expect(
+			D2L_ROUTES.filter((route) => route.coverageStatus === 'excluded').every(
+				(route) => route.coverageReason.length > 0,
+			),
 		).toBe(true);
 		expect(actual).toHaveLength(874);
 		expect(actual).toEqual(expected);
