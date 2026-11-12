@@ -26,7 +26,7 @@ pnpm add @corsair-dev/ynab
 | `payees.get` | `ynab.api.payees.get` | `read` | Read one payee |
 | `payees.list` | `ynab.api.payees.list` | `read` | List the payees in a budget |
 | `payees.update` | `ynab.api.payees.update` | `write` | Rename a payee |
-| `transactions.create` | `ynab.api.transactions.create` | `write` | Create up to 500 transactions in one call; an import_id makes a repeat update rather than duplicate |
+| `transactions.create` | `ynab.api.transactions.create` | `write` | Create up to 500 transactions in one call; a repeated import_id on the same account skips creation; use transactions.update for corrections |
 | `transactions.delete` | `ynab.api.transactions.delete` | `destructive` | Delete a transaction, which answers the transaction as it was |
 | `transactions.get` | `ynab.api.transactions.get` | `read` | Read one transaction with its amount, splits and cleared state |
 | `transactions.list` | `ynab.api.transactions.list` | `read` | List transactions, optionally since a date or only the uncategorized or unapproved ones |

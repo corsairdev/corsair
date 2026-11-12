@@ -58,6 +58,7 @@ describe('makeYnabRequest', () => {
 	it('throws a YnabAPIError carrying the name and detail', async () => {
 		respond(fetchMock, unauthorized, 401);
 
+		// unknown: a caught value must be checked before treating it as a plugin error.
 		const error = (await makeYnabRequest(API_KEY, {
 			method: 'GET',
 			path: '/budgets',
@@ -72,6 +73,7 @@ describe('makeYnabRequest', () => {
 	it('wraps a transport failure', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
+		// unknown: a caught value must be checked before treating it as a plugin error.
 		const error = (await makeYnabRequest(API_KEY, {
 			method: 'POST',
 			path: '/budgets/b1/transactions',

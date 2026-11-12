@@ -57,9 +57,9 @@ export const get: YnabEndpoints['transactionsGet'] = (ctx, input) =>
  * import wants: the whole batch is validated together rather than one at a
  * time.
  *
- * An `import_id` on each makes the call idempotent — a repeat with the same id
- * updates the existing transaction instead of adding a second, and the response
- * reports them in `duplicate_import_ids`.
+ * An `import_id` suppresses duplicates on the same account. A repeat skips
+ * creation and reports the key in `duplicate_import_ids`; it does not update
+ * the transaction. Use `transactions.update` for corrections.
  */
 export const create: YnabEndpoints['transactionsCreate'] = (ctx, input) =>
 	call(

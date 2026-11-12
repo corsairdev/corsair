@@ -300,7 +300,7 @@ const ynabEndpointMeta = {
 	'transactions.create': {
 		riskLevel: 'write',
 		description:
-			'Create up to 500 transactions in one call; an import_id makes a repeat update rather than duplicate',
+			'Create up to 500 transactions in one call; a repeated import_id on the same account skips creation; use transactions.update for corrections',
 	},
 	'transactions.update': {
 		riskLevel: 'write',

@@ -110,3 +110,13 @@ describe('YNAB error handlers', () => {
 		expect(classify(new Error('other'))).toBe('DEFAULT');
 	});
 });
+
+it.each(['unauthorized_scope', 'data_limit_reached', 'email_unconfirmed'])(
+	'keeps %s separate from subscription expiry',
+	async (name) => {
+		const error = apiError(403, { error: { id: '403', name, detail: name } });
+		expect(error.isSubscriptionLapsed).toBe(false);
+		expect(classify(error)).toBe('FORBIDDEN_ERROR');
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
+	},
+);

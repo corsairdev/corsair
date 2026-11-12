@@ -21,14 +21,14 @@ const MilliunitsSchema = z
  */
 const DateSchema = z
 	.string()
-	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Use `yyyy-MM-dd`, with no time or zone.')
+	.date('Use `yyyy-MM-dd` with a valid calendar date, with no time or zone.')
 	.describe('A date as `yyyy-MM-dd`, with no time or zone.');
 
 /** A month, `yyyy-MM-01`: YNAB only accepts the first day of the month. */
 const MonthSchema = z
 	.string()
 	.regex(
-		/^\d{4}-\d{2}-01$/,
+		/^\d{4}-(0[1-9]|1[0-2])-01$/,
 		'Use `yyyy-MM-01`: month requests start on the 1st.',
 	)
 	.describe('A month as `yyyy-MM-01`.');
@@ -165,7 +165,7 @@ const TransactionSchema = z
 		date: z.string().nullish(),
 		amount: MilliunitsSchema.nullish(),
 		memo: z.string().nullish(),
-		cleared: z.enum(['cleared', 'uncleared', 'reconciled']).nullish(),
+		cleared: z.string().nullish(),
 		approved: z.boolean().nullish(),
 		flag_color: z.string().nullable().optional(),
 		account_id: z.string().nullish(),
@@ -288,7 +288,7 @@ const BudgetsListResponseSchema = envelope(
 	z
 		.object({
 			budgets: z.array(BudgetSummarySchema).nullish(),
-			default_budget: z.record(z.string(), z.unknown()).nullish(),
+			default_budget: BudgetSummarySchema.nullish(),
 		})
 		.loose(),
 );

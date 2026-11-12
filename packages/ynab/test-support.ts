@@ -15,9 +15,16 @@ export async function invoke(endpoint: AnyEndpoint, input: unknown) {
 }
 
 export function installFetchMock() {
-	const fetchMock = jest.spyOn(globalThis, 'fetch');
+	const unexpectedFetch = () => {
+		throw new Error(
+			'Unexpected fetch: mock a response before calling the endpoint.',
+		);
+	};
+	const fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockImplementation(unexpectedFetch);
 	afterEach(() => {
-		fetchMock.mockReset();
+		fetchMock.mockReset().mockImplementation(unexpectedFetch);
 	});
 	return fetchMock;
 }

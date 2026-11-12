@@ -191,7 +191,7 @@ export async function makeYnabRequest(
 	}
 }
 
-/** Narrows a caught value to this plugin's error. */
+/** Narrows an unknown caught value to this plugin's error. */
 export function isYnabFailure(error: unknown): error is YnabAPIError {
 	return error instanceof YnabAPIError;
 }

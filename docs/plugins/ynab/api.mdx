@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for YNAB: every `ynab.api.*` operation with input and output types."
+title: "YNAB API reference"
+sidebarTitle: "API"
+description: "API reference for the YNAB plugin in Corsair: every `ynab.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `ynab.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -300,7 +299,7 @@ await corsair.ynab.api.budgets.get({ budgetId: 'last-used' });
       date?: string | null,
       amount?: number | null,
       memo?: string | null,
-      cleared?: cleared | uncleared | reconciled | null,
+      cleared?: string | null,
       approved?: boolean | null,
       flag_color?: string | null,
       account_id?: string | null,
@@ -408,7 +407,15 @@ await corsair.ynab.api.budgets.list({ include_accounts: false });
     date_format?: Record<string, any> | null,
     currency_format?: Record<string, any> | null
   }[] | null,
-  default_budget?: Record<string, any> | null
+  default_budget?: {
+    id?: string | null,
+    name?: string | null,
+    last_modified_on?: string | null,
+    first_month?: string | null,
+    last_month?: string | null,
+    date_format?: Record<string, any> | null,
+    currency_format?: Record<string, any> | null
+  } | null
 }
 ```
 </Accordion>
@@ -945,7 +952,7 @@ await corsair.ynab.api.payees.update({ budgetId: 'last-used', payeeId: 'pay00000
 
 `transactions.create`
 
-Create up to 500 transactions in one call; an import_id makes a repeat update rather than duplicate
+Create up to 500 transactions in one call; a repeated import_id on the same account skips creation; use transactions.update for corrections
 
 **Risk:** `write`
 
@@ -1000,7 +1007,7 @@ await corsair.ynab.api.transactions.create({ budgetId: 'last-used', transactions
     date?: string | null,
     amount?: number | null,
     memo?: string | null,
-    cleared?: cleared | uncleared | reconciled | null,
+    cleared?: string | null,
     approved?: boolean | null,
     flag_color?: string | null,
     account_id?: string | null,
@@ -1075,7 +1082,7 @@ await corsair.ynab.api.transactions.delete({ budgetId: 'last-used', transactionI
     date?: string | null,
     amount?: number | null,
     memo?: string | null,
-    cleared?: cleared | uncleared | reconciled | null,
+    cleared?: string | null,
     approved?: boolean | null,
     flag_color?: string | null,
     account_id?: string | null,
@@ -1149,7 +1156,7 @@ await corsair.ynab.api.transactions.get({ budgetId: 'last-used', transactionId: 
     date?: string | null,
     amount?: number | null,
     memo?: string | null,
-    cleared?: cleared | uncleared | reconciled | null,
+    cleared?: string | null,
     approved?: boolean | null,
     flag_color?: string | null,
     account_id?: string | null,
@@ -1225,7 +1232,7 @@ await corsair.ynab.api.transactions.list({ budgetId: 'last-used', since_date: '2
     date?: string | null,
     amount?: number | null,
     memo?: string | null,
-    cleared?: cleared | uncleared | reconciled | null,
+    cleared?: string | null,
     approved?: boolean | null,
     flag_color?: string | null,
     account_id?: string | null,
@@ -1613,7 +1620,7 @@ await corsair.ynab.api.transactions.update({ budgetId: 'last-used', transactionI
     date?: string | null,
     amount?: number | null,
     memo?: string | null,
-    cleared?: cleared | uncleared | reconciled | null,
+    cleared?: string | null,
     approved?: boolean | null,
     flag_color?: string | null,
     account_id?: string | null,

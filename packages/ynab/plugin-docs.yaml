@@ -3,6 +3,8 @@ description: Budgeting with YNAB - read budgets, accounts, categories, payees an
 domain: ynab.com
 recommendedAuth: api_key
 overviewNote: |
+  This plugin supports personal use of your own YNAB account only. Never collect another person's personal access token. YNAB requires OAuth for access to other users' accounts, and this plugin does not implement OAuth. The shared tenant-connect examples below do not apply to this plugin. Pass your own token with `ynab({ key: process.env.YNAB_API_KEY! })`.
+
   Create a personal access token in YNAB under **Account Settings → Developer Settings → New Token**. It goes in `Authorization: Bearer` against `https://api.ynab.com/v1`.
 
   - **Amounts are milliunits, not currency.** Every amount is the currency value times 1,000, so $12.34 is `12340` and $1,234.56 is `1234560`. An amount is a whole number of milliunits, so a fractional value is rejected before the request rather than rounded. Reading a milliunit as a decimal is the most common mistake with this API.
@@ -11,9 +13,9 @@ overviewNote: |
   - **Dates are `yyyy-MM-dd`.** No time and no zone. A month is addressed by its first day, so `2024-06-01` is June.
   - **Everything is wrapped in `data`.** Every response is `{ data: … }`, and list endpoints add `server_knowledge` — a counter you can pass back as `last_knowledge_of_server` to receive only what changed since. That is worth using, because a full budget is very large.
   - **`budgets.get` returns the whole budget.** Every account, category, payee, month and transaction in one answer, which is huge for a real budget. `last-used` reaches the most recently opened one without listing first.
-  - **Transactions can be created 500 at a time.** The batch is validated together rather than one call each, and an `import_id` on each makes a repeat safe: a transaction whose import_id already exists on the same account is skipped, not updated, and is reported in `duplicate_import_ids`.
+  - **Transactions can be created 500 at a time.** The batch is validated together rather than one call each, and an `import_id` on each makes a repeat safe: a transaction whose import_id already exists on the same account is skipped, not updated, and is reported in `duplicate_import_ids`. Use `transactions.update` for corrections.
   - **A split transaction has a null parent category.** When `subtransactions` is non-empty, the parent's `category_id` and `category_name` are null and the amounts live on the splits.
-  - **A 403 is a lapsed subscription, not a bad key.** YNAB makes the account read-only when the subscription expires, so that case has its own handler — only a 401 is a credential problem.
+  - **Check the error name on a 403.** `subscription_lapsed` requires renewal, `trial_expired` requires a subscription, `unauthorized_scope` requires write permission, `data_limit_reached` means the request exceeds an API data limit, and `email_unconfirmed` requires email confirmation. A 401 indicates a missing, invalid or revoked token.
   - **A malformed delta request is rejected whole.** Nothing is partly applied, which is why a 400 is never retried.
   - **Memo and payee names are personal.** A memo can name a merchant and a payee can name an employer, so the plugin logs ids, amounts and cleared state rather than text.
 examples:

@@ -216,6 +216,7 @@ describe('payees', () => {
 	it('lists payees', async () => {
 		respond(fetchMock, { data: { payees: [payee], server_knowledge: 3 } });
 
+		// unknown: this assertion only checks the array length.
 		const result = (await invoke(Payees.list, { budgetId })) as {
 			data: { payees?: unknown[] };
 		};
@@ -228,6 +229,7 @@ describe('payees', () => {
 
 		await invoke(Payees.get, { budgetId, payeeId });
 
+		// unknown: event fields vary by operation; only id and absence of name are checked.
 		// A payee name can be a merchant or an employer.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		expect(logged).not.toHaveProperty('name');
@@ -305,6 +307,7 @@ describe('transactions', () => {
 
 		await invoke(Transactions.get, { budgetId, transactionId });
 
+		// unknown: event fields vary by operation; this checks the transaction log.
 		const logged = mockLog.mock.calls.at(-1)?.[2] as Record<string, unknown>;
 		// The memo can name a merchant or a person.
 		expect(logged).not.toHaveProperty('memo');
@@ -327,6 +330,7 @@ describe('transactions', () => {
 			},
 		});
 
+		// unknown: only the split count is checked here.
 		const result = (await invoke(Transactions.get, {
 			budgetId,
 			transactionId,
@@ -372,7 +376,7 @@ describe('transactions', () => {
 	it('reports duplicates when an import_id repeats', async () => {
 		respond(fetchMock, {
 			data: {
-				transaction_ids: ['t1'],
+				transaction_ids: [],
 				transactions: [],
 				duplicate_import_ids: ['import-1'],
 			},
@@ -393,7 +397,7 @@ describe('transactions', () => {
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'ynab.transactions.create',
-			{ sent: 1, created: 1, duplicates: 1 },
+			{ sent: 1, created: 0, duplicates: 1 },
 			'completed',
 		);
 	});
@@ -587,5 +591,51 @@ describe('review fixes', () => {
 				balance: 0,
 			}),
 		).rejects.toThrow();
+	});
+});
+
+describe('calendar and response validation', () => {
+	it.each(['2026-00-01', '2026-13-01'])(
+		'rejects invalid month %s before sending',
+		async (month) => {
+			await expect(invoke(Months.get, { budgetId, month })).rejects.toThrow();
+			await expect(
+				invoke(Categories.update, { budgetId, categoryId, month, budgeted: 0 }),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+	it.each([
+		'2026-02-29',
+		'2026-04-31',
+		'2026-00-10',
+		'2026-13-10',
+		'2026-11-00',
+	])('rejects impossible date %s before sending', async (date) => {
+		await expect(
+			invoke(Transactions.create, {
+				budgetId,
+				transactions: [{ account_id: accountId, date, amount: 0 }],
+			}),
+		).rejects.toThrow();
+		await expect(
+			invoke(Transactions.list, { budgetId, since_date: date }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+	it('accepts a leap day', async () => {
+		respond(fetchMock, { data: { transactions: [] } });
+		await invoke(Transactions.list, { budgetId, since_date: '2024-02-29' });
+		expect(lastRequest(fetchMock).query.since_date).toBe('2024-02-29');
+	});
+	it('preserves future cleared statuses in responses', async () => {
+		respond(fetchMock, {
+			data: { transaction: { ...transaction, cleared: 'future-status' } },
+		});
+		await expect(
+			invoke(Transactions.get, { budgetId, transactionId }),
+		).resolves.toMatchObject({
+			data: { transaction: { cleared: 'future-status' } },
+		});
 	});
 });
