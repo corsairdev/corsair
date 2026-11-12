@@ -90,6 +90,15 @@ describe('remoteretrieval plugin definition', () => {
 		expect(writes).toEqual(['orders.create']);
 	});
 
+	it('says plainly that orders.create books and bills a real shipment', () => {
+		const create = plugin.endpointMeta?.['orders.create'];
+
+		// A purchase is a write, like stripe charges.create, not destructive.
+		expect(create?.riskLevel).toBe('write');
+		expect(create?.description).toMatch(/real, paid shipment/);
+		expect(create?.description).toMatch(/bills/);
+	});
+
 	it('exports the endpoint schema map for the host', () => {
 		expect(remoteRetrievalEndpointSchemas['orders.create'].input).toBeDefined();
 		expect(Object.keys(remoteRetrievalEndpointSchemas).sort()).toEqual(

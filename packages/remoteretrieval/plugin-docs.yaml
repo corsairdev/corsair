@@ -5,7 +5,7 @@ recommendedAuth: api_key
 overviewNote: |
   The API key comes from the **Enterprise Remote Retriever portal** and goes in `Authorization: Bearer`. It is only available on an enterprise account, and every route lives under `https://www.remoteretrieval.com/api/v1` — there is no separate API host.
 
-  **`orders.create` books a real shipment.** A box is sent to a named employee at a home address and collected from there, so read this before calling it in a loop:
+  **`orders.create` books a real, paid shipment.** A box is sent to a named employee at a home address and collected from there, and every order is billed at the per-device price `prices` returns (an order stays in `orders.pending` until that payment completes). The API documents no test mode and no cancel route, so read this before calling it, and never call it in a loop:
 
   - **Check `prices` first** when the cost matters. It is the live per-device price, and it is the only place `Monitor_27` is explained: it is a display of 24 to 27 inches, where plain `Monitor` means 17 to 23.
   - **Two cross-field rules are enforced before the request.** `return_add_srv: 2` means data wipe and delivery to a *new* employee, so it needs `new_employee_info`; `ins_active: 1` needs an `ins_amount`. The plugin rejects either omission rather than letting the API create an order it cannot fulfil. `return_add_srv` also only makes sense on a `Return To Company` order, not a recycle.
@@ -19,7 +19,7 @@ overviewNote: |
   - **The three list routes are a pipeline, not a filter.** `pending` is payment not yet completed (on hold), `new` is payment done and ready to process, and `inprogress` has the return leg started but the device not yet back. `orders.list` is the one place both `payment_status` and `order_status` appear together.
   - **`---` means "not started".** `shipments.send_status` and `return_status` carry that placeholder before a leg begins, so it is not a failure state to alert on.
   - **A refusal can arrive as a `401` with `Invalid Key!`,** which is the live answer for both a missing key and a wrong key — the message cannot tell them apart. A failure also carries `status: "Fail"` alongside its `code`, and the plugin checks for that, so a refusal reported inside a `200` still throws rather than being read as an order.
-  - **No rate limit is documented.** Orders are created at a real logistics company, so `orders.create` is never retried; the reads retry a `5xx` twice.
+  - **No rate limit is documented.** Orders are created and billed at a real logistics company, so `orders.create` is never retried, not even after a `429` or a `5xx`; the reads retry either twice.
 examples:
   read:
     path: orders.pending

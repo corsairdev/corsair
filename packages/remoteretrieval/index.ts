@@ -130,7 +130,7 @@ const remoteRetrievalEndpointMeta = {
 	'orders.create': {
 		riskLevel: 'write',
 		description:
-			'Create one or more equipment-return orders, booking a real box shipment to a named employee at a home address',
+			"Create one or more equipment-return orders. Each order is a real, paid shipment: Remote Retrieval mails a box to the named employee's home address and bills the account the per-device fee shown by prices",
 	},
 	'orders.pending': {
 		riskLevel: 'read',

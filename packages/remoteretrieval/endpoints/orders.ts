@@ -28,8 +28,8 @@ export const validate: RemoteRetrievalEndpoints['validate'] = (ctx, input) =>
 /**
  * Creates one or more orders.
  *
- * This books a real logistics job: a box ships to a named employee at a home
- * address. Every order in the array is therefore validated in full before the
+ * This books and bills a real logistics job: a box ships to a named employee at a
+ * home address, and each order is charged the per-device price from `prices`. Every order in the array is therefore validated in full before the
  * request goes out, including the two cross-field rules the API enforces —
  * `return_add_srv: 2` needs the new employee, and `ins_active: 1` needs an amount.
  */

@@ -13,7 +13,7 @@ pnpm add @corsair-dev/remoteretrieval
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `company.get` | `remoteretrieval.api.company.get` | `read` | Read the company record the key belongs to: name, address and creation date |
-| `orders.create` | `remoteretrieval.api.orders.create` | `write` | Create one or more equipment-return orders, booking a real box shipment to a named employee at a home address |
+| `orders.create` | `remoteretrieval.api.orders.create` | `write` | Create one or more equipment-return orders. Each order is a real, paid shipment: Remote Retrieval mails a box to the named employee's home address and bills the account the per-device fee shown by prices |
 | `orders.get` | `remoteretrieval.api.orders.get` | `read` | Read one order by ID, taking it as the oid query parameter |
 | `orders.inprogress` | `remoteretrieval.api.orders.inprogress` | `read` | List orders whose return has started but whose device has not arrived yet, with both shipment legs |
 | `orders.list` | `remoteretrieval.api.orders.list` | `read` | List every order with its payment status and shipping status, paged by the response's own next link |
