@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Raisely: every `raisely.api.*` operation with input and output types."
+title: "Raisely API reference"
+sidebarTitle: "API"
+description: "API reference for the Raisely plugin in Corsair: every `raisely.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `raisely.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -96,7 +95,7 @@ List the organisation’s campaigns with path, mode and status filters plus offs
 **Risk:** `read`
 
 ```ts
-await corsair.raisely.api.campaigns.list({ status: 'active', limit: 100, sort: 'createdAt', order: 'desc' });
+await corsair.raisely.api.campaigns.list({ status: 'ACTIVE', limit: 100, sort: 'createdAt', order: 'desc' });
 ```
 
 **Input**
@@ -180,8 +179,8 @@ await corsair.raisely.api.campaigns.list({ status: 'active', limit: 100, sort: '
   pages?: number | null,
   offset?: number | null,
   limit?: number | null,
-  prevUrl?: string | null,
-  nextUrl?: string | null
+  prevUrl?: string | boolean | null,
+  nextUrl?: string | boolean | null
 } | null
 ```
 </Accordion>
@@ -202,7 +201,7 @@ List the designations a donation can be attributed to, optionally for one campai
 **Risk:** `read`
 
 ```ts
-await corsair.raisely.api.designations.list({ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', status: 'active' });
+await corsair.raisely.api.designations.list({ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', status: 'ACTIVE' });
 ```
 
 **Input**
@@ -256,8 +255,8 @@ A designation is what a donation is attributed to; `publicName` is the label sho
   pages?: number | null,
   offset?: number | null,
   limit?: number | null,
-  prevUrl?: string | null,
-  nextUrl?: string | null
+  prevUrl?: string | boolean | null,
+  nextUrl?: string | boolean | null
 } | null
 ```
 </Accordion>
@@ -278,7 +277,7 @@ Record a donation for a campaign, with the donor details and the gateway it came
 **Risk:** `write`
 
 ```ts
-await corsair.raisely.api.donations.create({ amount: 2500, currency: 'USD', email: 'jordan@example.com', method: 'CREDIT_CARD', type: 'ONLINE', campaignUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa' });
+await corsair.raisely.api.donations.create({ amount: 2500, currency: 'USD', email: 'jordan@example.com', method: 'CREDIT_CARD', type: 'OFFLINE', campaign_uuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa' });
 ```
 
 **Input**
@@ -661,8 +660,8 @@ await corsair.raisely.api.donations.list({ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aa
   pages?: number | null,
   offset?: number | null,
   limit?: number | null,
-  prevUrl?: string | null,
-  nextUrl?: string | null
+  prevUrl?: string | boolean | null,
+  nextUrl?: string | boolean | null
 } | null
 ```
 </Accordion>
@@ -690,7 +689,7 @@ await corsair.raisely.api.profiles.get({ profile_path: 'jordan-lee' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `profile_path` | `string` | Yes | The profile path, as returned by `campaigns.profiles`. |
+| `profile_path` | `string` | Yes | The profile uuid or path, as returned by `profiles.list`. |
 | `private` | `boolean` | No | Return the full record. Only meaningful with a token that can see private fields. |
 
 
@@ -909,8 +908,8 @@ Raisely requires `campaign` on this route, so the schema makes it mandatory.
   pages?: number | null,
   offset?: number | null,
   limit?: number | null,
-  prevUrl?: string | null,
-  nextUrl?: string | null
+  prevUrl?: string | boolean | null,
+  nextUrl?: string | boolean | null
 } | null
 ```
 </Accordion>

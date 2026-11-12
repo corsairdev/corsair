@@ -481,7 +481,7 @@ const ProfilesGetInputSchema = z.object({
 	profile_path: z
 		.string()
 		.min(1)
-		.describe('The profile path, as returned by `campaigns.profiles`.'),
+		.describe('The profile uuid or path, as returned by `profiles.list`.'),
 	private: PrivateSchema,
 });
 

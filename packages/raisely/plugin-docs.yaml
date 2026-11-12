@@ -5,8 +5,8 @@ recommendedAuth: api_key
 overviewNote: |
   Generate an API key in Raisely under **Settings → API**. Send it as `Authorization: Bearer <key>`. Things to know before you call:
 
-  - **Auth is optional per route, not per account.** Raisely's routes accept an anonymous caller where the record is public, so a request can succeed without a key. With a key it returns the private fields too; without one, `private` is ignored.
-  - **Three routes are not on the plain REST shape.** `/donations` POST takes its record under `data`, and `/profiles` requires a `campaign` query parameter. Both are enforced by the schemas here rather than left to a 422.
+  - **This plugin always sends a key.** Raisely itself answers some public reads without one, but the plugin raises `AuthMissingError` when no key is set, so connect a key first. `private: true` returns the private fields the key can see.
+  - **Two routes are not on the plain REST shape.** `/donations` POST takes its record under `data`, and `/profiles` requires a `campaign` query parameter. Both are enforced by the schemas here rather than left to a 422.
   - **Offsets, not pages.** Every collection answers `{ data, pagination }` with `total`, `offset` and `limit`, and the plugin returns `next_offset` for the next call. Do not add `limit` to the offset: the response already reports both.
   - **A sort without an order is ignored.** Raisely applies `sort` only when `order` is also present, so the plugin sends the pair together or neither.
   - **Donation types.** `type` takes `ONLINE` for a donation taken through a gateway or `OFFLINE` for one recorded by hand; `mode` takes `LIVE` or `TEST`. An unknown value is rejected before the request is sent.
@@ -19,19 +19,17 @@ examples:
     path: campaigns.list
     title: List active campaigns
     args:
-      status: active
+      status: ACTIVE
       limit: 100
   write:
-    path: donations.create
-    title: Record an offline donation
+    path: profiles.update
+    title: Raise a fundraiser's goal
     args:
-      amount: 2500
-      currency: USD
-      email: jordan@example.com
-      method: CREDIT_CARD
+      profile_path: jordan-lee
+      goal: 6000
 apiExamples:
   campaigns.list:
-    call: "{ status: 'active', limit: 100, sort: 'createdAt', order: 'desc' }"
+    call: "{ status: 'ACTIVE', limit: 100, sort: 'createdAt', order: 'desc' }"
   campaigns.get:
     call: "{ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa' }"
   donations.list:
@@ -39,7 +37,7 @@ apiExamples:
   donations.get:
     call: "{ donation_uuid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb' }"
   donations.create:
-    call: "{ amount: 2500, currency: 'USD', email: 'jordan@example.com', method: 'CREDIT_CARD', type: 'ONLINE', campaignUuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa' }"
+    call: "{ amount: 2500, currency: 'USD', email: 'jordan@example.com', method: 'CREDIT_CARD', type: 'OFFLINE', campaign_uuid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa' }"
   profiles.list:
     call: "{ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', limit: 50 }"
   profiles.get:
@@ -47,7 +45,7 @@ apiExamples:
   profiles.update:
     call: "{ profile_path: 'jordan-lee', goal: 6000 }"
   designations.list:
-    call: "{ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', status: 'active' }"
+    call: "{ campaign: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', status: 'ACTIVE' }"
 apiNotes:
   'campaigns.list': '`order` is only sent when `sort` is also set, because Raisely ignores it alone.'
   'donations.create': 'The record is sent under `data`; amounts are integers in the smallest currency unit.'

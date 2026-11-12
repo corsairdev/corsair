@@ -1,5 +1,6 @@
 ---
-title: Overview
+title: "Raisely plugin"
+sidebarTitle: "Overview"
 description: "Charity fundraising with Raisely - read campaigns, donations, fundraising profiles and designations, record a donation, and update a fundraising profile through the Raisely API."
 ---
 
@@ -7,8 +8,8 @@ Use **Raisely** through Corsair: one client, typed API calls.
 
 Generate an API key in Raisely under **Settings → API**. Send it as `Authorization: Bearer <key>`. Things to know before you call:
 
-- **Auth is optional per route, not per account.** Raisely's routes accept an anonymous caller where the record is public, so a request can succeed without a key. With a key it returns the private fields too; without one, `private` is ignored.
-- **Three routes are not on the plain REST shape.** `/donations` POST takes its record under `data`, and `/profiles` requires a `campaign` query parameter. Both are enforced by the schemas here rather than left to a 422.
+- **This plugin always sends a key.** Raisely itself answers some public reads without one, but the plugin raises `AuthMissingError` when no key is set, so connect a key first. `private: true` returns the private fields the key can see.
+- **Two routes are not on the plain REST shape.** `/donations` POST takes its record under `data`, and `/profiles` requires a `campaign` query parameter. Both are enforced by the schemas here rather than left to a 422.
 - **Offsets, not pages.** Every collection answers `{ data, pagination }` with `total`, `offset` and `limit`, and the plugin returns `next_offset` for the next call. Do not add `limit` to the offset: the response already reports both.
 - **A sort without an order is ignored.** Raisely applies `sort` only when `order` is also present, so the plugin sends the pair together or neither.
 - **Donation types.** `type` takes `ONLINE` for a donation taken through a gateway or `OFFLINE` for one recorded by hand; `mode` takes `LIVE` or `TEST`. An unknown value is rejected before the request is sent.
@@ -75,7 +76,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. A call without a saved key throws `AuthMissingError`, which may carry a `connectUrl` for connecting Raisely. Note that Raisely's public routes also answer an anonymous caller, so a call can succeed without a key and still omit the private fields.
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
 
 ```ts
 raisely()
@@ -109,20 +110,15 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.raisely.api.campaigns.list({ status: 'active', limit: 100 });
+await tenant.raisely.api.campaigns.list({ status: 'ACTIVE', limit: 100 });
 ```
 
 
-**Record an offline donation**
+**Raise a fundraiser's goal**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.raisely.api.donations.create({
-	amount: 2500,
-	currency: 'USD',
-	email: 'jordan@example.com',
-	method: 'CREDIT_CARD',
-});
+await tenant.raisely.api.profiles.update({ profile_path: 'jordan-lee', goal: 6000 });
 ```
 
 
