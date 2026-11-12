@@ -114,11 +114,11 @@ await tenant.rollbar.api.items.list({ environment: 'production' });
 ```
 
 
-**Resolve an item against a version**
+**Snooze an item for an hour**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.rollbar.api.items.update({ item_id: 12345, resolved_in_version: '1.2.3' });
+await tenant.rollbar.api.items.update({ item_id: 12345, snooze_enabled: true, snooze_expiration_in_seconds: 3600 });
 ```
 
 

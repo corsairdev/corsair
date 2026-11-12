@@ -22,10 +22,11 @@ examples:
       environment: production
   write:
     path: items.update
-    title: Resolve an item against a version
+    title: Snooze an item for an hour
     args:
       item_id: 12345
-      resolved_in_version: 1.2.3
+      snooze_enabled: true
+      snooze_expiration_in_seconds: 3600
 apiExamples:
   items.list:
     call: "{ status: 'active', level: ['error', 'critical'], environment: 'production' }"

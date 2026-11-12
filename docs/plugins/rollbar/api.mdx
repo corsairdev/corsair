@@ -447,8 +447,8 @@ await corsair.rollbar.api.items.update({ item_id: 12345, status: 'resolved', res
 | `status` | `active \| resolved \| muted` | No | — |
 | `level` | `critical \| error \| warning \| info \| debug` | No | — |
 | `title` | `string` | No | A new title, up to 255 characters. |
-| `assigned_user_id` | `number` | No | — |
-| `assigned_team_id` | `number` | No | — |
+| `assigned_user_id` | `number \| null` | No | The user to assign, or null to clear the assignment. |
+| `assigned_team_id` | `number \| null` | No | The team to assign, or null to clear the assignment. |
 | `resolved_in_version` | `string` | No | The version the item is resolved in, up to 40 characters. |
 | `snooze_enabled` | `boolean` | No | — |
 | `snooze_expiration_in_seconds` | `number` | No | — |
@@ -552,7 +552,7 @@ await corsair.rollbar.api.occurrences.list({ page: 1, limit: 20 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | 1-based page. Rollbar returns 20 per page unless `limit` is set. |
-| `limit` | `number` | No | Records per page, up to 100. |
+| `limit` | `number` | No | Records per page, up to 5000. |
 | `project_id` | `number` | No | Account tokens only: read this project. |
 | `last_id` | `number` | No | Only occurrences after this id, for a forward walk. |
 
