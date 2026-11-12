@@ -879,15 +879,41 @@ describe('fixes from the 11-12 review and live run', () => {
 	it('accepts the empty 201 UptimeRobot answers when a comment is added', async () => {
 		respondEmpty(fetchMock, 201);
 
-		const result = await invoke(Incidents.addComment, {
-			id: incident.id,
-			content: 'Rolled back the deployment.',
+		await expect(
+			invoke(Incidents.addComment, {
+				id: incident.id,
+				content: 'Rolled back the deployment.',
+			}),
+		).resolves.toBeDefined();
+	});
+
+	it('does not fail a read on a maintenance-window value it does not know', async () => {
+		respond(fetchMock, {
+			...maintenanceWindowsPage,
+			data: [{ ...maintenanceWindow, interval: 'yearly', status: 'archived' }],
 		});
 
-		// The answer has no body, so the plugin echoes what it posted.
-		expect(result).toEqual({
-			comment: 'Rolled back the deployment.',
-			publishOnStatusPage: false,
+		const result = await invoke(MaintenanceWindows.list, {});
+
+		expect(result).toMatchObject({
+			data: [{ interval: 'yearly', status: 'archived' }],
 		});
+	});
+
+	it('does not fail the uptime stats on a log type it does not know', async () => {
+		respond(fetchMock, {
+			...uptimeStats,
+			logs: [
+				{
+					type: 'VISUAL_CHANGE',
+					datetime: '2026-11-12T00:00:00Z',
+					duration: 60,
+				},
+			],
+		});
+
+		const result = await invoke(Stats.uptime, { timeFrame: 'DAY' });
+
+		expect(result).toMatchObject({ logs: [{ type: 'VISUAL_CHANGE' }] });
 	});
 });

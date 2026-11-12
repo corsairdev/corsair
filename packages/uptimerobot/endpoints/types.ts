@@ -560,7 +560,8 @@ const StatsUptimeResponseSchema = z
 			.array(
 				z
 					.object({
-						type: z.enum(['DOWNTIME', 'SLOW_RESPONSE']).nullish(),
+						// DOWNTIME or SLOW_RESPONSE today; a string so a new type cannot fail the read.
+						type: z.string().nullish(),
 						datetime: z.string().nullish(),
 						duration: z.number().nullish(),
 					})
@@ -963,14 +964,16 @@ const MaintenanceWindowSchema = z
 	.object({
 		id: z.number().nullish(),
 		name: z.string().nullish(),
-		interval: z.enum(['once', 'daily', 'weekly', 'monthly']).nullish(),
+		// once, daily, weekly or monthly; a string so a new value cannot fail the read.
+		interval: z.string().nullish(),
 		date: z.string().nullish(),
 		time: z.string().nullish(),
 		duration: z.number().nullish(),
 		days: z.array(z.number()).nullish(),
 		monitorIds: z.array(z.number()).nullish(),
 		autoAddMonitors: z.boolean().nullish(),
-		status: z.enum(['active', 'paused']).nullish(),
+		// active or paused; a string for the same reason.
+		status: z.string().nullish(),
 		created: z.string().nullish(),
 	})
 	.loose();
