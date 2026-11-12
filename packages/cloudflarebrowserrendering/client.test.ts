@@ -20,6 +20,8 @@ function apiError(
 	status: number,
 	message: string,
 	retryAfter?: number,
+	// `unknown` because tests construct arbitrary credential-bearing JSON to
+	// prove redaction, not a fixed request shape.
 	requestBody?: Record<string, unknown>,
 ) {
 	return new ApiError(
@@ -141,6 +143,8 @@ describe('makeCloudflareBrowserRenderingRequest', () => {
 		const sanitized = await makeCloudflareBrowserRenderingRequest(
 			'/accounts/account-123/browser-run/content',
 			'test-token',
+			// `unknown` because a rejection value has no static type; the
+			// assertions below narrow it to ApiError.
 		).catch((error: unknown) => error);
 		expect(sanitized).toBeInstanceOf(ApiError);
 		expect(sanitized).not.toBe(limited);

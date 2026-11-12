@@ -686,7 +686,7 @@ await corsair.cloudflarebrowserrendering.api.crawl.start({
   contentUse?: reference | full,
   jsonOptions?: {
     custom_ai?: {
-      authorization: string,
+      authorization?: string,
       model: string
     }[],
     prompt?: string,
@@ -811,7 +811,7 @@ await corsair.cloudflarebrowserrendering.api.json.extract({
   url?: string,
   userAgent?: string,
   custom_ai?: {
-    authorization: string,
+    authorization?: string,
     model: string
   }[],
   prompt?: string,
@@ -1620,7 +1620,23 @@ await corsair.cloudflarebrowserrendering.api.snapshot.capture({
   html?: string,
   url?: string,
   userAgent?: string,
-  formats?: (content | screenshot | markdown | accessibilityTree)[]
+  formats?: (content | screenshot | markdown | accessibilityTree)[],
+  screenshotOptions?: {
+    captureBeyondViewport?: boolean,
+    clip?: {
+      height: number,
+      width: number,
+      x: number,
+      y: number,
+      scale?: number
+    },
+    fromSurface?: boolean,
+    fullPage?: boolean,
+    omitBackground?: boolean,
+    optimizeForSpeed?: boolean,
+    quality?: number,
+    type?: png | jpeg | webp
+  }
 }
 ```
 </Accordion>
@@ -1712,13 +1728,7 @@ await corsair.cloudflarebrowserrendering.api.targets.close({ accountId: 'acct-12
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `type` | `string` | Yes | — |
-| `url` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `devtoolsFrontendUrl` | `string` | No | — |
-| `title` | `string` | No | — |
-| `webSocketDebuggerUrl` | `string` | No | — |
+| `message` | `string` | Yes | — |
 
 
 
