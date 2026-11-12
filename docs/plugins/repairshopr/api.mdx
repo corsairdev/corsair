@@ -799,7 +799,7 @@ await corsair.repairshopr.api.products.list({ sku: 'SSD-1TB' });
 | `id_not` | `number` | No | — |
 | `sort` | `string` | No | A column and direction, such as `name ASC`. |
 
-This collection has no `meta` block, so `next_page` is always null.
+`next_page` comes from `meta.total_pages`. When the response has no `meta` block it is null, which does not mean every product came back: request the next `page` and stop when it is empty.
 
 
 

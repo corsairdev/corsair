@@ -12,7 +12,7 @@ Generate a key in RepairShopr under **Admin → API → API Tokens**. The key is
 - **A 401 covers three different problems.** `Failed to authenticate account` means a bad key, a wrong subdomain, or a key that belongs to another account; RepairShopr does not separate them, so the plugin reports one auth error rather than guessing.
 - **Paging is by page number.** Collections answer with their own array plus a `meta` block carrying `total_pages`, and `next_page` is derived from it. Only `invoices` accepts `per_page` (at most 25); the others use the account default.
 - **Sorting names a column and a direction**, such as `firstname ASC` or `created_at DESC`.
-- **Products and vendors carry no `meta`.** Their collections cannot be paged, so `next_page` is always null there rather than an invented number.
+- **Products and vendors may carry no `meta`.** Without it the plugin cannot tell whether more pages exist, so `next_page` is null rather than an invented number. A null there does not mean every record came back: ask for the next `page` yourself and stop when it comes back empty.
 - **Money is a string on invoices.** `subtotal`, `total` and `tax` come back as decimal strings such as `"181.50"`, while product prices are numbers.
 - **A contact spells its address differently from a customer.** A contact has `address1`/`address2`; a customer has `address`/`address_2`. Both are modelled as the API sends them.
 - **Ticket status is the account's own list.** `status` takes any status name the account uses; the defaults are `New`, `In Progress`, `Resolved`, `Invoiced`, `Waiting for Parts`, `Waiting on Customer`, `Scheduled` and `Customer Reply`. `priority` takes one of `Urgent`, `High`, `Medium` or `Low`.
