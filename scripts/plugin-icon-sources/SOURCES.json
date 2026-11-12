@@ -365,6 +365,10 @@
     "from": "https://commons.wikimedia.org/wiki/File:SAP_2011_logo.svg",
     "note": "stylesheet inlined"
   },
+  "satismeter": {
+    "from": "https://satismeter.com/favicon.svg",
+    "note": "satismeter.com <link rel=icon> favicon.svg (current triangle mark)"
+  },
   "scrapedo": {
     "from": "https://media.brand.dev/2308b1d5-5c3d-41d7-9766-96edf92f8cb2.svg",
     "note": "found with the context.dev Brand API for scrape.do"
@@ -439,6 +443,10 @@
   },
   "twitter": {
     "from": "https://svgl.app/library/x.svg"
+  },
+  "userlist": {
+    "from": "/tmp/claude-1000/-home-pranayasus-Corsair/519fcfce-bcca-4c8e-800d-d20fb6759bba/scratchpad/icons/real/userlist-inline.svg",
+    "note": "userlist.com <link rel=icon> /images/favicon.svg (linked loops); light-mode fill inlined from its prefers-color-scheme stylesheet"
   },
   "vercel": {
     "from": "https://svgl.app/library/vercel.svg"
