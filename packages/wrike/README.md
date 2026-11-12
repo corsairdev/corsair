@@ -15,13 +15,13 @@ pnpm add @corsair-dev/wrike
 | `account.get` | `wrike.api.account.get` | `read` | Read the account, including the virtual root folder id that a task or folder create needs as its parent |
 | `comments.create` | `wrike.api.comments.create` | `write` | Post a comment on a task |
 | `comments.delete` | `wrike.api.comments.delete` | `destructive` | Delete a comment |
-| `comments.list` | `wrike.api.comments.list` | `read` | List comments across the account |
+| `comments.list` | `wrike.api.comments.list` | `read` | List comments across the account, up to a limit |
 | `comments.task` | `wrike.api.comments.task` | `read` | List the comments on a task |
-| `comments.update` | `wrike.api.comments.update` | `write` | Edit the text of a comment you wrote |
+| `comments.update` | `wrike.api.comments.update` | `write` | Edit the text of a comment you wrote; Wrike allows it only in the 5 minutes after posting |
 | `contacts.get` | `wrike.api.contacts.get` | `read` | Read one contact by id, or `me` for the one behind the token |
 | `contacts.list` | `wrike.api.contacts.list` | `read` | List the contacts on the account, optionally only active ones or only yourself |
 | `folders.create` | `wrike.api.folders.create` | `write` | Create a folder inside another, or in the account root when given its virtual root id |
-| `folders.delete` | `wrike.api.folders.delete` | `destructive` | Delete a folder; a non-empty one is refused unless recursive is set, which deletes its contents too |
+| `folders.delete` | `wrike.api.folders.delete` | `destructive` | Move a folder and every folder and task inside it to the recycle bin; Wrike does not refuse a folder with contents |
 | `folders.get` | `wrike.api.folders.get` | `read` | Read one folder or project |
 | `folders.list` | `wrike.api.folders.list` | `read` | List folders and projects, each with its parent and scope |
 | `folders.tasks` | `wrike.api.folders.tasks` | `read` | List the tasks in a folder, optionally including every descendant folder |
@@ -31,9 +31,9 @@ pnpm add @corsair-dev/wrike
 | `tasks.get` | `wrike.api.tasks.get` | `read` | Read one task with its status, dates, assignees and custom fields |
 | `tasks.list` | `wrike.api.tasks.list` | `read` | Search tasks account-wide by title, status, dates, author or assignee, with paging and sorting |
 | `tasks.update` | `wrike.api.tasks.update` | `write` | Change a task title, status, dates, assignees or followers, or restore it from the recycle bin |
-| `timelogs.create` | `wrike.api.timelogs.create` | `write` | Log hours against a task for a tracked date, optionally with a comment and category |
+| `timelogs.create` | `wrike.api.timelogs.create` | `write` | Log hours against a task for a tracked date, with a comment (Wrike requires one, which may be empty) and an optional category |
 | `timelogs.delete` | `wrike.api.timelogs.delete` | `destructive` | Delete a logged time entry |
-| `timelogs.list` | `wrike.api.timelogs.list` | `read` | List the time logged on the account, filtered by task, person or date |
+| `timelogs.list` | `wrike.api.timelogs.list` | `read` | List the time logged on the account, filtered by tracked or created date, or only your own |
 | `timelogs.task` | `wrike.api.timelogs.task` | `read` | List the time logged against one task |
 
 ## Auth

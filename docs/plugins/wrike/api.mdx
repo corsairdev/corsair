@@ -1,9 +1,8 @@
 ---
-title: API
-description: "API reference for Wrike: every `wrike.api.*` operation with input and output types."
+title: "Wrike API reference"
+sidebarTitle: "API"
+description: "API reference for the Wrike plugin in Corsair: every `wrike.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
-
-Every `wrike.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
 
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
@@ -32,6 +31,8 @@ await corsair.wrike.api.account.get({});
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -76,7 +77,7 @@ await corsair.wrike.api.comments.create({ taskId: 'IEAAABCDEF12345', text: 'Look
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `taskId` | `string` | Yes | — |
-| `text` | `string` | Yes | The comment text. Plain text; Wrike renders the links itself. |
+| `text` | `string` | Yes | The comment text, sent as plain text: Wrike strips any HTML tags rather than rendering them. |
 
 
 
@@ -86,6 +87,8 @@ await corsair.wrike.api.comments.create({ taskId: 'IEAAABCDEF12345', text: 'Look
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -145,20 +148,19 @@ await corsair.wrike.api.comments.delete({ id: 'CMABCDEF12345' });
 
 `comments.list`
 
-List comments across the account
+List comments across the account, up to a limit
 
 **Risk:** `read`
 
 ```ts
-await corsair.wrike.api.comments.list({ pageSize: 100 });
+await corsair.wrike.api.comments.list({ limit: 100 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageSize` | `number` | No | Items per page, up to 1000. |
-| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
+| `limit` | `number` | No | The most comments to return. Wrike returns up to 1000 by default. |
 
 
 
@@ -168,6 +170,8 @@ await corsair.wrike.api.comments.list({ pageSize: 100 });
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -209,8 +213,6 @@ await corsair.wrike.api.comments.task({ taskId: 'IEAAABCDEF12345' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `taskId` | `string` | Yes | — |
-| `pageSize` | `number` | No | Items per page, up to 1000. |
-| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
 
 
 
@@ -220,6 +222,8 @@ await corsair.wrike.api.comments.task({ taskId: 'IEAAABCDEF12345' });
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -248,7 +252,7 @@ await corsair.wrike.api.comments.task({ taskId: 'IEAAABCDEF12345' });
 
 `comments.update`
 
-Edit the text of a comment you wrote
+Edit the text of a comment you wrote; Wrike allows it only in the 5 minutes after posting
 
 **Risk:** `write`
 
@@ -261,7 +265,7 @@ await corsair.wrike.api.comments.update({ id: 'CMABCDEF12345', text: 'Edited.' }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `text` | `string` | Yes | — |
+| `text` | `string` | Yes | Plain text, as on create. Wrike allows an edit only in the 5 minutes after posting. |
 
 
 
@@ -271,6 +275,8 @@ await corsair.wrike.api.comments.update({ id: 'CMABCDEF12345', text: 'Edited.' }
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -323,6 +329,8 @@ await corsair.wrike.api.contacts.get({ id: 'me' });
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -370,8 +378,6 @@ await corsair.wrike.api.contacts.list({ active: true });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pageSize` | `number` | No | Items per page, up to 1000. |
-| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
 | `me` | `boolean` | No | Only the contact behind the token. |
 | `active` | `boolean` | No | Only contacts who have not been deleted. |
 | `fields` | `string` | No | A JSON array of optional fields to include, e.g. `["attachmentCount"]`. |
@@ -384,6 +390,8 @@ await corsair.wrike.api.contacts.list({ active: true });
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -437,8 +445,6 @@ await corsair.wrike.api.folders.create({ parentId: 'IEAABCDEF12345', title: 'Che
 | `title` | `string` | Yes | — |
 | `description` | `string` | No | — |
 | `shareds` | `string[]` | No | Contact ids to share with. |
-| `pageSize` | `number` | No | Items per page, up to 1000. |
-| `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
 
 
 
@@ -448,6 +454,8 @@ await corsair.wrike.api.folders.create({ parentId: 'IEAABCDEF12345', title: 'Che
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -482,12 +490,12 @@ await corsair.wrike.api.folders.create({ parentId: 'IEAABCDEF12345', title: 'Che
 
 `folders.delete`
 
-Delete a folder; a non-empty one is refused unless recursive is set, which deletes its contents too
+Move a folder and every folder and task inside it to the recycle bin; Wrike does not refuse a folder with contents
 
 **Risk:** `destructive`
 
 ```ts
-await corsair.wrike.api.folders.delete({ id: 'IEAABCDEF12345', recursive: true });
+await corsair.wrike.api.folders.delete({ id: 'IEAABCDEF12345' });
 ```
 
 **Input**
@@ -495,7 +503,6 @@ await corsair.wrike.api.folders.delete({ id: 'IEAABCDEF12345', recursive: true }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `recursive` | `boolean` | No | Also delete the folder contents. Without it a non-empty folder is refused. |
 
 
 
@@ -536,6 +543,8 @@ await corsair.wrike.api.folders.get({ id: 'IEAABCDEF12345' });
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -575,7 +584,7 @@ List folders and projects, each with its parent and scope
 **Risk:** `read`
 
 ```ts
-await corsair.wrike.api.folders.list({ pageSize: 100 });
+await corsair.wrike.api.folders.list({ project: true, pageSize: 100 });
 ```
 
 **Input**
@@ -584,6 +593,9 @@ await corsair.wrike.api.folders.list({ pageSize: 100 });
 |------|------|----------|-------------|
 | `pageSize` | `number` | No | Items per page, up to 1000. |
 | `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
+| `project` | `boolean` | No | Only projects (true) or only plain folders (false). |
+| `title` | `string` | No | A substring of the title. |
+| `permalink` | `string` | No | A folder permalink, exact match. |
 | `fields` | `string` | No | A JSON array of optional fields to include, e.g. `["attachmentCount"]`. |
 
 
@@ -594,6 +606,8 @@ await corsair.wrike.api.folders.list({ pageSize: 100 });
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -644,7 +658,7 @@ await corsair.wrike.api.folders.tasks({ id: 'IEAABCDEF12345', descendants: true 
 | `pageSize` | `number` | No | Items per page, up to 1000. |
 | `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
 | `descendants` | `boolean` | No | Also search every descendant folder. |
-| `sortField` | `Status \| Importance \| Title \| StartDate \| DueDate \| CreatedDate \| UpdatedDate` | No | — |
+| `sortField` | `Status \| Importance \| Title \| StartFinishInterval \| DueDate \| CreatedDate \| UpdatedDate \| CompletedDate \| LastAccessDate` | No | — |
 | `sortOrder` | `Asc \| Desc` | No | — |
 | `fields` | `string` | No | A JSON array of optional fields to include, e.g. `["attachmentCount"]`. |
 
@@ -656,6 +670,8 @@ await corsair.wrike.api.folders.tasks({ id: 'IEAABCDEF12345', descendants: true 
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -727,6 +743,8 @@ await corsair.wrike.api.folders.update({ id: 'IEAABCDEF12345', title: 'Renamed' 
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -782,10 +800,10 @@ await corsair.wrike.api.tasks.create({ folderId: 'IEAABCDEF12345', title: 'Ship 
 | `importance` | `High \| Low \| Normal` | No | — |
 | `responsibles` | `string[]` | No | Contact ids to assign. |
 | `followers` | `string[]` | No | — |
-| `startDate` | `string` | No | — |
-| `dueDate` | `string` | No | — |
-| `dates` | `object` | No | A richer date form than startDate and dueDate. |
-| `parentIds` | `string[]` | No | Additional parent folders, beyond the one in the path. |
+| `startDate` | `string` | No | Shorthand for `dates.start`, as yyyy-MM-dd. |
+| `dueDate` | `string` | No | Shorthand for `dates.due`, as yyyy-MM-dd. |
+| `dates` | `object` | No | Wrike schedules a task through this object; startDate and dueDate are folded into it. |
+| `parents` | `string[]` | No | Additional parent folders, beyond the one in the path. |
 | `customFields` | `Record<string, any>[]` | No | — |
 | `metadata` | `Record<string, any>[]` | No | — |
 
@@ -794,7 +812,7 @@ await corsair.wrike.api.tasks.create({ folderId: 'IEAABCDEF12345', title: 'Ship 
 
 ```ts
 {
-  type?: Backlog | Milestone | Planned | Wrike,
+  type?: Backlog | Milestone | Planned,
   start?: string,
   due?: string,
   duration?: number
@@ -811,6 +829,8 @@ await corsair.wrike.api.tasks.create({ folderId: 'IEAABCDEF12345', title: 'Ship 
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -908,6 +928,8 @@ await corsair.wrike.api.tasks.get({ id: 'IEAAABCDEF12345' });
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -980,7 +1002,7 @@ await corsair.wrike.api.tasks.list({ status: ['Active', 'Completed'], importance
 | `type` | `Milestone \| Backlog \| Planned` | No | — |
 | `subTasks` | `boolean` | No | Include subtasks in the scope. |
 | `withInvitations` | `boolean` | No | Include invitations in the shared and responsible id lists. |
-| `sortField` | `Status \| Importance \| Title \| StartDate \| DueDate \| CreatedDate \| UpdatedDate` | No | — |
+| `sortField` | `Status \| Importance \| Title \| StartFinishInterval \| DueDate \| CreatedDate \| UpdatedDate \| CompletedDate \| LastAccessDate` | No | — |
 | `sortOrder` | `Asc \| Desc` | No | — |
 | `fields` | `string` | No | A JSON array of optional fields to include, e.g. `["attachmentCount"]`. |
 
@@ -992,6 +1014,8 @@ await corsair.wrike.api.tasks.list({ status: ['Active', 'Completed'], importance
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1056,11 +1080,25 @@ await corsair.wrike.api.tasks.update({ id: 'IEAAABCDEF12345', status: 'Completed
 | `addResponsibles` | `string[]` | No | — |
 | `removeResponsibles` | `string[]` | No | — |
 | `addFollowers` | `string[]` | No | — |
-| `removeFollowers` | `string[]` | No | — |
-| `startDate` | `string` | No | Send an empty string to clear it. |
-| `dueDate` | `string` | No | Send an empty string to clear it. |
+| `startDate` | `string` | No | Shorthand for `dates.start`, as yyyy-MM-dd. |
+| `dueDate` | `string` | No | Shorthand for `dates.due`, as yyyy-MM-dd. |
+| `dates` | `object` | No | Reschedule the task; `{ type: "Backlog" }` clears its dates. |
 | `restore` | `boolean` | No | Restore a task from the recycle bin. |
 | `customFields` | `Record<string, any>[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="dates full type">
+
+```ts
+{
+  type?: Backlog | Milestone | Planned,
+  start?: string,
+  due?: string,
+  duration?: number
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1070,6 +1108,8 @@ await corsair.wrike.api.tasks.update({ id: 'IEAAABCDEF12345', status: 'Completed
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1116,7 +1156,7 @@ await corsair.wrike.api.tasks.update({ id: 'IEAAABCDEF12345', status: 'Completed
 
 `timelogs.create`
 
-Log hours against a task for a tracked date, optionally with a comment and category
+Log hours against a task for a tracked date, with a comment (Wrike requires one, which may be empty) and an optional category
 
 **Risk:** `write`
 
@@ -1131,7 +1171,7 @@ await corsair.wrike.api.timelogs.create({ taskId: 'IEAAABCDEF12345', hours: 6.5,
 | `taskId` | `string` | Yes | — |
 | `hours` | `number` | Yes | — |
 | `trackedDate` | `string` | Yes | The day the work belongs to, as yyyy-MM-dd. |
-| `comment` | `string` | No | — |
+| `comment` | `string` | Yes | Wrike requires a comment on every time entry; it may be empty. |
 | `categoryId` | `string` | No | A timelog category id. |
 
 
@@ -1142,6 +1182,8 @@ await corsair.wrike.api.timelogs.create({ taskId: 'IEAAABCDEF12345', hours: 6.5,
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1204,12 +1246,12 @@ await corsair.wrike.api.timelogs.delete({ id: 'TLABCDEF12345' });
 
 `timelogs.list`
 
-List the time logged on the account, filtered by task, person or date
+List the time logged on the account, filtered by tracked or created date, or only your own
 
 **Risk:** `read`
 
 ```ts
-await corsair.wrike.api.timelogs.list({ taskId: 'IEAAABCDEF12345', trackedDate: '2024-06-01' });
+await corsair.wrike.api.timelogs.list({ me: true, trackedDate: '2024-06-01,2024-06-30' });
 ```
 
 **Input**
@@ -1218,8 +1260,7 @@ await corsair.wrike.api.timelogs.list({ taskId: 'IEAAABCDEF12345', trackedDate: 
 |------|------|----------|-------------|
 | `pageSize` | `number` | No | Items per page, up to 1000. |
 | `nextPageToken` | `string` | No | The token the previous page returned, to read the next. |
-| `taskId` | `string` | No | Only this task. |
-| `userId` | `string` | No | Only this person. |
+| `me` | `boolean` | No | Only the time logged by the user behind the token. |
 | `trackedDate` | `string` | No | A date, or a range as `{start},{end}`. |
 | `createdDate` | `string` | No | — |
 
@@ -1231,6 +1272,8 @@ await corsair.wrike.api.timelogs.list({ taskId: 'IEAAABCDEF12345', trackedDate: 
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1286,6 +1329,8 @@ await corsair.wrike.api.timelogs.task({ taskId: 'IEAAABCDEF12345' });
 |------|------|----------|-------------|
 | `kind` | `string \| null` | No | — |
 | `data` | `object[] \| null` | No | — |
+| `nextPageToken` | `string \| null` | No | Pass this back as `nextPageToken` to read the next page. |
+| `responseSize` | `number \| null` | No | The total number of matches across every page. |
 
 <AccordionGroup>
 <Accordion title="data full type">

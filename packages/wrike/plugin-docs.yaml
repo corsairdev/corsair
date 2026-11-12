@@ -10,11 +10,14 @@ overviewNote: |
   - **There is no account-level task create.** A task always lives in a folder, so `tasks.create` takes a `folderId` and posts to `/folders/{folderId}/tasks`. For the account root, use the `rootFolderId` that `account.get` returns — it is a virtual folder, which is why reading the account once is worth doing.
   - **Every response is `{ kind, data: [...] }`.** Even a single task comes back inside an array, so the output schemas unwrap by index rather than pretending a get returns one object.
   - **Ids carry a prefix.** `IEAA…` is a task, `IEA…` a folder, `KU…` a contact, `TL…` a timelog. The prefix is part of the id and is never stripped or rewritten.
-  - **Filters are comma-joined, not repeated.** `status`, `responsibles` and `authors` take one comma-separated value, so the plugin joins an array rather than sending the key twice.
-  - **A task delete is recoverable.** Wrike moves it to the recycle bin, and `tasks.update` with `restore: true` brings it back — which is why it is destructive but undoable, unlike a folder delete with `recursive`.
-  - **A folder delete is refused when it is not empty.** `recursive` deletes the contents with it, so the plugin does not default it: the safe call is the one that fails on a folder with anything in it.
-  - **`trackedDate` and `hours` are both required on a timelog.** The date is the day the work belongs to, not when it was entered, and `hours` is what every report totals.
-  - **Webhooks are configured in the app.** Wrike has no REST route for creating one, so the plugin is REST-only rather than pretending to manage them.
+  - **List filters are JSON arrays.** `status`, `responsibles` and `authors` go in the query string as JSON (`status=["Active"]`); Wrike refuses a comma-joined value as invalid, so the plugin encodes the array for you. Date filters take a date or a `start,end` range.
+  - **Folder paging needs a filter.** With no filter `folders.list` returns the whole folder tree, which Wrike does not page; set `project`, `title` or `permalink` to page with `pageSize` and `nextPageToken`. Comments and contacts have no paging: `comments.list` takes a `limit` instead.
+  - **Dates go in one `dates` object.** Wrike has no top-level start or due parameter, so `startDate` and `dueDate` on `tasks.create` and `tasks.update` are folded into `dates`; `dates: { type: 'Backlog' }` clears a schedule.
+  - **A task delete is recoverable.** Wrike moves it to the recycle bin, and `tasks.update` with `restore: true` brings it back — which is why it is destructive but undoable.
+  - **A folder delete takes its contents with it.** Wrike moves the folder and every folder and task inside it to the recycle bin, and there is no flag that refuses a non-empty folder. Check `folders.tasks` first if that matters.
+  - **A timelog needs `trackedDate`, `hours` and `comment`.** The date is the day the work belongs to, not when it was entered, and `hours` is what every report totals. Wrike requires the comment, though it may be empty.
+  - **Comments are plain text.** The plugin sends `plainText: true`, so Wrike strips HTML tags instead of rendering them, and the text comes back as written. A comment can be edited only in the 5 minutes after it is posted.
+  - **No webhooks here.** Wrike has REST routes for webhooks, but this plugin does not implement them.
 examples:
   read:
     path: tasks.list
@@ -39,7 +42,7 @@ apiExamples:
   tasks.delete:
     call: "{ id: 'IEAAABCDEF12345' }"
   folders.list:
-    call: "{ pageSize: 100 }"
+    call: "{ project: true, pageSize: 100 }"
   folders.get:
     call: "{ id: 'IEAABCDEF12345' }"
   folders.create:
@@ -49,9 +52,9 @@ apiExamples:
   folders.update:
     call: "{ id: 'IEAABCDEF12345', title: 'Renamed' }"
   folders.delete:
-    call: "{ id: 'IEAABCDEF12345', recursive: true }"
+    call: "{ id: 'IEAABCDEF12345' }"
   timelogs.list:
-    call: "{ taskId: 'IEAAABCDEF12345', trackedDate: '2024-06-01' }"
+    call: "{ me: true, trackedDate: '2024-06-01,2024-06-30' }"
   timelogs.task:
     call: "{ taskId: 'IEAAABCDEF12345' }"
   timelogs.create:
@@ -59,7 +62,7 @@ apiExamples:
   timelogs.delete:
     call: "{ id: 'TLABCDEF12345' }"
   comments.list:
-    call: "{ pageSize: 100 }"
+    call: "{ limit: 100 }"
   comments.task:
     call: "{ taskId: 'IEAAABCDEF12345' }"
   comments.create:
