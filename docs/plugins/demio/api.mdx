@@ -252,7 +252,7 @@ await corsair.demio.api.reports.participants({ date_id: 1575 });
 | `date_id` | `number` | Yes | The event date id from `events.get` or `events.getDate`. |
 | `status` | `attended \| did-not-attend \| completed \| left-early \| banned` | No | Narrows the list. Omit it to receive every registrant. |
 
-Filter with the hyphenated values `attended`, `did-not-attend`, `completed`, `left-early` and `banned`; the `status` each participant returns uses spaces. An unrecognised value is ignored and every registrant comes back.
+Filter with the hyphenated values `attended`, `did-not-attend`, `completed`, `left-early` and `banned`; the `status` each participant returns uses spaces. Any other value fails input validation before the request; Demio on its own would ignore it and return every registrant.
 
 
 
