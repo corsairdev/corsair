@@ -1,6 +1,8 @@
 // Response bodies built from the examples in
 // https://cdn.uptimerobot.com/api/openapi.yaml, with made-up names and hosts.
-// They were not captured from the live API.
+// The `status` fields of incidents and status pages, and the incident below,
+// follow responses captured from a free account on 11-12: UptimeRobot sends
+// them as plain strings ("Ongoing", "ENABLED"), not the objects the spec implies.
 
 export const monitor = {
 	id: 778_001,
@@ -17,7 +19,7 @@ export const monitor = {
 	assignedAlertContacts: [{ alertContactId: 42, threshold: 0, recurrence: 0 }],
 	lastIncident: {
 		id: 'inc_778001',
-		status: { code: 'RESOLVED' },
+		status: 'Resolved',
 		cause: 1,
 		reason: 'HTTP 503 returned',
 		startedAt: '2025-09-18T02:11:00.000Z',
@@ -123,7 +125,7 @@ export const responseTime = {
 
 export const incident = {
 	id: 'inc_778001',
-	status: { code: 'RESOLVED' },
+	status: 'Resolved',
 	cause: 1,
 	reason: 'HTTP 503 returned',
 	duration: 312,
@@ -141,6 +143,21 @@ export const incidentWithRootCause = {
 		requestHeaders: { 'User-Agent': 'UptimeRobot/3' },
 		responseHeaders: { 'content-type': 'text/html' },
 	},
+};
+
+/** Trimmed from a live incident on 11-12, with the monitor renamed. */
+export const liveOngoingIncident = {
+	id: '379143570940128317',
+	status: 'Ongoing',
+	type: 'Downtime',
+	cause: 100001,
+	reason: 'DNS Resolving problem',
+	monitor: { id: 804_643_938, friendlyName: 'Acme storefront' },
+	commentsCount: 0,
+	startedAt: '2026-11-12T05:41:11.459Z',
+	resolvedAt: null,
+	duration: null,
+	includeInReports: true,
 };
 
 export const incidentsPage = {
@@ -175,7 +192,7 @@ export const statusPage = {
 	monitorIds: [778_001, 778_002],
 	tagIds: [],
 	monitorsCount: 2,
-	status: { code: 'UP' },
+	status: 'ENABLED',
 	urlKey: 'acme-status',
 	homepageLink: 'https://acme.example',
 	gaCode: null,

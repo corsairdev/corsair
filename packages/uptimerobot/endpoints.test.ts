@@ -27,6 +27,7 @@ import {
 	incidentsPage,
 	incidentWithRootCause,
 	invalidToken,
+	liveOngoingIncident,
 	maintenanceWindow,
 	maintenanceWindowsPage,
 	monitor,
@@ -915,5 +916,36 @@ describe('fixes from the 11-12 review and live run', () => {
 		const result = await invoke(Stats.uptime, { timeFrame: 'DAY' });
 
 		expect(result).toMatchObject({ logs: [{ type: 'VISUAL_CHANGE' }] });
+	});
+});
+
+describe('status fields as UptimeRobot sends them', () => {
+	it('reads an ongoing incident whose status is a plain string', async () => {
+		respond(fetchMock, { data: [liveOngoingIncident] });
+
+		const result = await invoke(Incidents.list, {});
+
+		expect(result).toMatchObject({ data: [{ status: 'Ongoing' }] });
+	});
+
+	it('reads a monitor whose last incident has a string status', async () => {
+		respond(fetchMock, {
+			...monitor,
+			lastIncident: { ...monitor.lastIncident, status: 'Ongoing' },
+		});
+
+		const result = await invoke(Monitors.get, { id: 778_001 });
+
+		expect(result).toMatchObject({ lastIncident: { status: 'Ongoing' } });
+	});
+
+	it('reads a status page whose status is a plain string', async () => {
+		respond(fetchMock, statusPage, 201);
+
+		const result = await invoke(StatusPages.create, {
+			friendlyName: 'Acme status',
+		});
+
+		expect(result).toMatchObject({ status: 'ENABLED' });
 	});
 });

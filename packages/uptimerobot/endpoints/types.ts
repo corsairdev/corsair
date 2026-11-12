@@ -110,9 +110,9 @@ const MonitorSchema = z
 		lastIncident: z
 			.object({
 				id: z.string().nullish(),
-				// An object such as `{code: 'RESOLVED'}`. The spec leaves it untyped
-				// (`status: {}`), so the code is modelled and the rest passed through.
-				status: z.object({ code: z.string().nullish() }).loose().nullish(),
+				// The spec leaves it untyped (`status: {}`); the live API sends a plain
+				// string such as "Ongoing" or "Resolved".
+				status: z.string().nullish(),
 				cause: z.number().nullish(),
 				reason: z.string().nullish(),
 				startedAt: z.string().nullish(),
@@ -692,7 +692,8 @@ export type IncidentsListInput = z.infer<typeof IncidentsListInputSchema>;
 const IncidentSummarySchema = z
 	.object({
 		id: z.string().nullish(),
-		status: z.object({ code: z.string().nullish() }).loose().nullish(),
+		// "Ongoing" or "Resolved" from the live API; the spec leaves it untyped.
+		status: z.string().nullish(),
 		cause: z.number().nullish(),
 		reason: z.string().nullish(),
 		duration: z.number().nullish(),
@@ -796,7 +797,8 @@ const StatusPageSchema = z
 		tagIds: z.array(z.number()).nullish(),
 		monitorsCount: z.number().nullish(),
 		pinnedAnnouncementId: z.number().nullish(),
-		status: z.object({ code: z.string().nullish() }).loose().nullish(),
+		// "ENABLED" or "PAUSED" from the live API; the spec leaves it untyped.
+		status: z.string().nullish(),
 	})
 	.loose();
 
