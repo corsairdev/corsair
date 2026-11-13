@@ -1,0 +1,148 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "Shopify"
+description: "Read and manage products, variants, inventory, collections, orders and customers in a Shopify store, and verify the webhooks Shopify sends."
+domain: "shopify.com"
+recommendedAuth: "api_key"
+overviewNote: |
+  Shopify needs two credentials per store: an Admin API access token and the
+  store's `*.myshopify.com` domain. Both are stored on the account.
+
+  New apps are created in the Dev Dashboard at dev.shopify.com, not in the store
+  admin: create the app there, add a version with the scopes the operations you
+  call need (`read_products`, `write_products`, `read_orders`, `write_orders`,
+  `read_customers`, `write_customers`, `read_inventory`, `write_inventory`),
+  release it, and install it on the store. There are then two ways to get a
+  token:
+
+  - A token issued before January 2026 by the old admin-created custom app flow
+    still works, and so does any app already installed. Copy it from the app's
+    API credentials once; this is the simplest path for a single store.
+  - For a new app, use the client credentials grant: copy the Client ID and
+    Client secret from the app's Settings, then exchange them for a token at
+    `POST https://<store>.myshopify.com/admin/oauth/access_token` with
+    `grant_type=client_credentials`. The token lasts 24 hours. This grant only
+    works when the app and the store belong to the same organisation in the Dev
+    Dashboard, so create the store from the Dev Dashboard's Dev stores page if
+    the exchange answers `shop_not_permitted`.
+
+  The Admin API is GraphQL and versioned quarterly. This plugin calls
+  `2026-10`, the newest stable version. Shopify throttles by calculated query
+  cost and reports the result in the response body rather than a header, so a
+  throttled call arrives as HTTP 200 with a `THROTTLED` code; the plugin reads
+  the cost bucket and waits long enough to cover the query before retrying.
+
+  A mutation that the store rejects also answers HTTP 200, with the reason in
+  `userErrors`. The plugin treats a populated `userErrors` as a failure, so a
+  caller is never told a write succeeded when it did not.
+
+  Reading customer details depends on what the app is allowed to read, not on
+  the store's plan alone. A custom app holding the customer scopes gets the
+  personal fields; without them Shopify returns the customer rows with every
+  personally identifiable field nulled and an `ACCESS_DENIED` error beside the
+  data. The plugin accepts that partial result and logs a warning rather than
+  failing the call, so `customers.list` still returns ids, order counts and
+  spend. The `Customer` object's `displayName` is the one exception: asking for
+  it returns no data at all, so this plugin never selects it and callers build a
+  name from `firstName` and `lastName`.
+
+  Webhook deliveries are JSON and signed with `X-Shopify-Hmac-Sha256`. Set the
+  app's signing secret as the plugin's webhook secret. Verification runs over
+  the raw request body, so the handler must receive a `rawBody`.
+examples:
+  read: "products.list"
+  write: "products.update"
+apiExamples:
+  products.list:
+    args:
+      first: 10
+      query: "status:active"
+  products.get:
+    args:
+      id: "gid://shopify/Product/108828309"
+  products.create:
+    call: "{ title: 'Hiking backpack', vendor: 'Acme', status: 'DRAFT' }"
+  products.update:
+    call: "{ id: 'gid://shopify/Product/108828309', title: 'Trail backpack' }"
+  products.delete:
+    args:
+      id: "gid://shopify/Product/108828309"
+  variants.list:
+    call: "{ productId: 'gid://shopify/Product/108828309' }"
+  variants.update:
+    call: "{ productId: 'gid://shopify/Product/108828309', id: 'gid://shopify/ProductVariant/1', price: '19.99' }"
+  inventory.list:
+    call: "{ inventoryItemId: 'gid://shopify/InventoryItem/1' }"
+  inventory.adjust:
+    call: "{ inventoryItemId: 'gid://shopify/InventoryItem/1', locationId: 'gid://shopify/Location/1', delta: 5, reason: 'correction' }"
+  collections.list:
+    args:
+      first: 10
+  collections.get:
+    args:
+      id: "gid://shopify/Collection/1"
+  collections.create:
+    call: "{ title: 'Outdoor gear' }"
+  collections.addProducts:
+    call: "{ id: 'gid://shopify/Collection/1', productIds: ['gid://shopify/Product/108828309'] }"
+  orders.list:
+    args:
+      first: 10
+      query: "financial_status:paid"
+  orders.get:
+    args:
+      id: "gid://shopify/Order/1"
+  orders.listLineItems:
+    args:
+      id: "gid://shopify/Order/1"
+      first: 50
+  orders.cancel:
+    call: "{ id: 'gid://shopify/Order/1', reason: 'CUSTOMER', restock: true }"
+  orders.markAsPaid:
+    args:
+      id: "gid://shopify/Order/1"
+  orders.close:
+    args:
+      id: "gid://shopify/Order/1"
+  customers.list:
+    args:
+      first: 10
+  customers.get:
+    args:
+      id: "gid://shopify/Customer/1"
+  customers.create:
+    call: "{ email: 'buyer@example.com', firstName: 'Jenny' }"
+  customers.update:
+    call: "{ id: 'gid://shopify/Customer/1', note: 'VIP' }"
+  shop.get: {}
+  shop.listLocations:
+    args:
+      first: 10
+  webhookSubscriptions.list:
+    args:
+      first: 10
+  webhookSubscriptions.create:
+    call: "{ topic: 'ORDERS_CREATE', uri: 'https://example.com/webhooks/shopify' }"
+  webhookSubscriptions.delete:
+    args:
+      id: "gid://shopify/WebhookSubscription/1"
+exampleWebhook:
+  path: "shopify.receive"
+  note: 'Shopify puts the topic in the X-Shopify-Topic header and signs the raw body with X-Shopify-Hmac-Sha256. One handler covers every supported topic and the header selects the payload schema.'
+  after: '// result.data.topic names the delivery, e.g. orders/create'
+apiNotes:
+  products.delete:
+    'Deletes synchronously by default and returns deletedProductId. Set synchronous to false for a product with many variants: the delete then runs in the background and returns productDeleteOperation, whose id and status let you track it, while deletedProductId may be null.'
+  orders.cancel:
+    'Cancels the order without refunding. Cancelling and refunding are separate decisions, so the deprecated refund flag is not used and no money moves on a cancel.'
+  customers.update:
+    'Passing tags replaces the full tag set. Use the Shopify admin or a tagsAdd mutation to append one without dropping the rest.'
+  'customers.list':
+    'Personal data depends on the app access: a custom app with the customer scopes receives names and emails, and without them Shopify nulls every PII field and returns an ACCESS_DENIED warning beside the rows. The plugin keeps the rows either way. Ids, order counts and spend are always returned.'
+  'customers.get':
+    'Personal data depends on the app access: without the customer scopes the name, email and phone come back null with an ACCESS_DENIED warning, and the rest of the customer is returned.'
+  inventory.adjust:
+    'Adjusts the available quantity by a signed delta at one location. A positive delta adds stock and a negative one removes it.'
+  'webhookSubscriptions.create':
+    'Registers a JSON subscription. Shopify also delivers XML, which this plugin cannot verify or parse, so the format is not configurable.'
+  shop.listLocations:
+    'Returns the inventory locations. Pass a location id to inventory.adjust to change stock at that location.'

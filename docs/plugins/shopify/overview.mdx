@@ -1,0 +1,196 @@
+---
+title: "Shopify plugin"
+sidebarTitle: "Overview"
+description: "Read and manage products, variants, inventory, collections, orders and customers in a Shopify store, and verify the webhooks Shopify sends."
+---
+
+Use **Shopify** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Shopify needs two credentials per store: an Admin API access token and the
+store's `*.myshopify.com` domain. Both are stored on the account.
+
+New apps are created in the Dev Dashboard at dev.shopify.com, not in the store
+admin: create the app there, add a version with the scopes the operations you
+call need (`read_products`, `write_products`, `read_orders`, `write_orders`,
+`read_customers`, `write_customers`, `read_inventory`, `write_inventory`),
+release it, and install it on the store. There are then two ways to get a
+token:
+
+- A token issued before January 2026 by the old admin-created custom app flow
+  still works, and so does any app already installed. Copy it from the app's
+  API credentials once; this is the simplest path for a single store.
+- For a new app, use the client credentials grant: copy the Client ID and
+  Client secret from the app's Settings, then exchange them for a token at
+  `POST https://<store>.myshopify.com/admin/oauth/access_token` with
+  `grant_type=client_credentials`. The token lasts 24 hours. This grant only
+  works when the app and the store belong to the same organisation in the Dev
+  Dashboard, so create the store from the Dev Dashboard's Dev stores page if
+  the exchange answers `shop_not_permitted`.
+
+The Admin API is GraphQL and versioned quarterly. This plugin calls
+`2026-10`, the newest stable version. Shopify throttles by calculated query
+cost and reports the result in the response body rather than a header, so a
+throttled call arrives as HTTP 200 with a `THROTTLED` code; the plugin reads
+the cost bucket and waits long enough to cover the query before retrying.
+
+A mutation that the store rejects also answers HTTP 200, with the reason in
+`userErrors`. The plugin treats a populated `userErrors` as a failure, so a
+caller is never told a write succeeded when it did not.
+
+Reading customer details depends on what the app is allowed to read, not on
+the store's plan alone. A custom app holding the customer scopes gets the
+personal fields; without them Shopify returns the customer rows with every
+personally identifiable field nulled and an `ACCESS_DENIED` error beside the
+data. The plugin accepts that partial result and logs a warning rather than
+failing the call, so `customers.list` still returns ids, order counts and
+spend. The `Customer` object's `displayName` is the one exception: asking for
+it returns no data at all, so this plugin never selects it and callers build a
+name from `firstName` and `lastName`.
+
+Webhook deliveries are JSON and signed with `X-Shopify-Hmac-Sha256`. Set the
+app's signing secret as the plugin's webhook secret. Verification runs over
+the raw request body, so the handler must receive a `rawBody`.
+
+**What you get:**
+
+- 28 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/shopify better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/shopify better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/shopify better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/shopify better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { shopify } from '@corsair-dev/shopify';
+
+export const corsair = createCorsair({
+	plugins: [
+		shopify(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Shopify API key before the first call: `pnpm corsair setup --plugin=shopify --tenant=acme api_key=<your-key> shop_domain=<store>.myshopify.com` (leave out `--tenant` without `multiTenancy`), or pass them as `key` and `shopDomain` in the plugin options. Both are required: every request URL is built from the store domain, so a token without one fails before the call. With Hub, each tenant enters their own token and domain on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+shopify()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'shopify',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`products.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.shopify.api.products.list({});
+```
+
+
+**`products.update`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.shopify.api.products.update({});
+```
+
+
+See the full list on the [API](/plugins/shopify/api) page.
+
+## Webhooks
+
+Shopify puts the topic in the X-Shopify-Topic header and signs the raw body with X-Shopify-Hmac-Sha256. One handler covers every supported topic and the header selects the payload schema.
+
+```ts
+shopify({
+    webhookHooks: {
+        shopify: {
+            receive: {
+                after: async (ctx, result) => {
+                    // result.data.topic names the delivery, e.g. orders/create
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/shopify/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/shopify/api">
+    Every `shopify.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/shopify/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

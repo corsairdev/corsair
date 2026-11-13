@@ -1,0 +1,157 @@
+---
+title: "Shopify webhooks"
+sidebarTitle: "Webhooks"
+description: "Shopify incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Shopify plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/shopify/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `shopify`
+  - `receive` (`shopify.receive`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Shopify
+
+### Receive
+
+`shopify.receive`
+
+A verified delivery for one topic; the topic header selects the payload schema
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+{
+  id: string | number,
+  admin_graphql_api_id?: string,
+  name?: string | null,
+  email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  currency?: string | null,
+  financial_status?: string | null,
+  fulfillment_status?: string | null,
+  cancelled_at?: string | null,
+  current_total_price?: string | null,
+  total_price?: string | null,
+  order_number?: number | null,
+  line_items?: {
+    id?: string | number,
+    title?: string | null,
+    quantity?: number | null,
+    sku?: string | null
+  }[] | null,
+  customer?: {
+    id?: string | number | null,
+    email?: string | null,
+    first_name?: string | null,
+    last_name?: string | null
+  } | null
+} | {
+  id: string | number,
+  admin_graphql_api_id?: string,
+  title?: string | null,
+  handle?: string | null,
+  status?: string | null,
+  vendor?: string | null,
+  product_type?: string | null,
+  tags?: string | string[] | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  variants?: {
+    id?: string | number,
+    title?: string | null,
+    sku?: string | null,
+    price?: string | null,
+    inventory_quantity?: number | null
+  }[] | null
+} | {
+  id: string | number,
+  admin_graphql_api_id?: string,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone?: string | null,
+  state?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  orders_count?: number | null,
+  tags?: string | string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  topic: string,
+  shopDomain: string | null,
+  resourceId: string,
+  signatureVerified: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+shopify({
+    webhookHooks: {
+        shopify: {
+            receive: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
