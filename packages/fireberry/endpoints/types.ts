@@ -33,6 +33,13 @@ const RecordResponseSchema = z.object({
 	data: z.object({ Record: FieldMapSchema }),
 	message: z.string(),
 });
+// Live PUT responses return the record id as `data` and the updated record under `record`.
+const RecordUpdateResponseSchema = z.object({
+	success: z.boolean(),
+	data: z.string(),
+	message: z.string(),
+	record: FieldMapSchema,
+});
 const QueryResponseSchema = z.object({
 	success: z.boolean(),
 	data: z.array(FieldMapSchema),
@@ -1073,7 +1080,7 @@ const endpointSchemas = {
 	list: { input: ListInputSchema, output: RecordListResponseSchema },
 	get: { input: GetInputSchema, output: RecordResponseSchema },
 	create: { input: CreateInputSchema, output: RecordResponseSchema },
-	update: { input: UpdateInputSchema, output: RecordResponseSchema },
+	update: { input: UpdateInputSchema, output: RecordUpdateResponseSchema },
 	delete: { input: DeleteInputSchema, output: EnvelopeSchema },
 	query: { input: QueryInputSchema, output: QueryResponseSchema },
 	legacyQuery: {

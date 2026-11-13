@@ -251,6 +251,20 @@ describe('Fireberry endpoint schemas', () => {
 		).toBe(false);
 		expect(
 			fireberryEndpointSchemas['records.update'].input.safeParse({
+				object: 'account',
+				id: 'record-id',
+				data: { description: 'Only the changed field' },
+			}).success,
+		).toBe(true);
+		expect(
+			fireberryEndpointSchemas['records.update'].input.safeParse({
+				object: 'account',
+				id: 'record-id',
+				data: { accountname: 42 },
+			}).success,
+		).toBe(false);
+		expect(
+			fireberryEndpointSchemas['records.update'].input.safeParse({
 				object: 'note',
 				id: 'record-id',
 				data: { notetext: 'Updated' },

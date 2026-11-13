@@ -38,6 +38,18 @@ function fireberryRecordSchema(shape: Record<string, z.ZodType>) {
 			}
 		});
 }
+// The REST update (PUT) accepts partial bodies: a live account update without accountname
+// succeeded, so update schemas keep field types but do not require the reference's create fields.
+function fireberryUpdateRecordSchema(shape: Record<string, z.ZodType>) {
+	return fireberryRecordSchema(
+		Object.fromEntries(
+			Object.entries(shape).map(([fieldName, schema]) => [
+				fieldName,
+				schema.optional(),
+			]),
+		),
+	);
+}
 export const FIREBERRY_CREATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 	account: fireberryRecordSchema({
 		accountname: z.string(),
@@ -650,7 +662,7 @@ export const FIREBERRY_CREATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 };
 
 export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
-	account: fireberryRecordSchema({
+	account: fireberryUpdateRecordSchema({
 		accountname: z.string(),
 		accountnumber: z.string().optional(),
 		accountratingcode: z.number().int().optional(),
@@ -693,7 +705,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		telephone3: z.string().optional(),
 		websiteurl: z.string().optional(),
 	}),
-	activitylog: fireberryRecordSchema({
+	activitylog: fireberryUpdateRecordSchema({
 		calldestination: z.string().optional(),
 		contactid: z.string().optional(),
 		description: z.string().optional(),
@@ -703,7 +715,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		resultcode: z.number().int().optional(),
 		typecode: z.number().int().optional(),
 	}),
-	article: fireberryRecordSchema({
+	article: fireberryUpdateRecordSchema({
 		articlename: z.string(),
 		articlesubject: z.string(),
 		articlebody: z.string().optional(),
@@ -713,7 +725,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		statuscode: z.number().int().optional(),
 		viewcount: z.number().int().optional(),
 	}),
-	asset: fireberryRecordSchema({
+	asset: fireberryUpdateRecordSchema({
 		accountid: z.string(),
 		productid: z.string(),
 		description: z.string().optional(),
@@ -727,7 +739,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		service: z.string().optional(),
 		statuscode: z.number().int().optional(),
 	}),
-	businessunit: fireberryRecordSchema({
+	businessunit: fireberryUpdateRecordSchema({
 		name: z.string(),
 		cityaddress: z.string().optional(),
 		countryaddress: z.string().optional(),
@@ -742,7 +754,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		telephone: z.string().optional(),
 		zipcodeaddress: z.string().optional(),
 	}),
-	campaign: fireberryRecordSchema({
+	campaign: fireberryUpdateRecordSchema({
 		campaignname: z.string(),
 		budget1: z.number().optional(),
 		cost: z.number().optional(),
@@ -754,7 +766,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		statuscode: z.number().int().optional(),
 		typecode: z.number().int().optional(),
 	}),
-	competitor: fireberryRecordSchema({
+	competitor: fireberryUpdateRecordSchema({
 		competitorname: z.string(),
 		description: z.string().optional(),
 		keyproduct: z.string().optional(),
@@ -772,7 +784,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		w: z.string().optional(),
 		websiteurl: z.string().optional(),
 	}),
-	contact: fireberryRecordSchema({
+	contact: fireberryUpdateRecordSchema({
 		firstname: z.string(),
 		accountid: z.string().optional(),
 		billingcity: z.string().optional(),
@@ -810,7 +822,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		telephone3: z.string().optional(),
 		websiteurl: z.string().optional(),
 	}),
-	contract: fireberryRecordSchema({
+	contract: fireberryUpdateRecordSchema({
 		contractname: z.string(),
 		accountid: z.string().optional(),
 		contractnumber: z.string().optional(),
@@ -826,7 +838,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		statuscode: z.number().int().optional(),
 		supporthours: z.number().optional(),
 	}),
-	creditInvoice: fireberryRecordSchema({
+	creditInvoice: fireberryUpdateRecordSchema({
 		accountid: z.string(),
 		companyname: z.string(),
 		Items: fireberryRecordSchema({
@@ -860,7 +872,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		taxincludecode: z.number().int().optional(),
 		telephone: z.string().optional(),
 	}),
-	deliveryInvoice: fireberryRecordSchema({
+	deliveryInvoice: fireberryUpdateRecordSchema({
 		accountid: z.string(),
 		companyname: z.string(),
 		Items: fireberryRecordSchema({
@@ -893,7 +905,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		taxincludecode: z.number().int().optional(),
 		telephone: z.string().optional(),
 	}),
-	draftInvoice: fireberryRecordSchema({
+	draftInvoice: fireberryUpdateRecordSchema({
 		accountid: z.string(),
 		companyname: z.string(),
 		Items: fireberryRecordSchema({
@@ -927,7 +939,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		taxincludecode: z.number().int().optional(),
 		telephone: z.string().optional(),
 	}),
-	invoice: fireberryRecordSchema({
+	invoice: fireberryUpdateRecordSchema({
 		accountid: z.string(),
 		companyname: z.string(),
 		Items: fireberryRecordSchema({
@@ -964,7 +976,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		taxincludecode: z.number().int().optional(),
 		telephone: z.string().optional(),
 	}),
-	invoiceReceipt: fireberryRecordSchema({
+	invoiceReceipt: fireberryUpdateRecordSchema({
 		accountid: z.string(),
 		companyname: z.string(),
 		Items: fireberryRecordSchema({
@@ -1049,7 +1061,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		taxincludecode: z.number().int().optional(),
 		telephone: z.string().optional(),
 	}),
-	meeting: fireberryRecordSchema({
+	meeting: fireberryUpdateRecordSchema({
 		subject: z.string(),
 		activitytypecode: z.number().int().optional(),
 		description: z.string().optional(),
@@ -1064,7 +1076,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		scheduledstart: z.string().optional(),
 		statuscode: z.number().int().optional(),
 	}),
-	opportunity: fireberryRecordSchema({
+	opportunity: fireberryUpdateRecordSchema({
 		accountid: z.string(),
 		name: z.string(),
 		closeprobability: z.number().optional(),
@@ -1075,7 +1087,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		ownerid: z.string().optional(),
 		statuscode: z.number().int().optional(),
 	}),
-	order: fireberryRecordSchema({
+	order: fireberryUpdateRecordSchema({
 		accountid: z.string(),
 		companyname: z.string(),
 		Items: fireberryRecordSchema({
@@ -1110,7 +1122,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		taxincludecode: z.number().int().optional(),
 		telephone: z.string().optional(),
 	}),
-	orderItem: fireberryRecordSchema({
+	orderItem: fireberryUpdateRecordSchema({
 		crmorderid: z.string(),
 		productname: z.string(),
 		catalognumber: z.string().optional(),
@@ -1122,7 +1134,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		productid: z.string().optional(),
 		tax: z.number().int().optional(),
 	}),
-	phoneCall: fireberryRecordSchema({
+	phoneCall: fireberryUpdateRecordSchema({
 		ivruniqueid: z.string(),
 		accountid: z.string().optional(),
 		callerext: z.string().optional(),
@@ -1140,7 +1152,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		type: z.number().int().optional(),
 		vmboxname: z.string().optional(),
 	}),
-	product: fireberryRecordSchema({
+	product: fireberryUpdateRecordSchema({
 		name: z.string(),
 		catalognumber: z.string().optional(),
 		categorycode: z.number().int().optional(),
@@ -1153,7 +1165,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		vendorname: z.string().optional(),
 		vendorpartnumber: z.string().optional(),
 	}),
-	project: fireberryRecordSchema({
+	project: fireberryUpdateRecordSchema({
 		projectname: z.string(),
 		accountid: z.string().optional(),
 		budget: z.number().optional(),
@@ -1164,7 +1176,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		priority: z.number().int().optional(),
 		statuscode: z.number().int().optional(),
 	}),
-	receipt: fireberryRecordSchema({
+	receipt: fireberryUpdateRecordSchema({
 		accountid: z.string(),
 		companyname: z.string(),
 		ReceiptItems: fireberryRecordSchema({
@@ -1228,7 +1240,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		taxdeduction: z.number().optional(),
 		telephone: z.string().optional(),
 	}),
-	task: fireberryRecordSchema({
+	task: fireberryUpdateRecordSchema({
 		subject: z.string(),
 		description: z.string().optional(),
 		objectid: z.string().optional(),
@@ -1241,7 +1253,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		statuscode: z.number().int().optional(),
 		tasktypecode: z.number().int().optional(),
 	}),
-	ticket: fireberryRecordSchema({
+	ticket: fireberryUpdateRecordSchema({
 		title: z.string(),
 		accountid: z.string().optional(),
 		accountproductid: z.string().optional(),
@@ -1255,7 +1267,7 @@ export const FIREBERRY_UPDATE_RECORD_SCHEMAS: Record<string, z.ZodType> = {
 		statecode: z.number().int().optional(),
 		statuscode: z.number().int().optional(),
 	}),
-	user: fireberryRecordSchema({
+	user: fireberryUpdateRecordSchema({
 		firstname: z.string(),
 		languageid: z.number().int(),
 		roleid: z.string(),

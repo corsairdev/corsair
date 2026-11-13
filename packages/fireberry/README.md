@@ -15,7 +15,7 @@ so the published route is internally contradictory.
 
 | Corsair operation | Documented coverage |
 | --- | --- |
-| `records.list/get/create/update/delete` | Documented system-object CRUD and custom-object record CRUD; route and verb availability are resource-specific. Create/update schemas use each resource's official request fields, with tenant-defined fields supported as JSON extensions. |
+| `records.list/get/create/update/delete` | Documented system-object CRUD and custom-object record CRUD; route and verb availability are resource-specific. Create schemas use each resource's official request fields and update schemas accept partial bodies (only the fields that change), with tenant-defined fields supported as JSON extensions. |
 | `records.query` | Query v3 search, filtering, grouping, sorting, and pagination. |
 | `records.legacyQuery` | Legacy query endpoint. |
 | `records.related` | Related records for a record/object pair. |

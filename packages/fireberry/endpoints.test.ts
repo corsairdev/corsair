@@ -225,16 +225,28 @@ describe('registered Fireberry operations and route semantics', () => {
 				body: { accountname: 'Example' },
 			},
 			{
+				// Live PUT response: data is the record id and the record sits under `record`.
+				// A partial body without the primary field is accepted by the live API.
 				run: () =>
 					Records.update(endpointContext, {
 						object: 'account',
 						id: 'record-id',
-						data: { accountname: 'Changed' },
+						data: { description: 'Changed' },
 					}),
-				response: record,
+				response: {
+					success: true,
+					data: 'record-id',
+					message: '',
+					record: {
+						accountid: 'record-id',
+						accountname: 'Example',
+						description: 'Changed',
+						telephone1: null,
+					},
+				},
 				method: 'PUT',
 				path: '/api/record/account/record-id',
-				body: { accountname: 'Changed' },
+				body: { description: 'Changed' },
 			},
 			{
 				run: () =>
@@ -606,4 +618,5 @@ describe('registered Fireberry operations and route semantics', () => {
 			'completed',
 		);
 	});
+
 });
