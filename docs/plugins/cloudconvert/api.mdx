@@ -39,13 +39,13 @@ await corsair.cloudconvert.api.formats.listSupported({});
 ```ts
 {
   operation: string,
-  input_format: string,
-  output_format: string,
+  input_format?: string | null,
+  output_format?: string | null,
   engine: string,
   credits: number,
   options?: {
     name: string,
-    type?: string | boolean | integer | float | enum | dictionary,
+    type?: string | boolean | integer | float | enum | dictionary | string,
     default?: JsonValue,
     description?: string,
     possible_values?: JsonValue[],
@@ -145,7 +145,7 @@ Record<string, {
 {
   id: string,
   tag?: string | null,
-  status: waiting | processing | finished | error,
+  status: waiting | processing | finished | error | string,
   created_at: string,
   started_at?: string | null,
   ended_at?: string | null,
@@ -154,7 +154,7 @@ Record<string, {
     job_id?: string | null,
     name?: string | null,
     operation: string,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     message?: string | null,
     code?: string | null,
     waiting_reason?: string | null,
@@ -170,7 +170,7 @@ Record<string, {
       job_id?: string | null,
       name?: string | null,
       operation: string,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -179,12 +179,25 @@ Record<string, {
         self?: string | null
       } | null
     }[] | null,
-    depends_on_tasks?: Record<string, string> | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
     payload?: Record<string, JsonValue> | null,
     job?: {
       id: string,
       tag?: string | null,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -270,7 +283,7 @@ Record<string, {
 {
   id: string,
   tag?: string | null,
-  status: waiting | processing | finished | error,
+  status: waiting | processing | finished | error | string,
   created_at: string,
   started_at?: string | null,
   ended_at?: string | null,
@@ -279,7 +292,7 @@ Record<string, {
     job_id?: string | null,
     name?: string | null,
     operation: string,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     message?: string | null,
     code?: string | null,
     waiting_reason?: string | null,
@@ -295,7 +308,7 @@ Record<string, {
       job_id?: string | null,
       name?: string | null,
       operation: string,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -304,12 +317,25 @@ Record<string, {
         self?: string | null
       } | null
     }[] | null,
-    depends_on_tasks?: Record<string, string> | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
     payload?: Record<string, JsonValue> | null,
     job?: {
       id: string,
       tag?: string | null,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -375,7 +401,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
 {
   id: string,
   tag?: string | null,
-  status: waiting | processing | finished | error,
+  status: waiting | processing | finished | error | string,
   created_at: string,
   started_at?: string | null,
   ended_at?: string | null,
@@ -384,7 +410,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
     job_id?: string | null,
     name?: string | null,
     operation: string,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     message?: string | null,
     code?: string | null,
     waiting_reason?: string | null,
@@ -400,7 +426,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
       job_id?: string | null,
       name?: string | null,
       operation: string,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -409,12 +435,25 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
         self?: string | null
       } | null
     }[] | null,
-    depends_on_tasks?: Record<string, string> | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
     payload?: Record<string, JsonValue> | null,
     job?: {
       id: string,
       tag?: string | null,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -489,7 +528,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
 {
   id: string,
   tag?: string | null,
-  status: waiting | processing | finished | error,
+  status: waiting | processing | finished | error | string,
   created_at: string,
   started_at?: string | null,
   ended_at?: string | null,
@@ -498,7 +537,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
     job_id?: string | null,
     name?: string | null,
     operation: string,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     message?: string | null,
     code?: string | null,
     waiting_reason?: string | null,
@@ -514,7 +553,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
       job_id?: string | null,
       name?: string | null,
       operation: string,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -523,12 +562,25 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
         self?: string | null
       } | null
     }[] | null,
-    depends_on_tasks?: Record<string, string> | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
     payload?: Record<string, JsonValue> | null,
     job?: {
       id: string,
       tag?: string | null,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -644,7 +696,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
 {
   id: string,
   tag?: string | null,
-  status: waiting | processing | finished | error,
+  status: waiting | processing | finished | error | string,
   created_at: string,
   started_at?: string | null,
   ended_at?: string | null,
@@ -653,7 +705,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
     job_id?: string | null,
     name?: string | null,
     operation: string,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     message?: string | null,
     code?: string | null,
     waiting_reason?: string | null,
@@ -669,7 +721,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
       job_id?: string | null,
       name?: string | null,
       operation: string,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -678,12 +730,25 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
         self?: string | null
       } | null
     }[] | null,
-    depends_on_tasks?: Record<string, string> | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
     payload?: Record<string, JsonValue> | null,
     job?: {
       id: string,
       tag?: string | null,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -755,13 +820,13 @@ await corsair.cloudconvert.api.operations.list({ operation: 'convert', inputForm
 ```ts
 {
   operation: string,
-  input_format: string,
-  output_format: string,
+  input_format?: string | null,
+  output_format?: string | null,
   engine: string,
   credits: number,
   options?: {
     name: string,
-    type?: string | boolean | integer | float | enum | dictionary,
+    type?: string | boolean | integer | float | enum | dictionary | string,
     default?: JsonValue,
     description?: string,
     possible_values?: JsonValue[],
@@ -842,7 +907,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
   job_id?: string | null,
   name?: string | null,
   operation: string,
-  status: waiting | processing | finished | error,
+  status: waiting | processing | finished | error | string,
   message?: string | null,
   code?: string | null,
   waiting_reason?: string | null,
@@ -858,7 +923,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
     job_id?: string | null,
     name?: string | null,
     operation: string,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     created_at: string,
     started_at?: string | null,
     ended_at?: string | null,
@@ -867,12 +932,25 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
       self?: string | null
     } | null
   }[] | null,
-  depends_on_tasks?: Record<string, string> | null,
+  depends_on_tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | Record<string, string> | null,
   payload?: Record<string, JsonValue> | null,
   job?: {
     id: string,
     tag?: string | null,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     created_at: string,
     started_at?: string | null,
     ended_at?: string | null,
@@ -958,7 +1036,7 @@ Record<string, {
 {
   id: string,
   tag?: string | null,
-  status: waiting | processing | finished | error,
+  status: waiting | processing | finished | error | string,
   created_at: string,
   started_at?: string | null,
   ended_at?: string | null,
@@ -967,7 +1045,7 @@ Record<string, {
     job_id?: string | null,
     name?: string | null,
     operation: string,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     message?: string | null,
     code?: string | null,
     waiting_reason?: string | null,
@@ -983,7 +1061,7 @@ Record<string, {
       job_id?: string | null,
       name?: string | null,
       operation: string,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -992,12 +1070,25 @@ Record<string, {
         self?: string | null
       } | null
     }[] | null,
-    depends_on_tasks?: Record<string, string> | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
     payload?: Record<string, JsonValue> | null,
     job?: {
       id: string,
       tag?: string | null,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -1097,7 +1188,7 @@ Record<string, {
 {
   id: string,
   tag?: string | null,
-  status: waiting | processing | finished | error,
+  status: waiting | processing | finished | error | string,
   created_at: string,
   started_at?: string | null,
   ended_at?: string | null,
@@ -1106,7 +1197,7 @@ Record<string, {
     job_id?: string | null,
     name?: string | null,
     operation: string,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     message?: string | null,
     code?: string | null,
     waiting_reason?: string | null,
@@ -1122,7 +1213,7 @@ Record<string, {
       job_id?: string | null,
       name?: string | null,
       operation: string,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -1131,12 +1222,25 @@ Record<string, {
         self?: string | null
       } | null
     }[] | null,
-    depends_on_tasks?: Record<string, string> | null,
+    depends_on_tasks?: {
+      id: string,
+      job_id?: string | null,
+      name?: string | null,
+      operation: string,
+      status: waiting | processing | finished | error | string,
+      created_at: string,
+      started_at?: string | null,
+      ended_at?: string | null,
+      retry_of_task_id?: string | null,
+      links?: {
+        self?: string | null
+      } | null
+    }[] | Record<string, string> | null,
     payload?: Record<string, JsonValue> | null,
     job?: {
       id: string,
       tag?: string | null,
-      status: waiting | processing | finished | error,
+      status: waiting | processing | finished | error | string,
       created_at: string,
       started_at?: string | null,
       ended_at?: string | null,
@@ -1207,7 +1311,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
   job_id?: string | null,
   name?: string | null,
   operation: string,
-  status: waiting | processing | finished | error,
+  status: waiting | processing | finished | error | string,
   message?: string | null,
   code?: string | null,
   waiting_reason?: string | null,
@@ -1223,7 +1327,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
     job_id?: string | null,
     name?: string | null,
     operation: string,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     created_at: string,
     started_at?: string | null,
     ended_at?: string | null,
@@ -1232,12 +1336,25 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
       self?: string | null
     } | null
   }[] | null,
-  depends_on_tasks?: Record<string, string> | null,
+  depends_on_tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | Record<string, string> | null,
   payload?: Record<string, JsonValue> | null,
   job?: {
     id: string,
     tag?: string | null,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     created_at: string,
     started_at?: string | null,
     ended_at?: string | null,
@@ -1310,7 +1427,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
   job_id?: string | null,
   name?: string | null,
   operation: string,
-  status: waiting | processing | finished | error,
+  status: waiting | processing | finished | error | string,
   message?: string | null,
   code?: string | null,
   waiting_reason?: string | null,
@@ -1326,7 +1443,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
     job_id?: string | null,
     name?: string | null,
     operation: string,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     created_at: string,
     started_at?: string | null,
     ended_at?: string | null,
@@ -1335,12 +1452,25 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
       self?: string | null
     } | null
   }[] | null,
-  depends_on_tasks?: Record<string, string> | null,
+  depends_on_tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | Record<string, string> | null,
   payload?: Record<string, JsonValue> | null,
   job?: {
     id: string,
     tag?: string | null,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     created_at: string,
     started_at?: string | null,
     ended_at?: string | null,
@@ -1453,7 +1583,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
   job_id?: string | null,
   name?: string | null,
   operation: string,
-  status: waiting | processing | finished | error,
+  status: waiting | processing | finished | error | string,
   message?: string | null,
   code?: string | null,
   waiting_reason?: string | null,
@@ -1469,7 +1599,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
     job_id?: string | null,
     name?: string | null,
     operation: string,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     created_at: string,
     started_at?: string | null,
     ended_at?: string | null,
@@ -1478,12 +1608,25 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
       self?: string | null
     } | null
   }[] | null,
-  depends_on_tasks?: Record<string, string> | null,
+  depends_on_tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | Record<string, string> | null,
   payload?: Record<string, JsonValue> | null,
   job?: {
     id: string,
     tag?: string | null,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     created_at: string,
     started_at?: string | null,
     ended_at?: string | null,
@@ -1546,7 +1689,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
   job_id?: string | null,
   name?: string | null,
   operation: string,
-  status: waiting | processing | finished | error,
+  status: waiting | processing | finished | error | string,
   message?: string | null,
   code?: string | null,
   waiting_reason?: string | null,
@@ -1562,7 +1705,7 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
     job_id?: string | null,
     name?: string | null,
     operation: string,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     created_at: string,
     started_at?: string | null,
     ended_at?: string | null,
@@ -1571,12 +1714,25 @@ Response `status` values are the string literals `"waiting"`, `"processing"`, `"
       self?: string | null
     } | null
   }[] | null,
-  depends_on_tasks?: Record<string, string> | null,
+  depends_on_tasks?: {
+    id: string,
+    job_id?: string | null,
+    name?: string | null,
+    operation: string,
+    status: waiting | processing | finished | error | string,
+    created_at: string,
+    started_at?: string | null,
+    ended_at?: string | null,
+    retry_of_task_id?: string | null,
+    links?: {
+      self?: string | null
+    } | null
+  }[] | Record<string, string> | null,
   payload?: Record<string, JsonValue> | null,
   job?: {
     id: string,
     tag?: string | null,
-    status: waiting | processing | finished | error,
+    status: waiting | processing | finished | error | string,
     created_at: string,
     started_at?: string | null,
     ended_at?: string | null,
@@ -1631,7 +1787,7 @@ await corsair.cloudconvert.api.users.show({});
 ```ts
 {
   id: string | number,
-  username: string,
+  username: string | null,
   email: string,
   credits: number,
   created_at: string,
