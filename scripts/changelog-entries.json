@@ -4196,5 +4196,66 @@
         "title": "Let endpoints refresh an OAuth token after a 401"
       }
     ]
+  },
+  {
+    "date": "2026-11-13",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.50",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-13",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.25",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-13",
+    "package": "@corsair-dev/mastra",
+    "dir": "adapters/mastra",
+    "name": "mastra",
+    "version": "0.1.25",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-13",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.33",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-13",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.30",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-13",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.1.182",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2320,
+        "title": "Keep the error body on failed calls and redact more key names"
+      }
+    ]
   }
 ]
