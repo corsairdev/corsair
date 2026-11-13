@@ -1,0 +1,42 @@
+{
+  "cache_key": "cache_309833_1852298753c4fa0d283af57c6594d714c46c1a8897026a468c66cc7c87e6664b_[]_pc1_vf0",
+  "cache_target_age": "2026-11-12T19:37:44.512547Z",
+  "calculation_trigger": null,
+  "columns": [
+    "context.columns.breakdown_value",
+    "context.columns.visitors",
+    "context.columns.views",
+    "context.columns.ui_fill_fraction",
+    "context.columns.cross_sell"
+  ],
+  "error": null,
+  "hasMore": true,
+  "is_cached": false,
+  "last_refresh": "2026-11-12T13:37:44.512547Z",
+  "limit": 3,
+  "next_allowed_client_refresh": "2026-11-12T13:52:44.512547Z",
+  "offset": 0,
+  "preComputeIneligibleReason": "BelowVolumeFloor",
+  "preComputeStale": null,
+  "preComputeStrategy": "live",
+  "preComputedAt": null,
+  "query_scan": null,
+  "query_status": null,
+  "resolved_compare_date_range": null,
+  "resolved_date_range": null,
+  "results": [
+    ["/", [627, null], [858, null], 0.2913568773234201, ""],
+    ["/login", [109, null], [151, null], 0.05065055762081784, ""]
+  ],
+  "samplingRate": null,
+  "timezone": "UTC",
+  "types": [
+    ["context.columns.breakdown_value", "Nullable(String)"],
+    ["context.columns.visitors", "Tuple(UInt64, Nullable(Nothing))"],
+    ["context.columns.views", "Tuple(UInt64, Nullable(Nothing))"],
+    ["context.columns.ui_fill_fraction", "Float64"]
+  ],
+  "used_data_warehouse_sources": null,
+  "warehouse_suggestions": null,
+  "warnings": null
+}

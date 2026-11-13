@@ -1,26 +1,33 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAhrefsRequest } from '../client';
 import type { AhrefsEndpoints } from '../index';
-import type { SerpOverviewResponse } from './types';
+import { checkAhrefsOutput } from './request';
+import { AhrefsEndpointInputSchemas } from './types';
 
 export const overview: AhrefsEndpoints['serpOverview'] = async (ctx, input) => {
-	const response = await makeAhrefsRequest<SerpOverviewResponse>(
-		'/serp-overview/serp-overview',
-		ctx.key,
-		{ query: input },
+	const response = checkAhrefsOutput(
+		'serpOverview',
+		'ahrefs.serp.overview',
+		await makeAhrefsRequest<unknown>('/serp-overview/serp-overview', ctx.key, {
+			query: AhrefsEndpointInputSchemas.serpOverview.parse(input),
+		}),
 	);
 
 	for (const position of response.positions) {
+		// Rows are stored by position; skip them when `position` was not selected.
+		const rank = position.position;
+		if (rank == null) continue;
 		try {
 			const entityId = [
 				input.country,
 				input.keyword,
 				input.date ?? 'latest',
-				position.position,
+				rank,
 			].join(':');
 
 			await ctx.db.serpPositions.upsertByEntityId(entityId, {
 				...position,
+				position: rank,
 				country: input.country,
 				keyword: input.keyword,
 				requestedDate: input.date,
