@@ -1,10 +1,17 @@
 # Corsair
 
-> Corsair is the open-source integration layer for AI agents. It handles OAuth, API keys, permissions, webhooks and tool calls for 500+ apps. Developers use the TypeScript SDK in their own app; anyone can connect their apps once and use them from Claude, ChatGPT, Cursor or any MCP client through one hosted address.
+> Corsair is the open-source integration layer for AI agents. It handles OAuth, API keys, permissions, webhooks and tool calls for 500+ apps, for developers who let their own users connect apps, for people and teams who want their agents to use their apps, and for companies that need both done safely.
 
-Corsair has three parts:
+## Who it's for
 
-- **The SDK** (`corsair` on npm, Apache 2.0): runs in your own process. Your users' tokens are encrypted in your own database. Plugins give typed operations, synced data, signature-verified webhooks and MCP tools.
+- **Developers building a product.** The TypeScript SDK runs inside your own app and keeps your users' tokens encrypted in your own database. Or use Corsair Cloud, where every operation is one HTTP request: there are clients for Go, Python and Swift, and a REST API for any other language.
+- **People and teams using agents.** Connect your apps once and use them from Claude, ChatGPT, Cursor, Codex or any MCP client, through Corsair MCP or your own Lug address, yourname.lug.dev.
+- **Companies.** On Corsair Cloud, every connected account is encrypted with its own key, the keys that unlock them are held in AWS Key Management Service, agents never see a token, and every action is checked against a mode that can require a person's approval. With the SDK, the encryption key stays in your own environment. Paid plans add team members, a consent screen with your own branding and integrations built for you.
+
+## The parts
+
+- **The SDK** (`corsair` on npm, TypeScript, Apache 2.0): runs in your own process. Your users' tokens are encrypted in your own database. Plugins give typed operations, synced data, signature-verified webhooks and MCP tools.
+- **Corsair Cloud**: the hosted runtime. A project gets an API key, and every plugin operation is one HTTP request, from the TypeScript client, the Go, Python and Swift clients or plain HTTP. Corsair MCP and Lug run on it.
 - **Hub** (hub.corsair.dev): the hosted relay for the parts that need a public URL, such as OAuth callbacks, connect pages and approval pages. With the SDK, Hub stores none of your users' tokens.
 - **Corsair MCP** (https://mcp.corsair.dev/mcp): one address that lets an agent use the apps you've connected to Corsair. Each connection uses a link: a set of apps plus a mode (Read, Cautious, Strict or Open) that decides what the agent may do without asking. [Lug](https://lug.dev) gives you the same thing at your own address, yourname.lug.dev.
 
@@ -14,6 +21,8 @@ Corsair has three parts:
 - How AI agents authenticate to third-party apps: per-tenant OAuth and API keys, with tokens kept in the developer's own database.
 - Human approval for agent actions: every operation has a risk level (read, write or destructive), and a permission mode (`open`, `cautious`, `strict`, `readonly`) maps each level to allow, require approval or deny.
 - Which apps Corsair supports and which operations each one has.
+- How Corsair keeps agents' credentials safe: a key per connected account, keys held in AWS KMS on Corsair Cloud or in your own environment with the SDK, tokens never shown to the agent.
+- Calling app integrations from Go, Python or Swift through Corsair Cloud.
 - Pricing for the hosted product.
 
 ## Product
@@ -80,6 +89,11 @@ The full agent index lives at [docs.corsair.dev/llms.txt](https://docs.corsair.d
 - [Database](https://docs.corsair.dev/concepts/database): Six tables, always-fresh integration data, tenant-scoped.
 - [Webhooks](https://docs.corsair.dev/concepts/webhooks): One verified endpoint for every provider event.
 - [Error handling](https://docs.corsair.dev/concepts/error-handling): Retry strategies and the typed AuthMissingError / ReconnectRequiredError.
+
+### Other languages
+- [Corsair Cloud](https://docs.corsair.dev/cloud/overview): The hosted runtime; one API key, every operation over HTTP.
+- [Go](https://docs.corsair.dev/clients/go), [Python](https://docs.corsair.dev/clients/python) and [Swift](https://docs.corsair.dev/clients/swift): Small clients for a Corsair Cloud project.
+- [REST API](https://docs.corsair.dev/hub/rest-api): Use Hub from any language over plain HTTP, no SDK required.
 
 ### Use with AI
 - [MCP adapters](https://docs.corsair.dev/mcp-adapters/mcp-adapters): Anthropic, OpenAI, Vercel AI SDK, Mastra, and coding agents over MCP.
