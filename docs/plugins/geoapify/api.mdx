@@ -19,7 +19,7 @@ Read the administrative boundaries a place belongs to, such as its city, county 
 **Risk:** `read`
 
 ```ts
-await corsair.geoapify.api.geo.boundaries({ lat: 52.5, lon: 13.4, boundaries: ['city', 'country'] });
+await corsair.geoapify.api.geo.boundaries({ lat: 52.5, lon: 13.4, boundaries: ['administrative', 'postal_code'] });
 ```
 
 **Input**
@@ -30,8 +30,8 @@ await corsair.geoapify.api.geo.boundaries({ lat: 52.5, lon: 13.4, boundaries: ['
 | `lat` | `number` | No | Latitude of a point |
 | `lon` | `number` | No | Longitude of a point |
 | `osm_id` | `number` | No | An OpenStreetMap ID |
-| `osm_type` | `N \| W \| R` | No | The OSM type that goes with `osm_id`: node, way or relation |
-| `boundaries` | `string[]` | No | Which levels to return, such as `postal_code`, `city` or `country` |
+| `osm_type` | `n \| w \| r` | No | The OSM type that goes with `osm_id`: `n` node, `w` way or `r` relation |
+| `boundaries` | `string[]` | No | Which boundary kinds to return, such as `administrative` (the default) or `postal_code` |
 | `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
 | `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
 
@@ -113,9 +113,9 @@ await corsair.geoapify.api.geo.elevation({ locations: [{ lat: 52.5, lon: 13.4 }]
     lon?: number,
     lat?: number
   },
-  elevation: number,
+  elevation: number | null,
   units?: string,
-  distance?: number
+  distance?: number | null
 }[]
 ```
 </Accordion>
@@ -192,11 +192,11 @@ await corsair.geoapify.api.geo.postcodeList({ text: '1011', countrycode: 'de' })
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `text` | `string` | Yes | A postcode or a prefix, such as `1011` |
+| `text` | `string` | No | A postcode or a prefix, such as `1011`. Optional when a `filter` or `countrycode` narrows the list |
 | `countrycode` | `string` | No | Restricts to one country |
 | `filter` | `string[]` | No | A spatial filter |
 | `bias` | `string[]` | No | Biases toward a point or area |
-| `limit` | `number` | No | At most 100 results |
+| `limit` | `number` | No | At most 500 results |
 | `offset` | `number` | No | Skips this many results |
 | `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
 | `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
@@ -251,10 +251,10 @@ await corsair.geoapify.api.geo.postcodeSearch({ postcode: '10115', countrycode: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `postcode` | `string` | Yes | The postcode to look up |
+| `postcode` | `string` | No | The postcode to look up. Leave it out to search by `lat`/`lon` |
 | `countrycode` | `string` | No | The country the postcode belongs to, which sharpens the result |
-| `lat` | `number` | No | Biases toward this point |
-| `lon` | `number` | No | Biases toward this point |
+| `lat` | `number` | No | Finds the postcode at this point, instead of by `postcode` |
+| `lon` | `number` | No | Finds the postcode at this point, instead of by `postcode` |
 | `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
 | `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
 
@@ -331,13 +331,18 @@ await corsair.geoapify.api.geo.timezone({ lat: 52.5, lon: 13.4 });
 ```ts
 {
   name: string,
-  offset_STD_seconds?: number,
-  abbreviation_STD?: string,
-  offset_DST_seconds?: number,
-  abbreviation_DST?: string,
-  offset_at_request_seconds?: number,
-  abbreviation_at_request?: string,
-  offset_DST_at_request_seconds?: number
+  type?: string,
+  utc_offset?: string,
+  offset_seconds?: number,
+  abbreviation?: string,
+  local_time?: string,
+  next_transition?: {
+    at?: string,
+    before?: Record<string, any>,
+    after?: Record<string, any>,
+    offset_change_seconds?: number,
+    kind?: string
+  }
 }[]
 ```
 </Accordion>
@@ -372,7 +377,6 @@ await corsair.geoapify.api.geocode.autocomplete({ text: '10 Downing', countrycod
 | `countrycodes` | `string[]` | No | Restricts the suggestions to these two-letter country codes |
 | `filter` | `string[]` | No | A spatial filter |
 | `bias` | `string[]` | No | Biases toward a point or area |
-| `format` | `json \| geojson` | No | Defaults to `json`. `geojson` returns the geometry too, which the schemas describe only loosely |
 | `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
 
 
@@ -415,7 +419,12 @@ await corsair.geoapify.api.geocode.autocomplete({ text: '10 Downing', countrycod
     confidence_city_level?: number,
     match_type?: string
   },
-  bbox?: number[],
+  bbox?: {
+    lon1: number,
+    lat1: number,
+    lon2: number,
+    lat2: number
+  },
   timezone?: {
     name?: string,
     offset_STD?: string,
@@ -467,10 +476,9 @@ await corsair.geoapify.api.geocode.forward({ text: 'Berlin', countrycodes: ['de'
 | `countrycodes` | `string[]` | No | Restricts the search to these two-letter country codes |
 | `filter` | `string[]` | No | A spatial filter such as `rect:13.3,52.4,13.5,52.6` or `countrycode:de` |
 | `bias` | `string[]` | No | Bias results toward a point or area without excluding anything, such as `proximity:13.4,52.5` |
-| `format` | `json \| geojson` | No | Defaults to `json`. `geojson` returns the geometry too, which the schemas describe only loosely |
 | `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
 
-Asks for `format: json`; pass `format: geojson` when you want the geometry.
+Always asks for `format: json`, so matches are under `results`.
 
 
 
@@ -512,7 +520,12 @@ Asks for `format: json`; pass `format: geojson` when you want the geometry.
     confidence_city_level?: number,
     match_type?: string
   },
-  bbox?: number[],
+  bbox?: {
+    lon1: number,
+    lat1: number,
+    lon2: number,
+    lat2: number
+  },
   timezone?: {
     name?: string,
     offset_STD?: string,
@@ -559,11 +572,10 @@ await corsair.geoapify.api.geocode.reverse({ lat: 52.5, lon: 13.4 });
 |------|------|----------|-------------|
 | `lat` | `number` | Yes | Latitude of the point |
 | `lon` | `number` | Yes | Longitude of the point |
-| `type` | `country \| state \| city \| postcode \| street \| amenity \| locality` | No | Restricts the result to one kind of place |
+| `type` | `country \| state \| city \| postcode \| street \| amenity \| locality \| building` | No | Restricts the result to one kind of place |
 | `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
 | `limit` | `number` | No | At most 100 results |
 | `countrycodes` | `string[]` | No | Restricts the result to these two-letter country codes |
-| `format` | `json \| geojson` | No | Defaults to `json`. `geojson` returns the geometry too, which the schemas describe only loosely |
 | `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
 
 
@@ -606,7 +618,12 @@ await corsair.geoapify.api.geocode.reverse({ lat: 52.5, lon: 13.4 });
     confidence_city_level?: number,
     match_type?: string
   },
-  bbox?: number[],
+  bbox?: {
+    lon1: number,
+    lat1: number,
+    lon2: number,
+    lat2: number
+  },
   timezone?: {
     name?: string,
     offset_STD?: string,
@@ -699,7 +716,12 @@ await corsair.geoapify.api.places.details({ id: '51289a4b5f3d4d0f4058f2e9c8a1b7d
       confidence_city_level?: number,
       match_type?: string
     },
-    bbox?: number[],
+    bbox?: {
+      lon1: number,
+      lat1: number,
+      lon2: number,
+      lat2: number
+    },
     timezone?: {
       name?: string,
       offset_STD?: string,
@@ -802,7 +824,12 @@ A v2 route, so it always answers a feature collection under `features`.
       confidence_city_level?: number,
       match_type?: string
     },
-    bbox?: number[],
+    bbox?: {
+      lon1: number,
+      lat1: number,
+      lon2: number,
+      lat2: number
+    },
     timezone?: {
       name?: string,
       offset_STD?: string,
@@ -841,7 +868,7 @@ A v2 route, so it always answers a feature collection under `features`.
 
 `routing.isoline`
 
-Calculate the area reachable from a point within a time or distance, one polygon per range
+Calculate the area reachable from a point within a time or distance, one polygon per range. A slow calculation returns only an id to read it with later
 
 **Risk:** `read`
 
@@ -853,10 +880,11 @@ await corsair.geoapify.api.routing.isoline({ lat: 52.5, lon: 13.4, type: 'time',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `lat` | `number` | Yes | Latitude of the center |
-| `lon` | `number` | Yes | Longitude of the center |
-| `type` | `time \| distance` | Yes | Whether each range is a number of seconds or a distance |
-| `range` | `number[]` | Yes | The ranges to draw, such as `[300, 600, 900]` |
+| `id` | `string` | No | The `properties.id` of an earlier isoline. A slow calculation answers with no areas and only this ID; call again with it alone to read the result |
+| `lat` | `number` | No | Latitude of the center |
+| `lon` | `number` | No | Longitude of the center |
+| `type` | `time \| distance` | No | Whether each range is a number of seconds (at most 3600) or metres (at most 100000) |
+| `range` | `number[]` | No | The ranges to draw, such as `[300, 600, 900]` |
 | `mode` | `drive \| truck \| bicycle \| scooter \| walk \| hike` | No | How to travel; drive is the default |
 | `units` | `metric \| imperial` | No | Units of the answer |
 | `avoid` | `string[]` | No | Features to avoid |
@@ -873,7 +901,7 @@ await corsair.geoapify.api.routing.isoline({ lat: 52.5, lon: 13.4, type: 'time',
 | `type` | `string` | No | — |
 | `features` | `object[]` | Yes | — |
 | `bbox` | `number[]` | No | — |
-| `properties` | `Record<string, any>` | No | — |
+| `properties` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="features full type">
@@ -887,6 +915,15 @@ await corsair.geoapify.api.routing.isoline({ lat: 52.5, lon: 13.4, type: 'time',
 }[]
 ```
 </Accordion>
+
+<Accordion title="properties full type">
+
+```ts
+{
+  id?: string
+}
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -897,12 +934,12 @@ await corsair.geoapify.api.routing.isoline({ lat: 52.5, lon: 13.4, type: 'time',
 
 `routing.matrix`
 
-Calculate the time and distance between every source and target, one row per source. A pair with no route carries an error instead
+Calculate the time and distance between every source and target, one row per source. A pair with no route has null distance and time
 
 **Risk:** `read`
 
 ```ts
-await corsair.geoapify.api.routing.matrix({ mode: 'drive', sources: ['52.5,13.4'], targets: ['52.6,13.5'] });
+await corsair.geoapify.api.routing.matrix({ mode: 'drive', sources: [{ lat: 52.5163, lon: 13.3777 }], targets: [{ lat: 52.52, lon: 13.405 }] });
 ```
 
 **Input**
@@ -910,15 +947,38 @@ await corsair.geoapify.api.routing.matrix({ mode: 'drive', sources: ['52.5,13.4'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `mode` | `drive \| truck \| light_truck \| bicycle \| mountain_bike \| road_bike \| scooter \| walk \| hike \| motorcycle \| bus` | Yes | How to travel, which decides every cell of the matrix |
-| `sources` | `string[]` | Yes | Starting points as `lat,lon` pairs, one row each |
-| `targets` | `string[]` | Yes | Destination points as `lat,lon` pairs, one column each |
+| `sources` | `object[]` | Yes | Starting points, one row each |
+| `targets` | `object[]` | Yes | Destination points, one column each |
 | `type` | `balanced \| short \| less_maneuvers` | No | What to optimize for |
 | `units` | `metric \| imperial` | No | Units of the answer |
-| `avoid` | `string[]` | No | Features to avoid |
+| `avoid` | `(tolls \| ferries \| highways)[]` | No | Road types to avoid |
 | `traffic` | `free_flow \| approximated` | No | How to account for traffic |
 | `max_speed` | `number` | No | A speed cap |
+| `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
 
-A pair with no route carries an `error` and no distance, and the rest of the matrix is still valid.
+Points are `{ lat, lon }`. A pair with no route has `null` distance and time, and the rest of the matrix is still valid.
+
+<AccordionGroup>
+<Accordion title="sources full type">
+
+```ts
+{
+  lat: number,
+  lon: number
+}[]
+```
+</Accordion>
+
+<Accordion title="targets full type">
+
+```ts
+{
+  lat: number,
+  lon: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -930,18 +990,39 @@ A pair with no route carries an `error` and no distance, and the rest of the mat
 | `units` | `string` | No | — |
 | `distance_units` | `string` | No | — |
 | `sources_to_targets` | `object[]` | Yes | — |
-| `sources` | `Record<string, any>[]` | No | — |
-| `targets` | `Record<string, any>[]` | No | — |
+| `sources` | `object[]` | No | — |
+| `targets` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="sources_to_targets full type">
 
 ```ts
 {
-  distance?: number,
-  time?: number,
-  error?: string
+  distance?: number | null,
+  time?: number | null,
+  source_index?: number,
+  target_index?: number
 }[][]
+```
+</Accordion>
+
+<Accordion title="sources full type">
+
+```ts
+{
+  original_location?: number[],
+  location?: number[]
+}[]
+```
+</Accordion>
+
+<Accordion title="targets full type">
+
+```ts
+{
+  original_location?: number[],
+  location?: number[]
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -959,26 +1040,26 @@ Calculate a route between waypoints, with distance, time and optional turn-by-tu
 **Risk:** `read`
 
 ```ts
-await corsair.geoapify.api.routing.route({ waypoints: ['52.5,13.4', '52.6,13.5'], mode: 'drive' });
+await corsair.geoapify.api.routing.route({ waypoints: ['52.5163,13.3777', '52.52,13.405'], mode: 'drive' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `waypoints` | `string[]` | Yes | The points to route through, as `lat,lon` pairs, such as `52.5,13.4\|52.6,13.5` |
-| `mode` | `drive \| truck \| light_truck \| bicycle \| mountain_bike \| road_bike \| scooter \| walk \| hike \| motorcycle \| bus \| approx_transit \| transit` | Yes | How to travel, which decides the roads and paths used |
+| `waypoints` | `string[]` | Yes | The points to route through, one `lat,lon` pair per entry, such as `["52.5163,13.3777", "52.52,13.405"]` |
+| `mode` | `drive \| light_truck \| medium_truck \| truck \| heavy_truck \| truck_dangerous_goods \| long_truck \| bus \| scooter \| motorcycle \| bicycle \| mountain_bike \| road_bike \| walk \| hike \| transit \| approximated_transit` | Yes | How to travel, which decides the roads and paths used |
 | `type` | `balanced \| short \| less_maneuvers` | No | What to optimize for; balanced is the default |
 | `units` | `metric \| imperial` | No | Units of the answer |
 | `lang` | `string` | No | An IETF language tag such as `en` or `de`, which localizes names |
 | `avoid` | `string[]` | No | Features to avoid, such as `tollways`, `ferries` or `highways` |
-| `details` | `string[]` | No | Extras to include, such as `instruction` or `elevation` |
+| `details` | `(instruction_details \| route_details \| elevation \| admin_areas \| polyline5 \| polyline6)[]` | No | Extras to include, such as `instruction_details` (maneuver details) or `elevation` |
 | `traffic` | `free_flow \| approximated` | No | How to account for traffic |
 | `max_speed` | `number` | No | A speed cap for the route |
 | `format` | `json \| geojson` | No | Defaults to `json` here; `geojson` adds the route geometry |
 | `region` | `global \| eu` | No | `eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union |
 
-`format` defaults to `json` here; `geojson` adds the route geometry.
+`format` defaults to `json`, where `geometry` is one list of `{ lat, lon }` points per leg; `geojson` returns `features` instead of `results`.
 
 
 
@@ -1004,22 +1085,38 @@ await corsair.geoapify.api.routing.route({ waypoints: ['52.5,13.4', '52.6,13.5']
   distance_units?: string,
   polyline5?: string,
   polyline6?: string,
+  waypoints?: {
+    location?: number[],
+    original_index?: number
+  }[],
   legs?: {
     distance?: number,
     time?: number,
     steps?: {
       distance?: number,
       time?: number,
-      instruction?: string,
+      from_index?: number,
+      to_index?: number,
+      instruction?: {
+        text?: string,
+        type?: string,
+        transition_instruction?: string,
+        pre_transition_instruction?: string,
+        post_transition_instruction?: string,
+        streets?: string[]
+      },
       name?: string,
-      type?: string,
-      exit?: number
+      toll?: boolean,
+      ferry?: boolean
     }[]
   }[],
   toll?: boolean,
   ferry?: boolean,
   country_code?: string[],
-  geometry?: Record<string, any>
+  geometry?: {
+    lat: number,
+    lon: number
+  }[][]
 }[]
 ```
 </Accordion>

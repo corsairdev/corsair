@@ -2140,19 +2140,19 @@
                 ]
               },
               {
-                "group": "Geoapify",
-                "pages": [
-                  "plugins/geoapify/overview",
-                  "plugins/geoapify/api",
-                  "plugins/geoapify/database"
-                ]
-              },
-              {
                 "group": "Gemini",
                 "pages": [
                   "plugins/gemini/overview",
                   "plugins/gemini/api",
                   "plugins/gemini/database"
+                ]
+              },
+              {
+                "group": "Geoapify",
+                "pages": [
+                  "plugins/geoapify/overview",
+                  "plugins/geoapify/api",
+                  "plugins/geoapify/database"
                 ]
               },
               {
