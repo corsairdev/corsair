@@ -2124,6 +2124,14 @@
                 ]
               },
               {
+                "group": "Formdesk",
+                "pages": [
+                  "plugins/formdesk/overview",
+                  "plugins/formdesk/api",
+                  "plugins/formdesk/database"
+                ]
+              },
+              {
                 "group": "Foursquare",
                 "pages": [
                   "plugins/foursquare/overview",
