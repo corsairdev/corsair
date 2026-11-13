@@ -147,7 +147,7 @@ await corsair.companyenrich.api.companies.enrichBatch({
 ```ts
 {
   domain: string,
-  status: found | not-found | invalid-domain | pending,
+  status: found | not-found | invalid-domain | pending | string,
   company?: {
     id: string,
     name?: string | null,
@@ -156,13 +156,13 @@ await corsair.companyenrich.api.companies.enrichBatch({
     website: string,
     logoUrl: string,
     description?: string | null,
-    type?: private | public | self-employed | self-owned | partnership | nonprofit | educational | government | null,
+    type?: private | public | self-employed | self-owned | partnership | nonprofit | educational | government | string | null,
     foundedYear?: number | null,
-    employees?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
-    revenue?: under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b | null,
+    employees?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
+    revenue?: under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b | string | null,
     industry?: string | null,
     industries?: string[] | null,
-    categories?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | null,
+    categories?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | string)[] | null,
     location?: {
       country?: {
         code: string,
@@ -215,7 +215,7 @@ await corsair.companyenrich.api.companies.enrichBatch({
       companyId: string,
       domain: string,
       observedEmployeeCount: number,
-      employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
+      employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
       departmentHeadcount: {
         cSuite?: number | null,
         productManagement?: number | null,
@@ -238,7 +238,7 @@ await corsair.companyenrich.api.companies.enrichBatch({
       history?: {
         date: string,
         observedEmployeeCount: number,
-        employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
+        employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
         departmentHeadcount: {
           cSuite?: number | null,
           productManagement?: number | null,
@@ -306,13 +306,13 @@ await corsair.companyenrich.api.companies.enrichByDomain({
 | `website` | `string` | Yes | — |
 | `logoUrl` | `string` | Yes | — |
 | `description` | `string \| null` | No | — |
-| `type` | `private \| public \| self-employed \| self-owned \| partnership \| nonprofit \| educational \| government \| null` | No | — |
+| `type` | `private \| public \| self-employed \| self-owned \| partnership \| nonprofit \| educational \| government \| string \| null` | No | — |
 | `foundedYear` | `number \| null` | No | — |
-| `employees` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1K \| 1K-5K \| 5K-10K \| over-10K \| null` | No | — |
-| `revenue` | `under-1m \| 1m-10m \| 10m-50m \| 50m-100m \| 100m-200m \| 200m-1b \| over-1b \| null` | No | — |
+| `employees` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1K \| 1K-5K \| 5K-10K \| over-10K \| string \| null` | No | — |
+| `revenue` | `under-1m \| 1m-10m \| 10m-50m \| 50m-100m \| 100m-200m \| 200m-1b \| over-1b \| string \| null` | No | — |
 | `industry` | `string \| null` | No | — |
 | `industries` | `string[] \| null` | No | — |
-| `categories` | `(b2b \| b2c \| b2g \| e-commerce \| media \| service-provider \| mobile \| saas)[] \| null` | No | — |
+| `categories` | `(b2b \| b2c \| b2g \| e-commerce \| media \| service-provider \| mobile \| saas \| local-business \| string)[] \| null` | No | — |
 | `location` | `object \| null` | No | — |
 | `socials` | `object \| null` | No | — |
 | `updatedAt` | `string` | Yes | — |
@@ -392,7 +392,7 @@ await corsair.companyenrich.api.companies.enrichByDomain({
   companyId: string,
   domain: string,
   observedEmployeeCount: number,
-  employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
+  employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
   departmentHeadcount: {
     cSuite?: number | null,
     productManagement?: number | null,
@@ -415,7 +415,7 @@ await corsair.companyenrich.api.companies.enrichByDomain({
   history?: {
     date: string,
     observedEmployeeCount: number,
-    employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
+    employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
     departmentHeadcount: {
       cSuite?: number | null,
       productManagement?: number | null,
@@ -485,13 +485,13 @@ await corsair.companyenrich.api.companies.enrichByProperties({
 | `website` | `string` | Yes | — |
 | `logoUrl` | `string` | Yes | — |
 | `description` | `string \| null` | No | — |
-| `type` | `private \| public \| self-employed \| self-owned \| partnership \| nonprofit \| educational \| government \| null` | No | — |
+| `type` | `private \| public \| self-employed \| self-owned \| partnership \| nonprofit \| educational \| government \| string \| null` | No | — |
 | `foundedYear` | `number \| null` | No | — |
-| `employees` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1K \| 1K-5K \| 5K-10K \| over-10K \| null` | No | — |
-| `revenue` | `under-1m \| 1m-10m \| 10m-50m \| 50m-100m \| 100m-200m \| 200m-1b \| over-1b \| null` | No | — |
+| `employees` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1K \| 1K-5K \| 5K-10K \| over-10K \| string \| null` | No | — |
+| `revenue` | `under-1m \| 1m-10m \| 10m-50m \| 50m-100m \| 100m-200m \| 200m-1b \| over-1b \| string \| null` | No | — |
 | `industry` | `string \| null` | No | — |
 | `industries` | `string[] \| null` | No | — |
-| `categories` | `(b2b \| b2c \| b2g \| e-commerce \| media \| service-provider \| mobile \| saas)[] \| null` | No | — |
+| `categories` | `(b2b \| b2c \| b2g \| e-commerce \| media \| service-provider \| mobile \| saas \| local-business \| string)[] \| null` | No | — |
 | `location` | `object \| null` | No | — |
 | `socials` | `object \| null` | No | — |
 | `updatedAt` | `string` | Yes | — |
@@ -571,7 +571,7 @@ await corsair.companyenrich.api.companies.enrichByProperties({
   companyId: string,
   domain: string,
   observedEmployeeCount: number,
-  employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
+  employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
   departmentHeadcount: {
     cSuite?: number | null,
     productManagement?: number | null,
@@ -594,7 +594,7 @@ await corsair.companyenrich.api.companies.enrichByProperties({
   history?: {
     date: string,
     observedEmployeeCount: number,
-    employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
+    employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
     departmentHeadcount: {
       cSuite?: number | null,
       productManagement?: number | null,
@@ -627,7 +627,7 @@ await corsair.companyenrich.api.companies.enrichByProperties({
 
 `companies.get`
 
-Get a stored company by its CompanyEnrich ID. Costs 1 credit plus 1 per financial, keywords, NAICS codes or technologies expansion; workforce adds 5 credits (6 total).
+Get a stored company by its CompanyEnrich ID. Costs 1 credit plus 1 per expansion (financial, keywords, NAICS codes, technologies, workforce with 12 months of history).
 
 **Risk:** `read`
 
@@ -658,13 +658,13 @@ await corsair.companyenrich.api.companies.get({
 | `website` | `string` | Yes | — |
 | `logoUrl` | `string` | Yes | — |
 | `description` | `string \| null` | No | — |
-| `type` | `private \| public \| self-employed \| self-owned \| partnership \| nonprofit \| educational \| government \| null` | No | — |
+| `type` | `private \| public \| self-employed \| self-owned \| partnership \| nonprofit \| educational \| government \| string \| null` | No | — |
 | `foundedYear` | `number \| null` | No | — |
-| `employees` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1K \| 1K-5K \| 5K-10K \| over-10K \| null` | No | — |
-| `revenue` | `under-1m \| 1m-10m \| 10m-50m \| 50m-100m \| 100m-200m \| 200m-1b \| over-1b \| null` | No | — |
+| `employees` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1K \| 1K-5K \| 5K-10K \| over-10K \| string \| null` | No | — |
+| `revenue` | `under-1m \| 1m-10m \| 10m-50m \| 50m-100m \| 100m-200m \| 200m-1b \| over-1b \| string \| null` | No | — |
 | `industry` | `string \| null` | No | — |
 | `industries` | `string[] \| null` | No | — |
-| `categories` | `(b2b \| b2c \| b2g \| e-commerce \| media \| service-provider \| mobile \| saas)[] \| null` | No | — |
+| `categories` | `(b2b \| b2c \| b2g \| e-commerce \| media \| service-provider \| mobile \| saas \| local-business \| string)[] \| null` | No | — |
 | `location` | `object \| null` | No | — |
 | `socials` | `object \| null` | No | — |
 | `updatedAt` | `string` | Yes | — |
@@ -744,7 +744,7 @@ await corsair.companyenrich.api.companies.get({
   companyId: string,
   domain: string,
   observedEmployeeCount: number,
-  employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
+  employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
   departmentHeadcount: {
     cSuite?: number | null,
     productManagement?: number | null,
@@ -767,7 +767,7 @@ await corsair.companyenrich.api.companies.get({
   history?: {
     date: string,
     observedEmployeeCount: number,
-    employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
+    employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
     departmentHeadcount: {
       cSuite?: number | null,
       productManagement?: number | null,
@@ -827,7 +827,10 @@ await corsair.companyenrich.api.companies.search({
 
 ```ts
 {
-  query?: string,
+  query?: string | string[] | {
+    in?: string[],
+    notIn?: string[]
+  },
   id?: string | string[] | {
     in?: string[],
     notIn?: string[]
@@ -894,10 +897,10 @@ await corsair.companyenrich.api.companies.search({
     notIn?: string[],
     all?: string[]
   },
-  categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | {
-    in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-    notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-    all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[]
+  categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[] | {
+    in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+    notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+    all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[]
   },
   foundedYear?: {
     min?: number,
@@ -968,13 +971,13 @@ await corsair.companyenrich.api.companies.search({
   website: string,
   logoUrl: string,
   description?: string | null,
-  type?: private | public | self-employed | self-owned | partnership | nonprofit | educational | government | null,
+  type?: private | public | self-employed | self-owned | partnership | nonprofit | educational | government | string | null,
   foundedYear?: number | null,
-  employees?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
-  revenue?: under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b | null,
+  employees?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
+  revenue?: under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b | string | null,
   industry?: string | null,
   industries?: string[] | null,
-  categories?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | null,
+  categories?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | string)[] | null,
   location?: {
     country?: {
       code: string,
@@ -1027,7 +1030,7 @@ await corsair.companyenrich.api.companies.search({
     companyId: string,
     domain: string,
     observedEmployeeCount: number,
-    employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
+    employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
     departmentHeadcount: {
       cSuite?: number | null,
       productManagement?: number | null,
@@ -1050,7 +1053,7 @@ await corsair.companyenrich.api.companies.search({
     history?: {
       date: string,
       observedEmployeeCount: number,
-      employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
+      employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
       departmentHeadcount: {
         cSuite?: number | null,
         productManagement?: number | null,
@@ -1080,7 +1083,10 @@ await corsair.companyenrich.api.companies.search({
 ```ts
 {
   filter?: {
-    query?: string | null,
+    query?: string | string[] | {
+      in?: string[],
+      notIn?: string[]
+    } | null,
     id?: string | string[] | {
       in?: string[],
       notIn?: string[]
@@ -1147,10 +1153,10 @@ await corsair.companyenrich.api.companies.search({
       notIn?: string[],
       all?: string[]
     } | null,
-    categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | {
-      in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-      notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-      all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[]
+    categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[] | {
+      in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+      notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+      all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[]
     } | null,
     foundedYear?: {
       min?: number | null,
@@ -1174,8 +1180,8 @@ await corsair.companyenrich.api.companies.search({
   } | null,
   boost?: {
     names?: string[] | null,
-    categories?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | null,
-    revenue?: (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b)[] | null
+    categories?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | string)[] | null,
+    revenue?: (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b | string)[] | null
   } | null
 } | null
 ```
@@ -1213,7 +1219,10 @@ await corsair.companyenrich.api.companies.searchCount({
 
 ```ts
 {
-  query?: string,
+  query?: string | string[] | {
+    in?: string[],
+    notIn?: string[]
+  },
   id?: string | string[] | {
     in?: string[],
     notIn?: string[]
@@ -1280,10 +1289,10 @@ await corsair.companyenrich.api.companies.searchCount({
     notIn?: string[],
     all?: string[]
   },
-  categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | {
-    in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-    notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-    all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[]
+  categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[] | {
+    in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+    notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+    all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[]
   },
   foundedYear?: {
     min?: number,
@@ -1347,7 +1356,10 @@ await corsair.companyenrich.api.companies.searchCount({
 ```ts
 {
   filter?: {
-    query?: string | null,
+    query?: string | string[] | {
+      in?: string[],
+      notIn?: string[]
+    } | null,
     id?: string | string[] | {
       in?: string[],
       notIn?: string[]
@@ -1414,10 +1426,10 @@ await corsair.companyenrich.api.companies.searchCount({
       notIn?: string[],
       all?: string[]
     } | null,
-    categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | {
-      in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-      notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-      all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[]
+    categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[] | {
+      in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+      notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+      all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[]
     } | null,
     foundedYear?: {
       min?: number | null,
@@ -1441,8 +1453,8 @@ await corsair.companyenrich.api.companies.searchCount({
   } | null,
   boost?: {
     names?: string[] | null,
-    categories?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | null,
-    revenue?: (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b)[] | null
+    categories?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | string)[] | null,
+    revenue?: (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b | string)[] | null
   } | null
 } | null
 ```
@@ -1483,7 +1495,10 @@ await corsair.companyenrich.api.companies.searchPreview({
 
 ```ts
 {
-  query?: string,
+  query?: string | string[] | {
+    in?: string[],
+    notIn?: string[]
+  },
   id?: string | string[] | {
     in?: string[],
     notIn?: string[]
@@ -1550,10 +1565,10 @@ await corsair.companyenrich.api.companies.searchPreview({
     notIn?: string[],
     all?: string[]
   },
-  categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | {
-    in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-    notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-    all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[]
+  categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[] | {
+    in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+    notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+    all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[]
   },
   foundedYear?: {
     min?: number,
@@ -1631,7 +1646,10 @@ await corsair.companyenrich.api.companies.searchPreview({
 ```ts
 {
   filter?: {
-    query?: string | null,
+    query?: string | string[] | {
+      in?: string[],
+      notIn?: string[]
+    } | null,
     id?: string | string[] | {
       in?: string[],
       notIn?: string[]
@@ -1698,10 +1716,10 @@ await corsair.companyenrich.api.companies.searchPreview({
       notIn?: string[],
       all?: string[]
     } | null,
-    categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | {
-      in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-      notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-      all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[]
+    categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[] | {
+      in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+      notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+      all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[]
     } | null,
     foundedYear?: {
       min?: number | null,
@@ -1725,8 +1743,8 @@ await corsair.companyenrich.api.companies.searchPreview({
   } | null,
   boost?: {
     names?: string[] | null,
-    categories?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | null,
-    revenue?: (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b)[] | null
+    categories?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | string)[] | null,
+    revenue?: (under-1m | 1m-10m | 10m-50m | 50m-100m | 100m-200m | 200m-1b | over-1b | string)[] | null
   } | null
 } | null
 ```
@@ -1741,7 +1759,7 @@ await corsair.companyenrich.api.companies.searchPreview({
 
 `companies.workforce`
 
-Get observed headcount and department breakdowns for one company by ID or domain. Costs 5 credits per page.
+Get observed headcount and department breakdowns for one company by ID or domain, 12 months of history per page. Costs 1 credit per page.
 
 **Risk:** `read`
 
@@ -1766,7 +1784,7 @@ await corsair.companyenrich.api.companies.workforce({ id: '00000000-0000-4000-80
 | `companyId` | `string` | Yes | — |
 | `domain` | `string` | Yes | — |
 | `observedEmployeeCount` | `number` | Yes | — |
-| `employeeCountRange` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1K \| 1K-5K \| 5K-10K \| over-10K \| null` | No | — |
+| `employeeCountRange` | `1-10 \| 11-50 \| 51-200 \| 201-500 \| 501-1K \| 1K-5K \| 5K-10K \| over-10K \| string \| null` | No | — |
 | `departmentHeadcount` | `object` | Yes | — |
 | `unclassifiedHeadcount` | `number` | Yes | — |
 | `historyFrom` | `string` | Yes | — |
@@ -1803,7 +1821,7 @@ await corsair.companyenrich.api.companies.workforce({ id: '00000000-0000-4000-80
 {
   date: string,
   observedEmployeeCount: number,
-  employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | null,
+  employeeCountRange?: 1-10 | 11-50 | 51-200 | 201-500 | 501-1K | 1K-5K | 5K-10K | over-10K | string | null,
   departmentHeadcount: {
     cSuite?: number | null,
     productManagement?: number | null,
@@ -2154,7 +2172,7 @@ await corsair.companyenrich.api.people.enrich({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `email` | `string` | Yes | — |
-| `expand` | `education[]` | No | — |
+| `expand` | `(education \| company)[]` | No | — |
 
 
 
@@ -2168,8 +2186,8 @@ await corsair.companyenrich.api.people.enrich({
 | `lastName` | `string \| null` | No | — |
 | `imageUrl` | `string \| null` | No | — |
 | `position` | `string \| null` | No | — |
-| `seniority` | `owner \| founder \| c-suite \| partner \| vp \| head \| director \| manager \| senior \| entry \| intern \| null` | No | — |
-| `department` | `c-suite \| c-suite/executive \| c-suite/finance-executive \| c-suite/founder \| c-suite/human-resources-executive \| c-suite/information-technology-executive \| c-suite/legal-executive \| c-suite/marketing-executive \| c-suite/medical-health-executive \| c-suite/operations-executive \| c-suite/sales-executive \| product-management \| product-management/product-development \| product-management/product-management \| engineering-technical \| engineering-technical/artificial-intelligence-machine-learning \| engineering-technical/bioengineering \| engineering-technical/biometrics \| engineering-technical/business-intelligence \| engineering-technical/chemical-engineering \| engineering-technical/cloud-mobility \| engineering-technical/data-science \| engineering-technical/devops \| engineering-technical/digital-transformation \| engineering-technical/emerging-technology-innovation \| engineering-technical/engineering-technical \| engineering-technical/industrial-engineering \| engineering-technical/mechanic \| engineering-technical/mobile-development \| engineering-technical/project-management \| engineering-technical/research-development \| engineering-technical/scrum-master-agile-coach \| engineering-technical/software-development \| engineering-technical/support-technical-services \| engineering-technical/technician \| engineering-technical/technology-operations \| engineering-technical/test-quality-assurance \| engineering-technical/ui-ux \| engineering-technical/web-development \| design \| design/all-design \| design/product-ui-ux-design \| design/graphic-design \| education \| education/teacher \| education/principal \| education/superintendent \| education/professor \| finance \| finance/accounting \| finance/finance \| finance/financial-planning-analysis \| finance/financial-reporting \| finance/financial-strategy \| finance/financial-systems \| finance/internal-audit-control \| finance/investor-relations \| finance/mergers-acquisitions \| finance/real-estate-finance \| finance/financial-risk \| finance/shared-services \| finance/sourcing-procurement \| finance/tax \| finance/treasury \| human-resources \| human-resources/compensation-benefits \| human-resources/culture-diversity-inclusion \| human-resources/employee-labor-relations \| human-resources/health-safety \| human-resources/human-resource-information-system \| human-resources/human-resources \| human-resources/hr-business-partner \| human-resources/learning-development \| human-resources/organizational-development \| human-resources/recruiting-talent-acquisition \| human-resources/talent-management \| human-resources/workforce-management \| human-resources/people-operations \| information-technology \| information-technology/application-development \| information-technology/business-service-management-itsm \| information-technology/collaboration-web-app \| information-technology/data-center \| information-technology/data-warehouse \| information-technology/database-administration \| information-technology/ecommerce-development \| information-technology/enterprise-architecture \| information-technology/help-desk-desktop-services \| information-technology/hr-financial-erp-systems \| information-technology/information-security \| information-technology/information-technology \| information-technology/infrastructure \| information-technology/it-asset-management \| information-technology/it-audit-it-compliance \| information-technology/it-operations \| information-technology/it-procurement \| information-technology/it-strategy \| information-technology/it-training \| information-technology/networking \| information-technology/project-program-management \| information-technology/quality-assurance \| information-technology/retail-store-systems \| information-technology/servers \| information-technology/storage-disaster-recovery \| information-technology/telecommunications \| information-technology/virtualization \| legal \| legal/acquisitions \| legal/compliance \| legal/contracts \| legal/corporate-secretary \| legal/ediscovery \| legal/ethics \| legal/governance \| legal/governmental-affairs-regulatory-law \| legal/intellectual-property-patent \| legal/labor-employment \| legal/lawyer-attorney \| legal/legal \| legal/legal-counsel \| legal/legal-operations \| legal/litigation \| legal/privacy \| marketing \| marketing/advertising \| marketing/brand-management \| marketing/content-marketing \| marketing/customer-experience \| marketing/customer-marketing \| marketing/demand-generation \| marketing/digital-marketing \| marketing/ecommerce-marketing \| marketing/event-marketing \| marketing/field-marketing \| marketing/lead-generation \| marketing/marketing \| marketing/marketing-analytics-insights \| marketing/marketing-communications \| marketing/marketing-operations \| marketing/product-marketing \| marketing/public-relations \| marketing/search-engine-optimization-pay-per-click \| marketing/social-media-marketing \| marketing/strategic-communications \| marketing/technical-marketing \| medical-health \| medical-health/anesthesiology \| medical-health/chiropractics \| medical-health/clinical-systems \| medical-health/dentistry \| medical-health/dermatology \| medical-health/doctors-physicians \| medical-health/epidemiology \| medical-health/first-responder \| medical-health/infectious-disease \| medical-health/medical-administration \| medical-health/medical-education-training \| medical-health/medical-research \| medical-health/medicine \| medical-health/neurology \| medical-health/nursing \| medical-health/nutrition-dietetics \| medical-health/obstetrics-gynecology \| medical-health/oncology \| medical-health/opthalmology \| medical-health/optometry \| medical-health/orthopedics \| medical-health/pathology \| medical-health/pediatrics \| medical-health/pharmacy \| medical-health/physical-therapy \| medical-health/psychiatry \| medical-health/psychology \| medical-health/public-health \| medical-health/radiology \| medical-health/social-work \| operations \| operations/call-center \| operations/construction \| operations/corporate-strategy \| operations/customer-service-support \| operations/enterprise-resource-planning \| operations/facilities-management \| operations/leasing \| operations/logistics \| operations/office-operations \| operations/operations \| operations/physical-security \| operations/project-development \| operations/quality-management \| operations/real-estate \| operations/safety \| operations/store-operations \| operations/supply-chain \| sales \| sales/account-management \| sales/business-development \| sales/channel-sales \| sales/customer-retention-development \| sales/customer-success \| sales/field-outside-sales \| sales/inside-sales \| sales/partnerships \| sales/revenue-operations \| sales/sales \| sales/sales-enablement \| sales/sales-engineering \| sales/sales-operations \| sales/sales-training \| consulting \| consulting/consultant \| null` | No | — |
+| `seniority` | `owner \| founder \| c-suite \| partner \| vp \| head \| director \| manager \| senior \| entry \| intern \| string \| null` | No | — |
+| `department` | `c-suite \| c-suite/executive \| c-suite/finance-executive \| c-suite/founder \| c-suite/human-resources-executive \| c-suite/information-technology-executive \| c-suite/legal-executive \| c-suite/marketing-executive \| c-suite/medical-health-executive \| c-suite/operations-executive \| c-suite/sales-executive \| product-management \| product-management/product-development \| product-management/product-management \| engineering-technical \| engineering-technical/artificial-intelligence-machine-learning \| engineering-technical/bioengineering \| engineering-technical/biometrics \| engineering-technical/business-intelligence \| engineering-technical/chemical-engineering \| engineering-technical/cloud-mobility \| engineering-technical/data-science \| engineering-technical/devops \| engineering-technical/digital-transformation \| engineering-technical/emerging-technology-innovation \| engineering-technical/engineering-technical \| engineering-technical/industrial-engineering \| engineering-technical/mechanic \| engineering-technical/mobile-development \| engineering-technical/project-management \| engineering-technical/research-development \| engineering-technical/scrum-master-agile-coach \| engineering-technical/software-development \| engineering-technical/support-technical-services \| engineering-technical/technician \| engineering-technical/technology-operations \| engineering-technical/test-quality-assurance \| engineering-technical/ui-ux \| engineering-technical/web-development \| design \| design/all-design \| design/product-ui-ux-design \| design/graphic-design \| education \| education/teacher \| education/principal \| education/superintendent \| education/professor \| finance \| finance/accounting \| finance/finance \| finance/financial-planning-analysis \| finance/financial-reporting \| finance/financial-strategy \| finance/financial-systems \| finance/internal-audit-control \| finance/investor-relations \| finance/mergers-acquisitions \| finance/real-estate-finance \| finance/financial-risk \| finance/shared-services \| finance/sourcing-procurement \| finance/tax \| finance/treasury \| human-resources \| human-resources/compensation-benefits \| human-resources/culture-diversity-inclusion \| human-resources/employee-labor-relations \| human-resources/health-safety \| human-resources/human-resource-information-system \| human-resources/human-resources \| human-resources/hr-business-partner \| human-resources/learning-development \| human-resources/organizational-development \| human-resources/recruiting-talent-acquisition \| human-resources/talent-management \| human-resources/workforce-management \| human-resources/people-operations \| information-technology \| information-technology/application-development \| information-technology/business-service-management-itsm \| information-technology/collaboration-web-app \| information-technology/data-center \| information-technology/data-warehouse \| information-technology/database-administration \| information-technology/ecommerce-development \| information-technology/enterprise-architecture \| information-technology/help-desk-desktop-services \| information-technology/hr-financial-erp-systems \| information-technology/information-security \| information-technology/information-technology \| information-technology/infrastructure \| information-technology/it-asset-management \| information-technology/it-audit-it-compliance \| information-technology/it-operations \| information-technology/it-procurement \| information-technology/it-strategy \| information-technology/it-training \| information-technology/networking \| information-technology/project-program-management \| information-technology/quality-assurance \| information-technology/retail-store-systems \| information-technology/servers \| information-technology/storage-disaster-recovery \| information-technology/telecommunications \| information-technology/virtualization \| legal \| legal/acquisitions \| legal/compliance \| legal/contracts \| legal/corporate-secretary \| legal/ediscovery \| legal/ethics \| legal/governance \| legal/governmental-affairs-regulatory-law \| legal/intellectual-property-patent \| legal/labor-employment \| legal/lawyer-attorney \| legal/legal \| legal/legal-counsel \| legal/legal-operations \| legal/litigation \| legal/privacy \| marketing \| marketing/advertising \| marketing/brand-management \| marketing/content-marketing \| marketing/customer-experience \| marketing/customer-marketing \| marketing/demand-generation \| marketing/digital-marketing \| marketing/ecommerce-marketing \| marketing/event-marketing \| marketing/field-marketing \| marketing/lead-generation \| marketing/marketing \| marketing/marketing-analytics-insights \| marketing/marketing-communications \| marketing/marketing-operations \| marketing/product-marketing \| marketing/public-relations \| marketing/search-engine-optimization-pay-per-click \| marketing/social-media-marketing \| marketing/strategic-communications \| marketing/technical-marketing \| medical-health \| medical-health/anesthesiology \| medical-health/chiropractics \| medical-health/clinical-systems \| medical-health/dentistry \| medical-health/dermatology \| medical-health/doctors-physicians \| medical-health/epidemiology \| medical-health/first-responder \| medical-health/infectious-disease \| medical-health/medical-administration \| medical-health/medical-education-training \| medical-health/medical-research \| medical-health/medicine \| medical-health/neurology \| medical-health/nursing \| medical-health/nutrition-dietetics \| medical-health/obstetrics-gynecology \| medical-health/oncology \| medical-health/opthalmology \| medical-health/optometry \| medical-health/orthopedics \| medical-health/pathology \| medical-health/pediatrics \| medical-health/pharmacy \| medical-health/physical-therapy \| medical-health/psychiatry \| medical-health/psychology \| medical-health/public-health \| medical-health/radiology \| medical-health/social-work \| operations \| operations/call-center \| operations/construction \| operations/corporate-strategy \| operations/customer-service-support \| operations/enterprise-resource-planning \| operations/facilities-management \| operations/leasing \| operations/logistics \| operations/office-operations \| operations/operations \| operations/physical-security \| operations/project-development \| operations/quality-management \| operations/real-estate \| operations/safety \| operations/store-operations \| operations/supply-chain \| sales \| sales/account-management \| sales/business-development \| sales/channel-sales \| sales/customer-retention-development \| sales/customer-success \| sales/field-outside-sales \| sales/inside-sales \| sales/partnerships \| sales/revenue-operations \| sales/sales \| sales/sales-enablement \| sales/sales-engineering \| sales/sales-operations \| sales/sales-training \| consulting \| consulting/consultant \| string \| null` | No | — |
 | `location` | `object \| null` | No | — |
 | `socials` | `object` | Yes | — |
 | `experiences` | `object[]` | Yes | — |
@@ -2208,8 +2226,8 @@ await corsair.companyenrich.api.people.enrich({
   isCurrent: boolean,
   isMatched: boolean,
   position?: string | null,
-  seniority?: owner | founder | c-suite | partner | vp | head | director | manager | senior | entry | intern | null,
-  department?: c-suite | c-suite/executive | c-suite/finance-executive | c-suite/founder | c-suite/human-resources-executive | c-suite/information-technology-executive | c-suite/legal-executive | c-suite/marketing-executive | c-suite/medical-health-executive | c-suite/operations-executive | c-suite/sales-executive | product-management | product-management/product-development | product-management/product-management | engineering-technical | engineering-technical/artificial-intelligence-machine-learning | engineering-technical/bioengineering | engineering-technical/biometrics | engineering-technical/business-intelligence | engineering-technical/chemical-engineering | engineering-technical/cloud-mobility | engineering-technical/data-science | engineering-technical/devops | engineering-technical/digital-transformation | engineering-technical/emerging-technology-innovation | engineering-technical/engineering-technical | engineering-technical/industrial-engineering | engineering-technical/mechanic | engineering-technical/mobile-development | engineering-technical/project-management | engineering-technical/research-development | engineering-technical/scrum-master-agile-coach | engineering-technical/software-development | engineering-technical/support-technical-services | engineering-technical/technician | engineering-technical/technology-operations | engineering-technical/test-quality-assurance | engineering-technical/ui-ux | engineering-technical/web-development | design | design/all-design | design/product-ui-ux-design | design/graphic-design | education | education/teacher | education/principal | education/superintendent | education/professor | finance | finance/accounting | finance/finance | finance/financial-planning-analysis | finance/financial-reporting | finance/financial-strategy | finance/financial-systems | finance/internal-audit-control | finance/investor-relations | finance/mergers-acquisitions | finance/real-estate-finance | finance/financial-risk | finance/shared-services | finance/sourcing-procurement | finance/tax | finance/treasury | human-resources | human-resources/compensation-benefits | human-resources/culture-diversity-inclusion | human-resources/employee-labor-relations | human-resources/health-safety | human-resources/human-resource-information-system | human-resources/human-resources | human-resources/hr-business-partner | human-resources/learning-development | human-resources/organizational-development | human-resources/recruiting-talent-acquisition | human-resources/talent-management | human-resources/workforce-management | human-resources/people-operations | information-technology | information-technology/application-development | information-technology/business-service-management-itsm | information-technology/collaboration-web-app | information-technology/data-center | information-technology/data-warehouse | information-technology/database-administration | information-technology/ecommerce-development | information-technology/enterprise-architecture | information-technology/help-desk-desktop-services | information-technology/hr-financial-erp-systems | information-technology/information-security | information-technology/information-technology | information-technology/infrastructure | information-technology/it-asset-management | information-technology/it-audit-it-compliance | information-technology/it-operations | information-technology/it-procurement | information-technology/it-strategy | information-technology/it-training | information-technology/networking | information-technology/project-program-management | information-technology/quality-assurance | information-technology/retail-store-systems | information-technology/servers | information-technology/storage-disaster-recovery | information-technology/telecommunications | information-technology/virtualization | legal | legal/acquisitions | legal/compliance | legal/contracts | legal/corporate-secretary | legal/ediscovery | legal/ethics | legal/governance | legal/governmental-affairs-regulatory-law | legal/intellectual-property-patent | legal/labor-employment | legal/lawyer-attorney | legal/legal | legal/legal-counsel | legal/legal-operations | legal/litigation | legal/privacy | marketing | marketing/advertising | marketing/brand-management | marketing/content-marketing | marketing/customer-experience | marketing/customer-marketing | marketing/demand-generation | marketing/digital-marketing | marketing/ecommerce-marketing | marketing/event-marketing | marketing/field-marketing | marketing/lead-generation | marketing/marketing | marketing/marketing-analytics-insights | marketing/marketing-communications | marketing/marketing-operations | marketing/product-marketing | marketing/public-relations | marketing/search-engine-optimization-pay-per-click | marketing/social-media-marketing | marketing/strategic-communications | marketing/technical-marketing | medical-health | medical-health/anesthesiology | medical-health/chiropractics | medical-health/clinical-systems | medical-health/dentistry | medical-health/dermatology | medical-health/doctors-physicians | medical-health/epidemiology | medical-health/first-responder | medical-health/infectious-disease | medical-health/medical-administration | medical-health/medical-education-training | medical-health/medical-research | medical-health/medicine | medical-health/neurology | medical-health/nursing | medical-health/nutrition-dietetics | medical-health/obstetrics-gynecology | medical-health/oncology | medical-health/opthalmology | medical-health/optometry | medical-health/orthopedics | medical-health/pathology | medical-health/pediatrics | medical-health/pharmacy | medical-health/physical-therapy | medical-health/psychiatry | medical-health/psychology | medical-health/public-health | medical-health/radiology | medical-health/social-work | operations | operations/call-center | operations/construction | operations/corporate-strategy | operations/customer-service-support | operations/enterprise-resource-planning | operations/facilities-management | operations/leasing | operations/logistics | operations/office-operations | operations/operations | operations/physical-security | operations/project-development | operations/quality-management | operations/real-estate | operations/safety | operations/store-operations | operations/supply-chain | sales | sales/account-management | sales/business-development | sales/channel-sales | sales/customer-retention-development | sales/customer-success | sales/field-outside-sales | sales/inside-sales | sales/partnerships | sales/revenue-operations | sales/sales | sales/sales-enablement | sales/sales-engineering | sales/sales-operations | sales/sales-training | consulting | consulting/consultant | null,
+  seniority?: owner | founder | c-suite | partner | vp | head | director | manager | senior | entry | intern | string | null,
+  department?: c-suite | c-suite/executive | c-suite/finance-executive | c-suite/founder | c-suite/human-resources-executive | c-suite/information-technology-executive | c-suite/legal-executive | c-suite/marketing-executive | c-suite/medical-health-executive | c-suite/operations-executive | c-suite/sales-executive | product-management | product-management/product-development | product-management/product-management | engineering-technical | engineering-technical/artificial-intelligence-machine-learning | engineering-technical/bioengineering | engineering-technical/biometrics | engineering-technical/business-intelligence | engineering-technical/chemical-engineering | engineering-technical/cloud-mobility | engineering-technical/data-science | engineering-technical/devops | engineering-technical/digital-transformation | engineering-technical/emerging-technology-innovation | engineering-technical/engineering-technical | engineering-technical/industrial-engineering | engineering-technical/mechanic | engineering-technical/mobile-development | engineering-technical/project-management | engineering-technical/research-development | engineering-technical/scrum-master-agile-coach | engineering-technical/software-development | engineering-technical/support-technical-services | engineering-technical/technician | engineering-technical/technology-operations | engineering-technical/test-quality-assurance | engineering-technical/ui-ux | engineering-technical/web-development | design | design/all-design | design/product-ui-ux-design | design/graphic-design | education | education/teacher | education/principal | education/superintendent | education/professor | finance | finance/accounting | finance/finance | finance/financial-planning-analysis | finance/financial-reporting | finance/financial-strategy | finance/financial-systems | finance/internal-audit-control | finance/investor-relations | finance/mergers-acquisitions | finance/real-estate-finance | finance/financial-risk | finance/shared-services | finance/sourcing-procurement | finance/tax | finance/treasury | human-resources | human-resources/compensation-benefits | human-resources/culture-diversity-inclusion | human-resources/employee-labor-relations | human-resources/health-safety | human-resources/human-resource-information-system | human-resources/human-resources | human-resources/hr-business-partner | human-resources/learning-development | human-resources/organizational-development | human-resources/recruiting-talent-acquisition | human-resources/talent-management | human-resources/workforce-management | human-resources/people-operations | information-technology | information-technology/application-development | information-technology/business-service-management-itsm | information-technology/collaboration-web-app | information-technology/data-center | information-technology/data-warehouse | information-technology/database-administration | information-technology/ecommerce-development | information-technology/enterprise-architecture | information-technology/help-desk-desktop-services | information-technology/hr-financial-erp-systems | information-technology/information-security | information-technology/information-technology | information-technology/infrastructure | information-technology/it-asset-management | information-technology/it-audit-it-compliance | information-technology/it-operations | information-technology/it-procurement | information-technology/it-strategy | information-technology/it-training | information-technology/networking | information-technology/project-program-management | information-technology/quality-assurance | information-technology/retail-store-systems | information-technology/servers | information-technology/storage-disaster-recovery | information-technology/telecommunications | information-technology/virtualization | legal | legal/acquisitions | legal/compliance | legal/contracts | legal/corporate-secretary | legal/ediscovery | legal/ethics | legal/governance | legal/governmental-affairs-regulatory-law | legal/intellectual-property-patent | legal/labor-employment | legal/lawyer-attorney | legal/legal | legal/legal-counsel | legal/legal-operations | legal/litigation | legal/privacy | marketing | marketing/advertising | marketing/brand-management | marketing/content-marketing | marketing/customer-experience | marketing/customer-marketing | marketing/demand-generation | marketing/digital-marketing | marketing/ecommerce-marketing | marketing/event-marketing | marketing/field-marketing | marketing/lead-generation | marketing/marketing | marketing/marketing-analytics-insights | marketing/marketing-communications | marketing/marketing-operations | marketing/product-marketing | marketing/public-relations | marketing/search-engine-optimization-pay-per-click | marketing/social-media-marketing | marketing/strategic-communications | marketing/technical-marketing | medical-health | medical-health/anesthesiology | medical-health/chiropractics | medical-health/clinical-systems | medical-health/dentistry | medical-health/dermatology | medical-health/doctors-physicians | medical-health/epidemiology | medical-health/first-responder | medical-health/infectious-disease | medical-health/medical-administration | medical-health/medical-education-training | medical-health/medical-research | medical-health/medicine | medical-health/neurology | medical-health/nursing | medical-health/nutrition-dietetics | medical-health/obstetrics-gynecology | medical-health/oncology | medical-health/opthalmology | medical-health/optometry | medical-health/orthopedics | medical-health/pathology | medical-health/pediatrics | medical-health/pharmacy | medical-health/physical-therapy | medical-health/psychiatry | medical-health/psychology | medical-health/public-health | medical-health/radiology | medical-health/social-work | operations | operations/call-center | operations/construction | operations/corporate-strategy | operations/customer-service-support | operations/enterprise-resource-planning | operations/facilities-management | operations/leasing | operations/logistics | operations/office-operations | operations/operations | operations/physical-security | operations/project-development | operations/quality-management | operations/real-estate | operations/safety | operations/store-operations | operations/supply-chain | sales | sales/account-management | sales/business-development | sales/channel-sales | sales/customer-retention-development | sales/customer-success | sales/field-outside-sales | sales/inside-sales | sales/partnerships | sales/revenue-operations | sales/sales | sales/sales-enablement | sales/sales-engineering | sales/sales-operations | sales/sales-training | consulting | consulting/consultant | string | null,
   company?: {
     id: string,
     name?: string | null,
@@ -2274,9 +2292,9 @@ await corsair.companyenrich.api.people.findEmail({ personId: 101, domain: 'acme.
 |------|------|----------|-------------|
 | `personId` | `number` | Yes | — |
 | `domain` | `string` | Yes | — |
-| `status` | `found \| not-found \| unavailable \| pending` | Yes | — |
+| `status` | `found \| not-found \| unavailable \| pending \| string` | Yes | — |
 | `email` | `string \| null` | No | — |
-| `certainty` | `unknown \| medium \| high \| very-high \| null` | No | — |
+| `certainty` | `unknown \| medium \| high \| very-high \| string \| null` | No | — |
 
 
 
@@ -2286,7 +2304,7 @@ await corsair.companyenrich.api.people.findEmail({ personId: 101, domain: 'acme.
 
 `people.get`
 
-Get a stored person by their CompanyEnrich ID. Costs 2 credits plus 1 for the education expansion.
+Get a stored person by their CompanyEnrich ID. Costs 2 credits, plus 1 for the education expansion and 1 per unique company for the company expansion.
 
 **Risk:** `read`
 
@@ -2302,7 +2320,7 @@ await corsair.companyenrich.api.people.get({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `personId` | `number` | Yes | — |
-| `expand` | `education[]` | No | — |
+| `expand` | `(education \| company)[]` | No | — |
 
 
 
@@ -2316,8 +2334,8 @@ await corsair.companyenrich.api.people.get({
 | `lastName` | `string \| null` | No | — |
 | `imageUrl` | `string \| null` | No | — |
 | `position` | `string \| null` | No | — |
-| `seniority` | `owner \| founder \| c-suite \| partner \| vp \| head \| director \| manager \| senior \| entry \| intern \| null` | No | — |
-| `department` | `c-suite \| c-suite/executive \| c-suite/finance-executive \| c-suite/founder \| c-suite/human-resources-executive \| c-suite/information-technology-executive \| c-suite/legal-executive \| c-suite/marketing-executive \| c-suite/medical-health-executive \| c-suite/operations-executive \| c-suite/sales-executive \| product-management \| product-management/product-development \| product-management/product-management \| engineering-technical \| engineering-technical/artificial-intelligence-machine-learning \| engineering-technical/bioengineering \| engineering-technical/biometrics \| engineering-technical/business-intelligence \| engineering-technical/chemical-engineering \| engineering-technical/cloud-mobility \| engineering-technical/data-science \| engineering-technical/devops \| engineering-technical/digital-transformation \| engineering-technical/emerging-technology-innovation \| engineering-technical/engineering-technical \| engineering-technical/industrial-engineering \| engineering-technical/mechanic \| engineering-technical/mobile-development \| engineering-technical/project-management \| engineering-technical/research-development \| engineering-technical/scrum-master-agile-coach \| engineering-technical/software-development \| engineering-technical/support-technical-services \| engineering-technical/technician \| engineering-technical/technology-operations \| engineering-technical/test-quality-assurance \| engineering-technical/ui-ux \| engineering-technical/web-development \| design \| design/all-design \| design/product-ui-ux-design \| design/graphic-design \| education \| education/teacher \| education/principal \| education/superintendent \| education/professor \| finance \| finance/accounting \| finance/finance \| finance/financial-planning-analysis \| finance/financial-reporting \| finance/financial-strategy \| finance/financial-systems \| finance/internal-audit-control \| finance/investor-relations \| finance/mergers-acquisitions \| finance/real-estate-finance \| finance/financial-risk \| finance/shared-services \| finance/sourcing-procurement \| finance/tax \| finance/treasury \| human-resources \| human-resources/compensation-benefits \| human-resources/culture-diversity-inclusion \| human-resources/employee-labor-relations \| human-resources/health-safety \| human-resources/human-resource-information-system \| human-resources/human-resources \| human-resources/hr-business-partner \| human-resources/learning-development \| human-resources/organizational-development \| human-resources/recruiting-talent-acquisition \| human-resources/talent-management \| human-resources/workforce-management \| human-resources/people-operations \| information-technology \| information-technology/application-development \| information-technology/business-service-management-itsm \| information-technology/collaboration-web-app \| information-technology/data-center \| information-technology/data-warehouse \| information-technology/database-administration \| information-technology/ecommerce-development \| information-technology/enterprise-architecture \| information-technology/help-desk-desktop-services \| information-technology/hr-financial-erp-systems \| information-technology/information-security \| information-technology/information-technology \| information-technology/infrastructure \| information-technology/it-asset-management \| information-technology/it-audit-it-compliance \| information-technology/it-operations \| information-technology/it-procurement \| information-technology/it-strategy \| information-technology/it-training \| information-technology/networking \| information-technology/project-program-management \| information-technology/quality-assurance \| information-technology/retail-store-systems \| information-technology/servers \| information-technology/storage-disaster-recovery \| information-technology/telecommunications \| information-technology/virtualization \| legal \| legal/acquisitions \| legal/compliance \| legal/contracts \| legal/corporate-secretary \| legal/ediscovery \| legal/ethics \| legal/governance \| legal/governmental-affairs-regulatory-law \| legal/intellectual-property-patent \| legal/labor-employment \| legal/lawyer-attorney \| legal/legal \| legal/legal-counsel \| legal/legal-operations \| legal/litigation \| legal/privacy \| marketing \| marketing/advertising \| marketing/brand-management \| marketing/content-marketing \| marketing/customer-experience \| marketing/customer-marketing \| marketing/demand-generation \| marketing/digital-marketing \| marketing/ecommerce-marketing \| marketing/event-marketing \| marketing/field-marketing \| marketing/lead-generation \| marketing/marketing \| marketing/marketing-analytics-insights \| marketing/marketing-communications \| marketing/marketing-operations \| marketing/product-marketing \| marketing/public-relations \| marketing/search-engine-optimization-pay-per-click \| marketing/social-media-marketing \| marketing/strategic-communications \| marketing/technical-marketing \| medical-health \| medical-health/anesthesiology \| medical-health/chiropractics \| medical-health/clinical-systems \| medical-health/dentistry \| medical-health/dermatology \| medical-health/doctors-physicians \| medical-health/epidemiology \| medical-health/first-responder \| medical-health/infectious-disease \| medical-health/medical-administration \| medical-health/medical-education-training \| medical-health/medical-research \| medical-health/medicine \| medical-health/neurology \| medical-health/nursing \| medical-health/nutrition-dietetics \| medical-health/obstetrics-gynecology \| medical-health/oncology \| medical-health/opthalmology \| medical-health/optometry \| medical-health/orthopedics \| medical-health/pathology \| medical-health/pediatrics \| medical-health/pharmacy \| medical-health/physical-therapy \| medical-health/psychiatry \| medical-health/psychology \| medical-health/public-health \| medical-health/radiology \| medical-health/social-work \| operations \| operations/call-center \| operations/construction \| operations/corporate-strategy \| operations/customer-service-support \| operations/enterprise-resource-planning \| operations/facilities-management \| operations/leasing \| operations/logistics \| operations/office-operations \| operations/operations \| operations/physical-security \| operations/project-development \| operations/quality-management \| operations/real-estate \| operations/safety \| operations/store-operations \| operations/supply-chain \| sales \| sales/account-management \| sales/business-development \| sales/channel-sales \| sales/customer-retention-development \| sales/customer-success \| sales/field-outside-sales \| sales/inside-sales \| sales/partnerships \| sales/revenue-operations \| sales/sales \| sales/sales-enablement \| sales/sales-engineering \| sales/sales-operations \| sales/sales-training \| consulting \| consulting/consultant \| null` | No | — |
+| `seniority` | `owner \| founder \| c-suite \| partner \| vp \| head \| director \| manager \| senior \| entry \| intern \| string \| null` | No | — |
+| `department` | `c-suite \| c-suite/executive \| c-suite/finance-executive \| c-suite/founder \| c-suite/human-resources-executive \| c-suite/information-technology-executive \| c-suite/legal-executive \| c-suite/marketing-executive \| c-suite/medical-health-executive \| c-suite/operations-executive \| c-suite/sales-executive \| product-management \| product-management/product-development \| product-management/product-management \| engineering-technical \| engineering-technical/artificial-intelligence-machine-learning \| engineering-technical/bioengineering \| engineering-technical/biometrics \| engineering-technical/business-intelligence \| engineering-technical/chemical-engineering \| engineering-technical/cloud-mobility \| engineering-technical/data-science \| engineering-technical/devops \| engineering-technical/digital-transformation \| engineering-technical/emerging-technology-innovation \| engineering-technical/engineering-technical \| engineering-technical/industrial-engineering \| engineering-technical/mechanic \| engineering-technical/mobile-development \| engineering-technical/project-management \| engineering-technical/research-development \| engineering-technical/scrum-master-agile-coach \| engineering-technical/software-development \| engineering-technical/support-technical-services \| engineering-technical/technician \| engineering-technical/technology-operations \| engineering-technical/test-quality-assurance \| engineering-technical/ui-ux \| engineering-technical/web-development \| design \| design/all-design \| design/product-ui-ux-design \| design/graphic-design \| education \| education/teacher \| education/principal \| education/superintendent \| education/professor \| finance \| finance/accounting \| finance/finance \| finance/financial-planning-analysis \| finance/financial-reporting \| finance/financial-strategy \| finance/financial-systems \| finance/internal-audit-control \| finance/investor-relations \| finance/mergers-acquisitions \| finance/real-estate-finance \| finance/financial-risk \| finance/shared-services \| finance/sourcing-procurement \| finance/tax \| finance/treasury \| human-resources \| human-resources/compensation-benefits \| human-resources/culture-diversity-inclusion \| human-resources/employee-labor-relations \| human-resources/health-safety \| human-resources/human-resource-information-system \| human-resources/human-resources \| human-resources/hr-business-partner \| human-resources/learning-development \| human-resources/organizational-development \| human-resources/recruiting-talent-acquisition \| human-resources/talent-management \| human-resources/workforce-management \| human-resources/people-operations \| information-technology \| information-technology/application-development \| information-technology/business-service-management-itsm \| information-technology/collaboration-web-app \| information-technology/data-center \| information-technology/data-warehouse \| information-technology/database-administration \| information-technology/ecommerce-development \| information-technology/enterprise-architecture \| information-technology/help-desk-desktop-services \| information-technology/hr-financial-erp-systems \| information-technology/information-security \| information-technology/information-technology \| information-technology/infrastructure \| information-technology/it-asset-management \| information-technology/it-audit-it-compliance \| information-technology/it-operations \| information-technology/it-procurement \| information-technology/it-strategy \| information-technology/it-training \| information-technology/networking \| information-technology/project-program-management \| information-technology/quality-assurance \| information-technology/retail-store-systems \| information-technology/servers \| information-technology/storage-disaster-recovery \| information-technology/telecommunications \| information-technology/virtualization \| legal \| legal/acquisitions \| legal/compliance \| legal/contracts \| legal/corporate-secretary \| legal/ediscovery \| legal/ethics \| legal/governance \| legal/governmental-affairs-regulatory-law \| legal/intellectual-property-patent \| legal/labor-employment \| legal/lawyer-attorney \| legal/legal \| legal/legal-counsel \| legal/legal-operations \| legal/litigation \| legal/privacy \| marketing \| marketing/advertising \| marketing/brand-management \| marketing/content-marketing \| marketing/customer-experience \| marketing/customer-marketing \| marketing/demand-generation \| marketing/digital-marketing \| marketing/ecommerce-marketing \| marketing/event-marketing \| marketing/field-marketing \| marketing/lead-generation \| marketing/marketing \| marketing/marketing-analytics-insights \| marketing/marketing-communications \| marketing/marketing-operations \| marketing/product-marketing \| marketing/public-relations \| marketing/search-engine-optimization-pay-per-click \| marketing/social-media-marketing \| marketing/strategic-communications \| marketing/technical-marketing \| medical-health \| medical-health/anesthesiology \| medical-health/chiropractics \| medical-health/clinical-systems \| medical-health/dentistry \| medical-health/dermatology \| medical-health/doctors-physicians \| medical-health/epidemiology \| medical-health/first-responder \| medical-health/infectious-disease \| medical-health/medical-administration \| medical-health/medical-education-training \| medical-health/medical-research \| medical-health/medicine \| medical-health/neurology \| medical-health/nursing \| medical-health/nutrition-dietetics \| medical-health/obstetrics-gynecology \| medical-health/oncology \| medical-health/opthalmology \| medical-health/optometry \| medical-health/orthopedics \| medical-health/pathology \| medical-health/pediatrics \| medical-health/pharmacy \| medical-health/physical-therapy \| medical-health/psychiatry \| medical-health/psychology \| medical-health/public-health \| medical-health/radiology \| medical-health/social-work \| operations \| operations/call-center \| operations/construction \| operations/corporate-strategy \| operations/customer-service-support \| operations/enterprise-resource-planning \| operations/facilities-management \| operations/leasing \| operations/logistics \| operations/office-operations \| operations/operations \| operations/physical-security \| operations/project-development \| operations/quality-management \| operations/real-estate \| operations/safety \| operations/store-operations \| operations/supply-chain \| sales \| sales/account-management \| sales/business-development \| sales/channel-sales \| sales/customer-retention-development \| sales/customer-success \| sales/field-outside-sales \| sales/inside-sales \| sales/partnerships \| sales/revenue-operations \| sales/sales \| sales/sales-enablement \| sales/sales-engineering \| sales/sales-operations \| sales/sales-training \| consulting \| consulting/consultant \| string \| null` | No | — |
 | `location` | `object \| null` | No | — |
 | `socials` | `object` | Yes | — |
 | `experiences` | `object[]` | Yes | — |
@@ -2356,8 +2374,8 @@ await corsair.companyenrich.api.people.get({
   isCurrent: boolean,
   isMatched: boolean,
   position?: string | null,
-  seniority?: owner | founder | c-suite | partner | vp | head | director | manager | senior | entry | intern | null,
-  department?: c-suite | c-suite/executive | c-suite/finance-executive | c-suite/founder | c-suite/human-resources-executive | c-suite/information-technology-executive | c-suite/legal-executive | c-suite/marketing-executive | c-suite/medical-health-executive | c-suite/operations-executive | c-suite/sales-executive | product-management | product-management/product-development | product-management/product-management | engineering-technical | engineering-technical/artificial-intelligence-machine-learning | engineering-technical/bioengineering | engineering-technical/biometrics | engineering-technical/business-intelligence | engineering-technical/chemical-engineering | engineering-technical/cloud-mobility | engineering-technical/data-science | engineering-technical/devops | engineering-technical/digital-transformation | engineering-technical/emerging-technology-innovation | engineering-technical/engineering-technical | engineering-technical/industrial-engineering | engineering-technical/mechanic | engineering-technical/mobile-development | engineering-technical/project-management | engineering-technical/research-development | engineering-technical/scrum-master-agile-coach | engineering-technical/software-development | engineering-technical/support-technical-services | engineering-technical/technician | engineering-technical/technology-operations | engineering-technical/test-quality-assurance | engineering-technical/ui-ux | engineering-technical/web-development | design | design/all-design | design/product-ui-ux-design | design/graphic-design | education | education/teacher | education/principal | education/superintendent | education/professor | finance | finance/accounting | finance/finance | finance/financial-planning-analysis | finance/financial-reporting | finance/financial-strategy | finance/financial-systems | finance/internal-audit-control | finance/investor-relations | finance/mergers-acquisitions | finance/real-estate-finance | finance/financial-risk | finance/shared-services | finance/sourcing-procurement | finance/tax | finance/treasury | human-resources | human-resources/compensation-benefits | human-resources/culture-diversity-inclusion | human-resources/employee-labor-relations | human-resources/health-safety | human-resources/human-resource-information-system | human-resources/human-resources | human-resources/hr-business-partner | human-resources/learning-development | human-resources/organizational-development | human-resources/recruiting-talent-acquisition | human-resources/talent-management | human-resources/workforce-management | human-resources/people-operations | information-technology | information-technology/application-development | information-technology/business-service-management-itsm | information-technology/collaboration-web-app | information-technology/data-center | information-technology/data-warehouse | information-technology/database-administration | information-technology/ecommerce-development | information-technology/enterprise-architecture | information-technology/help-desk-desktop-services | information-technology/hr-financial-erp-systems | information-technology/information-security | information-technology/information-technology | information-technology/infrastructure | information-technology/it-asset-management | information-technology/it-audit-it-compliance | information-technology/it-operations | information-technology/it-procurement | information-technology/it-strategy | information-technology/it-training | information-technology/networking | information-technology/project-program-management | information-technology/quality-assurance | information-technology/retail-store-systems | information-technology/servers | information-technology/storage-disaster-recovery | information-technology/telecommunications | information-technology/virtualization | legal | legal/acquisitions | legal/compliance | legal/contracts | legal/corporate-secretary | legal/ediscovery | legal/ethics | legal/governance | legal/governmental-affairs-regulatory-law | legal/intellectual-property-patent | legal/labor-employment | legal/lawyer-attorney | legal/legal | legal/legal-counsel | legal/legal-operations | legal/litigation | legal/privacy | marketing | marketing/advertising | marketing/brand-management | marketing/content-marketing | marketing/customer-experience | marketing/customer-marketing | marketing/demand-generation | marketing/digital-marketing | marketing/ecommerce-marketing | marketing/event-marketing | marketing/field-marketing | marketing/lead-generation | marketing/marketing | marketing/marketing-analytics-insights | marketing/marketing-communications | marketing/marketing-operations | marketing/product-marketing | marketing/public-relations | marketing/search-engine-optimization-pay-per-click | marketing/social-media-marketing | marketing/strategic-communications | marketing/technical-marketing | medical-health | medical-health/anesthesiology | medical-health/chiropractics | medical-health/clinical-systems | medical-health/dentistry | medical-health/dermatology | medical-health/doctors-physicians | medical-health/epidemiology | medical-health/first-responder | medical-health/infectious-disease | medical-health/medical-administration | medical-health/medical-education-training | medical-health/medical-research | medical-health/medicine | medical-health/neurology | medical-health/nursing | medical-health/nutrition-dietetics | medical-health/obstetrics-gynecology | medical-health/oncology | medical-health/opthalmology | medical-health/optometry | medical-health/orthopedics | medical-health/pathology | medical-health/pediatrics | medical-health/pharmacy | medical-health/physical-therapy | medical-health/psychiatry | medical-health/psychology | medical-health/public-health | medical-health/radiology | medical-health/social-work | operations | operations/call-center | operations/construction | operations/corporate-strategy | operations/customer-service-support | operations/enterprise-resource-planning | operations/facilities-management | operations/leasing | operations/logistics | operations/office-operations | operations/operations | operations/physical-security | operations/project-development | operations/quality-management | operations/real-estate | operations/safety | operations/store-operations | operations/supply-chain | sales | sales/account-management | sales/business-development | sales/channel-sales | sales/customer-retention-development | sales/customer-success | sales/field-outside-sales | sales/inside-sales | sales/partnerships | sales/revenue-operations | sales/sales | sales/sales-enablement | sales/sales-engineering | sales/sales-operations | sales/sales-training | consulting | consulting/consultant | null,
+  seniority?: owner | founder | c-suite | partner | vp | head | director | manager | senior | entry | intern | string | null,
+  department?: c-suite | c-suite/executive | c-suite/finance-executive | c-suite/founder | c-suite/human-resources-executive | c-suite/information-technology-executive | c-suite/legal-executive | c-suite/marketing-executive | c-suite/medical-health-executive | c-suite/operations-executive | c-suite/sales-executive | product-management | product-management/product-development | product-management/product-management | engineering-technical | engineering-technical/artificial-intelligence-machine-learning | engineering-technical/bioengineering | engineering-technical/biometrics | engineering-technical/business-intelligence | engineering-technical/chemical-engineering | engineering-technical/cloud-mobility | engineering-technical/data-science | engineering-technical/devops | engineering-technical/digital-transformation | engineering-technical/emerging-technology-innovation | engineering-technical/engineering-technical | engineering-technical/industrial-engineering | engineering-technical/mechanic | engineering-technical/mobile-development | engineering-technical/project-management | engineering-technical/research-development | engineering-technical/scrum-master-agile-coach | engineering-technical/software-development | engineering-technical/support-technical-services | engineering-technical/technician | engineering-technical/technology-operations | engineering-technical/test-quality-assurance | engineering-technical/ui-ux | engineering-technical/web-development | design | design/all-design | design/product-ui-ux-design | design/graphic-design | education | education/teacher | education/principal | education/superintendent | education/professor | finance | finance/accounting | finance/finance | finance/financial-planning-analysis | finance/financial-reporting | finance/financial-strategy | finance/financial-systems | finance/internal-audit-control | finance/investor-relations | finance/mergers-acquisitions | finance/real-estate-finance | finance/financial-risk | finance/shared-services | finance/sourcing-procurement | finance/tax | finance/treasury | human-resources | human-resources/compensation-benefits | human-resources/culture-diversity-inclusion | human-resources/employee-labor-relations | human-resources/health-safety | human-resources/human-resource-information-system | human-resources/human-resources | human-resources/hr-business-partner | human-resources/learning-development | human-resources/organizational-development | human-resources/recruiting-talent-acquisition | human-resources/talent-management | human-resources/workforce-management | human-resources/people-operations | information-technology | information-technology/application-development | information-technology/business-service-management-itsm | information-technology/collaboration-web-app | information-technology/data-center | information-technology/data-warehouse | information-technology/database-administration | information-technology/ecommerce-development | information-technology/enterprise-architecture | information-technology/help-desk-desktop-services | information-technology/hr-financial-erp-systems | information-technology/information-security | information-technology/information-technology | information-technology/infrastructure | information-technology/it-asset-management | information-technology/it-audit-it-compliance | information-technology/it-operations | information-technology/it-procurement | information-technology/it-strategy | information-technology/it-training | information-technology/networking | information-technology/project-program-management | information-technology/quality-assurance | information-technology/retail-store-systems | information-technology/servers | information-technology/storage-disaster-recovery | information-technology/telecommunications | information-technology/virtualization | legal | legal/acquisitions | legal/compliance | legal/contracts | legal/corporate-secretary | legal/ediscovery | legal/ethics | legal/governance | legal/governmental-affairs-regulatory-law | legal/intellectual-property-patent | legal/labor-employment | legal/lawyer-attorney | legal/legal | legal/legal-counsel | legal/legal-operations | legal/litigation | legal/privacy | marketing | marketing/advertising | marketing/brand-management | marketing/content-marketing | marketing/customer-experience | marketing/customer-marketing | marketing/demand-generation | marketing/digital-marketing | marketing/ecommerce-marketing | marketing/event-marketing | marketing/field-marketing | marketing/lead-generation | marketing/marketing | marketing/marketing-analytics-insights | marketing/marketing-communications | marketing/marketing-operations | marketing/product-marketing | marketing/public-relations | marketing/search-engine-optimization-pay-per-click | marketing/social-media-marketing | marketing/strategic-communications | marketing/technical-marketing | medical-health | medical-health/anesthesiology | medical-health/chiropractics | medical-health/clinical-systems | medical-health/dentistry | medical-health/dermatology | medical-health/doctors-physicians | medical-health/epidemiology | medical-health/first-responder | medical-health/infectious-disease | medical-health/medical-administration | medical-health/medical-education-training | medical-health/medical-research | medical-health/medicine | medical-health/neurology | medical-health/nursing | medical-health/nutrition-dietetics | medical-health/obstetrics-gynecology | medical-health/oncology | medical-health/opthalmology | medical-health/optometry | medical-health/orthopedics | medical-health/pathology | medical-health/pediatrics | medical-health/pharmacy | medical-health/physical-therapy | medical-health/psychiatry | medical-health/psychology | medical-health/public-health | medical-health/radiology | medical-health/social-work | operations | operations/call-center | operations/construction | operations/corporate-strategy | operations/customer-service-support | operations/enterprise-resource-planning | operations/facilities-management | operations/leasing | operations/logistics | operations/office-operations | operations/operations | operations/physical-security | operations/project-development | operations/quality-management | operations/real-estate | operations/safety | operations/store-operations | operations/supply-chain | sales | sales/account-management | sales/business-development | sales/channel-sales | sales/customer-retention-development | sales/customer-success | sales/field-outside-sales | sales/inside-sales | sales/partnerships | sales/revenue-operations | sales/sales | sales/sales-enablement | sales/sales-engineering | sales/sales-operations | sales/sales-training | consulting | consulting/consultant | string | null,
   company?: {
     id: string,
     name?: string | null,
@@ -2399,7 +2417,7 @@ await corsair.companyenrich.api.people.get({
 
 `people.search`
 
-Search people by person filters and an optional company query, with cursor pagination. Costs 2 credits per person.
+Search people by person filters, a natural-language query and an optional company query, with cursor pagination. Costs 2 credits per person.
 
 **Risk:** `read`
 
@@ -2416,8 +2434,9 @@ await corsair.companyenrich.api.people.search({
 |------|------|----------|-------------|
 | `pageSize` | `number` | No | — |
 | `cursor` | `string` | No | — |
-| `expand` | `education[]` | No | — |
+| `expand` | `(education \| company)[]` | No | — |
 | `filter` | `object` | No | — |
+| `semantic` | `object` | No | — |
 | `company` | `object` | No | — |
 
 <AccordionGroup>
@@ -2425,7 +2444,10 @@ await corsair.companyenrich.api.people.search({
 
 ```ts
 {
-  query?: string,
+  query?: string | string[] | {
+    in?: string[],
+    notIn?: string[]
+  },
   companyId?: string | string[] | {
     in?: string[],
     notIn?: string[]
@@ -2507,12 +2529,24 @@ await corsair.companyenrich.api.people.search({
 ```
 </Accordion>
 
+<Accordion title="semantic full type">
+
+```ts
+{
+  query: string
+}
+```
+</Accordion>
+
 <Accordion title="company full type">
 
 ```ts
 {
   filter?: {
-    query?: string,
+    query?: string | string[] | {
+      in?: string[],
+      notIn?: string[]
+    },
     id?: string | string[] | {
       in?: string[],
       notIn?: string[]
@@ -2579,10 +2613,10 @@ await corsair.companyenrich.api.people.search({
       notIn?: string[],
       all?: string[]
     },
-    categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | {
-      in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-      notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-      all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[]
+    categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[] | {
+      in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+      notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+      all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[]
     },
     foundedYear?: {
       min?: number,
@@ -2627,6 +2661,7 @@ await corsair.companyenrich.api.people.search({
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
 | `nextCursor` | `string \| null` | No | — |
+| `interpretation` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -2639,8 +2674,8 @@ await corsair.companyenrich.api.people.search({
   lastName?: string | null,
   imageUrl?: string | null,
   position?: string | null,
-  seniority?: owner | founder | c-suite | partner | vp | head | director | manager | senior | entry | intern | null,
-  department?: c-suite | c-suite/executive | c-suite/finance-executive | c-suite/founder | c-suite/human-resources-executive | c-suite/information-technology-executive | c-suite/legal-executive | c-suite/marketing-executive | c-suite/medical-health-executive | c-suite/operations-executive | c-suite/sales-executive | product-management | product-management/product-development | product-management/product-management | engineering-technical | engineering-technical/artificial-intelligence-machine-learning | engineering-technical/bioengineering | engineering-technical/biometrics | engineering-technical/business-intelligence | engineering-technical/chemical-engineering | engineering-technical/cloud-mobility | engineering-technical/data-science | engineering-technical/devops | engineering-technical/digital-transformation | engineering-technical/emerging-technology-innovation | engineering-technical/engineering-technical | engineering-technical/industrial-engineering | engineering-technical/mechanic | engineering-technical/mobile-development | engineering-technical/project-management | engineering-technical/research-development | engineering-technical/scrum-master-agile-coach | engineering-technical/software-development | engineering-technical/support-technical-services | engineering-technical/technician | engineering-technical/technology-operations | engineering-technical/test-quality-assurance | engineering-technical/ui-ux | engineering-technical/web-development | design | design/all-design | design/product-ui-ux-design | design/graphic-design | education | education/teacher | education/principal | education/superintendent | education/professor | finance | finance/accounting | finance/finance | finance/financial-planning-analysis | finance/financial-reporting | finance/financial-strategy | finance/financial-systems | finance/internal-audit-control | finance/investor-relations | finance/mergers-acquisitions | finance/real-estate-finance | finance/financial-risk | finance/shared-services | finance/sourcing-procurement | finance/tax | finance/treasury | human-resources | human-resources/compensation-benefits | human-resources/culture-diversity-inclusion | human-resources/employee-labor-relations | human-resources/health-safety | human-resources/human-resource-information-system | human-resources/human-resources | human-resources/hr-business-partner | human-resources/learning-development | human-resources/organizational-development | human-resources/recruiting-talent-acquisition | human-resources/talent-management | human-resources/workforce-management | human-resources/people-operations | information-technology | information-technology/application-development | information-technology/business-service-management-itsm | information-technology/collaboration-web-app | information-technology/data-center | information-technology/data-warehouse | information-technology/database-administration | information-technology/ecommerce-development | information-technology/enterprise-architecture | information-technology/help-desk-desktop-services | information-technology/hr-financial-erp-systems | information-technology/information-security | information-technology/information-technology | information-technology/infrastructure | information-technology/it-asset-management | information-technology/it-audit-it-compliance | information-technology/it-operations | information-technology/it-procurement | information-technology/it-strategy | information-technology/it-training | information-technology/networking | information-technology/project-program-management | information-technology/quality-assurance | information-technology/retail-store-systems | information-technology/servers | information-technology/storage-disaster-recovery | information-technology/telecommunications | information-technology/virtualization | legal | legal/acquisitions | legal/compliance | legal/contracts | legal/corporate-secretary | legal/ediscovery | legal/ethics | legal/governance | legal/governmental-affairs-regulatory-law | legal/intellectual-property-patent | legal/labor-employment | legal/lawyer-attorney | legal/legal | legal/legal-counsel | legal/legal-operations | legal/litigation | legal/privacy | marketing | marketing/advertising | marketing/brand-management | marketing/content-marketing | marketing/customer-experience | marketing/customer-marketing | marketing/demand-generation | marketing/digital-marketing | marketing/ecommerce-marketing | marketing/event-marketing | marketing/field-marketing | marketing/lead-generation | marketing/marketing | marketing/marketing-analytics-insights | marketing/marketing-communications | marketing/marketing-operations | marketing/product-marketing | marketing/public-relations | marketing/search-engine-optimization-pay-per-click | marketing/social-media-marketing | marketing/strategic-communications | marketing/technical-marketing | medical-health | medical-health/anesthesiology | medical-health/chiropractics | medical-health/clinical-systems | medical-health/dentistry | medical-health/dermatology | medical-health/doctors-physicians | medical-health/epidemiology | medical-health/first-responder | medical-health/infectious-disease | medical-health/medical-administration | medical-health/medical-education-training | medical-health/medical-research | medical-health/medicine | medical-health/neurology | medical-health/nursing | medical-health/nutrition-dietetics | medical-health/obstetrics-gynecology | medical-health/oncology | medical-health/opthalmology | medical-health/optometry | medical-health/orthopedics | medical-health/pathology | medical-health/pediatrics | medical-health/pharmacy | medical-health/physical-therapy | medical-health/psychiatry | medical-health/psychology | medical-health/public-health | medical-health/radiology | medical-health/social-work | operations | operations/call-center | operations/construction | operations/corporate-strategy | operations/customer-service-support | operations/enterprise-resource-planning | operations/facilities-management | operations/leasing | operations/logistics | operations/office-operations | operations/operations | operations/physical-security | operations/project-development | operations/quality-management | operations/real-estate | operations/safety | operations/store-operations | operations/supply-chain | sales | sales/account-management | sales/business-development | sales/channel-sales | sales/customer-retention-development | sales/customer-success | sales/field-outside-sales | sales/inside-sales | sales/partnerships | sales/revenue-operations | sales/sales | sales/sales-enablement | sales/sales-engineering | sales/sales-operations | sales/sales-training | consulting | consulting/consultant | null,
+  seniority?: owner | founder | c-suite | partner | vp | head | director | manager | senior | entry | intern | string | null,
+  department?: c-suite | c-suite/executive | c-suite/finance-executive | c-suite/founder | c-suite/human-resources-executive | c-suite/information-technology-executive | c-suite/legal-executive | c-suite/marketing-executive | c-suite/medical-health-executive | c-suite/operations-executive | c-suite/sales-executive | product-management | product-management/product-development | product-management/product-management | engineering-technical | engineering-technical/artificial-intelligence-machine-learning | engineering-technical/bioengineering | engineering-technical/biometrics | engineering-technical/business-intelligence | engineering-technical/chemical-engineering | engineering-technical/cloud-mobility | engineering-technical/data-science | engineering-technical/devops | engineering-technical/digital-transformation | engineering-technical/emerging-technology-innovation | engineering-technical/engineering-technical | engineering-technical/industrial-engineering | engineering-technical/mechanic | engineering-technical/mobile-development | engineering-technical/project-management | engineering-technical/research-development | engineering-technical/scrum-master-agile-coach | engineering-technical/software-development | engineering-technical/support-technical-services | engineering-technical/technician | engineering-technical/technology-operations | engineering-technical/test-quality-assurance | engineering-technical/ui-ux | engineering-technical/web-development | design | design/all-design | design/product-ui-ux-design | design/graphic-design | education | education/teacher | education/principal | education/superintendent | education/professor | finance | finance/accounting | finance/finance | finance/financial-planning-analysis | finance/financial-reporting | finance/financial-strategy | finance/financial-systems | finance/internal-audit-control | finance/investor-relations | finance/mergers-acquisitions | finance/real-estate-finance | finance/financial-risk | finance/shared-services | finance/sourcing-procurement | finance/tax | finance/treasury | human-resources | human-resources/compensation-benefits | human-resources/culture-diversity-inclusion | human-resources/employee-labor-relations | human-resources/health-safety | human-resources/human-resource-information-system | human-resources/human-resources | human-resources/hr-business-partner | human-resources/learning-development | human-resources/organizational-development | human-resources/recruiting-talent-acquisition | human-resources/talent-management | human-resources/workforce-management | human-resources/people-operations | information-technology | information-technology/application-development | information-technology/business-service-management-itsm | information-technology/collaboration-web-app | information-technology/data-center | information-technology/data-warehouse | information-technology/database-administration | information-technology/ecommerce-development | information-technology/enterprise-architecture | information-technology/help-desk-desktop-services | information-technology/hr-financial-erp-systems | information-technology/information-security | information-technology/information-technology | information-technology/infrastructure | information-technology/it-asset-management | information-technology/it-audit-it-compliance | information-technology/it-operations | information-technology/it-procurement | information-technology/it-strategy | information-technology/it-training | information-technology/networking | information-technology/project-program-management | information-technology/quality-assurance | information-technology/retail-store-systems | information-technology/servers | information-technology/storage-disaster-recovery | information-technology/telecommunications | information-technology/virtualization | legal | legal/acquisitions | legal/compliance | legal/contracts | legal/corporate-secretary | legal/ediscovery | legal/ethics | legal/governance | legal/governmental-affairs-regulatory-law | legal/intellectual-property-patent | legal/labor-employment | legal/lawyer-attorney | legal/legal | legal/legal-counsel | legal/legal-operations | legal/litigation | legal/privacy | marketing | marketing/advertising | marketing/brand-management | marketing/content-marketing | marketing/customer-experience | marketing/customer-marketing | marketing/demand-generation | marketing/digital-marketing | marketing/ecommerce-marketing | marketing/event-marketing | marketing/field-marketing | marketing/lead-generation | marketing/marketing | marketing/marketing-analytics-insights | marketing/marketing-communications | marketing/marketing-operations | marketing/product-marketing | marketing/public-relations | marketing/search-engine-optimization-pay-per-click | marketing/social-media-marketing | marketing/strategic-communications | marketing/technical-marketing | medical-health | medical-health/anesthesiology | medical-health/chiropractics | medical-health/clinical-systems | medical-health/dentistry | medical-health/dermatology | medical-health/doctors-physicians | medical-health/epidemiology | medical-health/first-responder | medical-health/infectious-disease | medical-health/medical-administration | medical-health/medical-education-training | medical-health/medical-research | medical-health/medicine | medical-health/neurology | medical-health/nursing | medical-health/nutrition-dietetics | medical-health/obstetrics-gynecology | medical-health/oncology | medical-health/opthalmology | medical-health/optometry | medical-health/orthopedics | medical-health/pathology | medical-health/pediatrics | medical-health/pharmacy | medical-health/physical-therapy | medical-health/psychiatry | medical-health/psychology | medical-health/public-health | medical-health/radiology | medical-health/social-work | operations | operations/call-center | operations/construction | operations/corporate-strategy | operations/customer-service-support | operations/enterprise-resource-planning | operations/facilities-management | operations/leasing | operations/logistics | operations/office-operations | operations/operations | operations/physical-security | operations/project-development | operations/quality-management | operations/real-estate | operations/safety | operations/store-operations | operations/supply-chain | sales | sales/account-management | sales/business-development | sales/channel-sales | sales/customer-retention-development | sales/customer-success | sales/field-outside-sales | sales/inside-sales | sales/partnerships | sales/revenue-operations | sales/sales | sales/sales-enablement | sales/sales-engineering | sales/sales-operations | sales/sales-training | consulting | consulting/consultant | string | null,
   location?: {
     country?: {
       code: string,
@@ -2657,8 +2692,8 @@ await corsair.companyenrich.api.people.search({
     isCurrent: boolean,
     isMatched: boolean,
     position?: string | null,
-    seniority?: owner | founder | c-suite | partner | vp | head | director | manager | senior | entry | intern | null,
-    department?: c-suite | c-suite/executive | c-suite/finance-executive | c-suite/founder | c-suite/human-resources-executive | c-suite/information-technology-executive | c-suite/legal-executive | c-suite/marketing-executive | c-suite/medical-health-executive | c-suite/operations-executive | c-suite/sales-executive | product-management | product-management/product-development | product-management/product-management | engineering-technical | engineering-technical/artificial-intelligence-machine-learning | engineering-technical/bioengineering | engineering-technical/biometrics | engineering-technical/business-intelligence | engineering-technical/chemical-engineering | engineering-technical/cloud-mobility | engineering-technical/data-science | engineering-technical/devops | engineering-technical/digital-transformation | engineering-technical/emerging-technology-innovation | engineering-technical/engineering-technical | engineering-technical/industrial-engineering | engineering-technical/mechanic | engineering-technical/mobile-development | engineering-technical/project-management | engineering-technical/research-development | engineering-technical/scrum-master-agile-coach | engineering-technical/software-development | engineering-technical/support-technical-services | engineering-technical/technician | engineering-technical/technology-operations | engineering-technical/test-quality-assurance | engineering-technical/ui-ux | engineering-technical/web-development | design | design/all-design | design/product-ui-ux-design | design/graphic-design | education | education/teacher | education/principal | education/superintendent | education/professor | finance | finance/accounting | finance/finance | finance/financial-planning-analysis | finance/financial-reporting | finance/financial-strategy | finance/financial-systems | finance/internal-audit-control | finance/investor-relations | finance/mergers-acquisitions | finance/real-estate-finance | finance/financial-risk | finance/shared-services | finance/sourcing-procurement | finance/tax | finance/treasury | human-resources | human-resources/compensation-benefits | human-resources/culture-diversity-inclusion | human-resources/employee-labor-relations | human-resources/health-safety | human-resources/human-resource-information-system | human-resources/human-resources | human-resources/hr-business-partner | human-resources/learning-development | human-resources/organizational-development | human-resources/recruiting-talent-acquisition | human-resources/talent-management | human-resources/workforce-management | human-resources/people-operations | information-technology | information-technology/application-development | information-technology/business-service-management-itsm | information-technology/collaboration-web-app | information-technology/data-center | information-technology/data-warehouse | information-technology/database-administration | information-technology/ecommerce-development | information-technology/enterprise-architecture | information-technology/help-desk-desktop-services | information-technology/hr-financial-erp-systems | information-technology/information-security | information-technology/information-technology | information-technology/infrastructure | information-technology/it-asset-management | information-technology/it-audit-it-compliance | information-technology/it-operations | information-technology/it-procurement | information-technology/it-strategy | information-technology/it-training | information-technology/networking | information-technology/project-program-management | information-technology/quality-assurance | information-technology/retail-store-systems | information-technology/servers | information-technology/storage-disaster-recovery | information-technology/telecommunications | information-technology/virtualization | legal | legal/acquisitions | legal/compliance | legal/contracts | legal/corporate-secretary | legal/ediscovery | legal/ethics | legal/governance | legal/governmental-affairs-regulatory-law | legal/intellectual-property-patent | legal/labor-employment | legal/lawyer-attorney | legal/legal | legal/legal-counsel | legal/legal-operations | legal/litigation | legal/privacy | marketing | marketing/advertising | marketing/brand-management | marketing/content-marketing | marketing/customer-experience | marketing/customer-marketing | marketing/demand-generation | marketing/digital-marketing | marketing/ecommerce-marketing | marketing/event-marketing | marketing/field-marketing | marketing/lead-generation | marketing/marketing | marketing/marketing-analytics-insights | marketing/marketing-communications | marketing/marketing-operations | marketing/product-marketing | marketing/public-relations | marketing/search-engine-optimization-pay-per-click | marketing/social-media-marketing | marketing/strategic-communications | marketing/technical-marketing | medical-health | medical-health/anesthesiology | medical-health/chiropractics | medical-health/clinical-systems | medical-health/dentistry | medical-health/dermatology | medical-health/doctors-physicians | medical-health/epidemiology | medical-health/first-responder | medical-health/infectious-disease | medical-health/medical-administration | medical-health/medical-education-training | medical-health/medical-research | medical-health/medicine | medical-health/neurology | medical-health/nursing | medical-health/nutrition-dietetics | medical-health/obstetrics-gynecology | medical-health/oncology | medical-health/opthalmology | medical-health/optometry | medical-health/orthopedics | medical-health/pathology | medical-health/pediatrics | medical-health/pharmacy | medical-health/physical-therapy | medical-health/psychiatry | medical-health/psychology | medical-health/public-health | medical-health/radiology | medical-health/social-work | operations | operations/call-center | operations/construction | operations/corporate-strategy | operations/customer-service-support | operations/enterprise-resource-planning | operations/facilities-management | operations/leasing | operations/logistics | operations/office-operations | operations/operations | operations/physical-security | operations/project-development | operations/quality-management | operations/real-estate | operations/safety | operations/store-operations | operations/supply-chain | sales | sales/account-management | sales/business-development | sales/channel-sales | sales/customer-retention-development | sales/customer-success | sales/field-outside-sales | sales/inside-sales | sales/partnerships | sales/revenue-operations | sales/sales | sales/sales-enablement | sales/sales-engineering | sales/sales-operations | sales/sales-training | consulting | consulting/consultant | null,
+    seniority?: owner | founder | c-suite | partner | vp | head | director | manager | senior | entry | intern | string | null,
+    department?: c-suite | c-suite/executive | c-suite/finance-executive | c-suite/founder | c-suite/human-resources-executive | c-suite/information-technology-executive | c-suite/legal-executive | c-suite/marketing-executive | c-suite/medical-health-executive | c-suite/operations-executive | c-suite/sales-executive | product-management | product-management/product-development | product-management/product-management | engineering-technical | engineering-technical/artificial-intelligence-machine-learning | engineering-technical/bioengineering | engineering-technical/biometrics | engineering-technical/business-intelligence | engineering-technical/chemical-engineering | engineering-technical/cloud-mobility | engineering-technical/data-science | engineering-technical/devops | engineering-technical/digital-transformation | engineering-technical/emerging-technology-innovation | engineering-technical/engineering-technical | engineering-technical/industrial-engineering | engineering-technical/mechanic | engineering-technical/mobile-development | engineering-technical/project-management | engineering-technical/research-development | engineering-technical/scrum-master-agile-coach | engineering-technical/software-development | engineering-technical/support-technical-services | engineering-technical/technician | engineering-technical/technology-operations | engineering-technical/test-quality-assurance | engineering-technical/ui-ux | engineering-technical/web-development | design | design/all-design | design/product-ui-ux-design | design/graphic-design | education | education/teacher | education/principal | education/superintendent | education/professor | finance | finance/accounting | finance/finance | finance/financial-planning-analysis | finance/financial-reporting | finance/financial-strategy | finance/financial-systems | finance/internal-audit-control | finance/investor-relations | finance/mergers-acquisitions | finance/real-estate-finance | finance/financial-risk | finance/shared-services | finance/sourcing-procurement | finance/tax | finance/treasury | human-resources | human-resources/compensation-benefits | human-resources/culture-diversity-inclusion | human-resources/employee-labor-relations | human-resources/health-safety | human-resources/human-resource-information-system | human-resources/human-resources | human-resources/hr-business-partner | human-resources/learning-development | human-resources/organizational-development | human-resources/recruiting-talent-acquisition | human-resources/talent-management | human-resources/workforce-management | human-resources/people-operations | information-technology | information-technology/application-development | information-technology/business-service-management-itsm | information-technology/collaboration-web-app | information-technology/data-center | information-technology/data-warehouse | information-technology/database-administration | information-technology/ecommerce-development | information-technology/enterprise-architecture | information-technology/help-desk-desktop-services | information-technology/hr-financial-erp-systems | information-technology/information-security | information-technology/information-technology | information-technology/infrastructure | information-technology/it-asset-management | information-technology/it-audit-it-compliance | information-technology/it-operations | information-technology/it-procurement | information-technology/it-strategy | information-technology/it-training | information-technology/networking | information-technology/project-program-management | information-technology/quality-assurance | information-technology/retail-store-systems | information-technology/servers | information-technology/storage-disaster-recovery | information-technology/telecommunications | information-technology/virtualization | legal | legal/acquisitions | legal/compliance | legal/contracts | legal/corporate-secretary | legal/ediscovery | legal/ethics | legal/governance | legal/governmental-affairs-regulatory-law | legal/intellectual-property-patent | legal/labor-employment | legal/lawyer-attorney | legal/legal | legal/legal-counsel | legal/legal-operations | legal/litigation | legal/privacy | marketing | marketing/advertising | marketing/brand-management | marketing/content-marketing | marketing/customer-experience | marketing/customer-marketing | marketing/demand-generation | marketing/digital-marketing | marketing/ecommerce-marketing | marketing/event-marketing | marketing/field-marketing | marketing/lead-generation | marketing/marketing | marketing/marketing-analytics-insights | marketing/marketing-communications | marketing/marketing-operations | marketing/product-marketing | marketing/public-relations | marketing/search-engine-optimization-pay-per-click | marketing/social-media-marketing | marketing/strategic-communications | marketing/technical-marketing | medical-health | medical-health/anesthesiology | medical-health/chiropractics | medical-health/clinical-systems | medical-health/dentistry | medical-health/dermatology | medical-health/doctors-physicians | medical-health/epidemiology | medical-health/first-responder | medical-health/infectious-disease | medical-health/medical-administration | medical-health/medical-education-training | medical-health/medical-research | medical-health/medicine | medical-health/neurology | medical-health/nursing | medical-health/nutrition-dietetics | medical-health/obstetrics-gynecology | medical-health/oncology | medical-health/opthalmology | medical-health/optometry | medical-health/orthopedics | medical-health/pathology | medical-health/pediatrics | medical-health/pharmacy | medical-health/physical-therapy | medical-health/psychiatry | medical-health/psychology | medical-health/public-health | medical-health/radiology | medical-health/social-work | operations | operations/call-center | operations/construction | operations/corporate-strategy | operations/customer-service-support | operations/enterprise-resource-planning | operations/facilities-management | operations/leasing | operations/logistics | operations/office-operations | operations/operations | operations/physical-security | operations/project-development | operations/quality-management | operations/real-estate | operations/safety | operations/store-operations | operations/supply-chain | sales | sales/account-management | sales/business-development | sales/channel-sales | sales/customer-retention-development | sales/customer-success | sales/field-outside-sales | sales/inside-sales | sales/partnerships | sales/revenue-operations | sales/sales | sales/sales-enablement | sales/sales-engineering | sales/sales-operations | sales/sales-training | consulting | consulting/consultant | string | null,
     company?: {
       id: string,
       name?: string | null,
@@ -2686,6 +2721,21 @@ await corsair.companyenrich.api.people.search({
 }[]
 ```
 </Accordion>
+
+<Accordion title="interpretation full type">
+
+```ts
+{
+  companyNames?: string[] | null,
+  filter?: Record<string, any> | null,
+  company?: {
+    query: string,
+    filter?: Record<string, any> | null,
+    boost?: Record<string, any> | null
+  } | null
+} | null
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -2696,7 +2746,7 @@ await corsair.companyenrich.api.people.search({
 
 `people.searchCount`
 
-Count people matching the same person filters and company query as search. Free.
+Count people matching the same person filters, natural-language query and company query as search. Free.
 
 **Risk:** `read`
 
@@ -2711,6 +2761,7 @@ await corsair.companyenrich.api.people.searchCount({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `filter` | `object` | No | — |
+| `semantic` | `object` | No | — |
 | `company` | `object` | No | — |
 
 <AccordionGroup>
@@ -2718,7 +2769,10 @@ await corsair.companyenrich.api.people.searchCount({
 
 ```ts
 {
-  query?: string,
+  query?: string | string[] | {
+    in?: string[],
+    notIn?: string[]
+  },
   companyId?: string | string[] | {
     in?: string[],
     notIn?: string[]
@@ -2800,12 +2854,24 @@ await corsair.companyenrich.api.people.searchCount({
 ```
 </Accordion>
 
+<Accordion title="semantic full type">
+
+```ts
+{
+  query: string
+}
+```
+</Accordion>
+
 <Accordion title="company full type">
 
 ```ts
 {
   filter?: {
-    query?: string,
+    query?: string | string[] | {
+      in?: string[],
+      notIn?: string[]
+    },
     id?: string | string[] | {
       in?: string[],
       notIn?: string[]
@@ -2872,10 +2938,10 @@ await corsair.companyenrich.api.people.searchCount({
       notIn?: string[],
       all?: string[]
     },
-    categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | {
-      in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-      notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-      all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[]
+    categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[] | {
+      in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+      notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+      all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[]
     },
     foundedYear?: {
       min?: number,
@@ -2920,6 +2986,24 @@ await corsair.companyenrich.api.people.searchCount({
 |------|------|----------|-------------|
 | `count` | `number` | Yes | — |
 | `total` | `number` | Yes | — |
+| `interpretation` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="interpretation full type">
+
+```ts
+{
+  companyNames?: string[] | null,
+  filter?: Record<string, any> | null,
+  company?: {
+    query: string,
+    filter?: Record<string, any> | null,
+    boost?: Record<string, any> | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2944,6 +3028,7 @@ await corsair.companyenrich.api.people.searchPreview({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `filter` | `object` | No | — |
+| `semantic` | `object` | No | — |
 | `company` | `object` | No | — |
 
 <AccordionGroup>
@@ -2951,7 +3036,10 @@ await corsair.companyenrich.api.people.searchPreview({
 
 ```ts
 {
-  query?: string,
+  query?: string | string[] | {
+    in?: string[],
+    notIn?: string[]
+  },
   companyId?: string | string[] | {
     in?: string[],
     notIn?: string[]
@@ -3033,12 +3121,24 @@ await corsair.companyenrich.api.people.searchPreview({
 ```
 </Accordion>
 
+<Accordion title="semantic full type">
+
+```ts
+{
+  query: string
+}
+```
+</Accordion>
+
 <Accordion title="company full type">
 
 ```ts
 {
   filter?: {
-    query?: string,
+    query?: string | string[] | {
+      in?: string[],
+      notIn?: string[]
+    },
     id?: string | string[] | {
       in?: string[],
       notIn?: string[]
@@ -3105,10 +3205,10 @@ await corsair.companyenrich.api.people.searchPreview({
       notIn?: string[],
       all?: string[]
     },
-    categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[] | {
-      in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-      notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[],
-      all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas)[]
+    categories?: b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business | (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[] | {
+      in?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+      notIn?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[],
+      all?: (b2b | b2c | b2g | e-commerce | media | service-provider | mobile | saas | local-business)[]
     },
     foundedYear?: {
       min?: number,
@@ -3153,6 +3253,7 @@ await corsair.companyenrich.api.people.searchPreview({
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | — |
 | `total` | `number` | Yes | — |
+| `interpretation` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3174,6 +3275,21 @@ await corsair.companyenrich.api.people.searchPreview({
     } | null
   }[]
 }[]
+```
+</Accordion>
+
+<Accordion title="interpretation full type">
+
+```ts
+{
+  companyNames?: string[] | null,
+  filter?: Record<string, any> | null,
+  company?: {
+    query: string,
+    filter?: Record<string, any> | null,
+    boost?: Record<string, any> | null
+  } | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
