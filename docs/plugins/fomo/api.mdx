@@ -14,12 +14,12 @@ description: "API reference for the Fomo plugin in Corsair: every `fomo.api.*` o
 
 `application.get`
 
-Get Fomo application settings
+Get Fomo application settings for the token's own site, or pass id to read another site of the same user
 
 **Risk:** `read`
 
 ```ts
-await corsair.fomo.api.application.get({ id: 1 });
+await corsair.fomo.api.application.get({});
 ```
 
 **Input**
@@ -151,7 +151,7 @@ Record<string, {
 
 `application.update`
 
-Update Fomo application settings
+Update Fomo application settings for the token's own site, or pass id to update another site of the same user
 
 **Risk:** `write`
 
@@ -223,7 +223,7 @@ await corsair.fomo.api.application.update({ name: 'My Online Store', position: '
 
 `events.create`
 
-Create a new Fomo event notification
+Create a new Fomo event; it shows as a social-proof notification on the site's live feed
 
 **Risk:** `write`
 
