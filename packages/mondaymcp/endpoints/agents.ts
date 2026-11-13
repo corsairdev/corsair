@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { MondayMcpEndpoints } from '..';
 import { makeMondayMcpToolCall } from '../client';
+import { safeEventPayload } from '../safe-event';
 import {
 	MondayMcpEndpointInputSchemas,
 	MondayMcpEndpointOutputSchemas,
@@ -18,7 +19,7 @@ export const agentsManage: MondayMcpEndpoints['agents.manage'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.agents.manage',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -38,7 +39,7 @@ export const agentsManageTriggers: MondayMcpEndpoints['agents.manageTriggers'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.agents.manageTriggers',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -58,7 +59,7 @@ export const agentsManageSkills: MondayMcpEndpoints['agents.manageSkills'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.agents.manageSkills',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -78,7 +79,7 @@ export const agentsManageKnowledge: MondayMcpEndpoints['agents.manageKnowledge']
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.agents.manageKnowledge',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -94,7 +95,7 @@ export const agentsCatalog: MondayMcpEndpoints['agents.catalog'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.agents.catalog',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;

@@ -3,7 +3,7 @@ import type { MondayMcpAPIError } from './client';
 
 // The client throws MondayMcpAPIError with the HTTP status of the failed
 // transport call when the server rejects at the HTTP layer, and with the
-// JSON-RPC error message when the failure is protocol-level. Handlers only
+// JSON-RPC error code when the failure is protocol-level. Handlers only
 // inspect the optional fields, so a plain Error from elsewhere still routes.
 function getStatus(error: Error): number | undefined {
 	return (error as Partial<MondayMcpAPIError>).status;

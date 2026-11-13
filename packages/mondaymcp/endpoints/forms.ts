@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { MondayMcpEndpoints } from '..';
 import { makeMondayMcpToolCall } from '../client';
+import { safeEventPayload } from '../safe-event';
 import {
 	MondayMcpEndpointInputSchemas,
 	MondayMcpEndpointOutputSchemas,
@@ -19,7 +20,7 @@ export const formsCreate: MondayMcpEndpoints['forms.create'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.forms.create',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -32,7 +33,7 @@ export const formsGet: MondayMcpEndpoints['forms.get'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.forms.get',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -48,7 +49,7 @@ export const formsUpdate: MondayMcpEndpoints['forms.update'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.forms.update',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -68,7 +69,7 @@ export const formsEditQuestions: MondayMcpEndpoints['forms.editQuestions'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.forms.editQuestions',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -88,7 +89,7 @@ export const formsCreateSubmission: MondayMcpEndpoints['forms.createSubmission']
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.forms.createSubmission',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -109,7 +110,7 @@ export const usersGetContext: MondayMcpEndpoints['users.getContext'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.users.getContext',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -129,7 +130,7 @@ export const usersListAndTeams: MondayMcpEndpoints['users.listAndTeams'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.users.listAndTeams',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;

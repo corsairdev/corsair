@@ -2,6 +2,7 @@ import { AuthMissingError } from 'corsair/core';
 import type { MondayMcpAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 import { mondaymcp } from './index';
+import { safeEventPayload } from './safe-event';
 
 function collectEndpointPaths(
 	nested: Record<string, unknown>,
@@ -57,6 +58,8 @@ describe('mondaymcp plugin registry', () => {
 		expect(meta['automations.manage']?.riskLevel).toBe('destructive');
 		expect(meta['agents.manage']?.riskLevel).toBe('destructive');
 		expect(meta['schema.executeQuery']?.riskLevel).toBe('destructive');
+		expect(meta['updates.create']?.riskLevel).toBe('destructive');
+		expect(meta['notifications.create']?.riskLevel).toBe('destructive');
 	});
 
 	it('registers as an api_key plugin with no webhooks', () => {
@@ -137,5 +140,39 @@ describe('mondaymcp error handlers', () => {
 		);
 		expect(errorHandlers.SERVER_ERROR.match(new Error('boom'))).toBe(false);
 		expect(errorHandlers.DEFAULT.match()).toBe(true);
+	});
+});
+
+describe('safeEventPayload', () => {
+	it('keeps only numeric pagination metadata', () => {
+		expect(
+			safeEventPayload({
+				boardId: 1,
+				userIds: ['1', '2'],
+				doc_id: 'doc',
+				action: 'activate',
+				mode: 'content',
+				limit: 5,
+			}),
+		).toEqual({
+			limit: 5,
+		});
+	});
+
+	it('drops secrets and customer content from event payloads', () => {
+		expect(
+			safeEventPayload({
+				formPassword: 'hunter2',
+				markdown: '# secret doc',
+				body: 'message text',
+				answers: { q1: 'a1' },
+				prompt: 'do things',
+				boardName: 'My Board',
+				query: 'private query',
+				searchTerm: 'private search',
+				term: 'private term',
+				customerId: 'customer secret',
+			}),
+		).toEqual({});
 	});
 });

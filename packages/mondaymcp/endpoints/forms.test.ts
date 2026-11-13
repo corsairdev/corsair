@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import type { MondayMcpContext } from '../index';
 import {
 	formsCreate,
@@ -251,5 +252,25 @@ describe('forms and users families (mocked MCP transport)', () => {
 			formsCreate(mockCtx, { destination_name: 'Incomplete Form' } as never),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+describe('forms family — event payload safety', () => {
+	it('keeps formPassword out of the logged event payload', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+
+		await formsUpdate(mockCtx, {
+			formToken: 'test-formToken',
+			action: 'test-action',
+			formPassword: 'hunter2',
+		});
+
+		const logged = jest.mocked(logEventFromContext).mock.calls.at(-1)?.[2] as
+			| Record<string, unknown>
+			| undefined;
+		expect(logged).toBeDefined();
+		expect(logged).not.toHaveProperty('formPassword');
+		expect(logged).not.toHaveProperty('action');
 	});
 });

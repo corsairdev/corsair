@@ -163,7 +163,7 @@ describe('boards family (mocked MCP transport)', () => {
 		expect(apiError.retryAfter).toBe(7000);
 	});
 
-	it('throws with the tool text when the result is an MCP tool error', async () => {
+	it('does not expose tool text when the result is an MCP tool error', async () => {
 		stubSession();
 		stubToolResult({
 			isError: true,
@@ -172,6 +172,151 @@ describe('boards family (mocked MCP transport)', () => {
 
 		await expect(
 			boardsGetInfo(mockCtx, { boardId: 18412502536 }),
-		).rejects.toThrow('Board not found');
+		).rejects.toThrow('monday MCP tool reported an error');
+	});
+});
+
+import {
+	boardsGetActivity,
+	boardsInsights,
+	columnsCreate,
+	columnsGetTypeInfo,
+	groupsCreate,
+	itemsChangeColumnValues,
+	itemsCreate,
+} from './boards';
+
+describe('boards family — per-endpoint coverage', () => {
+	it('boardsGetActivity forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			boardId: 12345,
+		};
+		const result = await boardsGetActivity(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('get_board_activity');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+
+	it('boardsInsights forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			boardId: 12345,
+		};
+		const result = await boardsInsights(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('board_insights');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+
+	it('groupsCreate forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			boardId: 'test-boardId',
+			groupName: 'test-groupName',
+		};
+		const result = await groupsCreate(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('create_group');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+
+	it('columnsCreate forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			boardId: 12345,
+			columnType: 'test-columnType',
+			columnTitle: 'test-columnTitle',
+		};
+		const result = await columnsCreate(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('create_column');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+
+	it('columnsGetTypeInfo forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			columnType: 'test-columnType',
+		};
+		const result = await columnsGetTypeInfo(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('get_column_type_info');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+
+	it('itemsCreate forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			boardId: 12345,
+			name: 'test-name',
+			columnValues: 'test-columnValues',
+		};
+		const result = await itemsCreate(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('create_item');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+
+	it('itemsChangeColumnValues forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			boardId: 12345,
+			itemId: 12345,
+			columnValues: 'test-columnValues',
+		};
+		const result = await itemsChangeColumnValues(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('change_item_column_values');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
 	});
 });

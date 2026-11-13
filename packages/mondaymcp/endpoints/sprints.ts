@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { MondayMcpEndpoints } from '..';
 import { makeMondayMcpToolCall } from '../client';
+import { safeEventPayload } from '../safe-event';
 import {
 	MondayMcpEndpointInputSchemas,
 	MondayMcpEndpointOutputSchemas,
@@ -24,7 +25,7 @@ export const sprintsGetBoards: MondayMcpEndpoints['sprints.getBoards'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.sprints.getBoards',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -44,7 +45,7 @@ export const sprintsGetMetadata: MondayMcpEndpoints['sprints.getMetadata'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.sprints.getMetadata',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -64,7 +65,7 @@ export const sprintsGetSummary: MondayMcpEndpoints['sprints.getSummary'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.sprints.getSummary',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -84,7 +85,7 @@ export const apiExecuteQuery: MondayMcpEndpoints['schema.executeQuery'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.api.executeQuery',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -104,7 +105,7 @@ export const apiGetGraphqlSchema: MondayMcpEndpoints['schema.getGraphqlSchema'] 
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.api.getGraphqlSchema',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -124,7 +125,7 @@ export const apiGetTypeDetails: MondayMcpEndpoints['schema.getTypeDetails'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.api.getTypeDetails',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;

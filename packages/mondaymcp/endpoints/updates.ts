@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { MondayMcpEndpoints } from '..';
 import { makeMondayMcpToolCall } from '../client';
+import { safeEventPayload } from '../safe-event';
 import {
 	MondayMcpEndpointInputSchemas,
 	MondayMcpEndpointOutputSchemas,
@@ -19,7 +20,7 @@ export const updatesCreate: MondayMcpEndpoints['updates.create'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.updates.create',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -35,7 +36,7 @@ export const updatesList: MondayMcpEndpoints['updates.list'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.updates.list',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -55,7 +56,7 @@ export const notificationsCreate: MondayMcpEndpoints['notifications.create'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.notifications.create',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -71,7 +72,7 @@ export const searchQuery: MondayMcpEndpoints['search.query'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.search.query',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -87,7 +88,7 @@ export const assetsGet: MondayMcpEndpoints['assets.get'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.assets.get',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -107,7 +108,7 @@ export const assetsGetUploadUrl: MondayMcpEndpoints['assets.getUploadUrl'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.assets.getUploadUrl',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -127,7 +128,7 @@ export const assetsFinalizeUpload: MondayMcpEndpoints['assets.finalizeUpload'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.assets.finalizeUpload',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -147,7 +148,7 @@ export const meetingsGetNotetaker: MondayMcpEndpoints['meetings.getNotetaker'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.meetings.getNotetaker',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;

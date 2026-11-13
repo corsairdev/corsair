@@ -239,7 +239,7 @@ export const DocsCreateInputSchema = z
 				'Markdown content to import into the document as blocks on creation.',
 			),
 		location: z
-			.string()
+			.enum(['workspace', 'item'])
 			.describe(
 				'Where to create the document. One of `workspace` (standalone doc) or `item` (attached to a board item).',
 			),
@@ -247,7 +247,8 @@ export const DocsCreateInputSchema = z
 			.number()
 			.describe(
 				'The ID of the workspace to create the document in. Use `list_workspaces` to discover workspace IDs.',
-			),
+			)
+			.optional(),
 		doc_kind: z
 			.string()
 			.describe(
@@ -264,7 +265,8 @@ export const DocsCreateInputSchema = z
 			.number()
 			.describe(
 				'The ID of the board item to attach the document to. Only used when location=`item`.',
-			),
+			)
+			.optional(),
 		column_id: z
 			.string()
 			.describe(
@@ -272,7 +274,17 @@ export const DocsCreateInputSchema = z
 			)
 			.optional(),
 	})
-	.loose();
+	.loose()
+	.superRefine((value, ctx) => {
+		const field = value.location === 'workspace' ? 'workspace_id' : 'item_id';
+		if (value[field] === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: [field],
+				message: `${field} is required for ${value.location} documents`,
+			});
+		}
+	});
 
 export type DocsCreateInput = z.infer<typeof DocsCreateInputSchema>;
 
@@ -1484,7 +1496,8 @@ export const DocsReadInputSchema = z
 			.string()
 			.describe(
 				'Query type for content mode. One of `ids` (doc IDs), `object_ids` (object IDs from the URL), or `workspace_ids`. Required when mode is `content`.',
-			),
+			)
+			.optional(),
 		ids: z
 			.array(z.unknown())
 			.describe(
@@ -1561,7 +1574,19 @@ export const DocsReadInputSchema = z
 			)
 			.optional(),
 	})
-	.loose();
+	.loose()
+	// type is documented as required only when mode is content; version
+	// history calls omit it.
+	.superRefine((value, ctx) => {
+		if ((value.mode ?? 'content') !== 'version_history' && !value.type) {
+			ctx.addIssue({
+				code: 'custom',
+				message:
+					'type is required when mode is content; omit type or set mode to version_history.',
+				path: ['type'],
+			});
+		}
+	});
 
 export type DocsReadInput = z.infer<typeof DocsReadInputSchema>;
 
@@ -1605,19 +1630,33 @@ export const DocsUpdateInputSchema = z
 			.string()
 			.describe(
 				'The document ID returned by `read_docs` (`id` field). Takes priority over `object_id` if both are provided.',
-			),
+			)
+			.optional(),
 		object_id: z
 			.string()
 			.describe(
 				'The document object ID visible in the document URL. Resolved to `doc_id` internally.',
-			),
+			)
+			.optional(),
 		operations: z
 			.array(z.unknown())
 			.describe(
 				'Ordered list of operations to perform (1–25). Each operation requires an `operation_type` and type-specific fields. See operation types below.',
 			),
 	})
-	.loose();
+	.loose()
+	// doc_id and object_id are alternatives: the tool resolves either
+	// identifier internally (doc_id takes priority when both are present).
+	.superRefine((value, ctx) => {
+		if (!value.doc_id && !value.object_id) {
+			ctx.addIssue({
+				code: 'custom',
+				message:
+					'Provide doc_id or object_id — the update targets the document through either identifier.',
+				path: ['doc_id'],
+			});
+		}
+	});
 
 export type DocsUpdateInput = z.infer<typeof DocsUpdateInputSchema>;
 

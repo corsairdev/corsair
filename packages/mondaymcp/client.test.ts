@@ -120,7 +120,7 @@ describe('makeMondayMcpToolCall', () => {
 
 		expect(caught).toBeInstanceOf(MondayMcpAPIError);
 		expect((caught as MondayMcpAPIError).code).toBe('-32602');
-		expect((caught as MondayMcpAPIError).message).toContain('boardId');
+		expect((caught as MondayMcpAPIError).message).not.toContain('boardId');
 	});
 
 	it('keeps the HTTP status and Retry-After from a transport failure', async () => {
@@ -143,7 +143,40 @@ describe('makeMondayMcpToolCall', () => {
 		expect(caught).toBeInstanceOf(MondayMcpAPIError);
 		expect((caught as MondayMcpAPIError).status).toBe(429);
 		expect((caught as MondayMcpAPIError).retryAfter).toBe(30_000);
-		expect((caught as MondayMcpAPIError).body).toBe('daily limit reached');
+		expect((caught as MondayMcpAPIError).body).toBeUndefined();
+		expect((caught as MondayMcpAPIError).message).not.toContain('daily limit');
+	});
+
+	it('does not expose network error details', async () => {
+		fetchMock.mockRejectedValueOnce(new Error('private customer token'));
+		await expect(makeMondayMcpToolCall('token', 'search', {})).rejects.toThrow(
+			'Failed to reach the monday MCP server',
+		);
+	});
+
+	it('does not expose malformed provider response text', async () => {
+		fetchMock.mockResolvedValueOnce(new Response('private customer text', {
+			headers: { 'content-type': 'application/json' },
+		}));
+		await expect(makeMondayMcpToolCall('token', 'search', {})).rejects.toThrow(
+			'Failed to parse the monday MCP response',
+		);
+	});
+
+	it('does not expose JSON-RPC error data', async () => {
+		fetchMock.mockResolvedValueOnce(jsonResponse({
+			jsonrpc: '2.0', id: 1,
+			error: { code: -32602, message: 'private message', data: 'private data' },
+		}));
+		try {
+			await makeMondayMcpToolCall('token', 'search', {});
+			throw new Error('expected rejection');
+		} catch (error) {
+			expect(error).toBeInstanceOf(MondayMcpAPIError);
+			expect((error as MondayMcpAPIError).code).toBe('-32602');
+			expect(JSON.stringify(error)).not.toContain('private');
+			expect((error as Error).message).not.toContain('private');
+		}
 	});
 
 	it('fails loudly when the server answers with the wrong request id', async () => {
@@ -168,5 +201,55 @@ describe('makeMondayMcpToolCall', () => {
 		await expect(makeMondayMcpToolCall('token', 'search', {})).rejects.toThrow(
 			/instead of 2/,
 		);
+	});
+
+	it('resolves from an SSE stream that stays open after the reply', async () => {
+		const cancelled: Array<boolean> = [];
+		const stream = new ReadableStream<Uint8Array>({
+			start(controller) {
+				controller.enqueue(
+					new TextEncoder().encode(
+						'data: ' +
+							JSON.stringify({
+								jsonrpc: '2.0',
+								id: 2,
+								result: { content: [{ type: 'text', text: 'early reply' }] },
+							}) +
+							'\n\n',
+					),
+				);
+				// Never closes: the server keeps the stream open after replying.
+			},
+			cancel() {
+				cancelled.push(true);
+			},
+		});
+		fetchMock
+			.mockImplementationOnce(() =>
+				Promise.resolve(
+					jsonResponse(
+						{ jsonrpc: '2.0', id: 1, result: {} },
+						{ 'mcp-session-id': 's' },
+					),
+				),
+			)
+			.mockImplementationOnce(() =>
+				Promise.resolve(new Response(null, { status: 202 })),
+			)
+			.mockImplementationOnce(() =>
+				Promise.resolve(
+					new Response(stream, {
+						status: 200,
+						headers: { 'content-type': 'text/event-stream' },
+					}),
+				),
+			);
+
+		const result = await makeMondayMcpToolCall('token', 'search', {});
+
+		expect(result).toEqual({
+			content: [{ type: 'text', text: 'early reply' }],
+		});
+		expect(cancelled).toEqual([true]);
 	});
 });

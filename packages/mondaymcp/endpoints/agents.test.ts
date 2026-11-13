@@ -200,3 +200,25 @@ describe('agents family (mocked MCP transport)', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
+
+import { agentsManageSkills } from './agents';
+
+describe('agents family — per-endpoint coverage', () => {
+	it('agentsManageSkills forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			action: 'create',
+		} as const;
+		const result = await agentsManageSkills(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('manage_agent_skills');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+});

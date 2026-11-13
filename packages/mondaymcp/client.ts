@@ -24,6 +24,13 @@ const MCP_CLIENT_INFO = { name: 'corsair-mondaymcp', version: '0.1.0' };
 
 const REQUEST_TIMEOUT_MS = 60_000;
 
+// The JSON-RPC envelope is typed strictly; only the tool `result` payload and
+// the protocol-error `data` field stay unknown on purpose: MCP tool results
+// are provider-defined (each of the 60 tools returns a different shape that
+// monday.com documents through examples, not schemas), and `error.data` is an
+// optional server-defined extension point, so stricter types here would invent
+// structure the wire does not guarantee. The endpoint output schemas give the
+// payloads their public shape.
 type JsonRpcResponse = {
 	jsonrpc?: string;
 	id?: number;
@@ -64,19 +71,15 @@ async function postRpc(
 			body,
 			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 		});
-	} catch (error) {
-		throw new MondayMcpAPIError(
-			`Failed to reach the monday MCP server: ${error instanceof Error ? error.message : 'unknown error'}`,
-		);
+	} catch {
+		throw new MondayMcpAPIError('Failed to reach the monday MCP server');
 	}
 	if (!response.ok) {
-		const text = await response.text().catch(() => '');
 		throw new MondayMcpAPIError(
-			`monday MCP server returned ${response.status}: ${text || response.statusText}`,
+			`monday MCP server returned HTTP ${response.status}`,
 			undefined,
 			response.status,
 			parseRetryAfter(response.headers.get('retry-after')),
-			text || undefined,
 		);
 	}
 	return response;
@@ -91,48 +94,80 @@ async function readRpcResponse(
 ): Promise<JsonRpcResponse> {
 	const contentType = response.headers.get('content-type') ?? '';
 	if (contentType.includes('text/event-stream')) {
-		const raw = await response.text();
-		const frames = raw.split(/\r?\n\r?\n/);
-		for (const frame of frames) {
-			const dataLines = frame
-				.split(/\r?\n/)
-				.filter((line) => line.startsWith('data:'))
-				.map((line) => line.slice(5).trim());
-			if (!dataLines.length) continue;
-			let parsed: JsonRpcResponse;
-			try {
-				parsed = JSON.parse(dataLines.join('\n')) as JsonRpcResponse;
-			} catch {
-				continue;
+		// The server may keep the SSE stream open after sending the reply (for
+		// progress notifications and server-initiated requests), so frames are
+		// consumed incrementally and the reader is cancelled as soon as the
+		// matching JSON-RPC response arrives — waiting for stream closure would
+		// run into the request timeout despite the result already being in hand.
+		const reader = response.body?.getReader();
+		if (!reader) {
+			throw new MondayMcpAPIError(
+				'monday MCP server returned an SSE response without a readable body',
+			);
+		}
+		const decoder = new TextDecoder();
+		let buffer = '';
+		try {
+			for (;;) {
+				const { done, value } = await reader.read();
+				buffer += decoder.decode(value ?? new Uint8Array(), { stream: !done });
+				const frames = buffer.split(/\r?\n\r?\n/);
+				buffer = frames.pop() ?? '';
+				for (const frame of frames) {
+					const dataLines = frame
+						.split(/\r?\n/)
+						.filter((line) => line.startsWith('data:'))
+						.map((line) => line.slice(5).trim());
+					if (!dataLines.length) continue;
+					let parsed: JsonRpcResponse;
+					try {
+						parsed = JSON.parse(dataLines.join('\n')) as JsonRpcResponse;
+					} catch {
+						continue;
+					}
+					if (
+						parsed.id === expectedId &&
+						(parsed.result !== undefined || parsed.error !== undefined)
+					) {
+						return parsed;
+					}
+				}
+				if (done) break;
 			}
-			if (
-				parsed.id === expectedId &&
-				(parsed.result !== undefined || parsed.error !== undefined)
-			) {
-				return parsed;
-			}
+		} catch {
+			throw new MondayMcpAPIError('Failed to read the monday MCP stream');
+		} finally {
+			// Release the stream whether the reply arrived or the body ended.
+			reader.cancel().catch(() => undefined);
 		}
 		throw new MondayMcpAPIError(
 			`monday MCP server stream did not contain a response for request ${expectedId}`,
 		);
 	}
-	const payload = (await response.json()) as JsonRpcResponse;
+	let payload: JsonRpcResponse;
+	try {
+		payload = (await response.json()) as JsonRpcResponse;
+	} catch {
+		throw new MondayMcpAPIError('Failed to parse the monday MCP response');
+	}
 	if (payload.id !== expectedId) {
 		throw new MondayMcpAPIError(
-			`monday MCP server replied to request ${String(payload.id)} instead of ${expectedId}`,
+			`monday MCP server returned a mismatched response instead of ${expectedId}`,
 		);
 	}
 	return payload;
 }
 
+// Returns the reply payload after rejecting protocol-level errors. The return
+// type is unknown because the payload shape is per-tool and provider-defined
+// (see the JsonRpcResponse note); endpoint output schemas own the public type.
 function assertRpcOk(payload: JsonRpcResponse): unknown {
 	if (payload.error) {
 		throw new MondayMcpAPIError(
-			payload.error.message ?? 'monday MCP request failed',
-			payload.error.code === undefined ? undefined : String(payload.error.code),
-			undefined,
-			undefined,
-			payload.error.data,
+			'monday MCP request failed',
+			typeof payload.error.code === 'number' && Number.isFinite(payload.error.code)
+				? String(payload.error.code)
+				: undefined,
 		);
 	}
 	return payload.result;
@@ -146,6 +181,9 @@ function assertRpcOk(payload: JsonRpcResponse): unknown {
 export async function makeMondayMcpToolCall<T>(
 	apiKey: string,
 	toolName: string,
+	// MCP `tools/call` arguments are an open object per the protocol; each
+	// endpoint validates its documented subset with Zod first and forwards the
+	// whole validated object, so the transport stays schema-agnostic here.
 	args: Record<string, unknown>,
 ): Promise<T> {
 	if (!apiKey) {
@@ -198,13 +236,7 @@ export async function makeMondayMcpToolCall<T>(
 		| undefined;
 
 	if (result?.isError) {
-		const text = (result.content ?? [])
-			.filter((item) => item.type === 'text')
-			.map((item) => item.text ?? '')
-			.join('\n');
-		throw new MondayMcpAPIError(
-			text || `monday MCP tool ${toolName} reported an error`,
-		);
+		throw new MondayMcpAPIError('monday MCP tool reported an error');
 	}
 
 	return result as T;

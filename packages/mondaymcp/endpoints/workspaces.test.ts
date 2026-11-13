@@ -164,3 +164,85 @@ describe('workspaces & folders family (mocked MCP transport)', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
+
+import {
+	foldersCreate,
+	foldersUpdate,
+	workspacesGetInfo,
+	workspacesUpdate,
+} from './workspaces';
+
+describe('workspaces family — per-endpoint coverage', () => {
+	it('workspacesUpdate forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			id: 'test-id',
+		};
+		const result = await workspacesUpdate(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('update_workspace');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+
+	it('workspacesGetInfo forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			workspace_id: 12345,
+		};
+		const result = await workspacesGetInfo(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('workspace_info');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+
+	it('foldersCreate forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			workspaceId: 'test-workspaceId',
+			name: 'test-name',
+		};
+		const result = await foldersCreate(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('create_folder');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+
+	it('foldersUpdate forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			folderId: 'test-folderId',
+		};
+		const result = await foldersUpdate(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('update_folder');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+});

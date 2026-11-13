@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import type { MondayMcpContext } from '../index';
 import {
 	assetsGetUploadUrl,
@@ -67,6 +68,16 @@ beforeEach(() => {
 });
 
 describe('updates family (mocked MCP transport)', () => {
+	it('forwards search text without logging customer content', async () => {
+		stubSession();
+		stubToolResult({ content: [] });
+		const input = { searchType: 'BOARD', searchTerm: 'private customer', query: 'private query', term: 'private term', limit: 5 };
+		await searchQuery(mockCtx, input);
+		const call = JSON.parse(String(fetchMock.mock.calls[2]?.[1]?.body));
+		expect(call.params.arguments).toEqual(input);
+		const payload = jest.mocked(logEventFromContext).mock.calls.at(-1)?.[2];
+		expect(payload).toEqual({ limit: 5 });
+	});
 	it('updates.create runs the session handshake and calls create_update', async () => {
 		stubSession();
 		stubToolResult({
@@ -208,5 +219,74 @@ describe('updates family (mocked MCP transport)', () => {
 			updatesCreate(mockCtx, { body: '<p>Missing item id</p>' } as never),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+import {
+	assetsFinalizeUpload,
+	assetsGet,
+	notificationsCreate,
+} from './updates';
+
+describe('updates family — per-endpoint coverage', () => {
+	it('notificationsCreate forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			user_id: 'test-user_id',
+			target_id: 'test-target_id',
+			text: 'test-text',
+			target_type: 'test-target_type',
+		};
+		const result = await notificationsCreate(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('create_notification');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+
+	it('assetsGet forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			ids: ['12345'],
+		};
+		const result = await assetsGet(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('get_assets');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+
+	it('assetsFinalizeUpload forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {
+			uploadId: 'test-uploadId',
+			etag: 'test-etag',
+			boardId: 'test-boardId',
+			itemId: 'test-itemId',
+			columnId: 'test-columnId',
+		};
+		const result = await assetsFinalizeUpload(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('finalize_asset_upload');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
 	});
 });

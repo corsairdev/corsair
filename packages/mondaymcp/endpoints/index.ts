@@ -1,79 +1,79 @@
 import {
+	agentsCatalog,
+	agentsManage,
+	agentsManageKnowledge,
+	agentsManageSkills,
+	agentsManageTriggers,
+} from './agents';
+import {
 	boardsCreate,
+	boardsGetActivity,
 	boardsGetInfo,
 	boardsGetItemsPage,
-	boardsGetActivity,
 	boardsInsights,
-	groupsCreate,
 	columnsCreate,
 	columnsGetTypeInfo,
-	itemsCreate,
+	groupsCreate,
 	itemsChangeColumnValues,
+	itemsCreate,
 } from './boards';
 import {
-	workspacesCreate,
-	workspacesUpdate,
-	workspacesList,
-	workspacesGetInfo,
-	foldersCreate,
-	foldersUpdate,
-	foldersMoveObject,
-} from './workspaces';
-import {
-	docsCreate,
-	docsUpdate,
-	docsRead,
+	dashboardsAllWidgetsSchema,
 	dashboardsCreate,
 	dashboardsCreateWidget,
-	dashboardsAllWidgetsSchema,
+	docsCreate,
+	docsRead,
+	docsUpdate,
 	viewsCreate,
-	viewsUpdate,
 	viewsCreateTable,
+	viewsUpdate,
 	viewsUpdateTable,
 } from './docs';
 import {
 	formsCreate,
+	formsCreateSubmission,
+	formsEditQuestions,
 	formsGet,
 	formsUpdate,
-	formsEditQuestions,
-	formsCreateSubmission,
 	usersGetContext,
 	usersListAndTeams,
 } from './forms';
 import {
-	updatesCreate,
-	updatesList,
-	notificationsCreate,
-	searchQuery,
-	assetsGet,
-	assetsGetUploadUrl,
-	assetsFinalizeUpload,
-	meetingsGetNotetaker,
-} from './updates';
-import {
-	automationsList,
-	automationsManage,
-	automationsCreate,
-	workflowsPlan,
-	workflowsCreate,
-	workflowsUpdate,
-	workflowsPublish,
-} from './workflows';
-import {
-	agentsManage,
-	agentsManageTriggers,
-	agentsManageSkills,
-	agentsManageKnowledge,
-	agentsCatalog,
-} from './agents';
-import {
-	sprintsGetBoards,
-	sprintsGetMetadata,
-	sprintsGetSummary,
 	apiExecuteQuery,
 	apiGetGraphqlSchema,
 	apiGetTypeDetails,
+	sprintsGetBoards,
+	sprintsGetMetadata,
+	sprintsGetSummary,
 } from './sprints';
+import {
+	assetsFinalizeUpload,
+	assetsGet,
+	assetsGetUploadUrl,
+	meetingsGetNotetaker,
+	notificationsCreate,
+	searchQuery,
+	updatesCreate,
+	updatesList,
+} from './updates';
+import {
+	automationsCreate,
+	automationsList,
+	automationsManage,
+	workflowsCreate,
+	workflowsPlan,
+	workflowsPublish,
+	workflowsUpdate,
+} from './workflows';
+import {
+	foldersCreate,
+	foldersMoveObject,
+	foldersUpdate,
+	workspacesCreate,
+	workspacesGetInfo,
+	workspacesList,
+	workspacesUpdate,
+} from './workspaces';
 
 export const mondayMcpEndpointsNested = {
 	boards: {

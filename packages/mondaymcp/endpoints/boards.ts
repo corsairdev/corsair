@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { MondayMcpEndpoints } from '..';
 import { makeMondayMcpToolCall } from '../client';
+import { safeEventPayload } from '../safe-event';
 import {
 	MondayMcpEndpointInputSchemas,
 	MondayMcpEndpointOutputSchemas,
@@ -19,7 +20,7 @@ export const boardsCreate: MondayMcpEndpoints['boards.create'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.boards.create',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -35,7 +36,7 @@ export const boardsGetInfo: MondayMcpEndpoints['boards.getInfo'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.boards.getInfo',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -55,7 +56,7 @@ export const boardsGetItemsPage: MondayMcpEndpoints['boards.getItemsPage'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.boards.getItemsPage',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -75,7 +76,7 @@ export const boardsGetActivity: MondayMcpEndpoints['boards.getActivity'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.boards.getActivity',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -92,7 +93,7 @@ export const boardsInsights: MondayMcpEndpoints['boards.insights'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.boards.insights',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -108,7 +109,7 @@ export const groupsCreate: MondayMcpEndpoints['groups.create'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.groups.create',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -124,7 +125,7 @@ export const columnsCreate: MondayMcpEndpoints['columns.create'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.columns.create',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -144,7 +145,7 @@ export const columnsGetTypeInfo: MondayMcpEndpoints['columns.getTypeInfo'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.columns.getTypeInfo',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -160,7 +161,7 @@ export const itemsCreate: MondayMcpEndpoints['items.create'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.items.create',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -180,7 +181,7 @@ export const itemsChangeColumnValues: MondayMcpEndpoints['items.changeColumnValu
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.items.changeColumnValues',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;

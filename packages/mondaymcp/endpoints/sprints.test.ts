@@ -171,3 +171,23 @@ describe('sprints & api families (mocked MCP transport)', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
+
+import { apiGetGraphqlSchema } from './sprints';
+
+describe('sprints family — per-endpoint coverage', () => {
+	it('apiGetGraphqlSchema forwards its documented tool call', async () => {
+		stubSession();
+		stubToolResult({ content: [{ type: 'text', text: '{}' }] });
+		const input = {};
+		const result = await apiGetGraphqlSchema(mockCtx, input);
+
+		const callBody = JSON.parse(
+			String(fetchMock.mock.calls[2]?.[1]?.body) ?? '{}',
+		) as {
+			params: { name: string; arguments: Record<string, unknown> };
+		};
+		expect(callBody.params.name).toBe('get_graphql_schema');
+		expect(callBody.params.arguments).toEqual(input);
+		expect(result).toEqual({ content: [{ type: 'text', text: '{}' }] });
+	});
+});

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { MondayMcpEndpoints } from '..';
 import { makeMondayMcpToolCall } from '../client';
+import { safeEventPayload } from '../safe-event';
 import {
 	MondayMcpEndpointInputSchemas,
 	MondayMcpEndpointOutputSchemas,
@@ -24,7 +25,7 @@ export const automationsList: MondayMcpEndpoints['automations.list'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.automations.list',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -44,7 +45,7 @@ export const automationsManage: MondayMcpEndpoints['automations.manage'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.automations.manage',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -64,7 +65,7 @@ export const automationsCreate: MondayMcpEndpoints['automations.create'] =
 		await logEventFromContext(
 			ctx,
 			'mondaymcp.automations.create',
-			{ ...parsed },
+			{ ...safeEventPayload(parsed) },
 			'completed',
 		);
 		return output;
@@ -80,7 +81,7 @@ export const workflowsPlan: MondayMcpEndpoints['workflows.plan'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.workflows.plan',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -101,7 +102,7 @@ export const workflowsCreate: MondayMcpEndpoints['workflows.create'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.workflows.create',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -122,7 +123,7 @@ export const workflowsUpdate: MondayMcpEndpoints['workflows.update'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.workflows.update',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
@@ -144,7 +145,7 @@ export const workflowsPublish: MondayMcpEndpoints['workflows.publish'] = async (
 	await logEventFromContext(
 		ctx,
 		'mondaymcp.workflows.publish',
-		{ ...parsed },
+		{ ...safeEventPayload(parsed) },
 		'completed',
 	);
 	return output;
