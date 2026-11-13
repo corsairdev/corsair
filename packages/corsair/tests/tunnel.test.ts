@@ -406,3 +406,52 @@ describe('processCorsair — probe tunnel', () => {
 		});
 	});
 });
+
+describe('processCorsair — webhook failures', () => {
+	// One plugin whose handler answers with the given failure.
+	function corsairAnswering(reply: { success: false; statusCode: number }) {
+		return {
+			slack: {
+				pluginWebhookMatcher: () => true,
+				webhooks: {
+					events: {
+						message: { match: () => true, handler: async () => reply },
+					},
+				},
+			},
+			[CORSAIR_INTERNAL]: {
+				plugins: [],
+				kek: 'test-kek-with-at-least-32-characters!!',
+				multiTenancy: false,
+			},
+		};
+	}
+	const delivery = JSON.stringify({
+		type: 'webhook',
+		payload: {
+			headers: {},
+			body: '{"type":"event_callback"}',
+			plugin: 'slack',
+		},
+	});
+
+	it('keeps a failure on our side (5xx) retryable', async () => {
+		const ack = await processCorsair(
+			corsairAnswering({ success: false, statusCode: 503 }),
+			{ headers: {}, body: delivery },
+			{ allowUnsignedTunnel: true },
+		);
+		expect(ack.status).toBe('failed');
+		expect(ack.retryable).toBe(true);
+	});
+
+	it('keeps a refusal (4xx) final', async () => {
+		const ack = await processCorsair(
+			corsairAnswering({ success: false, statusCode: 401 }),
+			{ headers: {}, body: delivery },
+			{ allowUnsignedTunnel: true },
+		);
+		expect(ack.status).toBe('failed');
+		expect(ack.retryable).toBe(false);
+	});
+});
