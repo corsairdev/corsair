@@ -9,6 +9,7 @@ function apiError(options: {
 	timedOut?: boolean;
 	retryAfter?: number;
 	message?: string;
+	replayable?: boolean;
 }) {
 	return new GagelistAPIError(options.message ?? 'failed', options);
 }
@@ -94,6 +95,15 @@ describe('error handler selection', () => {
 		await expect(
 			resolve(apiError({ status: 503, method: 'GET' })),
 		).resolves.toEqual({ maxRetries: 2, retryStrategy: 'exponential_backoff' });
+	});
+
+	it('retries a 5xx and a dropped connection on a POST list read', async () => {
+		await expect(
+			resolve(apiError({ status: 503, method: 'POST', replayable: true })),
+		).resolves.toMatchObject({ maxRetries: 2 });
+		await expect(
+			resolve(apiError({ method: 'POST', transport: true, replayable: true })),
+		).resolves.toMatchObject({ maxRetries: 2 });
 	});
 
 	it('never replays a 5xx gage create, which may already exist', async () => {

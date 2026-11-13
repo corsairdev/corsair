@@ -248,6 +248,18 @@ describe('gages.list', () => {
 		});
 	});
 
+	it('marks a failed list as a replayable read, though it is a POST', async () => {
+		respondToken();
+		respond({ Message: 'Server error' }, 503);
+
+		const error = await caught(invoke(Gages.list, {}));
+		expect(error).toMatchObject({
+			status: 503,
+			method: 'POST',
+			replayable: true,
+		});
+	});
+
 	it('rejects a negative start before calling', async () => {
 		await expect(invoke(Gages.list, { start: -1 })).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();

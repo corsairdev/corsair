@@ -57,12 +57,13 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A read is safe to replay. A write is not: a 5xx after a gage create can
-	// arrive once the record exists, and a retry would create a second one.
+	// A read is safe to replay, the POST list routes included. A write is not:
+	// a 5xx after a gage create can arrive once the record exists, and a retry
+	// would create a second one.
 	SERVER_ERROR: {
 		match: (error: Error) =>
 			error instanceof GagelistAPIError &&
-			error.method === 'GET' &&
+			error.replayable &&
 			(error.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
@@ -76,7 +77,7 @@ export const errorHandlers = {
 			error instanceof GagelistAPIError && error.timedOut,
 		handler: async (error: Error) => ({
 			maxRetries:
-				error instanceof GagelistAPIError && error.method === 'GET' ? 1 : 0,
+				error instanceof GagelistAPIError && error.replayable ? 1 : 0,
 			retryStrategy: 'linear_2s' as const,
 		}),
 	},
@@ -85,7 +86,7 @@ export const errorHandlers = {
 			error instanceof GagelistAPIError && error.transport,
 		handler: async (error: Error) => ({
 			maxRetries:
-				error instanceof GagelistAPIError && error.method === 'GET' ? 2 : 0,
+				error instanceof GagelistAPIError && error.replayable ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

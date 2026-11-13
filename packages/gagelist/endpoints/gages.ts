@@ -20,6 +20,8 @@ export const list: GagelistEndpoints['gagesList'] = (ctx, input) =>
 		(parsed) => ({
 			method: 'POST',
 			path: '/GageList/api/Gage/List',
+			// A read, even though it is a POST.
+			replayable: true,
 			// The paging travels in the body, which is what this route documents.
 			body: {
 				start: parsed.start ?? 0,

@@ -88,6 +88,8 @@ export class GagelistAPIError extends Error {
 	readonly method?: string;
 	readonly transport: boolean;
 	readonly timedOut: boolean;
+	/** A read, safe to send again: any GET, and the list routes sent as POST. */
+	readonly replayable: boolean;
 
 	constructor(
 		message: string,
@@ -98,6 +100,7 @@ export class GagelistAPIError extends Error {
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
+			replayable?: boolean;
 		} = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
@@ -107,6 +110,7 @@ export class GagelistAPIError extends Error {
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
+		this.replayable = options.replayable ?? options.method === 'GET';
 	}
 
 	get isRateLimit(): boolean {
@@ -162,6 +166,8 @@ export type GagelistRequest = {
 	 * is fetched directly and its bytes come back base64-encoded.
 	 */
 	binary?: boolean;
+	/** A read sent as POST (the list routes), so a failure may be retried. */
+	replayable?: boolean;
 };
 
 /** A file route's answer: base64 bytes, or the JSON it sent instead. */
@@ -355,7 +361,7 @@ async function fetchDocument(
 // `binary` route answers a GagelistDocument instead.
 export async function makeGagelistRequest(
 	credentials: GagelistCredentials,
-	{ method, path, query, body, binary }: GagelistRequest,
+	{ method, path, query, body, binary, replayable }: GagelistRequest,
 	// unknown: see the note above the signature.
 ): Promise<unknown> {
 	const token = await tokenFor(credentials);
@@ -393,6 +399,7 @@ export async function makeGagelistRequest(
 					status: error.status,
 					retryAfter: error.retryAfter,
 					method,
+					replayable,
 				},
 			);
 		}
@@ -404,11 +411,13 @@ export async function makeGagelistRequest(
 				method,
 				transport: true,
 				timedOut: error.name === 'TimeoutError',
+				replayable,
 			});
 		}
 		throw new GagelistAPIError('Unknown GageList error', {
 			method,
 			transport: true,
+			replayable,
 		});
 	}
 }

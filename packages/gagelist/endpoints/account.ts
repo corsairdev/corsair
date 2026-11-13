@@ -23,6 +23,8 @@ export const manufacturers: GagelistEndpoints['manufacturersList'] = (
 		(parsed) => ({
 			method: 'POST',
 			path: '/GageList/api/Manufacturer/List',
+			// A read, even though it is a POST.
+			replayable: true,
 			body: {
 				start: parsed.start ?? 0,
 				record_number: parsed.record_number ?? DEFAULT_PAGE,

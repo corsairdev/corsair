@@ -21,6 +21,8 @@ export const list: GagelistEndpoints['calibrationsList'] = (ctx, input) =>
 		(parsed) => ({
 			method: 'POST',
 			path: '/GageList/api/Calibration/List',
+			// A read, even though it is a POST.
+			replayable: true,
 			body: {
 				start: parsed.start ?? 0,
 				record_number: parsed.record_number ?? DEFAULT_PAGE,
