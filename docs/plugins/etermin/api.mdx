@@ -1,0 +1,2988 @@
+---
+title: "eTermin API reference"
+sidebarTitle: "API"
+description: "API reference for the eTermin plugin in Corsair: every `etermin.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Anchor Time Dates
+
+### create
+
+`anchorTimeDates.create`
+
+Use this function to create a new anchortime for a specific date.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.anchorTimeDates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `number` | Yes | ID of the calendar. Use the "Calendar - Get calendar details" function to get a list with all available calendars. |
+| `startdate` | `string` | Yes | Date and time of the anchortime. Format is yyy-mm-dd HH:MM e.g. 2017-10-24 18:00 |
+| `ignoreonceappbooked` | `boolean` | Yes | If true the anchortime will be ignored once an appointment is booked this day. |
+| `reason` | `string` | No | Reason why this anchortime is created. |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`anchorTimeDates.delete`
+
+Use this function to delete an anchortime by date.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.anchorTimeDates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the anchortime by date. |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`anchorTimeDates.list`
+
+Use this function if you want to get all information about anchortimes by date.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.anchorTimeDates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `number` | No | ID of the calendar. Use this parameter if you want to get existing anchortimes for a specific calendar. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`anchorTimeDates.update`
+
+Use this function to update an anchortime by date.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.anchorTimeDates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the anchortime. |
+| `calendarid` | `number` | Yes | ID of the calendar. Use the "Calendar - Get calendar details" function to get a list with all available calendars. |
+| `startdate` | `string` | Yes | Date and time of the anchortime. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00 |
+| `ignoreonceappbooked` | `boolean` | Yes | If true the anchortime will be ignored once an appointment is booked this day |
+| `reason` | `string` | No | Reason why this anchortime is created |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Anchor Times
+
+### create
+
+`anchorTimes.create`
+
+Use this function to create a new weekly anchortime.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.anchorTimes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `number` | Yes | ID of the calendar. Use the "Calendar - Get calendar details" function to get a list with all available calendars. |
+| `starttime` | `string` | Yes | Time of the anchor, e.g. 17:00. |
+| `weekday` | `string` | Yes | ID of the weekday 1 = Sunday, 7 = Saturday. |
+| `ignoreonceappbooked` | `boolean` | Yes | If true the anchortime will be ignored once an appointment is booked this day. |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`anchorTimes.delete`
+
+Use this function to delete a weekly anchortime.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.anchorTimes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the anchortime. |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`anchorTimes.list`
+
+Use this function if you want to get all information about weekly anchortimes.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.anchorTimes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `number` | No | ID of the calendar. Use this parameter if you want to get existing anchortimes for a specific calendar. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`anchorTimes.update`
+
+Use this function to update a weekly anchortime.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.anchorTimes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the anchortime. |
+| `calendarid` | `number` | No | ID of the calendar. Use the "Calendar - Get calendar details" function to get a list with all available calendars. |
+| `starttime` | `string` | No | Time of the anchor, e.g. 17:00. |
+| `weekday` | `number` | No | ID of the weekday 1 = Sunday, 7 = Saturday. |
+| `ignoreonceappbooked` | `boolean` | No | If true the anchortime will be ignored once an appointment is booked this day. |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Appointments
+
+### create
+
+`appointments.create`
+
+Use this function to create a new appointment in the eTermin calendar
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.appointments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | Start date and time of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00 |
+| `end` | `string` | Yes | End date and time of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 19:00 |
+| `calendarid` | `number` | Yes | ID of the calendar. Use the 'Calendar - Get calendar details' function to get a list with all available calendars |
+| `calendarname` | `string` | No | Name of the calendar (needed for Webpush) |
+| `services` | `string` | No | ID of the service. Use the 'Service - Get service details' function to get a list with all available services. To use multiple services use a comma (,) to seperate the IDs |
+| `servicestext` | `string` | No | Name of the services |
+| `servicesinclsgtext` | `string` | No | Name of the services including the service groups |
+| `servicesabb` | `string` | No | Abbreviation of the services |
+| `capacity` | `number` | No | Defines the capacity of the appointment |
+| `capused` | `boolean` | No | true if the capacity of the appointment needs to be checked |
+| `capmaxused` | `number` | No | Maximum capacity that can't be exceeded |
+| `location` | `string` | No | Location of the appointment |
+| `bookingtype` | `string` | No | Information about how the appointment is booked |
+| `bookingurl` | `string` | No | Information from which URL the appointment got booked |
+| `checkexist` | `boolean` | No | Checks if the appointment start/end time is available (1 = yes, 0 = no). May not work with multiple capacity |
+| `manualconfirmed` | `number` | No | Set to 0 to have the appointment manually confirmed by the appoinment provider |
+| `confirmappointment` | `number` | No | Set to 1 to have the appointment manually confirmed by the booker, won't work if manualconfirmed is set to 0 |
+| `confirmtime` | `number` | No | Time in minutes that the booker is able to confirm the appointment before it gets deleted |
+| `language` | `string` | No | Languagecode, defines in which language the emails are sent |
+| `sendemail` | `boolean` | No | Send a confirmation email to the adress that was specified in the email parameter (1 = yes, 0 = no) |
+| `sms` | `boolean` | No | Send a confirmation sms to the phone number that was specified in the phone field (1 = yes, 0 = no). |
+| `notificationmsg` | `boolean` | No | Send an information email to the appointment provider (1 = yes, 0 = no). |
+| `sync` | `boolean` | No | True if the appointment should be synchronized with external calendars (1 = yes, 0 = no). |
+| `calselid` | `number` | No | Use this parameter with the value -1 to also use the Calendar Linking function (also requires a valid value for the parameter services) |
+| `appointmentreminderhours` | `number` | No | Defines when the first reminder is sent in hours (needs to be a negative value) |
+| `appointmentreminderhours2` | `number` | No | Defines when the second reminder is sent in hours (needs to be a negative value) |
+| `canceldeadline` | `number` | No | Minutes how long before the startdate the appointment can be cancelled |
+| `recurrencerule` | `string` | No | Recurrence rule. e.g. DTSTART:&#123;20171126T083000Z&#125; DTEND:&#123;20171126T090000Z&#125; RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=WE; |
+| `recurrenceparentid` | `string` | No | ID of the parent recurring appointment |
+| `pricegross` | `number` | No | Price including vat multiplied by 100 (e.g. 18.50€ = 1850) |
+| `pricenet` | `number` | No | Price excluding vat multiplied by 100 (e.g. 18.50€ = 1850) |
+| `vat` | `number` | No | Vat multiplied by 100 (e.g. 18.50€ = 1850) |
+| `salutation` | `string` | No | Salutation of the person |
+| `title` | `string` | No | Title of the person |
+| `lastname` | `string` | No | Lastname of the person |
+| `firstname` | `string` | No | Firstname of the person |
+| `email` | `string` | No | E-Mail of the person |
+| `phone` | `string` | No | Phone of the person |
+| `company` | `string` | No | Company of the person (make sure this field exists in your account) |
+| `notes` | `string` | No | Appointment notes |
+| `street` | `string` | No | Street of the person that booked appointment |
+| `zip` | `string` | No | Zip of the person that booked appointment |
+| `city` | `string` | No | City of the person that booked appointment |
+| `customernumber` | `string` | No | ID of the person that booked appointment |
+| `birthday` | `string` | No | Date of birth of the person that booked appointment |
+| `additional1` | `string` | No | Additional appointment field 1 |
+| `additional2` | `string` | No | Additional appointment field 2 |
+| `additional3` | `string` | No | Additional appointment field 3 |
+| `additional4` | `string` | No | Additional appointment field 4 |
+| `additional5` | `string` | No | Additional appointment field 5 |
+| `additional6` | `string` | No | Additional appointment field 6 |
+| `additional7` | `string` | No | Additional appointment field 7 |
+| `additional8` | `string` | No | Additional appointment field 8 |
+| `additional9` | `string` | No | Additional appointment field 9 |
+| `additional10` | `string` | No | Additional appointment field 10 |
+| `additional11` | `string` | No | Additional appointment field 11 |
+| `additional12` | `string` | No | Additional appointment field 12 |
+| `additional13` | `string` | No | Additional appointment field 13 |
+| `additional14` | `string` | No | Additional appointment field 14 |
+| `additional15` | `string` | No | Additional appointment field 15 |
+| `additional16` | `string` | No | Additional appointment field 16 |
+| `additional17` | `string` | No | Additional appointment field 17 |
+| `additional18` | `string` | No | Additional appointment field 18 |
+| `additional19` | `string` | No | Additional appointment field 19 |
+| `additional20` | `string` | No | Additional appointment field 20 |
+| `agbaccepted` | `boolean` | No | true if customer accepted the terms of service |
+| `dataprivacyaccepted` | `boolean` | No | true if customer accepted the privacy terms |
+| `feedbackpermissionaccepted` | `boolean` | No | true if the customer should get a feedback mail |
+| `newsletter` | `boolean` | No | true if the customer accepted to get newsletters |
+| `bookerinfo` | `string` | No | Parameter that includes information for the notification message to the appointment provider |
+| `emailm` | `number` | No | Checks if there is an email, if set to 1 |
+| `lnm` | `number` | No | Checks if there is a lastname, if set to 1 |
+| `blacklist` | `number` | No | Checks if the email is on the blacklist, if set to 1 |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`appointments.delete`
+
+Use this function to delete an appointment in the eTermin calendar. You can either use the id of a specific appointment or the start/end parameters to delete all appointments within a specific time span.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.appointments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appid` | `number` | No | AppID of the appointment (relates to the ID) |
+| `id` | `string` | No | ID of the appointment, &lt;b&gt;use externalid instead, if you use the parameter sync=1 or sendemail=1&lt;/b&gt; (relates to the ExternalID) |
+| `externalid` | `string` | No | External ID of the appointment, required when sync or sendemail is used. |
+| `start` | `string` | No | Start date of the appointments. |
+| `end` | `string` | No | End date of the appointments. |
+| `sync` | `boolean` | No | True if the appointment should be synchronized with external calendars (use externalid instead of id Parameter) |
+| `sendemail` | `boolean` | No | True if an email should be sent to the customer (use externalid instead of id Parameter) |
+| `msgtype` | `number` | No | Defines which template should be sent |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`appointments.list`
+
+Use this function if you want to get all appointment details that are stored on the eTermin platform. You can use the start/end parameters the get all appointments within a specific time span or the id parameter to get the appointment details of a specific appointment. &lt;br&gt;&lt;b&gt;At least one parameter is mandatory!&lt;/b&gt;
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.appointments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appid` | `number` | No | ID of an appointment. (relates to the ID) |
+| `id` | `string` | No | ID of an appointment. (relates to the ExternalID) |
+| `start` | `string` | No | Start date of the appointments. Format yyyy-mm-dd. It will return a list with all appointments that are between "start" and "end". |
+| `end` | `string` | No | End date of the appointments. Format yyyy-mm-dd. It will return a list with all appointments that are between "start" and "end". |
+| `bycreationdate` | `boolean` | No | Changes the start and end parameters to look for the creation date instead of the date, the appointment takes place |
+| `calendarid` | `string` | No | IDs of the calendars that you want to get appointments from, you can separate multiple calendars with a "," |
+| `wl` | `boolean` | No | Set to 1 if you want to get all appointments on the Waiting List (start and end parameters required) |
+| `pbl` | `boolean` | No | Set to 1 if you want to get all appointments on the Reservation List (start and end parameters not required) |
+| `cid` | `number` | No | Use a customer ID to see all appointments that are related to this customer. (start and end parameters not required) |
+| `email` | `string` | No | Use an email address to see all appointments that are related to this email. (start and end parameters required) |
+| `limited` | `boolean` | No | Reduces the amount of information that the response have. Set to 1 if you want basic information about a lot of appointments. |
+| `manualconfirmed` | `boolean` | No | If set to 0 shows all appointments in the specified timeframe (start and end) that are not confirmed yet |
+| `noholidays` | `boolean` | No | Only shows appointments that are no holidays and not blocked appointments. |
+| `noholidays2` | `boolean` | No | Only shows appointments that are no holidays. (bookingtype &lt;&gt; "Holiday") |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`appointments.update`
+
+Use this function if you want to update details of an existing appointment.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.appointments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | External ID of the appointment that you want to modify. |
+| `start` | `string` | No | Start date and time of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00 |
+| `end` | `string` | No | End date and time of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 19:00 |
+| `calendarid` | `number` | No | ID of the calendar. |
+| `calendarname` | `string` | No | Name of the calendar (needed for Webpush) |
+| `services` | `string` | No | ID of the service. Use the 'Service - Get service details' function to get a list with all available services. To use multiple services use a comma (,) to seperate the IDs |
+| `servicestext` | `string` | No | Name of the services |
+| `servicesinclsgtext` | `string` | No | Name of the services including the service groups |
+| `servicesabb` | `string` | No | Abbreviation of the services |
+| `capacity` | `number` | No | Defines the capacity of the appointment |
+| `location` | `string` | No | Location of the appointment |
+| `manualconfirmed` | `number` | No | Set to 0 to have the appointment manually confirmed by the appoinment provider, set to 1 if the appointment got confirmed |
+| `sendemail` | `boolean` | No | Send a confirmation email to the adress that was specified in the email parameter (1 = yes, 0 = no). |
+| `msgtype` | `number` | No | ID of the template that is sent to the customer with the API call |
+| `sendsms` | `boolean` | No | Send a confirmation SMS to the phone number that was specified in the phone parameter (1 = yes, 0 = no). |
+| `msgtypesms` | `number` | No | ID of the template that is sent to the customer via SMS with the API call (required to send a SMS) |
+| `notificationmsg` | `boolean` | No | Send an information email to the appointment provider (1 = yes, 0 = no). |
+| `sync` | `boolean` | No | True if the appointment should be synchronized with external calendars (1 = yes, 0 = no). |
+| `appointmentreminderhours` | `number` | No | Defines when the first reminder is sent in hours (needs to be a negative value) |
+| `appointmentreminderhours2` | `number` | No | Defines when the second reminder is sent in hours (needs to be a negative value) |
+| `canceldeadline` | `number` | No | Minutes how long before the startdate the appointment can be cancelled |
+| `recurrencerule` | `string` | No | Recurrence rule. e.g. DTSTART:20171126T083000Z DTEND:20181126T090000Z RRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=WE; |
+| `pricegross` | `number` | No | Price including vat multiplied by 100 (e.g. 18.50€ = 1850) |
+| `pricenet` | `number` | No | Price excluding vat multiplied by 100 (e.g. 18.50€ = 1850) |
+| `vat` | `number` | No | Vat multiplied by 100 (e.g. 18.50€ = 1850) |
+| `linkedappidmanual` | `number` | No | AppID of the linked app if the calendar linking should be applied after two appointments are booked. Keep in mind to update the second appointment aswell |
+| `salutation` | `string` | No | Salutation of the person. |
+| `title` | `string` | No | Title of the person. |
+| `lastname` | `string` | No | Lastname of the person. |
+| `firstname` | `string` | No | Firstname of the person. |
+| `email` | `string` | No | E-Mail of the person. |
+| `phone` | `string` | No | Phone of the person. |
+| `company` | `string` | No | Company of the person (make sure this field exists in your account) |
+| `notes` | `string` | No | Appointment notes. |
+| `street` | `string` | No | Street. |
+| `zip` | `string` | No | Zip. |
+| `city` | `string` | No | City. |
+| `customernumber` | `string` | No | ID of the person that booked appointment. |
+| `additional1` | `string` | No | Additional appointment field 1. |
+| `additional2` | `string` | No | Additional appointment field 2. |
+| `additional3` | `string` | No | Additional appointment field 3. |
+| `additional4` | `string` | No | Additional appointment field 4. |
+| `additional5` | `string` | No | Additional appointment field 5. |
+| `additional6` | `string` | No | Additional appointment field 6. |
+| `additional7` | `string` | No | Additional appointment field 7. |
+| `additional8` | `string` | No | Additional appointment field 8. |
+| `additional9` | `string` | No | Additional appointment field 9. |
+| `additional10` | `string` | No | Additional appointment field 10. |
+| `additional11` | `string` | No | Additional appointment field 11. |
+| `additional12` | `string` | No | Additional appointment field 12. |
+| `additional13` | `string` | No | Additional appointment field 13. |
+| `additional14` | `string` | No | Additional appointment field 14. |
+| `additional15` | `string` | No | Additional appointment field 15. |
+| `additional16` | `string` | No | Additional appointment field 16. |
+| `additional17` | `string` | No | Additional appointment field 17. |
+| `additional18` | `string` | No | Additional appointment field 18. |
+| `additional19` | `string` | No | Additional appointment field 19. |
+| `additional20` | `string` | No | Additional appointment field 20. |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Appointment Sync
+
+### create
+
+`appointmentSync.create`
+
+Create a new appointment
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.appointmentSync.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointmentid` | `string` | Yes | ID of the appointment |
+| `start` | `string` | Yes | Start date and time of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00 |
+| `end` | `string` | Yes | End date and time of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 19:00 |
+| `startutc` | `string` | Yes | Start date and time(utc) of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00 |
+| `endutc` | `string` | Yes | End date and time (utc) of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 19:00 |
+| `calendarid` | `number` | Yes | ID of the calendar |
+| `summary` | `string` | Yes | Title (subject) of the appointment |
+| `description` | `string` | Yes | Body text of the appointment |
+| `email` | `string` | No | E-Mail |
+| `recurrencerule` | `string` | No | Recurrence rule |
+| `recurrenceparentid` | `string` | No | ID of the parent recurring appointment |
+| `sequence` | `string` | No | Sequence of the recurring appointment. Leave it empty if it is not an recurring appointment |
+| `location` | `string` | No | Location |
+| `sendemail` | `boolean` | No | Send a confirmation email to the adress that was specified in the email parameter (1 = yes, 0 = no) |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`appointmentSync.delete`
+
+Use this function to delete an appointment in the eTermin calendar. You can either use the id of a specific appointment or the start/end parameters to delete all appointments within a specific time span.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.appointmentSync.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointmentid` | `string` | No | ID of the appointment |
+| `start` | `string` | No | Start date of the appointments. |
+| `end` | `string` | No | End date of the appointments. |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`appointmentSync.list`
+
+Gets all inserted (I), modified (U) and deleted (D) appointments that were modified on the eTermin platform. The parameter 'SyncStatus' contains the status of the appointment (U, I, D). You can call this function e.g. every 5 minutes to get all appointments that were added, modified or deleted within the last 5 minutes on the eTermin platform. Important: If the SyncStatus returns 'U' and the appointment does not exist in your application, please insert this appointment in your application. There can be cases that the 'SyncStatus' returns 'U' although the appointment does not yet exist in your application.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.appointmentSync.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `synctoken` | `number` | Yes | SyncToken. If you start the synchronization the first time, please use 1. eTermin will return a (new) SyncToken after each call. This value can be found in the header. Please use then the new SnycToken when you call the api function again. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointments` | `object[]` | Yes | — |
+| `synctoken` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="appointments full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`appointmentSync.update`
+
+Update an existing appointment
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.appointmentSync.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appointmentid` | `string` | Yes | ID of the appointment |
+| `start` | `string` | Yes | Start date and time of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00 |
+| `end` | `string` | Yes | End date and time of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 19:00 |
+| `startutc` | `string` | Yes | Start date and time(utc) of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00 |
+| `endutc` | `string` | Yes | End date and time (utc) of the appointment. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 19:00 |
+| `calendarid` | `number` | Yes | ID of the calendar |
+| `summary` | `string` | Yes | Title (subject) of the appointment |
+| `description` | `string` | Yes | Body text of the appointment |
+| `email` | `string` | No | E-Mail |
+| `recurrencerule` | `string` | No | Recurrence rule |
+| `recurrenceparentid` | `string` | No | ID if the parent recurring appointment |
+| `sequence` | `string` | No | Sequence of the recurring appointment. Leave it empty if it is not an recurring appointment |
+| `location` | `string` | No | Location |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Booking Page Logs
+
+### list
+
+`bookingPageLogs.list`
+
+Use this function if you want to get all requests of your booking page. You can only get the booking page requests of the last 30 days.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.bookingPageLogs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datefrom` | `string` | Yes | Start date of the requests. Format: yyyy-mm-dd. |
+| `summaryonly` | `boolean` | No | Set to 1 to only get a summary of all requests, not every single request. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Calendar Non Working Times
+
+### create
+
+`calendarNonWorkingTimes.create`
+
+Use this function to create a new absence.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.calendarNonWorkingTimes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appcalendarid` | `number` | Yes | ID of the calendar. Use the "Calendar - Get calendar details" function to get a list with all available calendars. |
+| `startdate` | `string` | Yes | Start time of the absence. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00 |
+| `enddate` | `string` | Yes | End time of the absence. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00 |
+| `reason` | `string` | No | Reason or note for the absence. |
+| `nwtype` | `boolean` | No | Indicates if the absence is dynamic. |
+| `dynamicdays` | `number` | No | Number of days for the dynamic absence to begin (nwtype has to be 1). |
+| `dynamicdaysduration` | `number` | No | Number of days for the dynamic absence to last (nwtype has to be 1). |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`calendarNonWorkingTimes.delete`
+
+Use this function to delete an absence.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.calendarNonWorkingTimes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the absence. |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`calendarNonWorkingTimes.list`
+
+Use this function if you want to get information about absences for a calendar.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.calendarNonWorkingTimes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `number` | Yes | ID of the calendar. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`calendarNonWorkingTimes.update`
+
+Use this function to update an absence.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.calendarNonWorkingTimes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the absence. |
+| `appcalendarid` | `number` | No | ID of the calendar. Use the "Calendar - Get calendar details" function to get a list with all available calendars. |
+| `startdate` | `string` | No | Start time of the absence. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00 |
+| `enddate` | `string` | No | End time of the absence. Format: yyyy-mm-dd HH:MM e.g. 2017-10-24 18:00 |
+| `reason` | `string` | No | Reason or note for the absence. |
+| `nwtype` | `boolean` | No | Indicates if the absence is dynamic. |
+| `dynamicdays` | `number` | No | Number of days for the dynamic absence (nwtype has to be 1). |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Calendar Return Times
+
+### create
+
+`calendarReturnTimes.create`
+
+Use this function to create a new return time.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.calendarReturnTimes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `number` | Yes | ID of the calendar. Use the "Calendar - Get calendar details" function to get a list with all available calendars. |
+| `starttime` | `string` | Yes | Start time of the return time. Format: HH:MM e.g. 18:00 |
+| `endtime` | `string` | Yes | End time of the return time. Format: HH:MM e.g. 18:00 |
+| `weekdayidx` | `number` | Yes | ID of the weekday 1=Sunday, 7 = Saturday. |
+| `newday` | `boolean` | Yes | If true the return time will end on the next day. Use this if you have a return time over midnight. |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`calendarReturnTimes.delete`
+
+Use this function to delete a return time by its ID.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.calendarReturnTimes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the return time. |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`calendarReturnTimes.list`
+
+Use this function if you want to get information about return times for a calendar.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.calendarReturnTimes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `number` | Yes | ID of the calendar. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`calendarReturnTimes.update`
+
+Use this function to update a return time.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.calendarReturnTimes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the return time. |
+| `calendarid` | `number` | No | ID of the calendar. Use the "Calendar - Get calendar details" function to get a list with all available calendars. |
+| `starttime` | `string` | No | Start time of the return time. Format: HH:MM e.g. 18:00 |
+| `endtime` | `string` | No | End time of the return time. Format: HH:MM e.g. 18:00 |
+| `weekdayidx` | `number` | No | ID of the weekday 1=Sunday, 7 = Saturday. |
+| `newday` | `boolean` | No | If true the return time will end on the next day. Use this if you have a return time over midnight. |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Calendars
+
+### create
+
+`calendars.create`
+
+Use this function to create a new calendar
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.calendars.create({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`calendars.delete`
+
+Use this function if you want to delete a calendar
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.calendars.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the calendar |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`calendars.list`
+
+Returns all calendars that are available for the specific account.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.calendars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `number` | No | ID of the calendar, if you only need to get the details of a single calendar |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`calendars.update`
+
+Use this function if you want to update details of an existing calendar/employee/ressource.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.calendars.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the calendar |
+| `calendarname` | `string` | No | Name of the calendar. This name is used for all languages |
+| `descriptionlanguagecode` | `string` | No | e.g. descriptionde adds additional information for this calendar in German language. descriptionen in English etc. |
+| `descriptiondisplaytype` | `number` | No | defines if the description is shown on the bookingpage &lt;br&gt; 0 = not shown&lt;br&gt; 1 = shown under calendar name&lt;br&gt; 2 = shown as tooltip |
+| `enablecapacity` | `boolean` | No | Several appointments can be booked at the same time |
+| `maxcapacity` | `number` | No | Maximum capacity of appointments that can be booked at the same time |
+| `differentlocation` | `boolean` | No | The location of the calendar is different than the main location |
+| `name` | `string` | No | Name of the different company name |
+| `street` | `string` | No | Street |
+| `zip` | `string` | No | ZIP |
+| `city` | `string` | No | City |
+| `country` | `string` | No | Country |
+| `telephone` | `string` | No | Telephone |
+| `mobilephone` | `string` | No | MobilePhone |
+| `emaillocation` | `string` | No | Email |
+| `web` | `string` | No | Internet address |
+| `completeappointmentwithinopeninghours` | `boolean` | No | If you have configured services where free, idle or down times between appointments occur, you can define whether these should be within the defined available times. |
+| `smsnotification` | `boolean` | No | Employee will be informed by SMS if an appointment was booked |
+| `smsphonenumber` | `string` | No | Number of the phone |
+| `smstimespanhours` | `number` | No | Threshold (in hours) if SMS should be sent |
+| `calendartype` | `boolean` | No | Main calendar (0) or sub calendar (1) |
+| `limittoduration` | `number` | No | Calendar can only handle appointments that have a certain length (defined in maxduration) |
+| `maxduration` | `number` | No | Maximum appointment duration (minutes) |
+| `waitingnr` | `boolean` | No | Calculate waiting number |
+| `wnprefix` | `string` | No | Prefix of the waiting number |
+| `wnstartnr` | `number` | No | Start number of the waiting number |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Calendar Services
+
+### create
+
+`calendarServices.create`
+
+Creates a new service assignment of a calendar
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.calendarServices.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `string` | Yes | ID of the calendar |
+| `serviceid` | `string` | Yes | ID of the service |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`calendarServices.delete`
+
+Use this function if you want to delete a calendar/service assignment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.calendarServices.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the calendar service assignment |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`calendarServices.list`
+
+Returns all assigned services of a calendar
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.calendarServices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `string` | No | ID of the calendar you want the service assignments |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contact Frequencies
+
+### create
+
+`contactFrequencies.create`
+
+Creates contact frequency that limites the amount of bookings a contact can have. The login on the booking page has to be activated to use this function.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.contactFrequencies.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cid` | `number` | Yes | CID of the contact that should get a frequency |
+| `limited` | `boolean` | Yes | Set to true if the frequency limitation should apply |
+| `frequency` | `number` | Yes | Defines how many appointments can be booked in the specific timeframe |
+| `frequencytype` | `string` | Yes | Defines the timeframe of the frequency limitation:&lt;br&gt;0 = per week&lt;br&gt;1 = per month&lt;br&gt;2 = per quarter&lt;br&gt;3 = per year |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`contactFrequencies.list`
+
+Returns the frequency setting of the contact.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.contactFrequencies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cid` | `number` | Yes | CID of the contact |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Creates a new contact. You can see the new contact in the eTermin CRM.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updatewhenexistsgdt` | `number` | No | Set to 1 to check if the contact is already existing. If so the existing contact gets updated. Needs email or firstname, lastname, birthday. |
+| `salutation` | `string` | No | Salutation of the person. |
+| `title` | `string` | No | Title of the person. |
+| `lastname` | `string` | No | Lastname of the person. |
+| `firstname` | `string` | No | Firstname of the person. |
+| `birthday` | `string` | No | Birthday of the person. |
+| `email` | `string` | No | E-Mail of the person. |
+| `phone` | `string` | No | Phone of the person. |
+| `company` | `string` | No | Company of the person (make sure this field exists in your account) |
+| `street` | `string` | No | Street of the person. |
+| `zip` | `string` | No | Zip of the person. |
+| `city` | `string` | No | City of the person. |
+| `state` | `string` | No | State of the person. |
+| `country` | `string` | No | Country of the person. |
+| `customernumber` | `string` | No | ID of the person. |
+| `loginid` | `string` | No | Sets the loginID for the contact (if Login is used on Bookingpage). |
+| `password` | `string` | No | Sets the initial password for the contact. |
+| `newsletter` | `boolean` | No | Opts the contact into the newsletter. |
+| `additional1` | `string` | No | Additional appointment field 1. |
+| `additional2` | `string` | No | Additional appointment field 2. |
+| `additional3` | `string` | No | Additional appointment field 3. |
+| `additional4` | `string` | No | Additional appointment field 4. |
+| `additional5` | `string` | No | Additional appointment field 5. |
+| `additional6` | `string` | No | Additional appointment field 6. |
+| `additional7` | `string` | No | Additional appointment field 7. |
+| `additional8` | `string` | No | Additional appointment field 8. |
+| `additional9` | `string` | No | Additional appointment field 9. |
+| `additional10` | `string` | No | Additional appointment field 10. |
+| `additional11` | `string` | No | Additional appointment field 11. |
+| `additional12` | `string` | No | Additional appointment field 12. |
+| `additional13` | `string` | No | Additional appointment field 13. |
+| `additional14` | `string` | No | Additional appointment field 14. |
+| `additional15` | `string` | No | Additional appointment field 15. |
+| `additional16` | `string` | No | Additional appointment field 16. |
+| `additional17` | `string` | No | Additional appointment field 17. |
+| `additional18` | `string` | No | Additional appointment field 18. |
+| `additional19` | `string` | No | Additional appointment field 19. |
+| `additional20` | `string` | No | Additional appointment field 20. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Use this function if you want to delete a contact in the eTermin CRM. You can either use the email address or the ID to delete the contact.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | E-Mail of the contact (this can lead to the deletion of multiple contacts with the same Email) |
+| `id` | `string` | No | ExternalID of the contact |
+| `cid` | `string` | No | CID of the contact |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`contacts.list`
+
+Returns a list with all contacts that are maintained in the eTermin CRM.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | E-Mail of the contact |
+| `id` | `string` | No | ExternalID of the contact |
+| `cid` | `string` | No | CID of the contact |
+| `creationdate` | `string` | No | Displays all contacts that were created on this date |
+| `creationdateall` | `string` | No | Displays all contacts that were created since this date |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`contacts.update`
+
+Use this function if you want to update details of an existing contact.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `salutation` | `string` | No | Salutation of the person. |
+| `title` | `string` | No | Title of the person. |
+| `lastname` | `string` | No | Lastname of the person. |
+| `birthday` | `string` | No | Birthday of the person. |
+| `email` | `string` | No | E-Mail of the person. |
+| `phone` | `string` | No | Phone of the person. |
+| `company` | `string` | No | Company of the person (make sure this field exists in your account) |
+| `street` | `string` | No | Street of the person. |
+| `zip` | `string` | No | Zip of the person. |
+| `city` | `string` | No | City of the person. |
+| `state` | `string` | No | State of the person. |
+| `country` | `string` | No | Country of the person. |
+| `customernumber` | `string` | No | ID of the person. |
+| `loginid` | `string` | No | Sets the loginID for the contact (if Login is used on Bookingpage). |
+| `password` | `string` | No | Sets the initial password for the contact. |
+| `newsletter` | `boolean` | No | Opts the contact into the newsletter. |
+| `additional1` | `string` | No | Additional appointment field 1. |
+| `additional2` | `string` | No | Additional appointment field 2. |
+| `additional3` | `string` | No | Additional appointment field 3. |
+| `additional4` | `string` | No | Additional appointment field 4. |
+| `additional5` | `string` | No | Additional appointment field 5. |
+| `additional6` | `string` | No | Additional appointment field 6. |
+| `additional7` | `string` | No | Additional appointment field 7. |
+| `additional8` | `string` | No | Additional appointment field 8. |
+| `additional9` | `string` | No | Additional appointment field 9. |
+| `additional10` | `string` | No | Additional appointment field 10. |
+| `additional11` | `string` | No | Additional appointment field 11. |
+| `additional12` | `string` | No | Additional appointment field 12. |
+| `additional13` | `string` | No | Additional appointment field 13. |
+| `additional14` | `string` | No | Additional appointment field 14. |
+| `additional15` | `string` | No | Additional appointment field 15. |
+| `additional16` | `string` | No | Additional appointment field 16. |
+| `additional17` | `string` | No | Additional appointment field 17. |
+| `additional18` | `string` | No | Additional appointment field 18. |
+| `additional19` | `string` | No | Additional appointment field 19. |
+| `additional20` | `string` | No | Additional appointment field 20. |
+| `tags` | `string` | No | Tags of the person. To add multiple tags use a comma (,) |
+| `limitedservices` | `string` | No | Set to 1 if you want to limit the services for the contact. Also see &lt;br&gt; /api/contactpermission and &lt;br&gt; /api/contactfrequency &lt;br&gt; for more information. The login on the booking page needs to be activated to use this feature |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Contact Services
+
+### create
+
+`contactServices.create`
+
+Creates contact permission to specific service groups. The login on the booking page has to be activated to use this function.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.contactServices.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cid` | `number` | Yes | CID of the contact that should get permissions |
+| `sgid` | `string` | Yes | Servicegroupids of the servicegroups that the contact should have permission to. Multiple servicegroups are separated by a comma (,). Leave empty for no restrictions |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`contactServices.list`
+
+Returns a list of the permissions of the contact.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.contactServices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cid` | `number` | Yes | CID of the contact |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Deleted Appointments
+
+### list
+
+`deletedAppointments.list`
+
+Returns all appointments that got deleted during the specified time span.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.deletedAppointments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | No | Start day when appointment(s) got deleted. Format: yyyy-mm-dd. It will return a list with all appointments that are between start and end |
+| `end` | `string` | No | End day when appointment(s) got deleted. Format: yyyy-mm-dd. It will return a list with all appointments there are between start and end |
+| `id` | `string` | No | External ID of an appointment, it returns only the information of the specific appointment. Start and end parameters are getting ignored if used |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Message Logs
+
+### list
+
+`messageLogs.list`
+
+Returns a list with all messages that are sent via eTermin. Note: You can only get the list for the last 30 days or less, depending on your privacy settings in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.messageLogs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | ID of a messagelog entry. Gives the email text that is sent in this specific email. |
+| `appid` | `number` | No | Gives a list of all emails and SMS that are sent relating to the numeric appointmentid (not externalid) |
+| `smsonly` | `boolean` | No | Only gives you a list how many SMS are sent this month and last month. It won't contain the list of SMS that are actually sent, only the amount. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Ratings
+
+### list
+
+`ratings.list`
+
+Returns all the ratings that were received from the customers.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.ratings.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Service Calendars
+
+### list
+
+`serviceCalendars.list`
+
+Returns a list of all calendars that are compatible with one of the provided serviceid(s)
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.serviceCalendars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serviceid` | `string` | Yes | ID of a service. Several service ID's can be separated with a comma (,). e.g. 45345,45346 etc. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Service Groups
+
+### create
+
+`serviceGroups.create`
+
+Creates a new service group
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.serviceGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `servicegroupde` | `string` | No | Name of the service group in german. For other languages use servicegroupLANGUAGECODE e.g. servicegroupen |
+| `servicegroupen` | `string` | No | Name of the service group in English. |
+| `additionaltextde` | `string` | No | Additional information of the service group in german. For other languages use additionaltextLANGUAGECODE e.g. additionaltexten |
+| `additionaltexten` | `string` | No | Additional information in English. |
+| `addtextdisplaymode` | `number` | No | Defines the location of the additional text (0 = via Tooltip; 1 = under the name of the service group) |
+| `servicegrouptype` | `number` | No | Defines the service group type (0 = Service selection; 2 = Text field; 5 = location selection; 8 = Day amount selection; 9 = Number search; 10 = Minutes amount selection) |
+| `answerselection` | `number` | No | Selection type for services (0 = Single selection; 1 = Multi selection; 2 = list selection). Has to be -1 if servicegrouptype is not 0! |
+| `isoptional` | `boolean` | No | Defines if a selection of a service is mandatory |
+| `showprice` | `boolean` | No | Defines if the price of the service is shown |
+| `showduration` | `boolean` | No | Defines if the duration of the service is shown |
+| `nrservicecolumns` | `number` | No | Defines how many columns the services should be displayed in |
+| `showtoggle` | `boolean` | No | true if the service group can be collapsed |
+| `collapse` | `boolean` | No | true if the service group is shown collapsed as default (need showtoggle to be true) |
+| `enabled` | `boolean` | No | false if the service group should not appear on the bookingpage (only via direct link or for internal services) |
+| `showinsummary` | `boolean` | No | false if the selected service should not appear in the summary box |
+| `showwhencertainanswerselected` | `string` | No | List of services that have to be selected to show this service group. Set to -1 if the service group should be shown initially |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`serviceGroups.delete`
+
+Use this function if you want to delete a service group. All services that are linked to this service group will be deleted automatically as well.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.serviceGroups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `servicegroupid` | `number` | Yes | ID of the servicegroup that you want information on |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`serviceGroups.list`
+
+Returns all service groups that are available for the specific account.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.serviceGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `servicegroupid` | `number` | No | ID of the servicegroup that you want information on |
+| `languageid` | `string` | No | Language code if you only want the information for a specific language e.g. DE, EN, etc. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`serviceGroups.update`
+
+Updates attributes of a service group
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.serviceGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `servicegroupid` | `number` | Yes | ID of the service group that gets updated |
+| `servicegroupde` | `string` | No | Name of the service group in german. For other languages use servicegroupLANGUAGECODE e.g. servicegroupen |
+| `servicegroupen` | `string` | No | Name of the service group in English. |
+| `additionaltextde` | `string` | No | Additional information of the service group in german. For other languages use additionaltextLANGUAGECODE e.g. additionaltexten |
+| `additionaltexten` | `string` | No | Additional information in English. |
+| `addtextdisplaymode` | `number` | No | Defines the location of the additional text (0 = via Tooltip; 1 = under the name of the service group) |
+| `servicegrouptype` | `number` | No | Defines the service group type (0 = Service selection; 2 = Text field; 5 = location selection; 8 = Day amount selection; 9 = Number search; 10 = Minutes amount selection) |
+| `answerselection` | `number` | No | Selection type for services (0 = Single selection; 1 = Multi selection; 2 = list selection). Has to be -1 if servicegrouptype is not 0! |
+| `isoptional` | `boolean` | No | Defines if a selection of a service is mandatory |
+| `showprice` | `boolean` | No | Defines if the price of the service is shown |
+| `showduration` | `boolean` | No | Defines if the duration of the service is shown |
+| `nrservicecolumns` | `number` | No | Defines how many columns the services should be displayed in |
+| `showimgfull` | `boolean` | No | true if the picture of the service should be shown as big as possible |
+| `showtoggle` | `boolean` | No | true if the service group can be collapsed |
+| `collapse` | `boolean` | No | true if the service group is shown collapsed as default (need showtoggle to be true) |
+| `enabled` | `boolean` | No | false if the service group should not appear on the bookingpage (only via direct link or for internal services) |
+| `answersortorder` | `number` | No | Defines in which order the services are shown (0 = according to position in service; 1 = Ascending by name; 2 = Descending by name) |
+| `showinsummary` | `boolean` | No | false if the selected service should not appear in the summary box |
+| `showinemailsummary` | `boolean` | No | false if the selected service should not appear in the summary of the emails |
+| `pageidx` | `number` | No | If set to 1 the service group will be shown on a second service selection page. Default value is 0 |
+| `displayindex` | `number` | Yes | Index in which order the service group should be shown |
+| `showwhencertainanswerselected` | `string` | No | List of services that have to be selected to show this service group. Set to -1 if the service group should be shown initially |
+| `countrylimitation` | `string` | No | Languagecodes that are supported by the location lookup (servicegrouptype has to be 5) |
+| `regex` | `string` | No | Is a validation rule. Can be used if you want to have your location written in a certain way (servicegrouptype has to be 5) |
+| `errormsgde` | `string` | No | Error message, if the regex isn't valid or a wrong number on the number search is used. For other languages use errormsgLANGUAGECODE e.g. errormsgen (servicegrouptype has to be 5 or 9) |
+| `selminduration` | `number` | No | The interval of minutes you can switch up or down with the minute selection (servicegrouptype has to be 10) |
+| `selminprice` | `number` | No | The price of every minute selection interval (servicegrouptype has to be 10) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Services
+
+### create
+
+`services.create`
+
+Use this function if you want to create a service. Note: Most services only need the first few parameters. However, since the services are very versatile, they have much more parameters, especially because they may override global settings.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.services.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `servicegroupid` | `number` | Yes | ID of the service group |
+| `servicede` | `string` | Yes | Name of the service in german. For other languages use serviceLANGUAGECODE e.g. serviceen |
+| `timeslotminutes` | `number` | Yes | Duration of the service in minutes |
+| `infode` | `string` | No | Additional description of the service in german. For other languages use serviceLANGUAGECODE e.g. infoen |
+| `infodisplay` | `number` | No | Defines where the information is shown (0 = below service name, 1 = informationtext page 2, 2 = summary after booking, 3 = below service name and summary after booking) |
+| `differenttimeresource` | `boolean` | No | True if you want to add pre- or post processing times |
+| `timeslotminutesresstart` | `number` | No | Busy by minute (use negative number to have a pre-processing time) |
+| `timeslotminutesresend` | `number` | No | Busy until minute (use a number greater than timeslotminutes to have a post-processing time) |
+| `price` | `number` | No | Price of the service |
+| `priceispercentage` | `boolean` | No | True if price is a percentage |
+| `abbreviation` | `string` | No | abbreviation of the service |
+| `enablecapacity` | `boolean` | No | True to enable the capacity of the service |
+| `showcapselectionbox` | `boolean` | No | True if the customer is able to select the capacity |
+| `maxcapacity` | `number` | No | Sets the maximum capacity of the service |
+| `maxcapacityusersel` | `number` | No | Sets the maximum capacity the user can set on the booking page (needs showcapselectionbox to be true) |
+| `capacitynonsel` | `number` | No | Sets the capacity if selected on the booking page (needs showcapselectionbox to be false) |
+| `image` | `string` | No | Image of the service |
+| `appdeadline` | `number` | No | Time the appointment must be booked in advance in minutes |
+| `appfuture` | `number` | No | Time the appointment can be booked in the future in days |
+| `startedapp` | `number` | No | Time the appointment can be booked if already started in minutes (has to be a negative value) |
+| `canceldeadline` | `number` | No | Time the appointment can be cancelled in hours |
+| `dayselectiontype` | `number` | No | Defines how page 2 shows the available days (0 = Calendar, 1 = list of days) |
+| `appointmentlocation` | `number` | No | Defines the location of the appointment |
+| `appointmentlocationtext` | `string` | No | Defines the location text if appointmentlocation = 3 |
+| `vendorconfirmation` | `number` | No | Defines if the appointment provider needs to manually confirm the appointment (0 = manually, 1 = automatically) |
+| `smsconfirmation` | `number` | No | Defines if a SMS confirmation is sent after booking (1 = enabled, 0 = disabled) |
+| `reminderhours` | `number` | No | Defines when the first reminder is sent in hours (needs to be a negative value) |
+| `reminderhours2` | `number` | No | Defines when the second reminder is sent in hours (needs to be a negative value) |
+| `cluster` | `number` | No | Defines if the cluster is applied to this service (1 = enabled, 0 = disabled) |
+| `customerconfirm` | `number` | No | Defines if the customer needs to confirm the appointment (1 = enabled, 0 = disabled; doesn't work with online payments or vendorconfirmation) |
+| `customerconfirmtime` | `number` | No | Time in minutes the customer has time to confirm the appointment (customerconfirm must be set to 1) |
+| `PM0` | `number` | No | Shows online payment options (1 = enabled, 0 = disabled) |
+| `PM1` | `number` | No | Shows on site payment options (1 = enabled, 0 = disabled) |
+| `PM2` | `number` | No | Shows by invoice payment options (1 = enabled, 0 = disabled) |
+| `paymentamountpercentage` | `number` | No | Defines the payment amount that needs to be paid at the end of booking |
+| `paymentamountisabsolute` | `number` | No | Defines if paymentamountpercentage is abolute or a percentage (1 = absolute, 0 = percentage) |
+| `currency` | `string` | No | Defines the currency of the service |
+| `voucherfield` | `number` | No | Defines if the voucherfield is shown (0 = not shown, 1 = shown, 2 = shown and mandatory) |
+| `mpbs` | `number` | No | Defines if the price is multiplied by the amount of booked appointments |
+| `timeslotformat` | `number` | No | Defines how the timeslots are shown on page 2 on the bookingpage (0 = starttime - endtime, 1 = starttime, 2 = only date, 3 = calendar week, 4 = like 0 but with dates, 5 = startdate only) |
+| `multiappointment` | `number` | No | Defines if multiple appointments can be booked in one booking (0 = no, 1 = yes) |
+| `multiservicedurationcalcmethod` | `number` | No | Defines how the duration is calculated if multiple services are selected (0 = all durations are summed up, 1 = only duration of the longest service, 2 = all durations are halfed, 3 = like 2 except the longest service) |
+| `calendarselection` | `number` | No | Defines if the calendar selection should be shown (0 = no, 1 = yes) |
+| `ssca` | `number` | No | Defines if in the calendar selection the entry all calendars is shown (0 = no, 1 = yes) |
+| `showcalname` | `number` | No | Defines if in the calendar name is shown in the time slot (0 = no, 1 = yes) |
+| `showcalpic` | `number` | No | Defines if in the calendar picture is shown after the timeslot is selected (0 = no, 1 = yes) |
+| `showavcap` | `number` | No | Defines if the available capacity is shown in time slots (0 = no, 1 = yes) |
+| `limitbooking` | `number` | No | Defines if this service can be booked a limited amount of times per customer (0 = no, 1 = yes) |
+| `limitappointmentstype` | `number` | No | Defines how the appointments are limited (0 = per booking day, 1 = per week, 2 = per month, 3 = per year, 4 = per booked day) |
+| `limitappointments` | `number` | No | Defines how many appointments can be booked per customer |
+| `limitservice` | `number` | No | Defines if the limitation only applies to this specific service |
+| `wowing` | `number` | No | Set to 0 if the Wowing interface should be disabled for this service |
+| `wowingautomationid` | `number` | No | Defines the Woing Automation ID |
+| `paymentduration` | `number` | No | Defines the payment term for LexOffice |
+| `workloadperc` | `number` | No | Defines the percentage of time slots that are not shown |
+| `nrtimeslotentries` | `number` | No | Defines the maximum amount of time slots that are shown |
+| `feedback` | `number` | No | Set to 0 if the feedback checkbox should not be shown |
+| `calcdrivingtime` | `number` | No | Defines if driving time should be calculated (0 = no, 1 = yes) |
+| `fillcalendarstrategy` | `number` | No | Defines how the calender should be filled (0 = standard, 1 = random, 2 = round Robin, 3 = sequential, 4 = skills, 5 = strict round Robin) |
+| `waitinglist` | `number` | No | Defines if the waiting list should be available (0 = no, 1 = yes) |
+| `notearlyapp` | `number` | No | Defines if the customer should get an email if an earlier appointment is available (0 = not active, 1 = for appointments that were cancelled online, 2 = for appointments cancelled online and manually, 3 = like 1 but per calendar, 4 = like 2 but per calendar) |
+| `sortorder` | `number` | No | Defines the position in the servicegroup |
+| `bookingtype` | `number` | No | Defines the bookingtype (0 = appointment, 1 = no appointment booking allowed, 2 = 'negative' appointment, 3 = reservation list, 4 = voucher sale) |
+| `showinternal` | `boolean` | No | Defines if the service is shown in the backend |
+| `enabled` | `boolean` | No | Defines if the service is shown in the frontend |
+| `showindb` | `boolean` | No | Defines if the service is shown in the most booked area of the Dashboard |
+| `emailsender` | `string` | No | Defines the sender adress of the email for this service |
+| `emailtxtde` | `string` | No | A special placeholder %SERVICETEXT% for emails, use other language codes to set the text (for example emailtxten for english) |
+| `infotxtp2` | `string` | No | A special placeholder %INFOTEXTP2% for page 2 of the booking page |
+| `pricesuffixde` | `string` | No | Additional information for the price, use other language codes to set the text (for example emailtxten for english) |
+| `priceinfopos` | `number` | No | Defines where the pricesuffix is shown (0 = left side, 1 = right side) |
+| `vat` | `number` | No | Defines the vat rate of the service |
+| `multiplypricewithcap` | `boolean` | No | Defines if the price is multiplied with the capacity |
+| `pricediffperday` | `boolean` | No | Defines if different prices per weekday are applied |
+| `issubscription` | `boolean` | No | Defines if the service is a subscription |
+| `capseltextde` | `string` | No | Defines the text if there is a capacity selection on that service, use other language codes to set the text (for example capseltexten for english) |
+| `mstextpos` | `number` | No | Defines the position of capseltext (0 = above selection, 1 = to the right) |
+| `allowonlythisservice` | `boolean` | No | If there are multiple services with capacity available at the same time, this option prevents that they will get mixed, if set to true |
+| `multiservicesel` | `boolean` | No | True, if the service can be booked multiple times after another. This won't work if the parameter enablecapacity is true aswell |
+| `multiservicemin` | `number` | No | Defines the minimum amount that can be choosen for multi service selection |
+| `multiservicemax` | `number` | No | Defines the maximum amount that can be choosen for multi service selection |
+| `extramin` | `number` | No | Defines total wrap up time |
+| `extramintype` | `number` | No | 0 if extramin should not be applied if differenttimeresource is true, 1 if extramin should be added to timeslotminutesresend |
+| `maxappsel` | `number` | No | Defines the maximum amount of appointments that can be selected on the booking page if multiappointment is true (in this service or globally) |
+| `nrappsel` | `number` | No | Defines the maximum / minimum amount of appointments that MUST be selected on the booking page if multiappointment is true (in this service or globally) |
+| `maxminslots` | `boolean` | No | Defines if nrappsel is maximum (0) or minimum (1) |
+| `nrappseladjacent` | `boolean` | No | True, if the selected appointments have to be adjacent |
+| `nrappseladjacenttype` | `number` | No | 0 = the date and time need to be adjacent, 1 = only the day need to be adjacent |
+| `specificrangenextslot` | `boolean` | No | True, if the next appointment needs to be after a specific timeframe |
+| `rangestart` | `number` | No | Days after the last appoinment |
+| `rangeend` | `number` | No | Days range for the new appointment |
+| `infotextinslots` | `boolean` | No | True, if the info text should be shown in the slot text in page 2 of the booking page |
+| `appattrib` | `number` | No | Defines which attribute is set automatically in appointment. Attributes are binary encoded (1st attribute = 1, 2nd = 2, 3rd = 4; 1st + 2nd = 3) |
+| `addapphours` | `number` | No | Hours after the first appointment, where a second appointment is booked |
+| `rrule` | `string` | No | Defines the RRULE for this service |
+| `bookingminute` | `number` | No | Defines when the timeslots are shown (61 = no restrictions, 0 = every full hour, 31 = every full and half hour, 15 or 30 or 45 = x minutes after a full hour) |
+| `showserviceids` | `string` | No | Service(s) that have to be selected to show this service |
+| `hideserviceids` | `string` | No | Service(s) that should be hidden, if this service is selected |
+| `uselogo` | `boolean` | No | True, if the the picture of this service should be used for the email logo |
+| `severalcalendarsused` | `boolean` | No | True, if the service can only be booked if another calendar is available |
+| `differenttimecombined` | `boolean` | No | True, if the service has a different time if booked with another service |
+| `timeslotcombined` | `number` | No | Defines the time of the appointment if booked with another service. differenttimecombined has to be true |
+| `tags` | `string` | No | ID of the tags that the contact gets after booking |
+| `tagscancel` | `string` | No | ID of the tags that the contact gets after cancellation of the appointment |
+| `externalreference` | `string` | No | Used for a tag ID or external reference after booking |
+| `externalreferencedelete` | `string` | No | Used for a tag ID or external reference after cancellation of the appointment |
+| `externalreferencechange` | `string` | No | Used for a tag ID or external reference after a change of the appointment |
+| `externalreferencedate` | `string` | No | ID of a field that should contain the date of the appointment |
+| `externalreferencelocation` | `string` | No | ID of a field that should contain the location of the appointment |
+| `externalreferencecalname` | `string` | No | ID of a field that should contain the calendar name of the appointment |
+| `externalreferencecancel` | `string` | No | ID of a field that should contain the cancellation link of the appointment |
+| `jscode` | `string` | No | Used for JavaScript code that will be executed after the booking of the appointment (for example to redirect to another website) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`services.delete`
+
+Use this function if you want to delete a service.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.services.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the service |
+
+
+
+**Output:** `undefined \| object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+undefined | {
+} | {
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`services.list`
+
+Use this function if you want to get details of an existing service or all services.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.services.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `languageid` | `string` | No | Use the language code in which you want the name and description of the service (e.g., DE, EN, etc.) |
+| `id` | `number` | No | ID of the service to get the information of a specific service |
+| `ServiceGroupID` | `number` | No | Use if you want only services of a specific service group |
+| `addimage` | `number` | No | true if you want to also get the image-data in your response |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`services.update`
+
+Use this function if you want to update details of an existing service.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.services.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the service |
+| `servicegroupid` | `number` | No | ID of the service group |
+| `servicede` | `string` | No | Name of the service in german. For other languages use serviceLANGUAGECODE e.g. serviceen |
+| `serviceen` | `string` | No | Name of the service in English. |
+| `timeslotminutes` | `number` | No | Duration of the service in minutes |
+| `infode` | `string` | No | Additional description of the service in german. For other languages use serviceLANGUAGECODE e.g. infoen |
+| `infoen` | `string` | No | Additional description of the service in English. |
+| `infodisplay` | `number` | No | Defines where the information is shown (0 = below service name, 1 = informationtext page 2, 2 = summary after booking, 3 = below service name and summary after booking) |
+| `differenttimeresource` | `boolean` | No | True if you want to add pre- or post processing times |
+| `timeslotminutesresstart` | `number` | No | Busy by minute (use negative number to have a pre-processing time) |
+| `timeslotminutesresend` | `number` | No | Busy until minute (use a number greater than timeslotminutes to have a post-processing time) |
+| `price` | `number` | No | Price of the service |
+| `priceispercentage` | `boolean` | No | True if price is a percentage |
+| `abbreviation` | `string` | No | abbreviation of the service |
+| `enablecapacity` | `boolean` | No | True to enable the capacity of the service |
+| `showcapselectionbox` | `boolean` | No | True if the customer is able to select the capacity |
+| `maxcapacity` | `number` | No | Sets the maximum capacity of the service |
+| `maxcapacityusersel` | `number` | No | Sets the maximum capacity the user can set on the booking page (needs showcapselectionbox to be true) |
+| `capacitynonsel` | `number` | No | Sets the capacity if selected on the booking page (needs showcapselectionbox to be false) |
+| `image` | `string` | No | Image of the service |
+| `appdeadline` | `number` | No | Time the appointment must be booked in advance in minutes |
+| `appfuture` | `number` | No | Time the appointment can be booked in the future in days |
+| `startedapp` | `number` | No | Time the appointment can be booked if already started in minutes (has to be a negative value) |
+| `canceldeadline` | `number` | No | Time the appointment can be cancelled in hours |
+| `dayselectiontype` | `number` | No | Defines how page 2 shows the available days (0 = Calendar, 1 = list of days) |
+| `appointmentlocation` | `number` | No | Defines the location of the appointment |
+| `appointmentlocationtext` | `string` | No | Defines the location text if appointmentlocation = 3 |
+| `vendorconfirmation` | `number` | No | Defines if the appointment provider needs to manually confirm the appointment (0 = manually, 1 = automatically) |
+| `smsconfirmation` | `number` | No | Defines if a SMS confirmation is sent after booking (1 = enabled, 0 = disabled) |
+| `reminderhours` | `number` | No | Defines when the first reminder is sent in hours (needs to be a negative value) |
+| `reminderhours2` | `number` | No | Defines when the second reminder is sent in hours (needs to be a negative value) |
+| `cluster` | `number` | No | Defines if the cluster is applied to this service (1 = enabled, 0 = disabled) |
+| `customerconfirm` | `number` | No | Defines if the customer needs to confirm the appointment (1 = enabled, 0 = disabled; doesn't work with online payments or vendorconfirmation) |
+| `customerconfirmtime` | `number` | No | Time in minutes the customer has time to confirm the appointment (customerconfirm must be set to 1) |
+| `PM0` | `number` | No | Shows online payment options (1 = enabled, 0 = disabled) |
+| `PM1` | `number` | No | Shows on site payment options (1 = enabled, 0 = disabled) |
+| `PM2` | `number` | No | Shows by invoice payment options (1 = enabled, 0 = disabled) |
+| `paymentamountpercentage` | `number` | No | Defines the payment amount that needs to be paid at the end of booking |
+| `paymentamountisabsolute` | `number` | No | Defines if paymentamountpercentage is abolute or a percentage (1 = absolute, 0 = percentage) |
+| `currency` | `string` | No | Defines the currency of the service |
+| `voucherfield` | `number` | No | Defines if the voucherfield is shown (0 = not shown, 1 = shown, 2 = shown and mandatory) |
+| `mpbs` | `number` | No | Defines if the price is multiplied by the amount of booked appointments |
+| `timeslotformat` | `number` | No | Defines how the timeslots are shown on page 2 on the bookingpage (0 = starttime - endtime, 1 = starttime, 2 = only date, 3 = calendar week, 4 = like 0 but with dates, 5 = startdate only) |
+| `multiappointment` | `number` | No | Defines if multiple appointments can be booked in one booking (0 = no, 1 = yes) |
+| `multiservicedurationcalcmethod` | `number` | No | Defines how the duration is calculated if multiple services are selected (0 = all durations are summed up, 1 = only duration of the longest service, 2 = all durations are halfed, 3 = like 2 except the longest service) |
+| `calendarselection` | `number` | No | Defines if the calendar selection should be shown (0 = no, 1 = yes) |
+| `ssca` | `number` | No | Defines if in the calendar selection the entry all calendars is shown (0 = no, 1 = yes) |
+| `showcalname` | `number` | No | Defines if in the calendar name is shown in the time slot (0 = no, 1 = yes) |
+| `showcalpic` | `number` | No | Defines if in the calendar picture is shown after the timeslot is selected (0 = no, 1 = yes) |
+| `showavcap` | `number` | No | Defines if the available capacity is shown in time slots (0 = no, 1 = yes) |
+| `limitbooking` | `number` | No | Defines if this service can be booked a limited amount of times per customer (0 = no, 1 = yes) |
+| `limitappointmentstype` | `number` | No | Defines how the appointments are limited (0 = per booking day, 1 = per week, 2 = per month, 3 = per year, 4 = per booked day) |
+| `limitappointments` | `number` | No | Defines how many appointments can be booked per customer |
+| `limitservice` | `number` | No | Defines if the limitation only applies to this specific service |
+| `wowing` | `number` | No | Set to 0 if the Wowing interface should be disabled for this service |
+| `wowingautomationid` | `number` | No | Defines the Woing Automation ID |
+| `paymentduration` | `number` | No | Defines the payment term for LexOffice |
+| `workloadperc` | `number` | No | Defines the percentage of time slots that are not shown |
+| `nrtimeslotentries` | `number` | No | Defines the maximum amount of time slots that are shown |
+| `feedback` | `number` | No | Set to 0 if the feedback checkbox should not be shown |
+| `calcdrivingtime` | `number` | No | Defines if driving time should be calculated (0 = no, 1 = yes) |
+| `fillcalendarstrategy` | `number` | No | Defines how the calender should be filled (0 = standard, 1 = random, 2 = round Robin, 3 = sequential, 4 = skills, 5 = strict round Robin) |
+| `waitinglist` | `number` | No | Defines if the waiting list should be available (0 = no, 1 = yes) |
+| `notearlyapp` | `number` | No | Defines if the customer should get an email if an earlier appointment is available (0 = not active, 1 = for appointments that were cancelled online, 2 = for appointments cancelled online and manually, 3 = like 1 but per calendar, 4 = like 2 but per calendar) |
+| `sortorder` | `number` | No | Defines the position in the servicegroup |
+| `bookingtype` | `number` | No | Defines the bookingtype (0 = appointment, 1 = no appointment booking allowed, 2 = 'negative' appointment, 3 = reservation list, 4 = voucher sale) |
+| `showinternal` | `boolean` | No | Defines if the service is shown in the backend |
+| `enabled` | `boolean` | No | Defines if the service is shown in the frontend |
+| `showindb` | `boolean` | No | Defines if the service is shown in the most booked area of the Dashboard |
+| `emailsender` | `string` | No | Defines the sender adress of the email for this service |
+| `emailtxtde` | `string` | No | A special placeholder %SERVICETEXT% for emails, use other language codes to set the text (for example emailtxten for english) |
+| `infotxtp2` | `string` | No | A special placeholder %INFOTEXTP2% for page 2 of the booking page |
+| `pricesuffixde` | `string` | No | Additional information for the price, use other language codes to set the text (for example emailtxten for english) |
+| `priceinfopos` | `number` | No | Defines where the pricesuffix is shown (0 = left side, 1 = right side) |
+| `vat` | `number` | No | Defines the vat rate of the service |
+| `multiplypricewithcap` | `boolean` | No | Defines if the price is multiplied with the capacity |
+| `pricediffperday` | `boolean` | No | Defines if different prices per weekday are applied |
+| `issubscription` | `boolean` | No | Defines if the service is a subscription |
+| `capseltextde` | `string` | No | Defines the text if there is a capacity selection on that service, use other language codes to set the text (for example capseltexten for english) |
+| `mstextpos` | `number` | No | Defines the position of capseltext (0 = above selection, 1 = to the right) |
+| `allowonlythisservice` | `boolean` | No | If there are multiple services with capacity available at the same time, this option prevents that they will get mixed, if set to true |
+| `multiservicesel` | `boolean` | No | True, if the service can be booked multiple times after another. This won't work if the parameter enablecapacity is true aswell |
+| `multiservicemin` | `number` | No | Defines the minimum amount that can be choosen for multi service selection |
+| `multiservicemax` | `number` | No | Defines the maximum amount that can be choosen for multi service selection |
+| `extramin` | `number` | No | Defines total wrap up time |
+| `extramintype` | `number` | No | 0 if extramin should not be applied if differenttimeresource is true, 1 if extramin should be added to timeslotminutesresend |
+| `maxappsel` | `number` | No | Defines the maximum amount of appointments that can be selected on the booking page if multiappointment is true (in this service or globally) |
+| `nrappsel` | `number` | No | Defines the maximum / minimum amount of appointments that MUST be selected on the booking page if multiappointment is true (in this service or globally) |
+| `maxminslots` | `boolean` | No | Defines if nrappsel is maximum (0) or minimum (1) |
+| `nrappseladjacent` | `boolean` | No | True, if the selected appointments have to be adjacent |
+| `nrappseladjacenttype` | `number` | No | 0 = the date and time need to be adjacent, 1 = only the day need to be adjacent |
+| `specificrangenextslot` | `boolean` | No | True, if the next appointment needs to be after a specific timeframe |
+| `rangestart` | `number` | No | Days after the last appoinment |
+| `rangeend` | `number` | No | Days range for the new appointment |
+| `infotextinslots` | `boolean` | No | True, if the info text should be shown in the slot text in page 2 of the booking page |
+| `appattrib` | `number` | No | Defines which attribute is set automatically in appointment. Attributes are binary encoded (1st attribute = 1, 2nd = 2, 3rd = 4; 1st + 2nd = 3) |
+| `addapphours` | `number` | No | Hours after the first appointment, where a second appointment is booked |
+| `rrule` | `string` | No | Defines the RRULE for this service |
+| `bookingminute` | `number` | No | Defines when the timeslots are shown (61 = no restrictions, 0 = every full hour, 31 = every full and half hour, 15 or 30 or 45 = x minutes after a full hour) |
+| `showserviceids` | `string` | No | Service(s) that have to be selected to show this service |
+| `hideserviceids` | `string` | No | Service(s) that should be hidden, if this service is selected |
+| `uselogo` | `boolean` | No | True, if the the picture of this service should be used for the email logo |
+| `severalcalendarsused` | `boolean` | No | True, if the service can only be booked if another calendar is available |
+| `differenttimecombined` | `boolean` | No | True, if the service has a different time if booked with another service |
+| `timeslotcombined` | `number` | No | Defines the time of the appointment if booked with another service. differenttimecombined has to be true |
+| `tags` | `string` | No | ID of the tags that the contact gets after booking |
+| `tagscancel` | `string` | No | ID of the tags that the contact gets after cancellation of the appointment |
+| `externalreference` | `string` | No | Used for a tag ID or external reference after booking |
+| `externalreferencedelete` | `string` | No | Used for a tag ID or external reference after cancellation of the appointment |
+| `externalreferencechange` | `string` | No | Used for a tag ID or external reference after a change of the appointment |
+| `externalreferencedate` | `string` | No | ID of a field that should contain the date of the appointment |
+| `externalreferencelocation` | `string` | No | ID of a field that should contain the location of the appointment |
+| `externalreferencecalname` | `string` | No | ID of a field that should contain the calendar name of the appointment |
+| `externalreferencecancel` | `string` | No | ID of a field that should contain the cancellation link of the appointment |
+| `jscode` | `string` | No | Used for JavaScript code that will be executed after the booking of the appointment (for example to redirect to another website) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Survey Results
+
+### list
+
+`surveyResults.list`
+
+Returns all survey results that were received from the customers.
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.surveyResults.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | Date when the survey result was created |
+| `appid` | `number` | No | Get all survey results of the appointment with this ID (not externalid). |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Time Slots
+
+### list
+
+`timeSlots.list`
+
+Get available time slots of a specific day or a time range.&lt;br&gt;&lt;br&gt; &lt;font color=red&gt;Important:&lt;/font&gt; Please pay attention that &lt;b&gt;some fields might be mandatory&lt;/b&gt; to not get an empty response, &lt;b&gt;depending how the account is set up&lt;/b&gt; (for example serviceid).
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.timeSlots.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | Day that you want to check if there are available slots. Format: yyyy-mm-dd |
+| `rangesearch` | `number` | No | 0 - All slots of a specific day will be displayed &lt;br&gt; 1 - Searches until it found a date when slots are available. Returns the number of slots that are available on a specific day (according to the account settings, the available slots may differ) |
+| `end` | `string` | No | End date of the time range. Only works if rangesearch=1. Format: yyyy-mm-dd |
+| `serviceid` | `string` | No | ID(s) of the selected service(s). This parameter is required if you restrict the calendar or working times to specific services. Several service ID's can be separated with a comma (,). e.g. 45345,45346 etc. |
+| `calendarid` | `string` | No | ID of the calendar. Use this parameter if you want to get available time slots for a specific calendar. If this parameter is empty, available time slots for all calendars will be returned. |
+| `capacity` | `number` | No | Defines the capacity that is searched for, if you have capacity enabled |
+| `duration` | `number` | No | Appointment duration in minutes. Use this parameter if you want to use a different duration than specified for the service |
+| `cluster` | `number` | No | Appointment cluster on (1) or off (0) |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## User Mappings
+
+### create
+
+`userMappings.create`
+
+Usermapping is used for the number search. Use this function to create a new entry for the number search.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.userMappings.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valuetype` | `number` | No | Type of the number search Values:&lt;br&gt; 0 = Equals &lt;br&gt; 1 = From - To &lt;br&gt; 2 = Last two digits &lt;br&gt; 3 = Last 3 digits &lt;br&gt; 5 = Last digit &lt;br&gt; 6 = First digit &lt;br&gt; 7 = First two digits &lt;br&gt; 8 = First three digits |
+| `value` | `number` | No | Value that should be matched (valuetype has to be 0, 2 or 3). If you use last x digits, only use x digits for the value. |
+| `valuefrom` | `number` | No | First number that works for this range (valuetype has to be 1) |
+| `valueto` | `number` | No | Last number that works for this range (valuetype has to be 1) |
+| `calendarid` | `string` | No | List of calendars that work with the searchvalue (default = -1) |
+| `servicegroupid` | `string` | No | List of servicegroups that work with the searchvalue (default = -1) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`userMappings.delete`
+
+Usermapping is used for the number search. Use this function to update an existing entry for the number search.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.userMappings.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the value that gets updated |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`userMappings.list`
+
+Usermapping is used for the number search. Use this function to validate a searchvalue to get the according calendarids and servicegroupids
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.userMappings.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchvalue` | `number` | No | Value that needs to be validated by the number search (use no parameter to get all usermappings) |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`userMappings.update`
+
+Usermapping is used for the number search. Use this function to update an existing entry for the number search.
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.userMappings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | ID of the value that gets updated |
+| `valuetype` | `number` | No | Type of the number search (0 = Equals; 1 = From - To; 2 = Last two digits; 3 = Last 3 digits) |
+| `value` | `number` | No | Value that should be matched (valuetype has to be 0, 2 or 3). If you use last x digits, only use x digits for the value. |
+| `valuefrom` | `number` | No | First number that works for this range (valuetype has to be 1) |
+| `valueto` | `number` | No | Last number that works for this range (valuetype has to be 1) |
+| `calendarid` | `string` | No | List of calendars that work with the searchvalue (default = -1) |
+| `servicegroupid` | `string` | No | List of servicegroups that work with the searchvalue (default = -1) |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Vouchers
+
+### create
+
+`vouchers.create`
+
+Creates a new voucher
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.vouchers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the voucher |
+| `description` | `string` | No | Description of the voucher |
+| `priceinclvat` | `number` | No | Price including vat of the voucher |
+| `priceoriginal` | `number` | No | Should be the same value as in priceinclvat, important with contingent |
+| `ispercentage` | `boolean` | No | true, if the value of the voucher is percentage |
+| `contingentmax` | `number` | No | Max. contingent |
+| `contingentcounter` | `number` | No | Counter of the contingent. Typically for a new voucher the value is 0 |
+| `validfrom` | `string` | No | Date from which date the voucher is valid. Format YYYY-MM-DD |
+| `validuntil` | `string` | No | Date until the voucher is valid. Format YYYY-MM-DD |
+| `calendarsassigned` | `string` | No | ID(s) of the calendar(s) for which the voucher is valid |
+| `servicesassigned` | `string` | No | ID(s) of the service(s) for which the voucher is valid |
+| `customeremail` | `string` | No | E-Mail of the customer that is assigned to this voucher/contingent |
+| `sendreminder` | `boolean` | No | true for a reminder to be sent if complete contingent is used |
+| `onetimevalidperemail` | `boolean` | No | true if the voucher can only be used x times for one email |
+| `validxtimes` | `number` | No | Number of times the voucher is usable per email, needs onetimevalidperemail to be true |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`vouchers.delete`
+
+Use this function if you want to delete a voucher. Use one of the given parameters!
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.vouchers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | ID of the voucher that should be deleted |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`vouchers.list`
+
+Returns a list with all vouchers
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.vouchers.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`vouchers.update`
+
+Update an existing voucher
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.vouchers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of the voucher |
+| `description` | `string` | No | Description of the voucher |
+| `priceinclvat` | `number` | No | Price including vat of the voucher |
+| `priceoriginal` | `number` | No | Should be the same value as in priceinclvat, important with contingent |
+| `ispercentage` | `boolean` | No | true, if the value of the voucher is percentage |
+| `contingentmax` | `number` | No | Max. contingent |
+| `contingentcounter` | `number` | No | Counter of the contingent. Typically for a new voucher the value is 0 |
+| `validfrom` | `string` | No | Date from which date the voucher is valid. Format YYYY-MM-DD |
+| `validuntil` | `string` | No | Date until the voucher is valid. Format YYYY-MM-DD |
+| `calendarsassigned` | `string` | No | ID(s) of the calendar(s) for which the voucher is valid |
+| `servicesassigned` | `string` | No | ID(s) of the service(s) for which the voucher is valid |
+| `customeremail` | `string` | No | E-Mail of the customer that is assigned to this voucher/contingent |
+| `sendreminder` | `boolean` | No | true for a reminder to be sent if complete contingent is used |
+| `onetimevalidperemail` | `boolean` | No | true if the voucher can only be used x times for one email |
+| `validxtimes` | `number` | No | Number of times the voucher is usable per email, needs onetimevalidperemail to be true |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Working Time Dates
+
+### create
+
+`workingTimeDates.create`
+
+Creates a new working slot for a specific day
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.workingTimeDates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | Start date/time of working time e.g. 2019-07-14 09:00 |
+| `end` | `string` | Yes | End date/time of working time e.g. 2019-07-14 18:00 |
+| `calendarid` | `number` | Yes | ID of the calendar |
+| `reason` | `string` | No | Reason of the specific working time (this is only visible internally) |
+| `slottype` | `number` | No | 0 if time slots should be valid for internal and external (online booked) appointments. 1 if timeslots are only valid for interal (manually entered) appointments |
+| `nrapps` | `number` | No | Amount of appointments that are bookable in this working slot. (-1 = unlimited) |
+| `overwriteday` | `boolean` | No | true, if the workingtime for this day should be disabled |
+| `serviceids` | `string` | No | List of services that work with this working slot |
+| `allserviceidsrequired` | `number` | No | Defines how the validity of the services are checked. Exclusive means that only the services provided with the parameter validwithserviceid are allowed. If not exclusive, every service the calendar is activated for can be used. &lt;br&gt; 0 = one service needs to be selected &lt;br&gt; 1 = all services need to be selected exclusively &lt;br&gt; 2 = all services need to be selected &lt;br&gt; 3 = one service needs to be selected exclusively) |
+| `locationid` | `number` | No | ID of the location for this working slot if locations are used in working times |
+| `oneoff` | `boolean` | No | true, if this timeslot needs a specific link (requires exactly one service for the validwithserviceid parameter) |
+| `oneoffcode` | `string` | No | Specific code that is used for the oneoff-link if oneoff is true |
+| `waitinglist` | `boolean` | No | true, if this timeslot should be filled with appointments from the waitinglist |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`workingTimeDates.delete`
+
+Delete a working slot for a specific date. Only one of the following parameters are needed
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.workingTimeDates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `number` | No | ID of the calendar, every working slot for specific days will be deleted |
+| `id` | `number` | No | ID of the working time that needs to be deleted |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`workingTimeDates.list`
+
+Get working time slots for specific dates
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.workingTimeDates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `number` | Yes | CalendarID of the calendar you need the working times for |
+| `join` | `number` | No | Set to 1 for the same information but with names instead of numbers |
+| `start` | `string` | No | Start date from when the workingtimes should be shown. Format needs to be yyyy-mm-dd |
+| `end` | `string` | No | End date until the workingtimes should be shown. Needs the start parameter. Format needs to be yyyy-mm-dd |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`workingTimeDates.update`
+
+Update an existing working slot for a specific date
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.workingTimeDates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the working time that needs to be changed |
+| `start` | `string` | Yes | Start date/time of working time e.g. 2019-07-14 09:00 |
+| `end` | `string` | Yes | End date/time of working time e.g. 2019-07-14 18:00 |
+| `calendarid` | `number` | Yes | ID of the calendar |
+| `reason` | `string` | No | Reason of the specific working time (this is only visible internally) |
+| `slottype` | `number` | No | 0 if time slots should be valid for internal and external (online booked) appointments. 1 if timeslots are only valid for interal (manually entered) appointments |
+| `nrapps` | `number` | No | Amount of appointments that are bookable in this working slot. (-1 = unlimited) |
+| `overwriteday` | `boolean` | No | true, if the workingtime for this day should be disabled |
+| `serviceids` | `string` | No | List of services that work with this working slot |
+| `allserviceidsrequired` | `number` | No | Defines how the validity of the services are checked. Exclusive means that only the services provided with the parameter validwithserviceid are allowed. If not exclusive, every service the calendar is activated for can be used. &lt;br&gt; 0 = one service needs to be selected &lt;br&gt; 1 = all services need to be selected exclusively &lt;br&gt; 2 = all services need to be selected &lt;br&gt; 3 = one service needs to be selected exclusively) |
+| `locationid` | `number` | No | ID of the location for this working slot if locations are used in working times |
+| `oneoff` | `boolean` | No | true, if this timeslot needs a specific link (requires exactly one service for the validwithserviceid parameter) |
+| `oneoffcode` | `string` | No | Specific code that is used for the oneoff-link if oneoff is true |
+| `waitinglist` | `boolean` | No | true, if this timeslot should be filled with appointments from the waitinglist |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Working Times
+
+### create
+
+`workingTimes.create`
+
+Creates a new working slot
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.workingTimes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | Yes | Start time of the slot, e.g. 09:00 |
+| `end` | `string` | Yes | End time of the slot, e.g. 17:00 |
+| `calendarid` | `number` | Yes | ID of the calendar |
+| `weekday` | `string` | Yes | ID of the weekday 1 = Sunday, 7 = Saturday. You can add several weekdays separated by a comma e.g. 2,3,5 |
+| `enable` | `number` | No | 0 if the time slot should exist but not being considered yet |
+| `slottype` | `number` | No | 0 if time slots should be valid for internal and external (online booked) appointments. 1 if timeslots are only valid for interal (manually entered) appointments |
+| `validwithserviceid` | `string` | No | List of services that work with this working slot |
+| `allserviceidsrequired` | `number` | No | Defines how the validity of the services are checked. Exclusive means that only the services provided with the parameter validwithserviceid are allowed. If not exclusive, every service the calendar is activated for can be used. &lt;br&gt; 0 = one service needs to be selected &lt;br&gt; 1 = all services need to be selected exclusively &lt;br&gt; 2 = all services need to be selected &lt;br&gt; 3 = one service needs to be selected exclusively) |
+| `nrapps` | `number` | No | Amount of appointments that are bookable in this working slot. (-1 = unlimited) |
+| `weektype` | `number` | No | Defines in which interval the time slot should be shown &lt;br&gt; 0 = Every week &lt;br&gt; 1 = Odd weeks &lt;br&gt; 2 = Even weeks &lt;br&gt; 3 = First occurrence in month &lt;br&gt; 4 = second occurrence in month &lt;br&gt; 5 = third occurrence in month &lt;br&gt; 6 = fourth occurrence in month &lt;br&gt; 7 = Every 3 weeks first occurrence &lt;br&gt; 8 = Every 3 weeks second occurrence &lt;br&gt; 9 = Every 3 weeks third occurrence &lt;br&gt; 10 = fifth occurrence in month &lt;br&gt; 11 = Every 4 weeks first occurrence &lt;br&gt; 12 = Every 4 weeks second occurrence &lt;br&gt; 13 = Every 4 weeks third occurrence &lt;br&gt; 14 = Every 4 weeks fourth occurrence |
+| `locationid` | `number` | No | ID of the location for this working slot if locations are used in working times |
+| `calendarintervalid` | `number` | No | ID of the period for this working slot if periods are used in working times |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### delete
+
+`workingTimes.delete`
+
+Deletes a working slot
+
+**Risk:** `destructive`
+
+```ts
+await corsair.etermin.api.workingTimes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `number` | Yes | ID of the calendar |
+| `id` | `number` | No | ID of the working time that needs to be deleted. If not provided, every working slot of the calendar will be deleted |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`workingTimes.list`
+
+Get working time slots for weekdays
+
+**Risk:** `read`
+
+```ts
+await corsair.etermin.api.workingTimes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `calendarid` | `number` | No | CalendarID of the calendar you need the working times for |
+| `all` | `boolean` | No | Use this parameter instead of calendarid, if you want the workingtimes of all calendars |
+| `join` | `number` | No | Set to 1 for the same information but with names instead of numbers |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`workingTimes.update`
+
+Update an existing working slot
+
+**Risk:** `write`
+
+```ts
+await corsair.etermin.api.workingTimes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | ID of the working time that needs to be changed |
+| `start` | `string` | No | Start time of the slot, e.g. 09:00 |
+| `end` | `string` | No | End time of the slot, e.g. 17:00 |
+| `calendarid` | `number` | No | ID of the calendar |
+| `weekday` | `string` | No | ID of the weekday 1 = Sunday, 7 = Saturday. You can add several weekdays separated by a comma e.g. 2,3,5 |
+| `enable` | `number` | No | 0 if the time slot should exist but not being considered yet |
+| `slottype` | `number` | No | 0 if time slots should be valid for internal and external (online booked) appointments. 1 if timeslots are only valid for interal (manually entered) appointments |
+| `validwithserviceid` | `string` | No | List of services that work with this working slot |
+| `allserviceidsrequired` | `number` | No | Defines how the validity of the services are checked. Exclusive means that only the services provided with the parameter validwithserviceid are allowed. If not exclusive, every service the calendar is activated for can be used. &lt;br&gt; 0 = one service needs to be selected &lt;br&gt; 1 = all services need to be selected exclusively &lt;br&gt; 2 = all services need to be selected &lt;br&gt; 3 = one service needs to be selected exclusively) |
+| `nrapps` | `number` | No | Amount of appointments that are bookable in this working slot. (-1 = unlimited) |
+| `weektype` | `number` | No | Defines in which interval the time slot should be shown &lt;br&gt; 0 = Every week &lt;br&gt; 1 = Odd weeks &lt;br&gt; 2 = Even weeks &lt;br&gt; 3 = First occurrence in month &lt;br&gt; 4 = second occurrence in month &lt;br&gt; 5 = third occurrence in month &lt;br&gt; 6 = fourth occurrence in month &lt;br&gt; 7 = Every 3 weeks first occurrence &lt;br&gt; 8 = Every 3 weeks second occurrence &lt;br&gt; 9 = Every 3 weeks third occurrence &lt;br&gt; 10 = fifth occurrence in month &lt;br&gt; 11 = Every 4 weeks first occurrence &lt;br&gt; 12 = Every 4 weeks second occurrence &lt;br&gt; 13 = Every 4 weeks third occurrence &lt;br&gt; 14 = Every 4 weeks fourth occurrence |
+| `locationid` | `number` | No | ID of the location for this working slot if locations are used in working times |
+| `calendarintervalid` | `number` | No | ID of the period for this working slot if periods are used in working times |
+
+
+
+**Output:** _empty object_
+
+
+---

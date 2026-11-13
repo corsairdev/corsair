@@ -228,6 +228,7 @@ export const BaseProviders = [
 	'epicgames',
 	'esignatures',
 	'esputnik',
+	'etermin',
 	'eventbrite',
 	'eventzilla',
 	'everhour',
@@ -763,6 +764,7 @@ export const ProviderDisplayNames = {
 	epicgames: 'Epic Games',
 	esignatures: 'eSignatures',
 	esputnik: 'eSputnik',
+	etermin: 'ETermin',
 	eventbrite: 'Eventbrite',
 	eventzilla: 'Eventzilla',
 	everhour: 'Everhour',
@@ -1305,6 +1307,7 @@ export type AllProviders =
 	| 'epicgames'
 	| 'esignatures'
 	| 'esputnik'
+	| 'etermin'
 	| 'eventbrite'
 	| 'eventzilla'
 	| 'everhour'
