@@ -337,6 +337,7 @@ export const BaseProviders = [
 	'mixmax',
 	'monday',
 	'mrscraper',
+	'nango',
 	'nanonets',
 	'neon',
 	'netsuite',
@@ -872,6 +873,7 @@ export const ProviderDisplayNames = {
 	mixmax: 'Mixmax',
 	monday: 'Monday',
 	mrscraper: 'MrScraper',
+	nango: 'Nango',
 	nanonets: 'Nanonets',
 	neon: 'Neon',
 	netsuite: 'NetSuite',
@@ -1414,6 +1416,7 @@ export type AllProviders =
 	| 'mixmax'
 	| 'monday'
 	| 'mrscraper'
+	| 'nango'
 	| 'nanonets'
 	| 'neon'
 	| 'netsuite'

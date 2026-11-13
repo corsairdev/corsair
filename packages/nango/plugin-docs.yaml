@@ -1,0 +1,29 @@
+displayName: Nango
+description: Manage Nango connections and Connect sessions.
+domain: nango.dev
+overviewNote: |
+  The [Nango HTTP API](https://nango.dev/docs/llms.txt) uses an environment API key as a bearer token. The key must have the appropriate connection and Connect session scopes. This plugin covers 11 connection and session operations; Nango's other HTTP API families are not included.
+
+  `sessions.get` and `sessions.delete` require a short-lived `session_token`, not the environment key. Nango's server implementation and tests show that session retrieval returns the session settings rather than the token shape described in its generated OpenAPI. Connection retrieval can return sensitive credentials; handle its result accordingly. List connections supports `page`, `limit`, and `tags`.
+
+  No inbound webhook processing, webhook signing-key administration, or automatic retries are included. Environment, integration, function, sync, tool, proxy, and provider operations are deferred.
+examples:
+  read:
+    path: connections.list
+    args: { page: 2, limit: 10 }
+  write:
+    path: sessions.create
+    args: { tags: { end_user_id: example } }
+apiExamples:
+  connections.import: { provider_config_key: example, credentials: { type: API_KEY, apiKey: placeholder } }
+  connections.get: { connectionId: example, provider_config_key: example }
+  connections.patch: { connectionId: example, provider_config_key: example, body: { webhook_url_override: "" } }
+  connections.setMetadata: { connection_id: example, provider_config_key: example, metadata: { label: value } }
+  connections.updateMetadata: { connection_id: example, provider_config_key: example, metadata: { label: value } }
+  connections.delete: { connectionId: example, provider_config_key: example }
+  sessions.create: { tags: { end_user_id: example } }
+  sessions.reconnect: { connection_id: example, integration_id: example }
+  sessions.get: { session_token: example }
+  sessions.delete: { session_token: example }
+apiNotes:
+  sessions.create: Either `tags` or `end_user` is required; Nango recommends using tags.

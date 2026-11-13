@@ -2842,6 +2842,14 @@
                 ]
               },
               {
+                "group": "Nango",
+                "pages": [
+                  "plugins/nango/overview",
+                  "plugins/nango/api",
+                  "plugins/nango/database"
+                ]
+              },
+              {
                 "group": "Nanonets",
                 "pages": [
                   "plugins/nanonets/overview",
