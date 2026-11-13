@@ -30,10 +30,10 @@ await corsair.gatherup.api.businesses.create({ businessName: 'Peach Trees Intl.'
 | `businessType` | `string` | Yes | A Google business type, such as `Insurance Agency`; see `businesses.types`. |
 | `city` | `string` | Yes | — |
 | `country` | `string` | Yes | A country code or full name. |
-| `streetAddress` | `string` | No | — |
-| `state` | `string` | No | — |
-| `zip` | `string` | No | — |
-| `phone` | `string` | No | — |
+| `streetAddress` | `string` | Yes | — |
+| `state` | `string` | Yes | A state code or full name. |
+| `zip` | `string` | Yes | — |
+| `phone` | `string` | Yes | — |
 | `websiteUrl` | `string` | No | — |
 | `organisationType` | `string` | No | Defaults to `company`. |
 | `legalBusinessName` | `string` | No | — |
@@ -48,20 +48,9 @@ Takes `businessName` and `businessType`, not the `name` and `organisationType` a
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object \| null` | No | — |
+| `businessId` | `number \| string \| null` | No | — |
 | `errorCode` | `number \| null` | No | `0` on success. Any other value is a failure, whatever the status. |
 | `errorMessage` | `string \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id?: number | null
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -202,7 +191,7 @@ await corsair.gatherup.api.businesses.list({ page: 1, perPage: 25 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `number` | No | 1-based page. |
-| `perPage` | `number` | No | — |
+| `perPage` | `number` | No | Rows per page, sent as `limit`. GatherUp defaults to 100. |
 
 Pages by `page` and `perPage`; `next_page` is null on the last one.
 
@@ -226,29 +215,19 @@ Pages by `page` and `perPage`; `next_page` is null on the last one.
 
 ```ts
 {
-  id: number,
-  name?: string | null,
-  phone?: string | null,
-  city?: string | null,
-  state?: string | null,
-  zip?: string | null,
-  country?: string | null,
-  streetAddress?: string | null,
-  timezone?: string | null,
-  organisationType?: string | null,
-  emailLogo?: string | null,
-  emailImage?: string | null,
-  feedbackBanner?: string | null,
-  added?: string | null,
-  websiteURL?: string | null,
-  package?: string | null,
-  shortFeedbackUrl?: string | null,
-  communicationMethod?: string | null,
-  nps?: number | null,
-  ratingsReceived?: number | null,
-  customersNotSent?: string | null,
-  legalBusinessName?: string | null,
-  isActive?: boolean | null
+  businessId: number | string,
+  businessDeleted?: number | null,
+  businessName?: string | null,
+  businessPhone?: string | null,
+  businessCity?: string | null,
+  businessState?: string | null,
+  businessZip?: string | null,
+  businessCountry?: string | null,
+  businessStreetAddress?: string | null,
+  businessOrganisationType?: string | null,
+  customField?: string | null,
+  businessPackage?: string | null,
+  extraField?: string | null
 }[]
 ```
 </Accordion>
@@ -294,7 +273,7 @@ await corsair.gatherup.api.businesses.reactivate({ businessId: 34291 });
 
 `businesses.search`
 
-Search the business directory for an ID by name or domain
+Find a business ID by its `customField` or `extraField` value
 
 **Risk:** `read`
 
@@ -306,7 +285,8 @@ await corsair.gatherup.api.businesses.search({ search: 'peach' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `search` | `string` | Yes | A name or domain to search the business directory for. |
+| `by` | `customField \| extraField` | Yes | Which of the business’s own IDs to match. |
+| `search` | `string` | Yes | The `customField` or `extraField` value to look up. |
 
 
 
@@ -314,22 +294,9 @@ await corsair.gatherup.api.businesses.search({ search: 'peach' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[] \| null` | No | — |
+| `businessId` | `number \| string \| null` | No | — |
 | `errorCode` | `number \| null` | No | `0` on success. Any other value is a failure, whatever the status. |
 | `errorMessage` | `string \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id?: number | null,
-  name?: string | null,
-  website?: string | null
-}[] | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -359,21 +326,9 @@ await corsair.gatherup.api.businesses.types({ search: 'Medicine' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[] \| null` | No | — |
+| `data` | `string[]` | Yes | — |
 | `errorCode` | `number \| null` | No | `0` on success. Any other value is a failure, whatever the status. |
 | `errorMessage` | `string \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id?: number | null,
-  name?: string | null
-}[] | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -400,7 +355,7 @@ await corsair.gatherup.api.businesses.update({ businessId: 34291, businessName: 
 | `city` | `string` | No | — |
 | `country` | `string` | No | A country code or full name. |
 | `streetAddress` | `string` | No | — |
-| `state` | `string` | No | — |
+| `state` | `string` | No | A state code or full name. |
 | `zip` | `string` | No | — |
 | `phone` | `string` | No | — |
 | `websiteUrl` | `string` | No | — |
@@ -416,20 +371,9 @@ await corsair.gatherup.api.businesses.update({ businessId: 34291, businessName: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object \| null` | No | — |
+| `businessId` | `number \| string \| null` | No | — |
 | `errorCode` | `number \| null` | No | `0` on success. Any other value is a failure, whatever the status. |
 | `errorMessage` | `string \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id?: number | null
-} | null
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -441,7 +385,7 @@ await corsair.gatherup.api.businesses.update({ businessId: 34291, businessName: 
 
 `customers.create`
 
-Add a customer to a business. The body uses `customerFirstName` and `customerEmail`; an email or a phone is needed to reach them
+Add a customer to a business. The body uses `customerFirstName` and `customerEmail`; an email or a phone is needed. No feedback request goes out unless `sendFeedbackRequest` is true
 
 **Risk:** `write`
 
@@ -461,7 +405,7 @@ await corsair.gatherup.api.customers.create({ businessId: 34291, customerFirstNa
 | `customerJobId` | `string` | No | — |
 | `customerCustomId` | `string` | No | — |
 | `customerTags` | `string` | No | Comma-separated tags, each at most 50 characters. |
-| `sendFeedbackRequest` | `boolean` | No | Send the request as soon as the customer is created. |
+| `sendFeedbackRequest` | `boolean` | No | Send a feedback request to the customer as soon as they are created. Defaults to false; a business in automatic mode still sends on its own schedule. |
 
 Takes `customerFirstName` and `customerEmail`; an email or a phone is needed to reach the customer.
 
@@ -471,21 +415,9 @@ Takes `customerFirstName` and `customerEmail`; an email or a phone is needed to 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string \| number \| null` | No | — |
-| `businessId` | `string \| number \| null` | No | — |
-| `firstName` | `string \| null` | No | — |
-| `lastName` | `string \| null` | No | — |
-| `phone` | `string \| null` | No | — |
-| `email` | `string \| null` | No | — |
-| `jobId` | `string \| null` | No | The caller’s own reference for the job. |
-| `customId` | `string \| null` | No | — |
-| `parentId` | `string \| null` | No | — |
-| `rating` | `string \| null` | No | — |
-| `review` | `string \| null` | No | — |
-| `statusInfo` | `string \| null` | No | — |
-| `subscription` | `number \| null` | No | — |
-| `unsubscribed` | `string \| null` | No | — |
-| `createdAt` | `string \| null` | No | — |
+| `customerId` | `string \| number \| null` | No | — |
+| `feedbackRequestErrorCode` | `number \| null` | No | `0` when the requested feedback request went out. |
+| `feedbackRequestErrorMessage` | `string \| null` | No | — |
 | `errorCode` | `number \| null` | No | `0` on success. Any other value is a failure, whatever the status. |
 | `errorMessage` | `string \| null` | No | — |
 
@@ -655,6 +587,7 @@ await corsair.gatherup.api.customers.requestFeedback({ businessId: 34291, custom
 |------|------|----------|-------------|
 | `businessId` | `number` | Yes | The business ID, from `businesses.list`. |
 | `customerId` | `string \| number` | Yes | The customer ID, as a string or a number. |
+| `ratingRevision` | `boolean` | No | Ask the customer to revise an earlier rating instead of sending a new request. Defaults to false; GatherUp’s own default is a revision. |
 
 Sends a review request to a real person.
 
