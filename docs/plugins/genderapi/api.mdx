@@ -29,7 +29,6 @@ await corsair.genderapi.api.account.stats({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `key` | `string` | Yes | — |
 | `is_limit_reached` | `boolean` | Yes | — |
 | `remaining_requests` | `number` | Yes | — |
 | `amount_month_start` | `number` | No | — |
@@ -83,9 +82,12 @@ Each entry carries a probability, and the last one is often a catch-all with the
 
 ```ts
 {
-  countryName: string,
+  country_name?: string,
   country: string,
   probability: number,
+  continental_region?: string,
+  statistical_region?: string,
+  countryName?: string,
   continentalRegion?: string,
   statisticalRegion?: string
 }[]
@@ -269,7 +271,7 @@ await corsair.genderapi.api.lookup.name({ name: 'Andrea', country: 'IT' });
 | `name` | `string` | Yes | The first name to look up |
 | `country` | `string` | No | Localizes the answer, which changes it for names such as Andrea: male in Italy, female in Germany |
 | `locale` | `string` | No | Localizes by browser locale instead of an explicit country |
-| `ip` | `string` | No | Localizes by the customer IP address instead of an explicit country |
+| `ip` | `string \| string` | No | Localizes by the customer IP address instead of an explicit country |
 
 Localizing with `country`, `locale` or `ip` changes the answer for names such as Andrea.
 

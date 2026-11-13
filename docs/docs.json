@@ -2140,19 +2140,19 @@
                 ]
               },
               {
-                "group": "Gender API",
-                "pages": [
-                  "plugins/genderapi/overview",
-                  "plugins/genderapi/api",
-                  "plugins/genderapi/database"
-                ]
-              },
-              {
                 "group": "Gemini",
                 "pages": [
                   "plugins/gemini/overview",
                   "plugins/gemini/api",
                   "plugins/gemini/database"
+                ]
+              },
+              {
+                "group": "Gender API",
+                "pages": [
+                  "plugins/genderapi/overview",
+                  "plugins/genderapi/api",
+                  "plugins/genderapi/database"
                 ]
               },
               {
