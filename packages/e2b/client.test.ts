@@ -229,4 +229,66 @@ describe('E2B API client', () => {
 			expect(result.message).not.toContain(secretValue);
 		}
 	});
+
+	it('redacts every environment variable value from propagated provider errors', async () => {
+		const secretValue = 'env-secret-fixture';
+		globalThis.fetch = async (url, init) => {
+			calls.push({ url: String(url), init });
+			return new Response(
+				JSON.stringify({ code: 400, message: `bad env ${secretValue}` }),
+				{ status: 400, headers: { 'Content-Type': 'application/json' } },
+			);
+		};
+
+		// A caught rejection is unknown until it is narrowed to the transport error.
+		const result: unknown = await makeE2bRequest(
+			e2bOperationRoutes['sandboxes.create'],
+			'project-api-key',
+			{
+				body: {
+					templateID: 'base',
+					envVars: { OPENAI_API_KEY: secretValue },
+				},
+			},
+		).catch((error: unknown) => error);
+
+		expect(result).toBeInstanceOf(ApiError);
+		if (result instanceof ApiError) {
+			const body = JSON.stringify(result.request.body);
+			expect(body).not.toContain(secretValue);
+			expect(body).toContain('OPENAI_API_KEY');
+			expect(JSON.stringify(result.body)).not.toContain(secretValue);
+			expect(result.message).not.toContain(secretValue);
+		}
+	});
+
+	it('redacts headers injected by network rule transforms', async () => {
+		const secretValue = 'injected-header-fixture';
+		globalThis.fetch = async () =>
+			new Response(JSON.stringify({ code: 400, message: 'bad rule' }), {
+				status: 400,
+				headers: { 'Content-Type': 'application/json' },
+			});
+
+		// A caught rejection is unknown until it is narrowed to the transport error.
+		const result: unknown = await makeE2bRequest(
+			e2bOperationRoutes['sandboxes.updateNetwork'],
+			'project-api-key',
+			{
+				path: { sandboxID: 'sandbox-test' },
+				body: {
+					rules: {
+						'api.example.com': [
+							{ transform: { headers: { 'X-Custom-Key': secretValue } } },
+						],
+					},
+				},
+			},
+		).catch((error: unknown) => error);
+
+		expect(result).toBeInstanceOf(ApiError);
+		if (result instanceof ApiError) {
+			expect(JSON.stringify(result.request.body)).not.toContain(secretValue);
+		}
+	});
 });

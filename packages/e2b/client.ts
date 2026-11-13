@@ -45,6 +45,22 @@ const SENSITIVE_FIELD_NAMES = new Set([
 	'value',
 ]);
 
+// Every value in these maps is treated as a secret: environment variables and
+// injected network headers commonly carry API keys under arbitrary names.
+const SENSITIVE_MAP_FIELD_NAMES = new Set(['envs', 'envvars']);
+
+function isSensitiveMapField(
+	name: string,
+	value: unknown,
+	parentName: string | undefined,
+): boolean {
+	if (!isRecord(value)) return false;
+	const field = normalizedFieldName(name);
+	// Network rule transforms inject request headers, usually credentials.
+	if (field === 'headers' && parentName === 'transform') return true;
+	return SENSITIVE_MAP_FIELD_NAMES.has(field);
+}
+
 function normalizedFieldName(name: string): string {
 	return name.toLowerCase().replace(/[_-]/g, '');
 }
@@ -58,10 +74,13 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function redactSensitive(
 	value: unknown,
 	sensitiveValues: string[] = [],
+	parentName?: string,
 ): unknown {
 	if (typeof value === 'string') return redactMessage(value, sensitiveValues);
 	if (Array.isArray(value)) {
-		return value.map((item) => redactSensitive(item, sensitiveValues));
+		return value.map((item) =>
+			redactSensitive(item, sensitiveValues, parentName),
+		);
 	}
 	if (!isRecord(value)) return value;
 	return Object.fromEntries(
@@ -69,8 +88,18 @@ function redactSensitive(
 			key,
 			SENSITIVE_FIELD_NAMES.has(normalizedFieldName(key))
 				? '[REDACTED]'
-				: redactSensitive(item, sensitiveValues),
+				: isSensitiveMapField(key, item, parentName)
+					? redactMapValues(item)
+					: redactSensitive(item, sensitiveValues, normalizedFieldName(key)),
 		]),
+	);
+}
+
+// Map values are unknown until narrowed; keys stay visible so errors remain debuggable.
+function redactMapValues(value: unknown): unknown {
+	if (!isRecord(value)) return value;
+	return Object.fromEntries(
+		Object.keys(value).map((key) => [key, '[REDACTED]']),
 	);
 }
 
@@ -82,14 +111,22 @@ function redactRecord(value: unknown): Record<string, unknown> | undefined {
 }
 
 // `unknown` is needed to recursively inspect request JSON without trusting its shape.
-function collectSensitiveValues(value: unknown): string[] {
-	if (Array.isArray(value)) return value.flatMap(collectSensitiveValues);
+function collectSensitiveValues(value: unknown, parentName?: string): string[] {
+	if (Array.isArray(value)) {
+		return value.flatMap((item) => collectSensitiveValues(item, parentName));
+	}
 	if (!isRecord(value)) return [];
 	return Object.entries(value).flatMap(([key, item]) => {
 		if (SENSITIVE_FIELD_NAMES.has(normalizedFieldName(key))) {
 			return typeof item === 'string' && item.length > 0 ? [item] : [];
 		}
-		return collectSensitiveValues(item);
+		if (isSensitiveMapField(key, item, parentName) && isRecord(item)) {
+			return Object.values(item).filter(
+				(entry): entry is string =>
+					typeof entry === 'string' && entry.length > 0,
+			);
+		}
+		return collectSensitiveValues(item, normalizedFieldName(key));
 	});
 }
 
