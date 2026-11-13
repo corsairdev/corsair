@@ -30,6 +30,8 @@ const JsonValueSchema: z.ZodType<CloudConvertJsonValue> = z.lazy(() =>
 const JsonObjectSchema = z.record(z.string(), JsonValueSchema);
 const TimestampSchema = z.string().describe('ISO 8601 timestamp.');
 const StatusSchema = z.enum(['waiting', 'processing', 'finished', 'error']);
+// Output-only: a status CloudConvert adds later must not fail the whole read.
+const StatusOutputSchema = StatusSchema.or(z.string());
 
 const TaskNameSchema = z
 	.string()
@@ -404,7 +406,7 @@ const JobReferenceSchema = z
 	.object({
 		id: z.string(),
 		tag: z.string().nullish(),
-		status: StatusSchema,
+		status: StatusOutputSchema,
 		created_at: TimestampSchema,
 		started_at: TimestampSchema.nullish(),
 		ended_at: TimestampSchema.nullish(),
@@ -418,7 +420,7 @@ const RetryTaskSchema = z
 		job_id: z.string().nullish(),
 		name: z.string().nullish(),
 		operation: z.string(),
-		status: StatusSchema,
+		status: StatusOutputSchema,
 		created_at: TimestampSchema,
 		started_at: TimestampSchema.nullish(),
 		ended_at: TimestampSchema.nullish(),
@@ -433,7 +435,7 @@ const TaskSchema = z
 		job_id: z.string().nullish(),
 		name: z.string().nullish(),
 		operation: z.string(),
-		status: StatusSchema,
+		status: StatusOutputSchema,
 		message: z.string().nullish(),
 		code: z.string().nullish(),
 		waiting_reason: z.string().nullish(),
@@ -457,7 +459,7 @@ const JobSchema = z
 	.object({
 		id: z.string(),
 		tag: z.string().nullish(),
-		status: StatusSchema,
+		status: StatusOutputSchema,
 		created_at: TimestampSchema,
 		started_at: TimestampSchema.nullish(),
 		ended_at: TimestampSchema.nullish(),
@@ -507,14 +509,11 @@ const JobsListOutputSchema = z
 	})
 	.loose();
 
-const OperationOptionTypeSchema = z.enum([
-	'string',
-	'boolean',
-	'integer',
-	'float',
-	'enum',
-	'dictionary',
-]);
+// The live response also returns "input" and "array", which the reference omits;
+// keep the documented values for autocomplete and accept any other string.
+const OperationOptionTypeSchema = z
+	.enum(['string', 'boolean', 'integer', 'float', 'enum', 'dictionary'])
+	.or(z.string());
 
 const OperationOptionSchema = z
 	.object({
@@ -562,8 +561,10 @@ const EngineVersionSchema = z
 const OperationSchema = z
 	.object({
 		operation: z.string(),
-		input_format: z.string(),
-		output_format: z.string(),
+		// Operations such as command, merge and watermark return null or omit
+		// input_format/output_format in the live response.
+		input_format: z.string().nullish(),
+		output_format: z.string().nullish(),
 		engine: z.string(),
 		credits: z.number().int(),
 		options: z.array(OperationOptionSchema).nullish(),

@@ -382,6 +382,76 @@ describe('CloudConvert endpoint input and output schemas', () => {
 		).toBe(false);
 	});
 
+	it('accepts operations from the live GET /operations response', () => {
+		// Shapes taken from the public GET /v2/operations?alternatives=true&include=options,options.details,engine_versions
+		// response (11-13): 31 operations return input_format null, 43 return output_format null,
+		// 360 omit one of them, and option types include "input" and "array" beyond the documented six.
+		const liveOperations = {
+			data: [
+				{
+					operation: 'command',
+					engine: 'ffmpeg',
+					engine_versions: [{ version: '9.0.2', default: true, latest: true }],
+					credits: 1,
+					options: [],
+				},
+				{
+					operation: 'watermark',
+					input_format: null,
+					output_format: 'pdf',
+					engine: 'imagemagick',
+					engine_versions: [{ version: '7.1.2', default: true, latest: true }],
+					options: [],
+					credits: 1,
+				},
+				{
+					operation: 'convert',
+					input_format: 'htm',
+					output_format: 'pdf',
+					engine: 'chrome',
+					engine_versions: [],
+					credits: 1,
+					options: [
+						{
+							name: 'header_template',
+							type: 'input',
+							default: null,
+							group: 'layout',
+							advanced: true,
+						},
+					],
+				},
+				{
+					operation: 'pdf/ocr',
+					engine: 'ocrmypdf',
+					engine_versions: [],
+					credits: 1,
+					options: [{ name: 'language', type: 'array', default: ['eng'] }],
+				},
+			],
+		};
+		expect(Outputs.operationsList.safeParse(liveOperations).success).toBe(true);
+		expect(Outputs.formatsListSupported.safeParse(liveOperations).success).toBe(
+			true,
+		);
+	});
+
+	it('keeps parsing jobs and tasks when CloudConvert adds a status value', () => {
+		const job = {
+			data: {
+				...jobResponse.data,
+				status: 'queued',
+				tasks: [{ ...jobResponse.data.tasks[0], status: 'paused' }],
+			},
+		};
+		expect(Outputs.jobsGet.safeParse(job).success).toBe(true);
+		expect(
+			Outputs.tasksGet.safeParse({
+				data: { ...taskResponse.data, status: 'paused' },
+			}).success,
+		).toBe(true);
+	});
+
 	it('validates the current-user input and output', () => {
 		expect(Inputs.usersShow.safeParse({}).success).toBe(true);
 		expect(Inputs.usersShow.safeParse({ id: 'user-123' }).success).toBe(false);
