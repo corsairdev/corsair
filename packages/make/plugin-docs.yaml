@@ -1,0 +1,24 @@
+displayName: Make
+description: Manage and run Make automation scenarios.
+domain: make.com
+overviewNote: >-
+  Configure your organization’s Make zone and an API token with the required scopes.
+  Scenario runs and replays can trigger external actions and consume credits.
+  The client does not retry failed requests automatically, including quota-related 429 responses.
+factory:
+  note: Select the Make zone for your organization; for example, `eu1`.
+  options:
+    zone: eu1
+examples:
+  read:
+    path: scenarios.list
+    title: List scenarios for a team
+    args:
+      teamId: 123
+  write:
+    path: scenarios.update
+    title: Rename a scenario
+    args:
+      scenarioId: 123
+      body:
+        name: Updated scenario

@@ -1,0 +1,1573 @@
+---
+title: "Make API reference"
+sidebarTitle: "API"
+description: "API reference for the Make plugin in Corsair: every `make.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Scenarios
+
+### activate
+
+`scenarios.activate`
+
+Activate scenario
+
+**Risk:** `destructive`
+
+```ts
+await corsair.make.api.scenarios.activate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenario` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="scenario full type">
+
+```ts
+{
+  id?: number,
+  isActive?: boolean,
+  islinked?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addBuildVariables
+
+`scenarios.addBuildVariables`
+
+Add new buildtime variables to scenario metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.make.api.scenarios.addBuildVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  input?: {
+    name?: string,
+    value?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `number` | No | — |
+
+
+
+---
+
+### clone
+
+`scenarios.clone`
+
+Clone scenario
+
+**Risk:** `write`
+
+```ts
+await corsair.make.api.scenarios.clone({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+| `organizationId` | `number` | Yes | — |
+| `cols[]` | `(id \| name \| teamId \| hookId \| devices \| deviceId \| deviceScope \| description \| folderId \| concept \| folderPath \| isinvalid \| islinked \| isActive \| islocked \| isPaused \| usedPackages \| usedModules \| lastEdit \| scheduling \| iswaiting \| dlqCount \| allDlqCount \| chainingRole \| isShared \| type \| createdByUser \| updatedByUser \| created \| nextExec \| operations \| centicredits \| transfer \| executions \| errors \| customProperties \| templateMetadata \| deleted \| deletedAt \| labels)[]` | No | — |
+| `confirmed` | `boolean` | No | — |
+| `notAnalyze` | `boolean` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  teamId: number,
+  account?: Record<string, any>,
+  key?: Record<string, any>,
+  hook?: Record<string, any>,
+  device?: Record<string, any>,
+  udt?: Record<string, any>,
+  datastore?: Record<string, any>,
+  states: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenario` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="scenario full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  teamId?: number,
+  hookId?: number,
+  devices?: {
+    id?: number,
+    scope?: string
+  }[],
+  deviceId?: number,
+  deviceScope?: string,
+  description?: string,
+  folderId?: number | null,
+  concept?: boolean,
+  folderPath?: string | null,
+  isinvalid?: boolean,
+  islinked?: boolean,
+  isActive?: boolean,
+  islocked?: boolean,
+  isPaused?: boolean,
+  usedPackages?: string[],
+  usedModules?: {
+    packageName?: string,
+    moduleName?: string
+  }[],
+  lastEdit?: string,
+  scheduling?: {
+    type?: string,
+    interval?: number
+  },
+  iswaiting?: boolean,
+  dlqCount?: number,
+  allDlqCount?: number,
+  createdByUser?: {
+    id?: number,
+    name?: string,
+    email?: string
+  },
+  updatedByUser?: {
+    id?: number,
+    name?: string,
+    email?: string
+  },
+  nextExec?: string,
+  created?: string,
+  scenarioVersion?: number,
+  moduleSequenceId?: number,
+  type?: scenario | tool,
+  chainingRole?: string | null,
+  isShared?: boolean,
+  operations?: number,
+  centicredits?: number,
+  transfer?: number,
+  executions?: number,
+  errors?: number,
+  customProperties?: Record<string, any> | null,
+  templateMetadata?: {
+    isOem?: boolean,
+    versionId?: number,
+    metadataId?: number,
+    instantiableId?: number
+  } | null,
+  deleted?: boolean,
+  deletedAt?: string | null,
+  labels?: {
+    id?: number,
+    name?: string,
+    colour?: white | neutral | brand | info | success | warning | danger | pink,
+    scope?: team,
+    teamId?: number,
+    description?: string | null,
+    createdBy?: number | null,
+    created?: string,
+    updated?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### countTrash
+
+`scenarios.countTrash`
+
+Count scenarios in trash
+
+**Risk:** `read`
+
+```ts
+await corsair.make.api.scenarios.countTrash({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenariosTrashedTotal` | `number` | No | — |
+
+
+
+---
+
+### create
+
+`scenarios.create`
+
+Create scenario
+
+**Risk:** `write`
+
+```ts
+await corsair.make.api.scenarios.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cols[]` | `(id \| name \| teamId \| hookId \| devices \| deviceId \| deviceScope \| description \| folderId \| concept \| folderPath \| isinvalid \| islinked \| isActive \| islocked \| isPaused \| usedPackages \| usedModules \| lastEdit \| scheduling \| iswaiting \| dlqCount \| allDlqCount \| chainingRole \| isShared \| type \| createdByUser \| updatedByUser \| created \| nextExec \| operations \| centicredits \| transfer \| executions \| errors \| customProperties \| templateMetadata \| deleted \| deletedAt \| labels)[]` | No | — |
+| `confirmed` | `boolean` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  blueprint: string,
+  teamId: number,
+  scheduling: string,
+  folderId?: number,
+  basedon?: number,
+  description?: string,
+  metadata?: {
+    input_spec?: Record<string, any>[],
+    output_spec?: Record<string, any>[],
+    template_metadata?: Record<string, any>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenario` | `object` | No | — |
+| `scenarioVersion` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="scenario full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  teamId?: number,
+  hookId?: number,
+  devices?: {
+    id?: number,
+    scope?: string
+  }[],
+  deviceId?: number,
+  deviceScope?: string,
+  description?: string,
+  folderId?: number | null,
+  concept?: boolean,
+  folderPath?: string | null,
+  isinvalid?: boolean,
+  islinked?: boolean,
+  isActive?: boolean,
+  islocked?: boolean,
+  isPaused?: boolean,
+  usedPackages?: string[],
+  usedModules?: {
+    packageName?: string,
+    moduleName?: string
+  }[],
+  lastEdit?: string,
+  scheduling?: {
+    type?: string,
+    interval?: number
+  },
+  iswaiting?: boolean,
+  dlqCount?: number,
+  allDlqCount?: number,
+  createdByUser?: {
+    id?: number,
+    name?: string,
+    email?: string
+  },
+  updatedByUser?: {
+    id?: number,
+    name?: string,
+    email?: string
+  },
+  nextExec?: string,
+  created?: string,
+  scenarioVersion?: number,
+  moduleSequenceId?: number,
+  type?: scenario | tool,
+  chainingRole?: string | null,
+  isShared?: boolean,
+  operations?: number,
+  centicredits?: number,
+  transfer?: number,
+  executions?: number,
+  errors?: number,
+  customProperties?: Record<string, any> | null,
+  templateMetadata?: {
+    isOem?: boolean,
+    versionId?: number,
+    metadataId?: number,
+    instantiableId?: number
+  } | null,
+  deleted?: boolean,
+  deletedAt?: string | null,
+  labels?: {
+    id?: number,
+    name?: string,
+    colour?: white | neutral | brand | info | success | warning | danger | pink,
+    scope?: team,
+    teamId?: number,
+    description?: string | null,
+    createdBy?: number | null,
+    created?: string,
+    updated?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="scenarioVersion full type">
+
+```ts
+{
+  version?: number,
+  draft?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deactivate
+
+`scenarios.deactivate`
+
+Deactivate scenario
+
+**Risk:** `write`
+
+```ts
+await corsair.make.api.scenarios.deactivate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenario` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="scenario full type">
+
+```ts
+{
+  id?: number,
+  isActive?: boolean,
+  islinked?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`scenarios.delete`
+
+Delete scenario
+
+**Risk:** `destructive`
+
+```ts
+await corsair.make.api.scenarios.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenario` | `number` | No | — |
+
+
+
+---
+
+### deleteBuildVariable
+
+`scenarios.deleteBuildVariable`
+
+Delete buildtime variable
+
+**Risk:** `write`
+
+```ts
+await corsair.make.api.scenarios.deleteBuildVariable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+| `value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`scenarios.get`
+
+Get scenario details
+
+**Risk:** `read`
+
+```ts
+await corsair.make.api.scenarios.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+| `cols[]` | `(id \| name \| teamId \| hookId \| devices \| deviceId \| deviceScope \| description \| folderId \| concept \| folderPath \| isinvalid \| islinked \| isActive \| islocked \| isPaused \| usedPackages \| usedModules \| lastEdit \| scheduling \| iswaiting \| dlqCount \| allDlqCount \| chainingRole \| isShared \| type \| createdByUser \| updatedByUser \| created \| nextExec \| operations \| centicredits \| transfer \| executions \| errors \| customProperties \| templateMetadata \| deleted \| deletedAt \| labels)[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenario` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="scenario full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  teamId?: number,
+  hookId?: number,
+  devices?: {
+    id?: number,
+    scope?: string
+  }[],
+  deviceId?: number,
+  deviceScope?: string,
+  description?: string,
+  folderId?: number | null,
+  concept?: boolean,
+  folderPath?: string | null,
+  isinvalid?: boolean,
+  islinked?: boolean,
+  isActive?: boolean,
+  islocked?: boolean,
+  isPaused?: boolean,
+  usedPackages?: string[],
+  usedModules?: {
+    packageName?: string,
+    moduleName?: string
+  }[],
+  lastEdit?: string,
+  scheduling?: {
+    type?: string,
+    interval?: number
+  },
+  iswaiting?: boolean,
+  dlqCount?: number,
+  allDlqCount?: number,
+  createdByUser?: {
+    id?: number,
+    name?: string,
+    email?: string
+  },
+  updatedByUser?: {
+    id?: number,
+    name?: string,
+    email?: string
+  },
+  nextExec?: string,
+  created?: string,
+  scenarioVersion?: number,
+  moduleSequenceId?: number,
+  type?: scenario | tool,
+  chainingRole?: string | null,
+  isShared?: boolean,
+  operations?: number,
+  centicredits?: number,
+  transfer?: number,
+  executions?: number,
+  errors?: number,
+  customProperties?: Record<string, any> | null,
+  templateMetadata?: {
+    isOem?: boolean,
+    versionId?: number,
+    metadataId?: number,
+    instantiableId?: number
+  } | null,
+  deleted?: boolean,
+  deletedAt?: string | null,
+  labels?: {
+    id?: number,
+    name?: string,
+    colour?: white | neutral | brand | info | success | warning | danger | pink,
+    scope?: team,
+    teamId?: number,
+    description?: string | null,
+    createdBy?: number | null,
+    created?: string,
+    updated?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAiAgentModules
+
+`scenarios.getAiAgentModules`
+
+Get AI agent module details for scenarios
+
+**Risk:** `read`
+
+```ts
+await corsair.make.api.scenarios.getAiAgentModules({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `number` | Yes | — |
+| `pg[offset]` | `number` | No | — |
+| `pg[limit]` | `number` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  scenarioIds?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentModules` | `object[]` | No | — |
+| `pg` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="agentModules full type">
+
+```ts
+{
+  scenarioId?: number,
+  id?: number,
+  module?: string,
+  userLabel?: string | null,
+  evaluationMode?: disabled | measured | measuredAndInferred,
+  tools?: {
+    moduleId?: number,
+    module?: string,
+    name?: string,
+    fileIds?: string[]
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pg full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInterface
+
+`scenarios.getInterface`
+
+Get scenario interface
+
+**Risk:** `read`
+
+```ts
+await corsair.make.api.scenarios.getInterface({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interface` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### getModuleData
+
+`scenarios.getModuleData`
+
+Check module data
+
+**Risk:** `read`
+
+```ts
+await corsair.make.api.scenarios.getModuleData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+| `moduleId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exists` | `boolean` | No | — |
+
+
+
+---
+
+### getTriggers
+
+`scenarios.getTriggers`
+
+Get trigger details
+
+**Risk:** `read`
+
+```ts
+await corsair.make.api.scenarios.getTriggers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `udid` | `string` | No | — |
+| `scope` | `string` | No | — |
+| `queueCount` | `number` | No | — |
+| `queueLimit` | `number` | No | — |
+| `typeName` | `string` | No | — |
+| `type` | `string` | No | — |
+| `url` | `string` | No | — |
+| `flags` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### getUsage
+
+`scenarios.getUsage`
+
+Get scenario usage
+
+**Risk:** `read`
+
+```ts
+await corsair.make.api.scenarios.getUsage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+| `organizationTimezone` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date?: string,
+  operations?: number,
+  dataTransfer?: number,
+  centicredits?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`scenarios.list`
+
+List scenarios
+
+**Risk:** `read`
+
+```ts
+await corsair.make.api.scenarios.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `number` | No | — |
+| `organizationId` | `number` | No | — |
+| `id[]` | `number[]` | No | — |
+| `folderId` | `number` | No | — |
+| `includeSubfolders` | `boolean` | No | — |
+| `labelIds[]` | `number[]` | No | — |
+| `isActive` | `boolean` | No | — |
+| `concept` | `boolean` | No | — |
+| `type` | `scenario \| tool` | No | — |
+| `deleted` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `search` | `string` | No | — |
+| `isinvalid` | `boolean` | No | — |
+| `islocked` | `boolean` | No | — |
+| `createdByUserName` | `string` | No | — |
+| `updatedByUserName` | `string` | No | — |
+| `dlqCount` | `number` | No | — |
+| `cols[]` | `(id \| name \| teamId \| hookId \| devices \| deviceId \| deviceScope \| description \| folderId \| concept \| folderPath \| isinvalid \| islinked \| isActive \| islocked \| isPaused \| usedPackages \| usedModules \| lastEdit \| scheduling \| iswaiting \| dlqCount \| allDlqCount \| chainingRole \| isShared \| type \| createdByUser \| updatedByUser \| created \| nextExec \| operations \| centicredits \| transfer \| executions \| errors \| customProperties \| templateMetadata \| deleted \| deletedAt \| labels)[]` | No | — |
+| `pg[offset]` | `number` | No | — |
+| `pg[limit]` | `number` | No | — |
+| `pg[sortBy]` | `proprietal \| id \| name \| teamId \| folderId \| isActive \| islinked \| isinvalid \| islocked \| lastEdit \| createdByUserName \| updatedByUserName \| created \| dlqCount \| operations \| executions \| centicredits \| transfer \| errors` | No | — |
+| `pg[sortDir]` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarios` | `object[]` | No | — |
+| `pg` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="scenarios full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  teamId?: number,
+  hookId?: number,
+  devices?: {
+    id?: number,
+    scope?: string
+  }[],
+  deviceId?: number,
+  deviceScope?: string,
+  description?: string,
+  folderId?: number | null,
+  concept?: boolean,
+  folderPath?: string | null,
+  isinvalid?: boolean,
+  islinked?: boolean,
+  isActive?: boolean,
+  islocked?: boolean,
+  isPaused?: boolean,
+  usedPackages?: string[],
+  usedModules?: {
+    packageName?: string,
+    moduleName?: string
+  }[],
+  lastEdit?: string,
+  scheduling?: {
+    type?: string,
+    interval?: number
+  },
+  iswaiting?: boolean,
+  dlqCount?: number,
+  allDlqCount?: number,
+  createdByUser?: {
+    id?: number,
+    name?: string,
+    email?: string
+  },
+  updatedByUser?: {
+    id?: number,
+    name?: string,
+    email?: string
+  },
+  nextExec?: string,
+  created?: string,
+  scenarioVersion?: number,
+  moduleSequenceId?: number,
+  type?: scenario | tool,
+  chainingRole?: string | null,
+  isShared?: boolean,
+  operations?: number,
+  centicredits?: number,
+  transfer?: number,
+  executions?: number,
+  errors?: number,
+  customProperties?: Record<string, any> | null,
+  templateMetadata?: {
+    isOem?: boolean,
+    versionId?: number,
+    metadataId?: number,
+    instantiableId?: number
+  } | null,
+  deleted?: boolean,
+  deletedAt?: string | null,
+  labels?: {
+    id?: number,
+    name?: string,
+    colour?: white | neutral | brand | info | success | warning | danger | pink,
+    scope?: team,
+    teamId?: number,
+    description?: string | null,
+    createdBy?: number | null,
+    created?: string,
+    updated?: string | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pg full type">
+
+```ts
+{
+  last?: string,
+  showLast?: boolean,
+  sortBy?: string,
+  sortDir?: string,
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAiAgents
+
+`scenarios.listAiAgents`
+
+List AI agent scenarios
+
+**Risk:** `read`
+
+```ts
+await corsair.make.api.scenarios.listAiAgents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `number` | Yes | — |
+| `pg[offset]` | `number` | No | — |
+| `pg[limit]` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarios` | `object[]` | No | — |
+| `pg` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="scenarios full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  description?: string | null,
+  isActive?: boolean,
+  teamId?: number,
+  created?: string,
+  lastEdit?: string,
+  scheduling?: Record<string, any>,
+  usedPackages?: string[],
+  agentCount?: number,
+  createdByUser?: {
+    id?: number,
+    name?: string | null,
+    email?: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pg full type">
+
+```ts
+{
+  limit?: number,
+  offset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBuildVariables
+
+`scenarios.listBuildVariables`
+
+List buildtime variables
+
+**Risk:** `read`
+
+```ts
+await corsair.make.api.scenarios.listBuildVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `variables` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### moveToTrash
+
+`scenarios.moveToTrash`
+
+Move scenarios to trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.make.api.scenarios.moveToTrash({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  teamId: number,
+  scenarioIds: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trashedScenarioIds` | `number[]` | Yes | — |
+| `rejectedScenarios` | `object[]` | Yes | — |
+| `summary` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="rejectedScenarios full type">
+
+```ts
+{
+  scenarioId: number,
+  code: string,
+  detail: string
+}[]
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  total: number,
+  trashed: number,
+  rejected: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replay
+
+`scenarios.replay`
+
+Replay scenario executions
+
+**Risk:** `destructive`
+
+```ts
+await corsair.make.api.scenarios.replay({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  executionIds: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `executionId` | `string` | Yes | — |
+| `replayed` | `object[]` | Yes | — |
+| `failed` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="replayed full type">
+
+```ts
+{
+  executionId: string,
+  replayExecutionId: string
+}[]
+```
+</Accordion>
+
+<Accordion title="failed full type">
+
+```ts
+{
+  executionId: string,
+  code: string,
+  message: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restore
+
+`scenarios.restore`
+
+Restore scenario from trash
+
+**Risk:** `write`
+
+```ts
+await corsair.make.api.scenarios.restore({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenario` | `object` | No | — |
+| `strippedModules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="scenario full type">
+
+```ts
+{
+  id?: number,
+  deleted?: boolean,
+  deletedAt?: string | null,
+  containsErrors?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="strippedModules full type">
+
+```ts
+{
+  moduleId?: number,
+  moduleName?: string,
+  entities?: {
+    entityType?: connection | key,
+    entityId?: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### run
+
+`scenarios.run`
+
+Run a scenario
+
+**Risk:** `destructive`
+
+```ts
+await corsair.make.api.scenarios.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data?: Record<string, any>,
+  responsive?: boolean,
+  callbackUrl?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `executionId` | `string` | No | — |
+| `status` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`scenarios.update`
+
+Update scenario
+
+**Risk:** `write`
+
+```ts
+await corsair.make.api.scenarios.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+| `cols[]` | `(id \| name \| teamId \| hookId \| devices \| deviceId \| deviceScope \| description \| folderId \| concept \| folderPath \| isinvalid \| islinked \| isActive \| islocked \| isPaused \| usedPackages \| usedModules \| lastEdit \| scheduling \| iswaiting \| dlqCount \| allDlqCount \| chainingRole \| isShared \| type \| createdByUser \| updatedByUser \| created \| nextExec \| operations \| centicredits \| transfer \| executions \| errors \| customProperties \| templateMetadata \| deleted \| deletedAt \| labels)[]` | No | — |
+| `confirmed` | `boolean` | No | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  blueprint?: string,
+  scheduling?: string,
+  folderId?: number | null,
+  name?: string,
+  baseVersion?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenario` | `object` | No | — |
+| `scenarioVersion` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="scenario full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  teamId?: number,
+  hookId?: number,
+  devices?: {
+    id?: number,
+    scope?: string
+  }[],
+  deviceId?: number,
+  deviceScope?: string,
+  description?: string,
+  folderId?: number | null,
+  concept?: boolean,
+  folderPath?: string | null,
+  isinvalid?: boolean,
+  islinked?: boolean,
+  isActive?: boolean,
+  islocked?: boolean,
+  isPaused?: boolean,
+  usedPackages?: string[],
+  usedModules?: {
+    packageName?: string,
+    moduleName?: string
+  }[],
+  lastEdit?: string,
+  scheduling?: {
+    type?: string,
+    interval?: number
+  },
+  iswaiting?: boolean,
+  dlqCount?: number,
+  allDlqCount?: number,
+  createdByUser?: {
+    id?: number,
+    name?: string,
+    email?: string
+  },
+  updatedByUser?: {
+    id?: number,
+    name?: string,
+    email?: string
+  },
+  nextExec?: string,
+  created?: string,
+  scenarioVersion?: number,
+  moduleSequenceId?: number,
+  type?: scenario | tool,
+  chainingRole?: string | null,
+  isShared?: boolean,
+  operations?: number,
+  centicredits?: number,
+  transfer?: number,
+  executions?: number,
+  errors?: number,
+  customProperties?: Record<string, any> | null,
+  templateMetadata?: {
+    isOem?: boolean,
+    versionId?: number,
+    metadataId?: number,
+    instantiableId?: number
+  } | null,
+  deleted?: boolean,
+  deletedAt?: string | null,
+  labels?: {
+    id?: number,
+    name?: string,
+    colour?: white | neutral | brand | info | success | warning | danger | pink,
+    scope?: team,
+    teamId?: number,
+    description?: string | null,
+    createdBy?: number | null,
+    created?: string,
+    updated?: string | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="scenarioVersion full type">
+
+```ts
+{
+  scenarioId?: number,
+  version?: number,
+  draft?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateBuildVariables
+
+`scenarios.updateBuildVariables`
+
+Update buildtime variables in scenario metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.make.api.scenarios.updateBuildVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  input?: {
+    name?: string,
+    value?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `number` | No | — |
+
+
+
+---
+
+### updateInterface
+
+`scenarios.updateInterface`
+
+Update scenario interface
+
+**Risk:** `write`
+
+```ts
+await corsair.make.api.scenarios.updateInterface({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scenarioId` | `number` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  interface?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `interface` | `Record<string, any>` | No | — |
+
+
+
+---
