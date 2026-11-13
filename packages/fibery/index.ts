@@ -336,8 +336,9 @@ const fiberyEndpointMeta = {
 		description: 'Remove existing entities from a Fibery collection field',
 	},
 	'collection.set': {
-		riskLevel: 'write',
-		description: 'Replace the contents of a Fibery collection field',
+		riskLevel: 'destructive',
+		description:
+			'Replace the contents of a Fibery collection field, unlinking every item not in the new list',
 	},
 	'collection.reset': {
 		riskLevel: 'destructive',

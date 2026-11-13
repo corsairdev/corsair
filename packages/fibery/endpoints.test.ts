@@ -696,3 +696,15 @@ describe('endpoint validation', () => {
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });
+
+describe('risk levels', () => {
+	it('marks replace-all and clear collection calls as destructive', () => {
+		const plugin = fibery<FiberyPluginOptions>({ workspaceUrl: url });
+		expect(plugin.endpointMeta?.['collection.set']?.riskLevel).toBe(
+			'destructive',
+		);
+		expect(plugin.endpointMeta?.['collection.reset']?.riskLevel).toBe(
+			'destructive',
+		);
+	});
+});
