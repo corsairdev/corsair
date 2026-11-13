@@ -263,13 +263,22 @@ const JsonExtractInputSchema = z.object({
 	body: JsonExtractBodySchema,
 });
 
+const LinksBodySchema = BrowserPageBodyFieldsSchema.extend({
+	excludeExternalLinks: z.boolean().optional(),
+	visibleLinksOnly: z.boolean().optional(),
+}).refine(hasExactlyOneSource, 'Provide exactly one of url or html');
+
 const LinksListInputSchema = z.object({
 	...AccountInputShape,
-	body: BrowserPageBodySchema,
+	body: LinksBodySchema,
 });
 
 const ScreenshotBodySchema = BrowserPageBodyFieldsSchema.extend({
-	screenshotOptions: ScreenshotOptionsSchema.optional(),
+	// The plugin always returns base64 itself; encoding "base64" makes Cloudflare
+	// answer with a text data URL that would be encoded a second time.
+	screenshotOptions: ScreenshotOptionsSchema.omit({
+		encoding: true,
+	}).optional(),
 	scrollPage: z.boolean().optional(),
 	selector: z.string().optional(),
 }).refine(hasExactlyOneSource, 'Provide exactly one of url or html');
@@ -360,6 +369,7 @@ const CrawlCreateBodySchema = z
 	.object({
 		...BrowserRunCommonOptionsShape,
 		url: z.string().url(),
+		browser: z.literal('kitesurf').optional(),
 		depth: z.number().int().min(0).max(100_000).optional(),
 		formats: z.array(CrawlFormatSchema).optional(),
 		crawlPurposes: z

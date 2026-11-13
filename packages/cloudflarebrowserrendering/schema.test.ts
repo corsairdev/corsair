@@ -61,7 +61,6 @@ const validInputs = [
 				screenshotOptions: {
 					fullPage: true,
 					omitBackground: true,
-					encoding: 'base64',
 					clip: { height: 720, width: 1280, x: 0, y: 0, scale: 1 },
 				},
 				scrollPage: true,
@@ -355,6 +354,70 @@ const validOutputs = [
 ] as const;
 
 describe('Cloudflare Browser Run schema', () => {
+	it('accepts the documented links and crawl options', () => {
+		expect(
+			CloudflareBrowserRenderingEndpointInputSchemas.linksList.safeParse({
+				accountId: 'account-123',
+				body: {
+					url: 'https://example.com',
+					visibleLinksOnly: true,
+					excludeExternalLinks: true,
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			CloudflareBrowserRenderingEndpointInputSchemas.crawlStart.safeParse({
+				accountId: 'account-123',
+				body: { url: 'https://example.com', render: true, browser: 'kitesurf' },
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects screenshot encoding because the plugin already returns base64', () => {
+		// Live 11-13: encoding "base64" returns a text/plain data URL, which the
+		// binary client would base64-encode a second time.
+		expect(
+			CloudflareBrowserRenderingEndpointInputSchemas.screenshotCapture.safeParse(
+				{
+					accountId: 'account-123',
+					body: {
+						url: 'https://example.com',
+						screenshotOptions: { encoding: 'base64' },
+					},
+				},
+			).success,
+		).toBe(false);
+	});
+
+	it('parses a live crawl result cancelled by the user', () => {
+		const live = {
+			id: 'job-123',
+			status: 'cancelled_by_user',
+			browserSecondsUsed: 0,
+			total: 40,
+			finished: 40,
+			skipped: 0,
+			robots: [
+				{
+					origin: 'https://developers.cloudflare.com',
+					state: 'available',
+					status: 200,
+				},
+			],
+			records: [
+				{
+					url: 'https://developers.cloudflare.com/browser-run/',
+					status: 'cancelled',
+				},
+			],
+			cursor: 3,
+		};
+		expect(
+			CloudflareBrowserRenderingEndpointOutputSchemas.crawlGet.parse(live)
+				.status,
+		).toBe('cancelled_by_user');
+	});
+
 	it('declares a semver version and an empty entities map', () => {
 		expect(CloudflareBrowserRenderingSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 		expect(CloudflareBrowserRenderingSchema.entities).toBe(

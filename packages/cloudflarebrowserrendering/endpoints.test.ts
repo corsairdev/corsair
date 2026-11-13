@@ -309,6 +309,31 @@ describe('Browser Run Quick Actions', () => {
 		]);
 	});
 
+	it('links.list forwards visibleLinksOnly and excludeExternalLinks', async () => {
+		mockedRequest.mockResolvedValue(['https://example.com/about']);
+		await linksList(ctx, {
+			accountId: 'acct-123',
+			body: {
+				url: 'https://example.com',
+				visibleLinksOnly: true,
+				excludeExternalLinks: true,
+			},
+		});
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/accounts/acct-123/browser-run/links',
+			'test-token',
+			{
+				method: 'POST',
+				body: {
+					url: 'https://example.com',
+					visibleLinksOnly: true,
+					excludeExternalLinks: true,
+				},
+			},
+		);
+	});
+
 	it('rejects invalid page inputs before making a request', async () => {
 		await expect(
 			contentFetch(ctx, {
