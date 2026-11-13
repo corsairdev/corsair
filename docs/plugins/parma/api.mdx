@@ -1,0 +1,1137 @@
+---
+title: "Parma API reference"
+sidebarTitle: "API"
+description: "API reference for the Parma plugin in Corsair: every `parma.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Deals
+
+### get
+
+`deals.get`
+
+Get a deal
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.deals.get({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  amount: number | string | null,
+  status: string,
+  relationship_id: number | null,
+  pipeline_id: number | null,
+  stage_id: number | null,
+  owned_by_id: number | null,
+  created_at: string,
+  updated_at: string,
+  closed_at: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+### list
+
+`deals.list`
+
+List deals
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.deals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  amount: number | string | null,
+  status: string,
+  relationship_id: number | null,
+  pipeline_id: number | null,
+  stage_id: number | null,
+  owned_by_id: number | null,
+  created_at: string,
+  updated_at: string,
+  closed_at: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### list
+
+`groups.list`
+
+List groups
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  properties: {
+    id: number,
+    name: string,
+    type: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Create a note
+
+**Risk:** `write`
+
+```ts
+await corsair.parma.api.notes.create({
+	body: 'Follow up next week',
+	relationship_ids: [123],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string` | Yes | — |
+| `datetime` | `string` | No | — |
+| `relationship_ids` | `number[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  body: string,
+  datetime: string,
+  relationship_ids: number[],
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`notes.list`
+
+List notes
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.notes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  body: string,
+  datetime: string,
+  relationship_ids: number[],
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`notes.update`
+
+Update a note
+
+**Risk:** `write`
+
+```ts
+await corsair.parma.api.notes.update({ id: '123', body: 'Updated note' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `string` | No | — |
+| `datetime` | `string` | No | — |
+| `relationship_ids` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  body: string,
+  datetime: string,
+  relationship_ids: number[],
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pipelines
+
+### get
+
+`pipelines.get`
+
+Get a pipeline
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.pipelines.get({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  position: number,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`pipelines.list`
+
+List pipelines
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.pipelines.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  position: number,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Relationships
+
+### addGroup
+
+`relationships.addGroup`
+
+Add a relationship to a group
+
+**Risk:** `write`
+
+```ts
+await corsair.parma.api.relationships.addGroup({ relationship_id: '123', group_id: 456 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `relationship_id` | `string` | Yes | — |
+| `group_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  group_id: number,
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`relationships.create`
+
+Create a relationship
+
+**Risk:** `write`
+
+```ts
+await corsair.parma.api.relationships.create({
+	name: 'Example relationship',
+	group_ids: [456],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `person \| company` | No | — |
+| `company_id` | `number` | No | — |
+| `group_ids` | `number[]` | Yes | — |
+| `about` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  type: string,
+  about: string | null,
+  company_id: number | null,
+  group_ids: number[],
+  contact_details: {
+    type: string,
+    value: string
+  }[],
+  properties: {
+    id: number,
+    name: string,
+    value: string | null
+  }[],
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`relationships.delete`
+
+Delete a relationship
+
+**Risk:** `destructive`
+
+```ts
+await corsair.parma.api.relationships.delete({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`relationships.get`
+
+Get a relationship
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.relationships.get({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  type: string,
+  about: string | null,
+  company_id: number | null,
+  group_ids: number[],
+  contact_details: {
+    type: string,
+    value: string
+  }[],
+  properties: {
+    id: number,
+    name: string,
+    value: string | null
+  }[],
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`relationships.list`
+
+List relationships
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.relationships.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `page` | `string` | No | — |
+| `schedulinglink` | `string` | No | — |
+| `linkedin` | `string` | No | — |
+| `instagram` | `string` | No | — |
+| `twitter` | `string` | No | — |
+| `telegram` | `string` | No | — |
+| `sms` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `whatsapp` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  type: string,
+  about: string | null,
+  company_id: number | null,
+  group_ids: number[],
+  contact_details: {
+    type: string,
+    value: string
+  }[],
+  properties: {
+    id: number,
+    name: string,
+    value: string | null
+  }[],
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listGroups
+
+`relationships.listGroups`
+
+List relationship groups
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.relationships.listGroups({ relationship_id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `relationship_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  group_id: number,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listNotes
+
+`relationships.listNotes`
+
+List relationship notes
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.relationships.listNotes({ relationship_id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `relationship_id` | `string` | Yes | — |
+| `page` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  body: string,
+  datetime: string,
+  relationship_ids: number[],
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeGroup
+
+`relationships.removeGroup`
+
+Remove a relationship from a group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.parma.api.relationships.removeGroup({ relationship_id: '123', relationship_group_id: '456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `relationship_id` | `string` | Yes | — |
+| `relationship_group_id` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### update
+
+`relationships.update`
+
+Update a relationship
+
+**Risk:** `write`
+
+```ts
+await corsair.parma.api.relationships.update({ id: '123', name: 'Updated relationship' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `person \| company` | No | — |
+| `company_id` | `number` | No | — |
+| `group_ids` | `number[]` | No | — |
+| `about` | `string` | No | — |
+| `properties` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  id: number,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  type: string,
+  about: string | null,
+  company_id: number | null,
+  group_ids: number[],
+  contact_details: {
+    type: string,
+    value: string
+  }[],
+  properties: {
+    id: number,
+    name: string,
+    value: string | null
+  }[],
+  created_at: string,
+  updated_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stages
+
+### get
+
+`stages.get`
+
+Get a stage
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.stages.get({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  position: number,
+  created_at: string,
+  updated_at: string,
+  pipeline_id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`stages.list`
+
+List stages
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.stages.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  position: number,
+  created_at: string,
+  updated_at: string,
+  pipeline_id: number
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a user
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.users.get({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### list
+
+`users.list`
+
+List users
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.users.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  email: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### me
+
+`users.me`
+
+Get the current user and account
+
+**Risk:** `read`
+
+```ts
+await corsair.parma.api.users.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  user: {
+    id: number,
+    name: string,
+    email: string
+  },
+  account: {
+    id: number,
+    name: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---

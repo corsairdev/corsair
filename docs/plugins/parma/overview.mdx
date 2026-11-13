@@ -1,0 +1,152 @@
+---
+title: "Parma plugin"
+sidebarTitle: "Overview"
+description: "Manage Parma CRM relationships, notes, groups, deals, pipelines, stages, and users."
+---
+
+Use **Parma** through Corsair: one client, typed API calls.
+
+**What you get:**
+
+- 22 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/parma better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/parma better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/parma better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/parma better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { parma } from '@corsair-dev/parma';
+
+export const corsair = createCorsair({
+	plugins: [
+		parma(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+parma()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Obtain an OAuth access token in your application using [Parma's OAuth flow](https://developers.parma.ai/api-docs/index.html). The plugin does not implement the authorization flow or refresh tokens; your application must refresh and replace expired tokens. Entering client credentials in Hub alone is not sufficient.
+
+```ts
+parma({
+	authType: 'oauth_2',
+	key: process.env.PARMA_ACCESS_TOKEN!,
+});
+```
+
+Alternatively, omit `key` and store the access token for a tenant using Corsair's credential store. Configure `parma({ authType: 'oauth_2' })` in `createCorsair`, then:
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.parma.keys.issue_new_dek(); // only when initializing the tenant's key storage
+await tenant.parma.keys.set_access_token(process.env.PARMA_ACCESS_TOKEN!);
+```
+
+When the token expires, update the stored access token after refreshing it in your application. Do not create a new DEK when replacing an existing token.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant (API key only)">
+For API key authentication, mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect](/management/connect). OAuth tokens must be supplied as described above instead; Hub's OAuth connect flow is not configured for Parma.
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'parma',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`deals.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.parma.api.deals.get({ id: '123' });
+```
+
+
+**`notes.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.parma.api.notes.create({
+	body: 'Follow up next week',
+	relationship_ids: [123],
+});
+```
+
+
+See the full list on the [API](/plugins/parma/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/parma/api">
+    Every `parma.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

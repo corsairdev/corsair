@@ -3029,6 +3029,14 @@
                 ]
               },
               {
+                "group": "Parma",
+                "pages": [
+                  "plugins/parma/overview",
+                  "plugins/parma/api",
+                  "plugins/parma/database"
+                ]
+              },
+              {
                 "group": "Parseur",
                 "pages": [
                   "plugins/parseur/overview",
