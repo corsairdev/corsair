@@ -23,7 +23,8 @@ export const peopleGet: CompanyenrichEndpoints['peopleGet'] = async (
 ) => {
 	const parsedInput = CompanyenrichEndpointInputSchemas.peopleGet.parse(input);
 
-	// 2 credits per person returned plus 1 for the `education` expansion (docs:
+	// 2 credits per person returned, plus 1 for the `education` expansion and 1
+	// per unique company for the `company` expansion (docs:
 	// https://docs.companyenrich.com/reference/get_v2-people-personid.md).
 	const response = await makeCompanyEnrichRequest<PersonResponse>(
 		`/v2/people/${parsedInput.personId}`,

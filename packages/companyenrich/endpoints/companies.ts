@@ -26,8 +26,8 @@ export const companiesGet: CompanyenrichEndpoints['companiesGet'] = async (
 	const parsedInput =
 		CompanyenrichEndpointInputSchemas.companiesGet.parse(input);
 
-	// 1 credit per company returned; financial, keywords, naicsCodes and
-	// technologies add 1 each, while workforce adds 5 (6 total; docs:
+	// 1 credit per company returned; each expansion (financial, keywords,
+	// naicsCodes, technologies, workforce) adds 1 (docs:
 	// https://docs.companyenrich.com/reference/get_v2-companies-companyid.md).
 	const response = await makeCompanyEnrichRequest<CompanyResponse>(
 		`/v2/companies/${encodeURIComponent(parsedInput.companyId)}`,
@@ -187,7 +187,7 @@ export const companiesWorkforce: CompanyenrichEndpoints['companiesWorkforce'] =
 		const parsedInput =
 			CompanyenrichEndpointInputSchemas.companiesWorkforce.parse(input);
 
-		// 5 credits per page; `cursor` walks the preceding 12-month history
+		// 1 credit per page; `cursor` walks the preceding 12-month history
 		// windows (docs:
 		// https://docs.companyenrich.com/reference/get_v2-companies-workforce.md).
 		const response = await makeCompanyEnrichRequest<CompaniesWorkforceResponse>(

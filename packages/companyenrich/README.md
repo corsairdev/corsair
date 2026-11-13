@@ -44,7 +44,7 @@ Every operation validates its input and response against a Zod schema. Search op
 | `positions.autocomplete` | `GET /v2/positions/autocomplete` | [Lookup positions](https://docs.companyenrich.com/reference/get_v2-positions-autocomplete.md) |
 | `account.me` | `GET /v2/me` | [Get current user information](https://docs.companyenrich.com/reference/get_v2-me.md) |
 
-`companies.get` costs 1 credit per returned company. The `financial`, `keywords`, `naicsCodes`, and `technologies` expansions add 1 credit each; `workforce` adds 5 credits, for 6 total with the company lookup.
+`companies.get` costs 1 credit per returned company. The `financial`, `keywords`, `naicsCodes`, `technologies`, and `workforce` expansions add 1 credit each; `workforce` includes the latest 12 months of history, and each earlier 12-month page from `companies.workforce` costs 1 more credit.
 
 ## API-surface note
 

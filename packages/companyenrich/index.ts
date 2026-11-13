@@ -244,7 +244,7 @@ const companyenrichEndpointMeta = {
 	'companies.get': {
 		riskLevel: 'read',
 		description:
-			'Get a stored company by its CompanyEnrich ID. Costs 1 credit plus 1 per financial, keywords, NAICS codes or technologies expansion; workforce adds 5 credits (6 total).',
+			'Get a stored company by its CompanyEnrich ID. Costs 1 credit plus 1 per expansion (financial, keywords, NAICS codes, technologies, workforce with 12 months of history).',
 	},
 	'companies.enrichByDomain': {
 		riskLevel: 'read',
@@ -269,7 +269,7 @@ const companyenrichEndpointMeta = {
 	'companies.workforce': {
 		riskLevel: 'read',
 		description:
-			'Get observed headcount and department breakdowns for one company by ID or domain. Costs 5 credits per page.',
+			'Get observed headcount and department breakdowns for one company by ID or domain, 12 months of history per page. Costs 1 credit per page.',
 	},
 	'companies.search': {
 		riskLevel: 'read',
@@ -289,7 +289,7 @@ const companyenrichEndpointMeta = {
 	'people.get': {
 		riskLevel: 'read',
 		description:
-			'Get a stored person by their CompanyEnrich ID. Costs 2 credits plus 1 for the education expansion.',
+			'Get a stored person by their CompanyEnrich ID. Costs 2 credits, plus 1 for the education expansion and 1 per unique company for the company expansion.',
 	},
 	'people.enrich': {
 		riskLevel: 'read',
@@ -304,12 +304,12 @@ const companyenrichEndpointMeta = {
 	'people.search': {
 		riskLevel: 'read',
 		description:
-			'Search people by person filters and an optional company query, with cursor pagination. Costs 2 credits per person.',
+			'Search people by person filters, a natural-language query and an optional company query, with cursor pagination. Costs 2 credits per person.',
 	},
 	'people.searchCount': {
 		riskLevel: 'read',
 		description:
-			'Count people matching the same person filters and company query as search. Free.',
+			'Count people matching the same person filters, natural-language query and company query as search. Free.',
 	},
 	'people.searchPreview': {
 		riskLevel: 'read',
