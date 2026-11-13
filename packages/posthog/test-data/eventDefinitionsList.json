@@ -1,0 +1,30 @@
+{
+  "count": 97,
+  "next": "https://us.posthog.com/api/projects/309833/event_definitions/?limit=2&offset=2",
+  "previous": null,
+  "results": [
+    {
+      "id": "01a0201f-a01a-7650-a4aa-47141c87c4b4",
+      "name": "account_created",
+      "owner": null,
+      "description": null,
+      "created_at": "2026-08-20T17:02:18.654073Z",
+      "updated_at": null,
+      "updated_by": null,
+      "last_seen_at": "2026-11-12T04:31:50.836557Z",
+      "verified": null,
+      "verified_at": null,
+      "verified_by": null,
+      "hidden": null,
+      "scheduled_deletion_at": null,
+      "enforcement_mode": "allow",
+      "primary_property": null,
+      "is_action": false,
+      "post_to_slack": false,
+      "default_columns": [],
+      "media_preview_urls": [],
+      "tags": []
+    }
+  ],
+  "count_is_capped": false
+}

@@ -1,0 +1,130 @@
+{
+  "count": 37,
+  "next": "https://us.posthog.com/api/projects/309833/insights/?limit=2&offset=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 11155202,
+      "short_id": "F5qaRwXu",
+      "name": "SEO funnel: land → blog → app",
+      "derived_name": "Landed on corsair.dev → Viewed the blog → Clicked through to app (hub) → Created an account user conversion rate",
+      "query": {
+        "kind": "InsightVizNode",
+        "source": {
+          "kind": "FunnelsQuery",
+          "series": [
+            {
+              "kind": "EventsNode",
+              "name": "$pageview",
+              "event": "$pageview",
+              "custom_name": "Landed on corsair.dev"
+            },
+            {
+              "kind": "EventsNode",
+              "name": "$pageview",
+              "event": "$pageview",
+              "properties": [
+                {
+                  "key": "$pathname",
+                  "type": "event",
+                  "value": "/blog",
+                  "operator": "icontains"
+                }
+              ],
+              "custom_name": "Viewed the blog"
+            },
+            {
+              "kind": "EventsNode",
+              "name": "$autocapture",
+              "event": "$autocapture",
+              "properties": [
+                {
+                  "key": "href",
+                  "type": "element",
+                  "value": ["hub.corsair.dev"],
+                  "operator": "icontains"
+                }
+              ],
+              "custom_name": "Clicked through to app (hub)"
+            },
+            {
+              "kind": "EventsNode",
+              "name": "account_created",
+              "event": "account_created",
+              "custom_name": "Created an account"
+            }
+          ],
+          "version": 2,
+          "dateRange": {
+            "date_from": "-30d"
+          },
+          "funnelsFilter": {
+            "funnelVizType": "steps"
+          },
+          "filterTestAccounts": false
+        }
+      },
+      "order": null,
+      "deleted": false,
+      "dashboards": [2010795],
+      "dashboard_tiles": [
+        {
+          "id": 11058945,
+          "dashboard_id": 2010795,
+          "deleted": null
+        }
+      ],
+      "last_refresh": null,
+      "cache_target_age": null,
+      "next_allowed_client_refresh": null,
+      "result": null,
+      "hasMore": null,
+      "columns": null,
+      "created_at": "2026-08-19T09:59:47.705620Z",
+      "created_by": {
+        "id": 636283,
+        "uuid": "019f5aed-1469-0000-9e4e-e282cc6ee87f",
+        "distinct_id": "distinct-id-1",
+        "first_name": "Test",
+        "last_name": "Test",
+        "email": "user@example.com",
+        "is_email_verified": true,
+        "hedgehog_config": null,
+        "role_at_organization": "engineering"
+      },
+      "description": "",
+      "updated_at": "2026-08-19T11:01:41.146751Z",
+      "favorited": false,
+      "saved": true,
+      "last_modified_at": "2026-08-19T11:01:41.143595Z",
+      "last_modified_by": {
+        "id": 636283,
+        "uuid": "019f5aed-1469-0000-9e4e-e282cc6ee87f",
+        "distinct_id": "distinct-id-1",
+        "first_name": "Test",
+        "last_name": "Test",
+        "email": "user@example.com",
+        "is_email_verified": true,
+        "hedgehog_config": null,
+        "role_at_organization": "engineering"
+      },
+      "is_sample": false,
+      "user_access_level": "editor",
+      "timezone": null,
+      "is_cached": false,
+      "query_status": null,
+      "hogql": null,
+      "types": null,
+      "resolved_date_range": null,
+      "resolved_compare_date_range": null,
+      "action_names": null,
+      "query_scan": null,
+      "warnings": null,
+      "alerts": [],
+      "filter_override_context": null,
+      "last_viewed_at": "2026-10-17T16:08:43.972886Z",
+      "tags": [],
+      "filters_hash": "cache_309833_fd04b0332679a39318cdb670399acffb334e41dc6798f09c389568893e03a3d0"
+    }
+  ]
+}

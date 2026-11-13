@@ -1,0 +1,834 @@
+{
+  "id": "rosette",
+  "displayName": "Rosette",
+  "description": "Language detection, entity and relationship extraction, sentiment, topics, semantic vectors, name matching and transliteration with the Rosette text-analytics API.",
+  "npmPackageName": "@corsair-dev/rosette",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "rosette.api.categories",
+      "shortPath": "categories",
+      "description": "Classify a text into topic-taxonomy categories with confidence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The text to analyse. Mutually exclusive with contentUri."
+          },
+          {
+            "key": "contentUri",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code, two or three letters, such as eng or spa."
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string",
+            "description": "A saved language profile to apply."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{ label?: string | null, score?: number | null, confidence?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.entities",
+      "shortPath": "entities",
+      "description": "Extract people, places, organisations and other entities, grouped by entity ID and ranked by confidence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The text to analyse. Mutually exclusive with contentUri."
+          },
+          {
+            "key": "contentUri",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code, two or three letters, such as eng or spa."
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string",
+            "description": "A saved language profile to apply."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{ type?: string | null, mention?: string | null, normalized?: string | null, count?: number | null, mentionOffsets?: { startOffset?: number | null, endOffset?: number | null }[] | null, entityId?: string | null, confidence?: number | null, linkingConfidence?: number | null, salience?: number | null, dbpediaTypes?: string[] | null, permId?: string | null }[] | null",
+            "description": "Entities, most confident first."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.info",
+      "shortPath": "info",
+      "description": "Read the server name, version and build, which explains a change in analysis output",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "buildNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "buildTime",
+            "optional": true,
+            "type": "string | null",
+            "description": "Such as 20260922013523."
+          },
+          {
+            "key": "licenseExpiration",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the key's license ends, where the server reports it."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.language",
+      "shortPath": "language",
+      "description": "Detect the language of a text: every candidate, most likely first, with its confidence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The text to analyse. Mutually exclusive with contentUri."
+          },
+          {
+            "key": "contentUri",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code, two or three letters, such as eng or spa."
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string",
+            "description": "A saved language profile to apply."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "languageDetections",
+            "optional": true,
+            "type": "{ language?: string | null, confidence?: number | null }[] | null",
+            "description": "Every candidate, most likely first."
+          },
+          {
+            "key": "regionalDetections",
+            "optional": true,
+            "type": "{ language?: string | null, confidence?: number | null }[] | null",
+            "description": "Regional variants, when the server returns them."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.morphology",
+      "shortPath": "morphology",
+      "description": "Analyse morphology: lemmas, part-of-speech tags, compound components and Han readings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The text to analyse. Mutually exclusive with contentUri."
+          },
+          {
+            "key": "contentUri",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code, two or three letters, such as eng or spa."
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string",
+            "description": "A saved language profile to apply."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tokens",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "lemmas",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "posTags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "compoundComponents",
+            "optional": true,
+            "type": "(string[] | null)[] | null",
+            "description": "The parts of each compound token, null for a non-compound."
+          },
+          {
+            "key": "hanReadings",
+            "optional": true,
+            "type": "(string[] | null)[] | null",
+            "description": "Readings of each Han token, null for other tokens."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.nameSimilarity",
+      "shortPath": "nameSimilarity",
+      "description": "Score how likely two names are to be the same entity; the order of the two affects the score",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name1",
+            "optional": false,
+            "type": "{ text: string, language?: string, script?: string, entityType?: PERSON | LOCATION | ORGANIZATION }"
+          },
+          {
+            "key": "name2",
+            "optional": false,
+            "type": "{ text: string, language?: string, script?: string, entityType?: PERSON | LOCATION | ORGANIZATION }"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Scoring overrides by name, such as { deletionScore: \"0.0\" }. An unknown parameter name gets a 500 from the API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "score",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.nameTranslation",
+      "shortPath": "nameTranslation",
+      "description": "Translate a name into another language, optionally saying which script and entity type it is",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name to translate."
+          },
+          {
+            "key": "targetLanguage",
+            "optional": false,
+            "type": "string",
+            "description": "The ISO 639 language to translate into."
+          },
+          {
+            "key": "entityType",
+            "optional": true,
+            "type": "PERSON | LOCATION | ORGANIZATION",
+            "description": "Defaults to PERSON."
+          },
+          {
+            "key": "sourceLanguageOfOrigin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceLanguageOfUse",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sourceScript",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 15924 code."
+          },
+          {
+            "key": "targetScript",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 15924 code."
+          },
+          {
+            "key": "targetScheme",
+            "optional": true,
+            "type": "string",
+            "description": "The transliteration scheme for the result, such as IC or BGN; an unknown scheme gets a 400."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "translation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "confidence",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "targetLanguage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "targetScript",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "targetScheme",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sourceScript",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sourceLanguageOfOrigin",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sourceLanguageOfUse",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "extendedInformation",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null",
+            "description": "Extra server details, such as processedByBabel."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.ping",
+      "shortPath": "ping",
+      "description": "Check that the host is reachable",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "A greeting such as \"Babel Street Analytics Server at your service\"."
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "number | null",
+            "description": "Server time in epoch milliseconds."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.relationships",
+      "shortPath": "relationships",
+      "description": "Extract relationships between the entities in a text, such as a person employed by an organisation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The text to analyse. Mutually exclusive with contentUri."
+          },
+          {
+            "key": "contentUri",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code, two or three letters, such as eng or spa."
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string",
+            "description": "A saved language profile to apply."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "relationships",
+            "optional": true,
+            "type": "{ predicate?: string | null, predicateId?: string | null, arg1?: string | null, arg1Id?: string | null, arg2?: string | null, arg2Id?: string | null, arg3?: string | null, arg3Id?: string | null, adjuncts?: string[] | null, locatives?: string[] | null, temporals?: string[] | null, modalities?: string[] | null, confidence?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.semantics.similarTerms",
+      "shortPath": "semantics.similarTerms",
+      "description": "Find terms near the input in embedding space, in each requested result language",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The term to find neighbours for. Mutually exclusive with contentUri."
+          },
+          {
+            "key": "contentUri",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code, two or three letters, such as eng or spa."
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string",
+            "description": "A saved language profile to apply."
+          },
+          {
+            "key": "resultLanguages",
+            "optional": false,
+            "type": "string[]",
+            "description": "The languages to return similar terms in, such as [\"eng\", \"spa\"]. Required by the API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "similarTerms",
+            "optional": true,
+            "type": "Record<string, { term?: string | null, similarity?: number | null }[]> | null",
+            "description": "Similar terms keyed by result language, closest first."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.semantics.vector",
+      "shortPath": "semantics.vector",
+      "description": "Compute a text embedding for the whole document",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The text to analyse. Mutually exclusive with contentUri."
+          },
+          {
+            "key": "contentUri",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code, two or three letters, such as eng or spa."
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string",
+            "description": "A saved language profile to apply."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentEmbedding",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "The embedding vector for the whole text."
+          },
+          {
+            "key": "tokens",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "tokenEmbeddings",
+            "optional": true,
+            "type": "number[][] | null",
+            "description": "A vector per token, when per-token output was requested."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.sentences",
+      "shortPath": "sentences",
+      "description": "Split a text into sentences, returned as text",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The text to analyse. Mutually exclusive with contentUri."
+          },
+          {
+            "key": "contentUri",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code, two or three letters, such as eng or spa."
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string",
+            "description": "A saved language profile to apply."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sentences",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Each sentence as text, with its trailing whitespace."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.sentiment",
+      "shortPath": "sentiment",
+      "description": "Score document and per-entity sentiment as a pos, neg or neu label with a confidence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The text to analyse. Mutually exclusive with contentUri."
+          },
+          {
+            "key": "contentUri",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code, two or three letters, such as eng or spa."
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string",
+            "description": "A saved language profile to apply."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "document",
+            "optional": true,
+            "type": "{ label?: string | null, confidence?: number | null } | null"
+          },
+          {
+            "key": "entities",
+            "optional": true,
+            "type": "{ type?: string | null, mention?: string | null, normalized?: string | null, count?: number | null, mentionOffsets?: { startOffset?: number | null, endOffset?: number | null }[] | null, entityId?: string | null, confidence?: number | null, linkingConfidence?: number | null, salience?: number | null, dbpediaTypes?: string[] | null, permId?: string | null, sentiment?: { label?: string | null, confidence?: number | null } | null }[] | null",
+            "description": "Sentiment per entity, when the analysis returned any."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.tokens",
+      "shortPath": "tokens",
+      "description": "Split a text into tokens; use morphology for part-of-speech tags and lemmas",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The text to analyse. Mutually exclusive with contentUri."
+          },
+          {
+            "key": "contentUri",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code, two or three letters, such as eng or spa."
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string",
+            "description": "A saved language profile to apply."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tokens",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "The text split into tokens."
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.topics",
+      "shortPath": "topics",
+      "description": "Extract keyphrases and their broader concepts, with a salience rather than a probability",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The text to analyse. Mutually exclusive with contentUri."
+          },
+          {
+            "key": "contentUri",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "An ISO 639 language code, two or three letters, such as eng or spa."
+          },
+          {
+            "key": "profileId",
+            "optional": true,
+            "type": "string",
+            "description": "A saved language profile to apply."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyphrases",
+            "optional": true,
+            "type": "{ phrase?: string | null, salience?: number | null }[] | null"
+          },
+          {
+            "key": "concepts",
+            "optional": true,
+            "type": "{ phrase?: string | null, salience?: number | null, conceptId?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "rosette.api.transliteration",
+      "shortPath": "transliteration",
+      "description": "Transliterate text between Latin and the native script of its language, which keeps the words rather than translating them",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "The text to transliterate. Mutually exclusive with contentUri."
+          },
+          {
+            "key": "contentUri",
+            "optional": true,
+            "type": "string",
+            "description": "A URL for Rosette to fetch, over http, https, ftp or ftps. Mutually exclusive with content."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "The language of the text, such as ara; it sets which native script Latin text is moved into, or out of."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transliteration",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
