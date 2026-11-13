@@ -65,6 +65,22 @@ export const MapViewerPermissionsSchema = z
 	})
 	.passthrough();
 
+// Responses send null for permissions and table settings nobody has set (live run 11-13).
+const MapTableSettingsOutputSchema = z
+	.object({
+		default_table_layer_id: z.string().nullable().optional(),
+		viewers_can_open_table: z.boolean().nullable().optional(),
+	})
+	.passthrough();
+
+const MapViewerPermissionsOutputSchema = z
+	.object({
+		can_duplicate_map: z.boolean().nullable().optional(),
+		can_export_data: z.boolean().nullable().optional(),
+		can_see_map_presence: z.boolean().nullable().optional(),
+	})
+	.passthrough();
+
 export const MapSchema = z
 	.object({
 		id: z.string(),
@@ -87,8 +103,8 @@ export const MapSchema = z
 		elements: GeoJsonSchema.optional(),
 		// `unknown` because layer groups in map detail can contain nested layer definitions.
 		layer_groups: z.array(z.unknown()).optional(),
-		table_settings: MapTableSettingsSchema.optional(),
-		viewer_permissions: MapViewerPermissionsSchema.optional(),
+		table_settings: MapTableSettingsOutputSchema.nullable().optional(),
+		viewer_permissions: MapViewerPermissionsOutputSchema.nullable().optional(),
 	})
 	// passthrough because maps can contain extensible links and custom settings.
 	.passthrough();

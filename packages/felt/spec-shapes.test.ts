@@ -301,6 +301,25 @@ describe('Felt request bodies from the API reference', () => {
 });
 
 describe('Felt responses seen in the live run (11-13)', () => {
+	it('parses an example map whose viewer permission is null', () => {
+		// Trimmed from GET /api/v2/maps/:id on a workspace's example map.
+		const exampleMap = {
+			...map,
+			table_settings: {
+				default_table_layer_id: null,
+				viewers_can_open_table: false,
+			},
+			viewer_permissions: {
+				can_duplicate_map: null,
+				can_export_data: false,
+				can_see_map_presence: false,
+			},
+		};
+		expect(
+			FeltEndpointOutputSchemas.mapsGet.parse(exampleMap).viewer_permissions,
+		).toEqual(exampleMap.viewer_permissions);
+	});
+
 	it('parses Global Library layers whose hide_from_legend is null', () => {
 		// Trimmed from GET /api/v2/library?source=felt.
 		const library = {
