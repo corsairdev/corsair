@@ -1,0 +1,146 @@
+---
+title: "Renderform plugin"
+sidebarTitle: "Overview"
+description: "Render templates to images, PDFs and video, manage templates and their html-editor content, capture screenshots and PDFs, and read usage and fonts with Renderform."
+---
+
+Use **Renderform** through Corsair: one client, typed API calls.
+
+Create an API key under **Account, API Keys** in Renderform. It goes in the `x-api-key` header.
+
+**A wrong key returns `400`, not `401`.** Renderform answers `{"msg":"Incorrect API Key","status":400}`, so the plugin identifies an auth failure by the message as well as the status — otherwise a bad key would look like a malformed body and a caller would keep retrying it.
+
+Rendering, in practice:
+
+- **A render costs a credit unless it is cached.** An identical request for the same `version` returns the file from the render cache, costs nothing and reports `cached: true`. `cache: false` forces a fresh render and the cost. Reuse `version` deliberately, or leave it off and accept the spend.
+- **A video render is asynchronous.** An image render is synchronous and `href` is ready. A video format needs a template made in the **Advanced Editor** and answers `202` with `status: "pending"`, so `href` is not usable yet: poll `results.get` with the `requestId` until the status is `done` or `failed`. A video costs 5 credits per started second.
+- **`data` is keyed by merge fields, not field names.** A field looks like `my-text.text`: the component name, a dot, then the property. `templates.content` returns the `sampleData` a template was previewed with, which is the fastest way to learn the exact keys.
+- **`fps` is a string.** The spec types it as `"24"`, `"25"` or `"30"` rather than a number, and it is sent that way. `duration` and `recordDuration` are numbers in milliseconds, between 1000 and 30000.
+- **Two API versions are in use.** Templates, renders and results are on `/api/v2`; `usage` and `fonts` are on `/api/v1`. Both are kept as they are.
+- **`templates.list` answers a bare array, not a page**, while `results.list` answers a Spring-style page whose rows are in `content`. The two models differ accordingly.
+- **`templates.update` replaces the tag set.** Sending `tags` swaps the whole list rather than merging into it, and updating metadata is a separate route from updating content: `templates.updateContent` is the one that changes HTML and CSS, and only an `html-editor` template has any.
+- **A `402` is an exhausted credit balance,** not a bad request; read `usage` before a bulk render loop.
+
+**What you get:**
+
+- 15 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/renderform better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/renderform better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/renderform better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/renderform better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { renderform } from '@corsair-dev/renderform';
+
+export const corsair = createCorsair({
+	plugins: [
+		renderform(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+renderform()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'renderform',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read credits used and the plan**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.renderform.api.usage({});
+```
+
+
+**Render a template with merge data**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.renderform.api.render({
+	template: 'template_1234',
+	data: { 'my-text.text': 'John' },
+	fileName: 'welcome-card',
+});
+```
+
+
+See the full list on the [API](/plugins/renderform/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/renderform/api">
+    Every `renderform.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,1688 @@
+---
+title: "UptimeRobot API reference"
+sidebarTitle: "API"
+description: "API reference for the UptimeRobot plugin in Corsair: every `uptimerobot.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### me
+
+`account.me`
+
+Read the account plan, monitor allowance and monitors in use; the cheapest way to check a key
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.account.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string \| null` | No | — |
+| `fullName` | `string \| null` | No | — |
+| `monitorsCount` | `number \| null` | No | — |
+| `monitorLimit` | `number \| null` | No | — |
+| `dependencyMonitorsCount` | `number \| null` | No | — |
+| `dependencyMonitorLimit` | `number \| null` | No | — |
+| `smsCredits` | `number \| null` | No | — |
+| `activeSubscription` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="activeSubscription full type">
+
+```ts
+{
+  plan?: string | null,
+  monitorLimit?: number | null,
+  expirationDate?: string | null,
+  status?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Incidents
+
+### addComment
+
+`incidents.addComment`
+
+Add a comment to an incident, optionally publishing it to the status page at the same time
+
+**Risk:** `write`
+
+```ts
+await corsair.uptimerobot.api.incidents.addComment({ id: 'inc_778001', content: 'Rolled back the deployment.', publishOnStatusPage: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `publishOnStatusPage` | `boolean` | No | Also show the comment on the status pages. Defaults to false. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `comment` | `string \| null` | No | — |
+| `publishOnStatusPage` | `boolean \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  fullName?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### comments
+
+`incidents.comments`
+
+List the comments on an incident, with who wrote each one
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.incidents.comments({ id: 'inc_778001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  comment?: string | null,
+  publishOnStatusPage?: boolean | null,
+  created?: string | null,
+  user?: {
+    id?: number | null,
+    fullName?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`incidents.get`
+
+Read one incident with its root cause: the failing URL, HTTP status and headers
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.incidents.get({ id: 'inc_778001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The incident id, as a string. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `cause` | `number \| null` | No | — |
+| `reason` | `string \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `resolvedAt` | `string \| null` | No | — |
+| `rootCause` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="rootCause full type">
+
+```ts
+{
+  url?: string | null,
+  httpResponseCode?: number | null,
+  responseDownloadUrl?: string | null,
+  requestHeaders?: Record<string, any> | null,
+  responseHeaders?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`incidents.list`
+
+List incidents newest first, filtered by monitor, date range, type or root-cause group
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.incidents.list({ status: 'open', type: 'Downtime', cause: '5xx' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
+| `monitor_id` | `number` | No | — |
+| `monitor_name` | `string` | No | A partial, case-insensitive match on the monitor name. |
+| `started_after` | `string` | No | ISO 8601. |
+| `started_before` | `string` | No | ISO 8601. |
+| `status` | `open` | No | Only ongoing incidents, whatever started_after and started_before say. |
+| `type` | `Downtime \| SlowResponse \| VisualChange` | No | — |
+| `cause` | `Timeout \| 2xx \| 3xx \| 4xx \| 5xx \| DNS \| AssertionFailed \| InvalidJSON \| ConfigError` | No | The root-cause group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  cause?: number | null,
+  reason?: string | null,
+  duration?: number | null,
+  startedAt?: string | null,
+  resolvedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Maintenance Windows
+
+### create
+
+`maintenanceWindows.create`
+
+Create a maintenance window that suppresses alerts once, daily, weekly or monthly for a set duration
+
+**Risk:** `write`
+
+```ts
+await corsair.uptimerobot.api.maintenanceWindows.create({ name: 'Sunday release window', interval: 'weekly', date: '2025-10-05', time: '02:00:00', duration: 120, days: [7], monitorIds: [778001] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `interval` | `once \| daily \| weekly \| monthly` | Yes | weekly and monthly also take `days`. |
+| `date` | `string` | Yes | YYYY-MM-DD. Required on create; the window starts repeating from it. |
+| `time` | `string` | Yes | HH:mm:ss. |
+| `duration` | `number` | Yes | Minutes the window lasts. |
+| `days` | `number[]` | No | Weekly: 1 to 7. Monthly: days of the month, or -1 for the last day. |
+| `monitorIds` | `number[]` | No | — |
+| `autoAddMonitors` | `boolean` | No | Also cover monitors created later. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `interval` | `string \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `days` | `number[] \| null` | No | — |
+| `monitorIds` | `number[] \| null` | No | — |
+| `autoAddMonitors` | `boolean \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`maintenanceWindows.delete`
+
+Permanently delete a maintenance window, so its monitors start alerting again during that period
+
+**Risk:** `destructive`
+
+```ts
+await corsair.uptimerobot.api.maintenanceWindows.delete({ id: 3317 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`maintenanceWindows.list`
+
+List maintenance windows with their schedule and monitors
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.maintenanceWindows.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  interval?: string | null,
+  date?: string | null,
+  time?: string | null,
+  duration?: number | null,
+  days?: number[] | null,
+  monitorIds?: number[] | null,
+  autoAddMonitors?: boolean | null,
+  status?: string | null,
+  created?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`maintenanceWindows.update`
+
+Change a window its schedule, monitors or status; paused stops it suppressing alerts
+
+**Risk:** `write`
+
+```ts
+await corsair.uptimerobot.api.maintenanceWindows.update({ id: 3317, status: 'paused' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `interval` | `once \| daily \| weekly \| monthly` | No | — |
+| `date` | `string` | No | — |
+| `time` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `days` | `number[]` | No | — |
+| `monitorIds` | `number[]` | No | — |
+| `status` | `active \| paused` | No | paused stops the window suppressing alerts; active restores it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `interval` | `string \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `duration` | `number \| null` | No | — |
+| `days` | `number[] \| null` | No | — |
+| `monitorIds` | `number[] \| null` | No | — |
+| `autoAddMonitors` | `boolean \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+
+
+
+---
+
+## Monitor Groups
+
+### create
+
+`monitorGroups.create`
+
+Create a monitor group, filling it with monitors by id or by moving another group whole
+
+**Risk:** `write`
+
+```ts
+await corsair.uptimerobot.api.monitorGroups.create({ name: 'Storefront', monitorIds: [778001] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `monitorIds` | `number[]` | No | Monitors to put in the new group. |
+| `groupIds` | `number[]` | No | Move every monitor of these groups into the new one. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`monitorGroups.delete`
+
+Delete a monitor group; its monitors are kept and become ungrouped
+
+**Risk:** `destructive`
+
+```ts
+await corsair.uptimerobot.api.monitorGroups.delete({ id: 1102 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`monitorGroups.list`
+
+List monitor groups
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.monitorGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Monitors
+
+### create
+
+`monitors.create`
+
+Create a monitor of any type; the body is checked against the type, so a PORT monitor needs a port and a HEARTBEAT one takes no URL
+
+**Risk:** `write`
+
+```ts
+await corsair.uptimerobot.api.monitors.create({ friendlyName: 'Acme storefront', type: 'HTTP', interval: 300, url: 'https://shop.acme.example', timeout: 30 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `friendlyName` | `string` | No | — |
+| `type` | `HTTP \| KEYWORD \| PING \| PORT \| HEARTBEAT \| DNS \| API \| UDP \| VISUAL_COMPARISON \| THIRD_PARTY_SERVICE` | Yes | — |
+| `interval` | `number` | No | Seconds between checks. The free plan allows no less than 300. |
+| `url` | `string` | No | The URL, hostname or IP to check; for DNS the resolver. Omitted only for HEARTBEAT. |
+| `port` | `number` | No | Required for PORT and UDP monitors, rejected otherwise. |
+| `portAlertCondition` | `CLOSED \| OPEN` | No | PORT only. Whether a closed port or an open one is the alert. |
+| `keywordType` | `ALERT_EXISTS \| ALERT_NOT_EXISTS` | No | KEYWORD only. Alert when the keyword is present or absent. |
+| `keywordCaseType` | `CaseSensitive \| CaseInsensitive` | No | KEYWORD only. |
+| `keywordValue` | `string` | No | KEYWORD only. Text to look for in the response body. |
+| `timeout` | `number` | No | Seconds to wait, at most 60. Required for HTTP, KEYWORD, PING, PORT, API and UDP monitors. |
+| `gracePeriod` | `number` | No | HEARTBEAT only. Seconds of lateness allowed before alerting. |
+| `groupId` | `number` | No | — |
+| `tagNames` | `string[]` | No | — |
+| `maintenanceWindowsIds` | `number[]` | No | — |
+| `assignedAlertContacts` | `object[]` | No | Who is alerted; an empty list alerts nobody. Threshold and recurrence are required; values above 0 need a paid plan. |
+| `customFields` | `Record<string, string>` | No | Up to 20 key/value pairs. Paid plans only. |
+| `responseTimeThreshold` | `number` | No | — |
+| `config` | `Record<string, any>` | No | Type-specific configuration. API monitors need `apiAssertions`; THIRD_PARTY_SERVICE needs `thirdPartyService.providerId`. |
+| `httpMethodType` | `GET \| POST \| PUT \| PATCH \| DELETE \| HEAD \| OPTIONS` | No | HTTP monitors only. |
+| `authType` | `string` | No | HTTP monitors only. The authentication scheme the check uses. |
+| `customHttpHeaders` | `Record<string, string>` | No | HTTP monitors only. Headers sent with the check. |
+
+<AccordionGroup>
+<Accordion title="assignedAlertContacts full type">
+
+```ts
+{
+  alertContactId: number,
+  threshold: number,
+  recurrence: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `friendlyName` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `interval` | `number \| null` | No | — |
+| `timeout` | `number \| null` | No | — |
+| `createDateTime` | `string \| null` | No | — |
+| `groupId` | `number \| null` | No | — |
+| `port` | `number \| null` | No | — |
+| `keywordValue` | `string \| null` | No | — |
+| `keywordType` | `string \| null` | No | — |
+| `gracePeriod` | `number \| null` | No | — |
+| `heartbeatUrl` | `string \| null` | No | — |
+| `responseTimeThreshold` | `number \| null` | No | — |
+| `customFields` | `Record<string, string> \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `assignedAlertContacts` | `object[] \| null` | No | — |
+| `lastIncident` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  color?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="assignedAlertContacts full type">
+
+```ts
+{
+  alertContactId?: number | null,
+  threshold?: number | null,
+  recurrence?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="lastIncident full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  cause?: number | null,
+  reason?: string | null,
+  startedAt?: string | null,
+  duration?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`monitors.delete`
+
+Permanently delete a monitor and its check history; this cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.uptimerobot.api.monitors.delete({ id: 778001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`monitors.get`
+
+Read one monitor with its current status, interval, tags and last incident
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.monitors.get({ id: 778001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `friendlyName` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `interval` | `number \| null` | No | — |
+| `timeout` | `number \| null` | No | — |
+| `createDateTime` | `string \| null` | No | — |
+| `groupId` | `number \| null` | No | — |
+| `port` | `number \| null` | No | — |
+| `keywordValue` | `string \| null` | No | — |
+| `keywordType` | `string \| null` | No | — |
+| `gracePeriod` | `number \| null` | No | — |
+| `heartbeatUrl` | `string \| null` | No | — |
+| `responseTimeThreshold` | `number \| null` | No | — |
+| `customFields` | `Record<string, string> \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `assignedAlertContacts` | `object[] \| null` | No | — |
+| `lastIncident` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  color?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="assignedAlertContacts full type">
+
+```ts
+{
+  alertContactId?: number | null,
+  threshold?: number | null,
+  recurrence?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="lastIncident full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  cause?: number | null,
+  reason?: string | null,
+  startedAt?: string | null,
+  duration?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`monitors.list`
+
+List monitors, filtered by name, URL, status, tag, group or custom field, with cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.monitors.list({ status: ['UP', 'DOWN'], tags: ['production'], limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
+| `name` | `string` | No | A case-insensitive substring of the monitor name. |
+| `url` | `string` | No | A case-insensitive substring of the monitor URL. |
+| `status` | `(PAUSED \| STARTED \| UP \| LOOKS_DOWN \| DOWN)[]` | No | Only monitors in any of these states. |
+| `tags` | `string[]` | No | Only monitors carrying any of these tag names. Case-sensitive. |
+| `groupId` | `number` | No | Only monitors in this group; 0 is the ungrouped default group. |
+| `customField` | `string[]` | No | `key:value` pairs, all of which must match. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  friendlyName?: string | null,
+  url?: string | null,
+  type?: string | null,
+  status?: string | null,
+  interval?: number | null,
+  timeout?: number | null,
+  createDateTime?: string | null,
+  groupId?: number | null,
+  port?: number | null,
+  keywordValue?: string | null,
+  keywordType?: string | null,
+  gracePeriod?: number | null,
+  heartbeatUrl?: string | null,
+  responseTimeThreshold?: number | null,
+  customFields?: Record<string, string> | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  assignedAlertContacts?: {
+    alertContactId?: number | null,
+    threshold?: number | null,
+    recurrence?: number | null
+  }[] | null,
+  lastIncident?: {
+    id?: string | null,
+    status?: string | null,
+    cause?: number | null,
+    reason?: string | null,
+    startedAt?: string | null,
+    duration?: number | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`monitors.pause`
+
+Pause a monitor so it stops checking and stops alerting until monitors.start is called
+
+**Risk:** `write`
+
+```ts
+await corsair.uptimerobot.api.monitors.pause({ id: 778001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `friendlyName` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `interval` | `number \| null` | No | — |
+| `timeout` | `number \| null` | No | — |
+| `createDateTime` | `string \| null` | No | — |
+| `groupId` | `number \| null` | No | — |
+| `port` | `number \| null` | No | — |
+| `keywordValue` | `string \| null` | No | — |
+| `keywordType` | `string \| null` | No | — |
+| `gracePeriod` | `number \| null` | No | — |
+| `heartbeatUrl` | `string \| null` | No | — |
+| `responseTimeThreshold` | `number \| null` | No | — |
+| `customFields` | `Record<string, string> \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `assignedAlertContacts` | `object[] \| null` | No | — |
+| `lastIncident` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  color?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="assignedAlertContacts full type">
+
+```ts
+{
+  alertContactId?: number | null,
+  threshold?: number | null,
+  recurrence?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="lastIncident full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  cause?: number | null,
+  reason?: string | null,
+  startedAt?: string | null,
+  duration?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reset
+
+`monitors.reset`
+
+Discard a monitor's accumulated statistics and incident history; the monitor itself keeps running
+
+**Risk:** `destructive`
+
+```ts
+await corsair.uptimerobot.api.monitors.reset({ id: 778001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `reset` | `true` | Yes | — |
+
+
+
+---
+
+### start
+
+`monitors.start`
+
+Start a paused monitor, or resume one that was paused by UptimeRobot itself after repeated failures
+
+**Risk:** `write`
+
+```ts
+await corsair.uptimerobot.api.monitors.start({ id: 778001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `friendlyName` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `interval` | `number \| null` | No | — |
+| `timeout` | `number \| null` | No | — |
+| `createDateTime` | `string \| null` | No | — |
+| `groupId` | `number \| null` | No | — |
+| `port` | `number \| null` | No | — |
+| `keywordValue` | `string \| null` | No | — |
+| `keywordType` | `string \| null` | No | — |
+| `gracePeriod` | `number \| null` | No | — |
+| `heartbeatUrl` | `string \| null` | No | — |
+| `responseTimeThreshold` | `number \| null` | No | — |
+| `customFields` | `Record<string, string> \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `assignedAlertContacts` | `object[] \| null` | No | — |
+| `lastIncident` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  color?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="assignedAlertContacts full type">
+
+```ts
+{
+  alertContactId?: number | null,
+  threshold?: number | null,
+  recurrence?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="lastIncident full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  cause?: number | null,
+  reason?: string | null,
+  startedAt?: string | null,
+  duration?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`monitors.update`
+
+Change a monitor: its name, URL, interval, tags, group, custom fields or credentials; omitted fields keep their value
+
+**Risk:** `write`
+
+```ts
+await corsair.uptimerobot.api.monitors.update({ id: 778001, friendlyName: 'Storefront (prod)', interval: 60 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `url` | `string` | No | — |
+| `interval` | `number` | No | — |
+| `timeout` | `number` | No | — |
+| `gracePeriod` | `number` | No | — |
+| `port` | `number` | No | — |
+| `portAlertCondition` | `CLOSED \| OPEN` | No | — |
+| `keywordType` | `ALERT_EXISTS \| ALERT_NOT_EXISTS` | No | — |
+| `keywordCaseType` | `0 \| 1` | No | — |
+| `keywordValue` | `string` | No | — |
+| `status` | `PAUSED \| STARTED \| UP \| LOOKS_DOWN \| DOWN` | No | PAUSED stops the checks, STARTED resumes them. Prefer monitors.pause and monitors.start. |
+| `groupId` | `number` | No | — |
+| `tagNames` | `string[]` | No | — |
+| `maintenanceWindowsIds` | `number[]` | No | — |
+| `customFields` | `Record<string, string>` | No | — |
+| `responseTimeThreshold` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `friendlyName` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `interval` | `number \| null` | No | — |
+| `timeout` | `number \| null` | No | — |
+| `createDateTime` | `string \| null` | No | — |
+| `groupId` | `number \| null` | No | — |
+| `port` | `number \| null` | No | — |
+| `keywordValue` | `string \| null` | No | — |
+| `keywordType` | `string \| null` | No | — |
+| `gracePeriod` | `number \| null` | No | — |
+| `heartbeatUrl` | `string \| null` | No | — |
+| `responseTimeThreshold` | `number \| null` | No | — |
+| `customFields` | `Record<string, string> \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `assignedAlertContacts` | `object[] \| null` | No | — |
+| `lastIncident` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  color?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="assignedAlertContacts full type">
+
+```ts
+{
+  alertContactId?: number | null,
+  threshold?: number | null,
+  recurrence?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="lastIncident full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  cause?: number | null,
+  reason?: string | null,
+  startedAt?: string | null,
+  duration?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stats
+
+### monitorUptime
+
+`stats.monitorUptime`
+
+Uptime percentage and downtime for one monitor over a range of up to 90 days
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.stats.monitorUptime({ id: 778001, from: '2025-09-01T00:00:00Z', to: '2025-09-30T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `from` | `string` | No | ISO 8601 start. Defaults to 24 hours ago. |
+| `to` | `string` | No | ISO 8601 end. Defaults to now. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uptime` | `number \| null` | No | — |
+| `total_downtime_seconds` | `number \| null` | No | — |
+| `incident_count` | `number \| null` | No | — |
+| `mtbf` | `number \| null` | No | — |
+| `from` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+
+
+
+---
+
+### responseTime
+
+`stats.responseTime`
+
+Response-time minimum, maximum and average for one monitor, optionally with the full time series
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.stats.responseTime({ id: 778001, includeTimeSeries: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `from` | `string` | No | ISO 8601 start. Defaults to 24 hours ago. |
+| `to` | `string` | No | ISO 8601 end. Defaults to now. |
+| `includeTimeSeries` | `boolean` | No | Also return `time_series`, which a long range makes large. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summary` | `object \| null` | No | — |
+| `data_points` | `number \| null` | No | — |
+| `from` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `time_series` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="summary full type">
+
+```ts
+{
+  min?: number | null,
+  max?: number | null,
+  avg?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="time_series full type">
+
+```ts
+{
+  timestamp?: string | null,
+  value?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uptime
+
+`stats.uptime`
+
+Aggregate uptime across every monitor for a timeframe, with incident totals, MTBF and a log of entries
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.stats.uptime({ timeFrame: 'DAYS_30', logLimit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeFrame` | `DAY \| WEEK \| MONTH \| DAYS_30 \| YEAR \| ALL \| CUSTOM` | Yes | CUSTOM needs both `start` and `end`. |
+| `start` | `number` | No | Unix seconds. Required when timeFrame is CUSTOM. |
+| `end` | `number` | No | Unix seconds, after start. Required when timeFrame is CUSTOM. |
+| `logLimit` | `number` | No | How many log entries to return. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `overallUptime` | `number \| null` | No | — |
+| `totalIncidents` | `number \| null` | No | — |
+| `totalTimeWithoutIncidents` | `number \| null` | No | — |
+| `affectedMonitors` | `number \| null` | No | — |
+| `mtbf` | `number \| null` | No | — |
+| `logs` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  type?: string | null,
+  datetime?: string | null,
+  duration?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Status Pages
+
+### announcements
+
+`statusPages.announcements`
+
+List a status page announcements, filtered by OFFLINE, PENDING, PUBLISHED or ARCHIVED
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.statusPages.announcements({ pspId: 2214, status: 'PUBLISHED' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pspId` | `number` | Yes | — |
+| `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
+| `status` | `OFFLINE \| PENDING \| PUBLISHED \| ARCHIVED` | No | OFFLINE is a draft, PENDING is scheduled, PUBLISHED is live, ARCHIVED is history. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  pspId?: number | null,
+  title?: string | null,
+  content?: string | null,
+  status?: string | null,
+  type?: string | null,
+  deliveryStatus?: string | null,
+  startDate?: string | null,
+  endDate?: string | null,
+  creationDate?: string | null,
+  submitDate?: string | null,
+  sentCount?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`statusPages.create`
+
+Create a public status page showing chosen monitors or tags, optionally behind a password and on a custom domain
+
+**Risk:** `write`
+
+```ts
+await corsair.uptimerobot.api.statusPages.create({ friendlyName: 'Acme status', monitorIds: [778001, 778002] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `friendlyName` | `string` | Yes | — |
+| `monitorIds` | `number[]` | No | The monitors to show. `[0]` alone means every monitor in the account; an empty array shows none. |
+| `tagIds` | `number[]` | No | Show every monitor carrying one of these tags. |
+| `autoAddMonitors` | `boolean` | No | Also show monitors created later. An explicit monitorIds wins over this, including an empty one. |
+| `customDomain` | `string` | No | — |
+| `password` | `string` | No | Visitors must enter this to see the page. |
+| `hideUrlLinks` | `boolean` | No | — |
+| `noIndex` | `boolean` | No | — |
+| `sort` | `FriendlyNameAsc \| FriendlyNameDesc \| StatusUpDownPaused \| StatusDownUpPaused` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `friendlyName` | `string \| null` | No | — |
+| `customDomain` | `string \| null` | No | — |
+| `urlKey` | `string \| null` | No | — |
+| `isPasswordSet` | `boolean \| null` | No | — |
+| `monitorIds` | `number[] \| null` | No | — |
+| `tagIds` | `number[] \| null` | No | — |
+| `monitorsCount` | `number \| null` | No | — |
+| `pinnedAnnouncementId` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### createAnnouncement
+
+`statusPages.createAnnouncement`
+
+Post an announcement to a status page: Info, Maintenance or Issue, as a draft, scheduled or published now
+
+**Risk:** `write`
+
+```ts
+await corsair.uptimerobot.api.statusPages.createAnnouncement({ pspId: 2214, title: 'Planned database maintenance', content: 'We will be performing scheduled maintenance.', status: 'Published', type: 'Maintenance', startDate: '2025-10-01T02:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pspId` | `number` | Yes | — |
+| `title` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `status` | `Offline \| Pending \| Published \| Archived` | Yes | Offline is a draft, Pending is scheduled, Published is visible now, Archived is history. |
+| `type` | `Info \| Maintenance \| Issue` | Yes | — |
+| `startDate` | `string` | No | ISO 8601. Omit it on a Published announcement to publish immediately. |
+| `endDate` | `string` | No | ISO 8601, after startDate. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `pspId` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `content` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `deliveryStatus` | `string \| null` | No | CantSend, InQueue or Sent. |
+| `startDate` | `string \| null` | No | — |
+| `endDate` | `string \| null` | No | — |
+| `creationDate` | `string \| null` | No | — |
+| `submitDate` | `string \| null` | No | — |
+| `sentCount` | `number \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`statusPages.delete`
+
+Permanently delete a status page; the monitors it showed keep running
+
+**Risk:** `destructive`
+
+```ts
+await corsair.uptimerobot.api.statusPages.delete({ id: 2214 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`statusPages.get`
+
+Read one status page with its monitors, custom domain and settings
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.statusPages.get({ id: 2214 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `friendlyName` | `string \| null` | No | — |
+| `customDomain` | `string \| null` | No | — |
+| `urlKey` | `string \| null` | No | — |
+| `isPasswordSet` | `boolean \| null` | No | — |
+| `monitorIds` | `number[] \| null` | No | — |
+| `tagIds` | `number[] \| null` | No | — |
+| `monitorsCount` | `number \| null` | No | — |
+| `pinnedAnnouncementId` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`statusPages.list`
+
+List the public status pages in the account, with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.statusPages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
+| `cursor` | `string` | No | Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `nextLink` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  friendlyName?: string | null,
+  customDomain?: string | null,
+  urlKey?: string | null,
+  isPasswordSet?: boolean | null,
+  monitorIds?: number[] | null,
+  tagIds?: number[] | null,
+  monitorsCount?: number | null,
+  pinnedAnnouncementId?: number | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### delete
+
+`tags.delete`
+
+Delete a tag, also removing it from every monitor that carried it; the monitors stay
+
+**Risk:** `destructive`
+
+```ts
+await corsair.uptimerobot.api.tags.delete({ id: 11 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List tags, paging by nextCursorId
+
+**Risk:** `read`
+
+```ts
+await corsair.uptimerobot.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 200. UptimeRobot defaults to 50. |
+| `cursor` | `number` | No | Where to resume. Take it from the previous page's `nextCursorId`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `nextCursorId` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

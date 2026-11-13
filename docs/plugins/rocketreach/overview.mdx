@@ -1,0 +1,141 @@
+---
+title: "RocketReach plugin"
+sidebarTitle: "Overview"
+description: "Person and company lookup and search, bulk lookup with status polling, and email verification with RocketReach."
+---
+
+Use **RocketReach** through Corsair: one client, typed API calls.
+
+Create an API key under **API Usage & Settings** on your [account page](https://rocketreach.co/account?section=nav_gen_api). It travels in the `Api-Key` header; the `api_key` query parameter still works but is documented as deprecated and is never used here.
+
+Lookups and verification can spend credits, so those four operations are marked `write` even where the HTTP verb is `GET`. Searches return summaries without spending lookup credits and are marked `read`. Search requests still count toward plan limits. Things to know:
+
+- **A `403` on a lookup is not a permission problem.** Running out of lookup credits returns `403 Forbidden` with only an explanatory `detail`; there is no structured credit field to check. The plugin exposes `isOutOfLookupCredits` for exactly this case, and no retry can help. Only `/email/verify` reports an empty balance as a `402`, and that one names the pool in `credit_type` and a `purchase_url`.
+- **`status` decides whether a lookup is final.** A lookup answers `complete`, `progress`, `searching` or `not queued`. Anything but `complete` means the contact fields are not settled: the cached emails may be withheld and the rest arrives later. Poll `person.checkStatus` with the profile ID or the `RR-Request-ID` rather than treating a `200` as finished.
+- **A bulk lookup has no body.** `person.bulkLookup` answers a bare `200` with the request ID in the `RR-Request-ID` header, so the plugin returns `requestId` (or `null` when RocketReach sends no header) and that is what to poll with.
+- **`email.verify` can cost nothing.** It charges one verification credit and refunds it when the status is `unknown` or `checks.format_valid` is false, which is why the response carries `credits_charged` as `0` or `1`. `status` and `checks.catchall` answer different questions: a catch-all domain whose mailbox was confirmed is `valid` while `catchall` is `true`.
+- **Search is not lookup.** `person.search` returns profile summaries and a `teaser`, with no unlocked contact details. `company.search` returns company summaries. Unlocking a profile is a lookup, and that is the call that spends a lookup credit.
+- **Rate limits are layered.** There is a global ceiling of 10 requests per second across every endpoint, plus a per-route, per-plan limit per minute. A `429` carries a `Retry-After` in seconds, which the plugin honours.
+- **The universal account returns your key.** `account.universal` includes the caller's own `api_key` in its body; the plugin strips it before returning, so a credential never lands in a caller's logs or stored records.
+- **Bulk prerequisites.** Enable a webhook for bulk lookups in RocketReach, or supply its `webhook_id`.
+- **Paging:** `page_size` tops out at 100 and `start` at 10,000 on both searches.
+
+**What you get:**
+
+- 9 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/rocketreach better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/rocketreach better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/rocketreach better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/rocketreach better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { rocketreach } from '@corsair-dev/rocketreach';
+
+export const corsair = createCorsair({
+	plugins: [
+		rocketreach(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+rocketreach()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'rocketreach',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the account and its credit balance**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.rocketreach.api.account.get({});
+```
+
+
+**Look up a person by email**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.rocketreach.api.person.lookup({ email: 'john.doe@example.com' });
+```
+
+
+See the full list on the [API](/plugins/rocketreach/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/rocketreach/api">
+    Every `rocketreach.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

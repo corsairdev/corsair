@@ -1,0 +1,75 @@
+{
+  "id": 715002,
+  "name": "corsair-plugin-test-1794490650",
+  "description": "corsair plugin test, safe to delete",
+  "groups": [],
+  "deleted": false,
+  "filters": {
+    "properties": {
+      "type": "OR",
+      "values": [
+        {
+          "type": "AND",
+          "values": [
+            {
+              "key": "corsair_plugin_test",
+              "type": "person",
+              "value": ["true"],
+              "bytecode": [
+                "_H",
+                1,
+                32,
+                "true",
+                32,
+                "corsair_plugin_test",
+                32,
+                "properties",
+                32,
+                "person",
+                1,
+                3,
+                11
+              ],
+              "negation": false,
+              "operator": "exact",
+              "conditionHash": "cdf40219c4801b89"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "query": null,
+  "version": null,
+  "pending_version": 2,
+  "is_calculating": true,
+  "created_by": {
+    "id": 823519,
+    "uuid": "01a17792-e2c3-0000-6440-326f9c1491f0",
+    "distinct_id": "distinct-id-1",
+    "first_name": "Test",
+    "last_name": "Test",
+    "email": "user@example.com",
+    "is_email_verified": true,
+    "hedgehog_config": null,
+    "role_at_organization": "engineering"
+  },
+  "created_at": "2026-11-12T13:38:12.515681Z",
+  "last_calculation": null,
+  "last_backfill_person_properties_at": null,
+  "errors_calculating": 0,
+  "last_error_message": null,
+  "count": null,
+  "last_import_total_count": null,
+  "last_import_unmatched_count": null,
+  "is_static": false,
+  "cohort_type": "realtime",
+  "condition_type": {
+    "cohorts": false,
+    "lifecycle": false,
+    "behavioral": false,
+    "person_properties": true
+  },
+  "realtime": null,
+  "experiment_set": []
+}

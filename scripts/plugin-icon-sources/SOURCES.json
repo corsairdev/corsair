@@ -185,6 +185,10 @@
   "gmail": {
     "from": "https://svgl.app/library/gmail.svg"
   },
+  "gong": {
+    "from": "https://media.brand.dev/1eded259-b947-4ae6-95ad-1498fd75e2fb.svg",
+    "note": "found with the context.dev Brand API for gong.io"
+  },
   "googleaddressvalidation": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/google_address_validation.svg"
   },
@@ -311,8 +315,16 @@
   "reddit": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/reddit.svg"
   },
+  "refiner": {
+    "from": "https://media.brand.dev/1c3764f7-b943-430c-81d3-5e28c7f0061c.svg",
+    "note": "found with the context.dev Brand API for refiner.io"
+  },
   "render": {
     "from": "https://svgl.app/library/render_black.svg"
+  },
+  "renderform": {
+    "from": "https://media.brand.dev/1f978cb1-46be-4de0-a036-7eaf780c9059.svg",
+    "note": "found with the context.dev Brand API for renderform.io"
   },
   "replicate": {
     "from": "https://svgl.app/library/replicate_light.svg"
@@ -323,8 +335,24 @@
   "retailed": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/retailed.svg"
   },
+  "revolt": {
+    "from": "https://media.brand.dev/54cd1cae-247a-4d88-9c23-267f3e14ae63.svg",
+    "note": "found with the context.dev Brand API for revolt.chat"
+  },
+  "roboflow": {
+    "from": "https://media.brand.dev/f82d814b-2e8a-45aa-9b59-08e5a0d71bbf.svg",
+    "note": "found with the context.dev Brand API for roboflow.com"
+  },
+  "rocketreach": {
+    "from": "https://media.brand.dev/2e0fe777-b9e5-45fd-8eb3-9b23cc9d8e54.svg",
+    "note": "found with the context.dev Brand API for rocketreach.co"
+  },
   "rootly": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/rootly.svg"
+  },
+  "rudderstacktransform": {
+    "from": "https://media.brand.dev/6f177cac-a1fc-47c0-8b8f-0f115604d31b.svg",
+    "note": "found with the context.dev Brand API for rudderstack.com"
   },
   "salesforce": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/salesforce.svg"
@@ -336,6 +364,14 @@
   "sapsuccessfactors": {
     "from": "https://commons.wikimedia.org/wiki/File:SAP_2011_logo.svg",
     "note": "stylesheet inlined"
+  },
+  "satismeter": {
+    "from": "https://satismeter.com/favicon.svg",
+    "note": "satismeter.com <link rel=icon> favicon.svg (current triangle mark)"
+  },
+  "scrapedo": {
+    "from": "https://media.brand.dev/2308b1d5-5c3d-41d7-9766-96edf92f8cb2.svg",
+    "note": "found with the context.dev Brand API for scrape.do"
   },
   "semanticscholar": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/semanticscholar.svg"
@@ -408,6 +444,10 @@
   "twitter": {
     "from": "https://svgl.app/library/x.svg"
   },
+  "userlist": {
+    "from": "/tmp/claude-1000/-home-pranayasus-Corsair/519fcfce-bcca-4c8e-800d-d20fb6759bba/scratchpad/icons/real/userlist-inline.svg",
+    "note": "userlist.com <link rel=icon> /images/favicon.svg (linked loops); light-mode fill inlined from its prefers-color-scheme stylesheet"
+  },
   "vercel": {
     "from": "https://svgl.app/library/vercel.svg"
   },
@@ -417,12 +457,20 @@
   "webflow": {
     "from": "https://svgl.app/library/webflow.svg"
   },
+  "webscraperio": {
+    "from": "https://media.brand.dev/5cd468f4-0600-435f-a226-db456719fa54.svg",
+    "note": "found with the context.dev Brand API for webscraper.io"
+  },
   "webvizio": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/webvizio.svg",
     "note": "wordmark under the mark removed"
   },
   "whatsapp": {
     "from": "https://svgl.app/library/whatsapp-icon.svg"
+  },
+  "yandex": {
+    "from": "https://media.brand.dev/6e87f40f-176f-41d7-8197-9b5aac3563cd.svg",
+    "note": "found with the context.dev Brand API for yandex.cloud"
   },
   "youcom": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/yousearch.svg"
