@@ -714,7 +714,8 @@ const documensoEndpointMeta = {
 	},
 	'documents.attachments.find.get': {
 		riskLevel: 'read',
-		description: 'GET /document/attachment — [Deprecated] Find attachments.',
+		description:
+			"GET /document/attachment — [Deprecated] Find attachments. Documenso's server currently routes this path to the get-document handler and answers 400; use envelopes.attachments.find with the document's envelopeId instead.",
 	},
 	'documents.fields.get.get': {
 		riskLevel: 'read',
