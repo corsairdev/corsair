@@ -273,7 +273,8 @@ const endorsalEndpointMeta = {
 	},
 	'contacts.post': {
 		riskLevel: 'write',
-		description: 'Create a contact and optionally enroll it in a campaign',
+		description:
+			'Create a contact; with campaignID, enroll it in an AutoRequest campaign that emails the contact',
 	},
 	'contacts.byId.get': {
 		riskLevel: 'read',
@@ -349,22 +350,6 @@ export type InternalEndorsalPlugin = BaseEndorsalPlugin<EndorsalPluginOptions>;
 export type ExternalEndorsalPlugin<T extends EndorsalPluginOptions> =
 	BaseEndorsalPlugin<T>;
 
-const PUBLIC_OPERATIONS = new Set([
-	'testimonials.get',
-	'testimonials.byId.get',
-	'contacts.get',
-	'contacts.byId.get',
-	'contacts.testimonials.get',
-	'tags.get',
-	'tags.byId.get',
-	'tags.testimonials.get',
-	'widgets.get',
-	'widgets.byId.get',
-	'wallOfLove.get',
-	'autorequests.campaigns.get',
-	'autorequests.campaigns.byId.get',
-]);
-
 export function endorsal<const T extends EndorsalPluginOptions>(
 	incomingOptions: EndorsalPluginOptions & T = {} as EndorsalPluginOptions & T,
 ): ExternalEndorsalPlugin<T> {
@@ -395,7 +380,7 @@ export function endorsal<const T extends EndorsalPluginOptions>(
 			if (options.key !== undefined) return options.key;
 			const apiKey = ctx.keys ? await ctx.keys.get_api_key() : null;
 			if (apiKey) return apiKey;
-			if (PUBLIC_OPERATIONS.has(ctx.meteredOperationId ?? '')) return '';
+			// Every route, GETs included, answers 401 without a key.
 			throw new AuthMissingError('endorsal', 'api_key');
 		},
 	} satisfies InternalEndorsalPlugin;

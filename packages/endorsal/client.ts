@@ -30,7 +30,8 @@ export async function makeEndorsalRequest<T>(
 	options: EndorsalRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
-	if (method !== 'GET' && (!apiKey || apiKey.length === 0)) {
+	// Endorsal answers 401 to every route without a key, GETs included.
+	if (!apiKey) {
 		throw new AuthMissingError('endorsal', 'api_key');
 	}
 
@@ -41,7 +42,7 @@ export async function makeEndorsalRequest<T>(
 		CREDENTIALS: 'omit',
 		HEADERS: {
 			'Content-Type': 'application/json',
-			...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 	const requestOptions: ApiRequestOptions = {

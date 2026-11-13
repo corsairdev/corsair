@@ -4,7 +4,7 @@ Endorsal REST API plugin for Corsair. It exposes 25 operations for testimonials,
 
 ## Setup
 
-Create a property-specific key at [Endorsal API settings](https://app.endorsal.io/account/api), then configure the plugin with `authType: 'api_key'`. Protected write requests use `Authorization: Bearer <key>`. Endorsal documents GET operations as key-optional, so they work without a stored key. An explicitly configured key uses the Authorization header, never the query string.
+Create a property-specific key at [Endorsal API settings](https://app.endorsal.io/account/api), then configure the plugin with `authType: 'api_key'`. Every request sends `Authorization: Bearer <key>`, never a query-string key. Endorsal's reference marks GET keys as optional, but the API answers 401 to every route without one, so a missing key raises `AuthMissingError` before any call.
 
 ```ts
 import { endorsal } from '@corsair-dev/endorsal';

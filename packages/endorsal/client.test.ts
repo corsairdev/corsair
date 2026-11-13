@@ -62,13 +62,14 @@ describe('makeEndorsalRequest', () => {
 		);
 	});
 
-	it('allows a keyless GET request and omits Authorization', async () => {
-		mockedRequest.mockResolvedValue({ success: true, data: [] });
-		await makeEndorsalRequest('/v1/testimonials', undefined);
-		expect(mockedRequest.mock.calls[0]?.[0]?.BASE).toBe(ENDORSAL_API_BASE);
-		expect(mockedRequest.mock.calls[0]?.[0]?.HEADERS).not.toHaveProperty(
-			'Authorization',
+	it('rejects a keyless GET before transport, since Endorsal answers 401 without a key', async () => {
+		await expect(
+			makeEndorsalRequest('/v1/testimonials', undefined),
+		).rejects.toThrow(AuthMissingError);
+		await expect(makeEndorsalRequest('/v1/testimonials', '')).rejects.toThrow(
+			AuthMissingError,
 		);
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
 	it('rejects write requests with a missing or empty key before transport', async () => {
@@ -174,7 +175,7 @@ describe('endorsal keyBuilder', () => {
 		expect(getApiKey).toHaveBeenCalledTimes(1);
 	});
 
-	it('keeps GET operations keyless when no saved tenant key exists', async () => {
+	it('raises AuthMissingError for GET operations when no saved tenant key exists', async () => {
 		const plugin = endorsal();
 		const keyBuilderContext = {
 			authType: 'api_key',
@@ -193,6 +194,6 @@ describe('endorsal keyBuilder', () => {
 
 		await expect(
 			plugin.keyBuilder?.(keyBuilderContext, 'endpoint'),
-		).resolves.toBe('');
+		).rejects.toThrow(AuthMissingError);
 	});
 });
