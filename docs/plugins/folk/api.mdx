@@ -82,7 +82,7 @@ await corsair.folk.api.companies.create({ name: 'Acme Corporation' });
   emails?: string[],
   phones?: string[],
   urls?: string[],
-  createdAt?: string,
+  createdAt?: string | null,
   createdBy?: {
     id: string,
     fullName?: string | null,
@@ -93,6 +93,8 @@ await corsair.folk.api.companies.create({ name: 'Acme Corporation' });
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -134,6 +136,8 @@ await corsair.folk.api.companies.delete({ companyId: 'com_92346499-30bf-4278-ae8
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -185,7 +189,7 @@ await corsair.folk.api.companies.get({ companyId: 'com_92346499-30bf-4278-ae8e-4
   emails?: string[],
   phones?: string[],
   urls?: string[],
-  createdAt?: string,
+  createdAt?: string | null,
   createdBy?: {
     id: string,
     fullName?: string | null,
@@ -196,6 +200,8 @@ await corsair.folk.api.companies.get({ companyId: 'com_92346499-30bf-4278-ae8e-4
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -251,7 +257,7 @@ await corsair.folk.api.companies.list({ limit: 10 });
     emails?: string[],
     phones?: string[],
     urls?: string[],
-    createdAt?: string,
+    createdAt?: string | null,
     createdBy?: {
       id: string,
       fullName?: string | null,
@@ -266,6 +272,8 @@ await corsair.folk.api.companies.list({ limit: 10 });
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -342,7 +350,7 @@ await corsair.folk.api.companies.update({ companyId: 'com_92346499-30bf-4278-ae8
   emails?: string[],
   phones?: string[],
   urls?: string[],
-  createdAt?: string,
+  createdAt?: string | null,
   createdBy?: {
     id: string,
     fullName?: string | null,
@@ -353,6 +361,8 @@ await corsair.folk.api.companies.update({ companyId: 'com_92346499-30bf-4278-ae8
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -398,6 +408,8 @@ await corsair.folk.api.credits.get({});
 </Accordion>
 </AccordionGroup>
 
+
+
 ---
 
 ## Group Members
@@ -440,11 +452,13 @@ await corsair.folk.api.groupMembers.add({ groupId: 'grp_5fa60242-0756-4e31-8cca-
   id: string,
   fullName?: string | null,
   email?: string | null,
-  role: admin | contributor | reader
+  role: owner | admin | contributor | reader
 }
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -486,7 +500,7 @@ await corsair.folk.api.groupMembers.list({ groupId: 'grp_5fa60242-0756-4e31-8cca
     id: string,
     fullName?: string | null,
     email?: string | null,
-    role: admin | contributor | reader
+    role: owner | admin | contributor | reader
   }[],
   pagination: {
     nextLink?: string
@@ -495,6 +509,8 @@ await corsair.folk.api.groupMembers.list({ groupId: 'grp_5fa60242-0756-4e31-8cca
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -538,6 +554,8 @@ await corsair.folk.api.groupMembers.remove({ groupId: 'grp_5fa60242-0756-4e31-8c
 </Accordion>
 </AccordionGroup>
 
+
+
 ---
 
 ### update
@@ -578,11 +596,13 @@ await corsair.folk.api.groupMembers.update({ groupId: 'grp_5fa60242-0756-4e31-8c
   id: string,
   fullName?: string | null,
   email?: string | null,
-  role: admin | contributor | reader
+  role: owner | admin | contributor | reader
 }
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -626,16 +646,14 @@ await corsair.folk.api.groups.create({ name: 'Strategic Partners', visibility: '
   id: string,
   name: string,
   visibility: public | private,
-  createdBy?: {
-    id: string,
-    fullName?: string | null,
-    email?: string | null
-  } | null,
+  createdBy?: string | null,
   emoji?: string | null
 }
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -676,11 +694,7 @@ await corsair.folk.api.groups.list({ limit: 10 });
     id: string,
     name: string,
     visibility: public | private,
-    createdBy?: {
-      id: string,
-      fullName?: string | null,
-      email?: string | null
-    } | null,
+    createdBy?: string | null,
     emoji?: string | null
   }[],
   pagination: {
@@ -690,6 +704,8 @@ await corsair.folk.api.groups.list({ limit: 10 });
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -732,16 +748,14 @@ await corsair.folk.api.groups.update({ groupId: 'grp_5fa60242-0756-4e31-8cca-30c
   id: string,
   name: string,
   visibility: public | private,
-  createdBy?: {
-    id: string,
-    fullName?: string | null,
-    email?: string | null
-  } | null,
+  createdBy?: string | null,
   emoji?: string | null
 }
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -800,28 +814,41 @@ await corsair.folk.api.interactions.create({ entity: { id: 'per_183ed5cc-3182-45
   from?: {
     type?: string,
     value?: string,
-    name?: string
+    name?: string,
+    picture?: string,
+    userId?: string
   },
   to?: {
     type?: string,
     value?: string,
-    name?: string
-  },
+    name?: string,
+    picture?: string,
+    userId?: string
+  } | {
+    type?: string,
+    value?: string,
+    name?: string,
+    picture?: string,
+    userId?: string
+  }[],
   entity?: {
     id: string,
     entityType?: string,
     fullName?: string
   },
   dateTime?: string,
+  url?: string | null,
   privacyLevel?: string,
   title?: string,
-  content?: string,
+  content?: string | Record<string, any>,
   type?: string,
   activityType?: string
 }
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -842,6 +869,7 @@ await corsair.folk.api.interactions.delete({ interactionId: 'lit_b049db09-c03d-4
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `interactionId` | `string` | Yes | — |
+| `entityId` | `string` | Yes | — |
 | `idempotencyKey` | `string` | No | — |
 
 
@@ -864,6 +892,8 @@ await corsair.folk.api.interactions.delete({ interactionId: 'lit_b049db09-c03d-4
 </Accordion>
 </AccordionGroup>
 
+
+
 ---
 
 ### get
@@ -883,6 +913,7 @@ await corsair.folk.api.interactions.get({ interactionId: 'lit_b049db09-c03d-4f32
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `interactionId` | `string` | Yes | — |
+| `entityId` | `string` | Yes | — |
 
 
 
@@ -903,28 +934,41 @@ await corsair.folk.api.interactions.get({ interactionId: 'lit_b049db09-c03d-4f32
   from?: {
     type?: string,
     value?: string,
-    name?: string
+    name?: string,
+    picture?: string,
+    userId?: string
   },
   to?: {
     type?: string,
     value?: string,
-    name?: string
-  },
+    name?: string,
+    picture?: string,
+    userId?: string
+  } | {
+    type?: string,
+    value?: string,
+    name?: string,
+    picture?: string,
+    userId?: string
+  }[],
   entity?: {
     id: string,
     entityType?: string,
     fullName?: string
   },
   dateTime?: string,
+  url?: string | null,
   privacyLevel?: string,
   title?: string,
-  content?: string,
+  content?: string | Record<string, any>,
   type?: string,
   activityType?: string
 }
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -944,9 +988,9 @@ await corsair.folk.api.interactions.list({ limit: 10 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
-| `entityId` | `string` | No | — |
+| `entityId` | `string` | Yes | — |
+| `timeframe` | `past \| upcoming` | Yes | — |
 
 
 
@@ -968,22 +1012,33 @@ await corsair.folk.api.interactions.list({ limit: 10 });
     from?: {
       type?: string,
       value?: string,
-      name?: string
+      name?: string,
+      picture?: string,
+      userId?: string
     },
     to?: {
       type?: string,
       value?: string,
-      name?: string
-    },
+      name?: string,
+      picture?: string,
+      userId?: string
+    } | {
+      type?: string,
+      value?: string,
+      name?: string,
+      picture?: string,
+      userId?: string
+    }[],
     entity?: {
       id: string,
       entityType?: string,
       fullName?: string
     },
     dateTime?: string,
+    url?: string | null,
     privacyLevel?: string,
     title?: string,
-    content?: string,
+    content?: string | Record<string, any>,
     type?: string,
     activityType?: string
   }[],
@@ -994,6 +1049,8 @@ await corsair.folk.api.interactions.list({ limit: 10 });
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -1013,9 +1070,8 @@ await corsair.folk.api.interactions.listPast({ limit: 10 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
-| `entityId` | `string` | No | — |
+| `entityId` | `string` | Yes | — |
 
 
 
@@ -1037,22 +1093,33 @@ await corsair.folk.api.interactions.listPast({ limit: 10 });
     from?: {
       type?: string,
       value?: string,
-      name?: string
+      name?: string,
+      picture?: string,
+      userId?: string
     },
     to?: {
       type?: string,
       value?: string,
-      name?: string
-    },
+      name?: string,
+      picture?: string,
+      userId?: string
+    } | {
+      type?: string,
+      value?: string,
+      name?: string,
+      picture?: string,
+      userId?: string
+    }[],
     entity?: {
       id: string,
       entityType?: string,
       fullName?: string
     },
     dateTime?: string,
+    url?: string | null,
     privacyLevel?: string,
     title?: string,
-    content?: string,
+    content?: string | Record<string, any>,
     type?: string,
     activityType?: string
   }[],
@@ -1063,6 +1130,8 @@ await corsair.folk.api.interactions.listPast({ limit: 10 });
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -1082,9 +1151,8 @@ await corsair.folk.api.interactions.listUpcoming({ limit: 10 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
-| `entityId` | `string` | No | — |
+| `entityId` | `string` | Yes | — |
 
 
 
@@ -1106,22 +1174,33 @@ await corsair.folk.api.interactions.listUpcoming({ limit: 10 });
     from?: {
       type?: string,
       value?: string,
-      name?: string
+      name?: string,
+      picture?: string,
+      userId?: string
     },
     to?: {
       type?: string,
       value?: string,
-      name?: string
-    },
+      name?: string,
+      picture?: string,
+      userId?: string
+    } | {
+      type?: string,
+      value?: string,
+      name?: string,
+      picture?: string,
+      userId?: string
+    }[],
     entity?: {
       id: string,
       entityType?: string,
       fullName?: string
     },
     dateTime?: string,
+    url?: string | null,
     privacyLevel?: string,
     title?: string,
-    content?: string,
+    content?: string | Record<string, any>,
     type?: string,
     activityType?: string
   }[],
@@ -1132,6 +1211,8 @@ await corsair.folk.api.interactions.listUpcoming({ limit: 10 });
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -1189,28 +1270,41 @@ await corsair.folk.api.interactions.update({ interactionId: 'lit_b049db09-c03d-4
   from?: {
     type?: string,
     value?: string,
-    name?: string
+    name?: string,
+    picture?: string,
+    userId?: string
   },
   to?: {
     type?: string,
     value?: string,
-    name?: string
-  },
+    name?: string,
+    picture?: string,
+    userId?: string
+  } | {
+    type?: string,
+    value?: string,
+    name?: string,
+    picture?: string,
+    userId?: string
+  }[],
   entity?: {
     id: string,
     entityType?: string,
     fullName?: string
   },
   dateTime?: string,
+  url?: string | null,
   privacyLevel?: string,
   title?: string,
-  content?: string,
+  content?: string | Record<string, any>,
   type?: string,
   activityType?: string
 }
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -1275,16 +1369,19 @@ await corsair.folk.api.notes.create({ entity: { id: 'per_183ed5cc-3182-45de-84d1
   id: string,
   entity?: {
     id: string,
-    entityType?: string
+    entityType?: string,
+    fullName?: string
   },
   content: string,
   visibility: public | private,
   author?: {
-    id: string,
+    type?: string,
+    id?: string,
     fullName?: string | null,
-    email?: string | null
+    email?: string | null,
+    deleted?: boolean
   } | null,
-  createdAt?: string,
+  createdAt?: string | null,
   parentNote?: {
     id: string
   } | null
@@ -1292,6 +1389,8 @@ await corsair.folk.api.notes.create({ entity: { id: 'per_183ed5cc-3182-45de-84d1
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -1334,6 +1433,8 @@ await corsair.folk.api.notes.delete({ noteId: 'nte_14c18444-a0c7-459a-86b0-ccd70
 </Accordion>
 </AccordionGroup>
 
+
+
 ---
 
 ### get
@@ -1371,16 +1472,19 @@ await corsair.folk.api.notes.get({ noteId: 'nte_14c18444-a0c7-459a-86b0-ccd70ebc
   id: string,
   entity?: {
     id: string,
-    entityType?: string
+    entityType?: string,
+    fullName?: string
   },
   content: string,
   visibility: public | private,
   author?: {
-    id: string,
+    type?: string,
+    id?: string,
     fullName?: string | null,
-    email?: string | null
+    email?: string | null,
+    deleted?: boolean
   } | null,
-  createdAt?: string,
+  createdAt?: string | null,
   parentNote?: {
     id: string
   } | null
@@ -1388,6 +1492,8 @@ await corsair.folk.api.notes.get({ noteId: 'nte_14c18444-a0c7-459a-86b0-ccd70ebc
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -1410,7 +1516,9 @@ await corsair.folk.api.notes.list({ limit: 10 });
 | `limit` | `number` | No | — |
 | `cursor` | `string` | No | — |
 | `entityId` | `string` | No | — |
-| `authorId` | `string` | No | — |
+| `query` | `string` | No | — |
+| `createdAfter` | `string` | No | — |
+| `createdBefore` | `string` | No | — |
 
 
 
@@ -1430,16 +1538,19 @@ await corsair.folk.api.notes.list({ limit: 10 });
     id: string,
     entity?: {
       id: string,
-      entityType?: string
+      entityType?: string,
+      fullName?: string
     },
     content: string,
     visibility: public | private,
     author?: {
-      id: string,
+      type?: string,
+      id?: string,
       fullName?: string | null,
-      email?: string | null
+      email?: string | null,
+      deleted?: boolean
     } | null,
-    createdAt?: string,
+    createdAt?: string | null,
     parentNote?: {
       id: string
     } | null
@@ -1451,6 +1562,8 @@ await corsair.folk.api.notes.list({ limit: 10 });
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -1492,16 +1605,19 @@ await corsair.folk.api.notes.update({ noteId: 'nte_14c18444-a0c7-459a-86b0-ccd70
   id: string,
   entity?: {
     id: string,
-    entityType?: string
+    entityType?: string,
+    fullName?: string
   },
   content: string,
   visibility: public | private,
   author?: {
-    id: string,
+    type?: string,
+    id?: string,
     fullName?: string | null,
-    email?: string | null
+    email?: string | null,
+    deleted?: boolean
   } | null,
-  createdAt?: string,
+  createdAt?: string | null,
   parentNote?: {
     id: string
   } | null
@@ -1509,6 +1625,8 @@ await corsair.folk.api.notes.update({ noteId: 'nte_14c18444-a0c7-459a-86b0-ccd70
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -1589,7 +1707,7 @@ await corsair.folk.api.people.create({ firstName: 'Jane', lastName: 'Doe', email
   birthday?: string | null,
   gender?: string | null,
   jobTitle?: string | null,
-  createdAt?: string,
+  createdAt?: string | null,
   createdBy?: {
     id: string,
     fullName?: string | null,
@@ -1633,6 +1751,8 @@ await corsair.folk.api.people.create({ firstName: 'Jane', lastName: 'Doe', email
 </Accordion>
 </AccordionGroup>
 
+
+
 ---
 
 ### delete
@@ -1673,6 +1793,8 @@ await corsair.folk.api.people.delete({ personId: 'per_183ed5cc-3182-45de-84d1-d5
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -1716,7 +1838,7 @@ await corsair.folk.api.people.get({ personId: 'per_183ed5cc-3182-45de-84d1-d520f
   birthday?: string | null,
   gender?: string | null,
   jobTitle?: string | null,
-  createdAt?: string,
+  createdAt?: string | null,
   createdBy?: {
     id: string,
     fullName?: string | null,
@@ -1759,6 +1881,8 @@ await corsair.folk.api.people.get({ personId: 'per_183ed5cc-3182-45de-84d1-d520f
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -1806,7 +1930,7 @@ await corsair.folk.api.people.list({ limit: 10 });
     birthday?: string | null,
     gender?: string | null,
     jobTitle?: string | null,
-    createdAt?: string,
+    createdAt?: string | null,
     createdBy?: {
       id: string,
       fullName?: string | null,
@@ -1853,6 +1977,8 @@ await corsair.folk.api.people.list({ limit: 10 });
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -1932,7 +2058,7 @@ await corsair.folk.api.people.update({ personId: 'per_183ed5cc-3182-45de-84d1-d5
   birthday?: string | null,
   gender?: string | null,
   jobTitle?: string | null,
-  createdAt?: string,
+  createdAt?: string | null,
   createdBy?: {
     id: string,
     fullName?: string | null,
@@ -1975,6 +2101,8 @@ await corsair.folk.api.people.update({ personId: 'per_183ed5cc-3182-45de-84d1-d5
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -2020,6 +2148,8 @@ await corsair.folk.api.users.get({ userId: 'usr_bc984b3f-0386-434d-82d7-a91eb6ba
 </Accordion>
 </AccordionGroup>
 
+
+
 ---
 
 ### getCurrentUser
@@ -2056,6 +2186,8 @@ await corsair.folk.api.users.getCurrentUser({});
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -2105,4 +2237,7 @@ await corsair.folk.api.users.list({ limit: 10 });
 </Accordion>
 </AccordionGroup>
 
+
+
 ---
+
