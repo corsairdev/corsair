@@ -1,0 +1,1703 @@
+---
+title: "YNAB API reference"
+sidebarTitle: "API"
+description: "API reference for the YNAB plugin in Corsair: every `ynab.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### create
+
+`accounts.create`
+
+Create an account with a type and an opening balance, given in milliunits
+
+**Risk:** `write`
+
+```ts
+await corsair.ynab.api.accounts.create({ budgetId: 'last-used', name: 'Checking', type: 'checking', balance: 1234560 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `name` | `string` | Yes | — |
+| `type` | `checking \| savings \| cash \| creditCard \| otherAsset \| otherLiability` | Yes | — |
+| `balance` | `number` | Yes | An amount in milliunits: the currency value times 1,000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  account?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    on_budget?: boolean | null,
+    closed?: boolean | null,
+    note?: string | null,
+    balance?: number | null,
+    cleared_balance?: number | null,
+    uncleared_balance?: number | null,
+    transfer_payee_id?: string | null,
+    deleted?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`accounts.get`
+
+Read one account with its balance and on-budget flag
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.accounts.get({ budgetId: 'last-used', accountId: 'acc00000-0000-0000-0000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `accountId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  account?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    on_budget?: boolean | null,
+    closed?: boolean | null,
+    note?: string | null,
+    balance?: number | null,
+    cleared_balance?: number | null,
+    uncleared_balance?: number | null,
+    transfer_payee_id?: string | null,
+    deleted?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+List the accounts in a budget with their cleared and uncleared balances
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.accounts.list({ budgetId: 'last-used', last_knowledge_of_server: 1234 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `last_knowledge_of_server` | `number` | No | A previous response server_knowledge, to return only what changed since. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accounts?: {
+    id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    on_budget?: boolean | null,
+    closed?: boolean | null,
+    note?: string | null,
+    balance?: number | null,
+    cleared_balance?: number | null,
+    uncleared_balance?: number | null,
+    transfer_payee_id?: string | null,
+    deleted?: boolean | null
+  }[] | null,
+  server_knowledge?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Budgets
+
+### get
+
+`budgets.get`
+
+Read a whole budget: every account, category, payee, month and transaction; `last-used` reaches the most recent
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.budgets.get({ budgetId: 'last-used' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  budget?: {
+    id?: string | null,
+    name?: string | null,
+    last_modified_on?: string | null,
+    first_month?: string | null,
+    last_month?: string | null,
+    accounts?: {
+      id?: string | null,
+      name?: string | null,
+      type?: string | null,
+      on_budget?: boolean | null,
+      closed?: boolean | null,
+      note?: string | null,
+      balance?: number | null,
+      cleared_balance?: number | null,
+      uncleared_balance?: number | null,
+      transfer_payee_id?: string | null,
+      deleted?: boolean | null
+    }[] | null,
+    payees?: {
+      id?: string | null,
+      name?: string | null,
+      transfer_account_id?: string | null,
+      deleted?: boolean | null
+    }[] | null,
+    category_groups?: {
+      id?: string | null,
+      name?: string | null,
+      hidden?: boolean | null,
+      deleted?: boolean | null,
+      categories?: {
+        id?: string | null,
+        category_group_id?: string | null,
+        category_group_name?: string | null,
+        name?: string | null,
+        hidden?: boolean | null,
+        budgeted?: number | null,
+        activity?: number | null,
+        balance?: number | null,
+        goal_type?: string | null,
+        goal_target?: number | null,
+        goal_percentage_complete?: number | null,
+        deleted?: boolean | null,
+        note?: string | null
+      }[] | null
+    }[] | null,
+    categories?: {
+      id?: string | null,
+      category_group_id?: string | null,
+      category_group_name?: string | null,
+      name?: string | null,
+      hidden?: boolean | null,
+      budgeted?: number | null,
+      activity?: number | null,
+      balance?: number | null,
+      goal_type?: string | null,
+      goal_target?: number | null,
+      goal_percentage_complete?: number | null,
+      deleted?: boolean | null,
+      note?: string | null
+    }[] | null,
+    months?: {
+      month?: string | null,
+      note?: string | null,
+      income?: number | null,
+      budgeted?: number | null,
+      activity?: number | null,
+      to_be_budgeted?: number | null,
+      age_of_money?: number | null,
+      deleted?: boolean | null,
+      categories?: {
+        id?: string | null,
+        category_group_id?: string | null,
+        category_group_name?: string | null,
+        name?: string | null,
+        hidden?: boolean | null,
+        budgeted?: number | null,
+        activity?: number | null,
+        balance?: number | null,
+        goal_type?: string | null,
+        goal_target?: number | null,
+        goal_percentage_complete?: number | null,
+        deleted?: boolean | null,
+        note?: string | null
+      }[] | null
+    }[] | null,
+    transactions?: {
+      id?: string | null,
+      date?: string | null,
+      amount?: number | null,
+      memo?: string | null,
+      cleared?: string | null,
+      approved?: boolean | null,
+      flag_color?: string | null,
+      account_id?: string | null,
+      account_name?: string | null,
+      payee_id?: string | null,
+      payee_name?: string | null,
+      category_id?: string | null,
+      category_name?: string | null,
+      transfer_account_id?: string | null,
+      transfer_transaction_id?: string | null,
+      matched_transaction_id?: string | null,
+      import_id?: string | null,
+      import_payee_name?: string | null,
+      deleted?: boolean | null,
+      subtransactions?: {
+        id?: string | null,
+        transaction_id?: string | null,
+        amount?: number | null,
+        memo?: string | null,
+        payee_id?: string | null,
+        payee_name?: string | null,
+        category_id?: string | null,
+        category_name?: string | null,
+        transfer_account_id?: string | null,
+        deleted?: boolean | null
+      }[] | null
+    }[] | null,
+    scheduled_transactions?: {
+      id?: string | null,
+      date_first?: string | null,
+      date_next?: string | null,
+      frequency?: string | null,
+      amount?: number | null,
+      memo?: string | null,
+      flag_color?: string | null,
+      account_id?: string | null,
+      account_name?: string | null,
+      payee_id?: string | null,
+      payee_name?: string | null,
+      category_id?: string | null,
+      category_name?: string | null,
+      transfer_account_id?: string | null,
+      deleted?: boolean | null,
+      subtransactions?: {
+        id?: string | null,
+        transaction_id?: string | null,
+        amount?: number | null,
+        memo?: string | null,
+        payee_id?: string | null,
+        payee_name?: string | null,
+        category_id?: string | null,
+        category_name?: string | null,
+        transfer_account_id?: string | null,
+        deleted?: boolean | null
+      }[] | null
+    }[] | null
+  } | null,
+  server_knowledge?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`budgets.list`
+
+List the budgets the token can see, with their date ranges
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.budgets.list({ include_accounts: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_accounts` | `boolean` | No | Also list each budget accounts, which makes the answer large. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  budgets?: {
+    id?: string | null,
+    name?: string | null,
+    last_modified_on?: string | null,
+    first_month?: string | null,
+    last_month?: string | null,
+    date_format?: Record<string, any> | null,
+    currency_format?: Record<string, any> | null
+  }[] | null,
+  default_budget?: {
+    id?: string | null,
+    name?: string | null,
+    last_modified_on?: string | null,
+    first_month?: string | null,
+    last_month?: string | null,
+    date_format?: Record<string, any> | null,
+    currency_format?: Record<string, any> | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Categories
+
+### get
+
+`categories.get`
+
+Read one category with its budgeted and balance amounts
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.categories.get({ budgetId: 'last-used', categoryId: 'cat00000-0000-0000-0000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `categoryId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  category?: {
+    id?: string | null,
+    category_group_id?: string | null,
+    category_group_name?: string | null,
+    name?: string | null,
+    hidden?: boolean | null,
+    budgeted?: number | null,
+    activity?: number | null,
+    balance?: number | null,
+    goal_type?: string | null,
+    goal_target?: number | null,
+    goal_percentage_complete?: number | null,
+    deleted?: boolean | null,
+    note?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`categories.list`
+
+List the category groups and categories with their budgeted, activity and balance amounts
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.categories.list({ budgetId: 'last-used' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `last_knowledge_of_server` | `number` | No | A previous response server_knowledge, to return only what changed since. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  category_groups?: {
+    id?: string | null,
+    name?: string | null,
+    hidden?: boolean | null,
+    deleted?: boolean | null,
+    categories?: {
+      id?: string | null,
+      category_group_id?: string | null,
+      category_group_name?: string | null,
+      name?: string | null,
+      hidden?: boolean | null,
+      budgeted?: number | null,
+      activity?: number | null,
+      balance?: number | null,
+      goal_type?: string | null,
+      goal_target?: number | null,
+      goal_percentage_complete?: number | null,
+      deleted?: boolean | null,
+      note?: string | null
+    }[] | null
+  }[] | null,
+  categories?: {
+    id?: string | null,
+    category_group_id?: string | null,
+    category_group_name?: string | null,
+    name?: string | null,
+    hidden?: boolean | null,
+    budgeted?: number | null,
+    activity?: number | null,
+    balance?: number | null,
+    goal_type?: string | null,
+    goal_target?: number | null,
+    goal_percentage_complete?: number | null,
+    deleted?: boolean | null,
+    note?: string | null
+  }[] | null,
+  server_knowledge?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`categories.update`
+
+Set the amount assigned to a category for a month; the value replaces rather than adds, in milliunits
+
+**Risk:** `write`
+
+```ts
+await corsair.ynab.api.categories.update({ budgetId: 'last-used', month: '2024-06-01', categoryId: 'cat00000-0000-0000-0000-000000000001', budgeted: 500000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `month` | `string` | Yes | The month, as the first day: `yyyy-MM-01`, or `current` for the current calendar month (UTC). |
+| `categoryId` | `string` | Yes | — |
+| `budgeted` | `number` | Yes | The new budgeted amount for the month, in milliunits. This replaces the value rather than adding to it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  category?: {
+    id?: string | null,
+    category_group_id?: string | null,
+    category_group_name?: string | null,
+    name?: string | null,
+    hidden?: boolean | null,
+    budgeted?: number | null,
+    activity?: number | null,
+    balance?: number | null,
+    goal_type?: string | null,
+    goal_target?: number | null,
+    goal_percentage_complete?: number | null,
+    deleted?: boolean | null,
+    note?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Months
+
+### get
+
+`months.get`
+
+Read one month with its categories, income and how much is still unassigned
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.months.get({ budgetId: 'last-used', month: '2024-06-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `month` | `string` | Yes | The month, as the first day: `yyyy-MM-01`, or `current` for the current calendar month (UTC). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  month?: {
+    month?: string | null,
+    note?: string | null,
+    income?: number | null,
+    budgeted?: number | null,
+    activity?: number | null,
+    to_be_budgeted?: number | null,
+    age_of_money?: number | null,
+    deleted?: boolean | null,
+    categories?: {
+      id?: string | null,
+      category_group_id?: string | null,
+      category_group_name?: string | null,
+      name?: string | null,
+      hidden?: boolean | null,
+      budgeted?: number | null,
+      activity?: number | null,
+      balance?: number | null,
+      goal_type?: string | null,
+      goal_target?: number | null,
+      goal_percentage_complete?: number | null,
+      deleted?: boolean | null,
+      note?: string | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`months.list`
+
+List the budget months with their income, budgeted and to-be-budgeted totals
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.months.list({ budgetId: 'last-used' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `last_knowledge_of_server` | `number` | No | A previous response server_knowledge, to return only what changed since. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  months?: {
+    month?: string | null,
+    note?: string | null,
+    income?: number | null,
+    budgeted?: number | null,
+    activity?: number | null,
+    to_be_budgeted?: number | null,
+    age_of_money?: number | null,
+    deleted?: boolean | null,
+    categories?: {
+      id?: string | null,
+      category_group_id?: string | null,
+      category_group_name?: string | null,
+      name?: string | null,
+      hidden?: boolean | null,
+      budgeted?: number | null,
+      activity?: number | null,
+      balance?: number | null,
+      goal_type?: string | null,
+      goal_target?: number | null,
+      goal_percentage_complete?: number | null,
+      deleted?: boolean | null,
+      note?: string | null
+    }[] | null
+  }[] | null,
+  server_knowledge?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payees
+
+### create
+
+`payees.create`
+
+Create a payee
+
+**Risk:** `write`
+
+```ts
+await corsair.ynab.api.payees.create({ budgetId: 'last-used', name: 'Acme Grocer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  payee?: {
+    id?: string | null,
+    name?: string | null,
+    transfer_account_id?: string | null,
+    deleted?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`payees.get`
+
+Read one payee
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.payees.get({ budgetId: 'last-used', payeeId: 'pay00000-0000-0000-0000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `payeeId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  payee?: {
+    id?: string | null,
+    name?: string | null,
+    transfer_account_id?: string | null,
+    deleted?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`payees.list`
+
+List the payees in a budget
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.payees.list({ budgetId: 'last-used' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `last_knowledge_of_server` | `number` | No | A previous response server_knowledge, to return only what changed since. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  payees?: {
+    id?: string | null,
+    name?: string | null,
+    transfer_account_id?: string | null,
+    deleted?: boolean | null
+  }[] | null,
+  server_knowledge?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`payees.update`
+
+Rename a payee
+
+**Risk:** `write`
+
+```ts
+await corsair.ynab.api.payees.update({ budgetId: 'last-used', payeeId: 'pay00000-0000-0000-0000-000000000001', name: 'Renamed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `payeeId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  payee?: {
+    id?: string | null,
+    name?: string | null,
+    transfer_account_id?: string | null,
+    deleted?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactions
+
+### create
+
+`transactions.create`
+
+Create up to 500 transactions in one call; a repeated import_id on the same account skips creation; use transactions.update for corrections
+
+**Risk:** `write`
+
+```ts
+await corsair.ynab.api.transactions.create({ budgetId: 'last-used', transactions: [{ account_id: 'acc00000-0000-0000-0000-000000000001', date: '2024-06-01', amount: -123450, payee_name: 'Acme Grocer', category_id: 'cat00000-0000-0000-0000-000000000001' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `transactions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="transactions full type">
+
+```ts
+{
+  account_id: string,
+  date: string,
+  amount: number,
+  payee_id?: string | null,
+  payee_name?: string | null,
+  category_id?: string | null,
+  memo?: string | null,
+  cleared?: cleared | uncleared | reconciled,
+  approved?: boolean,
+  flag_color?: string | null,
+  import_id?: string,
+  subtransactions?: {
+    amount: number,
+    payee_id?: string | null,
+    payee_name?: string | null,
+    category_id?: string | null,
+    memo?: string | null
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  transaction_ids?: string[] | null,
+  transactions?: {
+    id?: string | null,
+    date?: string | null,
+    amount?: number | null,
+    memo?: string | null,
+    cleared?: string | null,
+    approved?: boolean | null,
+    flag_color?: string | null,
+    account_id?: string | null,
+    account_name?: string | null,
+    payee_id?: string | null,
+    payee_name?: string | null,
+    category_id?: string | null,
+    category_name?: string | null,
+    transfer_account_id?: string | null,
+    transfer_transaction_id?: string | null,
+    matched_transaction_id?: string | null,
+    import_id?: string | null,
+    import_payee_name?: string | null,
+    deleted?: boolean | null,
+    subtransactions?: {
+      id?: string | null,
+      transaction_id?: string | null,
+      amount?: number | null,
+      memo?: string | null,
+      payee_id?: string | null,
+      payee_name?: string | null,
+      category_id?: string | null,
+      category_name?: string | null,
+      transfer_account_id?: string | null,
+      deleted?: boolean | null
+    }[] | null
+  }[] | null,
+  duplicate_import_ids?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`transactions.delete`
+
+Delete a transaction, which answers the transaction as it was
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ynab.api.transactions.delete({ budgetId: 'last-used', transactionId: 'txn00000-0000-0000-0000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `transactionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  transaction?: {
+    id?: string | null,
+    date?: string | null,
+    amount?: number | null,
+    memo?: string | null,
+    cleared?: string | null,
+    approved?: boolean | null,
+    flag_color?: string | null,
+    account_id?: string | null,
+    account_name?: string | null,
+    payee_id?: string | null,
+    payee_name?: string | null,
+    category_id?: string | null,
+    category_name?: string | null,
+    transfer_account_id?: string | null,
+    transfer_transaction_id?: string | null,
+    matched_transaction_id?: string | null,
+    import_id?: string | null,
+    import_payee_name?: string | null,
+    deleted?: boolean | null,
+    subtransactions?: {
+      id?: string | null,
+      transaction_id?: string | null,
+      amount?: number | null,
+      memo?: string | null,
+      payee_id?: string | null,
+      payee_name?: string | null,
+      category_id?: string | null,
+      category_name?: string | null,
+      transfer_account_id?: string | null,
+      deleted?: boolean | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`transactions.get`
+
+Read one transaction with its amount, splits and cleared state
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.transactions.get({ budgetId: 'last-used', transactionId: 'txn00000-0000-0000-0000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `transactionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  transaction?: {
+    id?: string | null,
+    date?: string | null,
+    amount?: number | null,
+    memo?: string | null,
+    cleared?: string | null,
+    approved?: boolean | null,
+    flag_color?: string | null,
+    account_id?: string | null,
+    account_name?: string | null,
+    payee_id?: string | null,
+    payee_name?: string | null,
+    category_id?: string | null,
+    category_name?: string | null,
+    transfer_account_id?: string | null,
+    transfer_transaction_id?: string | null,
+    matched_transaction_id?: string | null,
+    import_id?: string | null,
+    import_payee_name?: string | null,
+    deleted?: boolean | null,
+    subtransactions?: {
+      id?: string | null,
+      transaction_id?: string | null,
+      amount?: number | null,
+      memo?: string | null,
+      payee_id?: string | null,
+      payee_name?: string | null,
+      category_id?: string | null,
+      category_name?: string | null,
+      transfer_account_id?: string | null,
+      deleted?: boolean | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transactions.list`
+
+List transactions, optionally since a date or only the uncategorized or unapproved ones. Without since_date, only the past year comes back.
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.transactions.list({ budgetId: 'last-used', since_date: '2024-06-01', type: 'uncategorized' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `since_date` | `string` | No | Only transactions on or after this date, as `yyyy-MM-dd`. When omitted, YNAB returns transactions from one year ago onward, so pass an earlier date for older history. |
+| `type` | `uncategorized \| unapproved` | No | Only transactions matching this kind. |
+| `last_knowledge_of_server` | `number` | No | A previous response server_knowledge, to return only what changed since. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  transactions?: {
+    id?: string | null,
+    date?: string | null,
+    amount?: number | null,
+    memo?: string | null,
+    cleared?: string | null,
+    approved?: boolean | null,
+    flag_color?: string | null,
+    account_id?: string | null,
+    account_name?: string | null,
+    payee_id?: string | null,
+    payee_name?: string | null,
+    category_id?: string | null,
+    category_name?: string | null,
+    transfer_account_id?: string | null,
+    transfer_transaction_id?: string | null,
+    matched_transaction_id?: string | null,
+    import_id?: string | null,
+    import_payee_name?: string | null,
+    deleted?: boolean | null,
+    subtransactions?: {
+      id?: string | null,
+      transaction_id?: string | null,
+      amount?: number | null,
+      memo?: string | null,
+      payee_id?: string | null,
+      payee_name?: string | null,
+      category_id?: string | null,
+      category_name?: string | null,
+      transfer_account_id?: string | null,
+      deleted?: boolean | null
+    }[] | null
+  }[] | null,
+  server_knowledge?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### scheduledCreate
+
+`transactions.scheduledCreate`
+
+Create a scheduled transaction that repeats on a given frequency
+
+**Risk:** `write`
+
+```ts
+await corsair.ynab.api.transactions.scheduledCreate({ budgetId: 'last-used', scheduled_transaction: { account_id: 'acc00000-0000-0000-0000-000000000001', date: '2024-07-01', amount: -150000, frequency: 'monthly' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `scheduled_transaction` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="scheduled_transaction full type">
+
+```ts
+{
+  account_id: string,
+  date: string,
+  amount: number,
+  payee_id?: string | null,
+  payee_name?: string | null,
+  category_id?: string | null,
+  memo?: string | null,
+  flag_color?: string | null,
+  frequency: never | daily | weekly | everyOtherWeek | twiceAMonth | every4Weeks | monthly | everyOtherMonth | every3Months | every4Months | twiceAYear | yearly | everyOtherYear
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  scheduled_transaction?: {
+    id?: string | null,
+    date_first?: string | null,
+    date_next?: string | null,
+    frequency?: string | null,
+    amount?: number | null,
+    memo?: string | null,
+    flag_color?: string | null,
+    account_id?: string | null,
+    account_name?: string | null,
+    payee_id?: string | null,
+    payee_name?: string | null,
+    category_id?: string | null,
+    category_name?: string | null,
+    transfer_account_id?: string | null,
+    deleted?: boolean | null,
+    subtransactions?: {
+      id?: string | null,
+      transaction_id?: string | null,
+      amount?: number | null,
+      memo?: string | null,
+      payee_id?: string | null,
+      payee_name?: string | null,
+      category_id?: string | null,
+      category_name?: string | null,
+      transfer_account_id?: string | null,
+      deleted?: boolean | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### scheduledDelete
+
+`transactions.scheduledDelete`
+
+Delete a scheduled transaction
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ynab.api.transactions.scheduledDelete({ budgetId: 'last-used', scheduledTransactionId: 'sch00000-0000-0000-0000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `scheduledTransactionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  scheduled_transaction?: {
+    id?: string | null,
+    date_first?: string | null,
+    date_next?: string | null,
+    frequency?: string | null,
+    amount?: number | null,
+    memo?: string | null,
+    flag_color?: string | null,
+    account_id?: string | null,
+    account_name?: string | null,
+    payee_id?: string | null,
+    payee_name?: string | null,
+    category_id?: string | null,
+    category_name?: string | null,
+    transfer_account_id?: string | null,
+    deleted?: boolean | null,
+    subtransactions?: {
+      id?: string | null,
+      transaction_id?: string | null,
+      amount?: number | null,
+      memo?: string | null,
+      payee_id?: string | null,
+      payee_name?: string | null,
+      category_id?: string | null,
+      category_name?: string | null,
+      transfer_account_id?: string | null,
+      deleted?: boolean | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### scheduledGet
+
+`transactions.scheduledGet`
+
+Read one scheduled transaction
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.transactions.scheduledGet({ budgetId: 'last-used', scheduledTransactionId: 'sch00000-0000-0000-0000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `scheduledTransactionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  scheduled_transaction?: {
+    id?: string | null,
+    date_first?: string | null,
+    date_next?: string | null,
+    frequency?: string | null,
+    amount?: number | null,
+    memo?: string | null,
+    flag_color?: string | null,
+    account_id?: string | null,
+    account_name?: string | null,
+    payee_id?: string | null,
+    payee_name?: string | null,
+    category_id?: string | null,
+    category_name?: string | null,
+    transfer_account_id?: string | null,
+    deleted?: boolean | null,
+    subtransactions?: {
+      id?: string | null,
+      transaction_id?: string | null,
+      amount?: number | null,
+      memo?: string | null,
+      payee_id?: string | null,
+      payee_name?: string | null,
+      category_id?: string | null,
+      category_name?: string | null,
+      transfer_account_id?: string | null,
+      deleted?: boolean | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### scheduledList
+
+`transactions.scheduledList`
+
+List scheduled transactions with their frequency and next date
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.transactions.scheduledList({ budgetId: 'last-used' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `last_knowledge_of_server` | `number` | No | A previous response server_knowledge, to return only what changed since. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  scheduled_transactions?: {
+    id?: string | null,
+    date_first?: string | null,
+    date_next?: string | null,
+    frequency?: string | null,
+    amount?: number | null,
+    memo?: string | null,
+    flag_color?: string | null,
+    account_id?: string | null,
+    account_name?: string | null,
+    payee_id?: string | null,
+    payee_name?: string | null,
+    category_id?: string | null,
+    category_name?: string | null,
+    transfer_account_id?: string | null,
+    deleted?: boolean | null,
+    subtransactions?: {
+      id?: string | null,
+      transaction_id?: string | null,
+      amount?: number | null,
+      memo?: string | null,
+      payee_id?: string | null,
+      payee_name?: string | null,
+      category_id?: string | null,
+      category_name?: string | null,
+      transfer_account_id?: string | null,
+      deleted?: boolean | null
+    }[] | null
+  }[] | null,
+  server_knowledge?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`transactions.update`
+
+Change a transaction amount, date, payee, category, memo or cleared state
+
+**Risk:** `write`
+
+```ts
+await corsair.ynab.api.transactions.update({ budgetId: 'last-used', transactionId: 'txn00000-0000-0000-0000-000000000001', amount: -200000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `budgetId` | `string` | Yes | The budget id, or `last-used` for the one most recently opened. |
+| `transactionId` | `string` | Yes | — |
+| `account_id` | `string` | No | — |
+| `date` | `string` | No | A date as `yyyy-MM-dd`, with no time or zone. |
+| `amount` | `number` | No | An amount in milliunits: the currency value times 1,000. |
+| `payee_id` | `string \| null` | No | — |
+| `payee_name` | `string \| null` | No | — |
+| `category_id` | `string \| null` | No | The category, or null to clear it. |
+| `memo` | `string \| null` | No | The memo, or null to clear it. |
+| `cleared` | `cleared \| uncleared \| reconciled` | No | — |
+| `approved` | `boolean` | No | — |
+| `flag_color` | `string \| null` | No | The flag, or null to clear it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  transaction?: {
+    id?: string | null,
+    date?: string | null,
+    amount?: number | null,
+    memo?: string | null,
+    cleared?: string | null,
+    approved?: boolean | null,
+    flag_color?: string | null,
+    account_id?: string | null,
+    account_name?: string | null,
+    payee_id?: string | null,
+    payee_name?: string | null,
+    category_id?: string | null,
+    category_name?: string | null,
+    transfer_account_id?: string | null,
+    transfer_transaction_id?: string | null,
+    matched_transaction_id?: string | null,
+    import_id?: string | null,
+    import_payee_name?: string | null,
+    deleted?: boolean | null,
+    subtransactions?: {
+      id?: string | null,
+      transaction_id?: string | null,
+      amount?: number | null,
+      memo?: string | null,
+      payee_id?: string | null,
+      payee_name?: string | null,
+      category_id?: string | null,
+      category_name?: string | null,
+      transfer_account_id?: string | null,
+      deleted?: boolean | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### get
+
+`user.get`
+
+Read the user behind the token, which is the cheapest way to check it
+
+**Risk:** `read`
+
+```ts
+await corsair.ynab.api.user.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  user?: {
+    id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

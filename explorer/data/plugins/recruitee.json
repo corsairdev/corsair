@@ -1,0 +1,562 @@
+{
+  "id": "recruitee",
+  "displayName": "Recruitee",
+  "description": "Applicant tracking with Recruitee - search, read and write candidates, read and write offers, and list the departments and locations they belong to through the Recruitee ATS API.",
+  "npmPackageName": "@corsair-dev/recruitee",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "company_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "recruitee.api.candidates.create",
+      "shortPath": "candidates.create",
+      "description": "Add a candidate manually and assign them to a published or internal offer at its default stage",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The candidate name."
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "social_links",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "cover_letter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "remote_cv_url",
+            "optional": true,
+            "type": "string",
+            "description": "A link to a CV hosted elsewhere, instead of an upload."
+          },
+          {
+            "key": "offer_id",
+            "optional": true,
+            "type": "number",
+            "description": "The offer the candidate is assigned to at its default stage. Recruitee skips the assignment, without an error, when the offer is a draft."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidate",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, emails?: string[] | null, phones?: string[] | null, social_links?: string[] | null, links?: string[] | null, cover_letter?: string | null, sources?: (string | { id?: number | null, name?: string | null })[] | null, admin_id?: number | null, created_at?: string | null, updated_at?: string | null, last_activity_at?: string | null, my_last_rating?: number | string | null, photo_url?: string | null, cv_url?: string | null, placements?: { id?: number | null, candidate_id?: number | null, offer_id?: number | null, talent_pool_id?: number | null, offer?: { id?: number | null, title?: string | null, kind?: string | null, status?: string | null } | null, stage?: { id?: number | null, name?: string | null } | null, stage_id?: number | null, disqualified?: boolean | null, created_at?: string | null, updated_at?: string | null }[] | null, tags?: (string | { id?: number | null, name?: string | null })[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recruitee.api.candidates.delete",
+      "shortPath": "candidates.delete",
+      "description": "Delete a candidate. Recruitee keeps them restorable in its deleted list for 7 days, then removes them",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidate_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "candidate_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recruitee.api.candidates.get",
+      "shortPath": "candidates.get",
+      "description": "Fetch one candidate with their contact details, stage, status and placements",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidate_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidate",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, emails?: string[] | null, phones?: string[] | null, social_links?: string[] | null, links?: string[] | null, cover_letter?: string | null, sources?: (string | { id?: number | null, name?: string | null })[] | null, admin_id?: number | null, created_at?: string | null, updated_at?: string | null, last_activity_at?: string | null, my_last_rating?: number | string | null, photo_url?: string | null, cv_url?: string | null, placements?: { id?: number | null, candidate_id?: number | null, offer_id?: number | null, talent_pool_id?: number | null, offer?: { id?: number | null, title?: string | null, kind?: string | null, status?: string | null } | null, stage?: { id?: number | null, name?: string | null } | null, stage_id?: number | null, disqualified?: boolean | null, created_at?: string | null, updated_at?: string | null }[] | null, tags?: (string | { id?: number | null, name?: string | null })[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recruitee.api.candidates.list",
+      "shortPath": "candidates.list",
+      "description": "Search candidates by text, offer, stage, status, department or location, a page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page. Recruitee applies its own default when omitted."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, 1-based. Defaults to 1."
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A free-text search over name, emails, phones, tags, sources, stage, cover letter and CV."
+          },
+          {
+            "key": "offer_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only candidates on this offer."
+          },
+          {
+            "key": "stage",
+            "optional": true,
+            "type": "string",
+            "description": "Only candidates in a stage with this name, such as `Applied`."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "The candidate status: `qualified`, `disqualified` or `new`."
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only candidates on offers in this department."
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only candidates on offers at this location."
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string",
+            "description": "The column to sort on, such as `created_at`, `candidate_name` or `relevance`."
+          },
+          {
+            "key": "sort_direction",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Defaults to `desc` when `sort_by` is set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidates",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, emails?: string[] | null, phones?: string[] | null, social_links?: string[] | null, links?: string[] | null, cover_letter?: string | null, sources?: (string | { id?: number | null, name?: string | null })[] | null, admin_id?: number | null, created_at?: string | null, updated_at?: string | null, last_activity_at?: string | null, my_last_rating?: number | string | null, photo_url?: string | null, cv_url?: string | null, placements?: { id?: number | null, candidate_id?: number | null, offer_id?: number | null, talent_pool_id?: number | null, offer?: { id?: number | null, title?: string | null, kind?: string | null, status?: string | null } | null, stage?: { id?: number | null, name?: string | null } | null, stage_id?: number | null, disqualified?: boolean | null, created_at?: string | null, updated_at?: string | null }[] | null, tags?: (string | { id?: number | null, name?: string | null })[] | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number | null",
+            "description": "How many records match in total, when the route says."
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `page` to read the next page; null on the last."
+          }
+        ]
+      }
+    },
+    {
+      "path": "recruitee.api.candidates.update",
+      "shortPath": "candidates.update",
+      "description": "Update a candidate profile: their name, emails, phones or cover letter",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidate_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "cover_letter",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "candidate",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, emails?: string[] | null, phones?: string[] | null, social_links?: string[] | null, links?: string[] | null, cover_letter?: string | null, sources?: (string | { id?: number | null, name?: string | null })[] | null, admin_id?: number | null, created_at?: string | null, updated_at?: string | null, last_activity_at?: string | null, my_last_rating?: number | string | null, photo_url?: string | null, cv_url?: string | null, placements?: { id?: number | null, candidate_id?: number | null, offer_id?: number | null, talent_pool_id?: number | null, offer?: { id?: number | null, title?: string | null, kind?: string | null, status?: string | null } | null, stage?: { id?: number | null, name?: string | null } | null, stage_id?: number | null, disqualified?: boolean | null, created_at?: string | null, updated_at?: string | null }[] | null, tags?: (string | { id?: number | null, name?: string | null })[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recruitee.api.departments.list",
+      "shortPath": "departments.list",
+      "description": "List the company departments with how many offers each has",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "departments",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, status?: string | null, offers_count?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recruitee.api.locations.list",
+      "shortPath": "locations.list",
+      "description": "List the company locations with their city, country and address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page. Recruitee applies its own default when omitted."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, 1-based. Defaults to 1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locations",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, city?: string | null, state_name?: string | null, country_code?: string | null, full_address?: string | null, note?: string | null, archived_at?: string | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number | null",
+            "description": "How many records match in total, when the route says."
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `page` to read the next page; null on the last."
+          }
+        ]
+      }
+    },
+    {
+      "path": "recruitee.api.offers.create",
+      "shortPath": "offers.create",
+      "description": "Create an offer as a draft job or talent pool; publishing is done in Recruitee",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "job | talent_pool"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The description, as HTML."
+          },
+          {
+            "key": "requirements",
+            "optional": true,
+            "type": "string",
+            "description": "The requirements, as HTML. Recruitee requires them for a job."
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Location ids from `locations.list`. Recruitee requires at least one for a job."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offer",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, slug?: string | null, status?: string | null, kind?: string | null, department?: string | null, department_id?: number | null, location?: string | null, location_ids?: number[] | null, city?: string | null, country_code?: string | null, description?: string | null, requirements?: string | null, created_at?: string | null, updated_at?: string | null, published_at?: string | null, translations?: { locale?: string | null, title?: string | null, description?: string | null, requirements?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recruitee.api.offers.get",
+      "shortPath": "offers.get",
+      "description": "Fetch one offer with its title, slug, description, requirements and state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offer_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offer",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, slug?: string | null, status?: string | null, kind?: string | null, department?: string | null, department_id?: number | null, location?: string | null, location_ids?: number[] | null, city?: string | null, country_code?: string | null, description?: string | null, requirements?: string | null, created_at?: string | null, updated_at?: string | null, published_at?: string | null, translations?: { locale?: string | null, title?: string | null, description?: string | null, requirements?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "recruitee.api.offers.list",
+      "shortPath": "offers.list",
+      "description": "List offers with status, department, location and kind filters, a page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page. Recruitee applies its own default when omitted."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page to read, 1-based. Defaults to 1."
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only offers in this department."
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only offers at this location."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | published | internal | closed | archived",
+            "description": "Only offers in this status."
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "job | talent_pool",
+            "description": "`job` for a posted role, `talent_pool` for a pool."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offers",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, slug?: string | null, status?: string | null, kind?: string | null, department?: string | null, department_id?: number | null, location?: string | null, location_ids?: number[] | null, city?: string | null, country_code?: string | null, description?: string | null, requirements?: string | null, created_at?: string | null, updated_at?: string | null, published_at?: string | null, translations?: { locale?: string | null, title?: string | null, description?: string | null, requirements?: string | null }[] | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number | null",
+            "description": "How many records match in total, when the route says."
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `page` to read the next page; null on the last."
+          }
+        ]
+      }
+    },
+    {
+      "path": "recruitee.api.offers.update",
+      "shortPath": "offers.update",
+      "description": "Update an offer: its title, description, requirements, department or locations",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "job | talent_pool"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The description, as HTML."
+          },
+          {
+            "key": "requirements",
+            "optional": true,
+            "type": "string",
+            "description": "The requirements, as HTML. Recruitee requires them for a job."
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "location_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Location ids from `locations.list`. Recruitee requires at least one for a job."
+          },
+          {
+            "key": "offer_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offer",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, slug?: string | null, status?: string | null, kind?: string | null, department?: string | null, department_id?: number | null, location?: string | null, location_ids?: number[] | null, city?: string | null, country_code?: string | null, description?: string | null, requirements?: string | null, created_at?: string | null, updated_at?: string | null, published_at?: string | null, translations?: { locale?: string | null, title?: string | null, description?: string | null, requirements?: string | null }[] | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

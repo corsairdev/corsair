@@ -1,0 +1,139 @@
+---
+title: "Raisely plugin"
+sidebarTitle: "Overview"
+description: "Charity fundraising with Raisely - read campaigns, donations, fundraising profiles and designations, record a donation, and update a fundraising profile through the Raisely API."
+---
+
+Use **Raisely** through Corsair: one client, typed API calls.
+
+Generate an API key in Raisely under **Settings → API**. Send it as `Authorization: Bearer <key>`. Things to know before you call:
+
+- **This plugin always sends a key.** Raisely itself answers some public reads without one, but the plugin raises `AuthMissingError` when no key is set, so connect a key first. `private: true` returns the private fields the key can see.
+- **Two routes are not on the plain REST shape.** `/donations` POST takes its record under `data`, and `/profiles` requires a `campaign` query parameter. Both are enforced by the schemas here rather than left to a 422.
+- **Offsets, not pages.** Every collection answers `{ data, pagination }` with `total`, `offset` and `limit`, and the plugin returns `next_offset` for the next call. Do not add `limit` to the offset: the response already reports both.
+- **A sort without an order is ignored.** Raisely applies `sort` only when `order` is also present, so the plugin sends the pair together or neither.
+- **Donation types.** `type` takes `ONLINE` or `OFFLINE`, but Raisely stores a donation recorded through `donations.create` as `OFFLINE` either way; `mode` takes `LIVE` or `TEST`. An unknown value is rejected before the request is sent.
+- **Amounts are integers in the smallest currency unit.** A `$25.00` donation arrives as `2500`, and `donations.create` expects the same.
+- **Errors are RFC 7807 problem documents.** `detail` is the summary, `errors` names each field at fault, and `code` is the machine-readable reason. `instance` is the id Raisely support asks for; all four are exposed on `RaiselyAPIError`.
+- **`410 Gone` is not a 404.** A soft-deleted campaign or donation answers `410`; both are reported as not-found, since no retry recovers either.
+- **Retries.** A 429 is retried three times and honours the documented `Retry-After`. A `5xx` is retried only for a call the plugin declared read-only, never for a donation.
+
+**What you get:**
+
+- 9 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/raisely better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/raisely better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/raisely better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/raisely better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { raisely } from '@corsair-dev/raisely';
+
+export const corsair = createCorsair({
+	plugins: [
+		raisely(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+raisely()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'raisely',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List active campaigns**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.raisely.api.campaigns.list({ status: 'ACTIVE', limit: 100 });
+```
+
+
+**Raise a fundraiser's goal**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.raisely.api.profiles.update({ profile_path: 'jordan-lee', goal: 6000 });
+```
+
+
+See the full list on the [API](/plugins/raisely/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/raisely/api">
+    Every `raisely.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

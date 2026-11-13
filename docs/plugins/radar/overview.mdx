@@ -1,0 +1,148 @@
+---
+title: "Radar plugin"
+sidebarTitle: "Overview"
+description: "Location infrastructure with Radar - geocode addresses and coordinates, search places and geofences, read tracked users, geofences and trips, upsert a geofence, submit location updates and log conversions."
+---
+
+Use **Radar** through Corsair: one client, typed API calls.
+
+Create an API key on the **Settings** page of the Radar dashboard. Radar has two kinds: a **publishable** key (`pk`) for the routes that are safe to call client-side, and a **secret** key (`sk`) for the server-side routes. Send it **bare** in the `Authorization` header — no `Bearer` prefix — and use the test keys for non-production. Things to know before you call:
+
+- **No `Bearer` prefix.** Radar reads the raw key, so `Authorization: prj_live_sk_…` is correct and `Authorization: Bearer …` is not. The plugin sets the header literally for that reason.
+- **Results follow the operation schema.** Radar wire responses include `meta`, but the plugin returns fields such as `addresses`, `user` or `geofence`. A resolved call has passed output validation. Only read `meta.code` on results that retain `meta`, such as list results.
+- **A 402 is a spent quota, not a rate limit.** It means the organisation is disabled or the usage allowance is exhausted, and no retry fixes it. The plugin matches it first and stops immediately.
+- **`429` may mean selective throttling.** Radar says no state changed in that case, so a read is safe to repeat; the plugin retries replayable reads three times and honours `Retry-After`. Writes are never replayed.
+- **`451` is a country blocklist.** It is a legal refusal, not a request defect, and no retry clears it.
+- **Paging is by timestamp.** Users and geofences use the last row's `updatedAt` as `updated_before`. Trips use `created_before` with `sort_by: createdAt`. List results retain `meta`; `has_more` is true only when Radar supplies `meta.hasMore`. If that flag is absent, continue until an empty page.
+- **Choosing a geofence type.** `type` takes `circle`, `polygon` or `isochrone`; a circle takes a centre and a radius in meters, an isochrone takes a centre, travel mode and duration in minutes, and a polygon takes a closed ring.
+- **A geofence is a circle, a polygon or an isochrone.** A circle takes a `center` and a `radius`, a polygon takes a closed `ring` with the first point repeated last, and the schema rejects a shape that is missing its required part.
+- **`geofences.upsert` is an upsert.** Supplying a tag and external id creates the geofence when none matches; supplying `geofence_id` selects an update by Radar id. The plugin still requires `tag`, `external_id`, `description`, `type` and the geometry inputs for that type.
+- **`track` creates a user.** It is the write that turns a location update into a user, so it needs a `device_id`, both coordinates and a positive `accuracy`. The plugin never replays it.
+- **Coordinates are `[longitude, latitude]` in bodies.** Geofence geometry follows the GeoJSON convention, which is the reverse of the `latitude,longitude` string the geocode routes take.
+
+**What you get:**
+
+- 16 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/radar better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/radar better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/radar better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/radar better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { radar } from '@corsair-dev/radar';
+
+export const corsair = createCorsair({
+	plugins: [
+		radar(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+radar()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'radar',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Reverse geocode a coordinate**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.radar.api.geocode.reverse({ coordinates: '40.70390,-73.98670' });
+```
+
+
+**Upsert a circular store geofence**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.radar.api.geofences.upsert({
+	tag: 'store',
+	external_id: 'store-42',
+	description: 'Brooklyn store',
+	type: 'circle',
+	center: [-73.9867, 40.7039],
+	radius: 100,
+});
+```
+
+
+See the full list on the [API](/plugins/radar/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/radar/api">
+    Every `radar.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
