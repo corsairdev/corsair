@@ -167,6 +167,7 @@ export async function makeGetProspectRequest<T>(
 			rateLimitConfig: RATE_LIMIT_CONFIG,
 		});
 	} catch (error: unknown) {
+		// `unknown` because JavaScript can throw any value; narrow to ApiError before reading provider fields.
 		// Core ApiError retains body and request details, which may contain prospect PII.
 		if (error instanceof ApiError) throw safeApiError(error, method);
 		// Network errors may include full URLs or transport details; expose only a safe summary.

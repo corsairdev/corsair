@@ -13,10 +13,15 @@ pnpm add @corsair-dev/getprospect
 Use a GetProspect API key. The plugin sends it only in the documented `x-api-key` header; it never places the credential in a URL or logs it.
 
 ```ts
+import { createCorsair } from 'corsair';
 import { getprospect } from '@corsair-dev/getprospect';
 
-const getProspect = getprospect({ key: process.env.GETPROSPECT_API_KEY });
-const account = await getProspect.account.meGet({});
+const corsair = createCorsair({
+	plugins: [getprospect({ key: process.env.GETPROSPECT_API_KEY })],
+});
+
+const tenant = corsair.withTenant('acme');
+const account = await tenant.getprospect.api.account.meGet({});
 ```
 
 If the key is not passed in plugin options, configure the tenant API key through Corsair authentication. This API has no public/keyless operations.

@@ -1,7 +1,11 @@
 import { ApiError } from 'corsair/http';
 import { errorHandlers } from './error-handlers';
 
-function apiError(status: number, retryAfter?: number): ApiError {
+function apiError(
+	status: number,
+	retryAfter?: number,
+	body?: object,
+): ApiError {
 	return new ApiError(
 		{ method: 'GET', url: '/v2/[redacted]' },
 		{
@@ -9,7 +13,7 @@ function apiError(status: number, retryAfter?: number): ApiError {
 			ok: false,
 			status,
 			statusText: '',
-			body: undefined,
+			body,
 		},
 		`GetProspect request failed (HTTP ${status})`,
 		retryAfter === undefined ? undefined : { retryAfter },
@@ -51,6 +55,24 @@ describe('GetProspect error handlers', () => {
 			maxRetries: 0,
 			headersRetryAfterMs: 86_400_000,
 		});
+		const dailyJobRefusal = apiError(429, 4000, {
+			success: false,
+			data: null,
+			errors: [
+				{
+					name: 'RATE_LIMIT',
+					payload: {
+						code: 'rate_limit_exceeded',
+						bucket: 'search',
+						window: 'day',
+						reset_seconds: 45,
+					},
+				},
+			],
+		});
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(dailyJobRefusal),
+		).resolves.toEqual({ maxRetries: 0, headersRetryAfterMs: 4000 });
 	});
 
 	it('does not retry authentication, invalid input, missing records, or credit failures', async () => {
