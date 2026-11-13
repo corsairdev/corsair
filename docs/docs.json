@@ -1683,19 +1683,19 @@
                 ]
               },
               {
-                "group": "DeployHQ",
-                "pages": [
-                  "plugins/deployhq/overview",
-                  "plugins/deployhq/api",
-                  "plugins/deployhq/database"
-                ]
-              },
-              {
                 "group": "Demio",
                 "pages": [
                   "plugins/demio/overview",
                   "plugins/demio/api",
                   "plugins/demio/database"
+                ]
+              },
+              {
+                "group": "DeployHQ",
+                "pages": [
+                  "plugins/deployhq/overview",
+                  "plugins/deployhq/api",
+                  "plugins/deployhq/database"
                 ]
               },
               {
