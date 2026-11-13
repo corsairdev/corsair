@@ -36,7 +36,7 @@ await corsair.kadoa.api.changes.get({ changeId: '9a8b7c6d-5e4f-3a2b-1c0d-9e8f7a6
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `workflowId` | `string \| null` | No | — |
-| `data` | `Record<string, unknown>[] \| null` | No | — |
+| `data` | `Record<string, any>[] \| null` | No | — |
 | `dataPending` | `boolean \| null` | No | — |
 | `differences` | `object[] \| null` | No | — |
 | `differencesCounts` | `object \| null` | No | — |
@@ -96,7 +96,7 @@ await corsair.kadoa.api.changes.list({ startDate: '2026-11-01', endDate: '2026-1
 | `startDate` | `string` | No | Earliest change, as an ISO date or date-time. |
 | `endDate` | `string` | No | Latest change, as an ISO date or date-time. A date alone covers that whole day. |
 | `skip` | `number` | No | Changes to skip. |
-| `limit` | `number` | No | Changes to return. |
+| `limit` | `number` | No | Changes to return, at most 100. Defaults to 25. |
 | `exclude` | `(data \| differences)[]` | No | Drop these large fields from each change. The counts stay available. |
 
 `exclude` drops the large arrays; `differencesCounts` still arrives.
@@ -120,7 +120,7 @@ await corsair.kadoa.api.changes.list({ startDate: '2026-11-01', endDate: '2026-1
 {
   id: string,
   workflowId?: string | null,
-  data?: Record<string, unknown>[] | null,
+  data?: Record<string, any>[] | null,
   dataPending?: boolean | null,
   differences?: {
     type: string,
@@ -236,7 +236,7 @@ await corsair.kadoa.api.schemas.create({ name: 'Product', entity: 'Product', fie
     definition: string
   }[],
   mapper?: jobDescription | categoryClassifier | taxonomyMapping | stableUniqueId | linkExtraction | additionalData | categorize,
-  mapperConfig?: Record<string, unknown>
+  mapperConfig?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -261,7 +261,7 @@ await corsair.kadoa.api.schemas.create({ name: 'Product', entity: 'Product', fie
 
 `schemas.delete`
 
-Delete a schema and every revision of it, leaving workflows that used it without one
+Delete a schema and every revision of it; it cannot be restored
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -416,7 +416,7 @@ await corsair.kadoa.api.schemas.update({ schemaId: '3c7e9f10-2a4b-4d6c-8e0f-1a3b
 |------|------|----------|-------------|
 | `schemaId` | `string` | Yes | The schema ID. |
 | `name` | `string` | No | — |
-| `entity` | `string` | No | — |
+| `entity` | `string \| null` | No | The entity name. Send null to clear it. |
 | `fields` | `object[]` | No | Replace every field. Kadoa keeps the previous revision, so workflows on it keep the old shape. |
 
 <AccordionGroup>
@@ -434,7 +434,7 @@ await corsair.kadoa.api.schemas.update({ schemaId: '3c7e9f10-2a4b-4d6c-8e0f-1a3b
     definition: string
   }[],
   mapper?: jobDescription | categoryClassifier | taxonomyMapping | stableUniqueId | linkExtraction | additionalData | categorize,
-  mapperConfig?: Record<string, unknown>
+  mapperConfig?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -964,7 +964,7 @@ Exactly one build source: `userPrompt`, `schemaId`, `entity` with `fields`, or `
     definition: string
   }[],
   mapper?: jobDescription | categoryClassifier | taxonomyMapping | stableUniqueId | linkExtraction | additionalData | categorize,
-  mapperConfig?: Record<string, unknown>
+  mapperConfig?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1019,7 +1019,7 @@ await corsair.kadoa.api.workflows.data({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d
 {
   field: string,
   operator: string,
-  value: string
+  value?: string | number | boolean | (string | number | boolean)[]
 }[]
 ```
 </Accordion>
@@ -1034,7 +1034,7 @@ await corsair.kadoa.api.workflows.data({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d
 | `workflowId` | `string` | Yes | — |
 | `runId` | `string \| null` | No | — |
 | `executedAt` | `string \| null` | No | — |
-| `data` | `Record<string, unknown>[]` | Yes | — |
+| `data` | `Record<string, any>[]` | Yes | — |
 | `pagination` | `object \| null` | No | — |
 | `nextPage` | `number \| null` | Yes | The next page number while more rows remain; null on the last page and when every row was streamed at once. |
 
@@ -1146,8 +1146,8 @@ await corsair.kadoa.api.workflows.get({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5
 | `entity` | `string \| null` | No | — |
 | `isSchemaEditable` | `boolean \| null` | No | — |
 | `dataQualityIssues` | `number \| null` | No | — |
-| `extractionSpec` | `Record<string, unknown> \| null` | No | — |
-| `transformation` | `Record<string, unknown> \| null` | No | — |
+| `extractionSpec` | `Record<string, any> \| null` | No | — |
+| `transformation` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="awaitingUserInput full type">
@@ -1183,7 +1183,7 @@ await corsair.kadoa.api.workflows.get({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5
   message?: string | null,
   occurredAt?: string | null,
   screenshot?: string | null,
-  context?: Record<string, unknown> | null
+  context?: Record<string, any> | null
 }[] | null
 ```
 </Accordion>
@@ -1239,13 +1239,17 @@ await corsair.kadoa.api.workflows.history({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f
   screenshot?: string | null,
   records?: number | null,
   startedBy?: string | null,
-  stoppedBy?: string | null,
+  stoppedBy?: {
+    kind?: string | null,
+    name?: string | null,
+    via?: string | null
+  } | null,
   errors?: {
     errorCode?: string | null,
     message?: string | null,
     occurredAt?: string | null,
     screenshot?: string | null,
-    context?: Record<string, unknown> | null
+    context?: Record<string, any> | null
   }[] | null
 }[]
 ```
@@ -1300,7 +1304,7 @@ await corsair.kadoa.api.workflows.jobStatus({ workflowId: '7f3c1a2e-9b4d-4c6e-8a
 | `estimatedFinishedAtUtc` | `string \| null` | No | — |
 | `limit` | `number \| null` | No | — |
 | `workflowId` | `string \| null` | No | — |
-| `variables` | `Record<string, unknown> \| null` | No | — |
+| `variables` | `Record<string, any> \| null` | No | — |
 | `errors` | `object[] \| null` | No | — |
 
 <AccordionGroup>
@@ -1312,7 +1316,7 @@ await corsair.kadoa.api.workflows.jobStatus({ workflowId: '7f3c1a2e-9b4d-4c6e-8a
   message?: string | null,
   occurredAt?: string | null,
   screenshot?: string | null,
-  context?: Record<string, unknown> | null
+  context?: Record<string, any> | null
 }[] | null
 ```
 </Accordion>
@@ -1410,7 +1414,7 @@ Pages by offset. Pass `nextSkip` back as `skip`; a page that comes back short is
     message?: string | null,
     occurredAt?: string | null,
     screenshot?: string | null,
-    context?: Record<string, unknown> | null
+    context?: Record<string, any> | null
   }[] | null,
   templateId?: string | null,
   templateVersion?: number | null,
