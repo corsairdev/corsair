@@ -2,11 +2,7 @@ import {
 	GigasheetEndpointInputSchemas,
 	GigasheetEndpointOutputSchemas,
 } from './endpoints/types';
-import {
-	gigasheet,
-	gigasheetAuthConfig,
-	PUBLIC_ENDPOINTS,
-} from './index';
+import { gigasheet, gigasheetAuthConfig, PUBLIC_ENDPOINTS } from './index';
 import { GigasheetSchema } from './schema';
 
 describe('Gigasheet Schema & Types', () => {
