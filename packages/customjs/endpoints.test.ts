@@ -585,7 +585,7 @@ describe('scrape.page', () => {
 		[
 			{
 				url: 'https://example.com',
-				commands: [{ action: 'extract', selector: 'h1' }],
+				commands: [{ action: 'extract', selector: 'h1', as: '' }],
 			},
 		],
 		[
