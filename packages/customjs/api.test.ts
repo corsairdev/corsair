@@ -5,7 +5,7 @@ import { captureError } from './test-helpers';
 
 /**
  * Live smoke tests. They call the real API and are skipped unless a key is set,
- * so CI stays offline. A free key allows 20 calls a minute, so this suite makes a
+ * so CI stays offline. A free key allows 20 renders and runs a day, so this suite makes a
  * handful and asserts on the shape of each answer.
  *
  * Run with the key's own variable: CUSTOMJS_API_KEY=… pnpm test:live

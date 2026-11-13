@@ -103,7 +103,7 @@ describe('retry behaviour', () => {
 			key: 'customjs-test-key',
 		});
 		try {
-			respondRateLimited();
+			respondRateLimited('30');
 			respondPdf();
 
 			const result = await withFakeTimers(
@@ -126,7 +126,7 @@ describe('retry behaviour', () => {
 			key: 'customjs-test-key',
 		});
 		try {
-			respondRateLimited();
+			respondRateLimited('30');
 			fetchMock.mockResolvedValueOnce(
 				new Response(JSON.stringify(pageCreated), {
 					status: 201,
@@ -154,10 +154,10 @@ describe('retry behaviour', () => {
 			key: 'customjs-test-key',
 		});
 		try {
-			respondRateLimited();
-			respondRateLimited();
-			respondRateLimited();
-			respondRateLimited();
+			respondRateLimited('30');
+			respondRateLimited('30');
+			respondRateLimited('30');
+			respondRateLimited('30');
 
 			const error = await withFakeTimers(
 				captureError(
@@ -168,6 +168,26 @@ describe('retry behaviour', () => {
 			expect(error).toMatchObject({ isRateLimit: true, status: 403 });
 			// One attempt plus the three the handler allows.
 			expect(fetchMock).toHaveBeenCalledTimes(4);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	// The live 403 for a used-up day has no Retry-After, and the quota stays
+	// closed until the next day, so the call fails at once.
+	it('does not retry an exhausted daily quota', async () => {
+		const { corsair, testDb } = await createClient({
+			key: 'customjs-test-key',
+		});
+		try {
+			respondRateLimited();
+
+			const error = await captureError(
+				corsair.customjs.api.pdf.fromHtml({ html: '<h1>Hello</h1>' }),
+			);
+
+			expect(error).toMatchObject({ isRateLimit: true, status: 403 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}
@@ -311,15 +331,20 @@ describe('retry behaviour', () => {
 		}
 	});
 
-	// CustomJS sends no reset time, so this pins the fallback the plugin uses when
-	// there is no Retry-After header: the whole 60s window, stepped by hand.
-	it('waits the whole window when no Retry-After is sent', async () => {
+	// A 429 with no reset time: this pins the fallback the plugin uses when there
+	// is no Retry-After header, the whole 60s window, stepped by hand.
+	it('waits the whole window on a 429 with no Retry-After', async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient({
 			key: 'customjs-test-key',
 		});
 		try {
-			respondRateLimited();
+			fetchMock.mockResolvedValueOnce(
+				new Response(JSON.stringify(tooManyRequests), {
+					status: 429,
+					headers: { 'Content-Type': 'application/json' },
+				}),
+			);
 			respondPdf();
 
 			const run = corsair.customjs.api.pdf.fromHtml({ html: '<h1>Hi</h1>' });

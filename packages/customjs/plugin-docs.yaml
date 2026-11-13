@@ -3,11 +3,11 @@ description: Render HTML or Markdown to PDF, capture screenshots after browser a
 domain: customjs.space
 recommendedAuth: api_key
 overviewNote: |
-  Get the key from app.customjs.space: sign in, then copy the value under **API Key** on the dashboard. The free tier allows 20 requests a minute and 600 a month.
+  Get the key from app.customjs.space: sign in, then copy the value under **API Key** on the dashboard. The free plan allows 20 renders and script runs a day (page calls are not counted).
 
   Things to know before you call:
 
-  - **An exhausted window answers 403, not 429.** The body is `{"message":"Too Many Requests"}`, so the plugin classifies a 403 by its body: a wrong key and an exhausted window share the status. The plugin retries the window up to three times, then reports `CustomjsAPIError` with `isRateLimit`.
+  - **An exhausted window answers 403, not 429.** The body is `{"message":"Too Many Requests"}`, so the plugin classifies a 403 by its body: a wrong key and an exhausted window share the status. On the free plan that 403 means the day's quota is used up and carries no reset time, so the plugin reports `CustomjsAPIError` with `isRateLimit` at once instead of retrying. A 429, or a 403 with `Retry-After`, is retried up to three times.
   - **Files come back base64 encoded.** `pdf.fromHtml`, `pdf.fromMarkdown`, `screenshot.capture` and `javascript.runBinary` return `{ base64, contentType, byteLength }`. Decode `base64` to write a file.
   - **`javascript.run` returns text, not parsed JSON.** The route answers `text/plain` whatever the script returns, so an object arrives JSON encoded in `output` and a script with no `return` arrives empty.
   - **Missing required fields render blank files.** CustomJS answers 200 with an empty PDF or PNG when `html` or `url` is absent, so the input schema requires them.

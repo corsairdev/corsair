@@ -19,28 +19,32 @@ function isServerFailure(error: Error): boolean {
 	return status !== undefined && status >= 500;
 }
 
-/** One CustomJS rate-limit window: 20 calls a minute on the free tier. */
+/** The wait for a 429 that names no reset time. */
 export const RATE_LIMIT_WINDOW_MS = 60_000;
 
 export const errorHandlers = {
-	// CustomJS answers an exhausted window with 403 and the body
-	// `{"message":"Too Many Requests"}`, not 429: the window is per workspace and
-	// the count is in `x-ratelimit-remaining`.
-	//
-	// CustomJS does not document a reset time and sent no `Retry-After` in any
-	// probe, so the fallback is the whole window. Core applies
-	// `headersRetryAfterMs` verbatim on every attempt, so the default 1s/2s/4s
-	// backoff would spend all four attempts inside the same exhausted window and
-	// report a rate-limit error while it was still closed.
+	// CustomJS answers an exhausted quota with 403 and the body
+	// `{"message":"Too Many Requests"}`, not 429. On the live API (11-14) that
+	// quota is per day (the free plan's 20 renders and executions, counted in
+	// `x-ratelimit-remaining`), and the 403 carries no `Retry-After` and no
+	// rate-limit headers. A retry inside the same day cannot succeed, so that 403
+	// is reported at once. A 429, or a 403 that names a reset time, is retried.
 	RATE_LIMIT_ERROR: {
 		match: isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				(error instanceof CustomjsAPIError ? error.retryAfter : undefined) ??
-				RATE_LIMIT_WINDOW_MS,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) => {
+			const retryAfter =
+				error instanceof CustomjsAPIError ? error.retryAfter : undefined;
+			const status =
+				error instanceof CustomjsAPIError ? error.status : undefined;
+			if (status === 403 && retryAfter === undefined) {
+				return { maxRetries: 0 };
+			}
+			return {
+				maxRetries: 3,
+				headersRetryAfterMs: retryAfter ?? RATE_LIMIT_WINDOW_MS,
+				retryStrategy: 'exponential_backoff' as const,
+			};
+		},
 	},
 	// The key is wrong, expired, or was never issued. A retry sends the same key.
 	AUTH_ERROR: {

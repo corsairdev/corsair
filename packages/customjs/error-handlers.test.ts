@@ -90,16 +90,22 @@ describe('error handler decisions', () => {
 		});
 	});
 
-	it('waits the whole window when no Retry-After is sent', async () => {
+	// The live 403 for an exhausted day carries no Retry-After; a retry within
+	// the same day cannot succeed.
+	it('does not retry an exhausted daily quota (403, no Retry-After)', async () => {
 		const decision = await decide(
 			errorHandlers.RATE_LIMIT_ERROR,
 			error(403, { providerMessage: 'Too Many Requests' }),
 		);
 
+		expect(decision).toMatchObject({ maxRetries: 0 });
+	});
+
+	it('waits a minute on a 429 that names no reset time', async () => {
+		const decision = await decide(errorHandlers.RATE_LIMIT_ERROR, error(429));
+
 		expect(decision).toMatchObject({
 			maxRetries: 3,
-			// CustomJS sends no reset time, so the fallback is the full 60s window.
-			// A 1s/2s/4s backoff would spend every attempt inside the closed window.
 			headersRetryAfterMs: 60_000,
 		});
 	});
