@@ -334,7 +334,9 @@ export function gigasheet<const T extends GigasheetPluginOptions>(
 		keyBuilder: async (ctx: GigasheetKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
 			if (options.key) return options.key;
-			if (PUBLIC_ENDPOINTS.has(ctx.meteredOperationId ?? '')) return '';
+			if (PUBLIC_ENDPOINTS.has(ctx.meteredOperationId ?? '')) {
+				return (await ctx.keys?.get_api_key()) || '';
+			}
 			if (!ctx.keys) throw new AuthMissingError('gigasheet', 'api_key');
 			const apiKey = await ctx.keys.get_api_key();
 			if (!apiKey) throw new AuthMissingError('gigasheet', 'api_key');

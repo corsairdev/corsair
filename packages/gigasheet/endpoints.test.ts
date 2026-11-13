@@ -118,6 +118,21 @@ describe('Gigasheet Endpoints', () => {
 				'completed',
 			);
 		});
+
+		it('parses object response with bytesUsed property', async () => {
+			mockRequest.mockResolvedValue({ bytesUsed: 2048 });
+
+			const res = await User.getSpaceUsed(mockCtx, {});
+			expect(res).toEqual({ bytesUsed: 2048 });
+		});
+
+		it('throws GigasheetAPIError when provider returns unrecognized response shape', async () => {
+			mockRequest.mockResolvedValue('invalid string data');
+
+			await expect(User.getSpaceUsed(mockCtx, {})).rejects.toThrow(
+				'Invalid response format from /user/space-used',
+			);
+		});
 	});
 
 	describe('user.getEnrichmentCredits', () => {

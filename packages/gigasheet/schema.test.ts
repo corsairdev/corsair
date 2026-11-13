@@ -26,6 +26,29 @@ describe('Gigasheet Schema & Types', () => {
 		expect(PUBLIC_ENDPOINTS.has('user.whoami')).toBe(true);
 	});
 
+	it('keyBuilder returns stored key for user.whoami when available, and empty string when missing', async () => {
+		const plugin = gigasheet();
+		const withKeyCtx = {
+			meteredOperationId: 'user.whoami',
+			keys: {
+				get_api_key: jest.fn().mockResolvedValue('stored_secret_key'),
+			},
+		};
+		// @ts-expect-error test minimal mock context
+		const keyResult = await plugin.keyBuilder(withKeyCtx, 'endpoint');
+		expect(keyResult).toBe('stored_secret_key');
+
+		const withoutKeyCtx = {
+			meteredOperationId: 'user.whoami',
+			keys: {
+				get_api_key: jest.fn().mockResolvedValue(undefined),
+			},
+		};
+		// @ts-expect-error test minimal mock context
+		const emptyResult = await plugin.keyBuilder(withoutKeyCtx, 'endpoint');
+		expect(emptyResult).toBe('');
+	});
+
 	it('keeps endpoint registry, schema map, and metadata keys in perfect sync', () => {
 		const plugin = gigasheet();
 		expect(plugin.endpoints).toBeDefined();

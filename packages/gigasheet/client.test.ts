@@ -84,6 +84,22 @@ describe('makeGigasheetRequest', () => {
 		});
 	});
 
+	it('preserves request body on DELETE operations (e.g. rows.deleteRows)', async () => {
+		mockRequest.mockResolvedValue({ Success: true });
+
+		await makeGigasheetRequest('/dataset/test_handle/delete-rows', 'test-key-123', {
+			method: 'DELETE',
+			body: { Rows: [1, 2, 3] },
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'DELETE',
+			url: '/dataset/test_handle/delete-rows',
+			body: { Rows: [1, 2, 3] },
+		});
+	});
+
 	it('makes unauthenticated requests without X-GIGASHEET-TOKEN when key is undefined', async () => {
 		mockRequest.mockResolvedValue({ username: '', authenticated: false });
 

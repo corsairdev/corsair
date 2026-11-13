@@ -61,12 +61,22 @@ describeLive('Gigasheet live API (env-gated, read-only)', () => {
 			{ method: 'GET' },
 		);
 
-		const normalized =
-			typeof raw === 'number'
-				? { bytesUsed: raw }
-				: typeof raw === 'object' && raw !== null && 'bytesUsed' in raw
-					? (raw as { bytesUsed: number })
-					: { bytesUsed: 0 };
+		let normalized: { bytesUsed: number };
+		if (typeof raw === 'number' && Number.isFinite(raw)) {
+			normalized = { bytesUsed: raw };
+		} else if (
+			typeof raw === 'object' &&
+			raw !== null &&
+			'bytesUsed' in raw &&
+			typeof (raw as Record<string, unknown>).bytesUsed === 'number' &&
+			Number.isFinite((raw as Record<string, unknown>).bytesUsed)
+		) {
+			normalized = { bytesUsed: (raw as { bytesUsed: number }).bytesUsed };
+		} else {
+			throw new Error(
+				'Invalid response format from /user/space-used: expected numeric byte count or { bytesUsed: number }',
+			);
+		}
 
 		const parsed = UserGetSpaceUsedOutputSchema.parse(normalized);
 		expect(typeof parsed.bytesUsed).toBe('number');

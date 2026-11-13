@@ -21,8 +21,7 @@ export const fromUrl: GigasheetEndpoints['upload.fromUrl'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			// `unknown` because payload is dynamically shaped JSON validated by Zod above.
-			body: parsedInput as unknown as Record<string, unknown>,
+			body: parsedInput,
 		},
 	);
 
@@ -50,8 +49,7 @@ export const direct: GigasheetEndpoints['upload.direct'] = async (
 		ctx.key,
 		{
 			method: 'POST',
-			// `unknown` because payload is dynamically shaped JSON validated by Zod above.
-			body: parsedInput as unknown as Record<string, unknown>,
+			body: parsedInput,
 		},
 	);
 
