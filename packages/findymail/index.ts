@@ -275,7 +275,10 @@ const findymailEndpointMeta = {
 	},
 	'lists.create': { riskLevel: 'write', description: 'Create a new list' },
 	'lists.replace': { riskLevel: 'write', description: 'Update a contact list' },
-	'lists.delete': { riskLevel: 'write', description: 'Delete a given list' },
+	'lists.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a given list',
+	},
 	'contacts.list': { riskLevel: 'read', description: 'Get contacts saved' },
 	'search.name': { riskLevel: 'write', description: 'Find from name' },
 	'search.businessProfile': {
@@ -299,7 +302,7 @@ const findymailEndpointMeta = {
 		description: 'Update an exclusion list',
 	},
 	'exclusionLists.delete': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete an exclusion list',
 	},
 	'excludedDomains.list': {
@@ -311,7 +314,7 @@ const findymailEndpointMeta = {
 		description: 'Add excluded domains',
 	},
 	'excludedDomains.remove': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Remove excluded domains',
 	},
 	'intellimatch.search': { riskLevel: 'write', description: 'Search leads' },
@@ -338,7 +341,10 @@ const findymailEndpointMeta = {
 	'monitors.list': { riskLevel: 'read', description: 'List monitors' },
 	'monitors.create': { riskLevel: 'write', description: 'Create a monitor' },
 	'monitors.update': { riskLevel: 'write', description: 'Update a monitor' },
-	'monitors.delete': { riskLevel: 'write', description: 'Delete a monitor' },
+	'monitors.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a monitor',
+	},
 	'signals.get': { riskLevel: 'read', description: 'Get a signal' },
 	'technologies.search': {
 		riskLevel: 'read',

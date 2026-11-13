@@ -66,7 +66,8 @@ export const lists_replaceOutput = z
 export const lists_deleteInput = z.object({
 	id: z.number().int().nonnegative(),
 });
-export const lists_deleteOutput = z.record(z.string(), z.unknown());
+// The documented success body is an empty object; retain additional fields if the provider adds them.
+export const lists_deleteOutput = z.object({}).loose();
 
 export const contacts_listInput = z.object({
 	id: z.number().int().nonnegative(),
@@ -96,54 +97,28 @@ export const search_nameInput = z.object({
 	domain: z.string(),
 	webhook_url: z.string().optional(),
 });
-export const search_nameOutput = z.union([
-	z
-		.object({
-			contact: z
-				.object({
-					name: z.string().optional(),
-					domain: z.string().optional(),
-					email: z.string().optional(),
-				})
-				.loose()
-				.optional(),
-		})
-		.loose(),
-	z
-		.object({
-			payload: z
-				.object({
-					contact: z
-						.object({
-							name: z.string().optional(),
-							email: z.string().optional(),
-							domain: z.string().optional(),
-						})
-						.loose()
-						.optional(),
-				})
-				.loose()
-				.optional(),
-		})
-		.loose(),
-]);
+const searchContact = z
+	.object({
+		name: z.string().optional(),
+		domain: z.string().optional(),
+		email: z.string().optional(),
+	})
+	.loose();
+
+// Findymail shows direct results and callback payloads; validate both whenever present.
+const searchContactResponse = z
+	.object({
+		contact: searchContact.optional(),
+		payload: z.object({ contact: searchContact.optional() }).loose().optional(),
+	})
+	.loose();
+export const search_nameOutput = searchContactResponse;
 
 export const search_businessProfileInput = z.object({
 	linkedin_url: z.string(),
 	webhook_url: z.string().optional(),
 });
-export const search_businessProfileOutput = z
-	.object({
-		contact: z
-			.object({
-				name: z.string().optional(),
-				domain: z.string().optional(),
-				email: z.string().optional(),
-			})
-			.loose()
-			.optional(),
-	})
-	.loose();
+export const search_businessProfileOutput = searchContactResponse;
 
 export const exclusionLists_listInput = z.object({});
 export const exclusionLists_listOutput = z
@@ -361,88 +336,78 @@ export const intellimatch_lookalikesInput = z.object({
 	limit: z.number().int().optional(),
 	exclusion_list_ids: z.array(z.number().int()).optional(),
 });
-export const intellimatch_lookalikesOutput = z.union([
-	z
-		.object({
-			companies: z
-				.array(
-					z
-						.object({
-							domain: z.string().optional(),
-							name: z.string().optional(),
-							linkedin_url: z.string().optional(),
-							company_size: z.string().optional(),
-							country: z.string().optional(),
-						})
-						.loose(),
-				)
-				.optional(),
-			total: z.number().int().optional(),
-			credits_used: z.number().int().optional(),
-		})
-		.loose(),
-	z
-		.object({
-			companies: z.array(z.unknown()).optional(),
-			total: z.number().int().optional(),
-			credits_used: z.number().int().optional(),
-			message: z.string().optional(),
-		})
-		.loose(),
-]);
+export const intellimatch_lookalikesOutput = z
+	.object({
+		companies: z
+			.array(
+				z
+					.object({
+						domain: z.string().optional(),
+						name: z.string().optional(),
+						linkedin_url: z.string().optional(),
+						company_size: z.string().optional(),
+						country: z.string().optional(),
+					})
+					.loose(),
+			)
+			.optional(),
+		total: z.number().int().optional(),
+		credits_used: z.number().int().optional(),
+		message: z.string().optional(),
+	})
+	.loose();
 
 export const search_reverseEmailInput = z.object({
 	email: z.string(),
 	with_profile: z.boolean().optional(),
 });
-export const search_reverseEmailOutput = z.union([
-	z.object({ linkedin_url: z.string().optional() }).loose(),
-	z
-		.object({
-			fullName: z.string().optional(),
-			username: z.string().optional(),
-			headline: z.string().optional(),
-			jobTitle: z.string().optional(),
-			summary: z.string().optional(),
-			city: z.string().optional(),
-			region: z.string().optional(),
-			country: z.string().optional(),
-			companyLinkedinUrl: z.string().optional(),
-			companyName: z.string().optional(),
-			companyWebsite: z.string().optional(),
-			isPremium: z.boolean().optional(),
-			isOpenProfile: z.boolean().optional(),
-			skills: z.array(z.unknown()).optional(),
-			jobs: z.array(z.unknown()).optional(),
-			educations: z
-				.array(
-					z
-						.object({
-							school: z.string().optional(),
-							degree: z.string().optional(),
-							fieldOfStudy: z.string().optional(),
-							startDate: z.string().optional(),
-							endDate: z.string().optional(),
-						})
-						.loose(),
-				)
-				.optional(),
-			certificates: z
-				.array(
-					z
-						.object({
-							name: z.string().optional(),
-							issuingOrganization: z.string().optional(),
-							issueDate: z.string().optional(),
-							expirationDate: z.string().optional(),
-						})
-						.loose(),
-				)
-				.optional(),
-		})
-		.loose(),
-	z.object({ linkedin_url: z.string().nullable().optional() }).loose(),
-]);
+export const search_reverseEmailOutput = z
+	.object({
+		linkedin_url: z.string().nullable().optional(),
+		fullName: z.string().optional(),
+		username: z.string().optional(),
+		headline: z.string().optional(),
+		jobTitle: z.string().optional(),
+		summary: z.string().optional(),
+		city: z.string().optional(),
+		region: z.string().optional(),
+		country: z.string().optional(),
+		companyLinkedinUrl: z.string().optional(),
+		companyName: z.string().optional(),
+		companyWebsite: z.string().optional(),
+		isPremium: z.boolean().optional(),
+		isOpenProfile: z.boolean().optional(),
+		// The provider examples leave the skills and jobs array item shapes unspecified.
+		// Keep elements unknown rather than inventing a stricter profile contract.
+		skills: z.array(z.unknown()).optional(),
+		jobs: z.array(z.unknown()).optional(),
+		educations: z
+			.array(
+				z
+					.object({
+						school: z.string().optional(),
+						degree: z.string().optional(),
+						fieldOfStudy: z.string().optional(),
+						startDate: z.string().optional(),
+						endDate: z.string().optional(),
+					})
+					.loose(),
+			)
+			.optional(),
+		certificates: z
+			.array(
+				z
+					.object({
+						name: z.string().optional(),
+						issuingOrganization: z.string().optional(),
+						issueDate: z.string().optional(),
+						expirationDate: z.string().optional(),
+					})
+					.loose(),
+			)
+			.optional(),
+	})
+	.loose();
 
 export const search_companyInput = z.object({
 	linkedin_url: z.string().optional(),
@@ -803,31 +768,23 @@ export const technologies_lookupInput = z.object({
 	domain: z.string(),
 	technologies: z.array(z.string()).optional(),
 });
-export const technologies_lookupOutput = z.union([
-	z
-		.object({
-			domain: z.string().optional(),
-			technologies: z
-				.array(
-					z
-						.object({
-							name: z.string().optional(),
-							category: z.string().optional(),
-							subcategory: z.string().optional(),
-							last_detected_at: z.string().optional(),
-						})
-						.loose(),
-				)
-				.optional(),
-		})
-		.loose(),
-	z
-		.object({
-			domain: z.string().optional(),
-			technologies: z.array(z.unknown()).optional(),
-		})
-		.loose(),
-]);
+export const technologies_lookupOutput = z
+	.object({
+		domain: z.string().optional(),
+		technologies: z
+			.array(
+				z
+					.object({
+						name: z.string().optional(),
+						category: z.string().optional(),
+						subcategory: z.string().optional(),
+						last_detected_at: z.string().optional(),
+					})
+					.loose(),
+			)
+			.optional(),
+	})
+	.loose();
 
 export const usage_creditsInput = z.object({ type: z.string().optional() });
 export const usage_creditsOutput = z.union([

@@ -15,9 +15,9 @@ pnpm add @corsair-dev/findymail
 | `contacts.list` | `findymail.api.contacts.list` | `read` | Get contacts saved |
 | `excludedDomains.add` | `findymail.api.excludedDomains.add` | `write` | Add excluded domains |
 | `excludedDomains.list` | `findymail.api.excludedDomains.list` | `read` | Get excluded domains |
-| `excludedDomains.remove` | `findymail.api.excludedDomains.remove` | `write` | Remove excluded domains |
+| `excludedDomains.remove` | `findymail.api.excludedDomains.remove` | `destructive` | Remove excluded domains |
 | `exclusionLists.create` | `findymail.api.exclusionLists.create` | `write` | Create a new exclusion list |
-| `exclusionLists.delete` | `findymail.api.exclusionLists.delete` | `write` | Delete an exclusion list |
+| `exclusionLists.delete` | `findymail.api.exclusionLists.delete` | `destructive` | Delete an exclusion list |
 | `exclusionLists.get` | `findymail.api.exclusionLists.get` | `read` | Get exclusion list details |
 | `exclusionLists.list` | `findymail.api.exclusionLists.list` | `read` | Get all exclusion lists |
 | `exclusionLists.update` | `findymail.api.exclusionLists.update` | `write` | Update an exclusion list |
@@ -26,12 +26,12 @@ pnpm add @corsair-dev/findymail
 | `intellimatch.search` | `findymail.api.intellimatch.search` | `write` | Search leads |
 | `intellimatch.status` | `findymail.api.intellimatch.status` | `read` | Get export status |
 | `lists.create` | `findymail.api.lists.create` | `write` | Create a new list |
-| `lists.delete` | `findymail.api.lists.delete` | `write` | Delete a given list |
+| `lists.delete` | `findymail.api.lists.delete` | `destructive` | Delete a given list |
 | `lists.list` | `findymail.api.lists.list` | `read` | Get the list of contact lists |
 | `lists.replace` | `findymail.api.lists.replace` | `write` | Update a contact list |
 | `lists.update` | `findymail.api.lists.update` | `write` | Update a contact list (PATCH) |
 | `monitors.create` | `findymail.api.monitors.create` | `write` | Create a monitor |
-| `monitors.delete` | `findymail.api.monitors.delete` | `write` | Delete a monitor |
+| `monitors.delete` | `findymail.api.monitors.delete` | `destructive` | Delete a monitor |
 | `monitors.list` | `findymail.api.monitors.list` | `read` | List monitors |
 | `monitors.update` | `findymail.api.monitors.update` | `write` | Update a monitor |
 | `search.businessProfile` | `findymail.api.search.businessProfile` | `write` | Find from business profile |

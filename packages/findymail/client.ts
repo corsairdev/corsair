@@ -4,10 +4,12 @@ import { request } from 'corsair/http';
 
 export const FINDYMAIL_API_BASE = 'https://app.findymail.com';
 
-export async function makeFindymailRequest<T>(
+// The HTTP response is untrusted JSON, so no narrower type is sound until an
+// endpoint's Zod output schema validates it.
+export async function makeFindymailRequest(
 	key: string,
 	options: ApiRequestOptions,
-): Promise<T> {
+): Promise<unknown> {
 	if (!key?.trim()) throw new AuthMissingError('findymail', 'api_key');
 	const config: OpenAPIConfig = {
 		BASE: FINDYMAIL_API_BASE,
@@ -17,7 +19,7 @@ export async function makeFindymailRequest<T>(
 		TOKEN: key,
 		ENCODE_PATH: encodeURIComponent,
 	};
-	return request<T>(config, options, {
+	return request<unknown>(config, options, {
 		rateLimitConfig: {
 			enabled: true,
 			maxRetries: 0,

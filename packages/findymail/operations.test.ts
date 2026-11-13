@@ -1,4 +1,4 @@
-import { createCorsair } from 'corsair/core';
+import { createCorsair, runWithMode } from 'corsair/core';
 import {
 	FindymailEndpointInputSchemas,
 	FindymailEndpointOutputSchemas,
@@ -25,6 +25,8 @@ const monitor = {
 	max_matches: null,
 };
 
+// This table combines 36 different endpoint shapes; no single narrower response
+// or body type represents all provider fixtures before their schemas parse them.
 type Operation = {
 	name: keyof typeof findymailEndpointSchemas;
 	call: () => Promise<unknown>;
@@ -422,6 +424,94 @@ it('covers every registered operation', () => {
 	);
 });
 
+it.each(['cautious', 'strict'] as const)(
+	'blocks every deletion before sending a request in %s mode',
+	async (mode) => {
+		const deletes = [
+			() => api.lists.delete({ id: 1 }),
+			() => api.exclusionLists.delete({ excludedDomainList_id: 1 }),
+			() => api.excludedDomains.remove({ ids: [1] }),
+			() => api.monitors.delete({ id: 1 }),
+		];
+		await runWithMode(mode, async () => {
+			for (const remove of deletes) {
+				await expect(remove()).rejects.toMatchObject({
+					name: 'PermissionRequiredError',
+				});
+			}
+		});
+		expect(fetchMock).not.toHaveBeenCalled();
+	},
+);
+
+it.each([
+	{
+		name: 'direct contact',
+		call: () => api.search.name({ name: 'A', domain: 'a.com' }),
+		response: { contact: { email: 123 } },
+	},
+	{
+		name: 'callback contact',
+		call: () => api.search.name({ name: 'A', domain: 'a.com' }),
+		response: { payload: { contact: { email: 123 } } },
+	},
+	{
+		name: 'business callback',
+		call: () => api.search.businessProfile({ linkedin_url: 'a' }),
+		response: { payload: { contact: { email: 123 } } },
+	},
+	{
+		name: 'reverse profile',
+		call: () => api.search.reverseEmail({ email: 'a@b.com' }),
+		response: { fullName: 123 },
+	},
+	{
+		name: 'reverse url',
+		call: () => api.search.reverseEmail({ email: 'a@b.com' }),
+		response: { linkedin_url: 42 },
+	},
+	{
+		name: 'lookalike company',
+		call: () => api.intellimatch.lookalikes({ seed: 'a.com' }),
+		response: { companies: [{ name: 123 }] },
+	},
+	{
+		name: 'technology',
+		call: () => api.technologies.lookup({ domain: 'a.com' }),
+		response: { technologies: [{ name: 123 }] },
+	},
+])(
+	'rejects malformed $name response fields at the public seam',
+	async ({ call, response }) => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(response), {
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await expect(call()).rejects.toBeDefined();
+	},
+);
+
+it('accepts documented synchronous and callback name search responses', async () => {
+	for (const response of [
+		{ contact: { name: 'A', email: 'a@example.com', domain: 'example.com' } },
+		{
+			payload: {
+				contact: { name: 'A', email: 'a@example.com', domain: 'example.com' },
+			},
+		},
+	]) {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(response), {
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await expect(
+			api.search.name({ name: 'A', domain: 'example.com' }),
+		).resolves.toEqual(response);
+	}
+});
+
 it.each(cases)(
 	'$name sends the documented request and parses the response',
 	async ({ call, method, path, body, status = 200, response }) => {
@@ -433,6 +523,7 @@ it.each(cases)(
 		);
 		expect(await call()).toEqual(response);
 		expect(fetchMock).toHaveBeenCalledTimes(1);
+		// The transport always calls fetch(url, options); Jest's untyped spy loses that tuple.
 		const [url, request] = fetchMock.mock.calls[0] as [string, RequestInit];
 		expect(url).toBe(`https://app.findymail.com${path}`);
 		expect(request.method).toBe(method);
@@ -444,13 +535,17 @@ it.each(cases)(
 			expect(new Headers(request.headers).get('Content-Type')).toBe(
 				'application/json',
 			);
-			expect(JSON.parse(request.body as string)).toEqual(body);
+			if (typeof request.body !== 'string')
+				throw new Error('Expected JSON body');
+			expect(JSON.parse(request.body)).toEqual(body);
 		}
 	},
 );
 
 it('rejects unsafe path IDs before making a request', async () => {
 	for (const id of ['', '.', '..', '1/2', '1\\2', '"1"', -1]) {
+		// Intentionally bypass the static number type to exercise runtime rejection
+		// of untyped callers; valid TypeScript inputs cannot express these values.
 		await expect(api.lists.delete({ id: id as number })).rejects.toBeDefined();
 	}
 	expect(fetchMock).not.toHaveBeenCalled();
@@ -466,10 +561,13 @@ it('accepts documented tiered job titles and rejects more than three tiers', asy
 		query: 'SaaS',
 		config: { target_job_titles: [['RevOps'], ['CEO', 'CTO']] },
 	});
-	expect(
-		JSON.parse(fetchMock.mock.calls[0][1].body as string).config
-			.target_job_titles,
-	).toEqual([['RevOps'], ['CEO', 'CTO']]);
+	// The spy erases fetch's argument types; the transport sends a RequestInit here.
+	const request = fetchMock.mock.calls[0][1] as RequestInit;
+	if (typeof request.body !== 'string') throw new Error('Expected JSON body');
+	expect(JSON.parse(request.body).config.target_job_titles).toEqual([
+		['RevOps'],
+		['CEO', 'CTO'],
+	]);
 	await expect(
 		api.intellimatch.search({
 			query: 'SaaS',

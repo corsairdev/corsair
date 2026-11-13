@@ -151,7 +151,7 @@ await corsair.findymail.api.excludedDomains.list({});
 
 Remove excluded domains
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.findymail.api.excludedDomains.remove({ ids: [1] });
@@ -227,7 +227,7 @@ await corsair.findymail.api.exclusionLists.create({ name: 'Competitors' });
 
 Delete an exclusion list
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.findymail.api.exclusionLists.delete({ excludedDomainList_id: 1 });
@@ -400,31 +400,30 @@ await corsair.findymail.api.intellimatch.lookalikes({ seed: 'example.com' });
 
 
 
-**Output:** `object`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companies` | `object[]` | No | — |
+| `total` | `number` | No | — |
+| `credits_used` | `number` | No | — |
+| `message` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="companies full type">
 
 ```ts
 {
-  companies?: {
-    domain?: string,
-    name?: string,
-    linkedin_url?: string,
-    company_size?: string,
-    country?: string
-  }[],
-  total?: number,
-  credits_used?: number
-} | {
-  companies?: any[],
-  total?: number,
-  credits_used?: number,
-  message?: string
-}
+  domain?: string,
+  name?: string,
+  linkedin_url?: string,
+  company_size?: string,
+  country?: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -640,7 +639,7 @@ await corsair.findymail.api.lists.create({ name: 'Prospects' });
 
 Delete a given list
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.findymail.api.lists.delete({ id: 1 });
@@ -654,7 +653,7 @@ await corsair.findymail.api.lists.delete({ id: 1 });
 
 
 
-**Output:** `Record<string, any>`
+**Output:** _empty object_
 
 
 ---
@@ -866,7 +865,7 @@ await corsair.findymail.api.monitors.create({ name: 'Hiring', signal_type: 'keyw
 
 Delete a monitor
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.findymail.api.monitors.delete({ id: 1 });
@@ -1058,6 +1057,7 @@ await corsair.findymail.api.search.businessProfile({ linkedin_url: 'johndoe' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `contact` | `object` | No | — |
+| `payload` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="contact full type">
@@ -1067,6 +1067,19 @@ await corsair.findymail.api.search.businessProfile({ linkedin_url: 'johndoe' });
   name?: string,
   domain?: string,
   email?: string
+}
+```
+</Accordion>
+
+<Accordion title="payload full type">
+
+```ts
+{
+  contact?: {
+    name?: string,
+    domain?: string,
+    email?: string
+  }
 }
 ```
 </Accordion>
@@ -1177,10 +1190,26 @@ await corsair.findymail.api.search.name({ name: 'John Doe', domain: 'example.com
 
 
 
-**Output:** `object`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | No | — |
+| `payload` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="contact full type">
+
+```ts
+{
+  name?: string,
+  domain?: string,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="payload full type">
 
 ```ts
 {
@@ -1189,18 +1218,11 @@ await corsair.findymail.api.search.name({ name: 'John Doe', domain: 'example.com
     domain?: string,
     email?: string
   }
-} | {
-  payload?: {
-    contact?: {
-      name?: string,
-      email?: string,
-      domain?: string
-    }
-  }
 }
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -1266,49 +1288,56 @@ await corsair.findymail.api.search.reverseEmail({ email: 'john@example.com' });
 
 
 
-**Output:** `object`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkedin_url` | `string \| null` | No | — |
+| `fullName` | `string` | No | — |
+| `username` | `string` | No | — |
+| `headline` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `summary` | `string` | No | — |
+| `city` | `string` | No | — |
+| `region` | `string` | No | — |
+| `country` | `string` | No | — |
+| `companyLinkedinUrl` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyWebsite` | `string` | No | — |
+| `isPremium` | `boolean` | No | — |
+| `isOpenProfile` | `boolean` | No | — |
+| `skills` | `any[]` | No | — |
+| `jobs` | `any[]` | No | — |
+| `educations` | `object[]` | No | — |
+| `certificates` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="educations full type">
 
 ```ts
 {
-  linkedin_url?: string
-} | {
-  fullName?: string,
-  username?: string,
-  headline?: string,
-  jobTitle?: string,
-  summary?: string,
-  city?: string,
-  region?: string,
-  country?: string,
-  companyLinkedinUrl?: string,
-  companyName?: string,
-  companyWebsite?: string,
-  isPremium?: boolean,
-  isOpenProfile?: boolean,
-  skills?: any[],
-  jobs?: any[],
-  educations?: {
-    school?: string,
-    degree?: string,
-    fieldOfStudy?: string,
-    startDate?: string,
-    endDate?: string
-  }[],
-  certificates?: {
-    name?: string,
-    issuingOrganization?: string,
-    issueDate?: string,
-    expirationDate?: string
-  }[]
-} | {
-  linkedin_url?: string | null
-}
+  school?: string,
+  degree?: string,
+  fieldOfStudy?: string,
+  startDate?: string,
+  endDate?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="certificates full type">
+
+```ts
+{
+  name?: string,
+  issuingOrganization?: string,
+  issueDate?: string,
+  expirationDate?: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -1518,27 +1547,27 @@ await corsair.findymail.api.technologies.lookup({ domain: 'example.com' });
 
 
 
-**Output:** `object`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `technologies` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="technologies full type">
 
 ```ts
 {
-  domain?: string,
-  technologies?: {
-    name?: string,
-    category?: string,
-    subcategory?: string,
-    last_detected_at?: string
-  }[]
-} | {
-  domain?: string,
-  technologies?: any[]
-}
+  name?: string,
+  category?: string,
+  subcategory?: string,
+  last_detected_at?: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
