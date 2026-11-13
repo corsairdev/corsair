@@ -10,7 +10,7 @@ overviewNote: |
   - **The pair mints a token, and the token expires.** The plugin posts the pair to `/api/token` with `grant_type=password`, caches the token for the hour GageList allows, and mints a new one after a 401. A `401` from a protected route means the token was refused, not that the pair is wrong; a rejected pair comes back from the token endpoint as `invalid_client`.
   - **Field names are PascalCase and case-sensitive.** The API binds `SerialNumber`, `CalibrationDueDate` and so on, and one of them is misspelled in the API itself: `DateAquired`, not `DateAcquired`. Use the API's spelling.
   - **The lists are POST, not GET.** `gages.list`, `calibrations.list` and `manufacturers.list` take their paging in the request body as `start` and `record_number`, and answer `total` plus `count`. The plugin returns `next_start`, which is null on the last page.
-  - **An update replaces the record.** `gages.update` and `calibrations.update` take the whole object with its `Id`, so a field left out is not "unchanged" in the way a PATCH would leave it; send the fields you mean to keep.
+  - **An update replaces the record.** `gages.update` and `calibrations.update` take the whole object with its `Id`, so a field left out is not "unchanged" in the way a PATCH would leave it. Read the record with `gages.get` or `calibrations.get`, change the fields you mean to change, and send the whole record back.
   - **Deletes are POSTs.** GageList deletes with `POST` to a `Delete/{id}` path rather than an HTTP DELETE, and a gage is marked deleted rather than erased.
   - **The custom-value route takes a bare array.** `customFields.updateValues` posts `[{ FieldId, RefID, RefType, FieldValue }]`, not the usual object wrapper. `RefType` is `1` for a gage and `2` for a calibration, and a wrong one writes to the other table, so it is constrained to those two values.
   - **A certificate is a rendered document, not JSON.** `calibrations.certificate` returns it as a string on the result, which is what the renderer sends.
@@ -38,7 +38,7 @@ apiExamples:
   gages.create:
     call: "{ SerialNumber: 'SN-1001', Type: 'Caliper', Manufacturer: 'Mitutoyo', Years: 1, Location: 'Bench 3' }"
   gages.update:
-    call: "{ Id: 12, Location: 'Bench 4' }"
+    call: "{ ...(await corsair.gagelist.api.gages.get({ id: 12 })).data, Location: 'Bench 4' }"
   gages.delete:
     call: "{ id: 12 }"
   calibrations.list:
@@ -48,7 +48,7 @@ apiExamples:
   calibrations.create:
     call: "{ EquipmentRefId: 12, EquipmentAsFound: '0.01', EquipmentAsLeft: '0.00', CalibrationDueDate: '2027-04-24T00:00:00Z' }"
   calibrations.update:
-    call: "{ Id: 500, Uncertainty: '0.003' }"
+    call: "{ ...(await corsair.gagelist.api.calibrations.get({ id: 500 })).data, Uncertainty: '0.003' }"
   calibrations.delete:
     call: "{ id: 500 }"
   calibrations.certificate:
@@ -68,6 +68,7 @@ apiExamples:
 apiNotes:
   gages.list: 'Pages by `start` and `record_number` in the request body. `next_start` is null on the last page.'
   gages.create: 'Field names are PascalCase and bind case-sensitively. GageList spells the acquisition date `DateAquired`.'
-  gages.update: 'The body is the whole record with its `Id`, not a partial patch.'
+  gages.update: 'The body is the whole record with its `Id`, not a partial patch: read it with `gages.get` and send it back with your change.'
+  calibrations.update: 'The body is the whole record with its `Id`, not a partial patch: read it with `calibrations.get` and send it back with your change.'
   calibrations.certificate: 'Returns the rendered document as a string rather than JSON.'
   customFields.updateValues: 'Posts a bare JSON array. `RefType` is `1` for a gage and `2` for a calibration.'
