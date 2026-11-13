@@ -214,6 +214,8 @@ describe('sanity plugin through createCorsair', () => {
 						/Sanity webhook refused: The signature does not match/,
 					),
 				});
+				// Absent on older core, 500 on newer: never a success status.
+				expect([undefined, 500]).toContain(result.response?.statusCode);
 				expect(after).not.toHaveBeenCalled();
 			} finally {
 				testDb.cleanup();
