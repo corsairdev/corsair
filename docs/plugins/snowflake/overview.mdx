@@ -66,7 +66,9 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key and the account host. The account value is the identifier in `https://<account>.snowflakecomputing.com`, or that full URL. It can be passed as `account` on `snowflake()` or stored as the account credential.
+Store the Snowflake API key before the first call: `pnpm corsair setup --plugin=snowflake --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+Statement calls also need the account host. Pass `account` here, or store it as the account credential. It is the identifier in `https://<account>.snowflakecomputing.com`, or that full URL. That is separate from `corsair.withTenant()`.
 
 ```ts
 snowflake({

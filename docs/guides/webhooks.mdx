@@ -36,23 +36,29 @@ import { NextResponse } from 'next/server';
 import { corsair } from '@/server/corsair';
 
 export async function POST(request: NextRequest) {
-    const headers: Record<string, string> = {};
-    request.headers.forEach((value, key) => { headers[key] = value; });
+    const headers = Object.fromEntries(request.headers);
 
-    const body = request.headers.get('content-type')?.includes('application/json')
-        ? await request.json()
-        : await request.text();
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
 
-    // Include tenantId if you're using multi-tenancy
-    const tenantId = new URL(request.url).searchParams.get('tenantId') ?? undefined;
+    // With multi-tenancy, give each tenant its own URL (/api/webhook?tenantId=acme)
+    const query = Object.fromEntries(new URL(request.url).searchParams);
 
-    const result = await processWebhook(corsair, headers, body, { tenantId });
+    const result = await processWebhook(corsair, headers, body, query);
 
-    if (!result.response) {
+    if (!result.plugin) {
         return NextResponse.json({ success: false }, { status: 404 });
     }
 
-    return NextResponse.json(result.response);
+    // A refusal (bad signature, wrong secret) answers 400 so the sender doesn't
+    // redeliver it; a handler that threw comes back with 500, so the sender retries.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+
+    return NextResponse.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
 }
 ```
 
@@ -166,12 +172,25 @@ slack({
 ```
 Incoming webhook
     → Corsair reads headers to identify the plugin
+    → Finds the tenant (the URL's tenantId, or the plugin's stored webhook link)
     → Verifies signature against stored secret
     → Updates local database
     → Runs your webhookHooks.after() handler
 ```
 
 Every plugin shares the same endpoint. You never write routing logic.
+
+`processWebhook` returns `plugin` and `action` for the webhook that matched (`plugin` is `null` when none did), and a `response` to send back:
+
+| `response` | Meaning | Answer with |
+|---|---|---|
+| `{ success: true, ... }` | Handled. Some providers expect fields back, like Slack's `challenge`. | 200 |
+| `{ success: false, error }` with no `statusCode` | The plugin refused the delivery: a failed signature check or a wrong secret. | 400, so the sender doesn't redeliver a forged or misdirected request |
+| `{ success: false, error, statusCode: 500 }` | Your hook or the plugin's handler threw, or the tenant lookup failed. | 500, so the sender retries it |
+
+Set `responseHeaders` on the HTTP response too: a few providers (Asana's `X-Hook-Secret` handshake) need them.
+
+With `multiTenancy`, a URL that names no `tenantId` doesn't fall back to the `default` tenant blindly. Corsair asks the plugin that matched which account the delivery belongs to and uses the tenant linked to it. It uses `default` only when no tenant is linked, and refuses the delivery with a 500 if the lookup itself fails.
 
 
 ## What's next
