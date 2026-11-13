@@ -6,9 +6,25 @@ description: "Product analytics platform for event tracking, feature flags, sess
 
 Use **PostHog** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
 
+The key you connect decides what the plugin can do:
+
+- **Personal API key (`phx_...`)**: every action. Read actions call PostHog's private API (`/api/projects/{project_id}/...`), and capture looks up the project token (needs `project:read`). Create one under Settings → Personal API keys and tick the read scopes you need (see [Get Credentials](/plugins/posthog/get-credentials)).
+- **Project token (`phc_...`)**: the five capture actions only (`events.eventCreate`, `aliasCreate`, `identityCreate`, `trackPage`, `trackScreen`). Read actions throw an error asking for a personal key.
+
+Things to know before you call:
+
+- **`project_id` comes from the connection, and any call can override it.** It is the number in your PostHog URL (`/project/12345`). Every private-API action takes an optional `project_id` (capture always uses the connected project), so a key scoped to all projects (or all organizations) works across them; `organizations.list` and `projects.list` show what the key reaches.
+- **Writes match the PostHog MCP.** Insights, dashboards, flags, cohorts, experiments, surveys, annotations, actions, notebooks and person properties. Experiments and surveys are created and edited as drafts; launching stays in PostHog. Deleting an insight, dashboard, flag or annotation flags it `deleted` (restorable in PostHog); deleting a survey is permanent.
+- **Some reads run as queries.** `events.list` (EventsQuery, PostHog's replacement for the deprecated events endpoint), `webAnalytics.overview` / `webAnalytics.stats`, `llmAnalytics.traces` (TracesQuery) and `llmAnalytics.costs` (HogQL over `$ai_generation` events) all need only the `query` read scope.
+- **Region is detected for personal keys.** Without `host`, the first call goes to the US cloud and a 401 retries once on the EU cloud. A `phc_` token uses the US host unless `host` is set. Set `host` for self-hosted PostHog (https, or http on localhost).
+- **`query.run` is the general tool.** Pass a HogQL string (`select event, count() from events group by event`) or any PostHog query object with a `kind` (`TrendsQuery`, `FunnelsQuery`, `RetentionQuery`...). List event and property names first with `eventDefinitions.list` and `propertyDefinitions.list`.
+- **`logs.query` searches PostHog Logs** by service, severity, text or attribute; keep the window short (default last hour).
+- **Error tracking issues come from an `ErrorTrackingQuery`**, so each issue carries occurrence, user and session counts for the date range (last 7 days by default).
+- **`featureFlags.update` replaces `filters` whole.** Read the flag with `featureFlags.get` first and send back the full release conditions with your change.
+
 **What you get:**
 
-- 5 typed API operations
+- 71 typed API operations
 - 1 synced entity (`events`) for fast `.search()` / `.list()`
 - 1 incoming webhook event types
 
@@ -98,9 +114,12 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Read**
+**Count yesterday's events with HogQL**
 
-_No read-style endpoint inferred; pick any operation from the [API](/plugins/posthog/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.posthog.api.query.run({ query: 'select event, count() from events where timestamp > now() - interval 1 day group by event order by count() desc limit 10' });
+```
 
 
 **Capture an event**

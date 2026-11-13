@@ -380,9 +380,11 @@ export const BaseProviders = [
 	'radar',
 	'ragic',
 	'raisely',
+	'ramp',
 	'razorpay',
 	'realphonevalidation',
 	'reamaze',
+	'route4me',
 	'recallai',
 	'recruitee',
 	'redcircle',
@@ -415,7 +417,6 @@ export const BaseProviders = [
 	'rollbar',
 	'rootly',
 	'rosette',
-	'route4me',
 	'rudderstacktransform',
 	'runpod',
 	'salesflare',
@@ -488,13 +489,13 @@ export const BaseProviders = [
 	'twochat',
 	'typeform',
 	'typesafe',
-	'u301',
 	'unione',
 	'unipile',
 	'unisender',
 	'uniswapapi',
 	'updownio',
 	'uploadcare',
+	'u301',
 	'uptimerobot',
 	'userflow',
 	'userlist',
@@ -915,6 +916,7 @@ export const ProviderDisplayNames = {
 	radar: 'Radar',
 	ragic: 'Ragic',
 	raisely: 'Raisely',
+	ramp: 'Ramp',
 	route4me: 'Route4Me',
 	razorpay: 'Razorpay',
 	realphonevalidation: 'RealPhoneValidation',
@@ -1457,9 +1459,11 @@ export type AllProviders =
 	| 'radar'
 	| 'ragic'
 	| 'raisely'
+	| 'ramp'
 	| 'razorpay'
 	| 'realphonevalidation'
 	| 'reamaze'
+	| 'route4me'
 	| 'recallai'
 	| 'recruitee'
 	| 'redcircle'
@@ -1492,7 +1496,6 @@ export type AllProviders =
 	| 'rollbar'
 	| 'rootly'
 	| 'rosette'
-	| 'route4me'
 	| 'rudderstacktransform'
 	| 'runpod'
 	| 'salesflare'
@@ -1565,13 +1568,13 @@ export type AllProviders =
 	| 'twochat'
 	| 'typeform'
 	| 'typesafe'
-	| 'u301'
 	| 'unione'
 	| 'unipile'
 	| 'unisender'
 	| 'uniswapapi'
 	| 'updownio'
 	| 'uploadcare'
+	| 'u301'
 	| 'uptimerobot'
 	| 'userflow'
 	| 'userlist'
