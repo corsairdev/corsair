@@ -64,6 +64,37 @@ export function redactSensitiveData(
 	return value;
 }
 
+/**
+ * Flattens a nested filter record into Folk API query format (e.g. `filter[attribute][operator]=value`).
+ *
+ * @param filter The filter record to flatten.
+ * @param prefix Prefix for query keys, defaults to 'filter'.
+ */
+// `unknown` because filter values can be nested objects or primitive filter values.
+export function flattenFilter(
+	filter: Record<string, unknown>,
+	prefix = 'filter',
+): Record<string, string | number | boolean> {
+	const result: Record<string, string | number | boolean> = {};
+	for (const [key, value] of Object.entries(filter)) {
+		if (value === null || value === undefined) continue;
+		if (typeof value === 'object' && !Array.isArray(value)) {
+			// `unknown` because nested filter objects are untyped records.
+			Object.assign(
+				result,
+				flattenFilter(value as Record<string, unknown>, `${prefix}[${key}]`),
+			);
+		} else if (
+			typeof value === 'string' ||
+			typeof value === 'number' ||
+			typeof value === 'boolean'
+		) {
+			result[`${prefix}[${key}]`] = value;
+		}
+	}
+	return result;
+}
+
 // `unknown` because response JSON or error payload is an untrusted arbitrary object until inspected.
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -178,16 +209,26 @@ export async function makeFolkRequest<T>(
 
 			const sanitizedBody = redactSensitiveData(rawBody, secrets);
 			const sanitizedDetails = redactSensitiveData(parsedDetails, secrets);
-			const message = parsedMessage || error.message;
+			const rawMessage = parsedMessage || error.message;
+			const sanitized = redactSensitiveData(rawMessage, secrets);
+			const message = typeof sanitized === 'string' ? sanitized : rawMessage;
+			const sanitizedCode =
+				typeof parsedCode === 'string'
+					? (redactSensitiveData(parsedCode, secrets) as string)
+					: undefined;
+			const sanitizedRequestId =
+				typeof parsedRequestId === 'string'
+					? (redactSensitiveData(parsedRequestId, secrets) as string)
+					: undefined;
 
 			throw new FolkAPIError(message, {
 				status: error.status,
-				code: parsedCode,
-				requestId: parsedRequestId,
+				code: sanitizedCode,
+				requestId: sanitizedRequestId,
 				retryAfter: error.retryAfter,
 				details: sanitizedDetails,
 				body: sanitizedBody,
-				cause: error,
+				cause: new Error(message),
 			});
 		}
 
@@ -195,7 +236,9 @@ export async function makeFolkRequest<T>(
 			const sanitized = redactSensitiveData(error.message, secrets);
 			const sanitizedMessage =
 				typeof sanitized === 'string' ? sanitized : error.message;
-			throw new FolkAPIError(sanitizedMessage, { cause: error });
+			throw new FolkAPIError(sanitizedMessage, {
+				cause: new Error(sanitizedMessage),
+			});
 		}
 
 		throw new FolkAPIError('Unknown Folk API error');

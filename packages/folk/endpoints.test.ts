@@ -91,6 +91,39 @@ describe('Folk endpoints', () => {
 			);
 		});
 
+		it('people.list forwards nested filter parameters into query', async () => {
+			mockMakeRequest.mockResolvedValue({
+				data: {
+					items: [{ id: 'per_1', fullName: 'Alice' }],
+					pagination: {},
+				},
+				deprecations: [],
+			});
+
+			await People.list(ctx, {
+				limit: 20,
+				combinator: 'and',
+				filter: {
+					status: { eq: 'active' },
+					email: { contains: '@example.com' },
+				},
+			});
+
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'/people',
+				'test-api-key-123',
+				{
+					method: 'GET',
+					query: {
+						limit: 20,
+						combinator: 'and',
+						'filter[status][eq]': 'active',
+						'filter[email][contains]': '@example.com',
+					},
+				},
+			);
+		});
+
 		it('people.get requests GET /people/:id', async () => {
 			mockMakeRequest.mockResolvedValue({
 				data: { id: 'per_123', fullName: 'Bob' },
@@ -203,6 +236,39 @@ describe('Folk endpoints', () => {
 				},
 			);
 			expect(result.data.items[0]?.name).toBe('Acme');
+		});
+
+		it('companies.list forwards nested filter parameters into query', async () => {
+			mockMakeRequest.mockResolvedValue({
+				data: {
+					items: [{ id: 'com_1', name: 'Acme' }],
+					pagination: {},
+				},
+				deprecations: [],
+			});
+
+			await Companies.list(ctx, {
+				limit: 15,
+				combinator: 'or',
+				filter: {
+					domain: { eq: 'acme.com' },
+					tags: { contains: 'enterprise' },
+				},
+			});
+
+			expect(mockMakeRequest).toHaveBeenCalledWith(
+				'/companies',
+				'test-api-key-123',
+				{
+					method: 'GET',
+					query: {
+						limit: 15,
+						combinator: 'or',
+						'filter[domain][eq]': 'acme.com',
+						'filter[tags][contains]': 'enterprise',
+					},
+				},
+			);
 		});
 
 		it('companies.get requests GET /companies/:id', async () => {

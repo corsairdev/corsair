@@ -3,6 +3,7 @@ import { ApiError, request } from 'corsair/http';
 import {
 	FOLK_API_BASE,
 	FolkAPIError,
+	flattenFilter,
 	makeFolkRequest,
 	redactSensitiveData,
 } from './client';
@@ -133,7 +134,7 @@ describe('client.ts', () => {
 			expect(caught.details).toEqual({ field: 'personId' });
 		});
 
-		it('redacts explicit API keys from thrown error messages', async () => {
+		it('redacts explicit API keys from thrown error messages and causes on transport Error', async () => {
 			const secretKey = 'secret-api-token-xyz';
 			const plainErr = new Error(`Connection failed with token: ${secretKey}`);
 			mockRequest.mockRejectedValue(plainErr);
@@ -149,6 +150,85 @@ describe('client.ts', () => {
 			}
 			expect(caught.message).not.toContain(secretKey);
 			expect(caught.message).toContain('[REDACTED]');
+			expect(caught.cause).toBeInstanceOf(Error);
+			if (caught.cause instanceof Error) {
+				expect(caught.cause.message).not.toContain(secretKey);
+				expect(caught.cause.message).toContain('[REDACTED]');
+			}
+		});
+
+		it('redacts explicit API keys from ApiError message, cause, body, and details', async () => {
+			const secretKey = 'secret-api-token-xyz';
+			const errorPayload = {
+				error: {
+					code: 'INVALID_CREDENTIALS',
+					message: `Invalid API key: ${secretKey}`,
+					requestId: `req-${secretKey}`,
+					details: { apikey: secretKey, note: `failed with ${secretKey}` },
+				},
+			};
+			const apiErr = makeApiError(
+				401,
+				`Unauthorized with ${secretKey}`,
+				errorPayload,
+			);
+			mockRequest.mockRejectedValue(apiErr);
+
+			// `unknown` because catch blocks receive an untyped rejection value before assertion.
+			const caught: unknown = await makeFolkRequest('/users', secretKey, {
+				method: 'GET',
+			}).catch((e: unknown) => e);
+
+			expect(caught).toBeInstanceOf(FolkAPIError);
+			if (!(caught instanceof FolkAPIError)) {
+				throw new Error('Expected FolkAPIError');
+			}
+			expect(caught.message).not.toContain(secretKey);
+			expect(caught.message).toContain('[REDACTED]');
+			expect(caught.cause).toBeInstanceOf(Error);
+			if (caught.cause instanceof Error) {
+				expect(caught.cause.message).not.toContain(secretKey);
+				expect(caught.cause.message).toContain('[REDACTED]');
+			}
+			expect(caught.requestId).not.toContain(secretKey);
+			expect(JSON.stringify(caught.body)).not.toContain(secretKey);
+			expect(JSON.stringify(caught.details)).not.toContain(secretKey);
+		});
+	});
+
+	describe('flattenFilter', () => {
+		it('flattens nested filter objects into Folk query key format', () => {
+			const filter = {
+				status: { eq: 'active' },
+				nested: { deep: { eq: 42 } },
+				active: true,
+			};
+			const flattened = flattenFilter(filter);
+			expect(flattened).toEqual({
+				'filter[status][eq]': 'active',
+				'filter[nested][deep][eq]': 42,
+				'filter[active]': true,
+			});
+		});
+
+		it('skips null and undefined values', () => {
+			const filter = {
+				valid: 'val',
+				ignoredNull: null,
+				ignoredUndefined: undefined,
+			};
+			const flattened = flattenFilter(filter);
+			expect(flattened).toEqual({
+				'filter[valid]': 'val',
+			});
+		});
+
+		it('supports custom prefixes', () => {
+			const filter = { key: 'value' };
+			const flattened = flattenFilter(filter, 'custom');
+			expect(flattened).toEqual({
+				'custom[key]': 'value',
+			});
 		});
 	});
 

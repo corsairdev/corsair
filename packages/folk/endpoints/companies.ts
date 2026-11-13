@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FolkEndpoints } from '..';
-import { makeFolkRequest } from '../client';
+import { flattenFilter, makeFolkRequest } from '../client';
 import type {
 	CompaniesCreateResponse,
 	CompaniesDeleteResponse,
@@ -17,6 +17,9 @@ export const list: FolkEndpoints['companiesList'] = async (ctx, input) => {
 	if (parsedInput.cursor !== undefined) query.cursor = parsedInput.cursor;
 	if (parsedInput.combinator !== undefined)
 		query.combinator = parsedInput.combinator;
+	if (parsedInput.filter) {
+		Object.assign(query, flattenFilter(parsedInput.filter));
+	}
 
 	// `unknown` because response JSON from makeFolkRequest is untrusted until validated by Zod schema below.
 	const response: unknown = await makeFolkRequest<CompaniesListResponse>(
