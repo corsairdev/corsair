@@ -791,7 +791,7 @@ export const ProviderDisplayNames = {
 	foursquare: 'Foursquare',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
-	giftup: 'GiftUp',
+	giftup: 'Gift Up!',
 	giphy: 'Giphy',
 	github: 'GitHub',
 	gitlab: 'GitLab',

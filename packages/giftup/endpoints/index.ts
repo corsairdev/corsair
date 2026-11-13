@@ -1,7 +1,14 @@
-import { get as exampleGet } from './example';
-
-export const Example = {
-	get: exampleGet,
-};
-
+export { CompanyEndpoints as Company } from './company';
+export { GiftCards } from './gift-cards';
+export { Groups } from './groups';
+export { Integrations } from './integrations';
+export { Items } from './items';
+export { Locations } from './locations';
+export { Orders } from './orders';
+export { Partners } from './partners';
+export { Ping } from './ping';
+export { Promotions } from './promotions';
+export { Reports } from './reports';
+export { Settings } from './settings';
 export * from './types';
+export { Users } from './users';
