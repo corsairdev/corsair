@@ -1,0 +1,143 @@
+---
+title: "Freshdesk plugin"
+sidebarTitle: "Overview"
+description: "Manage support tickets, customer records, agents, groups, knowledge base content, and account settings through Freshdesk REST API v2."
+---
+
+Use **Freshdesk** through Corsair: one client, typed API calls.
+
+Set the exact account hostname from your Freshdesk portal in the `domain` option. Freshdesk API v2 does not support custom CNAMEs. The API key is sent using HTTP Basic authentication with `X` as the password.
+
+Freshdesk applies per-minute account and API sublimits. List operations accept `page` (1-based) and `per_page` (maximum 100). A 429 includes `Retry-After`; automatic retries are limited to safe GET requests.
+
+Ticket create/update/reply, note creation, contact avatar create/update, conversation updates, and outbound email with attachments accept `{ filename, contentType, base64 }` entries and send multipart/form-data. Contact avatars use the `avatar` file part; the other upload routes use `attachments[]`.
+
+Pass each route's documented request fields through its `body` object. Where Freshdesk publishes request attributes, the plugin validates field names and primitive types; tenant-defined `custom_fields` and nested object values remain open JSON. Responses are validated as JSON values to preserve optional embeds and custom fields; consult the linked route for resource-specific response fields.
+
+The plugin covers the documented v2 REST routes. Freshdesk marks v1 deprecated/restricted for new users. No webhook delivery contract is documented here.
+
+**What you get:**
+
+- 256 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/freshdesk better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/freshdesk better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/freshdesk better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/freshdesk better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { freshdesk } from '@corsair-dev/freshdesk';
+
+export const corsair = createCorsair({
+	plugins: [
+		freshdesk({
+			domain: 'acme.freshdesk.com',
+		}),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+Provide the account hostname shown in your Freshdesk portal; it is not discovered from the API key.
+
+```ts
+freshdesk({
+	domain: 'acme.freshdesk.com',
+})
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'freshdesk',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`routes.archiveTicketsGet.run`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.freshdesk.api.routes.archiveTicketsGet.run({});
+```
+
+
+**`routes.addNoteToATicketPostNotes.run`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.freshdesk.api.routes.addNoteToATicketPostNotes.run({});
+```
+
+
+See the full list on the [API](/plugins/freshdesk/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/freshdesk/api">
+    Every `freshdesk.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
