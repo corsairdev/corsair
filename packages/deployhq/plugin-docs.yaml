@@ -15,6 +15,7 @@
     "globalServers.copyToProjectGlobalServer": "Pass the target project's `identifier` (a UUID) as project_id. The project permalink returns 404 on this route (checked 11-13).",
     "servers.createProjectServer": "Send the connection fields for the chosen protocol_type inside `server` (for SSH: hostname, username, port, use_ssh_keys or password), as listed in DeployHQ's [create a server guide](https://www.deployhq.com/support/api/servers/create-a-new-server). DeployHQ checks that the host is reachable and answers 422 when it is not.",
     "environmentVariables.deleteProjectEnvironmentVariable": "DeployHQ answers with 204 No Content, so the operation returns undefined on success.",
+    "templates.createTemplate": "Pass the source project's `identifier` (a UUID) as template.project_id. Without a project_id DeployHQ answers 500 (checked 11-13).",
     "signup.createSignup": "This public operation posts to `https://api.deployhq.com/api/v1/signup`, not an account subdomain. The [signup guide](https://www.deployhq.com/support/api/signup) shows `https://deployhq.com`, which redirects to a 404. The API key works only after the new account's email address is verified."
   },
   "examples": {
