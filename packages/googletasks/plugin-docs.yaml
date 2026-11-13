@@ -1,0 +1,40 @@
+displayName: Google Tasks
+description: Manage Google task lists and tasks with scoped OAuth access, pagination, task ordering, and schema-validated REST operations.
+recommendedAuth: oauth_2
+overviewNote: |
+  OAuth uses the single narrowest scope that supports the configured operation set: `https://www.googleapis.com/auth/tasks` for read and write operations. For read-only integrations set `scopeMode: 'readonly'` to request only `https://www.googleapis.com/auth/tasks.readonly`; mutation operations then require a full-scope connection. The API has no supported webhook subscription endpoints, so changes are read through the paginated list methods.
+apiExamples:
+  taskLists.list:
+    call: "{ maxResults: 100 }"
+  taskLists.get:
+    call: "{ taskListId: '@default' }"
+  taskLists.insert:
+    call: "{ taskList: { title: 'Personal' } }"
+  taskLists.update:
+    call: "{ taskListId: 'list-id', taskList: { title: 'Personal' } }"
+  taskLists.patch:
+    call: "{ taskListId: 'list-id', taskList: { title: 'Personal' } }"
+  taskLists.delete:
+    call: "{ taskListId: 'list-id' }"
+  tasks.list:
+    call: "{ taskListId: '@default', maxResults: 100 }"
+  tasks.get:
+    call: "{ taskListId: '@default', taskId: 'task-id' }"
+  tasks.insert:
+    call: "{ taskListId: '@default', task: { title: 'Buy groceries' } }"
+  tasks.update:
+    call: "{ taskListId: '@default', taskId: 'task-id', task: { title: 'Buy groceries' } }"
+  tasks.patch:
+    call: "{ taskListId: '@default', taskId: 'task-id', task: { status: 'completed' } }"
+  tasks.delete:
+    call: "{ taskListId: '@default', taskId: 'task-id' }"
+  tasks.move:
+    call: "{ taskListId: '@default', taskId: 'task-id', previous: 'previous-task-id' }"
+  tasks.clear:
+    call: "{ taskListId: '@default' }"
+apiNotes:
+  taskLists.list: '`taskLists.list` accepts at most 1000 task lists per page and returns `nextPageToken` for continuation.'
+  tasks.list: '`tasks.list` returns 20 tasks by default and accepts at most 100 per page. Pass `nextPageToken` back as `pageToken` to continue. Its documented completion, due-date, update-time, and visibility filters are available as inputs.'
+  taskLists.delete: 'The default task list cannot be deleted. Deleting a list containing assigned tasks may also delete the original tasks in Docs or Chat Spaces.'
+  tasks.delete: 'Deleting an assigned task may also delete its original task in Docs or Chat Spaces.'
+  tasks.clear: 'Clearing hides all completed tasks; it does not permanently delete them. Clear and delete methods return HTTP 204 with no response body.'
