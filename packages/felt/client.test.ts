@@ -164,7 +164,10 @@ describe('makeFeltRequest client', () => {
 
 		// Test message sanitization
 		expect(
-			sanitizeErrorMessage('Failed with password=plain-pass and Bearer secret123', 'secret123'),
+			sanitizeErrorMessage(
+				'Failed with password=plain-pass and Bearer secret123',
+				'secret123',
+			),
 		).toBe('Failed with password=[REDACTED] and Bearer [REDACTED]');
 	});
 
