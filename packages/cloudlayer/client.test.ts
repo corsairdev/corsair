@@ -41,6 +41,41 @@ afterEach(() => {
 });
 
 describe('makeCloudlayerRequest', () => {
+	it('keeps Retry-After on the ApiError from the real transport', async () => {
+		const actualRequest =
+			jest.requireActual<typeof import('corsair/http')>('corsair/http').request;
+		mockedRequest.mockImplementation((config, options, requestOptions) =>
+			actualRequest(config, options, requestOptions),
+		);
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(JSON.stringify({ message: 'Too Many Requests' }), {
+				status: 429,
+				statusText: 'Too Many Requests',
+				headers: {
+					'Content-Type': 'application/json',
+					'Retry-After': '4',
+				},
+			}),
+		);
+
+		// `unknown` because a rejection value has no static type; the assertion
+		// below narrows it to ApiError.
+		const error = await makeCloudlayerRequest('/jobs', 'unit-test-key').catch(
+			(caught: unknown) => caught,
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) {
+			throw new Error('Expected the transport to throw ApiError');
+		}
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(error.retryAfter).toBe(4000);
+		expect(error.isRateLimitError()).toBe(true);
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({ maxRetries: 2, headersRetryAfterMs: 4000 });
+	});
+
 	it('uses X-API-Key on v2 requests and forwards method, body, and query', async () => {
 		mockedRequest.mockResolvedValue({ id: 'job-1', status: 'pending' });
 
@@ -249,6 +284,8 @@ describe('makeCloudlayerRequest', () => {
 			),
 		);
 
+		// `unknown` because a rejection value has no static type; the assertion
+		// below narrows it to ApiError.
 		const error = await makeCloudlayerSyncRequest('/html/pdf', apiKey, {
 			method: 'POST',
 			body: { html, async: false },

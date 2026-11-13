@@ -129,10 +129,11 @@ apiNotes:
   template.toPdf: >-
     V2 returns a JSON job; `async: false` waits for completion and returns the
     completed JSON job per the API overview. `template.toPdfV1` exposes the v1
-    route as a base64-encoded binary artifact. Multipart input uses
-    `{ template: Blob, data: object }`; `template` must be a `Blob` and `data`
-    is a JSON object. Multipart requests remain in v2 job mode; only the
-    documented `template` and `data` parts are sent. See
+    route as a base64-encoded binary artifact. For multipart input, the
+    generated type renderer labels the `z.instanceof(Blob)` field as `custom`;
+    callers must pass an actual `Blob` in `{ template: Blob, data: object }`,
+    where `data` is a JSON object. Multipart requests remain in v2 job mode;
+    only the documented `template` and `data` parts are sent. See
     https://cloudlayer.io/docs/template-to-pdf/.
   template.toPdfV1: >-
     The v1 response is binary and is returned as a base64-encoded
@@ -140,10 +141,11 @@ apiNotes:
   template.toImage: >-
     V2 returns a JSON job; `async: false` waits for completion and returns the
     completed JSON job per the API overview. `template.toImageV1` exposes the
-    v1 route as a base64-encoded binary artifact. Multipart input uses
-    `{ template: Blob, data: object }`; `template` must be a `Blob` and `data`
-    is a JSON object. Multipart requests remain in v2 job mode; only the
-    documented `template` and `data` parts are sent. See
+    v1 route as a base64-encoded binary artifact. For multipart input, the
+    generated type renderer labels the `z.instanceof(Blob)` field as `custom`;
+    callers must pass an actual `Blob` in `{ template: Blob, data: object }`,
+    where `data` is a JSON object. Multipart requests remain in v2 job mode;
+    only the documented `template` and `data` parts are sent. See
     https://cloudlayer.io/docs/template-to-image/.
   template.toImageV1: >-
     The v1 response is binary and is returned as a base64-encoded
