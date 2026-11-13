@@ -73,18 +73,6 @@ export function isEndpoint(value: unknown): value is Function {
 }
 
 /**
- * Recursively binds endpoints in a tree structure with context and hooks.
- * Handles both flat (key -> fn) and nested (key -> { key -> fn }) structures.
- * @param endpoints - The endpoint tree to bind
- * @param hooks - Optional hooks to apply to endpoint handlers
- * @param ctx - The context to bind to endpoint handlers
- * @param tree - The output tree to populate with bound endpoints
- * @param pluginId - The ID of the plugin for error context
- * @param errorHandler - The error handler for this plugin
- * @param currentPath - The current path for tracking nested endpoint operations
- * @param keyBuilder - Optional async callback to generate a key from the plugin context
- */
-/**
  * True when a provider call failed with HTTP 401. Plugins throw core's ApiError
  * or their own error class; both carry the status as `status` (some as
  * `statusCode`), sometimes on a wrapped `cause`. Provider-specific codes (a
@@ -104,6 +92,18 @@ export function isUnauthorizedError(error: unknown, depth = 0): boolean {
 	return isUnauthorizedError(cause, depth + 1);
 }
 
+/**
+ * Recursively binds endpoints in a tree structure with context and hooks.
+ * Handles both flat (key -> fn) and nested (key -> { key -> fn }) structures.
+ * @param endpoints - The endpoint tree to bind
+ * @param hooks - Optional hooks to apply to endpoint handlers
+ * @param ctx - The context to bind to endpoint handlers
+ * @param tree - The output tree to populate with bound endpoints
+ * @param pluginId - The ID of the plugin for error context
+ * @param errorHandler - The error handler for this plugin
+ * @param currentPath - The current path for tracking nested endpoint operations
+ * @param keyBuilder - Optional async callback to generate a key from the plugin context
+ */
 export function bindEndpointsRecursively({
 	endpoints,
 	hooks,
