@@ -1,0 +1,4153 @@
+---
+title: "Doppler Marketing Automation API reference"
+sidebarTitle: "API"
+description: "API reference for Doppler Marketing Automation: every `dopplermarketingautomation.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Automations
+
+### deliverabilityRate
+
+`automations.deliverabilityRate`
+
+List automation deliverability
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.automations.deliverabilityRate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `scheduledTaskId` | `number` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  actionId?: number | null,
+  name?: string | null,
+  subject?: string | null,
+  subscriberId?: number | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[],
+  openings?: number | null,
+  lastOpenedDate?: string | null,
+  clicks?: number | null,
+  lastClickedDate?: string | null,
+  sentDate?: string | null,
+  status?: string | null,
+  statusDetail?: string | null,
+  date?: string | null,
+  linkId?: number | null,
+  urlLink?: string | null,
+  reason?: string | null,
+  subreason?: string | null,
+  unsubDate?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+### linksTracking
+
+`automations.linksTracking`
+
+List automation link tracking
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.automations.linksTracking({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `scheduledTaskId` | `number` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  actionId?: number | null,
+  name?: string | null,
+  subject?: string | null,
+  subscriberId?: number | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[],
+  openings?: number | null,
+  lastOpenedDate?: string | null,
+  clicks?: number | null,
+  lastClickedDate?: string | null,
+  sentDate?: string | null,
+  status?: string | null,
+  statusDetail?: string | null,
+  date?: string | null,
+  linkId?: number | null,
+  urlLink?: string | null,
+  reason?: string | null,
+  subreason?: string | null,
+  unsubDate?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`automations.list`
+
+List automations
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.automations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  scheduledTaskId?: number | null,
+  status?: string | null,
+  type?: string | null,
+  name?: string | null,
+  creationDate?: string | null,
+  emailSentAmount?: number | null,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### opensAndClicks
+
+`automations.opensAndClicks`
+
+List automation opens and clicks
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.automations.opensAndClicks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `scheduledTaskId` | `number` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  actionId?: number | null,
+  name?: string | null,
+  subject?: string | null,
+  subscriberId?: number | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[],
+  openings?: number | null,
+  lastOpenedDate?: string | null,
+  clicks?: number | null,
+  lastClickedDate?: string | null,
+  sentDate?: string | null,
+  status?: string | null,
+  statusDetail?: string | null,
+  date?: string | null,
+  linkId?: number | null,
+  urlLink?: string | null,
+  reason?: string | null,
+  subreason?: string | null,
+  unsubDate?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### summary
+
+`automations.summary`
+
+Get automation summary
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.automations.summary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `scheduledTaskId` | `number` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scheduledTaskId` | `number \| null` | No | — |
+| `totalUnopenedMailCount` | `number \| null` | No | — |
+| `totalHardBouncedMailCount` | `number \| null` | No | — |
+| `totalSoftBouncedMailCount` | `number \| null` | No | — |
+| `totalDistinctOpenedMailCount` | `number \| null` | No | — |
+| `totalOpenedMailCount` | `number \| null` | No | — |
+| `totalDeliveryCount` | `number \| null` | No | — |
+| `totalSentCount` | `number \| null` | No | — |
+| `totalClickCount` | `number \| null` | No | — |
+| `totalUniqueClickCount` | `number \| null` | No | — |
+| `totalUniqueClickPerCampaignCount` | `number \| null` | No | — |
+| `totalClickThroughOpenRate` | `number \| null` | No | — |
+| `totalSocialUniqueClickCount` | `number \| null` | No | — |
+| `totalForwarded` | `number \| null` | No | — |
+| `totalUnsubscribersCount` | `number \| null` | No | — |
+| `lastClickedEmailDate` | `string \| null` | No | — |
+| `lastOpenedEmailDate` | `string \| null` | No | — |
+| `detail` | `object[] \| null` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="detail full type">
+
+```ts
+{
+  actionId?: number | null,
+  name?: string | null,
+  subject?: string | null,
+  unopenedMailCount?: number | null,
+  hardBouncedMailCount?: number | null,
+  softBouncedMailCount?: number | null,
+  distinctOpenedMailCount?: number | null,
+  openedMailCount?: number | null,
+  deliveryCount?: number | null,
+  sentCount?: number | null,
+  clickCount?: number | null,
+  uniqueClickCount?: number | null,
+  uniqueClickPerCampaignCount?: number | null,
+  clickThroughOpenRate?: number | null,
+  socialUniqueClickCount?: number | null,
+  forwarded?: number | null,
+  unsubscribersCount?: number | null,
+  lastClickedEmailDate?: string | null,
+  lastOpenedEmailDate?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribeActivity
+
+`automations.unsubscribeActivity`
+
+List automation unsubscribe activity
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.automations.unsubscribeActivity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `scheduledTaskId` | `number` | Yes | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  actionId?: number | null,
+  name?: string | null,
+  subject?: string | null,
+  subscriberId?: number | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  email?: string | null,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[],
+  openings?: number | null,
+  lastOpenedDate?: string | null,
+  clicks?: number | null,
+  lastClickedDate?: string | null,
+  sentDate?: string | null,
+  status?: string | null,
+  statusDetail?: string | null,
+  date?: string | null,
+  linkId?: number | null,
+  urlLink?: string | null,
+  reason?: string | null,
+  subreason?: string | null,
+  unsubDate?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaigns
+
+### approve
+
+`campaigns.approve`
+
+Approve a campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.approve({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`campaigns.create`
+
+Create a campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  campaignId?: number,
+  name: string,
+  fromName: string,
+  fromEmail: string,
+  subject: string,
+  scheduledDate?: string | null,
+  recipientsRequired?: boolean | null,
+  contentRequired?: boolean | null,
+  preheader?: string | null,
+  replyTo?: string | null,
+  textCampaign?: boolean | null,
+  status?: draft | scheduled | shipping | shipped,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+| `createdResourceId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createShipping
+
+`campaigns.createShipping`
+
+Send or schedule a campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.createShipping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+| `shipping` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="shipping full type">
+
+```ts
+{
+  shippingId?: string | null,
+  type: immediate | scheduled,
+  scheduledDate?: string | null,
+  status?: waiting | processing | sending | sent | closed | null,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+| `createdResourceId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Delete a campaign
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteShipping
+
+`campaigns.deleteShipping`
+
+Cancel a scheduled campaign delivery
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.deleteShipping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+| `shippingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteTextAlternative
+
+`campaigns.deleteTextAlternative`
+
+Delete campaign text alternative
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.deleteTextAlternative({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deliveries
+
+`campaigns.deliveries`
+
+List campaign deliveries
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.deliveries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `continuationToken` | `number` | No | — |
+| `orderBy` | `subcriber \| interactionDate` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  campaignId?: number,
+  campaignName?: string,
+  campaignSubject?: string,
+  subscriberEmail?: string,
+  deliveryStatus?: opened | notOpened | hardBounced | softBounced | null,
+  lastOpenDate?: string,
+  sentDate?: string,
+  opensCount?: number,
+  clicksCount?: number,
+  isSendingNow?: boolean,
+  campaignType?: string,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Get a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `fromName` | `string` | Yes | — |
+| `fromEmail` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `scheduledDate` | `string \| null` | No | — |
+| `recipientsRequired` | `boolean \| null` | No | — |
+| `contentRequired` | `boolean \| null` | No | — |
+| `preheader` | `string \| null` | No | — |
+| `replyTo` | `string \| null` | No | — |
+| `textCampaign` | `boolean \| null` | No | — |
+| `status` | `draft \| scheduled \| shipping \| shipped` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContent
+
+`campaigns.getContent`
+
+Get campaign HTML content
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.getContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### getRecipients
+
+`campaigns.getRecipients`
+
+Get campaign recipients
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.getRecipients({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lists` | `object[]` | No | — |
+| `segments` | `object[]` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="lists full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="segments full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getShipping
+
+`campaigns.getShipping`
+
+Get a scheduled campaign delivery
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.getShipping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+| `shippingId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shippingId` | `string \| null` | No | — |
+| `type` | `immediate \| scheduled` | Yes | — |
+| `scheduledDate` | `string \| null` | No | — |
+| `status` | `waiting \| processing \| sending \| sent \| closed \| null` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSocial
+
+`campaigns.getSocial`
+
+Get campaign social preferences
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.getSocial({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `share` | `(facebook \| twitter \| googleplus \| linkedin \| pinterest \| whatsapp)[]` | Yes | — |
+| `likes` | `(facebook \| googleplus)[]` | Yes | — |
+| `facebookWallPost` | `boolean` | Yes | — |
+| `facebookPagesPost` | `object[]` | Yes | — |
+| `twitterPost` | `boolean` | Yes | — |
+| `linkedInPost` | `boolean` | Yes | — |
+| `rssPost` | `boolean` | Yes | — |
+| `rssDescription` | `string \| null` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="facebookPagesPost full type">
+
+```ts
+{
+  pageId: string
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTextAlternative
+
+`campaigns.getTextAlternative`
+
+Get campaign text alternative
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.getTextAlternative({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `state` | `draft \| scheduled \| shipping \| shipped` | No | — |
+| `scheduledDateFrom` | `string` | No | — |
+| `scheduledDateTo` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  campaignId?: number,
+  name: string,
+  fromName: string,
+  fromEmail: string,
+  subject: string,
+  scheduledDate?: string | null,
+  recipientsRequired?: boolean | null,
+  contentRequired?: boolean | null,
+  preheader?: string | null,
+  replyTo?: string | null,
+  textCampaign?: boolean | null,
+  status?: draft | scheduled | shipping | shipped,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### preview
+
+`campaigns.preview`
+
+Preview campaign content
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.preview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+| `Accept` | `text/html \| image/jpeg \| image/png \| image/svg+xml` | No | — |
+
+
+
+**Output:** `string \| custom`
+
+
+---
+
+### resultsSummary
+
+`campaigns.resultsSummary`
+
+Get campaign results
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.resultsSummary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalRecipients` | `number` | No | — |
+| `successFullDeliveries` | `number` | No | — |
+| `timesForwarded` | `number` | No | — |
+| `totalTimesOpened` | `number` | No | — |
+| `lastOpenDate` | `string` | No | — |
+| `uniqueClicks` | `number` | No | — |
+| `uniqueOpens` | `number` | No | — |
+| `totalUnopened` | `number` | No | — |
+| `totalHardBounces` | `number` | No | — |
+| `totalSoftBounces` | `number` | No | — |
+| `totalClicks` | `number` | No | — |
+| `lastClickDate` | `string` | No | — |
+| `totalUnsubscribers` | `number` | No | — |
+| `campaignStatus` | `draft \| scheduled \| shipping \| shipped` | No | — |
+| `totalShipped` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribed
+
+`campaigns.unsubscribed`
+
+List campaign unsubscribers
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.unsubscribed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  email: string,
+  fields?: {
+    name: string,
+    value: string,
+    predefined?: boolean,
+    private?: boolean,
+    readonly?: boolean,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    permissionHTML?: string
+  }[],
+  belongsToLists?: string[],
+  listsHistory?: {
+    date?: string,
+    listId?: number,
+    status?: added | deleted,
+    _links?: {
+      href: string,
+      rel: string,
+      description?: string
+    }[]
+  }[],
+  unsubscribedDate?: string | null,
+  unsubscriptionDate?: string | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
+  unsubscriptionComment?: string | null,
+  status?: active | pending | unsubscribed | standBy | archived | null,
+  canBeReactivated?: boolean | null,
+  isBeingReactivated?: boolean | null,
+  userId?: number,
+  score?: number,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Update a campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  campaignId?: number,
+  name: string,
+  fromName: string,
+  fromEmail: string,
+  subject: string,
+  scheduledDate?: string | null,
+  recipientsRequired?: boolean | null,
+  contentRequired?: boolean | null,
+  preheader?: string | null,
+  replyTo?: string | null,
+  textCampaign?: boolean | null,
+  status?: draft | scheduled | shipping | shipped,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateContent
+
+`campaigns.updateContent`
+
+Update campaign HTML content
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.updateContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+| `Body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateRecipients
+
+`campaigns.updateRecipients`
+
+Update campaign recipients
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.updateRecipients({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+| `recipients` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+{
+  lists?: {
+    id: number,
+    name?: string | null,
+    _links?: {
+      href: string,
+      rel: string,
+      description?: string
+    }[]
+  }[],
+  segments?: {
+    id: number,
+    name?: string | null,
+    _links?: {
+      href: string,
+      rel: string,
+      description?: string
+    }[]
+  }[],
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateSocial
+
+`campaigns.updateSocial`
+
+Update campaign social preferences
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.updateSocial({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+| `socialMediaPreferences` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="socialMediaPreferences full type">
+
+```ts
+{
+  share: (facebook | twitter | googleplus | linkedin | pinterest | whatsapp)[],
+  likes: (facebook | googleplus)[],
+  facebookWallPost: boolean,
+  facebookPagesPost: {
+    pageId: string
+  }[],
+  twitterPost: boolean,
+  linkedInPost: boolean,
+  rssPost: boolean,
+  rssDescription?: string | null,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateTextAlternative
+
+`campaigns.updateTextAlternative`
+
+Update campaign text alternative
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.campaigns.updateTextAlternative({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `campaignId` | `number` | Yes | — |
+| `textAlternativeContent` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="textAlternativeContent full type">
+
+```ts
+{
+  text: string,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fields
+
+### list
+
+`fields.list`
+
+List subscriber field definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.fields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  name: string,
+  predefined: boolean,
+  private: boolean,
+  readonly: boolean,
+  type: boolean | number | string | date | email | gender | country | consent | phone | permission,
+  sample?: string | null,
+  fieldId?: number | null,
+  permissionHTML?: string | null,
+  required?: boolean | null,
+  allowedValues?: string[] | null,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Home
+
+### account
+
+`home.account`
+
+Get the account API home
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.home.account({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`home.get`
+
+Get the API home
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.home.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Integrations
+
+### delete
+
+`integrations.delete`
+
+Delete integration access
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dopplermarketingautomation.api.integrations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `integrationName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`integrations.get`
+
+Get integration access
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.integrations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `integrationName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`integrations.update`
+
+Update integration access
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.integrations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `integrationName` | `string` | Yes | — |
+| `thirdPartyAppAccess` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="thirdPartyAppAccess full type">
+
+```ts
+{
+  accessToken?: string | null,
+  refreshToken?: string | null,
+  idAccount?: number | null,
+  accountName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lists
+
+### create
+
+`lists.create`
+
+Create a subscriber list
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.lists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `list` | `object` | Yes | — |
+| `X-Doppler-List-Origin` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  name: string,
+  removeAssociation?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+| `createdResourceId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`lists.delete`
+
+Delete a subscriber list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.dopplermarketingautomation.api.lists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `listId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`lists.get`
+
+Get a subscriber list
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.lists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `listId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listId` | `number` | No | — |
+| `name` | `string` | Yes | — |
+| `currentStatus` | `ready \| draft \| readyToSent \| sent \| importingSubscribers \| exportingSubscribers \| mergingDestination \| mergingSource \| cancelingExportingSubscribers \| inCreationProcess \| sending \| inDeletingProcess \| deleted \| blocked` | No | — |
+| `subscribersCount` | `number` | No | — |
+| `creationDate` | `string` | No | — |
+| `deletedDate` | `string` | No | — |
+| `hasScheduledCampaigns` | `boolean \| null` | No | — |
+| `hasFormsAssociated` | `boolean \| null` | No | — |
+| `hasSegmentsAssociated` | `boolean \| null` | No | — |
+| `hasEventsAssociated` | `boolean \| null` | No | — |
+| `hasSynchronizationAssociated` | `boolean` | No | — |
+| `removeAssociation` | `boolean` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`lists.list`
+
+List subscriber lists
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.lists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `state` | `active \| inactive \| all` | No | — |
+| `listName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  listId?: number,
+  name: string,
+  currentStatus?: ready | draft | readyToSent | sent | importingSubscribers | exportingSubscribers | mergingDestination | mergingSource | cancelingExportingSubscribers | inCreationProcess | sending | inDeletingProcess | deleted | blocked,
+  subscribersCount?: number,
+  creationDate?: string,
+  deletedDate?: string,
+  hasScheduledCampaigns?: boolean | null,
+  hasFormsAssociated?: boolean | null,
+  hasSegmentsAssociated?: boolean | null,
+  hasEventsAssociated?: boolean | null,
+  hasSynchronizationAssociated?: boolean,
+  removeAssociation?: boolean,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`lists.update`
+
+Update a subscriber list
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.lists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `listId` | `number` | Yes | — |
+| `list` | `object` | Yes | — |
+| `X-Doppler-List-Origin` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  name: string,
+  removeAssociation?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscribers
+
+### archive
+
+`subscribers.archive`
+
+Archive a subscriber
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### associate
+
+`subscribers.associate`
+
+Associate a subscriber with a list
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.associate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `listId` | `number` | Yes | — |
+| `subscriber` | `object` | Yes | — |
+| `X-Doppler-Subscriber-Origin` | `string` | No | — |
+| `allowReSubscription` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscriber full type">
+
+```ts
+{
+  email: string,
+  fields?: {
+    name: string,
+    value: string,
+    predefined?: boolean,
+    private?: boolean,
+    readonly?: boolean,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    permissionHTML?: string
+  }[],
+  belongsToLists?: string[],
+  listsHistory?: {
+    date?: string,
+    listId?: number,
+    status?: added | deleted,
+    _links?: {
+      href: string,
+      rel: string,
+      description?: string
+    }[]
+  }[],
+  unsubscribedDate?: string | null,
+  unsubscriptionDate?: string | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
+  unsubscriptionComment?: string | null,
+  status?: active | pending | unsubscribed | standBy | archived | null,
+  canBeReactivated?: boolean | null,
+  isBeingReactivated?: boolean | null,
+  userId?: number,
+  score?: number,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`subscribers.create`
+
+Create or update a subscriber
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `subscriber` | `object` | Yes | — |
+| `X-Doppler-Subscriber-Origin` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscriber full type">
+
+```ts
+{
+  email: string,
+  fields?: {
+    name: string,
+    value: string,
+    predefined?: boolean,
+    private?: boolean,
+    readonly?: boolean,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    permissionHTML?: string
+  }[],
+  belongsToLists?: string[],
+  listsHistory?: {
+    date?: string,
+    listId?: number,
+    status?: added | deleted,
+    _links?: {
+      href: string,
+      rel: string,
+      description?: string
+    }[]
+  }[],
+  unsubscribedDate?: string | null,
+  unsubscriptionDate?: string | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
+  unsubscriptionComment?: string | null,
+  status?: active | pending | unsubscribed | standBy | archived | null,
+  canBeReactivated?: boolean | null,
+  isBeingReactivated?: boolean | null,
+  userId?: number,
+  score?: number,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deliveries
+
+`subscribers.deliveries`
+
+List subscriber campaign deliveries
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.deliveries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  campaignId?: number,
+  campaignName?: string,
+  campaignSubject?: string,
+  subscriberEmail?: string,
+  deliveryStatus?: opened | notOpened | hardBounced | softBounced | null,
+  lastOpenDate?: string,
+  sentDate?: string,
+  opensCount?: number,
+  clicksCount?: number,
+  isSendingNow?: boolean,
+  campaignType?: string,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### doubleOptIn
+
+`subscribers.doubleOptIn`
+
+Associate a subscriber using double opt-in
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.doubleOptIn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `listId` | `number` | Yes | — |
+| `templateId` | `number` | Yes | — |
+| `subscriber` | `object` | Yes | — |
+| `X-Doppler-Subscriber-Origin` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscriber full type">
+
+```ts
+{
+  email: string,
+  fields?: {
+    name: string,
+    value: string,
+    predefined?: boolean,
+    private?: boolean,
+    readonly?: boolean,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    permissionHTML?: string
+  }[],
+  belongsToLists?: string[],
+  listsHistory?: {
+    date?: string,
+    listId?: number,
+    status?: added | deleted,
+    _links?: {
+      href: string,
+      rel: string,
+      description?: string
+    }[]
+  }[],
+  unsubscribedDate?: string | null,
+  unsubscriptionDate?: string | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
+  unsubscriptionComment?: string | null,
+  status?: active | pending | unsubscribed | standBy | archived | null,
+  canBeReactivated?: boolean | null,
+  isBeingReactivated?: boolean | null,
+  userId?: number,
+  score?: number,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### exists
+
+`subscribers.exists`
+
+Check whether a subscriber exists
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.exists({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`subscribers.get`
+
+Get a subscriber
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `fields` | `object[]` | No | — |
+| `belongsToLists` | `string[]` | No | — |
+| `listsHistory` | `object[]` | No | — |
+| `unsubscribedDate` | `string \| null` | No | — |
+| `unsubscriptionDate` | `string \| null` | No | — |
+| `unsubscriptionType` | `hardBounce \| softBounce \| neverOpen \| abuseLink \| feedbackLoop \| internalPolicies \| manual \| null` | No | — |
+| `manualUnsubscriptionReason` | `administrative \| subscriberRequestNeverSubscribed \| subscriberRequestNotInterestingContent \| subscriberRequestIsSpam \| subscriberRequestTooManyEmails \| subscriberRequestOther \| null` | No | — |
+| `unsubscriptionComment` | `string \| null` | No | — |
+| `status` | `active \| pending \| unsubscribed \| standBy \| archived \| null` | No | — |
+| `canBeReactivated` | `boolean \| null` | No | — |
+| `isBeingReactivated` | `boolean \| null` | No | — |
+| `userId` | `number` | No | — |
+| `score` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+  name: string,
+  value: string,
+  predefined?: boolean,
+  private?: boolean,
+  readonly?: boolean,
+  type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+  permissionHTML?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="listsHistory full type">
+
+```ts
+{
+  date?: string,
+  listId?: number,
+  status?: added | deleted,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### import
+
+`subscribers.import`
+
+Import account subscribers
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.import({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `subscribers` | `object` | Yes | — |
+| `X-Doppler-Subscriber-Origin` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  items: {
+    email: string,
+    fields?: {
+      name: string,
+      value: string,
+      predefined?: boolean,
+      private?: boolean,
+      readonly?: boolean,
+      type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+      permissionHTML?: string
+    }[]
+  }[],
+  fields: string[],
+  callback?: string,
+  enableEmailNotification?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+| `createdResourceId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importCsv
+
+`subscribers.importCsv`
+
+Import subscribers from CSV
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.importCsv({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `listId` | `number` | Yes | — |
+| `Body` | `string` | Yes | — |
+| `X-Doppler-Subscriber-Origin` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+| `createdResourceId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importToList
+
+`subscribers.importToList`
+
+Import subscribers into a list
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.importToList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `listId` | `number` | Yes | — |
+| `subscribers` | `object` | Yes | — |
+| `X-Doppler-Subscriber-Origin` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  items: {
+    email: string,
+    fields?: {
+      name: string,
+      value: string,
+      predefined?: boolean,
+      private?: boolean,
+      readonly?: boolean,
+      type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+      permissionHTML?: string
+    }[]
+  }[],
+  fields: string[],
+  callback?: string,
+  enableEmailNotification?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+| `createdResourceId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importUnsubscribed
+
+`subscribers.importUnsubscribed`
+
+Import unsubscribed subscribers
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.importUnsubscribed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `subscribers` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  items: {
+    email: string,
+    manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
+    unsubscriptionComment?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscribers.list`
+
+List account subscribers
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `keyword` | `string` | No | — |
+| `updatedAfter` | `string` | No | — |
+| `resumeFrom` | `number` | No | — |
+| `withFieldType` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  email: string,
+  fields?: {
+    name: string,
+    value: string,
+    predefined?: boolean,
+    private?: boolean,
+    readonly?: boolean,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    permissionHTML?: string
+  }[],
+  belongsToLists?: string[],
+  listsHistory?: {
+    date?: string,
+    listId?: number,
+    status?: added | deleted,
+    _links?: {
+      href: string,
+      rel: string,
+      description?: string
+    }[]
+  }[],
+  unsubscribedDate?: string | null,
+  unsubscriptionDate?: string | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
+  unsubscriptionComment?: string | null,
+  status?: active | pending | unsubscribed | standBy | archived | null,
+  canBeReactivated?: boolean | null,
+  isBeingReactivated?: boolean | null,
+  userId?: number,
+  score?: number,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listByOrigin
+
+`subscribers.listByOrigin`
+
+List subscribers by origin
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.listByOrigin({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `updatedAfter` | `string` | No | — |
+| `withFieldType` | `string` | No | — |
+| `withFieldName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  email: string,
+  fields?: {
+    name: string,
+    value: string,
+    predefined?: boolean,
+    private?: boolean,
+    readonly?: boolean,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    permissionHTML?: string
+  }[],
+  belongsToLists?: string[],
+  listsHistory?: {
+    date?: string,
+    listId?: number,
+    status?: added | deleted,
+    _links?: {
+      href: string,
+      rel: string,
+      description?: string
+    }[]
+  }[],
+  unsubscribedDate?: string | null,
+  unsubscriptionDate?: string | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
+  unsubscriptionComment?: string | null,
+  status?: active | pending | unsubscribed | standBy | archived | null,
+  canBeReactivated?: boolean | null,
+  isBeingReactivated?: boolean | null,
+  userId?: number,
+  score?: number,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForList
+
+`subscribers.listForList`
+
+List subscribers in a list
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.listForList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `listId` | `number` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  email: string,
+  fields?: {
+    name: string,
+    value: string,
+    predefined?: boolean,
+    private?: boolean,
+    readonly?: boolean,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    permissionHTML?: string
+  }[],
+  belongsToLists?: string[],
+  listsHistory?: {
+    date?: string,
+    listId?: number,
+    status?: added | deleted,
+    _links?: {
+      href: string,
+      rel: string,
+      description?: string
+    }[]
+  }[],
+  unsubscribedDate?: string | null,
+  unsubscriptionDate?: string | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
+  unsubscriptionComment?: string | null,
+  status?: active | pending | unsubscribed | standBy | archived | null,
+  canBeReactivated?: boolean | null,
+  isBeingReactivated?: boolean | null,
+  userId?: number,
+  score?: number,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUnsubscribed
+
+`subscribers.listUnsubscribed`
+
+List unsubscribed subscribers
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.listUnsubscribed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  email: string,
+  fields?: {
+    name: string,
+    value: string,
+    predefined?: boolean,
+    private?: boolean,
+    readonly?: boolean,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    permissionHTML?: string
+  }[],
+  belongsToLists?: string[],
+  listsHistory?: {
+    date?: string,
+    listId?: number,
+    status?: added | deleted,
+    _links?: {
+      href: string,
+      rel: string,
+      description?: string
+    }[]
+  }[],
+  unsubscribedDate?: string | null,
+  unsubscriptionDate?: string | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
+  unsubscriptionComment?: string | null,
+  status?: active | pending | unsubscribed | standBy | archived | null,
+  canBeReactivated?: boolean | null,
+  isBeingReactivated?: boolean | null,
+  userId?: number,
+  score?: number,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### permissionsHistory
+
+`subscribers.permissionsHistory`
+
+Get subscriber permission history
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.permissionsHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `fieldName` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  date?: string,
+  originIP?: string,
+  value?: string,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeFromList
+
+`subscribers.removeFromList`
+
+Remove a subscriber from a list
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.removeFromList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `listId` | `number` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribe
+
+`subscribers.unsubscribe`
+
+Unsubscribe a subscriber from the account
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.subscribers.unsubscribe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `subscriber` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subscriber full type">
+
+```ts
+{
+  email: string,
+  fields?: {
+    name: string,
+    value: string,
+    predefined?: boolean,
+    private?: boolean,
+    readonly?: boolean,
+    type?: boolean | number | string | date | email | gender | country | consent | phone | permission,
+    permissionHTML?: string
+  }[],
+  belongsToLists?: string[],
+  listsHistory?: {
+    date?: string,
+    listId?: number,
+    status?: added | deleted,
+    _links?: {
+      href: string,
+      rel: string,
+      description?: string
+    }[]
+  }[],
+  unsubscribedDate?: string | null,
+  unsubscriptionDate?: string | null,
+  unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | null,
+  manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null,
+  unsubscriptionComment?: string | null,
+  status?: active | pending | unsubscribed | standBy | archived | null,
+  canBeReactivated?: boolean | null,
+  isBeingReactivated?: boolean | null,
+  userId?: number,
+  score?: number,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### get
+
+`tasks.get`
+
+Get a task
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.tasks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string \| null` | No | — |
+| `startDate` | `string \| null` | No | — |
+| `finishDate` | `string \| null` | No | — |
+| `taskType` | `string \| null` | No | — |
+| `itemsProcessed` | `number \| null` | No | — |
+| `status` | `unknown \| standBy \| inProgress \| completed \| failed \| null` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importErrors
+
+`tasks.importErrors`
+
+List task import errors
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.tasks.importErrors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `taskId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  errorCode?: string | null,
+  email?: string | null,
+  itemNumber?: number | null,
+  actionTaken?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List account tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.tasks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `itemsCount` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `pagesCount` | `number` | No | — |
+| `lastPage` | `number` | No | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  taskId?: string | null,
+  startDate?: string | null,
+  finishDate?: string | null,
+  taskType?: string | null,
+  itemsProcessed?: number | null,
+  status?: unknown | standBy | inProgress | completed | failed | null,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create a double opt-in template
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.templates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `template` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="template full type">
+
+```ts
+{
+  dobleOptinTemplateId?: number,
+  fromName: string,
+  fromEmail: string,
+  subject: string,
+  name: string,
+  preheader?: string | null,
+  replyTo?: string | null,
+  urlLanding: string,
+  _links?: {
+    href: string,
+    rel: string,
+    description?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+| `createdResourceId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Get a double opt-in template
+
+**Risk:** `read`
+
+```ts
+await corsair.dopplermarketingautomation.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `templateId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dobleOptinTemplateId` | `number` | No | — |
+| `fromName` | `string` | Yes | — |
+| `fromEmail` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `preheader` | `string \| null` | No | — |
+| `replyTo` | `string \| null` | No | — |
+| `urlLanding` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateContent
+
+`templates.updateContent`
+
+Update double opt-in template HTML
+
+**Risk:** `write`
+
+```ts
+await corsair.dopplermarketingautomation.api.templates.updateContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountName` | `string` | Yes | — |
+| `templateId` | `number` | Yes | — |
+| `Body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `_links` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="_links full type">
+
+```ts
+{
+  href: string,
+  rel: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
