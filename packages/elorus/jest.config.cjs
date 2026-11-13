@@ -49,6 +49,8 @@ module.exports = {
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
+	// The env-gated live smoke test calls a real account and runs only via test:live.
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,

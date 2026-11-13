@@ -1,134 +1,83 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { ElorusEndpointInputs, ElorusEndpointOutputs } from './endpoints/types';
-import { ElorusEndpointInputSchemas, ElorusEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
+import { ElorusEndpoints } from './endpoints';
+import { elorusEndpointMeta } from './endpoints/meta';
 import type {
-	ElorusWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { ElorusSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	ElorusOperationInputs,
+	ElorusOperationOutputs,
+} from './endpoints/operation';
+import { elorusOperationSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchElorusTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveElorusOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { ElorusSchema } from './schema';
 
 export type ElorusPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
-	hooks?: InternalElorusPlugin['hooks'];
-	webhookHooks?: InternalElorusPlugin['webhookHooks'];
+	organizationId?: string;
+	demo?: boolean;
 	errorHandlers?: CorsairErrorHandler;
-	permissions?: PluginPermissionsConfig<typeof elorusEndpointsNested>;
+	permissions?: PluginPermissionsConfig<typeof ElorusEndpoints>;
 };
-
-export type ElorusContext = CorsairPluginContext<
-	typeof ElorusSchema,
-	ElorusPluginOptions
->;
-
-export type ElorusKeyBuilderContext = KeyBuilderContext<ElorusPluginOptions>;
-
-export type ElorusBoundEndpoints = BindEndpoints<typeof elorusEndpointsNested>;
-
-type ElorusEndpoint<
-	K extends keyof ElorusEndpointOutputs,
-> = CorsairEndpoint<
-	ElorusContext,
-	ElorusEndpointInputs[K],
-	ElorusEndpointOutputs[K]
->;
-
-export type ElorusEndpoints = {
-	exampleGet: ElorusEndpoint<'exampleGet'>;
-};
-
-type ElorusWebhook<
-	K extends keyof ElorusWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ElorusContext, TEvent, ElorusWebhookOutputs[K]>;
-
-export type ElorusWebhooks = {
-	example: ElorusWebhook<'example', ExampleEvent>;
-};
-
-export type ElorusBoundWebhooks = BindWebhooks<ElorusWebhooks>;
-
-const elorusEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
-} as const;
-
-const elorusWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
-
-export const elorusEndpointSchemas = {
-	'example.get': {
-		input: ElorusEndpointInputSchemas.exampleGet,
-		output: ElorusEndpointOutputSchemas.exampleGet,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof elorusEndpointsNested>;
-
-const elorusWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof elorusWebhooksNested>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
-const elorusEndpointMeta = {
-	'example.get': {
-		riskLevel: 'read',
-		description: 'Get an example resource by ID',
-	},
-} as const satisfies RequiredPluginEndpointMeta<typeof elorusEndpointsNested>;
 
 export const elorusAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['organization_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
+
+const defaultAuthType: AuthTypes = 'api_key' as const;
+
+export type ElorusContext = CorsairPluginContext<
+	typeof ElorusSchema,
+	ElorusPluginOptions,
+	undefined,
+	typeof elorusAuthConfig
+>;
+
+export type ElorusKeyBuilderContext = KeyBuilderContext<
+	ElorusPluginOptions,
+	typeof elorusAuthConfig
+>;
+
+export type ElorusBoundEndpoints = BindEndpoints<typeof ElorusEndpoints>;
+export type ElorusEndpointInputs = ElorusOperationInputs;
+export type ElorusEndpointOutputs = ElorusOperationOutputs;
 
 export type BaseElorusPlugin<T extends ElorusPluginOptions> = CorsairPlugin<
 	'elorus',
 	typeof ElorusSchema,
-	typeof elorusEndpointsNested,
-	typeof elorusWebhooksNested,
+	typeof ElorusEndpoints,
+	Record<string, never>,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof elorusAuthConfig
 >;
 
 export type InternalElorusPlugin = BaseElorusPlugin<ElorusPluginOptions>;
-
 export type ExternalElorusPlugin<T extends ElorusPluginOptions> =
 	BaseElorusPlugin<T>;
+
+export const elorusEndpointSchemas =
+	elorusOperationSchemas satisfies RequiredPluginEndpointSchemas<
+		typeof ElorusEndpoints
+	>;
+
+export const elorusEndpointMetadata =
+	elorusEndpointMeta satisfies RequiredPluginEndpointMeta<
+		typeof ElorusEndpoints
+	>;
 
 export function elorus<const T extends ElorusPluginOptions>(
 	incomingOptions: ElorusPluginOptions & T = {} as ElorusPluginOptions & T,
@@ -141,62 +90,35 @@ export function elorus<const T extends ElorusPluginOptions>(
 		id: 'elorus',
 		authConfig: elorusAuthConfig,
 		schema: ElorusSchema,
-		options: options,
-		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
-		endpoints: elorusEndpointsNested,
-		webhooks: elorusWebhooksNested,
-		endpointMeta: elorusEndpointMeta,
+		options,
+		endpoints: ElorusEndpoints,
+		webhooks: {},
+		endpointMeta: elorusEndpointMetadata,
 		endpointSchemas: elorusEndpointSchemas,
-		webhookSchemas: elorusWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-elorus-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchElorusTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveElorusOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ElorusKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
+			if (source !== 'endpoint') return '';
+			const apiKey = options.key ?? (await ctx.keys.get_api_key());
+			const organizationId =
+				options.organizationId ?? (await ctx.keys.get_organization_id());
+			if (!apiKey || !organizationId) {
+				throw new AuthMissingError(
+					'elorus',
+					'api_key',
+					'Connect Elorus with an API key and organization ID before making API calls.',
+				);
 			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			return apiKey;
 		},
 	} satisfies InternalElorusPlugin;
 }
 
+export { ELORUS_API_BASE, ElorusAPIError } from './client';
 export type {
-	ExampleEvent,
-	ElorusWebhookOutputs,
-} from './webhooks/types';
-
-export type {
-	ElorusEndpointInputs,
-	ElorusEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
-} from './endpoints/types';
+	ElorusOperationInputs,
+	ElorusOperationOutputs,
+} from './endpoints/operation';
+export type { ElorusOperationKey } from './endpoints/types';
