@@ -598,14 +598,16 @@ export const AccountGetOutputSchema = z
 		/** Only present on usage-based plans (`subType: "usage"`). */
 		credit: z.number().optional(),
 		bytesTotal: z.number(),
-		bytesLimit: z.number(),
+		/** Missing on the free plan. */
+		bytesLimit: z.number().optional(),
 		computeTimeTotal: z.number(),
 		computeTimeLimit: z.number(),
 		storageUsed: z.number(),
 		storageLimit: z.number(),
-		totalJobs: z.number(),
-		successJobs: z.number(),
-		errorJobs: z.number(),
+		/** The job counters are missing until the account runs its first job. */
+		totalJobs: z.number().optional(),
+		successJobs: z.number().optional(),
+		errorJobs: z.number().optional(),
 	})
 	.catchall(JsonValueSchema);
 
@@ -768,7 +770,14 @@ export const StorageConfigSchema = z
 
 export type StorageConfig = z.infer<typeof StorageConfigSchema>;
 
-export const StorageGetCurrentOutputSchema = StorageConfigSchema;
+/**
+ * The docs show one object, but the live route answers a bare array of the
+ * account's configurations (`[]` when none is set), so both are accepted.
+ */
+export const StorageGetCurrentOutputSchema = z.union([
+	StorageConfigSchema,
+	z.array(StorageConfigSchema),
+]);
 
 export type StorageGetCurrentOutput = z.infer<
 	typeof StorageGetCurrentOutputSchema

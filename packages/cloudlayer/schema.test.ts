@@ -412,6 +412,39 @@ describe('Cloudlayer schema', () => {
 });
 
 describe('Cloudlayer endpoint schemas', () => {
+	it('accepts the free-plan account and empty storage list the live API returns', () => {
+		// Live GET /v2/account on a new free account (11-13): no bytesLimit, and
+		// no job counters until the first job runs.
+		const freeAccount = {
+			email: 'account@cloudlayer.invalid',
+			callsLimit: 100,
+			calls: 0,
+			storageUsed: 0,
+			storageLimit: 30_000_000,
+			subscription: 'price-free',
+			bytesTotal: 0,
+			computeTimeTotal: 0,
+			computeTimeLimit: -1,
+			subType: 'limit',
+			uid: 'user-1',
+			subActive: true,
+		};
+		expect(
+			CloudlayerEndpointOutputSchemas['account.get'].safeParse(freeAccount)
+				.success,
+		).toBe(true);
+		// Live GET /v2/storage with no configuration: a bare empty array.
+		expect(
+			CloudlayerEndpointOutputSchemas['storage.getCurrent'].safeParse([])
+				.success,
+		).toBe(true);
+		expect(
+			CloudlayerEndpointOutputSchemas['storage.getCurrent'].safeParse([
+				outputFixtures['storage.get'],
+			]).success,
+		).toBe(true);
+	});
+
 	it('accepts a job status or billing model the provider adds later', () => {
 		expect(
 			CloudlayerEndpointOutputSchemas['jobs.get'].safeParse({
