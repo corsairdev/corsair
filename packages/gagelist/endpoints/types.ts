@@ -167,9 +167,11 @@ const GagesUpdateInputSchema = GageWriteSchema.required({ Id: true });
 
 export type GagesUpdateInput = z.input<typeof GagesUpdateInputSchema>;
 
+// The reference shows `"data": 0` for every update and delete; a boolean is
+// accepted too, so either form parses once the write has happened.
 const GageUpdateResponseSchema = z
 	.object({
-		data: z.boolean().nullish(),
+		data: z.union([z.number(), z.boolean()]).nullish(),
 		success: z.boolean().nullish(),
 		message: z.string().nullish(),
 	})

@@ -58,7 +58,8 @@ export const gageDetail = { data: gage, success: true, message: null };
 
 export const created = { data: 99, success: true, message: 'Gage created' };
 
-export const updated = { data: true, success: true, message: 'Gage updated' };
+// The reference's update and delete example answers a number in `data`.
+export const updated = { data: 0, success: true, message: 'Gage updated' };
 
 export const calibration = {
 	Id: 500,

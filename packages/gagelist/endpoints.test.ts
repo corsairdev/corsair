@@ -395,7 +395,9 @@ describe('gages.update', () => {
 		respondToken();
 		respond(updated);
 
-		await invoke(Gages.update, { Id: 12, Location: 'Bench 4' });
+		await expect(
+			invoke(Gages.update, { Id: 12, Location: 'Bench 4' }),
+		).resolves.toMatchObject({ data: 0, success: true });
 
 		expect(lastRequest()).toMatchObject({
 			method: 'POST',
