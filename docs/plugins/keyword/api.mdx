@@ -187,7 +187,7 @@ Adding a keyword the project already tracks returns the existing one rather than
     kw?: string | null,
     source?: number | null,
     start?: number | null,
-    notes?: string | null,
+    notes?: string | Record<string, any> | null,
     tags_count?: number | null,
     tags?: {
       id?: number | null,
@@ -226,10 +226,10 @@ Adding a keyword the project already tracks returns the existing one rather than
     rankingurl?: string | null,
     grankhistory?: (number | null)[] | null,
     trends?: {
-      day?: number | null,
-      week?: number | null,
-      month?: number | null,
-      life?: number | null
+      day?: number | string | null,
+      week?: number | string | null,
+      month?: number | string | null,
+      life?: number | string | null
     } | null,
     updated_at?: string | null,
     crawled_at?: number | null
@@ -317,7 +317,7 @@ await corsair.keyword.api.keywords.bulkUpdate({ projectId: 3057417, keywordIds: 
   region?: string,
   language?: string,
   type?: se | local | gmb,
-  status?: ACTIVE | PAUSED | ARCHIVED,
+  status?: ACTIVE | INACTIVE | ARCHIVED,
   tags?: string[],
   ignore_local?: boolean,
   ignore_featured?: boolean,
@@ -436,7 +436,7 @@ await corsair.keyword.api.keywords.get({ projectName: 'Disney', keywordId: '2726
     kw?: string | null,
     source?: number | null,
     start?: number | null,
-    notes?: string | null,
+    notes?: string | Record<string, any> | null,
     tags_count?: number | null,
     tags?: {
       id?: number | null,
@@ -475,10 +475,10 @@ await corsair.keyword.api.keywords.get({ projectName: 'Disney', keywordId: '2726
     rankingurl?: string | null,
     grankhistory?: (number | null)[] | null,
     trends?: {
-      day?: number | null,
-      week?: number | null,
-      month?: number | null,
-      life?: number | null
+      day?: number | string | null,
+      week?: number | string | null,
+      month?: number | string | null,
+      life?: number | string | null
     } | null,
     updated_at?: string | null,
     crawled_at?: number | null
@@ -536,7 +536,7 @@ await corsair.keyword.api.keywords.list({ projectName: 'Disney', page: 1, per_pa
     kw?: string | null,
     source?: number | null,
     start?: number | null,
-    notes?: string | null,
+    notes?: string | Record<string, any> | null,
     tags_count?: number | null,
     tags?: {
       id?: number | null,
@@ -575,10 +575,10 @@ await corsair.keyword.api.keywords.list({ projectName: 'Disney', page: 1, per_pa
     rankingurl?: string | null,
     grankhistory?: (number | null)[] | null,
     trends?: {
-      day?: number | null,
-      week?: number | null,
-      month?: number | null,
-      life?: number | null
+      day?: number | string | null,
+      week?: number | string | null,
+      month?: number | string | null,
+      life?: number | string | null
     } | null,
     updated_at?: string | null,
     crawled_at?: number | null
@@ -628,7 +628,7 @@ Spends the plan’s daily on-demand refresh quota. The whole request is refused 
 
 `keywords.update`
 
-Change a keyword’s domain, region, tags, status, notes or favourite flag
+Change a keyword’s domain, region, tags, status, baseline or favourite flag
 
 **Risk:** `write`
 
@@ -646,14 +646,13 @@ await corsair.keyword.api.keywords.update({ projectName: 'Disney', keywordId: '2
 | `region` | `string` | No | — |
 | `language` | `string` | No | — |
 | `type` | `se \| local \| gmb` | No | — |
-| `status` | `ACTIVE \| PAUSED \| ARCHIVED` | No | — |
+| `status` | `ACTIVE \| INACTIVE \| ARCHIVED` | No | — |
 | `tags` | `string[]` | No | Replace every tag on the keyword with this list. |
-| `notes` | `string` | No | — |
 | `isfav` | `boolean` | No | — |
 | `ignore_local` | `boolean` | No | — |
 | `ignore_featured` | `boolean` | No | — |
 | `url_tracking_method` | `broad \| exact` | No | — |
-| `start` | `number` | No | A starting position, when importing history. |
+| `start` | `number` | No | The starting rank the keyword’s change is measured from (sent as Keyword’s `baseline`). |
 
 
 
@@ -677,7 +676,7 @@ await corsair.keyword.api.keywords.update({ projectName: 'Disney', keywordId: '2
     kw?: string | null,
     source?: number | null,
     start?: number | null,
-    notes?: string | null,
+    notes?: string | Record<string, any> | null,
     tags_count?: number | null,
     tags?: {
       id?: number | null,
@@ -716,10 +715,10 @@ await corsair.keyword.api.keywords.update({ projectName: 'Disney', keywordId: '2
     rankingurl?: string | null,
     grankhistory?: (number | null)[] | null,
     trends?: {
-      day?: number | null,
-      week?: number | null,
-      month?: number | null,
-      life?: number | null
+      day?: number | string | null,
+      week?: number | string | null,
+      month?: number | string | null,
+      life?: number | string | null
     } | null,
     updated_at?: string | null,
     crawled_at?: number | null
@@ -802,7 +801,7 @@ await corsair.keyword.api.metrics.get({ projectName: 'Disney', tagId: 27727, tim
 |------|------|----------|-------------|
 | `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
 | `tagId` | `number` | No | Only this tag’s keywords. |
-| `timeframe` | `number` | No | Days to compare over. Defaults to Keyword’s own 30. |
+| `timeframe` | `number` | Yes | Days to compare over, such as 30. Keyword requires it. |
 
 
 
@@ -896,21 +895,7 @@ Scoped by numeric `projectId`, and read from Keyword’s cache.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-Record<string, {
-  url?: string | null,
-  clicks?: number | null,
-  percentage?: number | null,
-  domain_exist_in_project?: boolean | null
-}[]>
-```
-</Accordion>
-</AccordionGroup>
+| `data` | `unknown` | Yes | — |
 
 
 
@@ -1333,10 +1318,12 @@ Keyword refuses a call covering more than 400,000 keyword-days, so shorten `limi
 ```ts
 {
   kwid: number | string,
-  data?: {
-    name?: string | null,
-    data: (string | number | null)[][]
-  }[][] | null
+  data?: (
+    {
+      name?: string | null,
+      data: (string | number | null)[][]
+    }[] | string | Record<string, any>
+  )[] | null
 }[]
 ```
 </Accordion>
