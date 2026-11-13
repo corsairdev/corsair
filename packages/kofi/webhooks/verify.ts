@@ -52,6 +52,8 @@ export function readPayment(rawBody: unknown): Record<string, unknown> | null {
 	return parseJsonObject(rawBody);
 }
 
+// unknown: JSON.parse returns any shape; only a plain object is kept, and the
+// payment's fields are checked one at a time by the callers.
 function parseJsonObject(text: string): Record<string, unknown> | null {
 	try {
 		const parsed: unknown = JSON.parse(text);
@@ -95,6 +97,8 @@ export type KofiVerification =
  * unverified payment notification is worse than a rejected one, because a
  * caller would otherwise act on whoever posted to the URL.
  */
+// unknown: the payment is not schema-parsed yet; only its verification_token
+// is read here, and the full schema runs after the token matches.
 export function verifyKofiPayment(
 	payment: Record<string, unknown> | null,
 	secret: string | undefined,
