@@ -79,7 +79,8 @@ apiExamples:
     name: "Points of Interest"
   layers.addFromSource:
     map_id: "a1b2c3d4e5"
-    source_id: "src_123"
+    from: "dataset"
+    dataset_id: "dataset_123"
   layers.refresh:
     map_id: "a1b2c3d4e5"
     layer_id: "layer_123"
@@ -89,7 +90,7 @@ apiExamples:
   layers.duplicate:
     layers:
       - destination_map_id: "a1b2c3d4e5"
-        layer_id: "layer_123"
+        source_layer_id: "layer_123"
   layers.listLibrary: {}
   layers.update:
     map_id: "a1b2c3d4e5"
@@ -179,6 +180,7 @@ apiExamples:
       - name: "Key Points"
   comments.export:
     map_id: "a1b2c3d4e5"
+    format: "json"
   comments.resolve:
     map_id: "a1b2c3d4e5"
     comment_id: "comm_123"
@@ -188,6 +190,7 @@ apiExamples:
   projects.list: {}
   projects.create:
     name: "Regional Planning"
+    visibility: "workspace"
   projects.get:
     project_id: "proj_123"
   projects.update:
@@ -199,7 +202,12 @@ apiExamples:
   sources.create:
     name: "Enterprise PostGIS"
     connection:
+      type: "postgresql"
       host: "db.example.com"
+      port: 5432
+      database: "gis"
+      user: "felt_reader"
+      password: "<password>"
   sources.get:
     source_id: "src_123"
   sources.update:
@@ -211,13 +219,15 @@ apiExamples:
     source_id: "src_123"
   sources.createCredential:
     source_id: "src_123"
+    name: "Snowflake token"
+    use_case: "source_authentication"
     credential:
-      username: "felt_user"
+      type: "snowflake_pat"
+      token: "<snowflake-token>"
   sources.updateCredential:
     source_id: "src_123"
     credential_id: "cred_123"
-    credential:
-      username: "felt_user"
+    name: "Snowflake token (rotated)"
   sources.deleteCredential:
     source_id: "src_123"
     credential_id: "cred_123"
@@ -225,6 +235,7 @@ apiExamples:
     map_id: "a1b2c3d4e5"
   printPages.createLayout:
     map_id: "a1b2c3d4e5"
+    page_id: "page_123"
     name: "Landscape Layout"
   printPages.updateLayout:
     map_id: "a1b2c3d4e5"
@@ -263,4 +274,4 @@ apiExamples:
 apiNotes:
   maps.create: "Creates a new Felt map. You can optionally supply initial coordinates and zoom level."
   layers.upload: "Imports spatial data into a Felt map from a publicly accessible URL or pre-signed upload URL."
-  sources.createCredential: "Configures database connection credentials (PostGIS/Snowflake/BigQuery). Credentials are strictly redacted from event logs."
+  sources.createCredential: "Adds a credential a source uses to authenticate (AWS role, Azure connection string, custom headers, GCP service account, key pair or Snowflake token). Secret values are redacted from errors and event logs."
