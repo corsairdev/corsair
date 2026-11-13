@@ -48,4 +48,21 @@ describe('getUserPlaylists', () => {
 			{ method: 'GET', query: { limit: 5, offset: 10 } },
 		);
 	});
+
+	it('sends only tracks and snapshot_id as the DELETE body', async () => {
+		await corsair.spotify.api.playlists.removeItem({
+			playlist_id: 'p1',
+			tracks: [{ uri: 'spotify:track:1' }],
+			snapshot_id: 'snap',
+		});
+
+		expect(request).toHaveBeenCalledWith(
+			'playlists/p1/tracks',
+			expect.anything(),
+			{
+				method: 'DELETE',
+				body: { tracks: [{ uri: 'spotify:track:1' }], snapshot_id: 'snap' },
+			},
+		);
+	});
 });
