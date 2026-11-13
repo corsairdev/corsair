@@ -1,13 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GigasheetEndpoints } from '..';
 import { makeGigasheetRequest } from '../client';
+import type { UploadDirectResponse, UploadFromUrlResponse } from './types';
 import {
 	GigasheetEndpointInputSchemas,
 	GigasheetEndpointOutputSchemas,
-} from './types';
-import type {
-	UploadDirectResponse,
-	UploadFromUrlResponse,
 } from './types';
 
 export const fromUrl: GigasheetEndpoints['upload.fromUrl'] = async (

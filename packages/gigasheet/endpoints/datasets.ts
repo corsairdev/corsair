@@ -1,16 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GigasheetEndpoints } from '..';
 import { makeGigasheetRequest } from '../client';
-import {
-	GigasheetEndpointInputSchemas,
-	GigasheetEndpointOutputSchemas,
-} from './types';
 import type {
 	DatasetsDeleteResponse,
 	DatasetsGetColumnsResponse,
 	DatasetsGetOperationStatusResponse,
 	DatasetsGetResponse,
 	DatasetsListResponse,
+} from './types';
+import {
+	GigasheetEndpointInputSchemas,
+	GigasheetEndpointOutputSchemas,
 } from './types';
 
 export const get: GigasheetEndpoints['datasets.get'] = async (ctx, input) => {

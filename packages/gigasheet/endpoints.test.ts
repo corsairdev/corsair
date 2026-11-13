@@ -1,13 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeGigasheetRequest } from './client';
-import {
-	Datasets,
-	Exports,
-	Rows,
-	Upload,
-	User,
-	Views,
-} from './endpoints';
+import { Datasets, Exports, Rows, Upload, User, Views } from './endpoints';
 import type { GigasheetContext } from './index';
 
 jest.mock('./client', () => ({
@@ -40,15 +33,16 @@ describe('Gigasheet Endpoints', () => {
 	// --------------------------------------------------------------------------
 	describe('user.whoami', () => {
 		it('calls GET /user/whoami and parses output', async () => {
-			mockRequest.mockResolvedValue({ username: 'testuser', authenticated: true });
+			mockRequest.mockResolvedValue({
+				username: 'testuser',
+				authenticated: true,
+			});
 
 			const res = await User.whoami(mockCtx, {});
 
-			expect(mockRequest).toHaveBeenCalledWith(
-				'/user/whoami',
-				'test-api-key',
-				{ method: 'GET' },
-			);
+			expect(mockRequest).toHaveBeenCalledWith('/user/whoami', 'test-api-key', {
+				method: 'GET',
+			});
 			expect(res).toEqual({ username: 'testuser', authenticated: true });
 			expect(mockLogEvent).toHaveBeenCalledWith(
 				mockCtx,
@@ -65,11 +59,9 @@ describe('Gigasheet Endpoints', () => {
 
 			const res = await User.whoami(unauthCtx, {});
 
-			expect(mockRequest).toHaveBeenCalledWith(
-				'/user/whoami',
-				undefined,
-				{ method: 'GET' },
-			);
+			expect(mockRequest).toHaveBeenCalledWith('/user/whoami', undefined, {
+				method: 'GET',
+			});
 			expect(res.authenticated).toBe(false);
 		});
 	});
@@ -172,17 +164,13 @@ describe('Gigasheet Endpoints', () => {
 				name: 'Test_Dataset',
 			});
 
-			expect(mockRequest).toHaveBeenCalledWith(
-				'/upload/url',
-				'test-api-key',
-				{
-					method: 'POST',
-					body: {
-						url: 'https://example.com/dataset.csv',
-						name: 'Test_Dataset',
-					},
+			expect(mockRequest).toHaveBeenCalledWith('/upload/url', 'test-api-key', {
+				method: 'POST',
+				body: {
+					url: 'https://example.com/dataset.csv',
+					name: 'Test_Dataset',
 				},
-			);
+			});
 			expect(res.Handle).toBe('handle_url_123');
 			expect(mockLogEvent).toHaveBeenCalledWith(
 				mockCtx,
@@ -198,7 +186,9 @@ describe('Gigasheet Endpoints', () => {
 				// `unknown` because deliberately passing invalid type to verify runtime Zod gate.
 				url: 'not-a-valid-url',
 				name: 'Test_Dataset',
-			} as unknown as { url: string; name: string }).catch((caught: unknown) => caught);
+			} as unknown as { url: string; name: string }).catch(
+				(caught: unknown) => caught,
+			);
 
 			expect(err).toBeDefined();
 			expect(mockRequest).not.toHaveBeenCalled();
@@ -357,11 +347,9 @@ describe('Gigasheet Endpoints', () => {
 
 			const res = await Datasets.list(mockCtx, {});
 
-			expect(mockRequest).toHaveBeenCalledWith(
-				'/library/',
-				'test-api-key',
-				{ method: 'GET' },
-			);
+			expect(mockRequest).toHaveBeenCalledWith('/library/', 'test-api-key', {
+				method: 'GET',
+			});
 			expect(res.length).toBe(1);
 			expect(mockLogEvent).toHaveBeenCalledWith(
 				mockCtx,
@@ -623,7 +611,8 @@ describe('Gigasheet Endpoints', () => {
 	describe('exports.download', () => {
 		it('calls GET /dataset/{handle}/download-export and parses presigned URL', async () => {
 			mockRequest.mockResolvedValue({
-				presignedUrl: 'https://s3.amazonaws.com/gigasheet-exports/data.zip?token=123',
+				presignedUrl:
+					'https://s3.amazonaws.com/gigasheet-exports/data.zip?token=123',
 				error: '',
 			});
 

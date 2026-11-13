@@ -1,18 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GigasheetEndpoints } from '..';
 import { makeGigasheetRequest } from '../client';
+import type { ViewsGetResponse, ViewsListResponse } from './types';
 import {
 	GigasheetEndpointInputSchemas,
 	GigasheetEndpointOutputSchemas,
 } from './types';
-import type {
-	ViewsGetResponse,
-	ViewsListResponse,
-} from './types';
 
 export const list: GigasheetEndpoints['views.list'] = async (ctx, input) => {
-	const parsedInput =
-		GigasheetEndpointInputSchemas['views.list'].parse(input);
+	const parsedInput = GigasheetEndpointInputSchemas['views.list'].parse(input);
 	const response = await makeGigasheetRequest<ViewsListResponse>(
 		`/dataset/${encodeURIComponent(parsedInput.handle)}/views`,
 		ctx.key,

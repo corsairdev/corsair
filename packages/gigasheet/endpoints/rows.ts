@@ -1,14 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GigasheetEndpoints } from '..';
 import { makeGigasheetRequest } from '../client';
-import {
-	GigasheetEndpointInputSchemas,
-	GigasheetEndpointOutputSchemas,
-} from './types';
 import type {
 	RowsAppendByNameResponse,
 	RowsDeleteRowsResponse,
 	RowsInsertBlankRowResponse,
+} from './types';
+import {
+	GigasheetEndpointInputSchemas,
+	GigasheetEndpointOutputSchemas,
 } from './types';
 
 export const appendByName: GigasheetEndpoints['rows.appendByName'] = async (

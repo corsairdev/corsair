@@ -6,18 +6,18 @@
 //
 // All live calls in this file are read-only and safe to execute.
 import { makeGigasheetRequest } from './client';
+import type {
+	DatasetsListResponse,
+	UserGetDetailsResponse,
+	UserGetEnrichmentCreditsResponse,
+	UserWhoamiResponse,
+} from './endpoints/types';
 import {
 	DatasetsListOutputSchema,
 	UserGetDetailsOutputSchema,
 	UserGetEnrichmentCreditsOutputSchema,
 	UserGetSpaceUsedOutputSchema,
 	UserWhoamiOutputSchema,
-} from './endpoints/types';
-import type {
-	DatasetsListResponse,
-	UserGetDetailsResponse,
-	UserGetEnrichmentCreditsResponse,
-	UserWhoamiResponse,
 } from './endpoints/types';
 
 const LIVE_KEY = process.env.GIGASHEET_API_KEY ?? '';

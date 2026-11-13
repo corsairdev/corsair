@@ -1,14 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GigasheetEndpoints } from '..';
 import { GigasheetAPIError, makeGigasheetRequest } from '../client';
-import {
-	GigasheetEndpointInputSchemas,
-	GigasheetEndpointOutputSchemas,
-} from './types';
 import type {
 	UserGetDetailsResponse,
 	UserGetEnrichmentCreditsResponse,
 	UserWhoamiResponse,
+} from './types';
+import {
+	GigasheetEndpointInputSchemas,
+	GigasheetEndpointOutputSchemas,
 } from './types';
 
 export const whoami: GigasheetEndpoints['user.whoami'] = async (ctx, input) => {

@@ -1,4 +1,3 @@
-import { AuthMissingError } from 'corsair/core';
 import type {
 	AuthTypes,
 	BindEndpoints,
@@ -13,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Datasets, Exports, Rows, Upload, User, Views } from './endpoints';
 import type {
 	GigasheetEndpointInputs,
@@ -345,6 +345,14 @@ export function gigasheet<const T extends GigasheetPluginOptions>(
 	} satisfies InternalGigasheetPlugin;
 }
 
+export {
+	Datasets,
+	Exports,
+	Rows,
+	Upload,
+	User,
+	Views,
+} from './endpoints';
 export type {
 	DatasetsDeleteInput,
 	DatasetsDeleteResponse,
@@ -385,11 +393,3 @@ export type {
 	ViewsListInput,
 	ViewsListResponse,
 } from './endpoints/types';
-export {
-	Datasets,
-	Exports,
-	Rows,
-	Upload,
-	User,
-	Views,
-} from './endpoints';
