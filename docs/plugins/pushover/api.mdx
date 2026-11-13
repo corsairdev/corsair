@@ -1,0 +1,836 @@
+---
+title: "Pushover API reference"
+sidebarTitle: "API"
+description: "API reference for the Pushover plugin in Corsair: every `pushover.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Apps
+
+### limits
+
+`apps.limits`
+
+Get the monthly message limit and remaining quota
+
+**Risk:** `read`
+
+```ts
+await corsair.pushover.api.apps.limits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `remaining` | `number` | Yes | — |
+| `reset` | `number` | Yes | — |
+
+
+
+---
+
+## Glances
+
+### update
+
+`glances.update`
+
+Update a user widget glance
+
+**Risk:** `write`
+
+```ts
+await corsair.pushover.api.glances.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | Yes | — |
+| `device` | `string` | No | — |
+| `title` | `string` | No | — |
+| `text` | `string` | No | — |
+| `subtext` | `string` | No | — |
+| `count` | `number \| ""` | No | — |
+| `percent` | `number \| ""` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+
+
+
+---
+
+## Groups
+
+### addUser
+
+`groups.addUser`
+
+Add a user to a delivery group
+
+**Risk:** `write`
+
+```ts
+await corsair.pushover.api.groups.addUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `string` | Yes | — |
+| `user` | `string` | Yes | — |
+| `device` | `string` | No | — |
+| `memo` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`groups.create`
+
+Create a delivery group
+
+**Risk:** `write`
+
+```ts
+await corsair.pushover.api.groups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+| `group` | `string` | Yes | — |
+
+
+
+---
+
+### disableUser
+
+`groups.disableUser`
+
+Disable a delivery group user
+
+**Risk:** `write`
+
+```ts
+await corsair.pushover.api.groups.disableUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `string` | Yes | — |
+| `user` | `string` | Yes | — |
+| `device` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+
+
+
+---
+
+### enableUser
+
+`groups.enableUser`
+
+Enable a delivery group user
+
+**Risk:** `write`
+
+```ts
+await corsair.pushover.api.groups.enableUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `string` | Yes | — |
+| `user` | `string` | Yes | — |
+| `device` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`groups.get`
+
+Get a delivery group and its users
+
+**Risk:** `read`
+
+```ts
+await corsair.pushover.api.groups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  user: string,
+  device: string | null,
+  memo: string | null,
+  disabled: boolean,
+  name?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List delivery groups
+
+**Risk:** `read`
+
+```ts
+await corsair.pushover.api.groups.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+| `groups` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  group: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeUser
+
+`groups.removeUser`
+
+Remove a user from a delivery group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pushover.api.groups.removeUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `string` | Yes | — |
+| `user` | `string` | Yes | — |
+| `device` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+
+
+
+---
+
+### rename
+
+`groups.rename`
+
+Rename a delivery group
+
+**Risk:** `write`
+
+```ts
+await corsair.pushover.api.groups.rename({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+
+
+
+---
+
+## Licenses
+
+### assign
+
+`licenses.assign`
+
+Permanently assign a license credit
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pushover.api.licenses.assign({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+| `email` | `string` | No | — |
+| `os` | `Android \| iOS \| Desktop \| ""` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+| `credits` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`licenses.get`
+
+Get remaining license credits
+
+**Risk:** `read`
+
+```ts
+await corsair.pushover.api.licenses.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+| `credits` | `number` | Yes | — |
+
+
+
+---
+
+## Messages
+
+### send
+
+`messages.send`
+
+Send a notification to a user or group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pushover.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `device` | `string` | No | — |
+| `title` | `string` | No | — |
+| `url` | `string` | No | — |
+| `url_title` | `string` | No | — |
+| `html` | `0 \| 1` | No | — |
+| `monospace` | `0 \| 1` | No | — |
+| `priority` | `-2 \| -1 \| 0 \| 1 \| 2` | No | — |
+| `retry` | `number` | No | — |
+| `expire` | `number` | No | — |
+| `callback` | `string` | No | — |
+| `tags` | `string` | No | — |
+| `timestamp` | `number` | No | — |
+| `ttl` | `number` | No | — |
+| `sound` | `string` | No | — |
+| `attachment_base64` | `string` | No | — |
+| `attachment_type` | `string` | No | — |
+| `encrypted` | `0 \| 1` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+| `receipt` | `string` | No | — |
+
+
+
+---
+
+## Receipts
+
+### cancel
+
+`receipts.cancel`
+
+Cancel retries for an emergency notification
+
+**Risk:** `write`
+
+```ts
+await corsair.pushover.api.receipts.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+
+
+
+---
+
+### cancelByTag
+
+`receipts.cancelByTag`
+
+Cancel emergency notification retries by tag
+
+**Risk:** `write`
+
+```ts
+await corsair.pushover.api.receipts.cancelByTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`receipts.get`
+
+Get an emergency notification receipt
+
+**Risk:** `read`
+
+```ts
+await corsair.pushover.api.receipts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+| `acknowledged` | `0 \| 1` | Yes | — |
+| `acknowledged_at` | `number` | Yes | — |
+| `acknowledged_by` | `string \| null` | No | — |
+| `acknowledged_by_device` | `string \| null` | No | — |
+| `last_delivered_at` | `number` | Yes | — |
+| `expired` | `0 \| 1` | Yes | — |
+| `expires_at` | `number` | Yes | — |
+| `called_back` | `0 \| 1` | Yes | — |
+| `called_back_at` | `number` | Yes | — |
+
+
+
+---
+
+## Sounds
+
+### list
+
+`sounds.list`
+
+List available notification sounds
+
+**Risk:** `read`
+
+```ts
+await corsair.pushover.api.sounds.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+| `sounds` | `Record<string, string>` | Yes | — |
+
+
+
+---
+
+## Subscriptions
+
+### migrate
+
+`subscriptions.migrate`
+
+Migrate a user key to a subscription key
+
+**Risk:** `write`
+
+```ts
+await corsair.pushover.api.subscriptions.migrate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscription` | `string` | Yes | — |
+| `user` | `string` | Yes | — |
+| `device_name` | `string` | No | — |
+| `sound` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+| `subscribed_user_key` | `string` | Yes | — |
+
+
+
+---
+
+## Teams
+
+### addUser
+
+`teams.addUser`
+
+Invite or add a team user using a team token
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pushover.api.teams.addUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `password` | `string` | No | — |
+| `instant` | `true` | No | — |
+| `admin` | `true` | No | — |
+| `group` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`teams.get`
+
+Get team details using a team token
+
+**Risk:** `read`
+
+```ts
+await corsair.pushover.api.teams.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  email: string,
+  administrator: boolean,
+  devices: {
+    name: string,
+    os: string,
+    os_version: string,
+    enabled: boolean,
+    administratively_disabled: boolean
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeUser
+
+`teams.removeUser`
+
+Remove a team user using a team token
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pushover.api.teams.removeUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+
+
+
+---
+
+### revokeInvitation
+
+`teams.revokeInvitation`
+
+Revoke a team invitation using a team token
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pushover.api.teams.revokeInvitation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+
+
+
+---
+
+## Users
+
+### validate
+
+`users.validate`
+
+Validate a user or group and list its devices
+
+**Risk:** `read`
+
+```ts
+await corsair.pushover.api.users.validate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | Yes | — |
+| `device` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `1` | Yes | — |
+| `request` | `string` | Yes | — |
+| `devices` | `string[]` | No | — |
+| `licenses` | `string[]` | No | — |
+
+
+
+---
