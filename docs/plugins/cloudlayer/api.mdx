@@ -32,20 +32,20 @@ await corsair.cloudlayer.api.account.get({});
 | `email` | `string` | Yes | — |
 | `uid` | `string` | Yes | — |
 | `subscription` | `string` | Yes | — |
-| `subType` | `limit \| usage` | Yes | — |
+| `subType` | `limit \| usage \| string` | Yes | — |
 | `subActive` | `boolean` | Yes | — |
 | `calls` | `number` | Yes | — |
 | `callsLimit` | `number` | Yes | — |
 | `credit` | `number` | No | — |
 | `bytesTotal` | `number` | Yes | — |
-| `bytesLimit` | `number` | Yes | — |
+| `bytesLimit` | `number` | No | — |
 | `computeTimeTotal` | `number` | Yes | — |
 | `computeTimeLimit` | `number` | Yes | — |
 | `storageUsed` | `number` | Yes | — |
 | `storageLimit` | `number` | Yes | — |
-| `totalJobs` | `number` | Yes | — |
-| `successJobs` | `number` | Yes | — |
-| `errorJobs` | `number` | Yes | — |
+| `totalJobs` | `number` | No | — |
+| `successJobs` | `number` | No | — |
+| `errorJobs` | `number` | No | — |
 
 
 
@@ -215,7 +215,7 @@ V2 returns a JSON job; `async: false` waits for completion and returns the compl
 ```ts
 {
   id: string,
-  status: pending | success | error,
+  status: pending | success | error | string,
   type?: string,
   assetUrl?: string,
   previewUrl?: string,
@@ -463,7 +463,7 @@ V2 returns a JSON job; `async: false` waits for completion and returns the compl
 ```ts
 {
   id: string,
-  status: pending | success | error,
+  status: pending | success | error | string,
   type?: string,
   assetUrl?: string,
   previewUrl?: string,
@@ -660,7 +660,7 @@ await corsair.cloudlayer.api.jobs.get({ id: 'job-id' });
 | `uid` | `string` | No | — |
 | `apiKeyUsed` | `string` | No | — |
 | `type` | `string` | Yes | — |
-| `status` | `pending \| success \| error` | Yes | — |
+| `status` | `pending \| success \| error \| string` | Yes | — |
 | `params` | `Record<string, JsonValue>` | No | — |
 | `size` | `number` | Yes | — |
 | `processTime` | `number` | Yes | — |
@@ -704,7 +704,7 @@ await corsair.cloudlayer.api.jobs.list({});
   uid?: string,
   apiKeyUsed?: string,
   type: string,
-  status: pending | success | error,
+  status: pending | success | error | string,
   params?: Record<string, JsonValue>,
   size: number,
   processTime: number,
@@ -751,7 +751,7 @@ await corsair.cloudlayer.api.jobs.listV2({});
   uid?: string,
   apiKeyUsed?: string,
   type: string,
-  status: pending | success | error,
+  status: pending | success | error | string,
   params?: Record<string, JsonValue>,
   size: number,
   processTime: number,
@@ -861,18 +861,32 @@ await corsair.cloudlayer.api.storage.getCurrent({});
 **Input:** _empty object_
 
 
-**Output**
+**Output:** `object \| object[]`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | No | — |
-| `title` | `string` | Yes | — |
-| `bucket` | `string` | Yes | — |
-| `region` | `string` | Yes | — |
-| `accessKeyId` | `string` | Yes | — |
-| `secretAccessKey` | `string` | Yes | — |
-| `endpoint` | `string \| null` | No | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+  id?: string,
+  title: string,
+  bucket: string,
+  region: string,
+  accessKeyId: string,
+  secretAccessKey: string,
+  endpoint?: string | null
+} | {
+  id?: string,
+  title: string,
+  bucket: string,
+  region: string,
+  accessKeyId: string,
+  secretAccessKey: string,
+  endpoint?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -988,7 +1002,7 @@ V2 returns a JSON job; `async: false` waits for completion and returns the compl
 ```ts
 {
   id: string,
-  status: pending | success | error,
+  status: pending | success | error | string,
   type?: string,
   assetUrl?: string,
   previewUrl?: string,
@@ -1211,7 +1225,7 @@ V2 returns a JSON job; `async: false` waits for completion and returns the compl
 ```ts
 {
   id: string,
-  status: pending | success | error,
+  status: pending | success | error | string,
   type?: string,
   assetUrl?: string,
   previewUrl?: string,
@@ -1494,7 +1508,7 @@ V2 POST returns a JSON job; `async: false` waits for completion and returns the 
 ```ts
 {
   id: string,
-  status: pending | success | error,
+  status: pending | success | error | string,
   type?: string,
   assetUrl?: string,
   previewUrl?: string,
@@ -1542,7 +1556,7 @@ The v2 GET shortcut returns a JSON job. `url.toImageQuickV1` exposes the v1 GET 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `pending \| success \| error` | Yes | — |
+| `status` | `pending \| success \| error \| string` | Yes | — |
 | `type` | `string` | No | — |
 | `assetUrl` | `string` | No | — |
 | `previewUrl` | `string` | No | — |
@@ -1884,7 +1898,7 @@ V2 POST returns a JSON job; `async: false` waits for completion and returns the 
 ```ts
 {
   id: string,
-  status: pending | success | error,
+  status: pending | success | error | string,
   type?: string,
   assetUrl?: string,
   previewUrl?: string,
@@ -1932,7 +1946,7 @@ The v2 GET shortcut returns a JSON job. `url.toPdfQuickV1` exposes the v1 GET ro
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `status` | `pending \| success \| error` | Yes | — |
+| `status` | `pending \| success \| error \| string` | Yes | — |
 | `type` | `string` | No | — |
 | `assetUrl` | `string` | No | — |
 | `previewUrl` | `string` | No | — |
