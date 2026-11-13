@@ -1,0 +1,144 @@
+---
+title: "Geocodio plugin"
+sidebarTitle: "Overview"
+description: "Geocode addresses one at a time or in batches of up to 10,000 with Geocodio - reverse geocode coordinates, append Census and district data, and measure driving or straight-line distances."
+---
+
+Use **Geocodio** through Corsair: one client, typed API calls.
+
+Copy the API key from your Geocodio dashboard. The key travels as the `api_key` **query parameter**, which is where the API expects it.
+
+Things to know before you call:
+
+- **v2.1 is the current version.** A live probe of v1.9 answered with a `_warnings` entry saying a newer version exists, so the plugin targets v2.1 and does not produce that warning.
+- **A bad key answers 403, not 401.** A live probe returned `{"error":"Invalid API key","reference":"https://www.geocod.io/geocodio-403-forbidden-error/"}` with HTTP 403, so `GeocodioAPIError.isAuthError` reads 403 and keeps the documentation link as `reference`.
+- **A result always carries its confidence.** `accuracy` is 0 to 1, `accuracy_type` says how the match was made (`rooftop`, `range_interpolation`, `nearest_street`, `place`) and `match_type` says whether it was exact. A caller that ignores those treats a street centroid like a rooftop.
+- **The components are parsed for you.** `address_components` splits the result into `street`, `city`, `state_province`, `postal_code`, `country` and `nation`, so nothing has to re-parse `formatted_address`.
+- **Batches are one request, not a loop.** `batchGeocode` and `batchReverse` take up to 10,000 entries in a single POST and answer a `results` array in the order they were sent.
+- **`parse` costs no lookup.** It splits an address without geocoding it, which is the cheap way to clean data before spending lookups on it.
+- **Distances come in two flavours.** `driving` follows roads and returns a duration; `straightline` and `haversine` are the as-the-crow-flies distance with no duration. The geocode `distance_mode` accepts only `driving` and `straightline`, while the standalone distance API also accepts `haversine`, and the plugin keeps each route's own list.
+- **An enterprise host exists.** Pass `enterprise: true` on the geocoding and distance calls to use `api.enterprise.geocod.io` instead of the self-serve host.
+- **Uploading a spreadsheet is not included.** That route needs a multipart file upload; `lists.all`, `lists.get` and `lists.delete` are here so an existing list can be tracked, but a new one has to be uploaded from the dashboard.
+
+**What you get:**
+
+- 13 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/geocodio better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/geocodio better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/geocodio better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/geocodio better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { geocodio } from '@corsair-dev/geocodio';
+
+export const corsair = createCorsair({
+	plugins: [
+		geocodio(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+geocodio()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'geocodio',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Geocode an address**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.geocodio.api.geocode.forward({
+	q: '1109 N Highland St, Arlington, VA 22201',
+	fields: ['timezone'],
+});
+```
+
+
+**`jobs.delete`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.geocodio.api.jobs.delete({});
+```
+
+
+See the full list on the [API](/plugins/geocodio/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/geocodio/api">
+    Every `geocodio.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
