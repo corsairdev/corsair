@@ -384,7 +384,6 @@ const TagsListInputSchema = PaginationInputSchema.extend({
 		.min(1)
 		.optional()
 		.describe('Also return each tag’s active subscriber count.'),
-	name: z.string().optional().describe('Only tags with this exact name.'),
 });
 
 export type TagsListInput = z.input<typeof TagsListInputSchema>;

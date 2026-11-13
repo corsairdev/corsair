@@ -399,6 +399,14 @@ describe('tags.list', () => {
 		expect(lastRequest().query.include).toBe('subscriber_count');
 		expect(result.tags[0]?.subscriber_count).toBe(128);
 	});
+
+	it('sends no name filter, which Kit does not document for this route', async () => {
+		respond(tags);
+
+		await invoke(Tags.list, { name: 'vip' });
+
+		expect(lastRequest().query).not.toHaveProperty('name');
+	});
 });
 
 describe('tags.create', () => {

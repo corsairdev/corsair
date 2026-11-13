@@ -22,7 +22,6 @@ export const list: KitEndpoints['tagsList'] = (ctx, input) =>
 				after: parsed.after,
 				before: parsed.before,
 				per_page: parsed.per_page,
-				name: parsed.name,
 				include:
 					parsed.include && parsed.include.length > 0
 						? parsed.include.join(',')
