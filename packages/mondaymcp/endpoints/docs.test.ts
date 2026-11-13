@@ -325,19 +325,27 @@ describe('docs family — conditional input requirements', () => {
 	it.each([
 		{ location: 'workspace' as const, workspace_id: 42 },
 		{ location: 'item' as const, item_id: 43 },
-	])('docsCreate accepts the applicable target for $location', async (target) => {
-		stubSession();
-		stubToolResult({ content: [] });
-		const input = { doc_name: 'doc', markdown: 'body', ...target };
-		await docsCreate(mockCtx, input);
-		const call = JSON.parse(String(fetchMock.mock.calls[2]?.[1]?.body));
-		expect(call.params.arguments).toEqual(input);
-	});
+	])(
+		'docsCreate accepts the applicable target for $location',
+		async (target) => {
+			stubSession();
+			stubToolResult({ content: [] });
+			const input = { doc_name: 'doc', markdown: 'body', ...target };
+			await docsCreate(mockCtx, input);
+			const call = JSON.parse(String(fetchMock.mock.calls[2]?.[1]?.body));
+			expect(call.params.arguments).toEqual(input);
+		},
+	);
 
-	it.each(['workspace', 'item'] as const)('docsCreate requires the %s target', async (location) => {
-		await expect(docsCreate(mockCtx, { doc_name: 'doc', markdown: 'body', location })).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
+	it.each(['workspace', 'item'] as const)(
+		'docsCreate requires the %s target',
+		async (location) => {
+			await expect(
+				docsCreate(mockCtx, { doc_name: 'doc', markdown: 'body', location }),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 
 	it('docsUpdate accepts a document targeted by doc_id alone', async () => {
 		stubSession();

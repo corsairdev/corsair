@@ -71,7 +71,13 @@ describe('updates family (mocked MCP transport)', () => {
 	it('forwards search text without logging customer content', async () => {
 		stubSession();
 		stubToolResult({ content: [] });
-		const input = { searchType: 'BOARD', searchTerm: 'private customer', query: 'private query', term: 'private term', limit: 5 };
+		const input = {
+			searchType: 'BOARD',
+			searchTerm: 'private customer',
+			query: 'private query',
+			term: 'private term',
+			limit: 5,
+		};
 		await searchQuery(mockCtx, input);
 		const call = JSON.parse(String(fetchMock.mock.calls[2]?.[1]?.body));
 		expect(call.params.arguments).toEqual(input);

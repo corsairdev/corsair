@@ -155,19 +155,28 @@ describe('makeMondayMcpToolCall', () => {
 	});
 
 	it('does not expose malformed provider response text', async () => {
-		fetchMock.mockResolvedValueOnce(new Response('private customer text', {
-			headers: { 'content-type': 'application/json' },
-		}));
+		fetchMock.mockResolvedValueOnce(
+			new Response('private customer text', {
+				headers: { 'content-type': 'application/json' },
+			}),
+		);
 		await expect(makeMondayMcpToolCall('token', 'search', {})).rejects.toThrow(
 			'Failed to parse the monday MCP response',
 		);
 	});
 
 	it('does not expose JSON-RPC error data', async () => {
-		fetchMock.mockResolvedValueOnce(jsonResponse({
-			jsonrpc: '2.0', id: 1,
-			error: { code: -32602, message: 'private message', data: 'private data' },
-		}));
+		fetchMock.mockResolvedValueOnce(
+			jsonResponse({
+				jsonrpc: '2.0',
+				id: 1,
+				error: {
+					code: -32602,
+					message: 'private message',
+					data: 'private data',
+				},
+			}),
+		);
 		try {
 			await makeMondayMcpToolCall('token', 'search', {});
 			throw new Error('expected rejection');

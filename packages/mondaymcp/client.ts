@@ -165,7 +165,8 @@ function assertRpcOk(payload: JsonRpcResponse): unknown {
 	if (payload.error) {
 		throw new MondayMcpAPIError(
 			'monday MCP request failed',
-			typeof payload.error.code === 'number' && Number.isFinite(payload.error.code)
+			typeof payload.error.code === 'number' &&
+				Number.isFinite(payload.error.code)
 				? String(payload.error.code)
 				: undefined,
 		);
