@@ -49,7 +49,7 @@ const C_EnvVarsInputSchema = z.object({}).catchall(z.string());
 const C_McpInputSchema = z
 	.object({})
 	// OpenAPI defines MCP configuration as an extensible JSON object.
-	.catchall(z.unknown())
+	.catchall(z.json())
 	.nullable();
 const C_SandboxIamTokenInputSchema = z
 	.object({ audience: z.string(), tokenType: z.string() })
@@ -292,12 +292,7 @@ const C_process_PTYInputSchema = z
 const C_process_UpdateRequestInputSchema = z
 	.object({
 		process: C_process_ProcessSelectorInputSchema.optional(),
-		pty: z
-			.union([
-				C_process_PTYInputSchema,
-				/* OpenAPI leaves the alternate PTY update representation unconstrained. */ z.unknown(),
-			])
-			.optional(),
+		pty: C_process_PTYInputSchema.nullable().optional(),
 	})
 	.strict();
 const C_SecretMetadataInputSchema = z.object({}).catchall(z.string().max(1024));
@@ -510,10 +505,7 @@ const C_TemplateOutputSchema = z
 		names: z.array(z.string()),
 		createdAt: z.string().datetime(),
 		updatedAt: z.string().datetime(),
-		createdBy: z.union([
-			C_TeamUserOutputSchema,
-			/* OpenAPI documents a user object or a nonstandard creator value. */ z.unknown(),
-		]),
+		createdBy: z.union([C_TeamUserOutputSchema, z.null()]),
 		lastSpawnedAt: z.string().datetime().nullable(),
 		spawnCount: z.number().int(),
 		buildCount: z.number().int(),
@@ -702,12 +694,7 @@ const C_filesystem_FilesystemEventOutputSchema = z
 	.object({
 		name: z.string().optional(),
 		type: C_filesystem_EventTypeOutputSchema.optional(),
-		entry: z
-			.union([
-				C_filesystem_EntryInfoOutputSchema,
-				/* OpenAPI leaves watcher event entries unconstrained. */ z.unknown(),
-			])
-			.optional(),
+		entry: C_filesystem_EntryInfoOutputSchema.nullable().optional(),
 	})
 	.strict();
 const C_filesystem_GetWatcherEventsResponseOutputSchema = z

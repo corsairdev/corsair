@@ -500,7 +500,7 @@ await corsair.e2b.api.filesystem.getWatcherEvents({"headers":{"e2bSandboxId":"te
     metadata?: {
     },
     isSymlink?: boolean
-  } | any
+  } | null
 }[]
 ```
 </Accordion>
@@ -1128,7 +1128,7 @@ await corsair.e2b.api.process.update({"headers":{"e2bSandboxId":"test","e2bSandb
       cols?: number,
       rows?: number
     }
-  } | any
+  } | null
 }
 ```
 </Accordion>
@@ -1220,6 +1220,8 @@ await corsair.e2b.api.sandboxes.create({"headers":{"idempotencyKey":"test"},"bod
 |------|------|----------|-------------|
 | `headers` | `object` | No | — |
 | `body` | `object` | Yes | — |
+
+metadata and envVars are string maps; mcp is an extensible JSON object, as specified by E2B's OpenAPI.
 
 <AccordionGroup>
 <Accordion title="headers full type">
@@ -3051,7 +3053,7 @@ Returns the template and its build page, including nextToken from X-Next-Token; 
   createdBy: {
     id: string,
     email: string | null
-  } | any,
+  } | null,
   lastSpawnedAt: string | null,
   spawnCount: number,
   buildCount: number,
@@ -3399,7 +3401,7 @@ Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continu
   createdBy: {
     id: string,
     email: string | null
-  } | any,
+  } | null,
   lastSpawnedAt: string | null,
   spawnCount: number,
   buildCount: number,
@@ -3452,7 +3454,7 @@ await corsair.e2b.api.templates.listDefault({});
   createdBy: {
     id: string,
     email: string | null
-  } | any,
+  } | null,
   lastSpawnedAt: string | null,
   spawnCount: number,
   buildCount: number,

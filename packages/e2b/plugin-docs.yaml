@@ -151,6 +151,7 @@ apiExamples:
   events.list:
     call: '{"query":{"offset":0,"limit":10,"orderAsc":false,"types":["test"]}}'
 apiNotes:
+  sandboxes.create: "metadata and envVars are string maps; mcp is an extensible JSON object, as specified by E2B's OpenAPI."
   sandboxes.list: "The v2 list operation accepts state as a comma-separated array and returns `{ items, nextToken?, totalRunning? }`; pass nextToken as query.nextToken to continue."
   sandboxes.listSnapshots: "Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue."
   templates.list: "Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue."
