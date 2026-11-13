@@ -21,7 +21,12 @@ const PredictionSchema = z.object({
 
 const CountryCodeSchema = z
 	.string()
-	.length(2, 'Use a two-letter ISO 3166-1 alpha-2 country code, such as US')
+	// Genderize does not validate the code: `1!` answers 200, echoed back, with
+	// `gender: null`, which reads as an unknown name rather than a bad input.
+	.regex(
+		/^[A-Za-z]{2}$/,
+		'Use a two-letter ISO 3166-1 alpha-2 country code, such as US',
+	)
 	.describe('Two-letter ISO 3166-1 alpha-2 country code, such as US or DK');
 
 const PredictInputSchema = z.object({
@@ -47,8 +52,9 @@ const BatchInputSchema = z.object({
 	names: z
 		.array(z.string().min(1, 'A name cannot be empty'))
 		.min(1, 'Send at least one name')
+		.max(100, 'Genderize takes at most 100 names per request')
 		.describe(
-			'Names to predict, answered in the same order. A batch is charged per name',
+			'Up to 100 names to predict, answered in the same order. A batch is charged per name',
 		),
 	country_id: CountryCodeSchema.optional().describe(
 		'Applies to every name in the batch, not one of them',

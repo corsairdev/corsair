@@ -118,12 +118,24 @@ describe('genderize schemas', () => {
 		expect(
 			predictInput.safeParse({ name: 'kim', country_id: 'Denmark' }).success,
 		).toBe(false);
+		// Genderize answers 200 with gender null for a malformed code, so the
+		// schema is the only place it is caught.
+		expect(
+			predictInput.safeParse({ name: 'kim', country_id: '1!' }).success,
+		).toBe(false);
 	});
 
 	it('requires at least one name in a batch', () => {
 		expect(batchInput.safeParse({ names: ['a'] }).success).toBe(true);
 		expect(batchInput.safeParse({ names: [] }).success).toBe(false);
 		expect(batchInput.safeParse({ names: [''] }).success).toBe(false);
+	});
+
+	it('caps a batch at the documented 100 names', () => {
+		const names = (count: number) =>
+			Array.from({ length: count }, (_, i) => `name${i}`);
+		expect(batchInput.safeParse({ names: names(100) }).success).toBe(true);
+		expect(batchInput.safeParse({ names: names(101) }).success).toBe(false);
 	});
 
 	it('accepts the response a live keyless call returned', () => {
