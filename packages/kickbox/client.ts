@@ -29,7 +29,7 @@ const KICKBOX_TIMEOUT_MS = 35_000;
 /**
  * Kickbox answers a failure with the same envelope as a success:
  * `{ success: false, code, message }`, where `code` is an upper-case string
- * such as `FORBIDDEN` rather than a status.
+ * such as `FORBIDDEN` rather than a status. A spent balance has no code.
  */
 // unknown: the body is an untyped error body until asRecord narrows it.
 export function readFailure(body: unknown): {
@@ -43,10 +43,19 @@ export function readFailure(body: unknown): {
 		return typeof value === 'string' && value.length > 0 ? value : undefined;
 	};
 	const success = record?.success;
+	const message = read('message');
+	// A spent balance arrives as a 403 with only `message: "Insufficient
+	// balance"` and no code (live API, 11-14), so the code is filled in here to
+	// keep it apart from a refused key, which is also a 403.
+	const code =
+		read('code') ??
+		(message && /insufficient balance/i.test(message)
+			? 'INSUFFICIENT_BALANCE'
+			: undefined);
 	return {
 		success: typeof success === 'boolean' ? success : undefined,
-		code: read('code'),
-		message: read('message'),
+		code,
+		message,
 	};
 }
 
@@ -116,8 +125,9 @@ export class KickboxAPIError extends Error {
 		return this.status === 429;
 	}
 
-	/** A refused or missing key. */
+	/** A refused or missing key. A spent balance is also a 403, but not this. */
 	get isAuthError(): boolean {
+		if (this.isQuotaError) return false;
 		return (
 			this.status === 401 || this.status === 403 || this.code === 'FORBIDDEN'
 		);

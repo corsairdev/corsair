@@ -9,9 +9,9 @@ function statusOf(error: Error): number | undefined {
 // body. Reference: https://docs.kickbox.com/docs/single-verification-api
 export const errorHandlers = {
 	// The account has run out of verification credits. Kickbox reports it as a
-	// 200 with `success: false` and `code: INSUFFICIENT_BALANCE`, which the
-	// client turns into an error, so matching the code is the only way to catch
-	// it. It sits before RATE_LIMIT_ERROR because a spent balance never clears.
+	// 403 with `message: "Insufficient balance"` and no code; the client fills in
+	// INSUFFICIENT_BALANCE. It sits before AUTH_ERROR, which would also take a
+	// 403, and before RATE_LIMIT_ERROR because a spent balance never clears.
 	QUOTA_ERROR: {
 		match: (error: Error) =>
 			error instanceof KickboxAPIError && error.isQuotaError,

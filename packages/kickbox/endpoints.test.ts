@@ -178,15 +178,16 @@ describe('verify.verify', () => {
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 
-	it('throws on a 200 that says the balance is spent', async () => {
-		respond(insufficientBalance);
+	it('reads a spent balance on a 403 as a quota error, not a refused key', async () => {
+		respond(insufficientBalance, 403);
 
 		await expect(
 			invoke(Verify.verify, { email: 'test@example.com' }),
 		).rejects.toMatchObject({
-			status: 200,
+			status: 403,
 			code: 'INSUFFICIENT_BALANCE',
 			isQuotaError: true,
+			isAuthError: false,
 		});
 	});
 

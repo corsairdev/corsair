@@ -113,11 +113,11 @@ describe('retry behaviour', () => {
 	it('does not retry a spent balance', async () => {
 		const { corsair, testDb } = await createClient({ key: API_KEY });
 		try {
-			respond(insufficientBalance);
+			respond(insufficientBalance, 403);
 
 			await expect(
 				corsair.kickbox.api.verify.verify({ email: 'test@example.com' }),
-			).rejects.toMatchObject({ status: 200, isQuotaError: true });
+			).rejects.toMatchObject({ status: 403, isQuotaError: true });
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();

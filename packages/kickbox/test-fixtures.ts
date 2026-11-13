@@ -67,11 +67,13 @@ export const refusedKeyOn200 = {
 	message: 'Invalid API key',
 };
 
-/** A spent balance, also answered as a 200 with `success: false`. */
+/**
+ * A spent balance, as the live API sends it: a 403 with no `code`, only the
+ * message (sandbox key, `insufficient-balance@example.com`, 11-14).
+ */
 export const insufficientBalance = {
 	success: false,
-	code: 'INSUFFICIENT_BALANCE',
-	message: 'You do not have enough credits to verify this email.',
+	message: 'Insufficient balance',
 };
 
 /** An address Kickbox will not accept. */
