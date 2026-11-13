@@ -49,6 +49,14 @@ describe('error handler selection', () => {
 		});
 	});
 
+	it('does not retry an exhausted quota, which only fails again until it resets', async () => {
+		const quota = new GeoapifyAPIError(
+			'Geoapify 429 Too Many Requests: Quota exceeded',
+			{ status: 429, retryAfter: 60_000 },
+		);
+		await expect(resolve(quota)).resolves.toEqual({ maxRetries: 0 });
+	});
+
 	it('does not retry an invalid key', async () => {
 		await expect(resolve(apiError({ status: 401 }))).resolves.toEqual({
 			maxRetries: 0,

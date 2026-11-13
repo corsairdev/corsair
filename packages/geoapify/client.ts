@@ -24,7 +24,8 @@ export const GEOAPIFY_EU_BASE = 'https://api-eu.geoapify.com';
 
 /**
  * The key travels as the `apiKey` query parameter, or as `X-Api-Key` in a
- * header. The plugin uses the query parameter, which is the documented default.
+ * header. The plugin uses the header (a live call with only the header answered
+ * 200), so the key stays out of URLs that proxies and logs record.
  */
 export type GeoapifyCredentials = {
 	apiKey?: string;
@@ -97,6 +98,14 @@ export class GeoapifyAPIError extends Error {
 	 */
 	get isRateLimit(): boolean {
 		return this.status === 429;
+	}
+
+	/**
+	 * A 429 whose message names the quota: the daily or monthly credits are used
+	 * up, and a retry before the reset only fails again.
+	 */
+	get isQuotaExceeded(): boolean {
+		return this.status === 429 && /quota/i.test(this.message);
 	}
 
 	/** A missing or invalid key. */
@@ -174,6 +183,7 @@ export async function makeGeoapifyRequest(
 		TIMEOUT: 30_000,
 		HEADERS: {
 			Accept: 'application/json',
+			...(credentials.apiKey ? { 'X-Api-Key': credentials.apiKey } : {}),
 		},
 	};
 
@@ -181,10 +191,7 @@ export async function makeGeoapifyRequest(
 		method,
 		// `{api-version}` is replaced from VERSION above, so one config serves both.
 		url: `/{api-version}${path}`,
-		query:
-			method === 'GET'
-				? { ...query, apiKey: credentials.apiKey }
-				: { apiKey: credentials.apiKey },
+		query: method === 'GET' ? query : undefined,
 		body,
 		mediaType: body === undefined ? undefined : 'application/json',
 	};

@@ -12,8 +12,14 @@ function statusOf(error: Error): number | undefined {
  * Reference: https://apidoc.geoapify.com/
  */
 export const errorHandlers = {
-	// 429 covers both a burst and an exhausted quota, so a retry may not help. The
-	// handler still honours Retry-After when the gateway sends one.
+	// 429 covers both a burst and an exhausted quota. A used-up quota only fails
+	// again until it resets, so it gets no retry.
+	QUOTA_EXCEEDED: {
+		match: (error: Error) =>
+			error instanceof GeoapifyAPIError && error.isQuotaExceeded,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// A burst over the per-second limit; honour Retry-After when it is sent.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			error instanceof GeoapifyAPIError && error.isRateLimit,
