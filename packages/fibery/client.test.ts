@@ -1,9 +1,9 @@
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
-	FiberyAPIError,
 	makeFiberyBinaryRequest,
 	makeFiberyCommand,
+	makeFiberyJsonRpc,
 	makeFiberyRequest,
 } from './client';
 
@@ -39,6 +39,27 @@ describe('Fibery HTTP client', () => {
 			url: '/api/commands',
 			body: { command: 'fibery.schema/query', args: {} },
 		});
+	});
+
+	it("leaves core's 429 retry on, since Fibery rate-limits at 3 requests a second", async () => {
+		mockRequest.mockResolvedValue({ success: true, result: [] });
+		await makeFiberyRequest('/api/commands', 'api-secret', {
+			workspaceUrl,
+			method: 'POST',
+			body: { command: 'fibery.schema/query', args: {} },
+		});
+		const retries =
+			mockRequest.mock.calls[0]?.[2]?.rateLimitConfig?.maxRetries ?? 3;
+		expect(retries).toBeGreaterThan(0);
+	});
+
+	it('returns null for a JSON-RPC answer with no result (delete-views)', async () => {
+		mockRequest.mockResolvedValue({ jsonrpc: '2.0' });
+		await expect(
+			makeFiberyJsonRpc('delete-views', { ids: [] }, 'api-secret', {
+				workspaceUrl,
+			}),
+		).resolves.toBeNull();
 	});
 
 	it('uses Bearer auth for OAuth access tokens', async () => {
@@ -140,44 +161,38 @@ describe('Fibery HTTP client', () => {
 		).rejects.toThrow('origin');
 	});
 
-	it('keeps transport retry ownership disabled while extracting Retry-After', async () => {
-		mockRequest.mockResolvedValue({ success: true, result: {} });
-		await makeFiberyRequest('/api/commands', 'token', {
-			workspaceUrl,
-			method: 'POST',
-			body: {},
-		});
-		expect(mockRequest.mock.calls[0]?.[2]).toMatchObject({
-			rateLimitConfig: {
-				enabled: true,
-				maxRetries: 0,
-				headerNames: { retryAfter: 'retry-after' },
-			},
-		});
-	});
-
-	it('extracts a real Retry-After response without retrying the request', async () => {
+	it('retries a 429 through core and returns the later success', async () => {
 		const realHttp =
 			jest.requireActual<typeof import('corsair/http')>('corsair/http');
-		const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
-			new Response('Too Many Requests', {
-				status: 429,
-				headers: { 'retry-after': '4' },
-			}),
-		);
+		const fetchSpy = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValueOnce(
+				new Response('Too Many Requests', {
+					status: 429,
+					headers: { 'retry-after': '1' },
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify({ success: true, result: 3 }), {
+					headers: { 'content-type': 'application/json' },
+				}),
+			);
 		mockRequest.mockImplementation(realHttp.request);
 
-		const failure = await makeFiberyRequest('/api/commands', 'api-secret', {
-			workspaceUrl,
-			method: 'POST',
-			body: { command: 'fibery.schema/query', args: {} },
-		}).catch((caught: unknown) => caught);
-		// `unknown` because a rejected promise has no static error type; the assertion narrows it.
-		if (!(failure instanceof FiberyAPIError))
-			throw new Error('Expected FiberyAPIError.');
-		expect(failure.status).toBe(429);
-		expect(failure.retryAfter).toBe(4000);
-		expect(fetchSpy).toHaveBeenCalledTimes(1);
+		await expect(
+			makeFiberyCommand(
+				'fibery.entity/query',
+				{
+					query: {
+						'q/from': 'CRM/Lead',
+						'q/select': ['q/count', ['fibery/id']],
+					},
+				},
+				'api-secret',
+				{ workspaceUrl },
+			),
+		).resolves.toBe(3);
+		expect(fetchSpy).toHaveBeenCalledTimes(2);
 		fetchSpy.mockRestore();
 	});
 

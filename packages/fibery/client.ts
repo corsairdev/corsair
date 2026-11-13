@@ -130,15 +130,9 @@ export async function makeFiberyRequest(
 	};
 	try {
 		// `unknown` because HTTP response bodies are untrusted until endpoint schemas parse them.
-		const response = await request(config, requestOptions, {
-			rateLimitConfig: {
-				enabled: true,
-				maxRetries: 0,
-				initialRetryDelay: 0,
-				backoffMultiplier: 1,
-				headerNames: { retryAfter: 'retry-after' },
-			},
-		});
+		// Core's default rate-limit config retries a 429 (Fibery allows 3 requests a second per token),
+		// honouring Retry-After; Fibery refused the request, so a write did not land.
+		const response = await request(config, requestOptions);
 		return response === undefined ? null : response;
 	} catch (error) {
 		throw safeError(error, apiKey);
@@ -213,7 +207,8 @@ export async function makeFiberyJsonRpc(
 			String(rpcResponse.data.error.code),
 		);
 	}
-	return rpcResponse.data.result;
+	// delete-views answers {"jsonrpc":"2.0"} with no result.
+	return rpcResponse.data.result ?? null;
 }
 
 export async function makeFiberyBinaryRequest(
