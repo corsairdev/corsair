@@ -2048,6 +2048,14 @@
                 ]
               },
               {
+                "group": "Findymail",
+                "pages": [
+                  "plugins/findymail/overview",
+                  "plugins/findymail/api",
+                  "plugins/findymail/database"
+                ]
+              },
+              {
                 "group": "FinerWorks",
                 "pages": [
                   "plugins/finerworks/overview",
