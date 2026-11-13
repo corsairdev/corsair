@@ -44,12 +44,7 @@ export const listTemplates: FomoEndpoints['templates.list'] = async (
 	const count = Array.isArray(parsed)
 		? parsed.length
 		: parsed.event_types.length;
-	await logEventFromContext(
-		ctx,
-		'fomo.templates.list',
-		{ count },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'fomo.templates.list', { count }, 'completed');
 
 	return parsed;
 };

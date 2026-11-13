@@ -29,7 +29,9 @@ describe('Fomo errorHandlers', () => {
 	it('routes 429 to RATE_LIMIT_ERROR with maxRetries 0 (transport owns retries)', async () => {
 		const error = apiError(429, 'Too Many Requests', 2500);
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');
-		await expect(errorHandlers.RATE_LIMIT_ERROR.handler(error)).resolves.toEqual({
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({
 			maxRetries: 0,
 		});
 	});
@@ -61,7 +63,9 @@ describe('Fomo errorHandlers', () => {
 		const err404 = apiError(404, 'Not Found');
 		expect(route(err404)).toBe('NOT_FOUND_ERROR');
 
-		await expect(errorHandlers.NOT_FOUND_ERROR.handler(err404)).resolves.toEqual({
+		await expect(
+			errorHandlers.NOT_FOUND_ERROR.handler(err404),
+		).resolves.toEqual({
 			maxRetries: 0,
 		});
 	});

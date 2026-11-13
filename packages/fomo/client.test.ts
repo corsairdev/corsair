@@ -194,10 +194,7 @@ describe('makeFomoRequest client', () => {
 
 	it('redactMessage redacts bearer tokens, query credentials, and specific keys', () => {
 		expect(
-			redactMessage(
-				'Failed with Token abcd-1234-xyz and secret',
-				'secret',
-			),
+			redactMessage('Failed with Token abcd-1234-xyz and secret', 'secret'),
 		).toBe('Failed with Token [REDACTED] and [REDACTED]');
 		expect(
 			redactMessage(

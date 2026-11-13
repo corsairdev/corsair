@@ -1,5 +1,4 @@
 import {
-	ApplicationGetInputSchema,
 	ApplicationGetStatsInputSchema,
 	ApplicationGetStatsOutputSchema,
 	ApplicationSettingsSchema,
@@ -7,7 +6,6 @@ import {
 	EventsCreateInputSchema,
 	EventsDeleteInputSchema,
 	EventsDeleteOutputSchema,
-	EventsGetInputSchema,
 	EventsListInputSchema,
 	EventsListOutputSchema,
 	EventsSearchInputSchema,
@@ -15,11 +13,7 @@ import {
 	FomoEventSchema,
 	TemplateSchema,
 	TemplatesCreateInputSchema,
-	TemplatesDeleteInputSchema,
 	TemplatesDeleteOutputSchema,
-	TemplatesGetInputSchema,
-	TemplatesListInputSchema,
-	TemplatesListOutputSchema,
 	TemplatesUpdateInputSchema,
 } from './endpoints/types';
 import { FomoSchema } from './schema';

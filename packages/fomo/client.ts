@@ -149,9 +149,9 @@ export async function makeFomoRequest<T>(
 				},
 				sanitizedMessage,
 				error.retryAfter !== undefined ||
-				error.rateLimitReset !== undefined ||
-				error.rateLimitRemaining !== undefined ||
-				error.rateLimitLimit !== undefined
+					error.rateLimitReset !== undefined ||
+					error.rateLimitRemaining !== undefined ||
+					error.rateLimitLimit !== undefined
 					? {
 							retryAfter: error.retryAfter,
 							rateLimitReset: error.rateLimitReset,
