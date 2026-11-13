@@ -662,7 +662,7 @@ export const squareEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Cancels an invoice. The seller cannot collect payments for the canceled invoice. Cannot be undone.',
+			"Cancels an invoice. The seller cannot collect payments for the canceled invoice. Pass the invoice's current version; every committed change, including adding or removing an attachment, increments it. Read it with invoices.get. Cannot be undone.",
 	},
 	'payments.cancel': {
 		riskLevel: 'destructive',
@@ -753,7 +753,7 @@ export const squareEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Deletes the specified invoice. When an invoice is deleted, the associated order status changes to CANCELED. Cannot be undone.',
+			'Deletes the specified invoice. When an invoice is deleted, the associated order status changes to CANCELED. If you pass version, it must be the current one; every committed change, including adding or removing an attachment, increments it. Read it with invoices.get. Cannot be undone.',
 	},
 	'invoices.deleteAttachment': {
 		riskLevel: 'destructive',
@@ -1133,12 +1133,12 @@ export const squareEndpointMeta = {
 	'invoices.publish': {
 		riskLevel: 'write',
 		description:
-			'Publishes the specified draft invoice. Sends the invoice to the customer and may charge the card on file; cancel with invoices.cancel. Moves money. Pass the same idempotency_key to retry safely.',
+			"Publishes the specified draft invoice. Sends the invoice to the customer and may charge the card on file; cancel with invoices.cancel. Pass the invoice's current version; every committed change, including adding or removing an attachment, increments it. Read it with invoices.get. Moves money. Pass the same idempotency_key to retry safely.",
 	},
 	'invoices.update': {
 		riskLevel: 'write',
 		description:
-			'Updates an invoice. This endpoint supports sparse updates, so you only need to specify the fields you want to change along with the required `version` field. Some restrictions apply to updating invoices. Pass the same idempotency_key to retry safely.',
+			"Updates an invoice. This endpoint supports sparse updates, so you only need to specify the fields you want to change along with the required `version` field. Some restrictions apply to updating invoices. Pass the invoice's current version; every committed change, including adding or removing an attachment, increments it. Read it with invoices.get. Pass the same idempotency_key to retry safely.",
 	},
 	'invoices.search': {
 		riskLevel: 'read',

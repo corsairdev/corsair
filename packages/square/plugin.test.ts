@@ -199,6 +199,24 @@ describe('Square plugin definition', () => {
 		);
 	});
 
+	it('says which invoice calls need the invoice current version', () => {
+		const increments =
+			'every committed change, including adding or removing an attachment, increments it.';
+		for (const op of [
+			'invoices.update',
+			'invoices.publish',
+			'invoices.cancel',
+		] as const) {
+			expect(meta[op].description).toContain(
+				`Pass the invoice's current version; ${increments} Read it with invoices.get.`,
+			);
+		}
+		// Square makes version optional on delete, so the wording is conditional.
+		expect(meta['invoices.delete'].description).toContain(
+			`If you pass version, it must be the current one; ${increments} Read it with invoices.get.`,
+		);
+	});
+
 	it('names the idempotency_key on every operation that takes one', () => {
 		for (const op of [
 			'payments.create',

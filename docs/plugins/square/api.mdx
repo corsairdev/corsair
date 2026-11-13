@@ -9360,7 +9360,7 @@ await corsair.square.api.inventory.get({ catalog_object_id: '<catalog object id>
 
 `invoices.cancel`
 
-Cancels an invoice. The seller cannot collect payments for the canceled invoice. Cannot be undone.
+Cancels an invoice. The seller cannot collect payments for the canceled invoice. Pass the invoice's current version; every committed change, including adding or removing an attachment, increments it. Read it with invoices.get. Cannot be undone.
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -9374,6 +9374,8 @@ await corsair.square.api.invoices.cancel({ invoice_id: '<invoice id>', version: 
 |------|------|----------|-------------|
 | `version` | `number` | Yes | The version of the invoice to cancel. If you do not know the version, you can call GetInvoice or ListInvoices. |
 | `invoice_id` | `string` | Yes | The ID of the invoice to cancel. |
+
+Needs the invoice's current `version` from `invoices.get`; every committed change, including adding or removing an attachment, increments it.
 
 
 
@@ -9863,7 +9865,7 @@ await corsair.square.api.invoices.createAttachment({ invoice_id: '<invoice id>',
 
 `invoices.delete`
 
-Deletes the specified invoice. When an invoice is deleted, the associated order status changes to CANCELED. Cannot be undone.
+Deletes the specified invoice. When an invoice is deleted, the associated order status changes to CANCELED. If you pass version, it must be the current one; every committed change, including adding or removing an attachment, increments it. Read it with invoices.get. Cannot be undone.
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -9877,6 +9879,8 @@ await corsair.square.api.invoices.delete({ invoice_id: '<invoice id>' });
 |------|------|----------|-------------|
 | `invoice_id` | `string` | Yes | The ID of the invoice to delete. |
 | `version` | `number` | No | The version of the invoice to delete. If you do not know the version, you can call GetInvoice or ListInvoices. |
+
+Only a draft invoice can be deleted. `version` is optional; if you pass it, it must be the current one (read it with `invoices.get`, since every committed change, including adding or removing an attachment, increments it).
 
 
 
@@ -10270,7 +10274,7 @@ await corsair.square.api.invoices.list({ location_id: '<location id>', cursor: '
 
 `invoices.publish`
 
-Publishes the specified draft invoice. Sends the invoice to the customer and may charge the card on file; cancel with invoices.cancel. Moves money. Pass the same idempotency_key to retry safely.
+Publishes the specified draft invoice. Sends the invoice to the customer and may charge the card on file; cancel with invoices.cancel. Pass the invoice's current version; every committed change, including adding or removing an attachment, increments it. Read it with invoices.get. Moves money. Pass the same idempotency_key to retry safely.
 
 **Risk:** `write`
 
@@ -10286,7 +10290,7 @@ await corsair.square.api.invoices.publish({ invoice_id: '<invoice id>', version:
 | `idempotency_key` | `string \| null` | No | A unique string that identifies the `PublishInvoice` request. |
 | `invoice_id` | `string` | Yes | The ID of the invoice to publish. |
 
-Needs the invoice `version` from `invoices.get`. Square then emails the customer and/or charges the card on file, depending on the invoice.
+Needs the invoice's current `version` from `invoices.get`; every committed change, including adding or removing an attachment, increments it. Square then emails the customer and/or charges the card on file, depending on the invoice.
 
 
 
@@ -10617,7 +10621,7 @@ await corsair.square.api.invoices.search({
 
 `invoices.update`
 
-Updates an invoice. This endpoint supports sparse updates, so you only need to specify the fields you want to change along with the required `version` field. Some restrictions apply to updating invoices. Pass the same idempotency_key to retry safely.
+Updates an invoice. This endpoint supports sparse updates, so you only need to specify the fields you want to change along with the required `version` field. Some restrictions apply to updating invoices. Pass the invoice's current version; every committed change, including adding or removing an attachment, increments it. Read it with invoices.get. Pass the same idempotency_key to retry safely.
 
 **Risk:** `write`
 
@@ -10636,6 +10640,8 @@ await corsair.square.api.invoices.update({
 | `idempotency_key` | `string \| null` | No | A unique string that identifies the `UpdateInvoice` request. |
 | `fields_to_clear` | `string[] \| null` | No | The list of fields to clear. Although this field is currently supported, we recommend using null values or the `remove` field when possible. For examples, see Update an Invoice. |
 | `invoice_id` | `string` | Yes | The ID of the invoice to update. |
+
+Needs the invoice's current `version` from `invoices.get`; every committed change, including adding or removing an attachment, increments it.
 
 <AccordionGroup>
 <Accordion title="invoice full type">

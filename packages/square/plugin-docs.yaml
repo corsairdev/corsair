@@ -34,7 +34,10 @@ apiNotes:
   payments.cancelByIdempotencyKey: The `idempotency_key` here names the payment to cancel (the key of the `payments.create` call that made it). It does not make this call repeatable.
   payments.refund: Pass `payment_id` and `amount_money`. A refund cannot be reversed; use a new `idempotency_key` for a second refund, and the same one to retry the first.
   orders.pay: The total of `payment_ids` must equal the order total. Approved payments that reference this `order_id` but are not listed in `payment_ids` are canceled.
-  invoices.publish: Needs the invoice `version` from `invoices.get`. Square then emails the customer and/or charges the card on file, depending on the invoice.
+  invoices.update: Needs the invoice's current `version` from `invoices.get`; every committed change, including adding or removing an attachment, increments it.
+  invoices.publish: Needs the invoice's current `version` from `invoices.get`; every committed change, including adding or removing an attachment, increments it. Square then emails the customer and/or charges the card on file, depending on the invoice.
+  invoices.cancel: Needs the invoice's current `version` from `invoices.get`; every committed change, including adding or removing an attachment, increments it.
+  invoices.delete: Only a draft invoice can be deleted. `version` is optional; if you pass it, it must be the current one (read it with `invoices.get`, since every committed change, including adding or removing an attachment, increments it).
   locations.create: Locations can't be deleted; deactivate one with `locations.update`.
   webhookSubscriptions.updateSignatureKey: The old signature key stops verifying as soon as the new one is issued.
   customers.removeGroup: "An HTTP `DELETE`, but classified as a write: `customers.addGroup` puts the customer back in the group."
