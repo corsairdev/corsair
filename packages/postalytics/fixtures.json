@@ -1,0 +1,1159 @@
+[
+  {
+    "group": "account",
+    "name": "getIntegrations",
+    "method": "GET",
+    "path": "/api/v1/account/integrations",
+    "input": {},
+    "output": [
+      {
+        "displayName": "My Integration to Keymaker",
+        "intergrationName": "Keymaker",
+        "pluginId": 10142067,
+        "userPluginId": 24680
+      }
+    ]
+  },
+  {
+    "group": "account",
+    "name": "getMyAccount",
+    "method": "GET",
+    "path": "/api/v1/account/me",
+    "input": {},
+    "output": [
+      {
+        "account_id": 10142067,
+        "address_city": "New York",
+        "address_state": "NY",
+        "address_street": "36 Pipers Row",
+        "address_zip": "10001",
+        "api_key": "375EE04C-432E-4d6A-943B-1B97FDD7FED7",
+        "company": "Metacortex",
+        "created_date": "1999-02-19T12:00:00.00:00",
+        "email_address": "tanderson@metacortex.net",
+        "first_name": "Thomas",
+        "last_name": "Anderson",
+        "password": "",
+        "phone": "888-574-7346",
+        "username": "choi"
+      }
+    ]
+  },
+  {
+    "group": "account",
+    "name": "getAccount",
+    "method": "GET",
+    "path": "/api/v1/account/42",
+    "input": {
+      "id": 42
+    },
+    "output": [
+      {
+        "account_id": 10142067,
+        "address_city": "New York",
+        "address_state": "NY",
+        "address_street": "36 Pipers Row",
+        "address_zip": "10001",
+        "api_key": "375EE04C-432E-4d6A-943B-1B97FDD7FED7",
+        "company": "Metacortex",
+        "created_date": "1999-02-19T12:00:00.00:00",
+        "email_address": "tanderson@metacortex.net",
+        "first_name": "Thomas",
+        "last_name": "Anderson",
+        "password": "",
+        "phone": "888-574-7346",
+        "username": "choi"
+      }
+    ]
+  },
+  {
+    "group": "account",
+    "name": "createNewAccount",
+    "method": "POST",
+    "path": "/api/v1/account",
+    "input": {
+      "body": {
+        "first_name": "Thomas",
+        "last_name": "Anderson",
+        "password": "test-password",
+        "username": "choi"
+      }
+    },
+    "output": {
+      "account_id": "10142067",
+      "api_key": "375EE04C-432E-4d6A-943B-1B97FDD7FED7",
+      "created_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "account",
+    "name": "updateAccount",
+    "method": "PUT",
+    "path": "/api/v1/account",
+    "input": {
+      "body": {
+        "first_name": "Thomas",
+        "last_name": "Anderson",
+        "password": "test-password",
+        "username": "choi"
+      }
+    },
+    "output": {
+      "account_id": 10142067,
+      "updated_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "account",
+    "name": "deleteAccount",
+    "method": "DELETE",
+    "path": "/api/v1/account/42",
+    "input": {
+      "id": 42
+    },
+    "output": {
+      "account_id": 10142067,
+      "deleted_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "campaigns",
+    "name": "getAllCampaigns",
+    "method": "GET",
+    "path": "/api/v1/campaigns",
+    "input": {},
+    "output": [
+      {
+        "audience": 1001,
+        "campaign_id": 10142067,
+        "campaign_type": 3,
+        "conversions": 15,
+        "created_date": "1999-02-19T12:00:00.00:00",
+        "creative_type": 34,
+        "delivered": 101,
+        "drop_id": 10142067,
+        "endpoint": "https://app.postalytics.com/1234567890",
+        "in_local_area": 100,
+        "in_transit": 800,
+        "is_live_mode": 1,
+        "name": "Keymaker",
+        "pageviews": 202,
+        "processed_for_delivery": 1001,
+        "returned": 0,
+        "send_date": "1999-02-19T12:00:00.00:00",
+        "status": 1,
+        "thumbnail": "https://some.url.com/thumb.jpg",
+        "thumbnail_back": "https://some.url.com/thumb_back.jpg",
+        "unique_pageviews": 155,
+        "unique_visitors": 55
+      }
+    ]
+  },
+  {
+    "group": "campaigns",
+    "name": "getAllDripCampaigns",
+    "method": "GET",
+    "path": "/api/v1/campaigns/drips",
+    "input": {},
+    "output": [
+      {
+        "endpoint_id": "10142067",
+        "name": "Keymaker"
+      }
+    ]
+  },
+  {
+    "group": "campaigns",
+    "name": "getCampaignStats",
+    "method": "GET",
+    "path": "/api/v1/campaigns/42",
+    "input": {
+      "id": 42
+    },
+    "output": [
+      {
+        "audience": 1001,
+        "campaign_id": 10142067,
+        "campaign_type": 3,
+        "conversions": 15,
+        "created_date": "1999-02-19T12:00:00.00:00",
+        "creative_type": 34,
+        "delivered": 101,
+        "drop_id": 10142067,
+        "endpoint": "https://app.postalytics.com/1234567890",
+        "in_local_area": 100,
+        "in_transit": 800,
+        "is_live_mode": 1,
+        "name": "Keymaker",
+        "pageviews": 202,
+        "processed_for_delivery": 1001,
+        "returned": 0,
+        "send_date": "1999-02-19T12:00:00.00:00",
+        "status": 1,
+        "thumbnail": "https://some.url.com/thumb.jpg",
+        "thumbnail_back": "https://some.url.com/thumb_back.jpg",
+        "unique_pageviews": 155,
+        "unique_visitors": 55
+      }
+    ]
+  },
+  {
+    "group": "campaigns",
+    "name": "getCampaign",
+    "method": "GET",
+    "path": "/api/v1/campaigns/42/details",
+    "input": {
+      "id": 42
+    },
+    "output": {
+      "ContactListId": 10142067,
+      "DirectMailDropId": 10142067,
+      "DirectMailName": "Keymaker",
+      "EndPointId": "https://app.postalytics.com/1234567890",
+      "Status": 1
+    }
+  },
+  {
+    "group": "campaigns",
+    "name": "getCampaignEvents",
+    "method": "GET",
+    "path": "/api/v1/campaigns/42/events?PageNumber=2&PageSize=2",
+    "input": {
+      "id": 42,
+      "PageNumber": 2,
+      "PageSize": 2
+    },
+    "output": [
+      {
+        "address": "36 Pipers Row",
+        "address_2": "Room 101",
+        "city": "New York",
+        "dataid": 10142067,
+        "event_date": "1999-02-19T12:00:00.00:00",
+        "event_name": "Addressed",
+        "first_name": "Thomas",
+        "metadata": "",
+        "state": "NY",
+        "zip": "10001"
+      }
+    ]
+  },
+  {
+    "group": "campaigns",
+    "name": "getContactEvent",
+    "method": "GET",
+    "path": "/api/v1/campaigns/42/events/42?PageNumber=2&PageSize=2",
+    "input": {
+      "dataid": 42,
+      "id": 42,
+      "PageNumber": 2,
+      "PageSize": 2
+    },
+    "output": [
+      {
+        "address": "36 Pipers Row",
+        "address_2": "Room 101",
+        "city": "New York",
+        "dataid": 10142067,
+        "event_date": "1999-02-19T12:00:00.00:00",
+        "event_name": "Addressed",
+        "first_name": "Thomas",
+        "metadata": "",
+        "state": "NY",
+        "zip": "10001"
+      }
+    ]
+  },
+  {
+    "group": "campaigns",
+    "name": "createNewCampaign",
+    "method": "POST",
+    "path": "/api/v1/campaigns",
+    "input": {
+      "body": {
+        "CreditTypeId": 34,
+        "DirectMailName": "Keymaker",
+        "PostageType": 10142067,
+        "SenderAddress1": "36 Pipers Row",
+        "SenderCity": "New York",
+        "SenderName": "Metacortex",
+        "SenderState": "NY",
+        "SenderZip": "10001",
+        "TemplateFrontId": 10142067
+      }
+    },
+    "output": {
+      "created_date": "1999-02-19T12:00:00.00:00",
+      "drop_id": 10142067
+    }
+  },
+  {
+    "group": "campaigns",
+    "name": "updateCampaignStatus",
+    "method": "PUT",
+    "path": "/api/v1/campaigns/42",
+    "input": {
+      "id": 42
+    },
+    "output": {
+      "updated_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "campaigns",
+    "name": "deleteCampaign",
+    "method": "DELETE",
+    "path": "/api/v1/campaigns/42",
+    "input": {
+      "id": 42
+    },
+    "output": {
+      "deleted_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "contacts",
+    "name": "getAllContactLists",
+    "method": "GET",
+    "path": "/api/v1/contacts",
+    "input": {},
+    "output": [
+      {
+        "contact_list_id": 10142067,
+        "count": 101,
+        "created_date": "1999-02-19T12:00:00.00:00",
+        "name": "Metacortex Employees"
+      }
+    ]
+  },
+  {
+    "group": "contacts",
+    "name": "getContact",
+    "method": "GET",
+    "path": "/api/v1/contacts/details/42",
+    "input": {
+      "id": 42
+    },
+    "output": {
+      "Address": "36 Pipers Row",
+      "Address2": "Room 101",
+      "City": "New York",
+      "Company": "Metacortex",
+      "ContactListId": 10142067,
+      "EmailId": "tanderson@metacortex.net",
+      "FirstName": "Thomas",
+      "Id": 10142067,
+      "LastName": "Anderson",
+      "Mobile": "888-574-7346",
+      "Occupation": "programmer",
+      "Phone": "888-574-7346",
+      "Purl": "https://thomas_anderson.metacortex.net",
+      "QRCode": "https://thomas_anderson.metacortex.net/img.png",
+      "State": "NY",
+      "VarField1": "",
+      "VarField10": "",
+      "VarField11": "",
+      "VarField12": "",
+      "VarField13": "",
+      "VarField14": "",
+      "VarField15": "",
+      "VarField16": "",
+      "VarField17": "",
+      "VarField18": "",
+      "VarField19": "",
+      "VarField2": "",
+      "VarField20": "",
+      "VarField21": "",
+      "VarField22": "",
+      "VarField23": "",
+      "VarField24": "",
+      "VarField25": "",
+      "VarField26": "",
+      "VarField27": "",
+      "VarField28": "",
+      "VarField29": "",
+      "VarField3": "",
+      "VarField30": "",
+      "VarField31": "",
+      "VarField32": "",
+      "VarField33": "",
+      "VarField34": "",
+      "VarField35": "",
+      "VarField4": "",
+      "VarField5": "",
+      "VarField6": "",
+      "VarField7": "",
+      "VarField8": "",
+      "VarField9": "",
+      "Website": "metacortex.net",
+      "Zip": "10001"
+    }
+  },
+  {
+    "group": "contacts",
+    "name": "getContactsOnList",
+    "method": "GET",
+    "path": "/api/v1/contacts/42?limit=2&start=2",
+    "input": {
+      "id": 42,
+      "limit": 2,
+      "start": 2
+    },
+    "output": [
+      {
+        "address_city": "New York",
+        "address_state": "NY",
+        "address_street": "36 Pipers Row",
+        "address_street2": "Room 101",
+        "address_zip": "10001",
+        "company": "Metacortex",
+        "contact_id": 10142067,
+        "contact_list_id": 10142067,
+        "created_date": "1999-02-19T12:00:00.00:00",
+        "email_address": "tanderson@metacortex.net",
+        "first_name": "Thomas",
+        "last_name": "Anderson",
+        "mobile_phone": "888-574-7346",
+        "occupation": "programmer",
+        "phone": "888-574-7346",
+        "row": 101,
+        "var_field1": "",
+        "var_field10": "",
+        "var_field11": "",
+        "var_field12": "",
+        "var_field13": "",
+        "var_field14": "",
+        "var_field15": "",
+        "var_field16": "",
+        "var_field17": "",
+        "var_field18": "",
+        "var_field19": "",
+        "var_field2": "",
+        "var_field20": "",
+        "var_field21": "",
+        "var_field22": "",
+        "var_field23": "",
+        "var_field24": "",
+        "var_field25": "",
+        "var_field26": "",
+        "var_field27": "",
+        "var_field28": "",
+        "var_field29": "",
+        "var_field3": "",
+        "var_field30": "",
+        "var_field31": "",
+        "var_field32": "",
+        "var_field33": "",
+        "var_field34": "",
+        "var_field35": "",
+        "var_field4": "",
+        "var_field5": "",
+        "var_field6": "",
+        "var_field7": "",
+        "var_field8": "",
+        "var_field9": "",
+        "website": "metacortex.net"
+      }
+    ]
+  },
+  {
+    "group": "contacts",
+    "name": "createContactOnList",
+    "method": "POST",
+    "path": "/api/v1/contacts",
+    "input": {
+      "body": {
+        "contact_id": 1,
+        "contact_list_id": 10142067
+      }
+    },
+    "output": {
+      "created_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "contacts",
+    "name": "updateContactOnList",
+    "method": "PUT",
+    "path": "/api/v1/contacts",
+    "input": {
+      "body": {
+        "contact_id": 1,
+        "contact_list_id": 10142067
+      }
+    },
+    "output": {
+      "updated_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "contacts",
+    "name": "deleteContact",
+    "method": "DELETE",
+    "path": "/api/v1/contacts/42",
+    "input": {
+      "id": 42
+    },
+    "output": {
+      "deleted_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "flows",
+    "name": "getAllFlows",
+    "method": "GET",
+    "path": "/api/v1/flow",
+    "input": {},
+    "output": [
+      {
+        "contactListId": 10142067,
+        "createDate": "1999-02-19T12:00:00.00:00",
+        "endpointId": "10142067",
+        "flowId": 10142067,
+        "lastModifiedDate": "1999-02-19T12:00:00.00:00",
+        "name": "Keymaker"
+      }
+    ]
+  },
+  {
+    "group": "flows",
+    "name": "getFlow",
+    "method": "GET",
+    "path": "/api/v1/flow/segment",
+    "input": {
+      "endpointId": "segment"
+    },
+    "output": {
+      "contactListId": 10142067,
+      "createDate": "1999-02-19T12:00:00.00:00",
+      "endpointId": "10142067",
+      "flowId": 10142067,
+      "lastModifiedDate": "1999-02-19T12:00:00.00:00",
+      "name": "Keymaker"
+    }
+  },
+  {
+    "group": "flows",
+    "name": "enrollContactToFlow",
+    "method": "POST",
+    "path": "/api/v1/flow/segment",
+    "input": {
+      "endPoint": "segment",
+      "body": {
+        "address_city": "New York",
+        "address_state": "NY",
+        "address_street": "36 Pipers Row",
+        "address_zip": "10001",
+        "first_name": "Thomas",
+        "last_name": "Anderson"
+      }
+    },
+    "output": {
+      "contactListId": 10142067,
+      "createDate": "1999-02-19T12:00:00.00:00",
+      "endpointId": "10142067",
+      "flowId": 10142067,
+      "lastModifiedDate": "1999-02-19T12:00:00.00:00",
+      "name": "Keymaker",
+      "send_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "flows",
+    "name": "unenrollContactFromFlow",
+    "method": "DELETE",
+    "path": "/api/v1/flow/unenroll/segment/42",
+    "input": {
+      "dataId": 42,
+      "endPoint": "segment"
+    },
+    "output": {
+      "unenrolled_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "login",
+    "name": "createLoginLink",
+    "method": "POST",
+    "path": "/api/v1/loginlink",
+    "input": {
+      "body": {
+        "api_key": "fixture-api-key"
+      }
+    },
+    "output": {
+      "CreatedDate": "https://www.metacortex.net/al.aspx?m=oKRD1iQHmXUEQkxihVS9DTvIRKAPM6ZoqrdY+lgRg1F",
+      "LoginLink": ""
+    }
+  },
+  {
+    "group": "mail",
+    "name": "sendMail",
+    "method": "POST",
+    "path": "/api/v1/send/segment",
+    "input": {
+      "endPoint": "segment",
+      "body": {
+        "address_city": "New York",
+        "address_state": "NY",
+        "address_street": "36 Pipers Row",
+        "address_zip": "10001",
+        "first_name": "Thomas",
+        "last_name": "Anderson"
+      }
+    },
+    "output": {
+      "send_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "suppressionLists",
+    "name": "getSuppressionLists",
+    "method": "GET",
+    "path": "/api/v1/lists/suppression?id=2",
+    "input": {
+      "id": 2
+    },
+    "output": [
+      {
+        "Country": "US",
+        "CreationDate": "1999-02-19T12:00:00.00:00",
+        "Id": 10142067,
+        "Name": "Metacortex Employees",
+        "Total": 101,
+        "Type": "Suppression"
+      }
+    ]
+  },
+  {
+    "group": "suppressionLists",
+    "name": "getSuppressionList",
+    "method": "GET",
+    "path": "/api/v1/lists/suppression/42",
+    "input": {
+      "id": 42
+    },
+    "output": [
+      {
+        "Country": "US",
+        "CreationDate": "1999-02-19T12:00:00.00:00",
+        "Id": 10142067,
+        "Name": "Metacortex Employees",
+        "Total": 101,
+        "Type": "Suppression"
+      }
+    ]
+  },
+  {
+    "group": "suppressionLists",
+    "name": "createSuppressionList",
+    "method": "POST",
+    "path": "/api/v1/lists/suppression",
+    "input": {
+      "body": {}
+    },
+    "output": [
+      {
+        "Country": "US",
+        "CreationDate": "1999-02-19T12:00:00.00:00",
+        "Id": 10142067,
+        "Name": "Metacortex Employees",
+        "Total": 101,
+        "Type": "Suppression"
+      }
+    ]
+  },
+  {
+    "group": "suppressionLists",
+    "name": "deleteSuppressionList",
+    "method": "DELETE",
+    "path": "/api/v1/lists/suppression/42",
+    "input": {
+      "id": 42
+    },
+    "output": {
+      "Message": "List Id: 123 Name: Metacortex Employees successfully deleted."
+    }
+  },
+  {
+    "group": "suppressionContacts",
+    "name": "getSuppressionListContacts",
+    "method": "GET",
+    "path": "/api/v1/lists/suppression/contacts/42?offset=2",
+    "input": {
+      "listId": 42,
+      "offset": 2
+    },
+    "output": {
+      "ContactDetails": [
+        {
+          "Address": "36 Pipers Row",
+          "Address2": "Room 101",
+          "City": "New York",
+          "Company": "Metacortex",
+          "Country": "US",
+          "CreatedDate": "1999-02-19T12:00:00.00:00",
+          "DataId": 10142067,
+          "Email": "tanderson@metacortex.net",
+          "FirstName": "Thomas",
+          "HasValidAddress": true,
+          "LastName": "Anderson",
+          "LastUpdateDate": "1999-02-19T12:00:00.00:00",
+          "ListId": 10142067,
+          "Mobile": "888-574-7346",
+          "Occupation": "programmer",
+          "Phone": "888-574-7346",
+          "State": "NY",
+          "VarField1": "",
+          "VarField10": "",
+          "VarField11": "",
+          "VarField12": "",
+          "VarField13": "",
+          "VarField14": "",
+          "VarField15": "",
+          "VarField16": "",
+          "VarField17": "",
+          "VarField18": "",
+          "VarField19": "",
+          "VarField2": "",
+          "VarField20": "",
+          "VarField21": "",
+          "VarField22": "",
+          "VarField23": "",
+          "VarField24": "",
+          "VarField25": "",
+          "VarField26": "",
+          "VarField27": "",
+          "VarField28": "",
+          "VarField29": "",
+          "VarField3": "",
+          "VarField30": "",
+          "VarField31": "",
+          "VarField32": "",
+          "VarField33": "",
+          "VarField34": "",
+          "VarField35": "",
+          "VarField4": "",
+          "VarField5": "",
+          "VarField6": "",
+          "VarField7": "",
+          "VarField8": "",
+          "VarField9": "",
+          "Website": "metacortex.net",
+          "Zip": "10001"
+        }
+      ],
+      "ListDetails": {
+        "Country": "US",
+        "CreationDate": "1999-02-19T12:00:00.00:00",
+        "Id": 10142067,
+        "Name": "Metacortex Employees",
+        "Total": 101,
+        "Type": "Suppression"
+      }
+    }
+  },
+  {
+    "group": "suppressionContacts",
+    "name": "getSuppressionListContact",
+    "method": "GET",
+    "path": "/api/v1/lists/suppression/contacts/42/42?offset=2",
+    "input": {
+      "contactId": 42,
+      "listId": 42,
+      "offset": 2
+    },
+    "output": {
+      "ContactDetails": [
+        {
+          "Address": "36 Pipers Row",
+          "Address2": "Room 101",
+          "City": "New York",
+          "Company": "Metacortex",
+          "Country": "US",
+          "CreatedDate": "1999-02-19T12:00:00.00:00",
+          "DataId": 10142067,
+          "Email": "tanderson@metacortex.net",
+          "FirstName": "Thomas",
+          "HasValidAddress": true,
+          "LastName": "Anderson",
+          "LastUpdateDate": "1999-02-19T12:00:00.00:00",
+          "ListId": 10142067,
+          "Mobile": "888-574-7346",
+          "Occupation": "programmer",
+          "Phone": "888-574-7346",
+          "State": "NY",
+          "VarField1": "",
+          "VarField10": "",
+          "VarField11": "",
+          "VarField12": "",
+          "VarField13": "",
+          "VarField14": "",
+          "VarField15": "",
+          "VarField16": "",
+          "VarField17": "",
+          "VarField18": "",
+          "VarField19": "",
+          "VarField2": "",
+          "VarField20": "",
+          "VarField21": "",
+          "VarField22": "",
+          "VarField23": "",
+          "VarField24": "",
+          "VarField25": "",
+          "VarField26": "",
+          "VarField27": "",
+          "VarField28": "",
+          "VarField29": "",
+          "VarField3": "",
+          "VarField30": "",
+          "VarField31": "",
+          "VarField32": "",
+          "VarField33": "",
+          "VarField34": "",
+          "VarField35": "",
+          "VarField4": "",
+          "VarField5": "",
+          "VarField6": "",
+          "VarField7": "",
+          "VarField8": "",
+          "VarField9": "",
+          "Website": "metacortex.net",
+          "Zip": "10001"
+        }
+      ],
+      "ListDetails": {
+        "Country": "US",
+        "CreationDate": "1999-02-19T12:00:00.00:00",
+        "Id": 10142067,
+        "Name": "Metacortex Employees",
+        "Total": 101,
+        "Type": "Suppression"
+      }
+    }
+  },
+  {
+    "group": "suppressionContacts",
+    "name": "createSuppressionListContact",
+    "method": "POST",
+    "path": "/api/v1/lists/suppression/contacts/42",
+    "input": {
+      "listId": 42,
+      "body": {}
+    },
+    "output": {
+      "ContactDetails": [
+        {
+          "Address": "36 Pipers Row",
+          "Address2": "Room 101",
+          "City": "New York",
+          "Company": "Metacortex",
+          "Country": "US",
+          "CreatedDate": "1999-02-19T12:00:00.00:00",
+          "DataId": 10142067,
+          "Email": "tanderson@metacortex.net",
+          "FirstName": "Thomas",
+          "HasValidAddress": true,
+          "LastName": "Anderson",
+          "LastUpdateDate": "1999-02-19T12:00:00.00:00",
+          "ListId": 10142067,
+          "Mobile": "888-574-7346",
+          "Occupation": "programmer",
+          "Phone": "888-574-7346",
+          "State": "NY",
+          "VarField1": "",
+          "VarField10": "",
+          "VarField11": "",
+          "VarField12": "",
+          "VarField13": "",
+          "VarField14": "",
+          "VarField15": "",
+          "VarField16": "",
+          "VarField17": "",
+          "VarField18": "",
+          "VarField19": "",
+          "VarField2": "",
+          "VarField20": "",
+          "VarField21": "",
+          "VarField22": "",
+          "VarField23": "",
+          "VarField24": "",
+          "VarField25": "",
+          "VarField26": "",
+          "VarField27": "",
+          "VarField28": "",
+          "VarField29": "",
+          "VarField3": "",
+          "VarField30": "",
+          "VarField31": "",
+          "VarField32": "",
+          "VarField33": "",
+          "VarField34": "",
+          "VarField35": "",
+          "VarField4": "",
+          "VarField5": "",
+          "VarField6": "",
+          "VarField7": "",
+          "VarField8": "",
+          "VarField9": "",
+          "Website": "metacortex.net",
+          "Zip": "10001"
+        }
+      ],
+      "ListDetails": {
+        "Country": "US",
+        "CreationDate": "1999-02-19T12:00:00.00:00",
+        "Id": 10142067,
+        "Name": "Metacortex Employees",
+        "Total": 101,
+        "Type": "Suppression"
+      }
+    }
+  },
+  {
+    "group": "suppressionContacts",
+    "name": "updateSuppressionListContact",
+    "method": "PUT",
+    "path": "/api/v1/lists/suppression/contacts/42/42",
+    "input": {
+      "contactId": 42,
+      "listId": 42,
+      "body": {}
+    },
+    "output": {
+      "ContactDetails": [
+        {
+          "Address": "36 Pipers Row",
+          "Address2": "Room 101",
+          "City": "New York",
+          "Company": "Metacortex",
+          "Country": "US",
+          "CreatedDate": "1999-02-19T12:00:00.00:00",
+          "DataId": 10142067,
+          "Email": "tanderson@metacortex.net",
+          "FirstName": "Thomas",
+          "HasValidAddress": true,
+          "LastName": "Anderson",
+          "LastUpdateDate": "1999-02-19T12:00:00.00:00",
+          "ListId": 10142067,
+          "Mobile": "888-574-7346",
+          "Occupation": "programmer",
+          "Phone": "888-574-7346",
+          "State": "NY",
+          "VarField1": "",
+          "VarField10": "",
+          "VarField11": "",
+          "VarField12": "",
+          "VarField13": "",
+          "VarField14": "",
+          "VarField15": "",
+          "VarField16": "",
+          "VarField17": "",
+          "VarField18": "",
+          "VarField19": "",
+          "VarField2": "",
+          "VarField20": "",
+          "VarField21": "",
+          "VarField22": "",
+          "VarField23": "",
+          "VarField24": "",
+          "VarField25": "",
+          "VarField26": "",
+          "VarField27": "",
+          "VarField28": "",
+          "VarField29": "",
+          "VarField3": "",
+          "VarField30": "",
+          "VarField31": "",
+          "VarField32": "",
+          "VarField33": "",
+          "VarField34": "",
+          "VarField35": "",
+          "VarField4": "",
+          "VarField5": "",
+          "VarField6": "",
+          "VarField7": "",
+          "VarField8": "",
+          "VarField9": "",
+          "Website": "metacortex.net",
+          "Zip": "10001"
+        }
+      ],
+      "ListDetails": {
+        "Country": "US",
+        "CreationDate": "1999-02-19T12:00:00.00:00",
+        "Id": 10142067,
+        "Name": "Metacortex Employees",
+        "Total": 101,
+        "Type": "Suppression"
+      }
+    }
+  },
+  {
+    "group": "suppressionContacts",
+    "name": "deleteSuppressionListContact",
+    "method": "DELETE",
+    "path": "/api/v1/lists/suppression/contacts/42/42",
+    "input": {
+      "contactId": 42,
+      "listId": 42
+    },
+    "output": {
+      "Message": "Contact Id: 123 succesfully removed from List Id: 123 Name: Metacortex Employees"
+    }
+  },
+  {
+    "group": "templates",
+    "name": "getAllTemplates",
+    "method": "GET",
+    "path": "/api/v1/templates",
+    "input": {},
+    "output": [
+      {
+        "is_full_html": true,
+        "is_proofed": false,
+        "name": "The Architect",
+        "size": "0",
+        "back": "https://some.url.com/back.jpg",
+        "count": 2,
+        "created_date": "1999-02-19T12:00:00.00:00",
+        "font_family": "sans-serif",
+        "front": "https://some.url.com/front.jpg",
+        "html": "full html here",
+        "is_double_sided": false,
+        "template_id": 10142067,
+        "thumbnail": "https://some.url.com/thumb_front.jpg",
+        "thumbnail_back": "https://some.url.com/thumb_back.jpg"
+      }
+    ]
+  },
+  {
+    "group": "templates",
+    "name": "getTemplate",
+    "method": "GET",
+    "path": "/api/v1/templates/42",
+    "input": {
+      "id": 42
+    },
+    "output": [
+      {
+        "is_full_html": true,
+        "is_proofed": false,
+        "name": "The Architect",
+        "size": "0",
+        "back": "https://some.url.com/back.jpg",
+        "count": 2,
+        "created_date": "1999-02-19T12:00:00.00:00",
+        "font_family": "sans-serif",
+        "front": "https://some.url.com/front.jpg",
+        "html": "full html here",
+        "is_double_sided": false,
+        "template_id": 10142067,
+        "thumbnail": "https://some.url.com/thumb_front.jpg",
+        "thumbnail_back": "https://some.url.com/thumb_back.jpg"
+      }
+    ]
+  },
+  {
+    "group": "templates",
+    "name": "createTemplate",
+    "method": "POST",
+    "path": "/api/v1/templates",
+    "input": {
+      "body": {
+        "is_full_html": true,
+        "is_proofed": true,
+        "name": "The Architect",
+        "size": "0"
+      }
+    },
+    "output": {
+      "CreatedDate": "1999-02-19T12:00:00.00:00",
+      "TemplateId": 10142067
+    }
+  },
+  {
+    "group": "templates",
+    "name": "deleteTemplate",
+    "method": "DELETE",
+    "path": "/api/v1/templates/42",
+    "input": {
+      "id": 42
+    },
+    "output": {
+      "DeletedDate": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "webhooks",
+    "name": "getAllWebhooks",
+    "method": "GET",
+    "path": "/api/v1/webhooks",
+    "input": {},
+    "output": [
+      {
+        "campaign_id": 10142067,
+        "campaign_name": "Keymaker",
+        "created_date": "1999-02-19T12:00:00.00:00",
+        "endpoint_id": "https://app.postalytics.com/1234567890",
+        "is_subscribed": 1,
+        "url": "https://some.url.com/action"
+      }
+    ]
+  },
+  {
+    "group": "webhooks",
+    "name": "getWebhook",
+    "method": "GET",
+    "path": "/api/v1/webhooks/42",
+    "input": {
+      "id": 42
+    },
+    "output": [
+      {
+        "campaign_id": 10142067,
+        "campaign_name": "Keymaker",
+        "created_date": "1999-02-19T12:00:00.00:00",
+        "endpoint_id": "https://app.postalytics.com/1234567890",
+        "is_subscribed": 1,
+        "url": "https://some.url.com/action"
+      }
+    ]
+  },
+  {
+    "group": "webhooks",
+    "name": "createWebhook",
+    "method": "POST",
+    "path": "/api/v1/webhooks",
+    "input": {
+      "body": {}
+    },
+    "output": {
+      "created_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "webhooks",
+    "name": "updateWebhook",
+    "method": "PUT",
+    "path": "/api/v1/webhooks",
+    "input": {
+      "body": {}
+    },
+    "output": {
+      "updated_date": "1999-02-19T12:00:00.00:00"
+    }
+  },
+  {
+    "group": "webhooks",
+    "name": "deleteWebhook",
+    "method": "DELETE",
+    "path": "/api/v1/webhooks/42",
+    "input": {
+      "id": 42
+    },
+    "output": {
+      "deleted_date": "1999-02-19T12:00:00.00:00"
+    }
+  }
+]

@@ -3110,6 +3110,14 @@
                 ]
               },
               {
+                "group": "Postalytics",
+                "pages": [
+                  "plugins/postalytics/overview",
+                  "plugins/postalytics/api",
+                  "plugins/postalytics/database"
+                ]
+              },
+              {
                 "group": "PostHog",
                 "pages": [
                   "plugins/posthog/overview",
