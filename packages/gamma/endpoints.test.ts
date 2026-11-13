@@ -59,7 +59,6 @@ function respond(body: unknown, status = 200) {
 	);
 }
 
-
 function lastRequest() {
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
 	const parsed = new URL(url);
