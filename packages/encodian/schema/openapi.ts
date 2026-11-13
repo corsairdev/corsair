@@ -463,13 +463,13 @@ export const S_Barcode_DtoBarcodeCreateBarcode = z
 	.strict();
 export const S_Barcode_DtoResponseCreateBarcode = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Barcode_DtoReadBarcodeFromDocument = z
@@ -486,11 +486,11 @@ export const S_Barcode_DtoReadBarcodeFromDocument = z
 export const S_Barcode_DtoResponseReadBarcodeFromDocument = z
 	.object({
 		barcodes: z.array(z.string()),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Barcode_DtoAIBarcodeRead = z
@@ -504,12 +504,12 @@ export const S_Barcode_DtoAIBarcodeRead = z
 	.strict();
 export const S_Barcode_DtoResponseAIBarcodeRead = z
 	.object({
-		barcodes: z.array(z.string()).optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		barcodes: z.array(z.string()).nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Barcode_DtoReadBarcodeFromImage = z
@@ -523,11 +523,11 @@ export const S_Barcode_DtoReadBarcodeFromImage = z
 export const S_Barcode_DtoResponseReadBarcodeFromImage = z
 	.object({
 		Value: z.string(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Barcode_DtoCreateQrCode = z
@@ -875,13 +875,13 @@ export const S_Barcode_DtoCreateQrCode = z
 	.strict();
 export const S_Barcode_DtoResponseCreateQrCode = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Barcode_DtoReadQrCodeFromDocument = z
@@ -898,11 +898,11 @@ export const S_Barcode_DtoReadQrCodeFromDocument = z
 export const S_Barcode_DtoResponseReadQrCodeFromDocument = z
 	.object({
 		qrCodes: z.array(z.string()),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Barcode_DtoReadQrCodeFromImage = z
@@ -916,11 +916,11 @@ export const S_Barcode_DtoReadQrCodeFromImage = z
 export const S_Barcode_DtoResponseReadQrCodeFromImage = z
 	.object({
 		Value: z.string(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Barcode_Creditor = z
@@ -1489,12 +1489,12 @@ export const S_Barcode_DtoCreateSwissQrCode = z
 	.strict();
 export const S_Barcode_DtoResponseCreateSwissQrCode = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Barcode_DtoReadSwissQrCodesFromDocument = z
@@ -1510,13 +1510,13 @@ export const S_Barcode_DtoReadSwissQrCodesFromDocument = z
 	.strict();
 export const S_Barcode_ReadSwissQrCodesFromDocumentCreditor = z
 	.object({
-		name: z.string().optional(),
-		houseNo: z.string().optional(),
-		addressLine1: z.string().optional(),
-		addressLine2: z.string().optional(),
-		street: z.string().optional(),
-		town: z.string().optional(),
-		postcode: z.string().optional(),
+		name: z.string().nullish(),
+		houseNo: z.string().nullish(),
+		addressLine1: z.string().nullish(),
+		addressLine2: z.string().nullish(),
+		street: z.string().nullish(),
+		town: z.string().nullish(),
+		postcode: z.string().nullish(),
 		countryCode: z
 			.enum([
 				'Afghanistan',
@@ -1770,18 +1770,18 @@ export const S_Barcode_ReadSwissQrCodesFromDocumentCreditor = z
 				'Zimbabwe',
 			])
 			.or(z.string())
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 export const S_Barcode_ReadSwissQrCodesFromDocumentDebtor = z
 	.object({
-		name: z.string().optional(),
-		houseNo: z.string().optional(),
-		addressLine1: z.string().optional(),
-		addressLine2: z.string().optional(),
-		street: z.string().optional(),
-		town: z.string().optional(),
-		postcode: z.string().optional(),
+		name: z.string().nullish(),
+		houseNo: z.string().nullish(),
+		addressLine1: z.string().nullish(),
+		addressLine2: z.string().nullish(),
+		street: z.string().nullish(),
+		town: z.string().nullish(),
+		postcode: z.string().nullish(),
 		countryCode: z
 			.enum([
 				'Afghanistan',
@@ -2035,31 +2035,29 @@ export const S_Barcode_ReadSwissQrCodesFromDocumentDebtor = z
 				'Zimbabwe',
 			])
 			.or(z.string())
-			.optional(),
+			.nullish(),
 	})
 	.loose();
 export const S_Barcode_ReadSwissQrCodesFromDocumentData = z
 	.object({
-		value: z.string().optional(),
-		account: z.string().optional(),
-		amount: z.number().optional(),
-		currency: z.enum(['CHF', 'EUR']).or(z.string()).optional(),
-		reference: z.string().optional(),
-		creditor: S_Barcode_ReadSwissQrCodesFromDocumentCreditor.optional(),
-		debtor: S_Barcode_ReadSwissQrCodesFromDocumentDebtor.optional(),
-		pageNumber: z.number().int().optional(),
+		value: z.string().nullish(),
+		account: z.string().nullish(),
+		amount: z.number().nullish(),
+		currency: z.enum(['CHF', 'EUR']).or(z.string()).nullish(),
+		reference: z.string().nullish(),
+		creditor: S_Barcode_ReadSwissQrCodesFromDocumentCreditor.nullish(),
+		debtor: S_Barcode_ReadSwissQrCodesFromDocumentDebtor.nullish(),
+		pageNumber: z.number().int().nullish(),
 	})
 	.loose();
 export const S_Barcode_DtoResponseReadSwissQrCodesFromDocument = z
 	.object({
-		swissQrCodes: z
-			.array(S_Barcode_ReadSwissQrCodesFromDocumentData)
-			.optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		swissQrCodes: z.array(S_Barcode_ReadSwissQrCodesFromDocumentData).nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Barcode_DtoReadSwissQrCodeFromImage = z
@@ -2070,18 +2068,18 @@ export const S_Barcode_DtoReadSwissQrCodeFromImage = z
 	.strict();
 export const S_Barcode_DtoResponseReadSwissQrCodeFromImage = z
 	.object({
-		value: z.string().optional(),
-		account: z.string().optional(),
-		currency: z.enum(['CHF', 'EUR']).or(z.string()).optional(),
-		amount: z.number().optional(),
-		reference: z.string().optional(),
-		creditorName: z.string().optional(),
-		creditorHouseNo: z.string().optional(),
-		creditorAddressLine1: z.string().optional(),
-		creditorAddressLine2: z.string().optional(),
-		creditorStreet: z.string().optional(),
-		creditorTown: z.string().optional(),
-		creditorPostcode: z.string().optional(),
+		value: z.string().nullish(),
+		account: z.string().nullish(),
+		currency: z.enum(['CHF', 'EUR']).or(z.string()).nullish(),
+		amount: z.number().nullish(),
+		reference: z.string().nullish(),
+		creditorName: z.string().nullish(),
+		creditorHouseNo: z.string().nullish(),
+		creditorAddressLine1: z.string().nullish(),
+		creditorAddressLine2: z.string().nullish(),
+		creditorStreet: z.string().nullish(),
+		creditorTown: z.string().nullish(),
+		creditorPostcode: z.string().nullish(),
 		creditorCountryCode: z
 			.enum([
 				'Afghanistan',
@@ -2335,14 +2333,14 @@ export const S_Barcode_DtoResponseReadSwissQrCodeFromImage = z
 				'Zimbabwe',
 			])
 			.or(z.string())
-			.optional(),
-		debtorName: z.string().optional(),
-		debtorHouseNo: z.string().optional(),
-		debtorAddressLine1: z.string().optional(),
-		debtorAddressLine2: z.string().optional(),
-		debtorStreet: z.string().optional(),
-		debtorTown: z.string().optional(),
-		debtorPostcode: z.string().optional(),
+			.nullish(),
+		debtorName: z.string().nullish(),
+		debtorHouseNo: z.string().nullish(),
+		debtorAddressLine1: z.string().nullish(),
+		debtorAddressLine2: z.string().nullish(),
+		debtorStreet: z.string().nullish(),
+		debtorTown: z.string().nullish(),
+		debtorPostcode: z.string().nullish(),
 		debtorCountryCode: z
 			.enum([
 				'Afghanistan',
@@ -2596,12 +2594,12 @@ export const S_Barcode_DtoResponseReadSwissQrCodeFromImage = z
 				'Zimbabwe',
 			])
 			.or(z.string())
-			.optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+			.nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertConvertCad = z
@@ -2909,13 +2907,13 @@ export const S_Conversion_DtoConvertConvertCad = z
 	.strict();
 export const S_Conversion_DtoResponseConvertCad = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertMailMessage = z
@@ -3097,13 +3095,13 @@ export const S_Conversion_DtoConvertMailMessage = z
 	.strict();
 export const S_Conversion_DtoResponseConvertMailMessage = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertConvertExcel = z
@@ -3160,13 +3158,13 @@ export const S_Conversion_DtoConvertConvertExcel = z
 	.strict();
 export const S_Conversion_DtoResponseConvertExcel = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoBasicConversion = z
@@ -3202,13 +3200,13 @@ export const S_Conversion_DtoBasicConversion = z
 	.strict();
 export const S_Conversion_DtoResponseBasicConversion = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertHeicToPdf = z
@@ -3216,12 +3214,12 @@ export const S_Conversion_DtoConvertHeicToPdf = z
 	.strict();
 export const S_Conversion_DtoResponseConvertHeicToPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertHtmlToImage = z
@@ -3239,12 +3237,12 @@ export const S_Conversion_DtoConvertHtmlToImage = z
 	.strict();
 export const S_Conversion_DtoResponseConvertHtmlToImage = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoHtmlToPdf = z
@@ -3311,13 +3309,13 @@ export const S_Conversion_DtoHtmlToPdf = z
 	.strict();
 export const S_Conversion_DtoResponseHtmlToPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertHtmlToPdfV2 = z
@@ -3373,12 +3371,12 @@ export const S_Conversion_DtoConvertHtmlToPdfV2 = z
 	.strict();
 export const S_Conversion_DtoResponseConvertHtmlToPdfV2 = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoHtmlToWord = z
@@ -3428,13 +3426,13 @@ export const S_Conversion_DtoHtmlToWord = z
 	.strict();
 export const S_Conversion_DtoResponseHtmlToWord = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertConvertImageToPdf = z
@@ -3524,12 +3522,12 @@ export const S_Conversion_DtoConvertConvertImageToPdf = z
 	.strict();
 export const S_Conversion_DtoResponseConvertImageToPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertJsonToExcel = z
@@ -3697,13 +3695,13 @@ export const S_Conversion_DtoConvertJsonToExcel = z
 	.strict();
 export const S_Conversion_DtoResponseConvertJsonToExcel = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertPdfToExcel = z
@@ -3711,12 +3709,12 @@ export const S_Conversion_DtoConvertPdfToExcel = z
 	.strict();
 export const S_Conversion_DtoResponseConvertPdfToExcel = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertPdfToImages = z
@@ -3729,18 +3727,18 @@ export const S_Conversion_DtoConvertPdfToImages = z
 	.strict();
 export const S_Conversion_DocumentArray = z
 	.object({
-		fileName: z.string().optional(),
-		fileContent: z.string().optional(),
+		fileName: z.string().nullish(),
+		fileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoResponseConvertPdfToImages = z
 	.object({
 		documents: z.array(S_Conversion_DocumentArray),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertPdfToJpg = z
@@ -3759,13 +3757,13 @@ export const S_Conversion_DtoConvertPdfToJpg = z
 	.strict();
 export const S_Conversion_DtoResponseConvertPdfToJpg = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertToPdfA = z
@@ -3797,13 +3795,13 @@ export const S_Conversion_DtoConvertToPdfA = z
 	.strict();
 export const S_Conversion_DtoResponseConvertToPdfA = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertPdfToPng = z
@@ -3821,13 +3819,13 @@ export const S_Conversion_DtoConvertPdfToPng = z
 	.strict();
 export const S_Conversion_DtoResponseConvertPdfToPng = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertPdfToTiff = z
@@ -3844,13 +3842,13 @@ export const S_Conversion_DtoConvertPdfToTiff = z
 	.strict();
 export const S_Conversion_DtoResponseConvertPdfToTiff = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertPdfToWord = z
@@ -3865,13 +3863,13 @@ export const S_Conversion_DtoConvertPdfToWord = z
 	.strict();
 export const S_Conversion_DtoResponseConvertPdfToWord = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertConvertPowerPoint = z
@@ -3937,13 +3935,13 @@ export const S_Conversion_DtoConvertConvertPowerPoint = z
 	.strict();
 export const S_Conversion_DtoResponseConvertPowerPoint = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoTextToPdf = z
@@ -3968,13 +3966,13 @@ export const S_Conversion_DtoTextToPdf = z
 	.strict();
 export const S_Conversion_DtoResponseTextToPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertConvertVisio = z
@@ -4085,13 +4083,13 @@ export const S_Conversion_DtoConvertConvertVisio = z
 	.strict();
 export const S_Conversion_DtoResponseConvertVisio = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoConvertConvertWord = z
@@ -4442,13 +4440,13 @@ export const S_Conversion_DtoConvertConvertWord = z
 	.strict();
 export const S_Conversion_DtoResponseConvertWord = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Conversion_DtoWordToPdfForm = z
@@ -4461,13 +4459,13 @@ export const S_Conversion_DtoWordToPdfForm = z
 	.strict();
 export const S_Conversion_DtoResponseWordToPdfForm = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoParseCsv = z
@@ -4485,11 +4483,11 @@ export const S_Excel_DtoParseCsv = z
 export const S_Excel_DtoResponseParseCsv = z
 	.object({
 		csvData: z.string(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoExcelAddImageHeaderOrFooter = z
@@ -4515,12 +4513,12 @@ export const S_Excel_DtoExcelAddImageHeaderOrFooter = z
 	.strict();
 export const S_Excel_DtoResponseExcelAddImageHeaderOrFooter = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoAddRowsToExcel = z
@@ -4541,12 +4539,12 @@ export const S_Excel_DtoAddRowsToExcel = z
 	.strict();
 export const S_Excel_DtoResponseAddRowsToExcel = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoExcelAddTextHeadersAndFooters = z
@@ -4565,12 +4563,12 @@ export const S_Excel_DtoExcelAddTextHeadersAndFooters = z
 	.strict();
 export const S_Excel_DtoResponseExcelAddTextHeadersAndFooters = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoExcelWatermarkText = z
@@ -4595,13 +4593,13 @@ export const S_Excel_DtoExcelWatermarkText = z
 	.strict();
 export const S_Excel_DtoResponseExcelWatermarkText = z
 	.object({
-		watermarkId: z.number().int().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		watermarkId: z.number().int().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoDeleteRowsFromExcel = z
@@ -4616,12 +4614,12 @@ export const S_Excel_DtoDeleteRowsFromExcel = z
 	.strict();
 export const S_Excel_DtoResponseDeleteRowsFromExcel = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoDeleteExcelWorksheets = z
@@ -4633,12 +4631,12 @@ export const S_Excel_DtoDeleteExcelWorksheets = z
 	.strict();
 export const S_Excel_DtoResponseDeleteExcelWorksheets = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoGetRowsFromExcel = z
@@ -4662,12 +4660,12 @@ export const S_Excel_DtoGetRowsFromExcel = z
 	.strict();
 export const S_Excel_DtoResponseGetRowsFromExcel = z
 	.object({
-		rowData: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		rowData: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoExtractExcelWorksheets = z
@@ -4679,12 +4677,12 @@ export const S_Excel_DtoExtractExcelWorksheets = z
 	.strict();
 export const S_Excel_DtoResponseExtractExcelWorksheets = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DocumentArrayExcel = z
@@ -4707,13 +4705,13 @@ export const S_Excel_DtoMergeArrayOfExcelDocuments = z
 	.strict();
 export const S_Excel_DtoResponseMergeArrayOfExcelDocuments = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DocumentArrayMergeExcelRows = z
@@ -4735,13 +4733,13 @@ export const S_Excel_DtoMergeExcelRows = z
 	.strict();
 export const S_Excel_DtoResponseMergeExcelRows = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoExcelMergeWorksheets = z
@@ -4759,12 +4757,12 @@ export const S_Excel_DtoExcelMergeWorksheets = z
 	.strict();
 export const S_Excel_DtoResponseExcelMergeWorksheets = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoPopulateExcel = z
@@ -4783,13 +4781,13 @@ export const S_Excel_DtoPopulateExcel = z
 	.strict();
 export const S_Excel_DtoResponsePopulateExcel = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoExcelRemoveHeadersAndFooters = z
@@ -4808,12 +4806,12 @@ export const S_Excel_DtoExcelRemoveHeadersAndFooters = z
 	.strict();
 export const S_Excel_DtoResponseExcelRemoveHeadersAndFooters = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoExcelWatermarkTextRemove = z
@@ -4827,12 +4825,12 @@ export const S_Excel_DtoExcelWatermarkTextRemove = z
 	.strict();
 export const S_Excel_DtoResponseExcelWatermarkTextRemove = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_ExcelRenameWorksheetsSheet = z
@@ -4851,12 +4849,12 @@ export const S_Excel_DtoExcelRenameWorksheets = z
 	.strict();
 export const S_Excel_DtoResponseExcelRenameWorksheets = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_ExcelReplaceTextPhrase = z
@@ -5058,12 +5056,12 @@ export const S_Excel_DtoExcelReplaceText = z
 	.strict();
 export const S_Excel_DtoResponseExcelReplaceText = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoSecureExcel = z
@@ -5085,12 +5083,12 @@ export const S_Excel_DtoSecureExcel = z
 	.strict();
 export const S_Excel_DtoResponseSecureExcel = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoExcelSeparateWorksheets = z
@@ -5098,18 +5096,18 @@ export const S_Excel_DtoExcelSeparateWorksheets = z
 	.strict();
 export const S_Excel_DocumentArray = z
 	.object({
-		fileName: z.string().optional(),
-		fileContent: z.string().optional(),
+		fileName: z.string().nullish(),
+		fileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoResponseExcelSeparateWorksheets = z
 	.object({
 		files: z.array(S_Excel_DocumentArray),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoUnlockExcel = z
@@ -5125,12 +5123,12 @@ export const S_Excel_DtoUnlockExcel = z
 	.strict();
 export const S_Excel_DtoResponseUnlockExcel = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Excel_DtoUpdateRowsInExcel = z
@@ -5150,12 +5148,12 @@ export const S_Excel_DtoUpdateRowsInExcel = z
 	.strict();
 export const S_Excel_DtoResponseUpdateRowsInExcel = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoAIProcessFile = z
@@ -5236,12 +5234,12 @@ export const S_General_DtoAIProcessFile = z
 	.strict();
 export const S_General_DtoResponseAIProcessFile = z
 	.object({
-		result: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoAIProcessFileMortgage = z
@@ -5338,13 +5336,13 @@ export const S_General_DtoAIRunPromptText = z
 	.strict();
 export const S_General_DtoResponseAIRunPromptText = z
 	.object({
-		message: z.string().optional(),
-		conversation: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		message: z.string().nullish(),
+		conversation: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoAISpeechToText = z
@@ -5361,12 +5359,12 @@ export const S_General_DtoAISpeechToText = z
 	.strict();
 export const S_General_DtoResponseAISpeechToText = z
 	.object({
-		result: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoAITranslateFile = z
@@ -5650,13 +5648,13 @@ export const S_General_DtoAITranslateFile = z
 	.strict();
 export const S_General_DtoResponseAITranslateFile = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoAITranslateTextMultiple = z
@@ -5944,12 +5942,12 @@ export const S_General_DtoAITranslateTextMultiple = z
 	.strict();
 export const S_General_DtoResponseAITranslateTextMultiple = z
 	.object({
-		translations: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		translations: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoAITranslateText = z
@@ -6235,12 +6233,12 @@ export const S_General_DtoAITranslateText = z
 	.strict();
 export const S_General_DtoResponseAITranslateText = z
 	.object({
-		translation: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		translation: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DocumentArrayZip = z
@@ -6264,13 +6262,13 @@ export const S_General_DtoZipArrayOfDocuments = z
 	.strict();
 export const S_General_DtoResponseZipArrayOfDocuments = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoExtractFromArchive = z
@@ -6282,18 +6280,18 @@ export const S_General_DtoExtractFromArchive = z
 	.strict();
 export const S_General_DocumentArray = z
 	.object({
-		fileName: z.string().optional(),
-		fileContent: z.string().optional(),
+		fileName: z.string().nullish(),
+		fileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoResponseExtractFromArchive = z
 	.object({
 		documents: z.array(S_General_DocumentArray),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoExtractFromArchiveV2 = z
@@ -6306,19 +6304,19 @@ export const S_General_DtoExtractFromArchiveV2 = z
 	.strict();
 export const S_General_ExtractArchiveDocumentArray = z
 	.object({
-		fileName: z.string().optional(),
-		fileContent: z.string().optional(),
-		directory: z.string().optional(),
+		fileName: z.string().nullish(),
+		fileContent: z.string().nullish(),
+		directory: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoResponseExtractFromArchiveV2 = z
 	.object({
 		documents: z.array(S_General_ExtractArchiveDocumentArray),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoGetEmailAttachments = z
@@ -6331,11 +6329,11 @@ export const S_General_DtoGetEmailAttachments = z
 export const S_General_DtoResponseGetEmailAttachments = z
 	.object({
 		documents: z.array(S_General_DocumentArray),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoGetEmailInfo = z
@@ -6343,28 +6341,28 @@ export const S_General_DtoGetEmailInfo = z
 	.strict();
 export const S_General_DtoResponseGetEmailInfo = z
 	.object({
-		subject: z.string().optional(),
-		bodyText: z.string().optional(),
-		bodyHtml: z.string().optional(),
-		to: z.string().optional(),
-		toArray: z.array(z.string()).optional(),
-		cc: z.string().optional(),
-		ccArray: z.array(z.string()).optional(),
-		bcc: z.string().optional(),
-		bccArray: z.array(z.string()).optional(),
-		from: z.string().optional(),
-		sent: z.string().datetime({ offset: true }).optional(),
-		priority: z.string().optional(),
-		sensitivity: z.string().optional(),
-		hasAttachments: z.boolean().optional(),
-		fileSize: z.string().optional(),
-		messageId: z.string().optional(),
-		headers: z.array(z.string()).optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		subject: z.string().nullish(),
+		bodyText: z.string().nullish(),
+		bodyHtml: z.string().nullish(),
+		to: z.string().nullish(),
+		toArray: z.array(z.string()).nullish(),
+		cc: z.string().nullish(),
+		ccArray: z.array(z.string()).nullish(),
+		bcc: z.string().nullish(),
+		bccArray: z.array(z.string()).nullish(),
+		from: z.string().nullish(),
+		sent: z.string().datetime({ offset: true, local: true }).nullish(),
+		priority: z.string().nullish(),
+		sensitivity: z.string().nullish(),
+		hasAttachments: z.boolean().nullish(),
+		fileSize: z.string().nullish(),
+		messageId: z.string().nullish(),
+		headers: z.array(z.string()).nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_General_Phrase = z
@@ -6393,13 +6391,13 @@ export const S_General_DtoSearchAndReplaceText = z
 	.strict();
 export const S_General_DtoResponseSearchAndReplaceText = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoSearchAndReplaceTextWithImage = z
@@ -6422,13 +6420,13 @@ export const S_General_DtoSearchAndReplaceTextWithImage = z
 	.strict();
 export const S_General_DtoResponseSearchAndReplaceTextWithImage = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoBuyAdditionalCredits = z
@@ -6441,43 +6439,43 @@ export const S_General_DtoBuyAdditionalCredits = z
 	.strict();
 export const S_General_DtoResponseBuyAdditionalCredits = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoResponseMgmtGetSubscriptionStatus = z
 	.object({
-		availableActionsMonth: z.number().int().optional(),
-		availableActionsMonthDec: z.number().optional(),
-		subscriptionEnabled: z.boolean().optional(),
-		subscriptionLevel: z.string().optional(),
-		monthlyActions: z.number().int().optional(),
-		expiryDate: z.string().datetime({ offset: true }).optional(),
-		billingInterval: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		availableActionsMonth: z.number().int().nullish(),
+		availableActionsMonthDec: z.number().nullish(),
+		subscriptionEnabled: z.boolean().nullish(),
+		subscriptionLevel: z.string().nullish(),
+		monthlyActions: z.number().int().nullish(),
+		expiryDate: z.string().datetime({ offset: true, local: true }).nullish(),
+		billingInterval: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_General_DtoResponseMgmtGetTrigrSubscriptionStatus = z
 	.object({
-		availableActionsMonth: z.number().int().optional(),
-		availableActionsMonthDec: z.number().optional(),
-		subscriptionEnabled: z.boolean().optional(),
-		subscriptionLevel: z.string().optional(),
-		monthlyActions: z.number().int().optional(),
-		expiryDate: z.string().datetime({ offset: true }).optional(),
-		billingInterval: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		availableActionsMonth: z.number().int().nullish(),
+		availableActionsMonthDec: z.number().nullish(),
+		subscriptionEnabled: z.boolean().nullish(),
+		subscriptionLevel: z.string().nullish(),
+		monthlyActions: z.number().int().nullish(),
+		expiryDate: z.string().datetime({ offset: true, local: true }).nullish(),
+		billingInterval: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoAddImageWatermarkToImage = z
@@ -6506,13 +6504,13 @@ export const S_Image_DtoAddImageWatermarkToImage = z
 	.strict();
 export const S_Image_DtoResponseAddImageWatermarkToImage = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoAddTextWatermarkToImage = z
@@ -6540,13 +6538,13 @@ export const S_Image_DtoAddTextWatermarkToImage = z
 	.strict();
 export const S_Image_DtoResponseAddTextWatermarkToImage = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoImageCleanUpDoc = z
@@ -6572,13 +6570,13 @@ export const S_Image_DtoImageCleanUpDoc = z
 	.strict();
 export const S_Image_DtoResponseImageCleanUpDoc = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoImageCleanUpPhoto = z
@@ -6602,13 +6600,13 @@ export const S_Image_DtoImageCleanUpPhoto = z
 	.strict();
 export const S_Image_DtoResponseImageCleanUpPhoto = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoImageCompress = z
@@ -6634,13 +6632,13 @@ export const S_Image_DtoImageCompress = z
 	.strict();
 export const S_Image_DtoResponseImageCompress = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoImageConvertFormat = z
@@ -6653,13 +6651,13 @@ export const S_Image_DtoImageConvertFormat = z
 	.strict();
 export const S_Image_DtoResponseImageConvertFormat = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoImageConvertToGrayscale = z
@@ -6667,12 +6665,12 @@ export const S_Image_DtoImageConvertToGrayscale = z
 	.strict();
 export const S_Image_DtoResponseImageConvertToGrayscale = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoImageCropImage = z
@@ -6691,12 +6689,12 @@ export const S_Image_DtoImageCropImage = z
 	.strict();
 export const S_Image_DtoResponseCropImage = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoGetImageInfo = z
@@ -6707,22 +6705,22 @@ export const S_Image_DtoGetImageInfo = z
 	.strict();
 export const S_Image_DtoResponseGetImageInfo = z
 	.object({
-		imageFormat: z.string().optional(),
-		fileSize: z.string().optional(),
-		width: z.number().optional(),
-		height: z.number().optional(),
-		orientation: z.string().optional(),
-		bitsPerPixel: z.number().int().optional(),
-		horizontalResolution: z.number().optional(),
-		verticalResolution: z.number().optional(),
-		hasExifData: z.boolean().optional(),
-		exifDataJson: z.string().optional(),
-		hasXmpData: z.boolean().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		imageFormat: z.string().nullish(),
+		fileSize: z.string().nullish(),
+		width: z.number().nullish(),
+		height: z.number().nullish(),
+		orientation: z.string().nullish(),
+		bitsPerPixel: z.number().int().nullish(),
+		horizontalResolution: z.number().nullish(),
+		verticalResolution: z.number().nullish(),
+		hasExifData: z.boolean().nullish(),
+		exifDataJson: z.string().nullish(),
+		hasXmpData: z.boolean().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoImageExtractText = z
@@ -6828,11 +6826,11 @@ export const S_Image_DtoImageExtractText = z
 export const S_Image_DtoResponseImageExtractText = z
 	.object({
 		Text: z.string(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoFlipImage = z
@@ -6847,12 +6845,12 @@ export const S_Image_DtoFlipImage = z
 	.strict();
 export const S_Image_DtoResponseFlipImage = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoImageRemoveExifTags = z
@@ -6864,13 +6862,13 @@ export const S_Image_DtoImageRemoveExifTags = z
 	.strict();
 export const S_Image_DtoResponseImageRemoveExifTags = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoImageResize = z
@@ -6890,13 +6888,13 @@ export const S_Image_DtoImageResize = z
 	.strict();
 export const S_Image_DtoResponseImageResize = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoRotateImage = z
@@ -7056,12 +7054,12 @@ export const S_Image_DtoRotateImage = z
 	.strict();
 export const S_Image_DtoResponseRotateImage = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Image_DtoRotateImageByExifData = z
@@ -7081,13 +7079,13 @@ export const S_PDF_DtoAddAttachmentsToPdf = z
 	.strict();
 export const S_PDF_DtoResponseAddAttachmentsToPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoAddHtmlHeaderFooter = z
@@ -7112,13 +7110,13 @@ export const S_PDF_DtoAddHtmlHeaderFooter = z
 	.strict();
 export const S_PDF_DtoResponseAddHtmlHeaderFooter = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoAddImageWatermark = z
@@ -7138,14 +7136,14 @@ export const S_PDF_DtoAddImageWatermark = z
 	.strict();
 export const S_PDF_DtoResponseAddImageWatermark = z
 	.object({
-		watermarkId: z.number().int().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		watermarkId: z.number().int().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoAddImageWatermarkAdv = z
@@ -7175,14 +7173,14 @@ export const S_PDF_DtoAddImageWatermarkAdv = z
 	.strict();
 export const S_PDF_DtoResponseAddImageWatermarkAdv = z
 	.object({
-		watermarkId: z.number().int().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		watermarkId: z.number().int().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoAddPageNumbers = z
@@ -7211,13 +7209,13 @@ export const S_PDF_DtoAddPageNumbers = z
 	.strict();
 export const S_PDF_DtoResponseAddPageNumbers = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoAddTextWatermark = z
@@ -7243,14 +7241,14 @@ export const S_PDF_DtoAddTextWatermark = z
 	.strict();
 export const S_PDF_DtoResponseAddTextWatermark = z
 	.object({
-		watermarkId: z.number().int().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		watermarkId: z.number().int().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoAddTextWatermarkAdv = z
@@ -7304,14 +7302,14 @@ export const S_PDF_DtoAddTextWatermarkAdv = z
 	.strict();
 export const S_PDF_DtoResponseAddTextWatermarkAdv = z
 	.object({
-		watermarkId: z.number().int().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		watermarkId: z.number().int().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoAIOcrPdfDocument = z
@@ -7335,12 +7333,12 @@ export const S_PDF_DtoAIOcrPdfDocument = z
 	.strict();
 export const S_PDF_DtoResponseAIOcrPdfDocument = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoOcrPdf = z
@@ -7468,13 +7466,13 @@ export const S_PDF_DtoOcrPdf = z
 	.strict();
 export const S_PDF_DtoResponseOcrPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfCheckPassword = z
@@ -7482,13 +7480,13 @@ export const S_PDF_DtoPdfCheckPassword = z
 	.strict();
 export const S_PDF_DtoResponsePdfCheckPassword = z
 	.object({
-		viewPassword: z.boolean().optional(),
-		editPassword: z.boolean().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		viewPassword: z.boolean().nullish(),
+		editPassword: z.boolean().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoCompressPdf = z
@@ -7511,13 +7509,13 @@ export const S_PDF_DtoCompressPdf = z
 	.strict();
 export const S_PDF_DtoResponseCompressPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfCreateZUGFeRDInvoice = z
@@ -7525,12 +7523,12 @@ export const S_PDF_DtoPdfCreateZUGFeRDInvoice = z
 	.strict();
 export const S_PDF_DtoResponsePdfCreateZUGFeRDInvoice = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfDeleteBlankPages = z
@@ -7543,12 +7541,12 @@ export const S_PDF_DtoPdfDeleteBlankPages = z
 	.strict();
 export const S_PDF_DtoResponsePdfDeleteBlankPages = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoDeletePdfPages = z
@@ -7561,12 +7559,12 @@ export const S_PDF_DtoDeletePdfPages = z
 	.strict();
 export const S_PDF_DtoResponseDeletePdfPages = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoExtractAttachmentsFromPdf = z
@@ -7575,11 +7573,11 @@ export const S_PDF_DtoExtractAttachmentsFromPdf = z
 export const S_PDF_DtoResponseExtractAttachmentsFromPdf = z
 	.object({
 		documents: z.array(S_PDF_DocumentArray.loose()),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoGetPdfFormData = z
@@ -7592,14 +7590,14 @@ export const S_PDF_DtoGetPdfFormData = z
 	.strict();
 export const S_PDF_DtoResponseGetPdfFormData = z
 	.object({
-		'Form Data': z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		'Form Data': z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfExtractHyperlinks = z
@@ -7613,12 +7611,12 @@ export const S_PDF_DtoPdfExtractHyperlinks = z
 	.strict();
 export const S_PDF_DtoResponsePdfExtractHyperlinks = z
 	.object({
-		result: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoExtractImagesAll = z
@@ -7633,11 +7631,11 @@ export const S_PDF_DtoExtractImagesAll = z
 export const S_PDF_DtoResponseExtractImagesAll = z
 	.object({
 		Images: z.array(S_PDF_DocumentArray.loose()),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_ImageRegion = z
@@ -7664,11 +7662,11 @@ export const S_PDF_DtoExtractImage = z
 export const S_PDF_DtoResponseExtractImage = z
 	.object({
 		Images: z.array(S_PDF_DocumentArray.loose()),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoGetPdfDocumentInfo = z
@@ -7680,32 +7678,32 @@ export const S_PDF_DtoGetPdfDocumentInfo = z
 	.strict();
 export const S_PDF_DtoResponseGetPdfDocumentInfo = z
 	.object({
-		NumberOfPages: z.number().int().optional(),
-		FileSize: z.string().optional(),
-		Author: z.string().optional(),
-		Creator: z.string().optional(),
-		Producer: z.string().optional(),
-		Title: z.string().optional(),
-		Subject: z.string().optional(),
-		Keywords: z.string().optional(),
-		customProperties: z.string().optional(),
-		Orientation: z.string().optional(),
-		Width: z.number().optional(),
-		Height: z.number().optional(),
-		CreatedDate: z.string().datetime({ offset: true }).optional(),
-		ModifiedDate: z.string().datetime({ offset: true }).optional(),
-		PDFFormat: z.string().optional(),
-		IsPDFACompliant: z.boolean().optional(),
-		IsPDFUACompliant: z.boolean().optional(),
-		IsEncrypted: z.boolean().optional(),
-		HasTextLayer: z.boolean().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		NumberOfPages: z.number().int().nullish(),
+		FileSize: z.string().nullish(),
+		Author: z.string().nullish(),
+		Creator: z.string().nullish(),
+		Producer: z.string().nullish(),
+		Title: z.string().nullish(),
+		Subject: z.string().nullish(),
+		Keywords: z.string().nullish(),
+		customProperties: z.string().nullish(),
+		Orientation: z.string().nullish(),
+		Width: z.number().nullish(),
+		Height: z.number().nullish(),
+		CreatedDate: z.string().datetime({ offset: true, local: true }).nullish(),
+		ModifiedDate: z.string().datetime({ offset: true, local: true }).nullish(),
+		PDFFormat: z.string().nullish(),
+		IsPDFACompliant: z.boolean().nullish(),
+		IsPDFUACompliant: z.boolean().nullish(),
+		IsEncrypted: z.boolean().nullish(),
+		HasTextLayer: z.boolean().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoExtractPdfPages = z
@@ -7718,12 +7716,12 @@ export const S_PDF_DtoExtractPdfPages = z
 	.strict();
 export const S_PDF_DtoResponseExtractPdfPages = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoExtractPdfPagesByText = z
@@ -7736,12 +7734,12 @@ export const S_PDF_DtoExtractPdfPagesByText = z
 	.strict();
 export const S_PDF_DtoResponseExtractPdfPagesByText = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfExtractTableData = z
@@ -7756,12 +7754,12 @@ export const S_PDF_DtoPdfExtractTableData = z
 	.strict();
 export const S_PDF_DtoResponsePdfExtractTableData = z
 	.object({
-		result: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoGetPdfTextLayer = z
@@ -7788,14 +7786,14 @@ export const S_PDF_DtoGetPdfTextLayer = z
 	.strict();
 export const S_PDF_DtoResponseGetPdfTextLayer = z
 	.object({
-		TextLayer: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		TextLayer: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfExtractTextByPage = z
@@ -7819,16 +7817,16 @@ export const S_PDF_DtoPdfExtractTextByPage = z
 	})
 	.strict();
 export const S_PDF_PdfExtractTextPage = z
-	.object({ Number: z.number().int().optional(), Text: z.string().optional() })
+	.object({ Number: z.number().int().nullish(), Text: z.string().nullish() })
 	.loose();
 export const S_PDF_DtoResponsePdfExtractTextByPage = z
 	.object({
-		pages: z.array(S_PDF_PdfExtractTextPage).optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		pages: z.array(S_PDF_PdfExtractTextPage).nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_TextRegion = z
@@ -7852,22 +7850,22 @@ export const S_PDF_DtoExtractTextRegion = z
 	.strict();
 export const S_PDF_TextRegionResult = z
 	.object({
-		Name: z.string().optional(),
-		Text: z.string().optional(),
-		PageNumber: z.number().int().optional(),
+		Name: z.string().nullish(),
+		Text: z.string().nullish(),
+		PageNumber: z.number().int().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoResponseExtractTextRegion = z
 	.object({
 		TextRegionResultsSimple: z.string(),
 		TextRegionResults: z.array(S_PDF_TextRegionResult),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoFillPdfForm = z
@@ -7879,13 +7877,13 @@ export const S_PDF_DtoFillPdfForm = z
 	.strict();
 export const S_PDF_DtoResponseFillPdfForm = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoFlattenPdf = z
@@ -7893,13 +7891,13 @@ export const S_PDF_DtoFlattenPdf = z
 	.strict();
 export const S_PDF_DtoResponseFlattenPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfFlattenFields = z
@@ -7911,12 +7909,12 @@ export const S_PDF_DtoPdfFlattenFields = z
 	.strict();
 export const S_PDF_DtoResponsePdfFlattenFields = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfGenerateBookmarks = z
@@ -7924,12 +7922,12 @@ export const S_PDF_DtoPdfGenerateBookmarks = z
 	.strict();
 export const S_PDF_DtoResponsePdfGenerateBookmarks = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoInsertHtmlToPdf = z
@@ -7979,13 +7977,13 @@ export const S_PDF_DtoInsertHtmlToPdf = z
 	.strict();
 export const S_PDF_DtoResponseInsertHtmlToPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_PdfPagesToInsert = z
@@ -8007,13 +8005,13 @@ export const S_PDF_DtoPdfInsertPages = z
 	.strict();
 export const S_PDF_DtoResponsePdfInsertPages = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfInsertToc = z
@@ -8620,12 +8618,12 @@ export const S_PDF_DtoPdfInsertToc = z
 	.strict();
 export const S_PDF_DtoResponsePdfInsertToc = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfLinearize = z
@@ -8633,12 +8631,12 @@ export const S_PDF_DtoPdfLinearize = z
 	.strict();
 export const S_PDF_DtoResponsePdfLinearize = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoMergeArrayOfDocumentsToPdf = z
@@ -8675,13 +8673,13 @@ export const S_PDF_DtoMergeArrayOfDocumentsToPdf = z
 	.strict();
 export const S_PDF_DtoResponseMergeArrayOfDocumentsToPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoMergeDocumentsToPdf = z
@@ -8736,13 +8734,13 @@ export const S_PDF_DtoMergeDocumentsToPdf = z
 	.strict();
 export const S_PDF_DtoResponseMergeDocumentsToPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_Redaction = z
@@ -8769,13 +8767,13 @@ export const S_PDF_DtoRedactPdf = z
 	.strict();
 export const S_PDF_DtoResponseRedactPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfRemoveDigitalSignature = z
@@ -8783,12 +8781,12 @@ export const S_PDF_DtoPdfRemoveDigitalSignature = z
 	.strict();
 export const S_PDF_DtoResponsePdfRemoveDigitalSignature = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoRemoveWatermarksFromPdf = z
@@ -8801,13 +8799,13 @@ export const S_PDF_DtoRemoveWatermarksFromPdf = z
 	.strict();
 export const S_PDF_DtoResponseRemoveWatermarksFromPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoRepairPdf = z
@@ -8815,13 +8813,13 @@ export const S_PDF_DtoRepairPdf = z
 	.strict();
 export const S_PDF_DtoResponseRepairPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfReplaceTextWithImage = z
@@ -8838,12 +8836,12 @@ export const S_PDF_DtoPdfReplaceTextWithImage = z
 	.strict();
 export const S_PDF_DtoResponsePdfReplaceTextWithImage = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoResizePdf = z
@@ -8877,13 +8875,13 @@ export const S_PDF_DtoResizePdf = z
 	.strict();
 export const S_PDF_DtoResponseResizePdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoRotatePdfPages = z
@@ -8905,12 +8903,12 @@ export const S_PDF_DtoRotatePdfPages = z
 	.strict();
 export const S_PDF_DtoResponseRotatePdfPages = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_PdfSearchAndReplaceTextPhrase = z
@@ -8937,12 +8935,12 @@ export const S_PDF_DtoPdfSearchAndReplaceText = z
 	.strict();
 export const S_PDF_DtoResponsePdfSearchAndReplaceText = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoSecurePdf = z
@@ -8968,13 +8966,13 @@ export const S_PDF_DtoSecurePdf = z
 	.strict();
 export const S_PDF_DtoResponseSecurePdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoPdfSetMetadata = z
@@ -8992,12 +8990,12 @@ export const S_PDF_DtoPdfSetMetadata = z
 	.strict();
 export const S_PDF_DtoResponsePdfSetMetadata = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoSetPdfPrivileges = z
@@ -9333,13 +9331,13 @@ export const S_PDF_DtoPdfSignPdf = z
 	.strict();
 export const S_PDF_DtoResponseSignPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoSplitDocument = z
@@ -9355,11 +9353,11 @@ export const S_PDF_DtoSplitDocument = z
 export const S_PDF_DtoResponseSplitDocument = z
 	.object({
 		documents: z.array(S_PDF_DocumentArray.loose()),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoSplitPdfByBarcode = z
@@ -9386,17 +9384,17 @@ export const S_PDF_DocumentArrayPdfSplitByBarcode = z
 	.object({
 		fileName: z.string(),
 		fileContent: z.string(),
-		barcodeValue: z.string().optional(),
+		barcodeValue: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoResponseSplitPdfByBarcode = z
 	.object({
-		documents: z.array(S_PDF_DocumentArrayPdfSplitByBarcode).optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		documents: z.array(S_PDF_DocumentArrayPdfSplitByBarcode).nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoSplitPdfByText = z
@@ -9413,11 +9411,11 @@ export const S_PDF_DtoSplitPdfByText = z
 export const S_PDF_DtoResponseSplitPdfByText = z
 	.object({
 		documents: z.array(S_PDF_DocumentArray.loose()),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoUnlockPdf = z
@@ -9431,13 +9429,13 @@ export const S_PDF_DtoUnlockPdf = z
 	.strict();
 export const S_PDF_DtoResponseUnlockPdf = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_PdfHyperlink = z
@@ -9460,12 +9458,12 @@ export const S_PDF_DtoPdfUpdateHyperlinks = z
 	.strict();
 export const S_PDF_DtoResponsePdfUpdateHyperlinks = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PDF_DtoValidatePdfTextLayer = z
@@ -9476,12 +9474,12 @@ export const S_PDF_DtoValidatePdfTextLayer = z
 	.strict();
 export const S_PDF_DtoResponseValidatePdfTextLayer = z
 	.object({
-		valid: z.boolean().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		valid: z.boolean().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_PowerPoint_DtoCompressPowerPoint = z
@@ -9498,13 +9496,13 @@ export const S_PowerPoint_DtoCompressPowerPoint = z
 	.strict();
 export const S_PowerPoint_DtoResponseCompressPowerPoint = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PowerPoint_DtoPowerPointDeleteSlides = z
@@ -9518,12 +9516,12 @@ export const S_PowerPoint_DtoPowerPointDeleteSlides = z
 	.strict();
 export const S_PowerPoint_DtoResponsePowerPointDeleteSlides = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PowerPoint_DocumentArrayPresentation = z
@@ -9563,13 +9561,13 @@ export const S_PowerPoint_DtoMergePresentations = z
 	.strict();
 export const S_PowerPoint_DtoResponseMergePresentations = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PowerPoint_DtoPopulatePowerPoint = z
@@ -9587,13 +9585,13 @@ export const S_PowerPoint_DtoPopulatePowerPoint = z
 	.strict();
 export const S_PowerPoint_DtoResponsePopulatePowerPoint = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PowerPoint_PowerPointSearchAndReplaceTextPhrase = z
@@ -9940,12 +9938,12 @@ export const S_PowerPoint_DtoPowerPointSearchAndReplaceText = z
 	.strict();
 export const S_PowerPoint_DtoResponsePowerPointSearchAndReplaceText = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PowerPoint_DtoPowerPointSplit = z
@@ -9958,18 +9956,18 @@ export const S_PowerPoint_DtoPowerPointSplit = z
 	.strict();
 export const S_PowerPoint_DocumentArray = z
 	.object({
-		fileName: z.string().optional(),
-		fileContent: z.string().optional(),
+		fileName: z.string().nullish(),
+		fileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_PowerPoint_DtoResponsePowerPointSplit = z
 	.object({
 		documents: z.array(S_PowerPoint_DocumentArray),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoAesEncryption = z
@@ -9986,12 +9984,12 @@ export const S_Utilities_DtoAesEncryption = z
 	.strict();
 export const S_Utilities_DtoResponseAesEncryption = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoAesDecryption = z
@@ -10008,12 +10006,12 @@ export const S_Utilities_DtoAesDecryption = z
 	.strict();
 export const S_Utilities_DtoResponseAesDecryption = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayAddItems = z
@@ -10027,12 +10025,12 @@ export const S_Utilities_DtoArrayAddItems = z
 	.strict();
 export const S_Utilities_DtoResponseArrayAddItems = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayCombine = z
@@ -10048,12 +10046,12 @@ export const S_Utilities_DtoArrayCombine = z
 	.strict();
 export const S_Utilities_DtoResponseArrayCombine = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayContainsValue = z
@@ -10066,12 +10064,12 @@ export const S_Utilities_DtoArrayContainsValue = z
 	.strict();
 export const S_Utilities_DtoResponseArrayContainsValue = z
 	.object({
-		result: z.boolean().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.boolean().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayCountItems = z
@@ -10079,12 +10077,12 @@ export const S_Utilities_DtoArrayCountItems = z
 	.strict();
 export const S_Utilities_DtoResponseArrayCountItems = z
 	.object({
-		result: z.number().int().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.number().int().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayFilterItems = z
@@ -10098,12 +10096,12 @@ export const S_Utilities_DtoArrayFilterItems = z
 	.strict();
 export const S_Utilities_DtoResponseArrayFilterItems = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayGetItems = z
@@ -10116,12 +10114,12 @@ export const S_Utilities_DtoArrayGetItems = z
 	.strict();
 export const S_Utilities_DtoResponseArrayGetItems = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayFilterItemsViaRegex = z
@@ -10135,12 +10133,12 @@ export const S_Utilities_DtoArrayFilterItemsViaRegex = z
 	.strict();
 export const S_Utilities_DtoResponseArrayFilterItemsViaRegex = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayMerge = z
@@ -10153,12 +10151,12 @@ export const S_Utilities_DtoArrayMerge = z
 	.strict();
 export const S_Utilities_DtoResponseArrayMerge = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayRemoveDuplicates = z
@@ -10170,12 +10168,12 @@ export const S_Utilities_DtoArrayRemoveDuplicates = z
 	.strict();
 export const S_Utilities_DtoResponseArrayRemoveDuplicates = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayRemoveItems = z
@@ -10188,12 +10186,12 @@ export const S_Utilities_DtoArrayRemoveItems = z
 	.strict();
 export const S_Utilities_DtoResponseArrayRemoveItems = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayRemoveItemsRegex = z
@@ -10201,12 +10199,12 @@ export const S_Utilities_DtoArrayRemoveItemsRegex = z
 	.strict();
 export const S_Utilities_DtoResponseArrayRemoveItemsRegex = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayReplaceValues = z
@@ -10219,12 +10217,12 @@ export const S_Utilities_DtoArrayReplaceValues = z
 	.strict();
 export const S_Utilities_DtoResponseArrayReplaceValues = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayReverseItems = z
@@ -10232,12 +10230,12 @@ export const S_Utilities_DtoArrayReverseItems = z
 	.strict();
 export const S_Utilities_DtoResponseArrayReverseItems = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArraySortItems = z
@@ -10251,12 +10249,12 @@ export const S_Utilities_DtoArraySortItems = z
 	.strict();
 export const S_Utilities_DtoResponseArraySortItems = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArraySplitItems = z
@@ -10270,12 +10268,12 @@ export const S_Utilities_DtoArraySplitItems = z
 	.strict();
 export const S_Utilities_DtoResponseArraySplitItems = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayConvertToJson = z
@@ -10283,12 +10281,12 @@ export const S_Utilities_DtoArrayConvertToJson = z
 	.strict();
 export const S_Utilities_DtoResponseArrayConvertToJson = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoArrayConvertToXml = z
@@ -10301,12 +10299,12 @@ export const S_Utilities_DtoArrayConvertToXml = z
 	.strict();
 export const S_Utilities_DtoResponseArrayConvertToXml = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoCalculateDate = z
@@ -10331,12 +10329,12 @@ export const S_Utilities_DtoCalculateDate = z
 	.strict();
 export const S_Utilities_DtoResponseCalculateDate = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoCleanString = z
@@ -10350,12 +10348,12 @@ export const S_Utilities_DtoCleanString = z
 	.strict();
 export const S_Utilities_DtoResponseCleanString = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoCompareText = z
@@ -10367,12 +10365,12 @@ export const S_Utilities_DtoCompareText = z
 	.strict();
 export const S_Utilities_DtoResponseCompareText = z
 	.object({
-		result: z.boolean().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.boolean().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoConcatenateText = z
@@ -10384,12 +10382,12 @@ export const S_Utilities_DtoConcatenateText = z
 	.strict();
 export const S_Utilities_DtoResponseConcatenateText = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoConvertJsonToXml = z
@@ -10401,12 +10399,12 @@ export const S_Utilities_DtoConvertJsonToXml = z
 	.strict();
 export const S_Utilities_DtoResponseConvertJsonToXml = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoConvertTimeZone = z
@@ -10707,12 +10705,12 @@ export const S_Utilities_DtoConvertTimeZone = z
 	.strict();
 export const S_Utilities_DtoResponseConvertTimeZone = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoConvertXmlToJson = z
@@ -10720,12 +10718,12 @@ export const S_Utilities_DtoConvertXmlToJson = z
 	.strict();
 export const S_Utilities_DtoResponseConvertXmlToJson = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoCreateGuid = z
@@ -10733,12 +10731,12 @@ export const S_Utilities_DtoCreateGuid = z
 	.strict();
 export const S_Utilities_DtoResponseCreateGuid = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoCreateHashCode = z
@@ -10771,11 +10769,11 @@ export const S_Utilities_DtoCreateHashCode = z
 export const S_Utilities_DtoResponseCreateHashCode = z
 	.object({
 		HashCode: z.string(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoCreateHMAC = z
@@ -10810,11 +10808,11 @@ export const S_Utilities_DtoCreateHMAC = z
 export const S_Utilities_DtoResponseCreateHMAC = z
 	.object({
 		hmac: z.string(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoCreateJwt = z
@@ -10853,12 +10851,12 @@ export const S_Utilities_DtoCreateJwt = z
 	.strict();
 export const S_Utilities_DtoResponseCreateJwt = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoEscapeHtml = z
@@ -10866,12 +10864,12 @@ export const S_Utilities_DtoEscapeHtml = z
 	.strict();
 export const S_Utilities_DtoResponseEscapeHtml = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoExtractEmailAddressesFromText = z
@@ -10879,12 +10877,12 @@ export const S_Utilities_DtoExtractEmailAddressesFromText = z
 	.strict();
 export const S_Utilities_DtoResponseExtractEmailAddressesFromText = z
 	.object({
-		result: z.array(z.string()).optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.array(z.string()).nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoExtractTextBetweenValues = z
@@ -10899,12 +10897,12 @@ export const S_Utilities_DtoExtractTextBetweenValues = z
 	.strict();
 export const S_Utilities_DtoResponseExtractTextBetweenValues = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoExtractAllTextInstancesBetweenValues = z
@@ -10920,12 +10918,12 @@ export const S_Utilities_DtoExtractAllTextInstancesBetweenValues = z
 	.strict();
 export const S_Utilities_DtoResponseExtractAllTextInstancesBetweenValues = z
 	.object({
-		result: z.array(z.string()).optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.array(z.string()).nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoExtractUrlsFromText = z
@@ -10933,12 +10931,12 @@ export const S_Utilities_DtoExtractUrlsFromText = z
 	.strict();
 export const S_Utilities_DtoResponseExtractUrlsFromText = z
 	.object({
-		result: z.array(z.string()).optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.array(z.string()).nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoFormatDate = z
@@ -10950,12 +10948,12 @@ export const S_Utilities_DtoFormatDate = z
 	.strict();
 export const S_Utilities_DtoResponseFormatDate = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoFormatTextCase = z
@@ -10975,12 +10973,12 @@ export const S_Utilities_DtoFormatTextCase = z
 	.strict();
 export const S_Utilities_DtoResponseFormatTextCase = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoGeneratePassword = z
@@ -10995,12 +10993,12 @@ export const S_Utilities_DtoGeneratePassword = z
 	.strict();
 export const S_Utilities_DtoResponseGeneratePassword = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoGenerateRandomNumber = z
@@ -11011,12 +11009,12 @@ export const S_Utilities_DtoGenerateRandomNumber = z
 	.strict();
 export const S_Utilities_DtoResponseGenerateRandomNumber = z
 	.object({
-		result: z.number().int().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.number().int().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoGetDateTimeDifference = z
@@ -11040,12 +11038,12 @@ export const S_Utilities_DtoGetDateTimeDifference = z
 	.strict();
 export const S_Utilities_DtoResponseGetDateTimeDifference = z
 	.object({
-		result: z.number().int().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.number().int().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoGetFileExtension = z
@@ -11053,12 +11051,12 @@ export const S_Utilities_DtoGetFileExtension = z
 	.strict();
 export const S_Utilities_DtoResponseGetFileExtension = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoGetFileFormat = z
@@ -11069,12 +11067,12 @@ export const S_Utilities_DtoGetFileFormat = z
 	.strict();
 export const S_Utilities_DtoResponseGetFileFormat = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoParseHtmlTable = z
@@ -11092,12 +11090,12 @@ export const S_Utilities_DtoParseHtmlTable = z
 	.strict();
 export const S_Utilities_DtoResponseParseHtmlTable = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoRemoveDiacritics = z
@@ -11109,12 +11107,12 @@ export const S_Utilities_DtoRemoveDiacritics = z
 	.strict();
 export const S_Utilities_DtoResponseRemoveDiacritics = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoRemoveTextBetweenValues = z
@@ -11130,12 +11128,12 @@ export const S_Utilities_DtoRemoveTextBetweenValues = z
 	.strict();
 export const S_Utilities_DtoResponseRemoveTextBetweenValues = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoRemoveWhitespaceFromText = z
@@ -11146,12 +11144,12 @@ export const S_Utilities_DtoRemoveWhitespaceFromText = z
 	.strict();
 export const S_Utilities_DtoResponseRemoveWhitespaceFromText = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoReplaceValueWithRegex = z
@@ -11164,12 +11162,12 @@ export const S_Utilities_DtoReplaceValueWithRegex = z
 	.strict();
 export const S_Utilities_DtoResponseReplaceValueWithRegex = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoReplaceValueWithText = z
@@ -11183,12 +11181,12 @@ export const S_Utilities_DtoReplaceValueWithText = z
 	.strict();
 export const S_Utilities_DtoResponseReplaceValueWithText = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoRsaEncryption = z
@@ -11203,12 +11201,12 @@ export const S_Utilities_DtoRsaEncryption = z
 	.strict();
 export const S_Utilities_DtoResponseRsaEncryption = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoRsaDecryption = z
@@ -11223,12 +11221,12 @@ export const S_Utilities_DtoRsaDecryption = z
 	.strict();
 export const S_Utilities_DtoResponseRsaDecryption = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoCreateRsaKeyPair = z
@@ -11246,12 +11244,12 @@ export const S_Utilities_DtoCreateRsaKeyPair = z
 	.strict();
 export const S_Utilities_DtoResponseCreateRsaKeyPair = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoRegexSearchText = z
@@ -11271,11 +11269,11 @@ export const S_Utilities_DtoRegexSearchText = z
 export const S_Utilities_DtoResponseRegexSearchText = z
 	.object({
 		matches: z.array(z.string()),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoSplitText = z
@@ -11290,12 +11288,12 @@ export const S_Utilities_DtoSplitText = z
 	.strict();
 export const S_Utilities_DtoResponseSplitText = z
 	.object({
-		result: z.array(z.string()).optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.array(z.string()).nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoSplitTextViaRegex = z
@@ -11310,12 +11308,12 @@ export const S_Utilities_DtoSplitTextViaRegex = z
 	.strict();
 export const S_Utilities_DtoResponseSplitTextViaRegex = z
 	.object({
-		result: z.array(z.string()).optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.array(z.string()).nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoTextContainsValue = z
@@ -11331,12 +11329,12 @@ export const S_Utilities_DtoTextContainsValue = z
 	.strict();
 export const S_Utilities_DtoResponseTextContainsValue = z
 	.object({
-		result: z.boolean().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.boolean().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoTrimText = z
@@ -11348,12 +11346,12 @@ export const S_Utilities_DtoTrimText = z
 	.strict();
 export const S_Utilities_DtoResponseTrimText = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoUnescapeHtml = z
@@ -11361,12 +11359,12 @@ export const S_Utilities_DtoUnescapeHtml = z
 	.strict();
 export const S_Utilities_DtoResponseUnescapeHtml = z
 	.object({
-		result: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoValidateEmailAddress = z
@@ -11374,12 +11372,12 @@ export const S_Utilities_DtoValidateEmailAddress = z
 	.strict();
 export const S_Utilities_DtoResponseValidateEmailAddress = z
 	.object({
-		result: z.boolean().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.boolean().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoValidateGuid = z
@@ -11387,12 +11385,12 @@ export const S_Utilities_DtoValidateGuid = z
 	.strict();
 export const S_Utilities_DtoResponseValidateGuid = z
 	.object({
-		result: z.boolean().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.boolean().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoValidateJson = z
@@ -11400,12 +11398,12 @@ export const S_Utilities_DtoValidateJson = z
 	.strict();
 export const S_Utilities_DtoResponseValidateJson = z
 	.object({
-		result: z.boolean().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.boolean().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoValidateUrlAvailability = z
@@ -11413,12 +11411,12 @@ export const S_Utilities_DtoValidateUrlAvailability = z
 	.strict();
 export const S_Utilities_DtoResponseValidateUrlAvailability = z
 	.object({
-		result: z.boolean().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.boolean().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Utilities_DtoValidateUrlSyntax = z
@@ -11426,12 +11424,12 @@ export const S_Utilities_DtoValidateUrlSyntax = z
 	.strict();
 export const S_Utilities_DtoResponseValidateUrlSyntax = z
 	.object({
-		result: z.boolean().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		result: z.boolean().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoAddHtmlHeaderFooterWord = z
@@ -11452,12 +11450,12 @@ export const S_Word_DtoAddHtmlHeaderFooterWord = z
 	.strict();
 export const S_Word_DtoResponseAddHtmlHeaderFooterWord = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoAddImageWatermarkWord = z
@@ -11474,13 +11472,13 @@ export const S_Word_DtoAddImageWatermarkWord = z
 	.strict();
 export const S_Word_DtoResponseAddImageWatermarkWord = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoWordAddPageNumbers = z
@@ -11567,13 +11565,13 @@ export const S_Word_DtoWordAddPageNumbers = z
 	.strict();
 export const S_Word_DtoResponseWordAddPageNumbers = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoAddTextWatermarkWord = z
@@ -11591,13 +11589,13 @@ export const S_Word_DtoAddTextWatermarkWord = z
 	.strict();
 export const S_Word_DtoResponseAddTextWatermarkWord = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoCompareWordDocuments = z
@@ -11617,13 +11615,13 @@ export const S_Word_DtoCompareWordDocuments = z
 	.strict();
 export const S_Word_DtoResponseCompareWordDocuments = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoDeleteWordPages = z
@@ -11638,13 +11636,13 @@ export const S_Word_DtoDeleteWordPages = z
 	.strict();
 export const S_Word_DtoResponseDeleteWordPages = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoDisableTrackedChanges = z
@@ -11656,13 +11654,13 @@ export const S_Word_DtoDisableTrackedChanges = z
 	.strict();
 export const S_Word_DtoResponseDisableTrackedChanges = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoEnableTrackedChanges = z
@@ -11674,13 +11672,13 @@ export const S_Word_DtoEnableTrackedChanges = z
 	.strict();
 export const S_Word_DtoResponseEnableTrackedChanges = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoWordExtractFieldData = z
@@ -11695,14 +11693,14 @@ export const S_Word_DtoWordExtractFieldData = z
 	.strict();
 export const S_Word_DtoResponseWordExtractFieldData = z
 	.object({
-		wordFieldData: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		wordFieldData: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoWordExtractFiles = z
@@ -11716,18 +11714,18 @@ export const S_Word_DtoWordExtractFiles = z
 	.strict();
 export const S_Word_DocumentArray = z
 	.object({
-		fileName: z.string().optional(),
-		fileContent: z.string().optional(),
+		fileName: z.string().nullish(),
+		fileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoResponseWordExtractFiles = z
 	.object({
 		documents: z.array(S_Word_DocumentArray),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoWordExtractImages = z
@@ -11746,11 +11744,11 @@ export const S_Word_DtoWordExtractImages = z
 export const S_Word_DtoResponseWordExtractImages = z
 	.object({
 		Images: z.array(S_Word_DocumentArray),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoWordExtractMetadata = z
@@ -11758,36 +11756,36 @@ export const S_Word_DtoWordExtractMetadata = z
 	.strict();
 export const S_Word_DtoResponseWordExtractMetadata = z
 	.object({
-		author: z.string().optional(),
-		category: z.string().optional(),
-		characters: z.number().int().optional(),
-		charactersWithSpaces: z.number().int().optional(),
-		comments: z.string().optional(),
-		company: z.string().optional(),
-		contentType: z.string().optional(),
-		created: z.string().datetime({ offset: true }).optional(),
-		customProperties: z.string().optional(),
-		fileSize: z.string().optional(),
-		keywords: z.string().optional(),
-		lastModified: z.string().datetime({ offset: true }).optional(),
-		lastModifiedBy: z.string().optional(),
-		lastPrinted: z.string().datetime({ offset: true }).optional(),
-		lines: z.number().int().optional(),
-		manager: z.string().optional(),
-		pages: z.number().int().optional(),
-		paragraphs: z.number().int().optional(),
-		revisionNumber: z.number().int().optional(),
-		status: z.string().optional(),
-		subject: z.string().optional(),
-		template: z.string().optional(),
-		title: z.string().optional(),
-		totalEditingTime: z.number().int().optional(),
-		words: z.number().int().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		author: z.string().nullish(),
+		category: z.string().nullish(),
+		characters: z.number().int().nullish(),
+		charactersWithSpaces: z.number().int().nullish(),
+		comments: z.string().nullish(),
+		company: z.string().nullish(),
+		contentType: z.string().nullish(),
+		created: z.string().datetime({ offset: true, local: true }).nullish(),
+		customProperties: z.string().nullish(),
+		fileSize: z.string().nullish(),
+		keywords: z.string().nullish(),
+		lastModified: z.string().datetime({ offset: true, local: true }).nullish(),
+		lastModifiedBy: z.string().nullish(),
+		lastPrinted: z.string().datetime({ offset: true, local: true }).nullish(),
+		lines: z.number().int().nullish(),
+		manager: z.string().nullish(),
+		pages: z.number().int().nullish(),
+		paragraphs: z.number().int().nullish(),
+		revisionNumber: z.number().int().nullish(),
+		status: z.string().nullish(),
+		subject: z.string().nullish(),
+		template: z.string().nullish(),
+		title: z.string().nullish(),
+		totalEditingTime: z.number().int().nullish(),
+		words: z.number().int().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoExtractWordPages = z
@@ -11802,13 +11800,13 @@ export const S_Word_DtoExtractWordPages = z
 	.strict();
 export const S_Word_DtoResponseExtractWordPages = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoGetTextFromWord = z
@@ -11824,12 +11822,12 @@ export const S_Word_DtoGetTextFromWord = z
 	.strict();
 export const S_Word_DtoResponseGetTextFromWord = z
 	.object({
-		text: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		text: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoGetTrackedChanges = z
@@ -11841,13 +11839,13 @@ export const S_Word_DtoGetTrackedChanges = z
 	.strict();
 export const S_Word_DtoResponseGetTrackedChanges = z
 	.object({
-		trackedChangesJson: z.string().optional(),
-		commentsJson: z.string().optional(),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		trackedChangesJson: z.string().nullish(),
+		commentsJson: z.string().nullish(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_WordInsertTextStyle = z
@@ -12221,13 +12219,13 @@ export const S_Word_DtoWordInsertText = z
 	.strict();
 export const S_Word_DtoResponseWordInsertText = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoManageTrackedChanges = z
@@ -12244,13 +12242,13 @@ export const S_Word_DtoManageTrackedChanges = z
 	.strict();
 export const S_Word_DtoResponseManageTrackedChanges = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DocumentArrayWord = z
@@ -12425,13 +12423,13 @@ export const S_Word_DtoMergeArrayOfDocumentsToWord = z
 	.strict();
 export const S_Word_DtoResponseMergeArrayOfDocumentsToWord = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoOptimiseWordDocument = z
@@ -12453,13 +12451,13 @@ export const S_Word_DtoOptimiseWordDocument = z
 	.strict();
 export const S_Word_DtoResponseOptimiseWordDocument = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoPopulateWordDocument = z
@@ -12628,13 +12626,13 @@ export const S_Word_DtoPopulateWordDocument = z
 	.strict();
 export const S_Word_DtoResponsePopulateWordDocument = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoRemoveHeaderFooterWord = z
@@ -12652,12 +12650,12 @@ export const S_Word_DtoRemoveHeaderFooterWord = z
 	.strict();
 export const S_Word_DtoResponseRemoveHeaderFooterWord = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoRemoveWordTableOfContents = z
@@ -12670,13 +12668,13 @@ export const S_Word_DtoRemoveWordTableOfContents = z
 	.strict();
 export const S_Word_DtoResponseRemoveWordTableOfContents = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoRemoveWatermarksFromWord = z
@@ -12688,13 +12686,13 @@ export const S_Word_DtoRemoveWatermarksFromWord = z
 	.strict();
 export const S_Word_DtoResponseRemoveWatermarksFromWord = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_WordSearchAndReplaceTextPhrase = z
@@ -13040,13 +13038,13 @@ export const S_Word_DtoWordSearchAndReplaceText = z
 	.strict();
 export const S_Word_DtoResponseWordSearchAndReplaceText = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoWordReplaceTextWithImage = z
@@ -13064,13 +13062,13 @@ export const S_Word_DtoWordReplaceTextWithImage = z
 	.strict();
 export const S_Word_DtoResponseWordReplaceTextWithImage = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoSecureWordDocument = z
@@ -13094,13 +13092,13 @@ export const S_Word_DtoSecureWordDocument = z
 	.strict();
 export const S_Word_DtoResponseSecureWordDocument = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoWordSetMetadata = z
@@ -13129,13 +13127,13 @@ export const S_Word_DtoWordSetMetadata = z
 	.strict();
 export const S_Word_DtoResponseWordSetMetadata = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoSplitWordDocument = z
@@ -13156,11 +13154,11 @@ export const S_Word_DtoSplitWordDocument = z
 export const S_Word_DtoResponseSplitWordDocument = z
 	.object({
 		documents: z.array(S_Word_DocumentArray),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoWordSplitByText = z
@@ -13178,11 +13176,11 @@ export const S_Word_DtoWordSplitByText = z
 export const S_Word_DtoResponseWordSplitByText = z
 	.object({
 		documents: z.array(S_Word_DocumentArray),
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoWordUnlock = z
@@ -13196,13 +13194,13 @@ export const S_Word_DtoWordUnlock = z
 	.strict();
 export const S_Word_DtoResponseWordUnlock = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_Hyperlink = z
@@ -13226,13 +13224,13 @@ export const S_Word_DtoSearchAndReplaceHyperlink = z
 	.strict();
 export const S_Word_DtoResponseSearchAndReplaceHyperlink = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Word_DtoUpdateWordTableOfContents = z
@@ -13390,13 +13388,13 @@ export const S_Word_DtoUpdateWordTableOfContents = z
 	.strict();
 export const S_Word_DtoResponseUpdateWordTableOfContents = z
 	.object({
-		HttpStatusCode: z.number().int().optional(),
-		HttpStatusMessage: z.string().optional(),
-		OperationId: z.string().optional(),
-		Errors: z.array(z.string()).optional(),
-		OperationStatus: z.string().optional(),
-		Filename: z.string().optional(),
-		FileContent: z.string().optional(),
+		HttpStatusCode: z.number().int().nullish(),
+		HttpStatusMessage: z.string().nullish(),
+		OperationId: z.string().nullish(),
+		Errors: z.array(z.string()).nullish(),
+		OperationStatus: z.string().nullish(),
+		Filename: z.string().nullish(),
+		FileContent: z.string().nullish(),
 	})
 	.loose();
 export const S_Sign_DtoField = z
@@ -13475,14 +13473,14 @@ export const S_Sign_DtoRequestEnvelopeCreateSingle = z
 	.strict();
 export const S_Sign_DtoResponseEnvelopeCreateSingle = z
 	.object({
-		envelopeId: z.string().optional(),
-		created: z.string().datetime({ offset: true }).optional(),
-		status: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		envelopeId: z.string().nullish(),
+		created: z.string().datetime({ offset: true, local: true }).nullish(),
+		status: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Sign_DtoStageEnvelopeRecipient = z
@@ -13544,14 +13542,14 @@ export const S_Sign_DtoRequestEnvelopeCreateSingleWithStages = z
 	.strict();
 export const S_Sign_DtoResponseEnvelopeCreateSingleWithStages = z
 	.object({
-		envelopeId: z.string().optional(),
-		created: z.string().datetime({ offset: true }).optional(),
-		status: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		envelopeId: z.string().nullish(),
+		created: z.string().datetime({ offset: true, local: true }).nullish(),
+		status: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Sign_FileArray = z
@@ -13633,14 +13631,14 @@ export const S_Sign_DtoRequestEnvelopeCreateMultiple = z
 	.strict();
 export const S_Sign_DtoResponseEnvelopeCreateMultiple = z
 	.object({
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
-		envelopeId: z.string().optional(),
-		created: z.string().datetime({ offset: true }).optional(),
-		status: z.string().optional(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
+		envelopeId: z.string().nullish(),
+		created: z.string().datetime({ offset: true, local: true }).nullish(),
+		status: z.string().nullish(),
 	})
 	.loose();
 export const S_Sign_DtoStageRecipientsWithFileFields = z
@@ -13665,14 +13663,14 @@ export const S_Sign_DtoRequestEnvelopeCreateMultipleWithStages = z
 	.strict();
 export const S_Sign_DtoResponseEnvelopeCreateMultipleWithStages = z
 	.object({
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
-		envelopeId: z.string().optional(),
-		created: z.string().datetime({ offset: true }).optional(),
-		status: z.string().optional(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
+		envelopeId: z.string().nullish(),
+		created: z.string().datetime({ offset: true, local: true }).nullish(),
+		status: z.string().nullish(),
 	})
 	.loose();
 export const S_Sign_DtoRequestGetEnvelopeStatus = z
@@ -13680,28 +13678,28 @@ export const S_Sign_DtoRequestGetEnvelopeStatus = z
 	.strict();
 export const S_Sign_DtoResponseGetEnvelopeStatus = z
 	.object({
-		status: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		status: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Sign_DtoRequestEnvelopeDownloadSignedDocuments = z
 	.object({ envelopeId: z.string().optional() })
 	.strict();
 export const S_Sign_SignDocumentArray = z
-	.object({ fileName: z.string().optional(), File: z.string().optional() })
+	.object({ fileName: z.string().nullish(), File: z.string().nullish() })
 	.loose();
 export const S_Sign_DtoResponseEnvelopeDownloadSignedDocuments = z
 	.object({
-		documents: z.array(S_Sign_SignDocumentArray).optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		documents: z.array(S_Sign_SignDocumentArray).nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Sign_DtoRequestDownloadAuditTrail = z
@@ -13709,14 +13707,14 @@ export const S_Sign_DtoRequestDownloadAuditTrail = z
 	.strict();
 export const S_Sign_DtoResponseDownloadAuditTrail = z
 	.object({
-		fileName: z.string().optional(),
-		file: z.string().optional(),
-		auditData: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		fileName: z.string().nullish(),
+		file: z.string().nullish(),
+		auditData: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Sign_DtoRequestRecipientCreateSingle = z
@@ -13731,13 +13729,13 @@ export const S_Sign_DtoRequestRecipientCreateSingle = z
 	.strict();
 export const S_Sign_DtoResponseRecipientCreateSingle = z
 	.object({
-		recipientId: z.string().optional(),
-		created: z.string().datetime({ offset: true }).optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		recipientId: z.string().nullish(),
+		created: z.string().datetime({ offset: true, local: true }).nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Sign_DtoRecipient = z
@@ -13755,13 +13753,13 @@ export const S_Sign_DtoRequestRecipientCreateMultiple = z
 	.strict();
 export const S_Sign_DtoResponseRecipientCreateMultiple = z
 	.object({
-		processed: z.array(z.string()).optional(),
-		unprocessed: z.record(z.string(), z.string()).optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		processed: z.array(z.string()).nullish(),
+		unprocessed: z.record(z.string(), z.string()).nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Sign_DtoRequestRecipientDeleteSingle = z
@@ -13772,12 +13770,12 @@ export const S_Sign_DtoRequestRecipientDeleteSingle = z
 	.strict();
 export const S_Sign_DtoResponseRecipientDeleteSingle = z
 	.object({
-		deleted: z.string().datetime({ offset: true }).optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		deleted: z.string().datetime({ offset: true, local: true }).nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Sign_DtoRequestRecipientGetSingle = z
@@ -13788,18 +13786,18 @@ export const S_Sign_DtoRequestRecipientGetSingle = z
 	.strict();
 export const S_Sign_DtoResponseRecipientGetSingle = z
 	.object({
-		recipientId: z.string().optional(),
-		emailAddress: z.string().optional(),
-		firstName: z.string().optional(),
-		lastName: z.string().optional(),
-		company: z.string().optional(),
-		jobTitle: z.string().optional(),
-		phoneNumber: z.string().optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		recipientId: z.string().nullish(),
+		emailAddress: z.string().nullish(),
+		firstName: z.string().nullish(),
+		lastName: z.string().nullish(),
+		company: z.string().nullish(),
+		jobTitle: z.string().nullish(),
+		phoneNumber: z.string().nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();
 export const S_Sign_DtoRequestRecipientListAll = z
@@ -13807,11 +13805,11 @@ export const S_Sign_DtoRequestRecipientListAll = z
 	.strict();
 export const S_Sign_DtoResponseRecipientListAll = z
 	.object({
-		recipients: z.array(S_Sign_DtoRecipient.loose()).optional(),
-		httpStatusCode: z.number().int().optional(),
-		httpStatusMessage: z.string().optional(),
-		operationId: z.string().optional(),
-		errors: z.array(z.string()).optional(),
-		operationStatus: z.string().optional(),
+		recipients: z.array(S_Sign_DtoRecipient.loose()).nullish(),
+		httpStatusCode: z.number().int().nullish(),
+		httpStatusMessage: z.string().nullish(),
+		operationId: z.string().nullish(),
+		errors: z.array(z.string()).nullish(),
+		operationStatus: z.string().nullish(),
 	})
 	.loose();

@@ -99,6 +99,59 @@ describe('Encodian operation schemas', () => {
 		).toBe(true);
 	});
 
+	it('parses the real subscription status responses from a live trial account', () => {
+		// Trimmed from live GET /api/v1/General/GetSubscriptionStatus and
+		// /api/v1/Trigr/GetTrigrSubscriptionStatus responses (11-13): the expiry
+		// date has no UTC offset and the operation envelope fields are null.
+		const flowr = {
+			availableActionsMonth: 500,
+			availableActionsMonthDec: 500,
+			subscriptionEnabled: true,
+			subscriptionLevel: '30 Day Trial',
+			monthlyActions: 500,
+			expiryDate: '2026-12-13T18:20:18.763',
+			billingInterval: 'none',
+			HttpStatusCode: 200,
+			HttpStatusMessage: '',
+			OperationId: null,
+			Errors: [],
+			OperationStatus: null,
+		};
+		const flowrResult =
+			EncodianEndpointOutputSchemas['general.getSubscriptionStatus'].safeParse(
+				flowr,
+			);
+		expect(flowrResult.success).toBe(true);
+		expect(flowrResult.data?.expiryDate).toBe('2026-12-13T18:20:18.763');
+		expect(
+			EncodianEndpointOutputSchemas[
+				'trigr.getTrigrSubscriptionStatus'
+			].safeParse({
+				...flowr,
+				availableActionsMonth: 10000,
+				subscriptionLevel: 'Trigr - 30 Day Trial',
+				expiryDate: '2026-12-13T19:21:50.347',
+			}).success,
+		).toBe(true);
+	});
+
+	it.each(EncodianOperationIds)(
+		'%s accepts null for every optional response field',
+		(operationId) => {
+			const schema = EncodianEndpointOutputSchemas[operationId];
+			const fixture = EncodianOutputFixtures[operationId];
+			const optionalFields = Object.entries(schema.shape).filter(
+				([, field]) => field.safeParse(undefined).success,
+			);
+			expect(
+				schema.safeParse({
+					...fixture,
+					...Object.fromEntries(optionalFields.map(([name]) => [name, null])),
+				}).success,
+			).toBe(true);
+		},
+	);
+
 	it('keeps buying credits at write risk, like other purchases', () => {
 		expect(EncodianEndpointMeta['general.buyAdditionalCredits'].riskLevel).toBe(
 			'write',
