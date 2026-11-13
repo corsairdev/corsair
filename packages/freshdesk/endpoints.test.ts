@@ -129,11 +129,20 @@ describe('Freshdesk v2 route endpoints', () => {
 			url: '/api/v2/tickets/bulk_update',
 			body: { bulk_action: bulkAction },
 		});
+		const directUpdate = { ids: [13], properties: { status: 3 } };
+		await Routes.bulkUpdateTicketsPostBulkUpdate.run(ctx, {
+			body: directUpdate,
+		});
+		expect(mockedRequest.mock.calls[1]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/api/v2/tickets/bulk_update',
+			body: directUpdate,
+		});
 		const bulkDelete = { ids: [21, 22] };
 		await Routes.bulkDeleteTicketsPostBulkDelete.run(ctx, {
 			body: { bulk_action: bulkDelete },
 		});
-		expect(mockedRequest.mock.calls[1]?.[1]).toMatchObject({
+		expect(mockedRequest.mock.calls[2]?.[1]).toMatchObject({
 			method: 'POST',
 			url: '/api/v2/tickets/bulk_delete',
 			body: { bulk_action: bulkDelete },
@@ -144,7 +153,7 @@ describe('Freshdesk v2 route endpoints', () => {
 			pathParams: { schemaId: '30' },
 			body: { data: recordData },
 		});
-		expect(mockedRequest.mock.calls[2]?.[1]).toMatchObject({
+		expect(mockedRequest.mock.calls[3]?.[1]).toMatchObject({
 			method: 'POST',
 			url: '/api/v2/custom_objects/schemas/30/records/',
 			body: { data: recordData },
@@ -154,7 +163,7 @@ describe('Freshdesk v2 route endpoints', () => {
 			pathParams: { schemaId: '30', recordId: 'BKG-1' },
 			body: { display_id: 'BKG-1', version: 2, data: recordData },
 		});
-		expect(mockedRequest.mock.calls[3]?.[1]).toMatchObject({
+		expect(mockedRequest.mock.calls[4]?.[1]).toMatchObject({
 			method: 'PUT',
 			url: '/api/v2/custom_objects/schemas/30/records/BKG-1',
 			body: { display_id: 'BKG-1', version: 2, data: recordData },
