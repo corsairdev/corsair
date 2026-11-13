@@ -183,7 +183,12 @@ export const GENDERIZE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
+	headerNames: {
+		retryAfter: 'retry-after',
+		// Genderize sends `X-Rate-Limit-Remaining` on every response, errors
+		// included, so a 429 carries what is left of the window.
+		remaining: 'x-rate-limit-remaining',
+	},
 };
 
 /** Drops keys whose value is undefined, so a query carries only what was asked for. */

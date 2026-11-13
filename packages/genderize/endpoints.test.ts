@@ -174,6 +174,22 @@ describe('Genderize client', () => {
 		expect(error.retryAfter).toBe(30_000);
 	});
 
+	it('reads X-Rate-Limit-Remaining off a 429', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(requestTooLow), {
+				status: 429,
+				headers: {
+					'Content-Type': 'application/json',
+					'X-Rate-Limit-Limit': '10',
+					'X-Rate-Limit-Remaining': '3',
+				},
+			}),
+		);
+		const error = await failure(invoke(predict, { name: 'Alice' }));
+
+		expect(error.remaining).toBe(3);
+	});
+
 	it('marks a dropped connection as a transport failure', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 		const error = await failure(invoke(predict, { name: 'Alice' }));
