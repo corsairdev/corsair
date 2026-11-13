@@ -59,6 +59,11 @@ export class CustomjsAPIError extends Error {
 			status?: number;
 			retryAfter?: number;
 			providerMessage?: string;
+			/**
+			 * Marks the failure as a bad key whatever the status. The key lookup
+			 * answers an unknown key with a 404, not a 401 or 403.
+			 */
+			authFailure?: boolean;
 			cause?: Error;
 		},
 	) {
@@ -78,7 +83,9 @@ export class CustomjsAPIError extends Error {
 			options.status === 429 ||
 			(options.status === 403 && /too many requests|rate limit/i.test(text));
 		this.isAuthError =
-			options.status === 401 || (options.status === 403 && !this.isRateLimit);
+			options.authFailure === true ||
+			options.status === 401 ||
+			(options.status === 403 && !this.isRateLimit);
 	}
 }
 

@@ -156,6 +156,17 @@ describe('auth.check', () => {
 		expect(result).not.toHaveProperty('jwt');
 	});
 
+	// The live key lookup answers an unknown key with 404 and `{}`, not 401/403.
+	it('reports an unknown key as an auth failure, not a missing route', async () => {
+		respondJson({}, 404);
+
+		const error = await captureError(invoke(AuthEndpoints.check, {}));
+
+		expect(error).toBeInstanceOf(CustomjsAPIError);
+		expect(error).toMatchObject({ status: 404, isAuthError: true });
+		expect((error as Error).message).not.toContain(API_KEY);
+	});
+
 	it('surfaces an invalid key on the pages envelope', async () => {
 		respondJson(pagesInvalidKey, 403);
 
