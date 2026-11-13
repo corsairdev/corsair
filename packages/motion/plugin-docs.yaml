@@ -1,0 +1,4 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Motion"
+description: Manage Motion tasks, projects, workspaces, comments, recurring tasks, and custom fields.
