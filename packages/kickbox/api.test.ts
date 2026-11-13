@@ -9,7 +9,7 @@ import { kickbox } from './index';
 const apiKey = process.env.KICKBOX_API_KEY;
 const describeIfKey = apiKey ? describe : describe.skip;
 
-if (!describeIfKey) {
+if (!apiKey) {
 	// A skipped run must not read as a pass.
 	console.warn('KICKBOX_API_KEY is not set: live tests skipped');
 }
