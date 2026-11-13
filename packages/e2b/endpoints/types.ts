@@ -326,10 +326,9 @@ const C_CPUCountOutputSchema = z.number().int().min(1);
 const C_MemoryMBOutputSchema = z.number().int().min(128);
 const C_DiskSizeMBOutputSchema = z.number().int().min(0);
 const C_SandboxMetadataOutputSchema = z.object({}).catchall(z.string());
-const C_SandboxStateOutputSchema = z.union([
-	z.literal('running'),
-	z.literal('paused'),
-]);
+const C_SandboxStateOutputSchema = z
+	.union([z.literal('running'), z.literal('paused')])
+	.or(z.string());
 const C_EnvdUnresponsiveAtPauseOutputSchema = z.boolean();
 const C_SandboxVolumeMountOutputSchema = z
 	.object({ name: z.string(), path: z.string() })
@@ -418,20 +417,18 @@ const C_SandboxNetworkConfigOutputSchema = z
 			.optional(),
 	})
 	.passthrough();
-const C_SandboxOnTimeoutOutputSchema = z.union([
-	z.literal('kill'),
-	z.literal('pause'),
-]);
+const C_SandboxOnTimeoutOutputSchema = z
+	.union([z.literal('kill'), z.literal('pause')])
+	.or(z.string());
 const C_SandboxLifecycleOutputSchema = z
 	.object({
 		autoResume: z.boolean(),
 		onTimeout: C_SandboxOnTimeoutOutputSchema,
 	})
 	.passthrough();
-const C_SandboxPauseModeOutputSchema = z.union([
-	z.literal('full'),
-	z.literal('filesystem'),
-]);
+const C_SandboxPauseModeOutputSchema = z
+	.union([z.literal('full'), z.literal('filesystem')])
+	.or(z.string());
 const C_SandboxDetailOutputSchema = z
 	.object({
 		templateID: z.string(),
@@ -485,13 +482,15 @@ const C_TemplateRequestResponseV3OutputSchema = z
 const C_TeamUserOutputSchema = z
 	.object({ id: z.string().uuid(), email: z.string().nullable() })
 	.passthrough();
-const C_TemplateBuildStatusOutputSchema = z.union([
-	z.literal('building'),
-	z.literal('waiting'),
-	z.literal('ready'),
-	z.literal('error'),
-	z.literal('uploaded'),
-]);
+const C_TemplateBuildStatusOutputSchema = z
+	.union([
+		z.literal('building'),
+		z.literal('waiting'),
+		z.literal('ready'),
+		z.literal('error'),
+		z.literal('uploaded'),
+	])
+	.or(z.string());
 const C_TemplateOutputSchema = z
 	.object({
 		templateID: z.string(),
@@ -658,21 +657,25 @@ const C_MetricsOutputSchema = z
 const C_EnvVarsOutputSchema = z.object({}).catchall(z.string());
 const C_filesystem_CreateWatcherResponseOutputSchema = z
 	.object({ watcherId: z.string().optional() })
-	.strict();
-const C_filesystem_EventTypeOutputSchema = z.union([
-	z.literal('EVENT_TYPE_UNSPECIFIED'),
-	z.literal('EVENT_TYPE_CREATE'),
-	z.literal('EVENT_TYPE_WRITE'),
-	z.literal('EVENT_TYPE_REMOVE'),
-	z.literal('EVENT_TYPE_RENAME'),
-	z.literal('EVENT_TYPE_CHMOD'),
-]);
-const C_filesystem_FileTypeOutputSchema = z.union([
-	z.literal('FILE_TYPE_UNSPECIFIED'),
-	z.literal('FILE_TYPE_FILE'),
-	z.literal('FILE_TYPE_DIRECTORY'),
-	z.literal('FILE_TYPE_SYMLINK'),
-]);
+	.passthrough();
+const C_filesystem_EventTypeOutputSchema = z
+	.union([
+		z.literal('EVENT_TYPE_UNSPECIFIED'),
+		z.literal('EVENT_TYPE_CREATE'),
+		z.literal('EVENT_TYPE_WRITE'),
+		z.literal('EVENT_TYPE_REMOVE'),
+		z.literal('EVENT_TYPE_RENAME'),
+		z.literal('EVENT_TYPE_CHMOD'),
+	])
+	.or(z.string());
+const C_filesystem_FileTypeOutputSchema = z
+	.union([
+		z.literal('FILE_TYPE_UNSPECIFIED'),
+		z.literal('FILE_TYPE_FILE'),
+		z.literal('FILE_TYPE_DIRECTORY'),
+		z.literal('FILE_TYPE_SYMLINK'),
+	])
+	.or(z.string());
 const C_google_protobuf_TimestampOutputSchema = z.string().datetime();
 const C_filesystem_EntryInfoOutputSchema = z
 	.object({
@@ -689,34 +692,36 @@ const C_filesystem_EntryInfoOutputSchema = z
 		metadata: z.object({}).catchall(z.string()).optional(),
 		isSymlink: z.boolean().optional(),
 	})
-	.strict();
+	.passthrough();
 const C_filesystem_FilesystemEventOutputSchema = z
 	.object({
 		name: z.string().optional(),
 		type: C_filesystem_EventTypeOutputSchema.optional(),
 		entry: C_filesystem_EntryInfoOutputSchema.nullable().optional(),
 	})
-	.strict();
+	.passthrough();
 const C_filesystem_GetWatcherEventsResponseOutputSchema = z
 	.object({
 		events: z.array(C_filesystem_FilesystemEventOutputSchema).optional(),
 	})
-	.strict();
+	.passthrough();
 const C_filesystem_ListDirResponseOutputSchema = z
 	.object({ entries: z.array(C_filesystem_EntryInfoOutputSchema).optional() })
-	.strict();
+	.passthrough();
 const C_filesystem_MakeDirResponseOutputSchema = z
 	.object({ entry: C_filesystem_EntryInfoOutputSchema.optional() })
-	.strict();
+	.passthrough();
 const C_filesystem_MoveResponseOutputSchema = z
 	.object({ entry: C_filesystem_EntryInfoOutputSchema.optional() })
-	.strict();
-const C_filesystem_RemoveResponseOutputSchema = z.object({}).strict();
-const C_filesystem_RemoveWatcherResponseOutputSchema = z.object({}).strict();
+	.passthrough();
+const C_filesystem_RemoveResponseOutputSchema = z.object({}).passthrough();
+const C_filesystem_RemoveWatcherResponseOutputSchema = z
+	.object({})
+	.passthrough();
 const C_filesystem_StatResponseOutputSchema = z
 	.object({ entry: C_filesystem_EntryInfoOutputSchema.optional() })
-	.strict();
-const C_process_CloseStdinResponseOutputSchema = z.object({}).strict();
+	.passthrough();
+const C_process_CloseStdinResponseOutputSchema = z.object({}).passthrough();
 const C_process_ProcessConfigOutputSchema = z
 	.object({
 		cmd: z.string().optional(),
@@ -724,20 +729,20 @@ const C_process_ProcessConfigOutputSchema = z
 		envs: z.object({}).catchall(z.string()).optional(),
 		cwd: z.string().nullable().optional(),
 	})
-	.strict();
+	.passthrough();
 const C_process_ProcessInfoOutputSchema = z
 	.object({
 		config: C_process_ProcessConfigOutputSchema.optional(),
 		pid: z.number().int().optional(),
 		tag: z.string().nullable().optional(),
 	})
-	.strict();
+	.passthrough();
 const C_process_ListResponseOutputSchema = z
 	.object({ processes: z.array(C_process_ProcessInfoOutputSchema).optional() })
-	.strict();
-const C_process_SendInputResponseOutputSchema = z.object({}).strict();
-const C_process_SendSignalResponseOutputSchema = z.object({}).strict();
-const C_process_UpdateResponseOutputSchema = z.object({}).strict();
+	.passthrough();
+const C_process_SendInputResponseOutputSchema = z.object({}).passthrough();
+const C_process_SendSignalResponseOutputSchema = z.object({}).passthrough();
+const C_process_UpdateResponseOutputSchema = z.object({}).passthrough();
 const C_TeamMetricOutputSchema = z
 	.object({
 		timestamp: z.string().datetime(),
@@ -772,25 +777,25 @@ const C_SandboxPageOutputSchema = z
 		nextToken: z.string().optional(),
 		totalRunning: z.number().int().optional(),
 	})
-	.strict();
+	.passthrough();
 const C_SnapshotPageOutputSchema = z
 	.object({
 		items: z.array(C_SnapshotInfoOutputSchema),
 		nextToken: z.string().optional(),
 	})
-	.strict();
+	.passthrough();
 const C_TemplatePageOutputSchema = z
 	.object({
 		items: z.array(C_TemplateOutputSchema),
 		nextToken: z.string().optional(),
 	})
-	.strict();
+	.passthrough();
 const C_SecretPageOutputSchema = z
 	.object({
 		items: z.array(C_SecretOutputSchema),
 		nextToken: z.string().optional(),
 	})
-	.strict();
+	.passthrough();
 const C_SandboxEventOutputSchema = z
 	.object({
 		id: z.string().uuid(),

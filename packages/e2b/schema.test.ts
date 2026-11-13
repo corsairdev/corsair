@@ -94,4 +94,23 @@ describe('E2B operation schemas', () => {
 			E2bEndpointOutputSchemas['sandboxes.kill'].safeParse({}).success,
 		).toBe(false);
 	});
+
+	it('accepts fields and enum values envd adds in newer versions', () => {
+		expect(
+			E2bEndpointOutputSchemas['filesystem.listDir'].safeParse({
+				entries: [
+					{ name: 'a', type: 'FILE_TYPE_SOCKET', inode: 12, path: '/a' },
+				],
+			}).success,
+		).toBe(true);
+		expect(
+			E2bEndpointOutputSchemas['process.list'].safeParse({
+				processes: [{ pid: 1, config: { cmd: 'sh', user: 'root' }, extra: 1 }],
+			}).success,
+		).toBe(true);
+		expect(
+			E2bEndpointOutputSchemas['filesystem.remove'].safeParse({ removed: true })
+				.success,
+		).toBe(true);
+	});
 });
