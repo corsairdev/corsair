@@ -71,11 +71,7 @@
               },
               {
                 "group": "Clients",
-                "pages": [
-                  "clients/python",
-                  "clients/go",
-                  "clients/swift"
-                ]
+                "pages": ["clients/python", "clients/go", "clients/swift"]
               }
             ]
           },
@@ -148,10 +144,7 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": [
-              "guides/plugins",
-              "guides/create-your-own-plugin"
-            ]
+            "pages": ["guides/plugins", "guides/create-your-own-plugin"]
           },
           {
             "group": "Plugins",
@@ -4585,9 +4578,7 @@
         "groups": [
           {
             "group": "Changelog",
-            "pages": [
-              "changelog"
-            ]
+            "pages": ["changelog"]
           }
         ]
       }
