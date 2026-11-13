@@ -157,17 +157,14 @@ describe('retry behaviour', () => {
 	});
 
 	it('does not replay a dropped connection on a paid verification', async () => {
-		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient({ key: API_KEY });
 		try {
 			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 			respond(deliverable);
 
 			await expect(
-				withFakeTimers(
-					corsair.kickbox.api.verify.verify({ email: 'test@example.com' }),
-				),
-			).rejects.toThrow('fetch failed');
+				corsair.kickbox.api.verify.verify({ email: 'test@example.com' }),
+			).rejects.toMatchObject({ transport: true, paid: true });
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
