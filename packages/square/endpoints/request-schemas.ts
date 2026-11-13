@@ -12,9 +12,9 @@ const FreeForm = z.record(z.string(), z.unknown());
 // unknown: the spec points at these types but never defines them.
 const UnspecifiedObject = z.record(z.string(), z.unknown());
 
-// unknown: objects nested more than 4 levels below a request stay open, and so does the edge
-// that closes a cycle (a catalog item holds catalog objects). The levels above
-// are fully typed; Square checks what is inside.
+// unknown: Deeply nested objects are typed down to a fixed depth; below that,
+// and at the edge that closes the catalog cycle, they are open objects.
+// Square checks what is inside.
 const OpenObject = z.record(z.string(), z.unknown());
 
 export const CustomAttributeDefinitionVisibilitySchema = z.enum([

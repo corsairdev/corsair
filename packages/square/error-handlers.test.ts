@@ -144,7 +144,7 @@ describe('Square retry policy on a 429', () => {
 		expect(await strategyFor(getError)).toMatchObject({ maxRetries: 3 });
 	});
 
-	it('passes no Retry-After on, because Square documents none', async () => {
+	it('passes no Retry-After on, because Square’s OpenAPI spec lists none', async () => {
 		const error = await failureOf(429, rateLimited, keyless);
 		expect((await strategyFor(error)).headersRetryAfterMs).toBeUndefined();
 	});

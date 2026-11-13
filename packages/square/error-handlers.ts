@@ -42,8 +42,8 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A 429 was rejected, not run, so every method is retried, keyless writes
-	// included. Square documents no Retry-After header: honour one only if it is
-	// present, otherwise back off exponentially.
+	// included. Square's OpenAPI spec lists no Retry-After header: honour one
+	// only if it is present, otherwise back off exponentially.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			statusOf(error) === 429 || hasCategory(error, 'RATE_LIMIT_ERROR'),
