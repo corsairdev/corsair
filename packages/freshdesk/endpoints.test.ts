@@ -187,6 +187,135 @@ describe('Freshdesk v2 route endpoints', () => {
 		});
 	});
 
+	it('accepts provider-documented bodies on admin and collaboration writes', async () => {
+		const operations: Array<{
+			endpoint: typeof Routes.createContactFieldPostContactFields;
+			input: Parameters<
+				typeof Routes.createContactFieldPostContactFields.run
+			>[1];
+			method: 'POST' | 'PUT' | 'PATCH';
+			url: string;
+		}> = [
+			{
+				endpoint: Routes.createContactFieldPostContactFields,
+				input: {
+					body: {
+						label: 'Portal choice',
+						label_for_customers: 'Portal choice',
+						type: 'custom_dropdown',
+						choices: [{ value: 'A', position: 1 }],
+					},
+				},
+				method: 'POST',
+				url: '/api/v2/contact_fields',
+			},
+			{
+				endpoint: Routes.updateContactFieldPut,
+				input: {
+					pathParams: { id: '7' },
+					body: { label: 'Updated label', choices: [{ id: 5, deleted: true }] },
+				},
+				method: 'PUT',
+				url: '/api/v2/contact_fields/7',
+			},
+			{
+				endpoint: Routes.createCompanyFieldPostCompanyFields,
+				input: {
+					body: {
+						label: 'Industry',
+						type: 'custom_dropdown',
+						choices: [{ value: 'Technology', position: 1 }],
+					},
+				},
+				method: 'POST',
+				url: '/api/v2/company_fields',
+			},
+			{
+				endpoint: Routes.updateAgentAvailabilityPutAvailability,
+				input: {
+					pathParams: { id: '12' },
+					body: {
+						channel_availability: [
+							{ channel: 'Email queue', assignment_limit: 20 },
+						],
+						availability_control: 'agent_controlled',
+					},
+				},
+				method: 'PUT',
+				url: '/api/v2/agents/12/availability',
+			},
+			{
+				endpoint: Routes.addOrRemoveAgentInAGroupPatchAgents,
+				input: {
+					pathParams: { id: '8' },
+					body: { agents: [{ id: 3 }, { id: 4, deleted: true }] },
+				},
+				method: 'PATCH',
+				url: '/api/v2/admin/groups/8/agents',
+			},
+			{
+				endpoint: Routes.updateAnAutomationRulePut,
+				input: {
+					pathParams: { automationTypeId: '4', id: '5' },
+					body: {
+						name: 'Route change',
+						active: true,
+						performer: [{ type: 1, members: ['3'] }],
+						events: [{ field_name: 'status', from: '2', to: '3' }],
+						conditions: [],
+						actions: [{ field_name: 'add_tag', value: 'reviewed' }],
+					},
+				},
+				method: 'PUT',
+				url: '/api/v2/automations/4/rules/5',
+			},
+			{
+				endpoint: Routes.createAThreadPostThreads,
+				input: {
+					body: {
+						type: 'forward',
+						parent: { id: '156', type: 'ticket' },
+						additional_info: { email_config_id: 2 },
+					},
+				},
+				method: 'POST',
+				url: '/api/v2/collaboration/threads',
+			},
+			{
+				endpoint: Routes.updateAThreadPut,
+				input: {
+					pathParams: { id: '2' },
+					body: { title: 'Updated returns form', description: 'Updated text' },
+				},
+				method: 'PUT',
+				url: '/api/v2/collaboration/threads/2',
+			},
+			{
+				endpoint: Routes.createMessageForThreadPostMessages,
+				input: {
+					body: {
+						body: '<p>Update</p>',
+						participants: { email: { to: ['customer@freshdesk.invalid'] } },
+						additional_info: { has_quoted_text: true },
+						thread_id: '24',
+						attachment_ids: [],
+					},
+				},
+				method: 'POST',
+				url: '/api/v2/collaboration/messages',
+			},
+		];
+
+		for (const operation of operations) {
+			await operation.endpoint.run(ctx, operation.input);
+			expect(mockedRequest.mock.calls.at(-1)?.[1]).toMatchObject({
+				method: operation.method,
+				url: operation.url,
+				body: operation.input.body,
+			});
+		}
+	});
+
 	it('rejects missing path parameters, extra input keys, and page sizes over 100 before I/O', async () => {
 		await expect(Routes.viewATicketGet.run(ctx, {})).rejects.toThrow();
 		await expect(
