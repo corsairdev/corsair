@@ -8,7 +8,7 @@ Use **Encodian** through Corsair: one client, typed API calls.
 
 Encodian Flowr API requests require an account subscription API key in the X-ApiKey header. The official API key guide says keys are issued when an organization starts a subscription or trial.
 
-File contents are passed as base64 strings in the documented JSON body fields. POST actions are not automatically retried because provider documentation does not establish idempotency or retry behavior. When Encodian returns HTTP 202, the client polls its same-origin Location URL with GET until HTTP 200 returns the processed result; polling is bounded and does not replay the POST.
+File contents are passed as base64 strings in the documented JSON body fields. Replace the barcode example placeholder with the base64-encoded contents of an actual supported image file containing a barcode (for example, `readFileSync('barcode.png').toString('base64')`). POST actions are not automatically retried because provider documentation does not establish idempotency or retry behavior. When Encodian returns HTTP 202, the client polls its same-origin Location URL with GET until HTTP 200 returns the processed result; polling is bounded and does not replay the POST.
 
 **What you get:**
 
@@ -103,7 +103,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.encodian.api.barcodes.aiBarcodeRead({
-	body: { FileContent: 'AA==' },
+	body: { FileContent: '<base64-encoded PNG barcode file>' },
 });
 ```
 
