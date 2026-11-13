@@ -557,6 +557,7 @@ describe('keywords.add', () => {
 			],
 		});
 
+		// unknown[]: only the number of keyword resources is checked here.
 		const body = lastRequest().body as { data: unknown[] };
 		expect(body.data).toHaveLength(2);
 	});

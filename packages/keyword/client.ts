@@ -45,8 +45,9 @@ export function readErrors(body: unknown): {
 	};
 }
 
-// Keyword enforces the plan's keyword count rather than a request rate, and it
-// publishes no Retry-After, so the handler's own backoff is the only delay.
+// Keyword limits each token to 60 requests a minute (30 for competitor
+// history) and answers 429 without a Retry-After. The RATE_LIMIT_ERROR handler
+// owns the retries and their backoff.
 const KEYWORD_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 0,

@@ -10,7 +10,7 @@ const apiKey = process.env.KEYWORD_API_KEY;
 const projectName = process.env.KEYWORD_PROJECT_NAME;
 const describeIfKey = apiKey ? describe : describe.skip;
 
-if (!describeIfKey) {
+if (!apiKey) {
 	// A skipped run must not read as a pass.
 	console.warn('KEYWORD_API_KEY is not set: live tests skipped');
 }

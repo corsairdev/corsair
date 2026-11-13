@@ -5,7 +5,7 @@ function statusOf(error: Error): number | undefined {
 	return error instanceof KeywordAPIError ? error.status : undefined;
 }
 
-// Keyword publishes 401, 402, 403, 404 and 422 on its routes, plus the usual
+// Keyword publishes 401, 403, 404, 422 and 429 on its routes, plus the usual
 // gateway statuses. Reference: https://keyword.com/docs/serp-api/
 export const errorHandlers = {
 	// The plan's keyword allowance is full, or a refresh needs an upgrade. No
@@ -16,8 +16,8 @@ export const errorHandlers = {
 			error instanceof KeywordAPIError && error.isQuotaError,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// Keyword enforces the plan's keyword count rather than a per-request rate,
-	// and publishes no Retry-After. A 429 still clears on its own.
+	// Keyword limits each token to 60 requests a minute (30 for competitor
+	// history) and sends no Retry-After, so the backoff is exponential.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			error instanceof KeywordAPIError && error.isRateLimit,
