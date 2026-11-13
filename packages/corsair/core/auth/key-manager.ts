@@ -1,3 +1,4 @@
+import { sql } from 'kysely';
 import { reencryptSealedAccountData } from '../../db/data-at-rest';
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { AuthTypes } from '../constants';
@@ -9,6 +10,7 @@ import {
 	generateDEK,
 	reEncryptConfig,
 } from './encryption';
+import { TOKEN_REFRESH_TIMEOUT_MS } from './oauth-token-cache';
 import type {
 	AccountKeyContext,
 	AccountKeyManagerFor,
@@ -275,6 +277,8 @@ export type AccountKeyManagerOptions<T extends AuthTypes> = {
 	/** Extra account-level fields from plugin authConfig */
 	extraAccountFields?: readonly string[];
 	ensureProvisioned?: () => Promise<void>;
+	/** Max wait for the refresh lock before a plain refresh. Defaults to 15s. */
+	refreshLockTimeoutMs?: number;
 };
 
 /**
@@ -294,6 +298,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		database,
 		extraAccountFields = [],
 		ensureProvisioned,
+		refreshLockTimeoutMs = TOKEN_REFRESH_TIMEOUT_MS + 5_000,
 	} = options;
 
 	// Merge base + extra fields
@@ -575,6 +580,50 @@ export function createAccountKeyManager<T extends AuthTypes>(
 
 	// Add OAuth2-specific get_integration_credentials method
 	if (authType === 'oauth_2') {
+		// Serialises token refresh for this (tenant, integration) across processes.
+		// A transaction-scoped advisory lock (works behind a transaction-mode
+		// pooler) rather than FOR UPDATE on the account row. fn gets a key manager
+		// bound to the lock's own transaction, so its reads and the token persist
+		// reuse that one connection: the hosted runtime's pool has max 1.
+		// Known ceiling: the provider call and the token write share this
+		// transaction, so a commit failure after a successful rotation loses the
+		// new refresh_token and the account needs a reconnect.
+		manager.with_refresh_lock = async <R>(
+			fn: (keys: AccountKeyManagerFor<T>) => Promise<R>,
+		): Promise<R> => {
+			if (database.isPg === false)
+				return fn(manager as AccountKeyManagerFor<T>);
+			let lockFailed = false;
+			try {
+				return await database.db.transaction().execute(async (trx) => {
+					try {
+						await sql`set local lock_timeout = ${sql.raw(String(Math.floor(refreshLockTimeoutMs)))}`.execute(
+							trx,
+						);
+						await sql`select pg_advisory_xact_lock(hashtext(${`corsair-refresh:${tenantId}:${integrationName}`}::text))`.execute(
+							trx,
+						);
+					} catch (err) {
+						lockFailed = true;
+						throw err;
+					}
+					// isPg false: the scoped manager must not try to lock again.
+					return fn(
+						createAccountKeyManager({
+							...options,
+							// Runs on the outer pool, which max:1 would hang; the pre-lock read provisioned.
+							ensureProvisioned: undefined,
+							database: { ...database, db: trx, isPg: false },
+						}),
+					);
+				});
+			} catch (err) {
+				// Lock timeout (stuck holder) or unsupported dialect: plain refresh.
+				if (lockFailed) return fn(manager as AccountKeyManagerFor<T>);
+				throw err;
+			}
+		};
+
 		manager.get_integration_credentials =
 			async (): Promise<OAuth2IntegrationCredentials> => {
 				const config = await getDecryptedIntegrationConfig();
