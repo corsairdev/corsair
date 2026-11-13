@@ -846,7 +846,7 @@ const ObjectsResponseSchema = z.object({
 		z.object({
 			name: z.string(),
 			systemName: z.string(),
-			objectType: z.union([z.string(), z.number()]),
+			objectType: z.string(),
 		}),
 	),
 	message: z.string(),
