@@ -14,7 +14,7 @@ description: "API reference for the Kanbanize plugin in Corsair: every `kanbaniz
 
 `boards.create`
 
-Create a Kanban board or an AI Canvas in a workspace; it starts empty and needs a workflow before it takes cards
+Create a Kanban board or an AI Canvas in a workspace; it starts with a cards workflow and an initiatives workflow
 
 **Risk:** `write`
 
@@ -157,7 +157,7 @@ await corsair.kanbanize.api.boards.list({ workspace_ids: [3], is_archived: 0, fi
 | `workspace_ids` | `number[]` | No | Only boards in these workspaces. |
 | `is_archived` | `0 \| 1` | No | `0` for live boards, `1` for archived ones. |
 | `if_assigned` | `0 \| 1` | No | `1` for only the boards the key’s user is assigned to. |
-| `fields` | `(board_id \| workspace_id \| is_archived \| name \| description \| type \| revision)[]` | No | Return only these fields. |
+| `fields` | `(board_id \| workspace_id \| is_archived \| name \| description \| type \| revision)[]` | No | Return only these fields. The record’s ID is always included. |
 | `expand` | `(workflows \| settings \| structure \| effective_cycle_time_column_ids \| data_fields)[]` | No | Include these nested objects. |
 
 A list such as `board_ids` goes as one comma-separated value, which is how the API documents it.
@@ -259,8 +259,8 @@ await corsair.kanbanize.api.cards.create({ title: 'Ship the pricing page', colum
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `column_id` | `number` | No | The column the card sits in. On update, the card moves there. |
-| `lane_id` | `number` | No | The lane the card sits in. On update, the card moves there. |
+| `column_id` | `number` | Yes | The column the new card goes in, from `columns.list`. |
+| `lane_id` | `number` | Yes | The lane the new card goes in, from `lanes.list`. |
 | `position` | `number` | No | `0` is the top. |
 | `title` | `string` | Yes | The card title. |
 | `description` | `string` | No | — |
@@ -280,7 +280,7 @@ await corsair.kanbanize.api.cards.create({ title: 'Ship the pricing page', colum
 | `subtasks_to_add` | `object[]` | No | — |
 | `watch` | `0 \| 1` | No | `1` to have the key’s user watch the new card. |
 
-`title` is required even though the spec does not mark it so. Businessmap rejects a card without one.
+`title`, `column_id` and `lane_id` are required: Businessmap places every new card in a column and a lane. It answers with a one-card array, which the plugin returns as `data`.
 
 <AccordionGroup>
 <Accordion title="custom_fields_to_add_or_update full type">
@@ -336,19 +336,26 @@ await corsair.kanbanize.api.cards.create({ title: 'Ship the pricing page', colum
   size?: number | null,
   priority?: number | null,
   deadline?: string | null,
-  reporter?: string | null,
+  reporter?: {
+    type?: string | null,
+    value?: number | string | null
+  } | null,
   created_at?: string | null,
   revision?: number | null,
   last_modified?: string | null,
   in_current_position_since?: string | null,
   is_blocked?: 0 | 1 | null,
-  block_reason?: string | null,
+  block_reason?: {
+    block_type?: number | null,
+    reason_id?: number | null,
+    comment?: string | null
+  } | null,
   finished_subtask_count?: number | null,
   unfinished_subtask_count?: number | null,
   tag_ids?: number[] | null,
-  custom_fields?: Record<string, unknown>[] | null,
-  subtasks?: Record<string, unknown>[] | null,
-  linked_cards?: Record<string, unknown>[] | null
+  custom_fields?: Record<string, any>[] | null,
+  subtasks?: Record<string, any>[] | null,
+  linked_cards?: Record<string, any>[] | null
 }
 ```
 </Accordion>
@@ -438,19 +445,26 @@ await corsair.kanbanize.api.cards.get({ card_id: 539522 });
   size?: number | null,
   priority?: number | null,
   deadline?: string | null,
-  reporter?: string | null,
+  reporter?: {
+    type?: string | null,
+    value?: number | string | null
+  } | null,
   created_at?: string | null,
   revision?: number | null,
   last_modified?: string | null,
   in_current_position_since?: string | null,
   is_blocked?: 0 | 1 | null,
-  block_reason?: string | null,
+  block_reason?: {
+    block_type?: number | null,
+    reason_id?: number | null,
+    comment?: string | null
+  } | null,
   finished_subtask_count?: number | null,
   unfinished_subtask_count?: number | null,
   tag_ids?: number[] | null,
-  custom_fields?: Record<string, unknown>[] | null,
-  subtasks?: Record<string, unknown>[] | null,
-  linked_cards?: Record<string, unknown>[] | null
+  custom_fields?: Record<string, any>[] | null,
+  subtasks?: Record<string, any>[] | null,
+  linked_cards?: Record<string, any>[] | null
 }
 ```
 </Accordion>
@@ -504,7 +518,7 @@ await corsair.kanbanize.api.cards.list({ board_ids: [1075], state: 'active', pag
 | `deadline_to_date` | `string` | No | — |
 | `page` | `number` | No | 1-based page. |
 | `per_page` | `number` | No | Cards per page. Defaults to 200. |
-| `fields` | `string[]` | No | Return only these fields. |
+| `fields` | `string[]` | No | Return only these fields. The record’s ID is always included. |
 | `expand` | `(custom_fields \| stickers \| tag_ids \| milestone_ids \| co_owner_ids \| watcher_ids \| attachments \| cover_image \| checked_column_checklist_items \| annotations \| subtasks \| linked_cards \| transitions \| block_times \| logged_times)[]` | No | Include these nested objects. |
 
 The only paginated read. `next_page` is null on the last page; `per_page` defaults to 200 and tops out at 1000.
@@ -547,19 +561,26 @@ The only paginated read. `next_page` is null on the last page; `per_page` defaul
     size?: number | null,
     priority?: number | null,
     deadline?: string | null,
-    reporter?: string | null,
+    reporter?: {
+      type?: string | null,
+      value?: number | string | null
+    } | null,
     created_at?: string | null,
     revision?: number | null,
     last_modified?: string | null,
     in_current_position_since?: string | null,
     is_blocked?: 0 | 1 | null,
-    block_reason?: string | null,
+    block_reason?: {
+      block_type?: number | null,
+      reason_id?: number | null,
+      comment?: string | null
+    } | null,
     finished_subtask_count?: number | null,
     unfinished_subtask_count?: number | null,
     tag_ids?: number[] | null,
-    custom_fields?: Record<string, unknown>[] | null,
-    subtasks?: Record<string, unknown>[] | null,
-    linked_cards?: Record<string, unknown>[] | null
+    custom_fields?: Record<string, any>[] | null,
+    subtasks?: Record<string, any>[] | null,
+    linked_cards?: Record<string, any>[] | null
   }[]
 }
 ```
@@ -669,19 +690,26 @@ Moving into a column whose WIP limit is reached answers 409 with code `L001`, wh
   size?: number | null,
   priority?: number | null,
   deadline?: string | null,
-  reporter?: string | null,
+  reporter?: {
+    type?: string | null,
+    value?: number | string | null
+  } | null,
   created_at?: string | null,
   revision?: number | null,
   last_modified?: string | null,
   in_current_position_since?: string | null,
   is_blocked?: 0 | 1 | null,
-  block_reason?: string | null,
+  block_reason?: {
+    block_type?: number | null,
+    reason_id?: number | null,
+    comment?: string | null
+  } | null,
   finished_subtask_count?: number | null,
   unfinished_subtask_count?: number | null,
   tag_ids?: number[] | null,
-  custom_fields?: Record<string, unknown>[] | null,
-  subtasks?: Record<string, unknown>[] | null,
-  linked_cards?: Record<string, unknown>[] | null
+  custom_fields?: Record<string, any>[] | null,
+  subtasks?: Record<string, any>[] | null,
+  linked_cards?: Record<string, any>[] | null
 }
 ```
 </Accordion>
@@ -849,7 +877,7 @@ await corsair.kanbanize.api.columns.list({ board_id: 1075 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `board_id` | `number` | Yes | The board ID, as returned by `boards.list`. |
-| `fields` | `string[]` | No | Return only these fields. |
+| `fields` | `string[]` | No | Return only these fields. The record’s ID is always included. |
 
 
 
@@ -974,8 +1002,8 @@ await corsair.kanbanize.api.comments.create({ card_id: 539522, text: 'Blocked on
 ```ts
 {
   comment_id: number,
-  author_user_id?: number | null,
-  author_name?: string | null,
+  type?: string | null,
+  author?: Record<string, any> | null,
   text?: string | null,
   created_at?: string | null,
   last_modified?: string | null
@@ -1020,8 +1048,8 @@ await corsair.kanbanize.api.comments.list({ card_id: 539522 });
 ```ts
 {
   comment_id: number,
-  author_user_id?: number | null,
-  author_name?: string | null,
+  type?: string | null,
+  author?: Record<string, any> | null,
   text?: string | null,
   created_at?: string | null,
   last_modified?: string | null
@@ -1590,7 +1618,7 @@ await corsair.kanbanize.api.users.list({ fields: ['user_id', 'email', 'realname'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fields` | `string[]` | No | Return only these fields. |
+| `fields` | `string[]` | No | Return only these fields. The record’s ID is always included. |
 
 
 
@@ -1660,7 +1688,8 @@ Registers a URL with Businessmap. The plugin does not handle the deliveries itse
   webhook_id: number,
   url?: string | null,
   is_enabled?: 0 | 1 | null,
-  board_id?: number | null
+  board_id?: number | null,
+  secret?: string | null
 }
 ```
 </Accordion>
@@ -1729,7 +1758,8 @@ await corsair.kanbanize.api.webhooks.list({});
   webhook_id: number,
   url?: string | null,
   is_enabled?: 0 | 1 | null,
-  board_id?: number | null
+  board_id?: number | null,
+  secret?: string | null
 }[]
 ```
 </Accordion>
@@ -1776,7 +1806,8 @@ await corsair.kanbanize.api.webhooks.update({ webhook_id: 77, is_enabled: 0 });
   webhook_id: number,
   url?: string | null,
   is_enabled?: 0 | 1 | null,
-  board_id?: number | null
+  board_id?: number | null,
+  secret?: string | null
 }
 ```
 </Accordion>
