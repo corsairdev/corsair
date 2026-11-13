@@ -14,10 +14,11 @@ import { FolkEndpointInputSchemas, FolkEndpointOutputSchemas } from './types';
 
 export const list: FolkEndpoints['interactionsList'] = async (ctx, input) => {
 	const parsedInput = FolkEndpointInputSchemas.interactionsList.parse(input);
-	const query: Record<string, string | number | boolean | undefined> = {};
-	if (parsedInput.limit !== undefined) query.limit = parsedInput.limit;
+	const query: Record<string, string | number | boolean | undefined> = {
+		'entity.id': parsedInput.entityId,
+		timeframe: parsedInput.timeframe,
+	};
 	if (parsedInput.cursor !== undefined) query.cursor = parsedInput.cursor;
-	if (parsedInput.entityId !== undefined) query.entityId = parsedInput.entityId;
 
 	// `unknown` because response JSON from makeFolkRequest is untrusted until validated by Zod schema below.
 	const response: unknown = await makeFolkRequest<InteractionsListResponse>(
@@ -47,10 +48,10 @@ export const listPast: FolkEndpoints['interactionsListPast'] = async (
 ) => {
 	const parsedInput =
 		FolkEndpointInputSchemas.interactionsListPast.parse(input);
-	const query: Record<string, string | number | boolean | undefined> = {};
-	if (parsedInput.limit !== undefined) query.limit = parsedInput.limit;
+	const query: Record<string, string | number | boolean | undefined> = {
+		'entity.id': parsedInput.entityId,
+	};
 	if (parsedInput.cursor !== undefined) query.cursor = parsedInput.cursor;
-	if (parsedInput.entityId !== undefined) query.entityId = parsedInput.entityId;
 
 	// `unknown` because response JSON from makeFolkRequest is untrusted until validated by Zod schema below.
 	const response: unknown = await makeFolkRequest<InteractionsListPastResponse>(
@@ -80,10 +81,10 @@ export const listUpcoming: FolkEndpoints['interactionsListUpcoming'] = async (
 ) => {
 	const parsedInput =
 		FolkEndpointInputSchemas.interactionsListUpcoming.parse(input);
-	const query: Record<string, string | number | boolean | undefined> = {};
-	if (parsedInput.limit !== undefined) query.limit = parsedInput.limit;
+	const query: Record<string, string | number | boolean | undefined> = {
+		'entity.id': parsedInput.entityId,
+	};
 	if (parsedInput.cursor !== undefined) query.cursor = parsedInput.cursor;
-	if (parsedInput.entityId !== undefined) query.entityId = parsedInput.entityId;
 
 	// `unknown` because response JSON from makeFolkRequest is untrusted until validated by Zod schema below.
 	const response: unknown =
@@ -116,7 +117,7 @@ export const get: FolkEndpoints['interactionsGet'] = async (ctx, input) => {
 	const response: unknown = await makeFolkRequest<InteractionsGetResponse>(
 		`/interactions/${encodeURIComponent(parsedInput.interactionId)}`,
 		ctx.key,
-		{ method: 'GET' },
+		{ method: 'GET', query: { 'entity.id': parsedInput.entityId } },
 	);
 
 	const parsed = FolkEndpointOutputSchemas.interactionsGet.parse(response);
@@ -217,6 +218,7 @@ export const deleteInteraction: FolkEndpoints['interactionsDelete'] = async (
 		ctx.key,
 		{
 			method: 'DELETE',
+			query: { 'entity.id': parsedInput.entityId },
 			headers,
 		},
 	);

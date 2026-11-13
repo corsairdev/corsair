@@ -15,8 +15,13 @@ export const list: FolkEndpoints['notesList'] = async (ctx, input) => {
 	const query: Record<string, string | number | boolean | undefined> = {};
 	if (parsedInput.limit !== undefined) query.limit = parsedInput.limit;
 	if (parsedInput.cursor !== undefined) query.cursor = parsedInput.cursor;
-	if (parsedInput.entityId !== undefined) query.entityId = parsedInput.entityId;
-	if (parsedInput.authorId !== undefined) query.authorId = parsedInput.authorId;
+	if (parsedInput.entityId !== undefined)
+		query['entity.id'] = parsedInput.entityId;
+	if (parsedInput.query !== undefined) query.query = parsedInput.query;
+	if (parsedInput.createdAfter !== undefined)
+		query.createdAfter = parsedInput.createdAfter;
+	if (parsedInput.createdBefore !== undefined)
+		query.createdBefore = parsedInput.createdBefore;
 
 	// `unknown` because response JSON from makeFolkRequest is untrusted until validated by Zod schema below.
 	const response: unknown = await makeFolkRequest<NotesListResponse>(

@@ -515,12 +515,17 @@ describe('Folk endpoints', () => {
 
 			const result = await Interactions.list(ctx, {
 				entityId: 'per_1',
+				timeframe: 'past',
+				cursor: 'cur1',
 			});
 
 			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'/interactions',
 				'test-api-key-123',
-				{ method: 'GET', query: { entityId: 'per_1' } },
+				{
+					method: 'GET',
+					query: { 'entity.id': 'per_1', timeframe: 'past', cursor: 'cur1' },
+				},
 			);
 			expect(result.data.items).toHaveLength(1);
 		});
@@ -530,12 +535,28 @@ describe('Folk endpoints', () => {
 				data: { items: [], pagination: {} },
 			});
 
-			await Interactions.listPast(ctx, {});
+			await Interactions.listPast(ctx, { entityId: 'per_1' });
 			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'/interactions/past',
 				'test-api-key-123',
-				{ method: 'GET', query: {} },
+				{ method: 'GET', query: { 'entity.id': 'per_1' } },
 			);
+		});
+
+		it('interaction reads require entityId and list requires timeframe, as Folk does', async () => {
+			await expect(
+				// @ts-expect-error entityId is required
+				Interactions.listPast(ctx, {}),
+			).rejects.toThrow();
+			await expect(
+				// @ts-expect-error timeframe is required
+				Interactions.list(ctx, { entityId: 'per_1' }),
+			).rejects.toThrow();
+			await expect(
+				// @ts-expect-error entityId is required
+				Interactions.get(ctx, { interactionId: 'int_1' }),
+			).rejects.toThrow();
+			expect(mockMakeRequest).not.toHaveBeenCalled();
 		});
 
 		it('interactions.listUpcoming requests GET /interactions/upcoming', async () => {
@@ -543,11 +564,11 @@ describe('Folk endpoints', () => {
 				data: { items: [], pagination: {} },
 			});
 
-			await Interactions.listUpcoming(ctx, {});
+			await Interactions.listUpcoming(ctx, { entityId: 'com_1' });
 			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'/interactions/upcoming',
 				'test-api-key-123',
-				{ method: 'GET', query: {} },
+				{ method: 'GET', query: { 'entity.id': 'com_1' } },
 			);
 		});
 
@@ -558,12 +579,13 @@ describe('Folk endpoints', () => {
 
 			const result = await Interactions.get(ctx, {
 				interactionId: 'int_123',
+				entityId: 'per_1',
 			});
 
 			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'/interactions/int_123',
 				'test-api-key-123',
-				{ method: 'GET' },
+				{ method: 'GET', query: { 'entity.id': 'per_1' } },
 			);
 			expect(result.data.id).toBe('int_123');
 		});
@@ -630,6 +652,7 @@ describe('Folk endpoints', () => {
 
 			const result = await Interactions.delete(ctx, {
 				interactionId: 'int_123',
+				entityId: 'per_1',
 			});
 
 			expect(mockMakeRequest).toHaveBeenCalledWith(
@@ -637,6 +660,7 @@ describe('Folk endpoints', () => {
 				'test-api-key-123',
 				{
 					method: 'DELETE',
+					query: { 'entity.id': 'per_1' },
 					headers: {},
 				},
 			);
@@ -650,14 +674,24 @@ describe('Folk endpoints', () => {
 				data: { items: [], pagination: {} },
 			});
 
-			await Notes.list(ctx, { authorId: 'usr_1' });
+			await Notes.list(ctx, {
+				entityId: 'per_1',
+				query: 'kickoff',
+				createdAfter: '2025-01-01',
+				createdBefore: '2025-02-01',
+			});
 
 			expect(mockMakeRequest).toHaveBeenCalledWith(
 				'/notes',
 				'test-api-key-123',
 				{
 					method: 'GET',
-					query: { authorId: 'usr_1' },
+					query: {
+						'entity.id': 'per_1',
+						query: 'kickoff',
+						createdAfter: '2025-01-01',
+						createdBefore: '2025-02-01',
+					},
 				},
 			);
 		});

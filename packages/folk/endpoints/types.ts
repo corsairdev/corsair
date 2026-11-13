@@ -538,9 +538,10 @@ export const GroupMembersRemoveResponseSchema = z.object({
 
 export const InteractionsListInputSchema = z
 	.object({
-		limit: z.number().min(1).max(100).optional(),
 		cursor: z.string().max(512).optional(),
-		entityId: z.string().optional(),
+		// Sent as Folk's required `entity.id` query parameter.
+		entityId: z.string().min(1).max(40),
+		timeframe: z.enum(['past', 'upcoming']),
 	})
 	.strict();
 
@@ -554,9 +555,9 @@ export const InteractionsListResponseSchema = z.object({
 
 export const InteractionsListPastInputSchema = z
 	.object({
-		limit: z.number().min(1).max(100).optional(),
 		cursor: z.string().max(512).optional(),
-		entityId: z.string().optional(),
+		// Sent as Folk's required `entity.id` query parameter.
+		entityId: z.string().min(1).max(40),
 	})
 	.strict();
 
@@ -570,9 +571,9 @@ export const InteractionsListPastResponseSchema = z.object({
 
 export const InteractionsListUpcomingInputSchema = z
 	.object({
-		limit: z.number().min(1).max(100).optional(),
 		cursor: z.string().max(512).optional(),
-		entityId: z.string().optional(),
+		// Sent as Folk's required `entity.id` query parameter.
+		entityId: z.string().min(1).max(40),
 	})
 	.strict();
 
@@ -587,6 +588,8 @@ export const InteractionsListUpcomingResponseSchema = z.object({
 export const InteractionsGetInputSchema = z
 	.object({
 		interactionId: z.string().min(1),
+		// Sent as Folk's required `entity.id` query parameter.
+		entityId: z.string().min(1).max(40),
 	})
 	.strict();
 
@@ -631,6 +634,8 @@ export const InteractionsUpdateResponseSchema = z.object({
 export const InteractionsDeleteInputSchema = z
 	.object({
 		interactionId: z.string().min(1),
+		// Sent as Folk's required `entity.id` query parameter.
+		entityId: z.string().min(1).max(40),
 		idempotencyKey: z.string().max(255).optional(),
 	})
 	.strict();
@@ -648,8 +653,11 @@ export const NotesListInputSchema = z
 	.object({
 		limit: z.number().min(1).max(100).optional(),
 		cursor: z.string().max(512).optional(),
-		entityId: z.string().optional(),
-		authorId: z.string().optional(),
+		// Sent as Folk's `entity.id` query parameter.
+		entityId: z.string().max(40).optional(),
+		query: z.string().max(500).optional(),
+		createdAfter: z.string().max(100).optional(),
+		createdBefore: z.string().max(100).optional(),
 	})
 	.strict();
 
