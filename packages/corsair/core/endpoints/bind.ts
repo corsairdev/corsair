@@ -159,6 +159,14 @@ export function bindEndpointsRecursively({
 					endpointMetaEntry?.riskLevel ?? 'write',
 				);
 
+				// With encryptDataAtRest on, every call stores or logs encrypted data
+				// once the provider answers. Without a kek that store throws, after a
+				// paid or irreversible request (or an approval) has already gone out.
+				// Refuse before the permission guard and the request.
+				if (encryptDataAtRest && !kek) {
+					throw new CorsairKekMissingError();
+				}
+
 				// ── Permission guard ────────────────────────────────────────────────────────────────
 				let onPermissionComplete: (() => Promise<void>) | undefined;
 				// A mode only tightens, so a caller naming one cannot relax what the
@@ -404,12 +412,6 @@ export function bindEndpointsRecursively({
 				// The keyBuilder adds `_refreshAuth` to this ctx, and an OAuth
 				// plugin calls it to refresh the token after a 401. The endpoint
 				// must get this ctx, not a new copy of the original one.
-				// With encryptDataAtRest on, every call stores or logs encrypted data
-				// once the provider answers. Without a kek that store throws, after a
-				// paid or irreversible request has already gone out. Refuse before it.
-				if (encryptDataAtRest && !kek) {
-					throw new CorsairKekMissingError();
-				}
 				const endpointCtx = { ...ctx, meteredOperationId: operationPath };
 				const ctxTenantId =
 					typeof ctx.tenantId === 'string' ? ctx.tenantId : undefined;

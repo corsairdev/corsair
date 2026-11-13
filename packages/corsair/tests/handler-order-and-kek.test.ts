@@ -13,13 +13,13 @@ const isRateLimit = (error: Error) => error instanceof RateLimited;
 
 // Most plugins' DEFAULT matches everything; it is the fallback, so the named
 // handlers after it must still get their turn.
-const pluginHandlers = {
+const pluginHandlers: CorsairErrorHandler = {
 	DEFAULT: { match: () => true, handler: async () => ({ maxRetries: 0 }) },
 	RATE_LIMIT_ERROR: {
 		match: isRateLimit,
 		handler: async () => ({ maxRetries: 5 }),
 	},
-} as unknown as CorsairErrorHandler;
+};
 
 describe('handleCorsairError order', () => {
 	it('tries named handlers before a match-all DEFAULT listed first', async () => {
@@ -78,47 +78,50 @@ function probePlugin(calls: { n: number }, failures: number): CorsairPlugin {
 
 type ProbeClient = {
 	probe: {
-		api: { items: { list: (a: Record<string, never>) => Promise<unknown> } };
+		api: {
+			items: { list: (a: Record<string, never>) => Promise<{ ok: boolean }> };
+		};
 	};
 };
 
-describe('root and plugin handlers through createCorsair', () => {
-	it.each([
-		['no root handlers', undefined],
-		[
-			'a root DEFAULT',
-			{
-				DEFAULT: {
-					match: () => true,
-					handler: async () => ({ maxRetries: 0 }),
-				},
+const rootCases: [string, CorsairErrorHandler | undefined][] = [
+	['no root handlers', undefined],
+	[
+		'a root DEFAULT',
+		{
+			DEFAULT: { match: () => true, handler: async () => ({ maxRetries: 0 }) },
+		},
+	],
+	[
+		// A name the plugin doesn't define, so only the root has it.
+		'a root-only handler that also matches',
+		{
+			AUTH_ERROR: {
+				match: isRateLimit,
+				handler: async () => ({ maxRetries: 0 }),
 			},
-		],
-		[
-			'a root-only handler that also matches',
-			{
-				MY_RATE_LIMIT: {
-					match: isRateLimit,
-					handler: async () => ({ maxRetries: 0 }),
-				},
-			},
-		],
-	])('with %s, the plugin retries its own 429', async (_label, root) => {
-		const calls = { n: 0 };
-		const corsair = createCorsair({
-			plugins: [probePlugin(calls, 2)],
-			...(root
-				? { errorHandlers: root as unknown as CorsairErrorHandler }
-				: {}),
-			// The client type is built from registered plugin ids; 'probe' is not
-			// one, so the test names the one route it calls.
-		}) as unknown as ProbeClient;
+		},
+	],
+];
 
-		await expect(corsair.probe.api.items.list({})).resolves.toEqual({
-			ok: true,
-		});
-		expect(calls.n).toBe(3);
-	});
+describe('root and plugin handlers through createCorsair', () => {
+	it.each(rootCases)(
+		'with %s, the plugin retries its own 429',
+		async (_label, root) => {
+			const calls = { n: 0 };
+			const corsair = createCorsair({
+				plugins: [probePlugin(calls, 2)],
+				...(root ? { errorHandlers: root } : {}),
+				// The client type is built from registered plugin ids; 'probe' is not
+				// one, so the test names the one route it calls.
+			}) as unknown as ProbeClient;
+
+			await expect(corsair.probe.api.items.list({})).resolves.toEqual({
+				ok: true,
+			});
+			expect(calls.n).toBe(3);
+		},
+	);
 });
 
 describe('encryptDataAtRest without a kek', () => {
@@ -130,6 +133,8 @@ describe('encryptDataAtRest without a kek', () => {
 				plugins: [probePlugin(calls, 0)],
 				database: database.db,
 				encryptDataAtRest: true,
+				// The client type is built from registered plugin ids; 'probe' is
+				// not one, so the test names the one route it calls.
 			}) as unknown as ProbeClient;
 
 			await expect(corsair.probe.api.items.list({})).rejects.toBeInstanceOf(

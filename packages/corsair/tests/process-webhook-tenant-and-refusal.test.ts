@@ -170,3 +170,141 @@ describe('processWebhook with a handler that refuses the delivery', () => {
 		}
 	});
 });
+
+// Two plugins whose matchers both accept the delivery, as Outlook's and
+// OneDrive's do for MS Graph notifications. Dispatch tries onedrive first;
+// the tenant must come from onedrive's link, not from whichever plugin is
+// listed first in the instance.
+function graphInstance(database: Db, seen: string[]) {
+	const sub = (request: RawWebhookRequest) =>
+		(request.body as { subscriptionId?: string }).subscriptionId;
+	const bound = (id: string, tenantId: string) => ({
+		pluginWebhookMatcher: () => true,
+		webhooks: {
+			notifications: {
+				changed: {
+					match: () => true,
+					handler: async () => {
+						seen.push(`${id}@${tenantId}`);
+						return { success: true };
+					},
+				},
+			},
+		},
+	});
+	const matcher = (request: RawWebhookRequest) => {
+		const externalId = sub(request);
+		return externalId ? { linkType: 'subscription_id', externalId } : null;
+	};
+	return {
+		withTenant: (tenantId: string) => ({
+			onedrive: bound('onedrive', tenantId),
+			outlook: bound('outlook', tenantId),
+		}),
+		[CORSAIR_INTERNAL]: {
+			multiTenancy: true,
+			database,
+			kek: KEK,
+			// Outlook listed first, as a host's plugin array might.
+			plugins: [
+				{
+					id: 'outlook',
+					pluginWebhookMatcher: () => true,
+					pluginTenantWebhookMatcher: matcher,
+				},
+				{
+					id: 'onedrive',
+					pluginWebhookMatcher: () => true,
+					pluginTenantWebhookMatcher: matcher,
+				},
+			],
+		},
+		// processWebhook's instance type is built from registered plugins; this
+		// stand-in carries only what the webhook path reads.
+	} as unknown as Parameters<typeof processWebhook>[0];
+}
+
+async function seedGraph(database: Db) {
+	const now = new Date();
+	const dek = generateDEK();
+	const encryptedDek = await encryptDEK(dek, KEK);
+	for (const name of ['outlook', 'onedrive']) {
+		await database.db
+			.insertInto('corsair_integrations')
+			.values({
+				id: `int-${name}`,
+				created_at: now,
+				updated_at: now,
+				name,
+				config: encryptConfig({}, dek),
+				dek: encryptedDek,
+			})
+			.execute();
+		await database.db
+			.insertInto('corsair_accounts')
+			.values({
+				id: `acc-${name}`,
+				created_at: now,
+				updated_at: now,
+				tenant_id: 'tenant_b',
+				integration_id: `int-${name}`,
+				config: encryptConfig({}, dek),
+				dek: encryptedDek,
+			})
+			.execute();
+	}
+	// Only onedrive holds the link for this subscription.
+	await setWebhookTenantLink({
+		database,
+		kek: KEK,
+		pluginId: 'onedrive',
+		tenantId: 'tenant_b',
+		link: { linkType: 'subscription_id', externalId: 'sub-1' },
+	});
+}
+
+describe('processWebhook when several plugins match', () => {
+	it('takes the tenant from the plugin that handles the delivery', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedGraph(database);
+			const seen: string[] = [];
+			const result = await processWebhook(
+				graphInstance(database, seen),
+				headers,
+				{
+					subscriptionId: 'sub-1',
+				},
+			);
+			expect(result.plugin).toBe('onedrive');
+			expect(seen).toEqual(['onedrive@tenant_b']);
+		} finally {
+			cleanup();
+		}
+	});
+});
+
+describe('processWebhook when the tenant lookup fails', () => {
+	it('refuses the delivery instead of running it as default', async () => {
+		const seen: string[] = [];
+		// The lookup reads corsair_accounts; a database that throws on any
+		// query stands in for an outage.
+		const broken = {
+			db: {
+				selectFrom: () => {
+					throw new Error('database unavailable');
+				},
+			},
+			// A stand-in database: only the query entry point the lookup uses.
+		} as unknown as Db;
+		const result = await processWebhook(instance(broken, seen), headers, {
+			team_id: 'T222',
+		});
+		expect(seen).toEqual([]);
+		expect(result.response).toEqual({
+			success: false,
+			error: 'Could not look up the tenant for this delivery',
+			statusCode: 500,
+		});
+	});
+});
