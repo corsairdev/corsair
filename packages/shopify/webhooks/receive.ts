@@ -44,13 +44,25 @@ function readSecret(ctx: ShopifyContext): string | undefined {
 }
 
 /**
- * The shop domain stored for this tenant, normalised for comparison. Reading
- * it can fail on a tenant that never configured one; that is not a reason to
- * reject a delivery, so a failure reads as "unknown" and the check is skipped.
+ * The shop domain this tenant is configured for, normalised for comparison.
+ *
+ * Reads the same sources in the same order as the endpoints: the plugin
+ * `shopDomain` option first, then the stored account value. Reading only the
+ * stored value would reject valid deliveries for an instance that overrides an
+ * old stored domain, while its API calls used the override.
+ *
+ * Reading can fail on a tenant that never configured one; that is not a reason
+ * to reject a delivery, so a failure reads as "unknown" and the check is
+ * skipped.
  */
 async function readTenantDomain(
 	ctx: ShopifyContext,
 ): Promise<string | undefined> {
+	const option =
+		typeof ctx.options?.shopDomain === 'string'
+			? ctx.options.shopDomain.trim()
+			: '';
+	if (option) return normaliseShopDomain(option);
 	try {
 		const stored = await ctx.keys?.get_shop_domain?.();
 		const value = stored?.trim();

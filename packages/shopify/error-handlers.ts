@@ -46,12 +46,26 @@ export const errorHandlers = {
 	},
 	// Out of cost points. Shopify rejects the query before running it, so
 	// replaying cannot apply a write twice even for a mutation.
+	//
+	// Two shapes arrive here: a `THROTTLED` body code, and a plain HTTP 429 from
+	// the gateway, which core raises as its own `ApiError` and which therefore
+	// has no `code`. Matching only the plugin's error would let an HTTP 429 fall
+	// through to DEFAULT with no wait at all.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			isShopifyError(error) &&
-			(error.code === 'THROTTLED' || error.status === 429),
+		match: (error: Error) => {
+			if (error instanceof ApiError) return error.status === 429;
+			return (
+				isShopifyError(error) &&
+				(error.code === 'THROTTLED' || error.status === 429)
+			);
+		},
 		handler: async (error: Error) => {
-			const delay = isShopifyError(error) ? error.retryAfter : undefined;
+			// `retryAfter` is on both types, and it is the delay Shopify asked
+			// for; the fixed fallback only applies when neither supplied one.
+			const delay =
+				error instanceof ApiError || isShopifyError(error)
+					? error.retryAfter
+					: undefined;
 			return {
 				maxRetries: 3,
 				headersRetryAfterMs: delay ?? DEFAULT_THROTTLE_DELAY_MS,

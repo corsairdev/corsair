@@ -61,17 +61,26 @@ mutation InventoryAdjust($input: InventoryAdjustQuantitiesInput!, $idempotencyKe
 }`;
 
 /**
- * A stable key for one logical adjustment. Two calls that change the same item
- * at the same location by the same delta for the same reason are the same
- * adjustment, and Shopify applies it once; a different delta or location is a
- * different adjustment and gets its own key.
+ * A key for one logical adjustment.
+ *
+ * It cannot be random per call. Core retries by re-invoking the whole endpoint,
+ * so a fresh key each time would differ on the retry and Shopify would apply
+ * the change twice. The default is therefore derived from the change, which is
+ * stable across retries of the same call.
+ *
+ * That default has one limitation: two *separate* receipts that each add five
+ * units to the same item and location produce the same key, and the second is
+ * deduplicated. A caller making that kind of repeated identical adjustment must
+ * pass `idempotencyKey` so each logical adjustment is distinct.
  */
 export function adjustmentIdempotencyKey(input: {
+	idempotencyKey?: string;
 	inventoryItemId: string;
 	locationId: string;
 	delta: number;
 	reason: string;
 }): string {
+	if (input.idempotencyKey) return input.idempotencyKey;
 	return [
 		'inventory-adjust',
 		input.inventoryItemId,
@@ -114,7 +123,14 @@ export const adjust = (
 			mutation: true,
 		},
 		input,
-		({ inventoryItemId, locationId, delta, reason, changeFromQuantity }) => ({
+		({
+			inventoryItemId,
+			locationId,
+			delta,
+			reason,
+			changeFromQuantity,
+			idempotencyKey,
+		}) => ({
 			query: ADJUST_MUTATION,
 			variables: {
 				input: {
@@ -134,6 +150,7 @@ export const adjust = (
 					],
 				},
 				idempotencyKey: adjustmentIdempotencyKey({
+					idempotencyKey,
 					inventoryItemId,
 					locationId,
 					delta,
