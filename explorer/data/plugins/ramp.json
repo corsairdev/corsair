@@ -1,0 +1,1160 @@
+{
+  "id": "ramp",
+  "displayName": "Ramp",
+  "description": "Corporate cards and spend management with Ramp - read card transactions, bills, reimbursements, virtual cards, merchants, users and departments, split a transaction into line items, edit a bill and attach memos.",
+  "npmPackageName": "@corsair-dev/ramp",
+  "authTypes": ["api_key", "oauth_2"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    },
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "ramp.api.bills.get",
+      "shortPath": "bills.get",
+      "description": "Fetch one bill by id, including its vendor, payment details, line items and attachment URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bill_id",
+            "optional": false,
+            "type": "string",
+            "description": "The bill id, from `bills.list`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bill",
+            "optional": false,
+            "type": "{ id?: string | null, invoice_number?: string | null, memo?: string | null, vendor_memo?: string | null, status?: string | null, status_summary?: string | null, approval_status?: string | null, sync_status?: string | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, due_at?: string | null, issued_at?: string | null, created_at?: string | null, paid_at?: string | null, accounting_date?: string | null, posting_date?: string | null, archived_at?: string | null, entity_id?: string | null, draft_bill_id?: string | null, remote_id?: string | null, purchase_order_id?: string | null, vendor_contact_id?: string | null, deep_link_url?: string | null, is_payment_sync_ready?: boolean | null, fx_conversion_rate?: string | null, vendor?: { id?: string | null, name?: string | null, remote_code?: string | null, remote_id?: string | null, remote_name?: string | null, type?: string | null } | null, bill_owner?: { id?: string | null, first_name?: string | null, last_name?: string | null } | null, payment?: { id?: string | null, customer_friendly_payment_id?: string | null, payment_method?: string | null, payment_date?: string | null, effective_date?: string | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null } | null, line_items?: { id?: string | null, memo?: string | null, accounting_field_selections?: { id?: string | null, name?: string | null, display_name?: string | null, type?: string | null, external_id?: string | null, external_code?: string | null, provider_name?: string | null, category_info?: { id?: string | null, name?: string | null, type?: string | null, external_id?: string | null } | null }[] | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, purchase_order_line_item_id?: string | null }[] | null, invoice_urls?: string[] | null, item_receipt_ids?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.bills.list",
+      "shortPath": "bills.list",
+      "description": "List bills with filters for vendor, status, approval, payment and date ranges, plus cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "vendor_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entity_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "invoice_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status_summaries",
+            "optional": true,
+            "type": "(APPROVAL_PENDING | APPROVAL_REJECTED | ARCHIVED | AWAITING_PAYMENT | AWAITING_RELEASE | BLOCKED | HELD_BY_PROVIDER | ON_HOLD | PAYMENT_COMPLETED | PAYMENT_DETAILS_MISSING | PAYMENT_ERROR | PAYMENT_NOT_INSTRUCTED | PAYMENT_PROCESSING | PAYMENT_READY | PAYMENT_SCHEDULED | PENDING_VENDOR_APPROVAL | WAITING_FOR_TRANSACTION_MATCH | WAITING_FOR_TRANSFER_MATCH | WAITING_FOR_VENDOR)[]",
+            "description": "Sent as a comma-separated list."
+          },
+          {
+            "key": "approval_status",
+            "optional": true,
+            "type": "APPROVED | INITIALIZED | PENDING | REJECTED | TERMINATED"
+          },
+          {
+            "key": "payment_status",
+            "optional": true,
+            "type": "OPEN | PAID"
+          },
+          {
+            "key": "sync_status",
+            "optional": true,
+            "type": "BILL_AND_PAYMENT_SYNCED | BILL_SYNCED | NOT_SYNCED"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show archived bills instead of active ones."
+          },
+          {
+            "key": "sync_ready",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "payment_details_missing",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "from_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_created_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_due_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_paid_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_paid_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "min_amount",
+            "optional": true,
+            "type": "string | number",
+            "description": "A decimal amount, as a string or a number."
+          },
+          {
+            "key": "max_amount",
+            "optional": true,
+            "type": "string | number",
+            "description": "A decimal amount, as a string or a number."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 2 to 100. Defaults to 20 when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bills",
+            "optional": false,
+            "type": "{ id?: string | null, invoice_number?: string | null, memo?: string | null, vendor_memo?: string | null, status?: string | null, status_summary?: string | null, approval_status?: string | null, sync_status?: string | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, due_at?: string | null, issued_at?: string | null, created_at?: string | null, paid_at?: string | null, accounting_date?: string | null, posting_date?: string | null, archived_at?: string | null, entity_id?: string | null, draft_bill_id?: string | null, remote_id?: string | null, purchase_order_id?: string | null, vendor_contact_id?: string | null, deep_link_url?: string | null, is_payment_sync_ready?: boolean | null, fx_conversion_rate?: string | null, vendor?: { id?: string | null, name?: string | null, remote_code?: string | null, remote_id?: string | null, remote_name?: string | null, type?: string | null } | null, bill_owner?: { id?: string | null, first_name?: string | null, last_name?: string | null } | null, payment?: { id?: string | null, customer_friendly_payment_id?: string | null, payment_method?: string | null, payment_date?: string | null, effective_date?: string | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null } | null, line_items?: { id?: string | null, memo?: string | null, accounting_field_selections?: { id?: string | null, name?: string | null, display_name?: string | null, type?: string | null, external_id?: string | null, external_code?: string | null, provider_name?: string | null, category_info?: { id?: string | null, name?: string | null, type?: string | null, external_id?: string | null } | null }[] | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, purchase_order_line_item_id?: string | null }[] | null, invoice_urls?: string[] | null, item_receipt_ids?: string[] | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ next?: string | null, total_count?: number | null, total_count_capped?: boolean | null } | null"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `start` to read the next page. Null once `page.next` is null."
+          },
+          {
+            "key": "next_page_url",
+            "optional": false,
+            "type": "string | null",
+            "description": "The absolute `page.next` URL, for callers that prefer it."
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count_capped",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.bills.update",
+      "shortPath": "bills.update",
+      "description": "Update a bill: its internal memo, the memo shown to the vendor, the invoice number or the due date",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bill_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "memo",
+            "optional": true,
+            "type": "string",
+            "description": "Replaces the internal bill memo."
+          },
+          {
+            "key": "vendor_memo",
+            "optional": true,
+            "type": "string",
+            "description": "Replaces the memo shown to the vendor."
+          },
+          {
+            "key": "invoice_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "due_at",
+            "optional": true,
+            "type": "string",
+            "description": "A new due date, as a `YYYY-MM-DD` date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bill",
+            "optional": false,
+            "type": "{ id?: string | null, invoice_number?: string | null, memo?: string | null, vendor_memo?: string | null, status?: string | null, status_summary?: string | null, approval_status?: string | null, sync_status?: string | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, due_at?: string | null, issued_at?: string | null, created_at?: string | null, paid_at?: string | null, accounting_date?: string | null, posting_date?: string | null, archived_at?: string | null, entity_id?: string | null, draft_bill_id?: string | null, remote_id?: string | null, purchase_order_id?: string | null, vendor_contact_id?: string | null, deep_link_url?: string | null, is_payment_sync_ready?: boolean | null, fx_conversion_rate?: string | null, vendor?: { id?: string | null, name?: string | null, remote_code?: string | null, remote_id?: string | null, remote_name?: string | null, type?: string | null } | null, bill_owner?: { id?: string | null, first_name?: string | null, last_name?: string | null } | null, payment?: { id?: string | null, customer_friendly_payment_id?: string | null, payment_method?: string | null, payment_date?: string | null, effective_date?: string | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null } | null, line_items?: { id?: string | null, memo?: string | null, accounting_field_selections?: { id?: string | null, name?: string | null, display_name?: string | null, type?: string | null, external_id?: string | null, external_code?: string | null, provider_name?: string | null, category_info?: { id?: string | null, name?: string | null, type?: string | null, external_id?: string | null } | null }[] | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, purchase_order_line_item_id?: string | null }[] | null, invoice_urls?: string[] | null, item_receipt_ids?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.business.get",
+      "shortPath": "business.get",
+      "description": "Fetch the business profile: legal and card names, billing address, SSO and reimbursement settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "business",
+            "optional": false,
+            "type": "{ id?: string | null, business_name_legal?: string | null, business_name_on_card?: string | null, active?: boolean | null, website?: string | null, phone?: string | null, created_time?: string | null, enforce_sso?: boolean | null, is_integrated_with_slack?: boolean | null, is_reimbursements_enabled?: boolean | null, limit_locked?: boolean | null, billing_address?: { address_line1?: string | null, address_line2?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.cards.listVirtual",
+      "shortPath": "cards.listVirtual",
+      "description": "List virtual cards with their fund, owner and suspension state; a terminated card is excluded unless asked for",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only cards for this entity."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only cards owned by this user."
+          },
+          {
+            "key": "is_terminated",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only terminated cards. Ramp defaults to excluding them."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 2 to 100. Defaults to 20 when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cards",
+            "optional": false,
+            "type": "{ id?: string | null, fund_id?: string | null, user_id?: string | null, is_card_suspended?: boolean | null, created_at?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ next?: string | null, total_count?: number | null, total_count_capped?: boolean | null } | null"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `start` to read the next page. Null once `page.next` is null."
+          },
+          {
+            "key": "next_page_url",
+            "optional": false,
+            "type": "string | null",
+            "description": "The absolute `page.next` URL, for callers that prefer it."
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count_capped",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.departments.create",
+      "shortPath": "departments.create",
+      "description": "Create a department with the given name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The department name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "department",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.departments.list",
+      "shortPath": "departments.list",
+      "description": "List the departments configured for the business",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 2 to 100. Defaults to 20 when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "departments",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ next?: string | null, total_count?: number | null, total_count_capped?: boolean | null } | null"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `start` to read the next page. Null once `page.next` is null."
+          },
+          {
+            "key": "next_page_url",
+            "optional": false,
+            "type": "string | null",
+            "description": "The absolute `page.next` URL, for callers that prefer it."
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count_capped",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.memos.create",
+      "shortPath": "memos.create",
+      "description": "Attach a memo of up to 255 characters to a transaction, replacing the existing one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "memo",
+            "optional": false,
+            "type": "string",
+            "description": "The memo text. Ramp caps it at 255 characters."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memo",
+            "optional": false,
+            "type": "{ id?: string | null, memo?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.memos.get",
+      "shortPath": "memos.get",
+      "description": "Read the memo attached to a transaction",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memo",
+            "optional": false,
+            "type": "{ id?: string | null, memo?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.merchants.list",
+      "shortPath": "merchants.list",
+      "description": "List merchants the business has transacted with, optionally filtered by name, domain or transaction date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "merchant_name",
+            "optional": true,
+            "type": "string",
+            "description": "A case-sensitive display-name prefix."
+          },
+          {
+            "key": "merchant_url",
+            "optional": true,
+            "type": "string",
+            "description": "A URL or domain, matched after normalisation."
+          },
+          {
+            "key": "transaction_from_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transaction_to_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 2 to 100. Defaults to 20 when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "merchants",
+            "optional": false,
+            "type": "{ id?: string | null, merchant_name?: string | null, sk_category_name?: string | null, is_auto_approved?: boolean | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ next?: string | null, total_count?: number | null, total_count_capped?: boolean | null } | null"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `start` to read the next page. Null once `page.next` is null."
+          },
+          {
+            "key": "next_page_url",
+            "optional": false,
+            "type": "string | null",
+            "description": "The absolute `page.next` URL, for callers that prefer it."
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count_capped",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.reimbursements.list",
+      "shortPath": "reimbursements.list",
+      "description": "List reimbursements and repayments with filters for state, direction, user, entity and date ranges",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "BUSINESS_TO_USER | USER_TO_BUSINESS",
+            "description": "Ramp defaults to `BUSINESS_TO_USER`; `USER_TO_BUSINESS` reads repayments."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "APPROVED | AWAITING_EXPORT | AWAITING_PAYMENT | AWAITING_PUSH_PAYMENT | CANCELED | DELETED | DRAFT | EXPORTED | EXPORT_FAILED | EXPORT_INITIATED | EXPORT_MARKED_AS_FAILED | EXPORT_SUCCESSFUL | FAILED_REIMBURSEMENT | INIT | MANUALLY_REIMBURSED | MISSING_ACH | PAYROLL_FAILED | PAYROLL_SUBMITTED | PENDING | PROCESSING | PUSH_PAYMENT_FAILED | PUSH_PAYMENT_INITIATED | REIMBURSED | REIMBURSED_VIA_PAYROLL | REIMBURSED_VIA_PUSH | REJECTED"
+          },
+          {
+            "key": "sync_status",
+            "optional": true,
+            "type": "NOT_SYNC_READY | SYNCED | SYNC_READY"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entity_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trip_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "has_been_approved",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sync_ready",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_no_sync_commits",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "from_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_submitted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_submitted_at",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_transaction_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to_transaction_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "synced_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 2 to 100. Defaults to 20 when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reimbursements",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, direction?: string | null, state?: string | null, sync_status?: string | null, memo?: string | null, merchant?: string | null, merchant_id?: string | null, user_id?: string | null, user_email?: string | null, user_full_name?: string | null, employee_id?: string | null, entity_id?: string | null, fund_id?: string | null, trip_id?: string | null, transaction_date?: string | null, accounting_date?: string | null, created_at?: string | null, updated_at?: string | null, submitted_at?: string | null, approved_at?: string | null, synced_at?: string | null, payment_processed_at?: string | null, distance?: number | null, payee_amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, entity_amount?: { currency?: string | null, value?: number | null, minor_unit_conversion_rate?: number | null } | null, merchant_amount?: { currency?: string | null, value?: number | null, minor_unit_conversion_rate?: number | null } | null, receipts?: string[] | null, line_items?: { memo?: string | null, accounting_field_selections?: { id?: string | null, name?: string | null, display_name?: string | null, type?: string | null, external_id?: string | null, external_code?: string | null, provider_name?: string | null, category_info?: { id?: string | null, name?: string | null, type?: string | null, external_id?: string | null } | null }[] | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null }[] | null, attendees?: { name?: string | null, user_id?: string | null }[] | null, waypoints?: string[] | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ next?: string | null, total_count?: number | null, total_count_capped?: boolean | null } | null"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `start` to read the next page. Null once `page.next` is null."
+          },
+          {
+            "key": "next_page_url",
+            "optional": false,
+            "type": "string | null",
+            "description": "The absolute `page.next` URL, for callers that prefer it."
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count_capped",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.transactions.get",
+      "shortPath": "transactions.get",
+      "description": "Fetch one transaction by id, including its cardholder, merchant location, line items and approval state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_id",
+            "optional": false,
+            "type": "string",
+            "description": "The transaction id, from `transactions.list`."
+          },
+          {
+            "key": "include_merchant_data",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask for the full purchase data the merchant sent."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction",
+            "optional": false,
+            "type": "{ id?: string | null, amount?: number | null, currency_code?: string | null, memo?: string | null, state?: string | null, sync_status?: string | null, sk_category_id?: number | null, sk_category_name?: string | null, merchant_id?: string | null, merchant_name?: string | null, merchant_descriptor?: string | null, merchant_category_code?: string | null, merchant_category_code_description?: string | null, merchant_location?: { city?: string | null, country?: string | null, postal_code?: string | null, state?: string | null } | null, card_id?: string | null, card_holder?: { department_id?: string | null, department_name?: string | null, employee_id?: string | null, first_name?: string | null, last_name?: string | null, location_id?: string | null, location_name?: string | null, user_id?: string | null } | null, card_present?: boolean | null, user_transaction_time?: string | null, accounting_date?: string | null, settlement_date?: string | null, updated_at?: string | null, synced_at?: string | null, entity_id?: string | null, statement_id?: string | null, trip_id?: string | null, trip_name?: string | null, fund_id?: string | null, limit_id?: string | null, spend_program_id?: string | null, original_transaction_id?: string | null, all_requirements_met_and_approved?: boolean | null, requires_accounting_vendor_creation_to_sync?: boolean | null, entity_amount?: { currency?: string | null, value?: number | null } | null, merchant_amount?: { currency?: string | null, value?: number | null } | null, original_transaction_amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, line_items?: { id?: string | null, memo?: string | null, accounting_field_selections?: { id?: string | null, name?: string | null, display_name?: string | null, type?: string | null, external_id?: string | null, external_code?: string | null, provider_name?: string | null, category_info?: { id?: string | null, name?: string | null, type?: string | null, external_id?: string | null } | null }[] | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, converted_amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null }[] | null, receipts?: string[] | null, disputes?: { id?: string | null, created_at?: string | null, memo?: string | null, type?: string | null }[] | null, policy_violations?: { id?: string | null, created_at?: string | null, memo?: string | null, type?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.transactions.list",
+      "shortPath": "transactions.list",
+      "description": "List card transactions with filters for date, merchant, cardholder, state and approval, plus sorting and cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "state",
+            "optional": true,
+            "type": "ALL | CLEARED | COMPLETION | DECLINED | ERROR | PENDING | PENDING_INITIATION",
+            "description": "Transaction state. Ramp omits declined transactions unless this is `ALL`."
+          },
+          {
+            "key": "sync_status",
+            "optional": true,
+            "type": "NOT_SYNC_READY | SYNCED | SYNC_READY"
+          },
+          {
+            "key": "from_date",
+            "optional": true,
+            "type": "string",
+            "description": "Only transactions whose `user_transaction_time` is after this ISO 8601 date."
+          },
+          {
+            "key": "to_date",
+            "optional": true,
+            "type": "string",
+            "description": "Only transactions whose `user_transaction_time` is before this ISO 8601 date."
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only this cardholder."
+          },
+          {
+            "key": "card_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only this physical card."
+          },
+          {
+            "key": "merchant_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entity_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only this business entity."
+          },
+          {
+            "key": "statement_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "trip_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "spend_program_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sk_category_id",
+            "optional": true,
+            "type": "number",
+            "description": "Ramp's own category code, for example 19 for restaurants."
+          },
+          {
+            "key": "has_been_approved",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "all_requirements_met_and_approved",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "requires_memo",
+            "optional": true,
+            "type": "true",
+            "description": "Pass `true` for only transactions that require a memo and do not have one. Ramp accepts only `true` (`false` answers 422); leave it out for every transaction."
+          },
+          {
+            "key": "has_statement",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_no_sync_commits",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "min_amount",
+            "optional": true,
+            "type": "string | number",
+            "description": "A decimal amount, as a string or a number."
+          },
+          {
+            "key": "max_amount",
+            "optional": true,
+            "type": "string | number",
+            "description": "A decimal amount, as a string or a number."
+          },
+          {
+            "key": "synced_after",
+            "optional": true,
+            "type": "string",
+            "description": "Only transactions with an accounting sync commit at or after this date. This is not an updated-at filter."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ by: date | amount, direction: asc | desc }",
+            "description": "Ramp takes one of four separate booleans and rejects more than one ordering parameter at once, so the pair is modelled as a single field."
+          },
+          {
+            "key": "include_count",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask Ramp to count the matches. Adds latency and caps the count at 10,000."
+          },
+          {
+            "key": "include_merchant_data",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 2 to 100. Defaults to 20 when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactions",
+            "optional": false,
+            "type": "{ id?: string | null, amount?: number | null, currency_code?: string | null, memo?: string | null, state?: string | null, sync_status?: string | null, sk_category_id?: number | null, sk_category_name?: string | null, merchant_id?: string | null, merchant_name?: string | null, merchant_descriptor?: string | null, merchant_category_code?: string | null, merchant_category_code_description?: string | null, merchant_location?: { city?: string | null, country?: string | null, postal_code?: string | null, state?: string | null } | null, card_id?: string | null, card_holder?: { department_id?: string | null, department_name?: string | null, employee_id?: string | null, first_name?: string | null, last_name?: string | null, location_id?: string | null, location_name?: string | null, user_id?: string | null } | null, card_present?: boolean | null, user_transaction_time?: string | null, accounting_date?: string | null, settlement_date?: string | null, updated_at?: string | null, synced_at?: string | null, entity_id?: string | null, statement_id?: string | null, trip_id?: string | null, trip_name?: string | null, fund_id?: string | null, limit_id?: string | null, spend_program_id?: string | null, original_transaction_id?: string | null, all_requirements_met_and_approved?: boolean | null, requires_accounting_vendor_creation_to_sync?: boolean | null, entity_amount?: { currency?: string | null, value?: number | null } | null, merchant_amount?: { currency?: string | null, value?: number | null } | null, original_transaction_amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, line_items?: { id?: string | null, memo?: string | null, accounting_field_selections?: { id?: string | null, name?: string | null, display_name?: string | null, type?: string | null, external_id?: string | null, external_code?: string | null, provider_name?: string | null, category_info?: { id?: string | null, name?: string | null, type?: string | null, external_id?: string | null } | null }[] | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, converted_amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null }[] | null, receipts?: string[] | null, disputes?: { id?: string | null, created_at?: string | null, memo?: string | null, type?: string | null }[] | null, policy_violations?: { id?: string | null, created_at?: string | null, memo?: string | null, type?: string | null }[] | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ next?: string | null, total_count?: number | null, total_count_capped?: boolean | null } | null"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `start` to read the next page. Null once `page.next` is null."
+          },
+          {
+            "key": "next_page_url",
+            "optional": false,
+            "type": "string | null",
+            "description": "The absolute `page.next` URL, for callers that prefer it."
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count_capped",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.transactions.update",
+      "shortPath": "transactions.update",
+      "description": "Replace or remove a transaction's line items: the amounts, split into minor units, must sum to the transaction amount",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "line_items",
+            "optional": false,
+            "type": "{ amount: number, memo?: string, accounting_field_selections?: { field_id?: string, field_external_id?: string, field_option_id?: string, field_option_external_id?: string, free_form_text?: string }[] }[]",
+            "description": "The line items to split the transaction into. Send an empty array to remove an existing split."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction",
+            "optional": false,
+            "type": "{ id?: string | null, amount?: number | null, currency_code?: string | null, memo?: string | null, state?: string | null, sync_status?: string | null, sk_category_id?: number | null, sk_category_name?: string | null, merchant_id?: string | null, merchant_name?: string | null, merchant_descriptor?: string | null, merchant_category_code?: string | null, merchant_category_code_description?: string | null, merchant_location?: { city?: string | null, country?: string | null, postal_code?: string | null, state?: string | null } | null, card_id?: string | null, card_holder?: { department_id?: string | null, department_name?: string | null, employee_id?: string | null, first_name?: string | null, last_name?: string | null, location_id?: string | null, location_name?: string | null, user_id?: string | null } | null, card_present?: boolean | null, user_transaction_time?: string | null, accounting_date?: string | null, settlement_date?: string | null, updated_at?: string | null, synced_at?: string | null, entity_id?: string | null, statement_id?: string | null, trip_id?: string | null, trip_name?: string | null, fund_id?: string | null, limit_id?: string | null, spend_program_id?: string | null, original_transaction_id?: string | null, all_requirements_met_and_approved?: boolean | null, requires_accounting_vendor_creation_to_sync?: boolean | null, entity_amount?: { currency?: string | null, value?: number | null } | null, merchant_amount?: { currency?: string | null, value?: number | null } | null, original_transaction_amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, line_items?: { id?: string | null, memo?: string | null, accounting_field_selections?: { id?: string | null, name?: string | null, display_name?: string | null, type?: string | null, external_id?: string | null, external_code?: string | null, provider_name?: string | null, category_info?: { id?: string | null, name?: string | null, type?: string | null, external_id?: string | null } | null }[] | null, amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null, converted_amount?: { amount?: number | null, currency_code?: string | null, minor_unit_conversion_rate?: number | null } | null }[] | null, receipts?: string[] | null, disputes?: { id?: string | null, created_at?: string | null, memo?: string | null, type?: string | null }[] | null, policy_violations?: { id?: string | null, created_at?: string | null, memo?: string | null, type?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.users.get",
+      "shortPath": "users.get",
+      "description": "Fetch one user by id, including their role, department and manager",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, role?: string | null, status?: string | null, employee_id?: string | null, business_id?: string | null, entity_id?: string | null, department_id?: string | null, location_id?: string | null, manager_id?: string | null, is_manager?: boolean | null, phone?: string | number | null, scheduled_deactivation_date?: string | null, scheduled_invitation_date?: string | null, custom_fields?: { name?: string | null, value?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ramp.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users with filters for email, role, status, department, location and entity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "AUDITOR | BUSINESS_ADMIN | BUSINESS_BOOKKEEPER | BUSINESS_OWNER | BUSINESS_USER | GUEST_USER | IT_ADMIN"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "USER_ACTIVE | USER_DRAFT | USER_INACTIVE | USER_SUSPENDED"
+          },
+          {
+            "key": "employee_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "entity_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "department_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "The id of the last record on the previous page. Read it from `next_cursor`, and keep the same filters: the id is only meaningful for the query that produced it."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 2 to 100. Defaults to 20 when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, role?: string | null, status?: string | null, employee_id?: string | null, business_id?: string | null, entity_id?: string | null, department_id?: string | null, location_id?: string | null, manager_id?: string | null, is_manager?: boolean | null, phone?: string | number | null, scheduled_deactivation_date?: string | null, scheduled_invitation_date?: string | null, custom_fields?: { name?: string | null, value?: string | null }[] | null }[]"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ next?: string | null, total_count?: number | null, total_count_capped?: boolean | null } | null"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `start` to read the next page. Null once `page.next` is null."
+          },
+          {
+            "key": "next_page_url",
+            "optional": false,
+            "type": "string | null",
+            "description": "The absolute `page.next` URL, for callers that prefer it."
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_count_capped",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

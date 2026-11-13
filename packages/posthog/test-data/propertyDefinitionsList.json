@@ -1,0 +1,25 @@
+{
+  "count": 157,
+  "next": "https://us.posthog.com/api/projects/309833/property_definitions/?event_names=%5B%22%24pageview%22%5D&filter_by_event_names=true&limit=2&offset=2&type=event",
+  "previous": null,
+  "results": [
+    {
+      "id": "019c5095-8252-7421-a01a-a95bbf87f1ba",
+      "name": "$active_feature_flags",
+      "description": null,
+      "is_numerical": false,
+      "updated_at": null,
+      "updated_by": null,
+      "is_seen_on_filtered_events": true,
+      "property_type": null,
+      "verified": null,
+      "verified_at": null,
+      "verified_by": null,
+      "hidden": null,
+      "warehouse_origin": null,
+      "type": "event",
+      "group_type_index": null,
+      "tags": []
+    }
+  ]
+}

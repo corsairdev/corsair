@@ -3192,6 +3192,14 @@
                 ]
               },
               {
+                "group": "Ramp",
+                "pages": [
+                  "plugins/ramp/overview",
+                  "plugins/ramp/api",
+                  "plugins/ramp/database"
+                ]
+              },
+              {
                 "group": "Razorpay",
                 "pages": [
                   "plugins/razorpay/overview",

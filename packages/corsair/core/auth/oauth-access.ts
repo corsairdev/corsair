@@ -5,7 +5,10 @@ import type {
 	OAuthBodyFormat,
 	OAuthTokenAuthMethod,
 } from './oauth-refresh-local';
-import { refreshOAuthTokensLocal } from './oauth-refresh-local';
+import {
+	OAuthRefreshError,
+	refreshOAuthTokensLocal,
+} from './oauth-refresh-local';
 import { cacheRefreshedTokens, isAccessTokenFresh } from './oauth-token-cache';
 import { singleFlight } from './single-flight';
 import type { AccountKeyManagerFor } from './types';
@@ -100,15 +103,29 @@ export async function getOAuthAccessToken(
 			if (!refreshToken) {
 				throw new AuthMissingError(opts.plugin, 'oauth_2');
 			}
-			const tokens = await refreshOAuthTokensLocal({
-				tokenUrl: opts.tokenUrl,
-				tokenAuthMethod: opts.tokenAuthMethod,
-				bodyFormat: opts.bodyFormat,
-				extraParams: opts.extraParams,
-				clientId,
-				clientSecret,
-				refreshToken,
-			});
+			let tokens: Awaited<ReturnType<typeof refreshOAuthTokensLocal>>;
+			try {
+				tokens = await refreshOAuthTokensLocal({
+					tokenUrl: opts.tokenUrl,
+					tokenAuthMethod: opts.tokenAuthMethod,
+					bodyFormat: opts.bodyFormat,
+					extraParams: opts.extraParams,
+					clientId,
+					clientSecret,
+					refreshToken,
+				});
+			} catch (error) {
+				// A refused refresh token is a connection to make again: raise it
+				// as auth-missing so the caller gets a reconnect link.
+				if (error instanceof OAuthRefreshError && error.kind === 'revoked') {
+					throw new AuthMissingError(opts.plugin, 'oauth_2', undefined, {
+						connectUrl: null,
+						tenantId: ctx.tenantId,
+						reason: 'revoked',
+					});
+				}
+				throw error;
+			}
 			await cacheRefreshedTokens(ctx.keys, tokens, expiresAt);
 			return tokens.access_token;
 		});
