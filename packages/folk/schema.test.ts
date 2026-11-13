@@ -215,6 +215,71 @@ describe('Folk schema and types', () => {
 		});
 	});
 
+	describe('Folk documented response shapes', () => {
+		it('accepts a group whose createdBy is a user ID and a group owner', () => {
+			expect(
+				GroupSchema.parse({
+					id: 'grp_1',
+					name: 'Core',
+					visibility: 'private',
+					createdBy: 'usr_1',
+					emoji: null,
+				}).createdBy,
+			).toBe('usr_1');
+			expect(
+				GroupMemberSchema.parse({
+					id: 'usr_1',
+					fullName: 'Alice',
+					email: 'alice@example.com',
+					role: 'owner',
+				}).role,
+			).toBe('owner');
+		});
+
+		it('accepts imported email interactions with several recipients and object content', () => {
+			const email = {
+				id: 'eml_1',
+				entity: { entityType: 'person', id: 'per_1', fullName: 'John Doe' },
+				dateTime: '2025-07-17T09:00:00.000Z',
+				url: null,
+				privacyLevel: 'subjectOnly',
+				interactionType: 'email',
+				from: { type: 'email', value: 'jane@example.com', name: 'Jane' },
+				to: [
+					{ type: 'email', value: 'john@example.com', name: 'John' },
+					{ type: 'email', value: 'amy@example.com' },
+				],
+				content: { subject: 'Project kickoff', snippet: 'Hi John' },
+			};
+			const parsed = InteractionSchema.parse(email);
+			expect(Array.isArray(parsed.to)).toBe(true);
+			expect(parsed.content).toEqual({
+				subject: 'Project kickoff',
+				snippet: 'Hi John',
+			});
+		});
+
+		it('accepts notes written by the assistant and records with a null createdAt', () => {
+			const note = NoteSchema.parse({
+				id: 'nte_1',
+				entity: { id: 'per_1', entityType: 'person', fullName: 'John Doe' },
+				content: 'Summary',
+				visibility: 'public',
+				author: { type: 'assistant', fullName: 'folk assistant' },
+				createdAt: null,
+				parentNote: null,
+			});
+			expect(note.author?.type).toBe('assistant');
+			expect(
+				PersonSchema.parse({ id: 'per_1', createdAt: null }).createdAt,
+			).toBeNull();
+			expect(
+				CompanySchema.parse({ id: 'com_1', name: 'Acme', createdAt: null })
+					.createdAt,
+			).toBeNull();
+		});
+	});
+
 	describe('Interaction schemas', () => {
 		it('validates interaction create requires entity, dateTime, title, and content', () => {
 			const valid = {

@@ -33,7 +33,7 @@ export const PersonSchema = z.object({
 	birthday: z.string().nullable().optional(),
 	gender: z.string().nullable().optional(),
 	jobTitle: z.string().nullable().optional(),
-	createdAt: z.string().optional(),
+	createdAt: z.string().nullable().optional(),
 	createdBy: UserSummarySchema.nullable().optional(),
 	groups: z.array(GroupRefSchema).optional(),
 	companies: z.array(CompanyRefSchema).optional(),
@@ -83,7 +83,7 @@ export const CompanySchema = z.object({
 	emails: z.array(z.string()).optional(),
 	phones: z.array(z.string()).optional(),
 	urls: z.array(z.string()).optional(),
-	createdAt: z.string().optional(),
+	createdAt: z.string().nullable().optional(),
 	createdBy: UserSummarySchema.nullable().optional(),
 	// `unknown` because custom field values map to dynamic custom field definitions configured in each Folk workspace.
 	customFieldValues: z
@@ -95,7 +95,8 @@ export const GroupSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	visibility: z.enum(['public', 'private']),
-	createdBy: UserSummarySchema.nullable().optional(),
+	// Folk returns the creating user's ID here, not a user object.
+	createdBy: z.string().nullable().optional(),
 	emoji: z.string().nullable().optional(),
 });
 
@@ -103,25 +104,27 @@ export const GroupMemberSchema = z.object({
 	id: z.string(),
 	fullName: z.string().nullable().optional(),
 	email: z.string().nullable().optional(),
-	role: z.enum(['admin', 'contributor', 'reader']),
+	role: z.enum(['owner', 'admin', 'contributor', 'reader']),
+});
+
+export const InteractionParticipantSchema = z.object({
+	type: z.string().optional(),
+	value: z.string().optional(),
+	name: z.string().optional(),
+	picture: z.string().optional(),
+	userId: z.string().optional(),
 });
 
 export const InteractionSchema = z.object({
 	id: z.string(),
 	interactionType: z.string().optional(),
-	from: z
-		.object({
-			type: z.string().optional(),
-			value: z.string().optional(),
-			name: z.string().optional(),
-		})
-		.optional(),
+	from: InteractionParticipantSchema.optional(),
+	// A logged interaction has one recipient; imported emails, calendar events, WhatsApp messages and calls list several.
 	to: z
-		.object({
-			type: z.string().optional(),
-			value: z.string().optional(),
-			name: z.string().optional(),
-		})
+		.union([
+			InteractionParticipantSchema,
+			z.array(InteractionParticipantSchema),
+		])
 		.optional(),
 	entity: z
 		.object({
@@ -131,11 +134,22 @@ export const InteractionSchema = z.object({
 		})
 		.optional(),
 	dateTime: z.string().optional(),
+	url: z.string().nullable().optional(),
 	privacyLevel: z.string().optional(),
 	title: z.string().optional(),
-	content: z.string().optional(),
+	// A logged interaction's content is text; imported ones carry an object (subject, snippet, text, status, ...) whose fields depend on the source, hence `unknown`.
+	content: z.union([z.string(), z.record(z.string(), z.unknown())]).optional(),
 	type: z.string().optional(),
 	activityType: z.string().optional(),
+});
+
+// A note's author is a workspace user, a deleted user (id only) or Folk's assistant (no id).
+export const NoteAuthorSchema = z.object({
+	type: z.string().optional(),
+	id: z.string().optional(),
+	fullName: z.string().nullable().optional(),
+	email: z.string().nullable().optional(),
+	deleted: z.boolean().optional(),
 });
 
 export const NoteSchema = z.object({
@@ -144,12 +158,13 @@ export const NoteSchema = z.object({
 		.object({
 			id: z.string(),
 			entityType: z.string().optional(),
+			fullName: z.string().optional(),
 		})
 		.optional(),
 	content: z.string(),
 	visibility: z.enum(['public', 'private']),
-	author: UserSummarySchema.nullable().optional(),
-	createdAt: z.string().optional(),
+	author: NoteAuthorSchema.nullable().optional(),
+	createdAt: z.string().nullable().optional(),
 	parentNote: z
 		.object({
 			id: z.string(),
