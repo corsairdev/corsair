@@ -63,8 +63,13 @@ class UnauthorizedError extends Error {
 	status = 401;
 }
 
+type ProbeCtx = { key: string; _refreshAuth?: () => Promise<string> };
+type ProbeArgs = Record<string, never>;
+type ProbeResult = { ok: true; key: string };
+type OAuthCtx = Parameters<typeof getOAuthAccessToken>[0];
+
 function probePlugin(seen: string[], withHooks: boolean): CorsairPlugin {
-	const callProvider = (key: string) => {
+	const callProvider = (key: string): ProbeResult => {
 		seen.push(key);
 		if (key === 'revoked') throw new UnauthorizedError('401');
 		return { ok: true, key };
@@ -77,7 +82,7 @@ function probePlugin(seen: string[], withHooks: boolean): CorsairPlugin {
 					hooks: {
 						items: {
 							list: {
-								before: async (ctx: unknown, args: unknown) => ({
+								before: async (ctx: ProbeCtx, args: ProbeArgs) => ({
 									ctx,
 									args,
 								}),
@@ -88,10 +93,7 @@ function probePlugin(seen: string[], withHooks: boolean): CorsairPlugin {
 			: {}),
 		endpoints: {
 			items: {
-				list: async (
-					ctx: { key: string; _refreshAuth?: () => Promise<string> },
-					_args: unknown,
-				) => {
+				list: async (ctx: ProbeCtx, _args: ProbeArgs) => {
 					try {
 						return callProvider(ctx.key);
 					} catch (error) {
@@ -103,15 +105,16 @@ function probePlugin(seen: string[], withHooks: boolean): CorsairPlugin {
 				},
 			},
 		},
-		keyBuilder: async (ctx: never) =>
+		keyBuilder: async (ctx: OAuthCtx) =>
 			getOAuthAccessToken(ctx, { plugin: 'probe', tokenUrl: TOKEN_URL }),
+		// CorsairPlugin's generics are inferred from a real plugin's schema and
+		// endpoint tree; this one-endpoint stand-in has neither, so it is cast.
 	} as unknown as CorsairPlugin;
 }
 
 describe('endpoint 401 refresh', () => {
-	const realFetch = global.fetch;
 	afterEach(() => {
-		global.fetch = realFetch;
+		jest.restoreAllMocks();
 	});
 
 	it.each([
@@ -124,26 +127,24 @@ describe('endpoint 401 refresh', () => {
 			try {
 				await seed(database);
 				const tokenCalls: string[] = [];
-				global.fetch = (async (url: string) => {
-					tokenCalls.push(String(url));
-					return {
-						ok: true,
-						status: 200,
-						headers: { get: () => 'application/json' },
-						text: async () =>
-							JSON.stringify({ access_token: 'fresh', expires_in: 3600 }),
-						json: async () => ({ access_token: 'fresh', expires_in: 3600 }),
-					} as unknown as Response;
-				}) as unknown as typeof fetch;
+				jest.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+					tokenCalls.push(String(input));
+					return new Response(
+						JSON.stringify({ access_token: 'fresh', expires_in: 3600 }),
+						{ status: 200, headers: { 'content-type': 'application/json' } },
+					);
+				});
 
 				const seen: string[] = [];
 				const corsair = createCorsair({
 					kek: KEK,
 					plugins: [probePlugin(seen, withHooks)],
 					database: database.db,
+					// The client type is built from registered plugin ids; 'probe' is
+					// not one, so the test names the one route it calls.
 				}) as unknown as {
 					probe: {
-						api: { items: { list: (a?: unknown) => Promise<unknown> } };
+						api: { items: { list: (a: ProbeArgs) => Promise<ProbeResult> } };
 					};
 				};
 
