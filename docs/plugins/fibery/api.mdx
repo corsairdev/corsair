@@ -3,6 +3,7 @@ title: "Fibery API reference"
 sidebarTitle: "API"
 description: "API reference for the Fibery plugin in Corsair: every `fibery.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
+
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -96,9 +97,9 @@ await corsair.fibery.api.collection.reset({ type: 'CRM/Lead', field: 'CRM/Contac
 
 `collection.set`
 
-Replace the contents of a Fibery collection field
+Replace the contents of a Fibery collection field, unlinking every item not in the new list
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.fibery.api.collection.set({ type: 'CRM/Lead', field: 'CRM/Contacts', entityId: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', itemIds: [] });
@@ -150,7 +151,8 @@ Rich-text fields are collaborative documents; first query the related document s
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `secret` | `string` | Yes | — |
-| `content` | `string` | Yes | — |
+| `content` | `string \| Record<string, JsonValue>` | Yes | — |
+| `modificationDate` | `string` | No | — |
 
 
 
@@ -184,7 +186,8 @@ await corsair.fibery.api.document.getBatch({ secrets: ['019dcf9a-c5ab-7292-9bdb-
 ```ts
 {
   secret: string,
-  content: string
+  content: string | Record<string, JsonValue>,
+  modificationDate?: string
 }[]
 ```
 </Accordion>
@@ -345,7 +348,7 @@ Entity queries return workspace-defined fields; select a bounded q/limit and fol
   q/where?: JsonValue,
   q/order-by?: JsonValue,
   q/offset?: number,
-  q/limit: number
+  q/limit?: number
 }
 ```
 </Accordion>
@@ -401,9 +404,20 @@ await corsair.fibery.api.entity.upsert({ type: 'CRM/Lead', entities: [{ 'fibery/
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
-| `entities` | `Record<string, JsonValue>[]` | Yes | — |
+| `entities` | `object[]` | Yes | — |
 | `conflictField` | `string` | Yes | — |
 | `conflictAction` | `skip-create \| update-latest` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entities full type">
+
+```ts
+{
+  fibery/id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -432,7 +446,7 @@ await corsair.fibery.api.file.download({ secret: '019dcf9a-c5ab-7292-9bdb-8956ee
 |------|------|----------|-------------|
 | `secret` | `string` | Yes | — |
 
-Returns { kind: 'binary', contentType, base64 }. Fibery's URL import endpoint is omitted because it fetches caller-provided URLs server-side.
+Returns `{ kind: 'binary', contentType, base64 }`. Fibery's URL import endpoint is omitted because it fetches caller-provided URLs server-side.
 
 
 
@@ -561,7 +575,7 @@ Pages may be shorter than limit; continue only while nextPage.hasNext, passing n
 
 ```ts
 {
-  field: id | action | entityPublicId | entityState | author | typeId | entityTypeId | entityName | entityId,
+  field: id | action | entityPublicId | entityState | author | typeId | entityTypeId | entityName | entityId | field,
   operator: = | in | contains | not-in | empty | not-empty,
   value?: JsonValue
 }[]
@@ -603,7 +617,7 @@ Create a Fibery database with its documented fields and metadata
 **Risk:** `write`
 
 ```ts
-await corsair.fibery.api.schema.createDatabase({ database: { 'fibery/name': 'CRM/Lead', 'fibery/meta': { 'fibery/domain?': true, 'fibery/secured?': true }, 'fibery/fields': [{ 'fibery/name': 'fibery/id', 'fibery/type': 'fibery/uuid', 'fibery/meta': { 'fibery/id?': true, 'fibery/readonly?': true } }, { 'fibery/name': 'fibery/public-id', 'fibery/type': 'fibery/text', 'fibery/meta': { 'fibery/public-id?': true, 'fibery/readonly?': true } }, { 'fibery/name': 'fibery/creation-date', 'fibery/type': 'fibery/date-time', 'fibery/meta': { 'fibery/creation-date?': true, 'fibery/readonly?': true, 'fibery/default-value': '$now' } }, { 'fibery/name': 'fibery/modification-date', 'fibery/type': 'fibery/date-time', 'fibery/meta': { 'fibery/modification-date?': true, 'fibery/readonly?': true, 'fibery/default-value': '$now' } }, { 'fibery/name': 'CRM/Name', 'fibery/type': 'fibery/text', 'fibery/meta': { 'ui/title?': true } }] } });
+await corsair.fibery.api.schema.createDatabase({ database: { 'fibery/name': 'CRM/Lead', 'fibery/meta': { 'fibery/domain?': true, 'fibery/secured?': true }, 'fibery/fields': [{ 'fibery/name': 'fibery/id', 'fibery/type': 'fibery/uuid', 'fibery/meta': { 'fibery/id?': true, 'fibery/readonly?': true } }, { 'fibery/name': 'fibery/public-id', 'fibery/type': 'fibery/text', 'fibery/meta': { 'fibery/public-id?': true, 'fibery/readonly?': true } }, { 'fibery/name': 'fibery/creation-date', 'fibery/type': 'fibery/date-time', 'fibery/meta': { 'fibery/creation-date?': true, 'fibery/readonly?': true, 'fibery/default-value': '$now' } }, { 'fibery/name': 'fibery/modification-date', 'fibery/type': 'fibery/date-time', 'fibery/meta': { 'fibery/modification-date?': true, 'fibery/required?': true, 'fibery/readonly?': true, 'fibery/default-value': '$now' } }, { 'fibery/name': 'CRM/Name', 'fibery/type': 'fibery/text', 'fibery/meta': { 'ui/title?': true } }] } });
 ```
 
 **Input**
@@ -977,3 +991,4 @@ await corsair.fibery.api.views.update({ updates: [{ id: '019dcf9a-c5ab-7292-9bdb
 
 
 ---
+
