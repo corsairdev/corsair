@@ -152,7 +152,7 @@ describe('Fathom errorHandlers', () => {
 			},
 		});
 
-		const handlerKeys = Object.keys(plugin.errorHandlers);
+		const handlerKeys = Object.keys(plugin.errorHandlers ?? {});
 		expect(handlerKeys[0]).toBe('CUSTOM_HANDLER');
 		expect(handlerKeys[handlerKeys.length - 1]).toBe('DEFAULT');
 	});

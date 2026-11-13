@@ -2,7 +2,7 @@ import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ZodError } from 'zod';
 import * as client from './client';
 import { Account, Events, Milestones, Reports, Sites } from './endpoints';
-import type { FathomContext, FathomKeyBuilderContext } from './index';
+import type { FathomContext } from './index';
 import { fathom, fathomEndpointMeta, fathomEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => {
@@ -547,33 +547,41 @@ describe('Fathom endpoints', () => {
 
 		it('keyBuilder throws AuthMissingError when key is absent', async () => {
 			const plugin = fathom();
-			const emptyCtx: FathomKeyBuilderContext = {
-				authType: 'api_key',
+			expect(plugin.keyBuilder).toBeDefined();
+			if (!plugin.keyBuilder) throw new Error('keyBuilder missing');
+			const emptyCtx = {
+				authType: 'api_key' as const,
 				options: {},
 				tenantId: 'test-tenant',
 				keys: {
 					get_api_key: () => Promise.resolve(null),
 					set_api_key: () => Promise.resolve(),
+					get_dek: () => Promise.resolve('dek'),
+					issue_new_dek: () => Promise.resolve('dek'),
 				},
 			};
 
-			await expect(plugin.keyBuilder(emptyCtx, 'endpoint')).rejects.toThrow(
-				AuthMissingError,
-			);
+			await expect(
+				plugin.keyBuilder(emptyCtx as never, 'endpoint'),
+			).rejects.toThrow(AuthMissingError);
 		});
 
 		it('keyBuilder returns static key when provided in options', async () => {
 			const plugin = fathom({ key: 'static-key-xyz' });
-			const keyBuilderCtx: FathomKeyBuilderContext = {
-				authType: 'api_key',
+			expect(plugin.keyBuilder).toBeDefined();
+			if (!plugin.keyBuilder) throw new Error('keyBuilder missing');
+			const keyBuilderCtx = {
+				authType: 'api_key' as const,
 				options: { key: 'static-key-xyz' },
 				tenantId: 'test-tenant',
 				keys: {
 					get_api_key: () => Promise.resolve('other-key'),
 					set_api_key: () => Promise.resolve(),
+					get_dek: () => Promise.resolve('dek'),
+					issue_new_dek: () => Promise.resolve('dek'),
 				},
 			};
-			const key = await plugin.keyBuilder(keyBuilderCtx, 'endpoint');
+			const key = await plugin.keyBuilder(keyBuilderCtx as never, 'endpoint');
 			expect(key).toBe('static-key-xyz');
 		});
 	});
