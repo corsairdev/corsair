@@ -65,8 +65,8 @@ describe('Fireberry HTTP client', () => {
 			{
 				url: 'https://api.fireberry.com/api/record/account',
 				ok: false,
-				status: 429,
-				statusText: 'Too Many Requests',
+				status: 422,
+				statusText: 'Unprocessable Entity',
 				body: { email: 'private@example.test' },
 			},
 			'Customer record exposed: private CRM value',
@@ -80,7 +80,7 @@ describe('Fireberry HTTP client', () => {
 		).catch((error: unknown) => error);
 		expect(result).toMatchObject({
 			name: 'FireberryAPIError',
-			status: 429,
+			status: 422,
 			retryAfter: 4000,
 			message: 'Fireberry request failed',
 		});

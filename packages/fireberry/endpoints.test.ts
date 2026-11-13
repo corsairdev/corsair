@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
 import { makeFireberryRequest } from './client';
 import {
@@ -16,8 +17,14 @@ jest.mock('corsair/http', () => {
 		jest.requireActual<typeof import('corsair/http')>('corsair/http');
 	return { ...actual, request: jest.fn() };
 });
+jest.mock('corsair/core', () => {
+	const actual =
+		jest.requireActual<typeof import('corsair/core')>('corsair/core');
+	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue(null) };
+});
 
 const mockRequest = jest.mocked(request);
+const mockLogEventFromContext = jest.mocked(logEventFromContext);
 const unusedEndpoint = async (): Promise<never> => {
 	throw new Error('Endpoint stubs are not invoked by this test');
 };
@@ -75,6 +82,8 @@ const endpointContext = {
 beforeEach(() => {
 	mockRequest.mockReset();
 	mockRequest.mockResolvedValue({ success: true, data: {}, message: '' });
+	mockLogEventFromContext.mockReset();
+	mockLogEventFromContext.mockResolvedValue(null);
 });
 
 describe('registered Fireberry operations and route semantics', () => {
@@ -444,6 +453,14 @@ describe('registered Fireberry operations and route semantics', () => {
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 
+		await expect(
+			Batch.update(endpointContext, {
+				objectCode: 'crmuser',
+				data: [{ id: 'user-id', record: { emailaddress1: 42 } }],
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+
 		mockRequest.mockResolvedValueOnce({});
 		await Batch.create(endpointContext, {
 			objectCode: 'accountproduct',
@@ -572,5 +589,20 @@ describe('registered Fireberry operations and route semantics', () => {
 			{ data: [{ id: 'record-id', record: { accountname: 'Changed' } }] },
 			{ data: ['record-id'] },
 		]);
+	});
+
+	it('accepts an empty Batch delete response and logs successful completion', async () => {
+		mockRequest.mockResolvedValueOnce(undefined);
+		const result = await Batch.delete(endpointContext, {
+			objectCode: 'account',
+			ids: ['record-id'],
+		});
+		expect(result).toBeUndefined();
+		expect(mockLogEventFromContext).toHaveBeenCalledWith(
+			endpointContext,
+			'fireberry.batch.delete',
+			{ count: 1 },
+			'completed',
+		);
 	});
 });

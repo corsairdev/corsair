@@ -149,6 +149,36 @@ describe('Fireberry endpoint schemas', () => {
 				ids: Array.from({ length: 21 }, (_, index) => `record-${index}`),
 			}).success,
 		).toBe(false);
+		expect(
+			fireberryEndpointSchemas['batch.create'].input.safeParse({
+				objectCode: 'account',
+				data: Array.from({ length: 20 }, () => ({ accountname: 'Example' })),
+			}).success,
+		).toBe(true);
+		expect(
+			fireberryEndpointSchemas['batch.create'].input.safeParse({
+				objectCode: 'account',
+				data: Array.from({ length: 21 }, () => ({ accountname: 'Example' })),
+			}).success,
+		).toBe(false);
+		expect(
+			fireberryEndpointSchemas['batch.update'].input.safeParse({
+				objectCode: 'account',
+				data: Array.from({ length: 20 }, (_, index) => ({
+					id: `record-${index}`,
+					record: { accountname: 'Example' },
+				})),
+			}).success,
+		).toBe(true);
+		expect(
+			fireberryEndpointSchemas['batch.update'].input.safeParse({
+				objectCode: 'account',
+				data: Array.from({ length: 21 }, (_, index) => ({
+					id: `record-${index}`,
+					record: { accountname: 'Example' },
+				})),
+			}).success,
+		).toBe(false);
 	});
 
 	it('enforces Query v3 aggregation and filter operator dependencies', () => {

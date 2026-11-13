@@ -28,8 +28,9 @@ so the published route is internally contradictory.
 
 REST record list pagination is `pagesize` 1–50 and `pagenumber` 1–10. Query
 v3 permits `pageSize` up to 500; legacy query uses its documented
-`page_size`/`page_number` fields with the same maxima. Batch deletion accepts
-up to 20 IDs. Batch availability depends on the Fireberry license.
+`page_size`/`page_number` fields with the same maxima. Batch create, update,
+and delete accept up to 20 records per request. Batch availability depends on
+the Fireberry license.
 The official reference does not specify general rate limits or retry
 idempotency guidance. The client preserves `Retry-After` on 429 responses but
 does not automatically retry writes.

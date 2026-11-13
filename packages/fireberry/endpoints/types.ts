@@ -74,7 +74,7 @@ const BatchInputSchema = z
 			]),
 			CustomObjectCodeSchema,
 		]),
-		data: z.array(FieldMapSchema).min(1),
+		data: z.array(FieldMapSchema).min(1).max(20),
 	})
 	.strict()
 	.superRefine((input, ctx) => {
@@ -131,7 +131,8 @@ const BatchUpdateInputSchema = z
 			.array(
 				z.object({ id: z.string().min(1), record: FieldMapSchema }).strict(),
 			)
-			.min(1),
+			.min(1)
+			.max(20),
 	})
 	.strict()
 	.superRefine((input, ctx) => {
@@ -182,6 +183,12 @@ const BatchDeleteInputSchema = z
 	.strict();
 // Batch API response bodies are undocumented on create/update and empty for delete.
 const BatchResponseSchema = z.object({}).passthrough();
+// Fireberry's Batch delete endpoint may return an empty body after deletion.
+const BatchDeleteResponseSchema = z.union([
+	z.object({}).passthrough(),
+	z.undefined(),
+	z.literal(''),
+]);
 const EmptyResponseSchema = z.object({}).passthrough();
 const BATCH_SCHEMA_RESOURCE_ALIASES: Record<string, string> = {
 	accountproduct: 'asset',
@@ -856,7 +863,7 @@ const MetadataEnvelopeSchema = z.object({
 	data: MetadataDataSchema,
 	message: z.string(),
 });
-// Legacy query results vary with selected fields; docs provide only a placeholder data example.
+// Legacy query results vary with selected fields; the official response schema leaves data unspecified.
 const LegacyQueryDataSchema = z.unknown();
 const LegacyQueryResponseSchema = z.object({
 	success: z.boolean(),
@@ -1113,7 +1120,10 @@ const endpointSchemas = {
 	fileUpload: { input: FileUploadInputSchema, output: EmptyResponseSchema },
 	batchCreate: { input: BatchInputSchema, output: BatchResponseSchema },
 	batchUpdate: { input: BatchUpdateInputSchema, output: BatchResponseSchema },
-	batchDelete: { input: BatchDeleteInputSchema, output: BatchResponseSchema },
+	batchDelete: {
+		input: BatchDeleteInputSchema,
+		output: BatchDeleteResponseSchema,
+	},
 } as const;
 
 type InferInput<K extends keyof typeof endpointSchemas> = z.infer<

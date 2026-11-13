@@ -29,7 +29,7 @@ await corsair.fireberry.api.batch.create({ objectCode: '1', data: [{ accountname
 | `objectCode` | `account \| activitylog \| article \| accountproduct \| businessunit \| campaign \| competitor \| contact \| contract \| invoicecredit \| invoicedelivery \| invoicedraft \| invoiceno \| invoicereno \| activity \| note \| opportunity \| crmorder \| crmorderitem \| calllog \| product \| project \| invoicereceipt \| task \| cases \| string` | Yes | — |
 | `data` | `Record<string, JsonValue>[]` | Yes | — |
 
-Batch create accepts an array of records under data. Invalid items may fail while valid records in the same request are still created.
+Batch create accepts 1–20 records under data. Invalid items may fail while valid records in the same request are still created.
 
 
 
@@ -61,7 +61,17 @@ Deletion accepts at most 20 record GUIDs under data. Batch API availability depe
 
 
 
-**Output:** _empty object_
+**Output:** `object \| undefined \| ""`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined | ""
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -85,7 +95,7 @@ await corsair.fireberry.api.batch.update({ objectCode: '1', data: [{ id: '000000
 | `objectCode` | `account \| activitylog \| article \| accountproduct \| businessunit \| campaign \| competitor \| contact \| contract \| invoicecredit \| invoicedelivery \| invoicedraft \| invoiceno \| invoicereno \| activity \| opportunity \| crmorder \| crmorderitem \| calllog \| product \| project \| invoicereceipt \| task \| cases \| crmuser \| string` | Yes | — |
 | `data` | `object[]` | Yes | — |
 
-Each batch update item requires an id and a record field map. Invalid items may fail while valid records continue.
+Batch update accepts 1–20 items; each item requires an id and a record field map. Invalid items may fail while valid records continue.
 
 <AccordionGroup>
 <Accordion title="data full type">
