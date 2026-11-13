@@ -81,6 +81,8 @@ export class OAuthRefreshError extends Error {
 
 function readErrorCode(body: string): string | undefined {
 	try {
+		// unknown: the token endpoint's body is the provider's, unvalidated;
+		// the typeof check below is what narrows it.
 		const parsed = JSON.parse(body) as { error?: unknown };
 		return typeof parsed.error === 'string' ? parsed.error : undefined;
 	} catch {

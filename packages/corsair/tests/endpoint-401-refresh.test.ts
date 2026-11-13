@@ -90,9 +90,14 @@ type ProbeOptions = {
 	// What a rejected key fails with.
 	failure?: 'unauthorized' | 'server';
 	// What the provider's token endpoint answers the refresh with.
-	tokenReply?: { status: number; body: Record<string, unknown> };
+	tokenReply?: {
+		status: number;
+		body: { access_token?: string; expires_in?: number; error?: string };
+	};
 	// The plugin opts out of core's retry.
 	refreshOnUnauthorized?: false;
+	// Declared risk level of items.list; core retries only reads.
+	riskLevel?: 'read' | 'write';
 };
 
 function probePlugin(seen: string[], opts: ProbeOptions = {}): CorsairPlugin {
@@ -109,6 +114,7 @@ function probePlugin(seen: string[], opts: ProbeOptions = {}): CorsairPlugin {
 	return {
 		id: 'probe',
 		options: { authType: 'oauth_2' },
+		endpointMeta: { 'items.list': { riskLevel: opts.riskLevel ?? 'read' } },
 		...(opts.refreshOnUnauthorized === false
 			? { refreshOnUnauthorized: false }
 			: {}),
@@ -251,6 +257,16 @@ describe('endpoint 401 refresh', () => {
 			});
 			expect(out.error?.message).toContain('Reconnecting will not help');
 		});
+	});
+
+	it('core leaves a 401 on a write to the plugin', async () => {
+		// The retry would run the whole endpoint again, and a write may have
+		// landed before the request that got the 401.
+		const out = await run({ riskLevel: 'write' });
+
+		expect(out.error).toBeInstanceOf(UnauthorizedError);
+		expect(out.seen).toEqual(['revoked']);
+		expect(out.tokenCalls).toEqual([]);
 	});
 
 	it('core leaves a 401 alone for a plugin that opted out', async () => {

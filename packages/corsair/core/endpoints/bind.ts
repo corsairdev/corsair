@@ -90,6 +90,9 @@ export function isEndpoint(value: unknown): value is Function {
  * `statusCode`), sometimes on a wrapped `cause`. Provider-specific codes (a
  * Facebook 190, a Zoho 57) stay with the plugins that know them.
  */
+// unknown: this receives whatever an endpoint threw (a catch value has no
+// type in TypeScript, and plugins throw their own classes); the checks below
+// narrow it field by field.
 export function isUnauthorizedError(error: unknown, depth = 0): boolean {
 	if (!error || typeof error !== 'object' || depth > 2) return false;
 	const { status, statusCode, cause } = error as {
@@ -420,6 +423,8 @@ export function bindEndpointsRecursively({
 				// The keyBuilder adds `_refreshAuth` to this ctx, and an OAuth
 				// plugin calls it to refresh the token after a 401. The endpoint
 				// must get this ctx, not a new copy of the original one.
+				// unknown: ctx carries each plugin's own options, keys and helpers, so
+				// no shared type covers its values; `call` takes it the same way.
 				const endpointCtx: Record<string, unknown> = {
 					...ctx,
 					meteredOperationId: operationPath,
@@ -430,6 +435,7 @@ export function bindEndpointsRecursively({
 				// An auth failure (no credentials, or a refresh the provider refused)
 				// is reported as an unverified connection, and its connect link is
 				// recorded for the connect dialog. Anything else is rethrown as is.
+				// unknown: err is a caught value, from a keyBuilder or a refresh.
 				const raiseAuthError = async (err: unknown): Promise<never> => {
 					// Hub already minted a scoped connect link and put it on the typed
 					// error — report the connection unverified and rethrow it intact.
@@ -558,6 +564,14 @@ export function bindEndpointsRecursively({
 				}
 				// A 401 the endpoint did not handle itself: refresh the token once
 				// (a revoked or rotated token can still look fresh) and call again.
+				// Only for reads: the retry runs the whole endpoint again, and a write
+				// that makes several requests may have landed one before the 401.
+				// Writes keep the plugin's own handling, which can retry just the
+				// request that failed.
+				const retriesUnauthorized =
+					(endpointMetaEntry?.riskLevel ?? 'write') === 'read';
+				// unknown: the same ctx and args `call` takes; each endpoint's own
+				// schema validates its args, so none is known here.
 				const callWithAuthRetry = async (
 					callCtx: Record<string, unknown>,
 					callArgs: unknown,
@@ -568,6 +582,7 @@ export function bindEndpointsRecursively({
 						const refresh = callCtx._refreshAuth;
 						if (
 							refreshedThisCall ||
+							!retriesUnauthorized ||
 							plugin?.refreshOnUnauthorized === false ||
 							typeof refresh !== 'function' ||
 							!isUnauthorizedError(error)
