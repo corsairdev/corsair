@@ -1,4 +1,5 @@
 import { BaseProviders } from '../core/constants';
+import { tryGetCorsairInternal } from '../core/utils/corsair-instance';
 import type {
 	BoundWebhook,
 	BoundWebhookTree,
@@ -6,6 +7,11 @@ import type {
 	RawWebhookRequest,
 	WebhookResponse,
 } from '../core/webhooks';
+import {
+	collectPluginWebhookMatchers,
+	matchWebhookPluginAndTenant,
+} from '../core/webhooks/tenant-match';
+import { resolveTenantFromWebhookLink } from './tenant-links';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -148,6 +154,42 @@ function buildGoogleChannelBody(
 }
 
 /**
+ * The tenant a delivery belongs to when its URL names none, on a multi-tenant
+ * instance: the plugin's tenant matcher reads the provider's account id from
+ * the delivery, and the stored webhook link maps it to a tenant (the same
+ * lookup the tunnel does with Hub's routing). Undefined when nothing matches,
+ * so the caller keeps its own fallback.
+ */
+async function resolveTenantFromPayload(
+	corsair: unknown,
+	request: RawWebhookRequest,
+	hintedPlugin: string | undefined,
+): Promise<string | undefined> {
+	const internal = tryGetCorsairInternal(corsair);
+	if (!internal?.multiTenancy || !internal.database) return undefined;
+	const matchers = collectPluginWebhookMatchers(internal.plugins);
+	const match = hintedPlugin
+		? (() => {
+				const tenantMatch =
+					matchers[hintedPlugin]?.pluginTenantWebhookMatcher?.(request);
+				return tenantMatch ? { plugin: hintedPlugin, tenantMatch } : null;
+			})()
+		: matchWebhookPluginAndTenant(matchers, request);
+	if (!match) return undefined;
+	try {
+		const tenantId = await resolveTenantFromWebhookLink({
+			database: internal.database,
+			kek: internal.kek,
+			pluginId: match.plugin,
+			match: match.tenantMatch,
+		});
+		return tenantId ?? undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+/**
  * Filters an incoming webhook request through all plugins in a corsair instance.
  *
  * Goes through each enabled plugin to find a matching webhook handler.
@@ -212,7 +254,10 @@ export async function processWebhook(
 		...(query ? { query } : {}),
 	} satisfies RawWebhookRequest;
 
-	const tenantId = query?.tenantId || 'default';
+	const tenantId =
+		query?.tenantId ||
+		(await resolveTenantFromPayload(corsair, rawRequest, options?.plugin)) ||
+		'default';
 
 	const tenantScopedCorsair = corsair.withTenant
 		? corsair.withTenant(tenantId)
@@ -266,6 +311,25 @@ export async function processWebhook(
 			const returnToSenderObjectExists = !!Object.keys(
 				response.returnToSender || {},
 			)?.length;
+
+			// A handler that refused the delivery (a wrong secret, a failed
+			// signature check) says so with success: false. Report that, with
+			// its error and status, instead of a success the sender never earned.
+			if (response.success === false) {
+				return {
+					plugin: pluginId,
+					action,
+					body: parsedBody,
+					response: {
+						success: false,
+						...(response.error ? { error: response.error } : {}),
+						...(response.statusCode ? { statusCode: response.statusCode } : {}),
+					},
+					...(response.responseHeaders && {
+						responseHeaders: response.responseHeaders,
+					}),
+				};
+			}
 
 			return {
 				plugin: pluginId,
