@@ -1,9 +1,1 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const GorgiasExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type GorgiasExample = z.infer<typeof GorgiasExample>;
+export const GorgiasEntities = {} as const;

@@ -1,24 +1,22 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
+import { GorgiasAPIError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
-		},
-		// Core's request() has already retried this 429 (three times, honouring
-		// Retry-After) before it reaches a handler. Retrying the endpoint again
-		// here would multiply the attempts and the wait.
+		match: (error: Error) =>
+			(error instanceof ApiError && error.status === 429) ||
+			(error instanceof GorgiasAPIError && error.status === 429),
+		// The shared transport retries ApiError 429s and the binary transport
+		// owns its Retry-After loop, so another endpoint retry would multiply calls.
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
-		},
+		match: (error: Error) =>
+			(error instanceof ApiError &&
+				(error.status === 401 || error.status === 403)) ||
+			(error instanceof GorgiasAPIError &&
+				(error.status === 401 || error.status === 403)),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {

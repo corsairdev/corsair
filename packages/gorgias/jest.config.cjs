@@ -2,6 +2,7 @@ module.exports = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	roots: ['<rootDir>'],
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
 	testMatch: [
 		'**/*.test.ts',
 		'**/tests/**/*.test.ts',
