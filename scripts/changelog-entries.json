@@ -4375,5 +4375,21 @@
         "title": "Plugin error handlers first, kek check before the call, honest webhook results"
       }
     ]
+  },
+  {
+    "date": "2026-11-13",
+    "package": "@corsair-dev/zohodesk",
+    "dir": "packages/zohodesk",
+    "name": "Zoho Desk",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2358,
+        "title": "Turn off core's 401 refresh, the endpoints already decide which 401s get one"
+      }
+    ]
   }
 ]
