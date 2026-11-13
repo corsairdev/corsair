@@ -93,7 +93,7 @@ describe('Fomo errorHandlers', () => {
 		});
 	});
 
-	it('preserves caller-supplied handlers and places DEFAULT last', () => {
+	it('prioritizes caller handlers before built-ins and places DEFAULT last', () => {
 		const customRateLimitHandler = {
 			match: (e: Error) => e.message.includes('custom_rate_limit'),
 			handler: async () => ({ maxRetries: 2 }),
@@ -114,12 +114,28 @@ describe('Fomo errorHandlers', () => {
 		if (!plugin.errorHandlers) throw new Error('errorHandlers missing');
 
 		const keys = Object.keys(plugin.errorHandlers);
-		expect(plugin.errorHandlers.CUSTOM_RATE).toBe(customRateLimitHandler);
+		// 1. Caller handlers come before built-in handlers
+		expect(keys[0]).toBe('CUSTOM_RATE');
+		// 2. Custom handler appears before RATE_LIMIT_ERROR and before other built-ins
+		expect(keys.indexOf('CUSTOM_RATE')).toBeLessThan(
+			keys.indexOf('RATE_LIMIT_ERROR'),
+		);
+		expect(keys.indexOf('CUSTOM_RATE')).toBeLessThan(
+			keys.indexOf('AUTH_ERROR'),
+		);
+		expect(keys.indexOf('CUSTOM_RATE')).toBeLessThan(
+			keys.indexOf('NOT_FOUND_ERROR'),
+		);
+		expect(keys.indexOf('CUSTOM_RATE')).toBeLessThan(
+			keys.indexOf('BAD_REQUEST_ERROR'),
+		);
+		// 4. DEFAULT is always the last key
 		expect(keys[keys.length - 1]).toBe('DEFAULT');
+		expect(plugin.errorHandlers.CUSTOM_RATE).toBe(customRateLimitHandler);
 		expect(plugin.errorHandlers.DEFAULT).toBe(customDefaultHandler);
 	});
 
-	it('preserves caller-supplied handler when overriding a built-in handler name like RATE_LIMIT_ERROR', () => {
+	it('preserves caller-supplied handler when overriding a built-in without duplicating it', () => {
 		const customRateLimitHandler = {
 			match: (e: Error) => e.message.includes('custom_429'),
 			handler: async () => ({ maxRetries: 7 }),
@@ -131,6 +147,15 @@ describe('Fomo errorHandlers', () => {
 			},
 		});
 
-		expect(plugin.errorHandlers?.RATE_LIMIT_ERROR).toBe(customRateLimitHandler);
+		expect(plugin.errorHandlers).toBeDefined();
+		if (!plugin.errorHandlers) throw new Error('errorHandlers missing');
+
+		const keys = Object.keys(plugin.errorHandlers);
+		// 3. Caller handler is preserved and not duplicated
+		expect(plugin.errorHandlers.RATE_LIMIT_ERROR).toBe(customRateLimitHandler);
+		expect(keys.filter((k) => k === 'RATE_LIMIT_ERROR')).toHaveLength(1);
+		expect(keys[0]).toBe('RATE_LIMIT_ERROR');
+		// 4. Built-in DEFAULT remains last key when not overridden
+		expect(keys[keys.length - 1]).toBe('DEFAULT');
 	});
 });

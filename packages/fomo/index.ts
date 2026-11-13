@@ -235,9 +235,13 @@ export function fomo<const T extends FomoPluginOptions>(
 
 	const { DEFAULT: builtInDefault, ...builtIns } = errorHandlers;
 	const { DEFAULT: callerDefault, ...callers } = options.errorHandlers ?? {};
+	// Exclude built-in handlers that the caller explicitly overrides so callers always take precedence
+	const nonOverriddenBuiltIns = Object.fromEntries(
+		Object.entries(builtIns).filter(([key]) => !(key in callers)),
+	);
 	const mergedErrorHandlers = {
-		...builtIns,
 		...callers,
+		...nonOverriddenBuiltIns,
 		DEFAULT: callerDefault ?? builtInDefault,
 	};
 
