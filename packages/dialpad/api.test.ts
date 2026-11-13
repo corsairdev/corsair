@@ -4,6 +4,9 @@ import { DialpadEndpointOutputSchemas } from './endpoints/types';
 
 const apiKey = process.env.DIALPAD_API_KEY;
 
+if (!apiKey) {
+	console.warn('DIALPAD_API_KEY is not set; skipping the live Dialpad test.');
+}
 const liveTest = apiKey ? test : test.skip;
 
 liveTest('reads the authenticated Dialpad company profile', async () => {

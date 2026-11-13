@@ -373,6 +373,29 @@ describe('Dialpad HTTP request behavior', () => {
 		},
 	);
 
+	it('treats the login page a refused recording download redirects to as a 401', async () => {
+		fetchMock.mockResolvedValue(
+			new Response('<html>Sign in</html>', {
+				status: 200,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' },
+			}),
+		);
+
+		// `unknown` because a rejected request can contain any thrown value.
+		const error = await makeDialpadRequest(
+			DialpadOperationDefinitions['recordings.call.download'],
+			{ path: { recording_id: '6086754856781234' } },
+			{ apiKey: 'safe-test-token' },
+		).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) {
+			throw new Error('Expected a Dialpad ApiError');
+		}
+		expect(error.status).toBe(401);
+		expect(error.message).not.toContain('safe-test-token');
+	});
+
 	it('preserves report download Retry-After metadata without retrying', async () => {
 		fetchMock.mockResolvedValue(
 			new Response(JSON.stringify({ error_code: 429, message: 'Try later' }), {

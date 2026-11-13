@@ -343,6 +343,23 @@ async function makeRecordingDownload(
 		);
 	}
 
+	// A key Dialpad does not accept (or one without recordings_export) is redirected to
+	// the HTML login page, which answers 200; that is an auth failure, not audio.
+	if (response.headers.get('content-type')?.includes('text/html')) {
+		await response.body?.cancel().catch(() => undefined);
+		throw new ApiError(
+			requestOptions,
+			{
+				url: url.toString(),
+				ok: false,
+				status: 401,
+				statusText: 'Unauthorized',
+				body: undefined,
+			},
+			'Dialpad returned its login page instead of the recording; the key needs the recordings_export scope',
+		);
+	}
+
 	const bytes = await readCappedBody(response, DIALPAD_REPORT_MAX_BYTES);
 	return {
 		kind: 'binary',
