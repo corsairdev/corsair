@@ -1,0 +1,6 @@
+displayName: Postalytics
+description: Manage direct mail campaigns, contacts, flows, templates, suppression lists, and outbound webhook configurations with the Postalytics API.
+domain: postalytics.com
+overviewNote: Postalytics authenticates with an API key as the HTTP Basic username and an empty password. Set sandbox to true in plugin options to use the development host. Outbound webhook configuration is supported; inbound webhook verification is not implemented.
+examples:
+  read: account.getMyAccount

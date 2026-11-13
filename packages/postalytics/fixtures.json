@@ -1,0 +1,512 @@
+[
+  {
+    "group": "account",
+    "name": "getIntegrations",
+    "method": "GET",
+    "path": "/api/v1/account/integrations",
+    "input": {},
+    "output": []
+  },
+  {
+    "group": "account",
+    "name": "getMyAccount",
+    "method": "GET",
+    "path": "/api/v1/account/me",
+    "input": {},
+    "output": []
+  },
+  {
+    "group": "account",
+    "name": "getAccount",
+    "method": "GET",
+    "path": "/api/v1/account/42",
+    "input": {
+      "id": 42
+    },
+    "output": []
+  },
+  {
+    "group": "account",
+    "name": "createNewAccount",
+    "method": "POST",
+    "path": "/api/v1/account",
+    "input": {
+      "body": {
+        "first_name": "Thomas",
+        "last_name": "Anderson",
+        "password": "test-password",
+        "username": "choi"
+      }
+    },
+    "output": {}
+  },
+  {
+    "group": "account",
+    "name": "updateAccount",
+    "method": "PUT",
+    "path": "/api/v1/account",
+    "input": {
+      "body": {
+        "first_name": "Thomas",
+        "last_name": "Anderson",
+        "password": "test-password",
+        "username": "choi"
+      }
+    },
+    "output": {}
+  },
+  {
+    "group": "account",
+    "name": "deleteAccount",
+    "method": "DELETE",
+    "path": "/api/v1/account/42",
+    "input": {
+      "id": 42
+    },
+    "output": {}
+  },
+  {
+    "group": "campaigns",
+    "name": "getAllCampaigns",
+    "method": "GET",
+    "path": "/api/v1/campaigns",
+    "input": {},
+    "output": []
+  },
+  {
+    "group": "campaigns",
+    "name": "getAllDripCampaigns",
+    "method": "GET",
+    "path": "/api/v1/campaigns/drips",
+    "input": {},
+    "output": []
+  },
+  {
+    "group": "campaigns",
+    "name": "getCampaignStats",
+    "method": "GET",
+    "path": "/api/v1/campaigns/42",
+    "input": {
+      "id": 42
+    },
+    "output": []
+  },
+  {
+    "group": "campaigns",
+    "name": "getCampaign",
+    "method": "GET",
+    "path": "/api/v1/campaigns/42/details",
+    "input": {
+      "id": 42
+    },
+    "output": {}
+  },
+  {
+    "group": "campaigns",
+    "name": "getCampaignEvents",
+    "method": "GET",
+    "path": "/api/v1/campaigns/42/events?PageNumber=2&PageSize=2",
+    "input": {
+      "id": 42,
+      "PageNumber": 2,
+      "PageSize": 2
+    },
+    "output": []
+  },
+  {
+    "group": "campaigns",
+    "name": "getContactEvent",
+    "method": "GET",
+    "path": "/api/v1/campaigns/42/events/42?PageNumber=2&PageSize=2",
+    "input": {
+      "dataid": 42,
+      "id": 42,
+      "PageNumber": 2,
+      "PageSize": 2
+    },
+    "output": []
+  },
+  {
+    "group": "campaigns",
+    "name": "createNewCampaign",
+    "method": "POST",
+    "path": "/api/v1/campaigns",
+    "input": {
+      "body": {
+        "CreditTypeId": 34,
+        "DirectMailName": "Keymaker",
+        "PostageType": 10142067,
+        "SenderAddress1": "36 Pipers Row",
+        "SenderCity": "New York",
+        "SenderName": "Metacortex",
+        "SenderState": "NY",
+        "SenderZip": "10001",
+        "TemplateFrontId": 10142067
+      }
+    },
+    "output": {}
+  },
+  {
+    "group": "campaigns",
+    "name": "updateCampaignStatus",
+    "method": "PUT",
+    "path": "/api/v1/campaigns/42",
+    "input": {
+      "id": 42
+    },
+    "output": {}
+  },
+  {
+    "group": "campaigns",
+    "name": "deleteCampaign",
+    "method": "DELETE",
+    "path": "/api/v1/campaigns/42",
+    "input": {
+      "id": 42
+    },
+    "output": {}
+  },
+  {
+    "group": "contacts",
+    "name": "getAllContactLists",
+    "method": "GET",
+    "path": "/api/v1/contacts",
+    "input": {},
+    "output": []
+  },
+  {
+    "group": "contacts",
+    "name": "getContact",
+    "method": "GET",
+    "path": "/api/v1/contacts/details/42",
+    "input": {
+      "id": 42
+    },
+    "output": {}
+  },
+  {
+    "group": "contacts",
+    "name": "getContactsOnList",
+    "method": "GET",
+    "path": "/api/v1/contacts/42?limit=2&start=2",
+    "input": {
+      "id": 42,
+      "limit": 2,
+      "start": 2
+    },
+    "output": []
+  },
+  {
+    "group": "contacts",
+    "name": "createContactOnList",
+    "method": "POST",
+    "path": "/api/v1/contacts",
+    "input": {
+      "body": {
+        "contact_id": 1,
+        "contact_list_id": 10142067
+      }
+    },
+    "output": {}
+  },
+  {
+    "group": "contacts",
+    "name": "updateContactOnList",
+    "method": "PUT",
+    "path": "/api/v1/contacts",
+    "input": {
+      "body": {
+        "contact_id": 1,
+        "contact_list_id": 10142067
+      }
+    },
+    "output": {}
+  },
+  {
+    "group": "contacts",
+    "name": "deleteContact",
+    "method": "DELETE",
+    "path": "/api/v1/contacts/42",
+    "input": {
+      "id": 42
+    },
+    "output": {}
+  },
+  {
+    "group": "flows",
+    "name": "getAllFlows",
+    "method": "GET",
+    "path": "/api/v1/flow",
+    "input": {},
+    "output": []
+  },
+  {
+    "group": "flows",
+    "name": "getFlow",
+    "method": "GET",
+    "path": "/api/v1/flow/segment",
+    "input": {
+      "endpointId": "segment"
+    },
+    "output": {}
+  },
+  {
+    "group": "flows",
+    "name": "enrollContactToFlow",
+    "method": "POST",
+    "path": "/api/v1/flow/segment",
+    "input": {
+      "endPoint": "segment",
+      "body": {
+        "address_city": "New York",
+        "address_state": "NY",
+        "address_street": "36 Pipers Row",
+        "address_zip": "10001",
+        "first_name": "Thomas",
+        "last_name": "Anderson"
+      }
+    },
+    "output": {}
+  },
+  {
+    "group": "flows",
+    "name": "unenrollContactFromFlow",
+    "method": "DELETE",
+    "path": "/api/v1/flow/unenroll/segment/42",
+    "input": {
+      "dataId": 42,
+      "endPoint": "segment"
+    },
+    "output": {}
+  },
+  {
+    "group": "login",
+    "name": "createLoginLink",
+    "method": "POST",
+    "path": "/api/v1/loginlink",
+    "input": {
+      "body": {
+        "api_key": "fixture-api-key"
+      }
+    },
+    "output": {}
+  },
+  {
+    "group": "mail",
+    "name": "sendMail",
+    "method": "POST",
+    "path": "/api/v1/send/segment",
+    "input": {
+      "endPoint": "segment",
+      "body": {
+        "address_city": "New York",
+        "address_state": "NY",
+        "address_street": "36 Pipers Row",
+        "address_zip": "10001",
+        "first_name": "Thomas",
+        "last_name": "Anderson"
+      }
+    },
+    "output": {}
+  },
+  {
+    "group": "suppressionLists",
+    "name": "getSuppressionLists",
+    "method": "GET",
+    "path": "/api/v1/lists/suppression?id=2",
+    "input": {
+      "id": 2
+    },
+    "output": []
+  },
+  {
+    "group": "suppressionLists",
+    "name": "getSuppressionList",
+    "method": "GET",
+    "path": "/api/v1/lists/suppression/42",
+    "input": {
+      "id": 42
+    },
+    "output": []
+  },
+  {
+    "group": "suppressionLists",
+    "name": "createSuppressionList",
+    "method": "POST",
+    "path": "/api/v1/lists/suppression",
+    "input": {
+      "body": {}
+    },
+    "output": []
+  },
+  {
+    "group": "suppressionLists",
+    "name": "deleteSuppressionList",
+    "method": "DELETE",
+    "path": "/api/v1/lists/suppression/42",
+    "input": {
+      "id": 42
+    },
+    "output": {}
+  },
+  {
+    "group": "suppressionContacts",
+    "name": "getSuppressionListContacts",
+    "method": "GET",
+    "path": "/api/v1/lists/suppression/contacts/42?offset=2",
+    "input": {
+      "listId": 42,
+      "offset": 2
+    },
+    "output": {
+      "ContactDetails": [],
+      "ListDetails": {}
+    }
+  },
+  {
+    "group": "suppressionContacts",
+    "name": "getSuppressionListContact",
+    "method": "GET",
+    "path": "/api/v1/lists/suppression/contacts/42/42?offset=2",
+    "input": {
+      "contactId": 42,
+      "listId": 42,
+      "offset": 2
+    },
+    "output": {
+      "ContactDetails": [],
+      "ListDetails": {}
+    }
+  },
+  {
+    "group": "suppressionContacts",
+    "name": "createSuppressionListContact",
+    "method": "POST",
+    "path": "/api/v1/lists/suppression/contacts/42",
+    "input": {
+      "listId": 42,
+      "body": {}
+    },
+    "output": {
+      "ContactDetails": [],
+      "ListDetails": {}
+    }
+  },
+  {
+    "group": "suppressionContacts",
+    "name": "updateSuppressionListContact",
+    "method": "PUT",
+    "path": "/api/v1/lists/suppression/contacts/42/42",
+    "input": {
+      "contactId": 42,
+      "listId": 42,
+      "body": {}
+    },
+    "output": {
+      "ContactDetails": [],
+      "ListDetails": {}
+    }
+  },
+  {
+    "group": "suppressionContacts",
+    "name": "deleteSuppressionListContact",
+    "method": "DELETE",
+    "path": "/api/v1/lists/suppression/contacts/42/42",
+    "input": {
+      "contactId": 42,
+      "listId": 42
+    },
+    "output": {}
+  },
+  {
+    "group": "templates",
+    "name": "getAllTemplates",
+    "method": "GET",
+    "path": "/api/v1/templates",
+    "input": {},
+    "output": []
+  },
+  {
+    "group": "templates",
+    "name": "getTemplate",
+    "method": "GET",
+    "path": "/api/v1/templates/42",
+    "input": {
+      "id": 42
+    },
+    "output": []
+  },
+  {
+    "group": "templates",
+    "name": "createTemplate",
+    "method": "POST",
+    "path": "/api/v1/templates",
+    "input": {
+      "body": {
+        "is_full_html": true,
+        "is_proofed": true,
+        "name": "The Architect",
+        "size": "0"
+      }
+    },
+    "output": {}
+  },
+  {
+    "group": "templates",
+    "name": "deleteTemplate",
+    "method": "DELETE",
+    "path": "/api/v1/templates/42",
+    "input": {
+      "id": 42
+    },
+    "output": {}
+  },
+  {
+    "group": "webhooks",
+    "name": "getAllWebhooks",
+    "method": "GET",
+    "path": "/api/v1/webhooks",
+    "input": {},
+    "output": []
+  },
+  {
+    "group": "webhooks",
+    "name": "getWebhook",
+    "method": "GET",
+    "path": "/api/v1/webhooks/42",
+    "input": {
+      "id": 42
+    },
+    "output": []
+  },
+  {
+    "group": "webhooks",
+    "name": "createWebhook",
+    "method": "POST",
+    "path": "/api/v1/webhooks",
+    "input": {
+      "body": {}
+    },
+    "output": {}
+  },
+  {
+    "group": "webhooks",
+    "name": "updateWebhook",
+    "method": "PUT",
+    "path": "/api/v1/webhooks",
+    "input": {
+      "body": {}
+    },
+    "output": {}
+  },
+  {
+    "group": "webhooks",
+    "name": "deleteWebhook",
+    "method": "DELETE",
+    "path": "/api/v1/webhooks/42",
+    "input": {
+      "id": 42
+    },
+    "output": {}
+  }
+]
