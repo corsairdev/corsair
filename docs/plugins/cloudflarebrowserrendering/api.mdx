@@ -157,7 +157,7 @@ await corsair.cloudflarebrowserrendering.api.browser.close({ accountId: 'acct-12
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `closing \| closed` | Yes | — |
+| `status` | `string` | Yes | — |
 
 
 
@@ -272,9 +272,9 @@ await corsair.cloudflarebrowserrendering.api.browser.liveView.create({ accountId
 
 ```ts
 {
-  mode: devtools | tab | full,
+  mode: string,
   guardrails?: {
-    mode: readonly
+    mode: string
   }
 }
 ```
@@ -581,7 +581,7 @@ await corsair.cloudflarebrowserrendering.api.crawl.get({ accountId: 'acct-123', 
 ```ts
 {
   origin: string,
-  state: available | absent | fetch_failed,
+  state: string,
   status?: number
 }[]
 ```
@@ -680,6 +680,7 @@ await corsair.cloudflarebrowserrendering.api.crawl.start({
   },
   waitForTimeout?: number,
   url: string,
+  browser?: kitesurf,
   depth?: number,
   formats?: (html | markdown | json)[],
   crawlPurposes?: (search | ai-input | ai-train)[],
@@ -922,7 +923,9 @@ await corsair.cloudflarebrowserrendering.api.links.list({
   waitForTimeout?: number,
   html?: string,
   url?: string,
-  userAgent?: string
+  userAgent?: string,
+  excludeExternalLinks?: boolean,
+  visibleLinksOnly?: boolean
 }
 ```
 </Accordion>
@@ -1405,7 +1408,6 @@ await corsair.cloudflarebrowserrendering.api.screenshot.capture({ accountId: 'ac
       y: number,
       scale?: number
     },
-    encoding?: binary | base64,
     fromSurface?: boolean,
     fullPage?: boolean,
     omitBackground?: boolean,
