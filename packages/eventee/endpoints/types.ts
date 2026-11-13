@@ -263,14 +263,24 @@ const CheckInAttendeeInputSchema = z
 	.strict();
 const ListParticipantsInputSchema = EmptyInputSchema;
 const RemoveAttendeeInputSchema = z
-	.object({ email: z.string().min(1) })
+	.object({
+		email: z
+			.string()
+			.min(1)
+			.describe('Plain email address; the plugin URL-encodes it for Eventee.'),
+	})
 	.strict();
 const CreateRegistrationsInputSchema = z
 	.object({ registrations: z.array(z.object(PersonFields).strict()).min(1) })
 	.strict();
 const ListRegistrationsInputSchema = EmptyInputSchema;
 const RemoveRegistrationInputSchema = z
-	.object({ email: z.string().min(1) })
+	.object({
+		email: z
+			.string()
+			.min(1)
+			.describe('Plain email address; the plugin URL-encodes it for Eventee.'),
+	})
 	.strict();
 const ListGroupsInputSchema = EmptyInputSchema;
 const ListReviewsInputSchema = EmptyInputSchema;
