@@ -47,31 +47,19 @@ export const list: FinmeiEndpoints['expensesList'] = async (ctx, input) => {
 export const create: FinmeiEndpoints['expensesCreate'] = async (ctx, input) => {
 	const parsedInput = FinmeiCreateExpenseInputSchema.parse(input);
 
-	// If a base64 file is provided, submit as multipart/form-data.
-	const fileBase64 = parsedInput.file;
-	const requestOptions =
-		typeof fileBase64 === 'string' && fileBase64.length > 0
-			? {
-					method: 'POST' as const,
-					formData: {
-						file: new Blob([Buffer.from(fileBase64, 'base64')], {
-							type: parsedInput.fileType ?? 'application/pdf',
-						}),
-						seller: parsedInput.seller,
-						total: String(parsedInput.total),
-						currency: parsedInput.currency,
-						date: parsedInput.date,
-					},
-				}
-			: {
-					method: 'POST' as const,
-					body: {
-						seller: parsedInput.seller,
-						total: parsedInput.total,
-						currency: parsedInput.currency,
-						date: parsedInput.date,
-					},
-				};
+	// Finmei requires the bill file, so create always sends multipart/form-data.
+	const requestOptions = {
+		method: 'POST' as const,
+		formData: {
+			file: new Blob([Buffer.from(parsedInput.file, 'base64')], {
+				type: parsedInput.fileType ?? 'application/pdf',
+			}),
+			seller: parsedInput.seller,
+			total: String(parsedInput.total),
+			currency: parsedInput.currency,
+			date: parsedInput.date,
+		},
+	};
 
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{

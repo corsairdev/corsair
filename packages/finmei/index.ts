@@ -243,7 +243,7 @@ const finmeiEndpointMeta = {
 	},
 	'expenses.create': {
 		riskLevel: 'write',
-		description: 'Create a new expense record with optional receipt file',
+		description: 'Create a new expense record with its bill file (base64 PDF or image, required)',
 	},
 	'expenses.get': {
 		riskLevel: 'read',

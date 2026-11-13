@@ -346,7 +346,8 @@ export const FinmeiCreateExpenseInputSchema = z
 		total: z.number(),
 		currency: z.string().min(1),
 		date: z.string().min(1),
-		file: z.string().optional(),
+		// Base64-encoded bill (PDF or image); Finmei rejects an expense without one.
+		file: z.string().min(1),
 		fileType: z.string().optional(),
 	})
 	.strict();

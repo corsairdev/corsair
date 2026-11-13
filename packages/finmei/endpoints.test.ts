@@ -254,21 +254,16 @@ describe('Expenses endpoints', () => {
 		});
 	});
 
-	it('expenses.create sends JSON when no file is present', async () => {
-		const input = {
-			seller: 'Acme',
-			total: 50,
-			currency: 'USD',
-			date: '2024-03-01',
-		};
-		mockRequest.mockResolvedValue({ data: { id: 'exp-1', ...input } });
-
-		const res = await Expenses.create(ctx, input);
-		expect(res.data.id).toBe('exp-1');
-		expect(mockRequest).toHaveBeenCalledWith('/expenses', 'test-api-key', {
-			method: 'POST',
-			body: input,
-		});
+	it('expenses.create rejects input without the bill file Finmei requires', async () => {
+		await expect(
+			Expenses.create(ctx, {
+				seller: 'Acme',
+				total: 50,
+				currency: 'USD',
+				date: '2024-03-01',
+			} as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('expenses.create sends formData when base64 file is attached', async () => {

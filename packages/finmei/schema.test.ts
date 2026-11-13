@@ -148,7 +148,12 @@ describe('Finmei expense schemas', () => {
 			total: 49.99,
 			currency: 'EUR',
 			date: '2024-03-01',
+			file: 'JVBERi0xLjQK',
 		};
+		const { file: _file, ...withoutFile } = validExpense;
+		expect(FinmeiCreateExpenseInputSchema.safeParse(withoutFile).success).toBe(
+			false,
+		);
 		expect(FinmeiCreateExpenseInputSchema.safeParse(validExpense).success).toBe(
 			true,
 		);
