@@ -483,6 +483,21 @@ describe('DigiCert endpoint schemas', () => {
 		).toBe('read');
 	});
 
+	it('classifies POST deletes and bulk tag replacement as destructive', () => {
+		for (const id of [
+			'trustLifecycleApi.deleteScanUsingPost',
+			'trustLifecycleApi.deletePastSystemScanUsingPostpublic',
+			'trustLifecycleApi.postBulkReplaceTags',
+		] as const) {
+			expect(generatedOpenApiEndpointMeta[id].riskLevel).toBe('destructive');
+		}
+		expect(
+			generatedOpenApiEndpointMeta[
+				'trustLifecycleApi.getCertificateCountsBySourceTypes'
+			].riskLevel,
+		).toBe('read');
+	});
+
 	it('infers required arguments and result fields from operation schemas', () => {
 		type CreateAccountArgs = Parameters<
 			typeof endpoints.accountManagerApi.createAccount

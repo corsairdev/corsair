@@ -6451,7 +6451,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Restore system scan schedule',
 	},
 	'trustLifecycleApi.deletePastSystemScanUsingPostpublic': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete past system scan instance',
 	},
 	'trustLifecycleApi.listUpcomingSystemScansUsingGetpublic': {
@@ -6658,7 +6658,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Bulk update tags',
 	},
 	'trustLifecycleApi.postBulkReplaceTags': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Bulk replace tags',
 	},
 	'trustLifecycleApi.postImportCertificate': {
@@ -6782,7 +6782,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Delete custom attribute',
 	},
 	'trustLifecycleApi.getCertificateCountsBySourceTypes': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description: 'Get certificate counts for deletion preview',
 	},
 	'trustLifecycleApi.deleteCertificatesBySourceTypes': {
@@ -7028,7 +7028,7 @@ export const generatedOpenApiEndpointMeta: Record<
 		description: 'Add scan',
 	},
 	'trustLifecycleApi.deleteScanUsingPost': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete scan',
 	},
 	'trustLifecycleApi.editScanUsingPut': {
