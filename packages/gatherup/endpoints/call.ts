@@ -1,4 +1,4 @@
-import { asRecord, logEventFromContext } from 'corsair/core';
+import { AuthMissingError, asRecord, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { GatherupContext } from '..';
 import type { GatherupCredentials, GatherupRequest } from '../client';
@@ -9,28 +9,19 @@ type LogFields = Record<string, string | number | boolean | undefined>;
 /**
  * GatherUp needs a bearer token and a client ID, and every call carries both.
  * The client ID is the key, because it names which account the call is about;
- * the token is the account's `api_secret` field beside it.
+ * the token is the account's `api_secret` field beside it. Each one is read
+ * from its own option first and its own stored field second, and a missing
+ * token is never replaced by the client ID.
  */
 export async function resolveCredentials(
 	ctx: GatherupContext,
 ): Promise<GatherupCredentials> {
-	if (ctx.options.clientId && ctx.options.apiKey) {
-		return {
-			apiKey: ctx.options.apiKey,
-			clientId: ctx.options.clientId,
-			agent: ctx.options.agent,
-		};
+	const clientId = ctx.options.clientId ?? ctx.options.key ?? ctx.key;
+	const apiKey = ctx.options.apiKey ?? (await ctx.keys.get_api_secret());
+	if (!clientId || !apiKey) {
+		throw new AuthMissingError('gatherup', 'api_key');
 	}
-
-	const [token, clientId] = await Promise.all([
-		ctx.keys.get_api_secret(),
-		ctx.keys.get_api_key(),
-	]);
-	return {
-		apiKey: token ?? ctx.key,
-		clientId: clientId ?? ctx.key,
-		agent: ctx.options.agent,
-	};
+	return { apiKey, clientId, agent: ctx.options.agent };
 }
 
 /**
@@ -78,6 +69,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 export function listShape(
 	raw: unknown,
 	parsed: { page?: number | undefined; perPage?: number | undefined },
+	defaultPageSize = 500,
 ) {
 	const record = asRecord(raw) ?? {};
 	const rows = record.data;
@@ -93,7 +85,7 @@ export function listShape(
 				? page < pages
 					? page + 1
 					: null
-				: count > 0 && count >= (parsed.perPage ?? 500)
+				: count > 0 && count >= (parsed.perPage ?? defaultPageSize)
 					? page + 1
 					: null,
 	};

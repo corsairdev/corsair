@@ -205,7 +205,8 @@ const gatherupEndpointMeta = {
 	},
 	'businesses.search': {
 		riskLevel: 'read',
-		description: 'Search the business directory for an ID by name or domain',
+		description:
+			'Find a business ID by its `customField` or `extraField` value',
 	},
 	'businesses.types': {
 		riskLevel: 'read',
@@ -248,7 +249,7 @@ const gatherupEndpointMeta = {
 	'customers.create': {
 		riskLevel: 'write',
 		description:
-			'Add a customer to a business. The body uses `customerFirstName` and `customerEmail`; an email or a phone is needed to reach them',
+			'Add a customer to a business. The body uses `customerFirstName` and `customerEmail`; an email or a phone is needed. No feedback request goes out unless `sendFeedbackRequest` is true',
 	},
 	'customers.update': {
 		riskLevel: 'write',
@@ -307,16 +308,24 @@ export function gatherup<const T extends GatherupPluginOptions>(
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: GatherupKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint') {
+				throw new AuthMissingError('gatherup', ctx.authType ?? 'api_key');
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+			// The key is the client ID. The bearer token is checked here too, so an
+			// account with only one of the pair gets the connect flow instead of a
+			// call GatherUp refuses.
+			const clientId =
+				options.clientId ??
+				options.key ??
+				(ctx.authType === 'api_key' ? await ctx.keys.get_api_key() : null);
+			const token =
+				options.apiKey ??
+				(ctx.authType === 'api_key' ? await ctx.keys.get_api_secret() : null);
+			if (!clientId || !token) {
+				throw new AuthMissingError('gatherup', ctx.authType ?? 'api_key');
 			}
-
-			throw new AuthMissingError('gatherup', ctx.authType ?? 'api_key');
+			return clientId;
 		},
 	} satisfies InternalGatherupPlugin;
 }
@@ -338,6 +347,7 @@ export type {
 	BusinessUpdateInput,
 	BusinessWriteResponse,
 	CustomerCreateInput,
+	CustomerCreateResponse,
 	CustomerGetInput,
 	CustomerRemoveInput,
 	CustomerResponse,
@@ -348,6 +358,7 @@ export type {
 	FeedbacksListInput,
 	FeedbacksListResponse,
 	GatherupBusiness,
+	GatherupBusinessListRow,
 	GatherupBusinessType,
 	GatherupCustomer,
 	GatherupEndpointInputs,

@@ -1,13 +1,17 @@
 import { AuthMissingError } from 'corsair/core';
 import { gatherup, gatherupEndpointSchemas } from './index';
 
-// The key builder only reads authType and keys.
-function keyContext(apiKey: string | null) {
+// The key builder only reads authType and keys: the stored client ID
+// (`api_key`) and the stored bearer token (`api_secret`).
+function keyContext(apiKey: string | null, apiSecret: string | null = 'token') {
 	return {
 		authType: 'api_key' as const,
 		options: {},
 		tenantId: 'default',
-		keys: { get_api_key: jest.fn().mockResolvedValue(apiKey) },
+		keys: {
+			get_api_key: jest.fn().mockResolvedValue(apiKey),
+			get_api_secret: jest.fn().mockResolvedValue(apiSecret),
+		},
 	};
 }
 
@@ -140,6 +144,20 @@ describe('gatherup key builder', () => {
 		await expect(buildKey(gatherup(), keyContext('stored-key'))).resolves.toBe(
 			'stored-key',
 		);
+	});
+
+	it('accepts the clientId and apiKey options with nothing stored', async () => {
+		const ctx = keyContext(null, null);
+
+		await expect(
+			buildKey(gatherup({ clientId: 'option-client', apiKey: 'tok' }), ctx),
+		).resolves.toBe('option-client');
+	});
+
+	it('throws AuthMissingError when the client ID is stored without a token', async () => {
+		await expect(
+			buildKey(gatherup(), keyContext('stored-key', null)),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('throws AuthMissingError when no client ID is stored', async () => {

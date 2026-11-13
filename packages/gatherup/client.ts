@@ -191,17 +191,22 @@ export async function makeGatherupRequest(
 		},
 	};
 
+	// `clientId` is required on every call, and `agent` only when configured.
+	// GatherUp reads them from the query on a GET and from the body on a POST,
+	// PUT or DELETE, so a write carries them in both places.
+	const auth = definedQuery({
+		clientId: credentials.clientId,
+		agent: credentials.agent,
+	});
+	const sendBody =
+		method === 'GET' ? body : { ...(asRecord(body) ?? {}), ...auth };
+
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
-		// `clientId` is required on every call, and `agent` only when configured.
-		query: {
-			...query,
-			clientId: credentials.clientId,
-			agent: credentials.agent,
-		},
-		body,
-		mediaType: body === undefined ? undefined : 'application/json',
+		query: { ...query, ...auth },
+		body: sendBody,
+		mediaType: sendBody === undefined ? undefined : 'application/json',
 	};
 
 	try {
