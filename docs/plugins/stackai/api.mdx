@@ -1,0 +1,409 @@
+---
+title: "StackAI API reference"
+sidebarTitle: "API"
+description: "API reference for the StackAI plugin in Corsair: every `stackai.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Projects
+
+### ioSchema
+
+`projects.ioSchema`
+
+Inspect a project version input and output schema.
+
+**Risk:** `read`
+
+```ts
+await corsair.stackai.api.projects.ioSchema({ project_id: 'example-project', version: 'latest' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `version` | `latest \| draft \| number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response_code` | `string \| null` | No | — |
+| `meta` | `Record<string, any>` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  input_kind: start_node | legacy_input_nodes,
+  inputs: {
+    id: string,
+    name: string
+  }[],
+  outputs: {
+    id: string,
+    name: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+---
+## Runs
+
+### cancel
+
+`runs.cancel`
+
+Request cancellation of an owned run.
+
+**Risk:** `write`
+
+```ts
+await corsair.stackai.api.runs.cancel({ run_id: '00000000-0000-4000-8000-000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `location` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  response_code?: string | null,
+  meta?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`runs.get`
+
+Get a run and its current state.
+
+**Risk:** `read`
+
+```ts
+await corsair.stackai.api.runs.get({ run_id: '00000000-0000-4000-8000-000000000000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response_code` | `string \| null` | No | — |
+| `meta` | `Record<string, any>` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  run_id: string,
+  project_id: string | null,
+  project_version?: number | null,
+  status: queued | running | paused | succeeded | failed | cancelled,
+  error: string | null,
+  created_at: string,
+  started_at: string | null,
+  completed_at: string | null,
+  run_type: workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | unknown | null,
+  created_by: {
+    type: user | personal_api_key | org_api_key | system | end_user | unknown,
+    id: string | null
+  } | null,
+  usage: {
+    total_tokens: number,
+    details: {
+      provider: string,
+      model_id: string,
+      connection_id: string | null,
+      input_tokens: number | null,
+      output_tokens: number | null
+    }[]
+  },
+  parent_run_id: string | null,
+  parent_project_id: string | null,
+  input: Record<string, any> | null,
+  output: Record<string, any> | null,
+  citations: {
+    knowledge_base_id: string | null,
+    resource_id: string | null,
+    source_url: string | null,
+    source_type: knowledge_base | website | document | other,
+    position: {
+      page_index: number | null,
+      chunk_index: number | null,
+      page_number: number | null
+    } | null
+  }[] | null,
+  pending_input: {
+    question: string,
+    context: string | null,
+    response_type: text | approval | choice | unknown,
+    choices: string[] | null,
+    resume_token: string,
+    resume_token_expires_at: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`runs.list`
+
+List runs using cursor pagination and filters.
+
+**Risk:** `read`
+
+```ts
+await corsair.stackai.api.runs.list({ page_size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| null` | No | — |
+| `status` | `queued \| running \| paused \| succeeded \| failed \| cancelled \| null` | No | — |
+| `run_type` | `workflow_builder \| form \| batch \| chat_assistant \| agent_assistant \| trigger \| scheduled \| sub_workflow \| api \| eval \| null` | No | — |
+| `created_by_id` | `string \| null` | No | — |
+| `created_at__gte` | `string \| null` | No | — |
+| `created_at__lte` | `string \| null` | No | — |
+| `cursor` | `string \| null` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `response_code` | `string \| null` | No | — |
+| `meta` | `Record<string, any>` | No | — |
+| `data` | `object[]` | No | — |
+| `next_cursor` | `string \| null` | No | — |
+| `prev_cursor` | `string \| null` | No | — |
+| `current_cursor` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  run_id: string,
+  project_id: string | null,
+  project_version?: number | null,
+  status: queued | running | paused | succeeded | failed | cancelled,
+  error: string | null,
+  created_at: string,
+  started_at: string | null,
+  completed_at: string | null,
+  run_type: workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | unknown | null,
+  created_by: {
+    type: user | personal_api_key | org_api_key | system | end_user | unknown,
+    id: string | null
+  } | null,
+  usage: {
+    total_tokens: number,
+    details: {
+      provider: string,
+      model_id: string,
+      connection_id: string | null,
+      input_tokens: number | null,
+      output_tokens: number | null
+    }[]
+  },
+  parent_run_id: string | null,
+  parent_project_id: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resume
+
+`runs.resume`
+
+Resume an ask-human paused run.
+
+**Risk:** `write`
+
+```ts
+await corsair.stackai.api.runs.resume({ run_id: '00000000-0000-4000-8000-000000000000', resume_token: 'token', response: 'yes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string` | Yes | — |
+| `resume_token` | `string` | Yes | — |
+| `response` | `string` | Yes | — |
+| `response_type` | `text \| approval \| choice \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `location` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  response_code?: string | null,
+  meta?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`runs.start`
+
+Start an asynchronous project run.
+
+**Risk:** `write`
+
+```ts
+await corsair.stackai.api.runs.start({ project_id: 'example-project', input: { 'in-0': 'Hello' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `input` | `Record<string, any>` | Yes | — |
+| `project_version` | `number \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+| `location` | `string \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  response_code?: string | null,
+  meta?: Record<string, any>,
+  data: {
+    run_id: string,
+    project_id: string | null,
+    project_version?: number | null,
+    status: queued | running | paused | succeeded | failed | cancelled,
+    error: string | null,
+    created_at: string,
+    started_at: string | null,
+    completed_at: string | null,
+    run_type: workflow_builder | form | batch | chat_assistant | agent_assistant | trigger | scheduled | sub_workflow | api | eval | unknown | null,
+    created_by: {
+      type: user | personal_api_key | org_api_key | system | end_user | unknown,
+      id: string | null
+    } | null,
+    usage: {
+      total_tokens: number,
+      details: {
+        provider: string,
+        model_id: string,
+        connection_id: string | null,
+        input_tokens: number | null,
+        output_tokens: number | null
+      }[]
+    },
+    parent_run_id: string | null,
+    parent_project_id: string | null,
+    input: Record<string, any> | null,
+    output: Record<string, any> | null,
+    citations: {
+      knowledge_base_id: string | null,
+      resource_id: string | null,
+      source_url: string | null,
+      source_type: knowledge_base | website | document | other,
+      position: {
+        page_index: number | null,
+        chunk_index: number | null,
+        page_number: number | null
+      } | null
+    }[] | null,
+    pending_input: {
+      question: string,
+      context: string | null,
+      response_type: text | approval | choice | unknown,
+      choices: string[] | null,
+      resume_token: string,
+      resume_token_expires_at: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
