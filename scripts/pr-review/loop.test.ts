@@ -2,9 +2,11 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
 	buildEscalationComment,
+	buildResolvedComment,
 	buildRoundOneComment,
 	currentRound,
 	decide,
+	reviewSupersededByCleanSummary,
 } from './loop.ts';
 import type { Finding } from './parse-greptile.ts';
 
@@ -66,4 +68,50 @@ test('escalation comment has round=3 marker', () => {
 			'<!-- corsair-review-bot round=3 -->',
 		),
 	);
+});
+
+const summary = (sha: string, badges = '') =>
+	`<h3>Greptile Summary</h3>${badges}\nConfidence Score: 5/5\nReviews (5) · Last reviewed commit: ["fix(ramp): time out a token response bod..."](https://github.com/corsairdev/corsair/commit/${sha}) · [Reviewed by Greptile](https://www.greptile.com/)`;
+
+test('a newer clean summary supersedes an older review (corsair#2184, 11-12)', () => {
+	assert.equal(
+		reviewSupersededByCleanSummary(
+			summary('dbbfc849d8bb4914a4b2d1ddb50328027aea3669'),
+			'f8411cb362779897ed7000c25a20e3e566871a9f',
+		),
+		true,
+	);
+});
+
+test('the review is current when the summary names its commit', () => {
+	const sha = 'f8411cb362779897ed7000c25a20e3e566871a9f';
+	assert.equal(reviewSupersededByCleanSummary(summary(sha), sha), false);
+});
+
+test('a newer summary that still shows a P0 or P1 does not clear the review', () => {
+	assert.equal(
+		reviewSupersededByCleanSummary(
+			summary('dbbfc84', '<img alt="P1" src="x">'),
+			'f8411cb362779897ed7000c25a20e3e566871a9f',
+		),
+		false,
+	);
+});
+
+test('no summary or no review commit keeps the review', () => {
+	assert.equal(reviewSupersededByCleanSummary(undefined, 'f8411cb'), false);
+	assert.equal(
+		reviewSupersededByCleanSummary(summary('dbbfc84'), undefined),
+		false,
+	);
+	assert.equal(
+		reviewSupersededByCleanSummary('no commit line here', 'f8411cb'),
+		false,
+	);
+});
+
+test('the resolved comment keeps the round=3 marker so it replaces the escalation', () => {
+	const body = buildResolvedComment();
+	assert.ok(body.startsWith('<!-- corsair-review-bot round=3 -->'));
+	assert.match(body, /no longer needed/);
 });
