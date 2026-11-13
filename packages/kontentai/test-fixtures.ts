@@ -89,9 +89,8 @@ export const contentTypes = {
 	pagination: { skip: 0, limit: 0, count: 1, next_page: '' },
 };
 
-export const contentType = {
-	type: contentTypes.types[0],
-};
+// GET /types/{codename} answers the type itself, `system` at the root.
+export const contentType = contentTypes.types[0];
 
 export const taxonomies = {
 	taxonomies: [

@@ -47,6 +47,8 @@ export const get: KontentEndpoints['typesGet'] = (ctx, input) =>
 			path: `/types/${segment(codename)}`,
 		}),
 		{
+			// Kontent answers the type at the root; the output is `{ type }`.
+			shape: (raw) => ({ type: raw }),
 			log: (_, result) => ({
 				codename: result.type.system.codename ?? undefined,
 				elements: Object.keys(result.type.elements ?? {}).length,
