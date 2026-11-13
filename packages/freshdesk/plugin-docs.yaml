@@ -1,4 +1,527 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Freshdesk"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Freshdesk
+description: Manage support tickets, customer records, agents, groups, knowledge base content, and account settings through Freshdesk REST API v2.
+domain: freshdesk.com
+recommendedAuth: api_key
+overviewNote: |
+  Set the exact account hostname from your Freshdesk portal in the `domain` option. Freshdesk API v2 does not support custom CNAMEs. The API key is sent using HTTP Basic authentication with `X` as the password.
+
+  Freshdesk applies per-minute account and API sublimits. List operations accept `page` (1-based) and `per_page` (maximum 100). A 429 includes `Retry-After`; automatic retries are limited to safe GET requests.
+
+  Attachment-enabled ticket, contact, and conversation operations accept `{ filename, contentType, base64 }` entries and send multipart/form-data.
+
+  Pass each route's documented request fields through its `body` object. Responses are validated as JSON values to preserve optional embed fields and tenant-defined custom fields; consult the linked Freshdesk route for resource-specific response fields.
+
+  The plugin covers the documented v2 REST routes. Freshdesk marks v1 deprecated/restricted for new users. No webhook delivery contract is documented here.
+apiExamples:
+  routes.createTicketPostTickets.run:
+    call: "{  }"
+  routes.createOutboundEmailPostOutboundEmail.run:
+    call: "{  }"
+  routes.viewATicketGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.ticketAssociationGetAssociatedTickets.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.ticketAssociationGetPrimeAssociation.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllTicketsGetTickets.run:
+    call: "{  }"
+  routes.filterTicketsGetTickets.run:
+    call: "{ query: { query: 'sample' } }"
+  routes.updateTicketPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.bulkUpdateTicketsPostBulkUpdate.run:
+    call: "{  }"
+  routes.forwardTicketsPostForward.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.ticketMergePutMerge.run:
+    call: "{  }"
+  routes.watcherGetWatchers.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.watcherPostWatch.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.watcherPutUnwatch.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.watcherPutBulkWatch.run:
+    call: "{  }"
+  routes.watcherPutBulkUnwatch.run:
+    call: "{  }"
+  routes.deleteATicketDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.bulkDeleteTicketsPostBulkDelete.run:
+    call: "{  }"
+  routes.deleteAnAttachmentDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.restoreATicketPutRestore.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllTicketFieldsGetTicketFields.run:
+    call: "{  }"
+  routes.listAllTicketNotesGetConversations.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllTicketTimeentriesGetTimeEntries.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.viewTicketSatisfactionRatingsGetSatisfactionRatings.run:
+    call: "{ pathParams: { ticketId: '123' } }"
+  routes.ticketSummaryGetSummary.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.ticketSummaryPutSummary.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.ticketSummaryDeleteSummary.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.archiveTicketsGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.archiveTicketsDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.archiveTicketsGetConversations.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.ticketUserAccessesPostAccesses.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.ticketUserAccessesPatchAccesses.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.ticketUserAccessesGetAccesses.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.ticketUserAccessesDeleteAccesses.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllTicketFieldsGetTicketFields35.run:
+    call: "{  }"
+  routes.createTicketFieldPostTicketFields.run:
+    call: "{  }"
+  routes.viewTicketFieldGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.updateTicketFieldPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteTicketFieldDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllSectionFieldsGetSections.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.createSectionPostSections.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listSpecificSectionGetSectionId.run:
+    call: "{ pathParams: { id: '123', sectionId: '123' } }"
+  routes.updateSectionPutSectionId.run:
+    call: "{ pathParams: { id: '123', sectionId: '123' } }"
+  routes.deleteSectionDeleteSectionId.run:
+    call: "{ pathParams: { id: '123', sectionId: '123' } }"
+  routes.listAllTicketFormsGetTicketForms.run:
+    call: "{  }"
+  routes.createTicketFormPostTicketForms.run:
+    call: "{  }"
+  routes.viewTicketFormGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.updateTicketFormPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteTicketFormDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.cloneTicketFormPostClone.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.viewTicketFormFieldGetFieldId.run:
+    call: "{ pathParams: { formId: '123', fieldId: '123' } }"
+  routes.updateTicketFormFieldPutFieldId.run:
+    call: "{ pathParams: { formId: '123', fieldId: '123' } }"
+  routes.deleteTicketFormFieldDeleteFieldId.run:
+    call: "{ pathParams: { formId: '123', fieldId: '123' } }"
+  routes.replyTicketPostReply.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.addNoteToATicketPostNotes.run:
+    call: "{ pathParams: { ticketId: '123' } }"
+  routes.updateConversationPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteConversationDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.replyToForwardPostReplyToForward.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.sendOutboundMessagePostOutboundMessages.run:
+    call: "{  }"
+  routes.retrieveOutboundMessageGetMessageId.run:
+    call: "{ pathParams: { messageId: '123' } }"
+  routes.viewAccountGetAccount.run:
+    call: "{  }"
+  routes.generateExportPostExport.run:
+    call: "{  }"
+  routes.viewJobGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.createContactPostContacts.run:
+    call: "{  }"
+  routes.viewContactGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllContactsGetContacts.run:
+    call: "{  }"
+  routes.searchContactsGetAutocomplete.run:
+    call: "{ query: { term: 'sample' } }"
+  routes.filterContactsGetContacts.run:
+    call: "{ query: { query: 'sample' } }"
+  routes.updateContactPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteContactDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.hardDeleteContactDeleteHardDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.makeAgentPutMakeAgent.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.restoreContactPutRestore.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.sendInvitePutSendInvite.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.mergeContactPostMerge.run:
+    call: "{  }"
+  routes.exportContactPostExport.run:
+    call: "{  }"
+  routes.exportContactGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.importContactGetImports.run:
+    call: "{  }"
+  routes.importContactGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.importContactPostImports.run:
+    call: "{  }"
+  routes.importContactPutCancel.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllContactFieldsGetContactFields.run:
+    call: "{  }"
+  routes.viewContactFieldGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.createContactFieldPostContactFields.run:
+    call: "{  }"
+  routes.updateContactFieldPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteContactFieldDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.viewAgentGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllAgentsGetAgents.run:
+    call: "{  }"
+  routes.createAgentPostOperation.run:
+    call: "{  }"
+  routes.updateAgentPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteAgentDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.meGetMe.run:
+    call: "{  }"
+  routes.createMultipleAgentsPostBulk.run:
+    call: "{  }"
+  routes.searchAgentsGetAutocomplete.run:
+    call: "{ query: { term: 'sample' } }"
+  routes.listAllAgentsAvailabilityGetAgents.run:
+    call: "{ query: { only: 'availability' } }"
+  routes.viewAgentAvailabilityGetAvailability.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.updateAgentAvailabilityPutAvailability.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.viewSkillGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllSkillsGetOperation.run:
+    call: "{  }"
+  routes.createSkillPostSkills.run:
+    call: "{  }"
+  routes.deleteSkillDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.updateSkillPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.viewRoleGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllRolesGetRoles.run:
+    call: "{  }"
+  routes.createGroupPostGroups.run:
+    call: "{  }"
+  routes.viewGroupGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllGroupsGetGroups.run:
+    call: "{  }"
+  routes.updateGroupPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteGroupDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.createAdminGroupPostGroups.run:
+    call: "{  }"
+  routes.viewAdminGroupGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllAdminGroupsGetGroups.run:
+    call: "{  }"
+  routes.updateAdminGroupPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteAdminGroupDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllAgentsInAGroupGetAgents.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.addOrRemoveAgentInAGroupPatchAgents.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.createCompanyPostCompanies.run:
+    call: "{  }"
+  routes.viewCompanyGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllCompaniesGetCompanies.run:
+    call: "{  }"
+  routes.searchCompaniesGetAutocomplete.run:
+    call: "{ query: { name: 'sample' } }"
+  routes.filterCompaniesGetCompanies.run:
+    call: "{ query: { query: 'sample' } }"
+  routes.updateCompanyPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteCompanyDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.exportCompanyPostExport.run:
+    call: "{  }"
+  routes.exportCompanyGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.importCompanyGetImports.run:
+    call: "{  }"
+  routes.importCompanyGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.importCompanyPostImports.run:
+    call: "{  }"
+  routes.importCompanyPutCancel.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllCompanyFieldsGetCompanyFields.run:
+    call: "{  }"
+  routes.viewCompanyFieldGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.createCompanyFieldPostCompanyFields.run:
+    call: "{  }"
+  routes.updateCompanyFieldPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteCompanyFieldDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.retrieveExistingCustomObjectsGetSchemas.run:
+    call: "{  }"
+  routes.retrieveSpecificCustomObjectGetSchemaId.run:
+    call: "{ pathParams: { schemaId: '123' } }"
+  routes.createANewCustomObjectRecordPostOperation.run:
+    call: "{ pathParams: { schemaId: '123' } }"
+  routes.retrieveACustomObjectRecordGetRecordId.run:
+    call: "{ pathParams: { schemaId: '123', recordId: '123' } }"
+  routes.updateACustomObjectRecordPutRecordId.run:
+    call: "{ pathParams: { schemaId: '123', recordId: '123' } }"
+  routes.deleteACustomObjectRecordDeleteRecordId.run:
+    call: "{ pathParams: { schemaId: '123', recordId: '123' } }"
+  routes.retrieveAllTheRecordsOfACustomObjectGetRecords.run:
+    call: "{ pathParams: { schemaId: '123' } }"
+  routes.retrieveTheCountOfRecordsCustomObjectsGetCount.run:
+    call: "{ pathParams: { schemaId: '123' } }"
+  routes.createCannedResponsePostCannedResponses.run:
+    call: "{  }"
+  routes.viewCannedResponseGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.updateCannedResponsePut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.bulkCreateCannedResponsesPostBulk.run:
+    call: "{  }"
+  routes.createCannedResponseFolderPostCannedResponseFolders.run:
+    call: "{  }"
+  routes.updateCannedResponseFolderPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllCannedResponseFoldersGetCannedResponseFolders.run:
+    call: "{  }"
+  routes.viewCannedResponseFoldersGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.getDetailsOfCannedResponsesInFoldersGetResponses.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.categoryAttributesPostCategories.run:
+    call: "{  }"
+  routes.categoryAttributesGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.categoryAttributesGetCategories.run:
+    call: "{  }"
+  routes.categoryAttributesGetForums.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.categoryAttributesPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.categoryAttributesDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.forumAttributesPostForums.run:
+    call: "{ pathParams: { categoryId: '123' } }"
+  routes.forumAttributesGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.forumAttributesGetTopics.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.forumAttributesPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.forumAttributesDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.forumAttributesPostFollow.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.forumAttributesDeleteFollow.run:
+    call: "{ pathParams: { forumId: '123' }, query: { user_id: 'sample' } }"
+  routes.forumAttributesGetFollow.run:
+    call: "{ pathParams: { id: '123' }, query: { user_id: 'sample' } }"
+  routes.topicAttributesPostTopics.run:
+    call: "{ pathParams: { forumId: '123' } }"
+  routes.topicAttributesGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.topicAttributesGetComments.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.topicAttributesPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.topicAttributesDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.topicAttributesPostFollow.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.topicAttributesDeleteFollow.run:
+    call: "{ pathParams: { topicId: '123' }, query: { user_id: 'sample' } }"
+  routes.topicAttributesGetFollow.run:
+    call: "{ pathParams: { id: '123' }, query: { user_id: 'sample' } }"
+  routes.topicAttributesGetFollowedBy.run:
+    call: "{ query: { user_id: 'sample' } }"
+  routes.topicAttributesGetParticipatedBy.run:
+    call: "{ query: { user_id: 'sample' } }"
+  routes.commentAttributesPostComments.run:
+    call: "{ pathParams: { topicId: '123' } }"
+  routes.commentAttributesPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.commentAttributesDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionCategoryAttributesPostCategories.run:
+    call: "{  }"
+  routes.solutionCategoryAttributesPostLanguageCode.run:
+    call: "{ pathParams: { id: '123', languageCode: '123' } }"
+  routes.solutionCategoryAttributesPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionCategoryAttributesPutLanguageCode.run:
+    call: "{ pathParams: { id: '123', languageCode: '123' } }"
+  routes.solutionCategoryAttributesGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionCategoryAttributesGetLanguageCode.run:
+    call: "{ pathParams: { id: '123', languageCode: '123' } }"
+  routes.solutionCategoryAttributesGetCategories.run:
+    call: "{  }"
+  routes.solutionCategoryAttributesGetLanguageCode186.run:
+    call: "{ pathParams: { languageCode: '123' } }"
+  routes.solutionCategoryAttributesDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionFolderAttributesPostFolders.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionFolderAttributesPostLanguageCode.run:
+    call: "{ pathParams: { id: '123', languageCode: '123' } }"
+  routes.solutionFolderAttributesPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionFolderAttributesPutLanguageCode.run:
+    call: "{ pathParams: { id: '123', languageCode: '123' } }"
+  routes.solutionFolderAttributesGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionFolderAttributesGetLanguageCode.run:
+    call: "{ pathParams: { id: '123', languageCode: '123' } }"
+  routes.solutionFolderAttributesGetFolders.run:
+    call: "{ pathParams: { categoryId: '123' } }"
+  routes.solutionFolderAttributesGetLanguageCode195.run:
+    call: "{ pathParams: { categoryId: '123', languageCode: '123' } }"
+  routes.solutionFolderAttributesGetSubfolders.run:
+    call: "{ pathParams: { folderId: '123' } }"
+  routes.solutionFolderAttributesGetLanguageCode197.run:
+    call: "{ pathParams: { folderId: '123', languageCode: '123' } }"
+  routes.solutionFolderAttributesDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionArticleAttributesPostArticles.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionArticleAttributesPostLanguageCode.run:
+    call: "{ pathParams: { id: '123', languageCode: '123' } }"
+  routes.solutionArticleAttributesPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionArticleAttributesPutLanguageCode.run:
+    call: "{ pathParams: { id: '123', languageCode: '123' } }"
+  routes.solutionArticleAttributesGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionArticleAttributesGetLanguageCode.run:
+    call: "{ pathParams: { id: '123', languageCode: '123' } }"
+  routes.solutionArticleAttributesGetArticles.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionArticleAttributesGetLanguageCode206.run:
+    call: "{ pathParams: { id: '123', languageCode: '123' } }"
+  routes.solutionArticleAttributesDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.solutionArticleAttributesGetSolutions.run:
+    call: "{ query: { term: 'sample' } }"
+  routes.csatSurveysGetSurveys.run:
+    call: "{  }"
+  routes.createSurveyResponsesPostResponses.run:
+    call: "{ pathParams: { surveyId: '123' } }"
+  routes.viewSurveyResponsesGetResponses.run:
+    call: "{ pathParams: { surveyId: '123' } }"
+  routes.listAllSurveyGetSurveys.run:
+    call: "{  }"
+  routes.createSatisfactionRatingPostSatisfactionRatings.run:
+    call: "{ pathParams: { ticketId: '123' } }"
+  routes.viewAllSatisfactionRatingsGetSatisfactionRatings.run:
+    call: "{  }"
+  routes.createTimeEntryPostTimeEntries.run:
+    call: "{ pathParams: { ticketId: '123' } }"
+  routes.listAllTimeEntriesGetTimeEntries.run:
+    call: "{  }"
+  routes.updateTimeEntryPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.toggleTimeEntryPutToggleTimer.run:
+    call: "{ pathParams: { timeEntryId: '123' } }"
+  routes.deleteTimeEntryDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.viewEmailConfigGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllEmailConfigsGetEmailConfigs.run:
+    call: "{  }"
+  routes.createEmailMailboxPostMailboxes.run:
+    call: "{  }"
+  routes.viewEmailMailboxGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllEmailMailboxesGetMailboxes.run:
+    call: "{  }"
+  routes.updateEmailMailboxPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteEmailMailboxDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.updateMailboxSettingsPutSettings.run:
+    call: "{  }"
+  routes.viewMailboxSettingsGetSettings.run:
+    call: "{  }"
+  routes.updateAutomaticBccEmailsPutBcc.run:
+    call: "{  }"
+  routes.viewAutomaticBccEmailsGetBcc.run:
+    call: "{  }"
+  routes.viewProductGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllProductsGetProducts.run:
+    call: "{  }"
+  routes.viewBusinessHourGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.listAllBusinessHoursGetBusinessHours.run:
+    call: "{  }"
+  routes.listAllScenarioAutomationsGetScenarioAutomations.run:
+    call: "{  }"
+  routes.createSlaPolicyPostSlaPolicies.run:
+    call: "{  }"
+  routes.listAllSlaPoliciesGetSlaPolicies.run:
+    call: "{  }"
+  routes.updateSlaPolicyPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.publishOmnichannelActivityPostContactActivities.run:
+    call: "{  }"
+  routes.listAllAutomationRulesGetRules.run:
+    call: "{ pathParams: { automationTypeId: '123' } }"
+  routes.viewAnAutomationRuleGet.run:
+    call: "{ pathParams: { automationTypeId: '123', id: '123' } }"
+  routes.deleteAnAutomationRuleDelete.run:
+    call: "{ pathParams: { automationTypeId: '123', id: '123' } }"
+  routes.createAnAutomationRulePostRules.run:
+    call: "{ pathParams: { automationTypeId: '123' } }"
+  routes.updateAnAutomationRulePut.run:
+    call: "{ pathParams: { automationTypeId: '123', id: '123' } }"
+  routes.settingsHelpdeskGetHelpdesk.run:
+    call: "{  }"
+  routes.createAThreadPostThreads.run:
+    call: "{  }"
+  routes.getAThreadGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.updateAThreadPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteAThreadDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.createMessageForThreadPostMessages.run:
+    call: "{  }"
+  routes.getMessageForThreadGet.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.updateMessageForThreadPut.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.deleteMessageForThreadDelete.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.getQuotedTextGetGenerateQuote.run:
+    call: "{ pathParams: { id: '123' } }"
+  routes.exportAuditLogPostExport.run:
+    call: "{  }"
+  routes.exportAuditLogGet.run:
+    call: "{ pathParams: { id: '123' } }"
