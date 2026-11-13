@@ -12,6 +12,7 @@ export class SendbirdAPIError extends Error {
 		message: string,
 		public readonly status: number,
 		public readonly retryAfter?: number,
+		// HTTP errors can contain arbitrary JSON or non-JSON bodies from Sendbird or intermediaries.
 		public readonly body?: unknown,
 	) {
 		super(message);
@@ -33,14 +34,16 @@ const rateLimitConfig: RateLimitConfig = {
 	headerNames: { retryAfter: 'Retry-After' },
 };
 
+// Responses cross an untrusted HTTP boundary and are parsed by each endpoint's output schema.
 export async function makeSendbirdRequest(
 	applicationId: string,
 	apiKey: string,
 	path: string,
 	options: {
 		method: 'GET' | 'POST' | 'PUT' | 'DELETE';
-		query?: Record<string, unknown>;
-		body?: unknown;
+		query?: Record<string, string | number | boolean | undefined>;
+		// Each endpoint supplies a different schema-validated JSON object.
+		body?: object;
 	},
 ): Promise<unknown> {
 	if (!apiKey?.trim()) throw new AuthMissingError('sendbird', 'api_key');
@@ -60,6 +63,7 @@ export async function makeSendbirdRequest(
 		mediaType: options.body === undefined ? undefined : 'application/json',
 	};
 	try {
+		// The shared transport cannot validate the endpoint-specific response shape.
 		const result = await request<unknown>(config, requestOptions, {
 			rateLimitConfig,
 		});

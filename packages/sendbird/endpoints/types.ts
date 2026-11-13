@@ -48,6 +48,7 @@ const user = z
 		last_seen_at: number.nullish(),
 		discovery_keys: z.array(z.string()).nullish(),
 		preferred_languages: z.array(z.string()).nullish(),
+		// Metadata is app-defined; the provider does not constrain nested values here.
 		metadata: z.record(z.string(), z.unknown()).nullish(),
 		unread_channel_count: number.nullish(),
 		unread_message_count: number.nullish(),
@@ -71,6 +72,8 @@ const message = z
 		updated_at: number.nullish(),
 		parent_message_id: number.nullish(),
 		is_reply_to_channel: z.boolean().nullish(),
+		// These provider-defined nested payloads vary by message type and enabled features;
+		// their complete shapes are not stable across all message responses.
 		translations: z.record(z.string(), z.unknown()).nullish(),
 		file: z.record(z.string(), z.unknown()).nullish(),
 		files: z.unknown().optional(),
@@ -106,6 +109,7 @@ const channel = z
 		created_by: user.nullish(),
 		delivery_receipt: z.record(z.string(), number).nullish(),
 		read_receipt: z.record(z.string(), number).nullish(),
+		// Channel metadata is app-defined, so its values cannot be narrowed safely.
 		metadata: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.passthrough();
