@@ -78,7 +78,7 @@ await corsair.eventee.api.attendeeInvite.put({ users: [{ email: 'jane.doe@exampl
 |------|------|----------|-------------|
 | `users` | `object[]` | Yes | — |
 
-The first 25 users are processed immediately and the rest in the background. Invalid entries and event admins/moderators are skipped.
+The first 25 users are processed immediately and the rest in the background. Invalid entries and event admins/moderators are skipped. `send_email: true` makes Eventee email each person an invitation; leave it unset or false for a silent import.
 
 <AccordionGroup>
 <Accordion title="users full type">
@@ -1140,7 +1140,7 @@ At least one of logo_url or photo_url is required. logo_url lists the partner as
 
 Replace a partner detail page sections list
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.eventee.api.partnerSections.patch({ partner_id: 1, sections: [{ type: 0, title: 'About Acme' }] });
@@ -1441,7 +1441,7 @@ await corsair.eventee.api.registrationInvite.put({ registrations: [{ email: 'jan
 |------|------|----------|-------------|
 | `registrations` | `object[]` | Yes | — |
 
-The first 25 registrations are processed immediately and the rest in the background. Invalid entries are skipped; duplicate emails update existing registrations.
+The first 25 registrations are processed immediately and the rest in the background. Invalid entries are skipped; duplicate emails update existing registrations. `send_email: true` makes Eventee email each person; leave it unset or false for a silent import.
 
 <AccordionGroup>
 <Accordion title="registrations full type">
