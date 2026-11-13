@@ -400,6 +400,9 @@ export function bindEndpointsRecursively({
 						answer.units,
 					);
 				};
+				// The keyBuilder adds `_refreshAuth` to this ctx, and an OAuth
+				// plugin calls it to refresh the token after a 401. The endpoint
+				// must get this ctx, not a new copy of the original one.
 				const endpointCtx = { ...ctx, meteredOperationId: operationPath };
 				const ctxTenantId =
 					typeof ctx.tenantId === 'string' ? ctx.tenantId : undefined;
@@ -515,7 +518,7 @@ export function bindEndpointsRecursively({
 					// Recording a completed approval is inside: if it throws, the
 					// caller gets an error, so the call is refunded like any other.
 					try {
-						res = await call(0, { ...ctx, key }, args);
+						res = await call(0, { ...endpointCtx, key }, args);
 						readAnswer(res);
 						await reportJob(args, res);
 						await onPermissionComplete?.();
@@ -538,7 +541,7 @@ export function bindEndpointsRecursively({
 					return res;
 				}
 
-				const ctxWithKey = { ...ctx, key };
+				const ctxWithKey = { ...endpointCtx, key };
 				let res: Awaited<ReturnType<typeof call>>;
 				try {
 					const beforeResult = endpointHooks.before
