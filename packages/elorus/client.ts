@@ -57,15 +57,10 @@ function routeWithPath(
 	});
 }
 
-// Transport rejections can be arbitrary values; only ApiError status metadata is safe to propagate.
-function safeError(error: unknown): ElorusAPIError {
-	if (error instanceof ApiError) {
-		return new ElorusAPIError(
-			`Elorus API request failed with status ${error.status}.`,
-			error.status,
-			error.retryAfter,
-		);
-	}
+// Core's ApiError passes through unchanged so its status, retryAfter and provider body reach core and the error handlers.
+// Any other transport rejection can be an arbitrary value and becomes a generic error.
+function toElorusError(error: unknown): Error {
+	if (error instanceof ApiError) return error;
 	return new ElorusAPIError('Elorus API request failed.');
 }
 
@@ -221,13 +216,13 @@ export async function makeElorusRequest(
 					query: options.query,
 				};
 
-	// The transport rejection may be non-Error data; safeError keeps only safe status metadata.
+	// The transport rejection may be non-Error data; toElorusError keeps ApiError and replaces anything else.
 	try {
 		// The shared transport returns untrusted provider JSON; operation.ts validates it before returning.
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: RATE_LIMIT_CONFIG,
 		});
 	} catch (error: unknown) {
-		throw safeError(error);
+		throw toElorusError(error);
 	}
 }

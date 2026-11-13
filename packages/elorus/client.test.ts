@@ -141,7 +141,7 @@ describe('Elorus client', () => {
 		expect(config.TOKEN).toBeUndefined();
 	});
 
-	it('does not expose the original request body through shared transport errors', async () => {
+	it("keeps the request body out of the error message when core's ApiError passes through", async () => {
 		const providerError = new ApiError(
 			{
 				method: 'POST',
@@ -167,6 +167,7 @@ describe('Elorus client', () => {
 				method: 'POST',
 				body: { password: 'private-value' },
 			}).catch((caught: unknown) => caught);
+			expect(error).toBe(providerError);
 			expect(String(error)).not.toContain('private-value');
 		} finally {
 			fetchSpy.mockRestore();
