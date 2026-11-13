@@ -69,9 +69,10 @@ const operationCases = [
 		invoke: (ctx: Context) =>
 			Content.get(ctx, { date: '2024-06-01', with_overlapping: false }),
 		url: '/public/api/v1/content',
+		// Eventee answers 422 to with_overlapping=false/true; it accepts 0/1.
 		request: {
 			method: 'GET',
-			query: { date: '2024-06-01', with_overlapping: false },
+			query: { date: '2024-06-01', with_overlapping: 0 },
 		},
 		response: program,
 	},
@@ -354,7 +355,8 @@ const operationCases = [
 		invoke: (ctx: Context) =>
 			Attendees.remove(ctx, { email: 'jane.doe@example.com' }),
 		url: '/public/api/v1/attendee',
-		request: { method: 'DELETE', query: { email: 'jane.doe@example.com' } },
+		// Eventee wants the email URL-encoded inside the query value, so the transport encodes it a second time.
+		request: { method: 'DELETE', query: { email: 'jane.doe%40example.com' } },
 		response: undefined,
 	},
 	{
@@ -382,7 +384,8 @@ const operationCases = [
 		invoke: (ctx: Context) =>
 			Registrations.remove(ctx, { email: 'jane.doe@example.com' }),
 		url: '/public/api/v1/registration',
-		request: { method: 'DELETE', query: { email: 'jane.doe@example.com' } },
+		// Eventee wants the email URL-encoded inside the query value, so the transport encodes it a second time.
+		request: { method: 'DELETE', query: { email: 'jane.doe%40example.com' } },
 		response: undefined,
 	},
 	{

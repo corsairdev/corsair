@@ -57,7 +57,14 @@ export const Content = {
 		'/public/api/{api-version}/content',
 		EventeeEndpointInputSchemas.contentGet,
 		EventeeEndpointOutputSchemas.contentGet,
-		{ query: ({ date, with_overlapping }) => ({ date, with_overlapping }) },
+		{
+			// Eventee validates this flag as 0/1 and answers 422 to the strings "true" and "false".
+			query: ({ date, with_overlapping }) => ({
+				date,
+				with_overlapping:
+					with_overlapping === undefined ? undefined : with_overlapping ? 1 : 0,
+			}),
+		},
 	),
 	deleteAll: operation(
 		'contentReset.delete',
@@ -418,7 +425,8 @@ export const Attendees = {
 		'/public/api/{api-version}/attendee',
 		EventeeEndpointInputSchemas.attendeeRemove,
 		EventeeEndpointOutputSchemas.attendeeRemove,
-		{ query: ({ email }) => ({ email }) },
+		// Eventee requires the email URL-encoded inside the query value (422 validation.encoded_email otherwise); the transport encodes it again.
+		{ query: ({ email }) => ({ email: encodeURIComponent(email) }) },
 	),
 };
 
@@ -444,7 +452,8 @@ export const Registrations = {
 		'/public/api/{api-version}/registration',
 		EventeeEndpointInputSchemas.registrationRemove,
 		EventeeEndpointOutputSchemas.registrationRemove,
-		{ query: ({ email }) => ({ email }) },
+		// Eventee requires the email URL-encoded inside the query value (422 validation.encoded_email otherwise); the transport encodes it again.
+		{ query: ({ email }) => ({ email: encodeURIComponent(email) }) },
 	),
 };
 
