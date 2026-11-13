@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/folk",
   "version": "0.1.0",
-  "description": "Folk plugin for Corsair",
+  "description": "Folk plugin for Corsair - manage people, companies, groups, interactions, notes, users, and credits",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -14,9 +14,10 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && tsc --build --force && tsup",
+    "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
@@ -34,9 +35,17 @@
   "keywords": [
     "corsair",
     "folk",
+    "crm",
+    "contacts",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/folk"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/folk",
   "license": "Apache-2.0",
   "files": [
     "dist"

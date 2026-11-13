@@ -8,6 +8,7 @@ module.exports = {
 		'**/plugins/**/*.test.ts',
 		'**/setup/**/*.test.ts',
 	],
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts$'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',
@@ -44,8 +45,13 @@ module.exports = {
 		],
 	},
 	moduleNameMapper: {
+		'^corsair$': '<rootDir>/../corsair/index.ts',
 		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^corsair/orm$': '<rootDir>/../corsair/orm.ts',
+		'^corsair/db$': '<rootDir>/../corsair/db.ts',
+		'^corsair/setup$': '<rootDir>/../corsair/setup.ts',
+		'^corsair/tests$': '<rootDir>/../corsair/tests.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
