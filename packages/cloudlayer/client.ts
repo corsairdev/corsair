@@ -241,6 +241,38 @@ export async function makeCloudlayerSyncRequest(
 	};
 }
 
+/**
+ * Plan gates answer 2xx with `{ allowed: false, reason, statusCode }` instead
+ * of an error status (live POST /v2/storage on the free plan, 11-13). Raise
+ * them as ApiError so callers see the provider's reason, not a schema error.
+ */
+// `unknown` because the response is untrusted JSON; isRecord narrows it.
+function throwIfRefused(
+	response: unknown,
+	method: ApiRequestOptions['method'],
+	endpoint: string,
+	base: string,
+): void {
+	if (!isRecord(response) || response.allowed !== false) return;
+	const reason =
+		typeof response.reason === 'string'
+			? response.reason
+			: 'Cloudlayer refused the request';
+	const status =
+		typeof response.statusCode === 'number' ? response.statusCode : 403;
+	throw new ApiError(
+		{ method, url: endpoint },
+		{
+			url: `${base}${endpoint}`,
+			ok: false,
+			status,
+			statusText: reason,
+			body: { statusCode: status, message: reason },
+		},
+		reason,
+	);
+}
+
 export async function makeCloudlayerRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -290,9 +322,11 @@ export async function makeCloudlayerRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions, {
+		const response = await request<T>(config, requestOptions, {
 			rateLimitConfig: CLOUDLAYER_RATE_LIMIT_CONFIG,
 		});
+		throwIfRefused(response, method, endpoint, config.BASE);
+		return response;
 	} catch (error) {
 		if (error instanceof Error) {
 			throw error;

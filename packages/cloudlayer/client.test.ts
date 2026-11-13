@@ -41,6 +41,30 @@ afterEach(() => {
 });
 
 describe('makeCloudlayerRequest', () => {
+	it('turns a 201 plan refusal into an ApiError with the provider reason', async () => {
+		// Live answer from POST /v2/storage on the free plan (11-13).
+		mockedRequest.mockResolvedValue({
+			allowed: false,
+			reason:
+				'User Storage not supported by current plan, upgrade plan to use User Storage.',
+			statusCode: 401,
+		});
+
+		// `unknown` because a rejection value has no static type; the assertions
+		// below narrow it to ApiError.
+		const error = await makeCloudlayerRequest('/storage', 'unit-test-key', {
+			method: 'POST',
+			body: { title: 'corsair-plugin-test' },
+		}).catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(error.status).toBe(401);
+		expect(error.message).toBe(
+			'User Storage not supported by current plan, upgrade plan to use User Storage.',
+		);
+	});
+
 	it('keeps Retry-After on the ApiError from the real transport', async () => {
 		const actualRequest =
 			jest.requireActual<typeof import('corsair/http')>('corsair/http').request;
