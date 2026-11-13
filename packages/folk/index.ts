@@ -473,7 +473,14 @@ export function folk<const T extends FolkPluginOptions>(
 	} satisfies InternalFolkPlugin;
 }
 
-export * from './client';
+// makeFolkRequest stays internal: exporting it hands any caller's raw path to core's URL templating.
+export type { FolkRequestOptions } from './client';
+export {
+	FOLK_API_BASE,
+	FolkAPIError,
+	flattenFilter,
+	redactSensitiveData,
+} from './client';
 export * from './endpoints/types';
 export * from './error-handlers';
 export * from './schema';

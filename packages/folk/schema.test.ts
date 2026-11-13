@@ -18,6 +18,7 @@ import {
 	UserSchema,
 	UsersGetInputSchema,
 } from './endpoints/types';
+import * as folkPackage from './index';
 import { FolkSchema } from './schema';
 
 describe('Folk schema and types', () => {
@@ -213,6 +214,12 @@ describe('Folk schema and types', () => {
 				role: 'admin',
 			});
 		});
+	});
+
+	it('keeps makeFolkRequest out of the package entry point', () => {
+		expect('makeFolkRequest' in folkPackage).toBe(false);
+		expect(typeof folkPackage.folk).toBe('function');
+		expect(typeof folkPackage.FolkAPIError).toBe('function');
 	});
 
 	describe('Folk documented response shapes', () => {
