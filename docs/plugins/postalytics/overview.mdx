@@ -108,7 +108,14 @@ await tenant.postalytics.api.account.getMyAccount({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.postalytics.api.account.createNewAccount({});
+await tenant.postalytics.api.account.createNewAccount({
+	body: {
+		first_name: 'Thomas',
+		last_name: 'Anderson',
+		password: 'test-password',
+		username: 'choi',
+	},
+});
 ```
 
 

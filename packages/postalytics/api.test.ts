@@ -1,4 +1,5 @@
 import { makePostalyticsRequest, PostalyticsRateLimitError } from './client';
+import type { PostalyticsContext, PostalyticsKeyBuilderContext } from './index';
 import { postalytics, postalyticsEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -7,7 +8,8 @@ jest.mock('corsair/core', () => ({
 
 const mockFetch = jest.fn();
 const originalFetch = globalThis.fetch;
-const ctx = { key: 'test-key', options: {} } as never;
+// The handlers exercised here only use key and options; Corsair supplies the rest.
+const ctx = { key: 'test-key', options: {} } as PostalyticsContext;
 
 beforeAll(() => {
 	globalThis.fetch = mockFetch as typeof fetch;
@@ -69,6 +71,24 @@ describe('Postalytics request seam', () => {
 			ListDetails: { Id: 4, Name: 'Suppression' },
 		});
 	});
+	it('rejects malformed required fields from both template reads', async () => {
+		const invalidTemplate = {
+			is_full_html: true,
+			is_proofed: 'false',
+			name: 'The Architect',
+			size: '0',
+		};
+		mockFetch.mockResolvedValue(
+			new Response(JSON.stringify([invalidTemplate]), { status: 200 }),
+		);
+		const endpoints = postalytics().endpoints!;
+		await expect(
+			endpoints.templates.getAllTemplates(ctx, {}),
+		).rejects.toThrow();
+		await expect(
+			endpoints.templates.getTemplate(ctx, { id: 42 }),
+		).rejects.toThrow();
+	});
 	it('gets an account from the sandbox using its numeric ID', async () => {
 		mockFetch.mockResolvedValue(new Response('[]', { status: 200 }));
 		const plugin = postalytics();
@@ -77,7 +97,7 @@ describe('Postalytics request seam', () => {
 		});
 		expect(
 			await plugin.endpoints!.account.getAccount(
-				{ key: 'test-key', options: { sandbox: true } } as never,
+				{ ...ctx, options: { sandbox: true } },
 				input,
 			),
 		).toEqual([]);
@@ -142,7 +162,19 @@ describe('Postalytics request seam', () => {
 		const plugin = postalytics();
 		await expect(
 			plugin.keyBuilder!(
-				{ keys: { get_api_key: async () => undefined } } as never,
+				{
+					authType: 'api_key',
+					options: {},
+					tenantId: 'fixture-tenant',
+					keys: {
+						get_api_key: async () => null,
+						set_api_key: async () => {},
+						get_webhook_signature: async () => null,
+						set_webhook_signature: async () => {},
+						get_dek: async () => '',
+						issue_new_dek: async () => '',
+					},
+				} satisfies PostalyticsKeyBuilderContext,
 				'endpoint',
 			),
 		).rejects.toThrow();

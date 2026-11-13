@@ -5,6 +5,7 @@ export class PostalyticsAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly status?: number,
+		// Error responses may be arbitrary JSON or plain text, so no narrower provider type is safe.
 		public readonly body?: unknown,
 	) {
 		super(message);
@@ -14,6 +15,7 @@ export class PostalyticsAPIError extends Error {
 
 export class PostalyticsRateLimitError extends PostalyticsAPIError {
 	constructor(
+		// Rate-limit responses have the same unstructured error boundary as other errors.
 		body: unknown,
 		public readonly retryAfterMs?: number,
 	) {
@@ -28,9 +30,11 @@ export async function makePostalyticsRequest(
 	options: {
 		method: 'GET' | 'POST' | 'PUT' | 'DELETE';
 		query?: Record<string, string | number | boolean | undefined>;
+		// Each endpoint validates a different request body before it reaches this shared transport.
 		body?: unknown;
 		sandbox?: boolean;
 	},
+	// Responses remain untrusted until the calling endpoint parses its specific output schema.
 ): Promise<unknown> {
 	if (!apiKey) throw new PostalyticsAPIError('Postalytics API key is required');
 	if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) {
@@ -58,10 +62,11 @@ export async function makePostalyticsRequest(
 		signal: AbortSignal.timeout(30_000),
 	});
 	const text = await response.text();
+	// JSON.parse can return any JSON value, and non-JSON error responses can be text.
 	let body: unknown = undefined;
 	if (text) {
 		try {
-			body = JSON.parse(text) as unknown;
+			body = JSON.parse(text);
 		} catch {
 			body = text;
 		}

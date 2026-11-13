@@ -19,7 +19,14 @@ create new account
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.account.createNewAccount({});
+await corsair.postalytics.api.account.createNewAccount({
+	body: {
+		first_name: 'Thomas',
+		last_name: 'Anderson',
+		password: 'test-password',
+		username: 'choi',
+	},
+});
 ```
 
 **Input**
@@ -73,7 +80,7 @@ delete account
 **Risk:** `destructive`
 
 ```ts
-await corsair.postalytics.api.account.deleteAccount({});
+await corsair.postalytics.api.account.deleteAccount({ id: 42 });
 ```
 
 **Input**
@@ -104,7 +111,7 @@ get account
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.account.getAccount({});
+await corsair.postalytics.api.account.getAccount({ id: 42 });
 ```
 
 **Input**
@@ -232,7 +239,14 @@ update account
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.account.updateAccount({});
+await corsair.postalytics.api.account.updateAccount({
+	body: {
+		first_name: 'Thomas',
+		last_name: 'Anderson',
+		password: 'test-password',
+		username: 'choi',
+	},
+});
 ```
 
 **Input**
@@ -286,7 +300,19 @@ create new campaign
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.campaigns.createNewCampaign({});
+await corsair.postalytics.api.campaigns.createNewCampaign({
+	body: {
+		CreditTypeId: 34,
+		DirectMailName: 'Keymaker',
+		PostageType: 10142067,
+		SenderAddress1: '36 Pipers Row',
+		SenderCity: 'New York',
+		SenderName: 'Metacortex',
+		SenderState: 'NY',
+		SenderZip: '10001',
+		TemplateFrontId: 10142067,
+	},
+});
 ```
 
 **Input**
@@ -339,7 +365,7 @@ delete campaign
 **Risk:** `destructive`
 
 ```ts
-await corsair.postalytics.api.campaigns.deleteCampaign({});
+await corsair.postalytics.api.campaigns.deleteCampaign({ id: 42 });
 ```
 
 **Input**
@@ -453,7 +479,7 @@ get campaign
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.campaigns.getCampaign({});
+await corsair.postalytics.api.campaigns.getCampaign({ id: 42 });
 ```
 
 **Input**
@@ -487,7 +513,7 @@ get campaign events
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.campaigns.getCampaignEvents({});
+await corsair.postalytics.api.campaigns.getCampaignEvents({ id: 42, PageNumber: 2, PageSize: 2 });
 ```
 
 **Input**
@@ -535,7 +561,7 @@ get campaign stats
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.campaigns.getCampaignStats({});
+await corsair.postalytics.api.campaigns.getCampaignStats({ id: 42 });
 ```
 
 **Input**
@@ -592,7 +618,12 @@ get contact event
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.campaigns.getContactEvent({});
+await corsair.postalytics.api.campaigns.getContactEvent({
+	dataid: 42,
+	id: 42,
+	PageNumber: 2,
+	PageSize: 2,
+});
 ```
 
 **Input**
@@ -641,7 +672,7 @@ update campaign status
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.campaigns.updateCampaignStatus({});
+await corsair.postalytics.api.campaigns.updateCampaignStatus({ id: 42 });
 ```
 
 **Input**
@@ -673,7 +704,9 @@ create contact on list
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.contacts.createContactOnList({});
+await corsair.postalytics.api.contacts.createContactOnList({
+	body: { contact_id: 1, contact_list_id: 10142067 },
+});
 ```
 
 **Input**
@@ -764,7 +797,7 @@ delete contact
 **Risk:** `destructive`
 
 ```ts
-await corsair.postalytics.api.contacts.deleteContact({});
+await corsair.postalytics.api.contacts.deleteContact({ id: 42 });
 ```
 
 **Input**
@@ -828,7 +861,7 @@ get contact
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.contacts.getContact({});
+await corsair.postalytics.api.contacts.getContact({ id: 42 });
 ```
 
 **Input**
@@ -911,7 +944,7 @@ get contacts on list
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.contacts.getContactsOnList({});
+await corsair.postalytics.api.contacts.getContactsOnList({ id: 42, limit: 2, start: 2 });
 ```
 
 **Input**
@@ -1000,7 +1033,9 @@ update contact on list
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.contacts.updateContactOnList({});
+await corsair.postalytics.api.contacts.updateContactOnList({
+	body: { contact_id: 1, contact_list_id: 10142067 },
+});
 ```
 
 **Input**
@@ -1093,7 +1128,17 @@ enroll contact to flow
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.flows.enrollContactToFlow({});
+await corsair.postalytics.api.flows.enrollContactToFlow({
+	endPoint: 'segment',
+	body: {
+		address_city: 'New York',
+		address_state: 'NY',
+		address_street: '36 Pipers Row',
+		address_zip: '10001',
+		first_name: 'Thomas',
+		last_name: 'Anderson',
+	},
+});
 ```
 
 **Input**
@@ -1226,7 +1271,7 @@ get flow
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.flows.getFlow({});
+await corsair.postalytics.api.flows.getFlow({ endpointId: 'segment' });
 ```
 
 **Input**
@@ -1262,7 +1307,7 @@ unenroll contact from flow
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.flows.unenrollContactFromFlow({});
+await corsair.postalytics.api.flows.unenrollContactFromFlow({ dataId: 42, endPoint: 'segment' });
 ```
 
 **Input**
@@ -1295,7 +1340,9 @@ create login link
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.login.createLoginLink({});
+await corsair.postalytics.api.login.createLoginLink({
+	body: { api_key: 'fixture-api-key' },
+});
 ```
 
 **Input**
@@ -1342,7 +1389,17 @@ Send direct mail, which may incur charges and cannot be recalled
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.postalytics.api.mail.sendMail({});
+await corsair.postalytics.api.mail.sendMail({
+	endPoint: 'segment',
+	body: {
+		address_city: 'New York',
+		address_state: 'NY',
+		address_street: '36 Pipers Row',
+		address_zip: '10001',
+		first_name: 'Thomas',
+		last_name: 'Anderson',
+	},
+});
 ```
 
 **Input**
@@ -1433,7 +1490,10 @@ create suppression list contact
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.suppressionContacts.createSuppressionListContact({});
+await corsair.postalytics.api.suppressionContacts.createSuppressionListContact({
+	listId: 42,
+	body: { FirstName: 'Thomas', LastName: 'Anderson' },
+});
 ```
 
 **Input**
@@ -1602,7 +1662,7 @@ delete suppression list contact
 **Risk:** `destructive`
 
 ```ts
-await corsair.postalytics.api.suppressionContacts.deleteSuppressionListContact({});
+await corsair.postalytics.api.suppressionContacts.deleteSuppressionListContact({ contactId: 42, listId: 42 });
 ```
 
 **Input**
@@ -1633,7 +1693,7 @@ get suppression list contact
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.suppressionContacts.getSuppressionListContact({});
+await corsair.postalytics.api.suppressionContacts.getSuppressionListContact({ contactId: 42, listId: 42, offset: 2 });
 ```
 
 **Input**
@@ -1744,7 +1804,7 @@ get suppression list contacts
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.suppressionContacts.getSuppressionListContacts({});
+await corsair.postalytics.api.suppressionContacts.getSuppressionListContacts({ listId: 42, offset: 2 });
 ```
 
 **Input**
@@ -1854,7 +1914,11 @@ update suppression list contact
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.suppressionContacts.updateSuppressionListContact({});
+await corsair.postalytics.api.suppressionContacts.updateSuppressionListContact({
+	contactId: 42,
+	listId: 42,
+	body: { FirstName: 'Thomas', LastName: 'Anderson' },
+});
 ```
 
 **Input**
@@ -2026,7 +2090,9 @@ create suppression list
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.suppressionLists.createSuppressionList({});
+await corsair.postalytics.api.suppressionLists.createSuppressionList({
+	body: { Name: 'Suppression list', Country: 'US' },
+});
 ```
 
 **Input**
@@ -2079,7 +2145,7 @@ delete suppression list
 **Risk:** `destructive`
 
 ```ts
-await corsair.postalytics.api.suppressionLists.deleteSuppressionList({});
+await corsair.postalytics.api.suppressionLists.deleteSuppressionList({ id: 42 });
 ```
 
 **Input**
@@ -2109,7 +2175,7 @@ get suppression list
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.suppressionLists.getSuppressionList({});
+await corsair.postalytics.api.suppressionLists.getSuppressionList({ id: 42 });
 ```
 
 **Input**
@@ -2150,7 +2216,7 @@ get suppression lists
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.suppressionLists.getSuppressionLists({});
+await corsair.postalytics.api.suppressionLists.getSuppressionLists({ id: 2 });
 ```
 
 **Input**
@@ -2193,7 +2259,14 @@ create template
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.templates.createTemplate({});
+await corsair.postalytics.api.templates.createTemplate({
+	body: {
+		is_full_html: true,
+		is_proofed: true,
+		name: 'The Architect',
+		size: '0',
+	},
+});
 ```
 
 **Input**
@@ -2248,7 +2321,7 @@ delete template
 **Risk:** `destructive`
 
 ```ts
-await corsair.postalytics.api.templates.deleteTemplate({});
+await corsair.postalytics.api.templates.deleteTemplate({ id: 42 });
 ```
 
 **Input**
@@ -2322,7 +2395,7 @@ get template
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.templates.getTemplate({});
+await corsair.postalytics.api.templates.getTemplate({ id: 42 });
 ```
 
 **Input**
@@ -2373,7 +2446,9 @@ create webhook
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.webhooks.createWebhook({});
+await corsair.postalytics.api.webhooks.createWebhook({
+	body: { campaign_id: 42, url: 'https://example.com/postalytics' },
+});
 ```
 
 **Input**
@@ -2419,7 +2494,7 @@ delete webhook
 **Risk:** `destructive`
 
 ```ts
-await corsair.postalytics.api.webhooks.deleteWebhook({});
+await corsair.postalytics.api.webhooks.deleteWebhook({ id: 42 });
 ```
 
 **Input**
@@ -2485,7 +2560,7 @@ get webhook
 **Risk:** `read`
 
 ```ts
-await corsair.postalytics.api.webhooks.getWebhook({});
+await corsair.postalytics.api.webhooks.getWebhook({ id: 42 });
 ```
 
 **Input**
@@ -2526,7 +2601,9 @@ update webhook
 **Risk:** `write`
 
 ```ts
-await corsair.postalytics.api.webhooks.updateWebhook({});
+await corsair.postalytics.api.webhooks.updateWebhook({
+	body: { campaign_id: 42, url: 'https://example.com/postalytics' },
+});
 ```
 
 **Input**

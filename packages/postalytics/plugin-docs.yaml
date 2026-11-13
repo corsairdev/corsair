@@ -4,3 +4,81 @@ domain: postalytics.com
 overviewNote: Postalytics authenticates with an API key as the HTTP Basic username and an empty password. Set sandbox to true in plugin options to use the development host. Outbound webhook configuration is supported; inbound webhook verification is not implemented.
 examples:
   read: account.getMyAccount
+  write:
+    path: account.createNewAccount
+    args: {"body": {"first_name": "Thomas", "last_name": "Anderson", "password": "test-password", "username": "choi"}}
+apiExamples:
+  account.getAccount:
+    args: {"id": 42}
+  account.createNewAccount:
+    args: {"body": {"first_name": "Thomas", "last_name": "Anderson", "password": "test-password", "username": "choi"}}
+  account.updateAccount:
+    args: {"body": {"first_name": "Thomas", "last_name": "Anderson", "password": "test-password", "username": "choi"}}
+  account.deleteAccount:
+    args: {"id": 42}
+  campaigns.getCampaignStats:
+    args: {"id": 42}
+  campaigns.getCampaign:
+    args: {"id": 42}
+  campaigns.getCampaignEvents:
+    args: {"id": 42, "PageNumber": 2, "PageSize": 2}
+  campaigns.getContactEvent:
+    args: {"dataid": 42, "id": 42, "PageNumber": 2, "PageSize": 2}
+  campaigns.createNewCampaign:
+    args: {"body": {"CreditTypeId": 34, "DirectMailName": "Keymaker", "PostageType": 10142067, "SenderAddress1": "36 Pipers Row", "SenderCity": "New York", "SenderName": "Metacortex", "SenderState": "NY", "SenderZip": "10001", "TemplateFrontId": 10142067}}
+  campaigns.updateCampaignStatus:
+    args: {"id": 42}
+  campaigns.deleteCampaign:
+    args: {"id": 42}
+  contacts.getContact:
+    args: {"id": 42}
+  contacts.getContactsOnList:
+    args: {"id": 42, "limit": 2, "start": 2}
+  contacts.createContactOnList:
+    args: {"body": {"contact_id": 1, "contact_list_id": 10142067}}
+  contacts.updateContactOnList:
+    args: {"body": {"contact_id": 1, "contact_list_id": 10142067}}
+  contacts.deleteContact:
+    args: {"id": 42}
+  flows.getFlow:
+    args: {"endpointId": "segment"}
+  flows.enrollContactToFlow:
+    args: {"endPoint": "segment", "body": {"address_city": "New York", "address_state": "NY", "address_street": "36 Pipers Row", "address_zip": "10001", "first_name": "Thomas", "last_name": "Anderson"}}
+  flows.unenrollContactFromFlow:
+    args: {"dataId": 42, "endPoint": "segment"}
+  login.createLoginLink:
+    args: {"body": {"api_key": "fixture-api-key"}}
+  mail.sendMail:
+    args: {"endPoint": "segment", "body": {"address_city": "New York", "address_state": "NY", "address_street": "36 Pipers Row", "address_zip": "10001", "first_name": "Thomas", "last_name": "Anderson"}}
+  suppressionLists.getSuppressionLists:
+    args: {"id": 2}
+  suppressionLists.getSuppressionList:
+    args: {"id": 42}
+  suppressionLists.createSuppressionList:
+    args: {"body": {"Name": "Suppression list", "Country": "US"}}
+  suppressionLists.deleteSuppressionList:
+    args: {"id": 42}
+  suppressionContacts.getSuppressionListContacts:
+    args: {"listId": 42, "offset": 2}
+  suppressionContacts.getSuppressionListContact:
+    args: {"contactId": 42, "listId": 42, "offset": 2}
+  suppressionContacts.createSuppressionListContact:
+    args: {"listId": 42, "body": {"FirstName": "Thomas", "LastName": "Anderson"}}
+  suppressionContacts.updateSuppressionListContact:
+    args: {"contactId": 42, "listId": 42, "body": {"FirstName": "Thomas", "LastName": "Anderson"}}
+  suppressionContacts.deleteSuppressionListContact:
+    args: {"contactId": 42, "listId": 42}
+  templates.getTemplate:
+    args: {"id": 42}
+  templates.createTemplate:
+    args: {"body": {"is_full_html": true, "is_proofed": true, "name": "The Architect", "size": "0"}}
+  templates.deleteTemplate:
+    args: {"id": 42}
+  webhooks.getWebhook:
+    args: {"id": 42}
+  webhooks.createWebhook:
+    args: {"body": {"campaign_id": 42, "url": "https://example.com/postalytics"}}
+  webhooks.updateWebhook:
+    args: {"body": {"campaign_id": 42, "url": "https://example.com/postalytics"}}
+  webhooks.deleteWebhook:
+    args: {"id": 42}
