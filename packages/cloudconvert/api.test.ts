@@ -5,6 +5,11 @@ import { CloudConvertEndpointOutputSchemas as Outputs } from './endpoints/types'
 
 const KEY = process.env.CLOUDCONVERT_API_KEY ?? '';
 const describeLive = KEY.length > 0 ? describe : describe.skip;
+if (KEY.length === 0) {
+	console.warn(
+		'Skipping CloudConvert live tests: CLOUDCONVERT_API_KEY not set',
+	);
+}
 
 describeLive('CloudConvert live API (env-gated)', () => {
 	it('GET /v2/tasks returns a validated first page', async () => {
