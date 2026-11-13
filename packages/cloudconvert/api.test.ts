@@ -32,7 +32,10 @@ describeLive('CloudConvert live API (env-gated)', () => {
 		>(KEY, { method: 'GET', path: '/users/me' });
 
 		const parsed = Outputs.usersShow.parse(response);
-		expect(typeof parsed.data.username).toBe('string');
+		// Email signups have no username: the API returns null.
+		expect(
+			parsed.data.username === null || typeof parsed.data.username === 'string',
+		).toBe(true);
 		expect(typeof parsed.data.credits).toBe('number');
 		expect(typeof parsed.data.created_at).toBe('string');
 	});

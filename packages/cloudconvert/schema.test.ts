@@ -456,6 +456,21 @@ describe('CloudConvert endpoint input and output schemas', () => {
 		expect(Inputs.usersShow.safeParse({}).success).toBe(true);
 		expect(Inputs.usersShow.safeParse({ id: 'user-123' }).success).toBe(false);
 		expect(Outputs.usersShow.safeParse(userResponse).success).toBe(true);
+		// Live GET /v2/users/me for an account created by email signup (11-13), trimmed.
+		const liveUser = {
+			data: {
+				id: 1,
+				username: null,
+				email: 'converter@project.test',
+				created_at: '2026-11-13T15:08:11+00:00',
+				email_verified: true,
+				credits: 10,
+				paying: false,
+				task_region: null,
+				links: { self: 'https://api.cloudconvert.com/v2/users/1' },
+			},
+		};
+		expect(Outputs.usersShow.safeParse(liveUser).success).toBe(true);
 		expect(Outputs.usersShow.safeParse({ data: { id: 1 } }).success).toBe(
 			false,
 		);

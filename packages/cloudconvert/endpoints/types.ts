@@ -585,7 +585,8 @@ const UserSchema = z
 	.object({
 		// The reference calls id a string but its published response sample uses a number.
 		id: z.union([z.string(), z.number()]),
-		username: z.string(),
+		// null for accounts created by email signup (live response, 11-13).
+		username: z.string().nullable(),
 		email: z.string(),
 		credits: z.number().int(),
 		created_at: TimestampSchema,
