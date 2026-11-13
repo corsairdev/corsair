@@ -1202,6 +1202,31 @@ describe('the account subdomain', () => {
 		expect(String(error)).toContain('subdomain');
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
+
+	it.each([
+		'attacker.example/',
+		'evil.com#',
+		'user@evil.com',
+		'a.b',
+		'acme:8080',
+		'-acme',
+	])(
+		'refuses %s as a subdomain, so the key never leaves for another host',
+		async (bad) => {
+			const ctx = {
+				key: API_KEY,
+				options: {},
+				keys: { get_subdomain: jest.fn().mockResolvedValue(bad) },
+			};
+
+			const error = await caught(
+				(Boards.list as never as AnyEndpoint)(ctx as never, {} as never),
+			);
+
+			expect(error).toBeInstanceOf(KanbanizeAPIError);
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 });
 
 describe('error envelopes', () => {
@@ -1276,5 +1301,32 @@ describe('error envelopes', () => {
 		const error = await caught(invoke(Boards.list, {}));
 
 		expect(error).not.toHaveProperty('body');
+	});
+
+	it('keeps neither the card body it sent nor the echoed reply anywhere on the error', async () => {
+		respond(
+			{
+				error: {
+					code: 'V001',
+					message: 'Invalid field.',
+					details: { description: 'secret plan table' },
+				},
+			},
+			400,
+		);
+
+		const error = await caught(
+			invoke(Cards.create, {
+				title: 'x',
+				column_id: 1,
+				lane_id: 2,
+				description: 'secret plan table',
+			}),
+		);
+
+		expect(error).toMatchObject({ status: 400, code: 'V001', method: 'POST' });
+		expect((error as Error).cause).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('secret plan table');
+		expect(String(error)).not.toContain('secret plan table');
 	});
 });

@@ -11,8 +11,17 @@ import { ApiError, request } from 'corsair/http';
  * own subdomain, so the base URL is built per account.
  */
 export function kanbanizeBaseUrl(subdomain: string): string {
+	// The subdomain becomes part of the host that receives the API key, so it
+	// must be one DNS label: `acme`, never `attacker.example/` or `a@b`.
+	if (!SUBDOMAIN_LABEL.test(subdomain)) {
+		throw new KanbanizeAPIError(
+			'The Businessmap subdomain must be a single label, such as acme for acme.kanbanize.com',
+		);
+	}
 	return `https://${subdomain}.kanbanize.com/api/v2`;
 }
+
+const SUBDOMAIN_LABEL = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/i;
 
 /** The codes Businessmap sends when a limit is hit, on either window. */
 const RATE_LIMIT_CODES = new Set(['RL01', 'RL02']);
@@ -83,7 +92,14 @@ export class KanbanizeAPIError extends Error {
 	constructor(
 		message: string,
 		options: {
+			/** A transport failure (timeout, DNS). It carries no request or response body. */
 			cause?: Error;
+			/**
+			 * The failed API call. Its status, code and retry fields are copied;
+			 * the error itself is not kept, because it holds the request body (a
+			 * card description) and the response body.
+			 */
+			apiError?: ApiError;
 			status?: number;
 			retryAfter?: number;
 			method?: string;
@@ -93,17 +109,17 @@ export class KanbanizeAPIError extends Error {
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'KanbanizeAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		const fields = errorObject(cause?.body);
-		this.status = options.status ?? cause?.status;
+		const apiError = options.apiError;
+		const fields = errorObject(apiError?.body);
+		this.status = options.status ?? apiError?.status;
 		this.code = fields.code;
 		this.reference = fields.reference;
 		// The body's seconds win only when no header carried a delay.
 		this.retryAfter =
 			options.retryAfter ??
-			cause?.retryAfter ??
+			apiError?.retryAfter ??
 			(fields.retryAfter !== undefined ? fields.retryAfter * 1000 : undefined);
-		this.method = options.method ?? cause?.request.method;
+		this.method = options.method ?? apiError?.request.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
 	}
@@ -201,7 +217,7 @@ export async function makeKanbanizeRequest(
 		if (error instanceof ApiError) {
 			throw new KanbanizeAPIError(
 				describeKanbanizeError(error.status, error.body, error.message),
-				{ cause: error },
+				{ apiError: error },
 			);
 		}
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
