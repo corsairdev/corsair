@@ -361,10 +361,9 @@ describe('Retry-After parsing', () => {
 });
 
 describe('api key redaction', () => {
-	// Core's ApiError redacts `api_key`, `key`, `token` and `appid`, but Alpha
-	// Vantage spells its parameter `apikey`, which is not in that set — so
-	// without the plugin's own sanitiser the live key would ride along in every
-	// failed request's url and query.
+	// Core's ApiError redacts the url and query for the parameter names it
+	// knows, but never the message, which can quote the full url. The plugin's
+	// sanitiser covers all three, whatever core's list holds.
 	it('strips the key from an ApiError url, query and message', () => {
 		const raw = new ApiError(
 			{
@@ -383,9 +382,7 @@ describe('api key redaction', () => {
 		);
 
 		// Confirms the gap is real rather than assumed.
-		expect(JSON.stringify({ u: raw.url, q: raw.request.query })).toContain(
-			TEST_KEY,
-		);
+		expect(raw.message).toContain(TEST_KEY);
 
 		const safe = sanitizeApiError(raw) as ApiError;
 
