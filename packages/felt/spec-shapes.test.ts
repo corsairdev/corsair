@@ -299,3 +299,37 @@ describe('Felt request bodies from the API reference', () => {
 		).toThrow();
 	});
 });
+
+describe('Felt responses seen in the live run (11-13)', () => {
+	it('parses Global Library layers whose hide_from_legend is null', () => {
+		// Trimmed from GET /api/v2/library?source=felt.
+		const library = {
+			type: 'layer_library',
+			layer_groups: [],
+			layers: [
+				{
+					id: 'nZHoOexIRbu8m3F9BalC9BuD',
+					type: 'layer',
+					name: 'Alternative Fuel Stations',
+					status: 'completed',
+					progress: 100,
+					style: {},
+					subtitle: '',
+					caption: '',
+					legend_visibility: 'show',
+					hide_from_legend: null,
+					last_refreshed_at: '2023-07-22T21:43:32Z',
+					geometry_type: 'Point',
+					is_spreadsheet: false,
+					next_refresh_at: null,
+					refresh_status: 'disabled',
+					refresh_period: 'disabled',
+					paused_reason: null,
+				},
+			],
+		};
+		expect(
+			FeltEndpointOutputSchemas.layersListLibrary.parse(library).layers,
+		).toHaveLength(1);
+	});
+});

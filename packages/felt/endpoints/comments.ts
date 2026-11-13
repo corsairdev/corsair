@@ -15,7 +15,17 @@ export const Comments = {
 				query: input.format ? { format: input.format } : undefined,
 			},
 		);
-		const parsed = FeltEndpointOutputSchemas.commentsExport.parse(response);
+		// Felt serves the geojson export as text; hand it back as an object like the json export.
+		// `unknown` because the body is either the response or JSON parsed from it; the schema below narrows it.
+		let body: unknown = response;
+		if (input.format === 'geojson' && typeof response === 'string') {
+			try {
+				body = JSON.parse(response);
+			} catch {
+				body = response;
+			}
+		}
+		const parsed = FeltEndpointOutputSchemas.commentsExport.parse(body);
 		await logEventFromContext(
 			ctx,
 			'felt.comments.export',

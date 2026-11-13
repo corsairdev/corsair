@@ -655,7 +655,8 @@ const feltEndpointMeta = {
 	},
 	'elements.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a drawn element from a map',
+		description:
+			"Delete a drawn element from a map; the element id is the feature's `felt:id` property",
 	},
 	'elements.listGroups': {
 		riskLevel: 'read',

@@ -350,7 +350,7 @@ export const LayerSchema = z
 			.or(z.string())
 			.nullable()
 			.optional(),
-		hide_from_legend: z.boolean().optional(),
+		hide_from_legend: z.boolean().nullable().optional(),
 		is_spreadsheet: z.boolean().nullable().optional(),
 		last_refreshed_at: z.string().nullable().optional(),
 		next_refresh_at: z.string().nullable().optional(),

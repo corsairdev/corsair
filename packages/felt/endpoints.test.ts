@@ -735,6 +735,22 @@ describe('Elements endpoints', () => {
 });
 
 describe('Comments endpoints', () => {
+	it('comments.export parses a geojson export that Felt sends as text', async () => {
+		// Live run 11-13: format=geojson came back as a JSON string, not a parsed object.
+		mockedRequest.mockResolvedValue(
+			'{"type":"FeatureCollection","features":[]}',
+		);
+		const result = await Comments.export(ctx, {
+			map_id: 'm_1',
+			format: 'geojson',
+		});
+		expect(result).toEqual({ type: 'FeatureCollection', features: [] });
+
+		mockedRequest.mockResolvedValue('thread_id,comment_id\n');
+		const csv = await Comments.export(ctx, { map_id: 'm_1', format: 'csv' });
+		expect(csv).toBe('thread_id,comment_id\n');
+	});
+
 	it('supports Comments export, resolve and delete operations', async () => {
 		mockedRequest.mockResolvedValue([{ id: 'c_1', text: 'Hello' }]);
 		await Comments.export(ctx, { map_id: 'm_1', format: 'json' });
