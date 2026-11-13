@@ -291,4 +291,24 @@ describe('E2B API client', () => {
 			expect(JSON.stringify(result.request.body)).not.toContain(secretValue);
 		}
 	});
+
+	it('encodes slashes in path IDs so they cannot change the route', async () => {
+		globalThis.fetch = async (url, init) => {
+			calls.push({ url: String(url), init });
+			return new Response(null, { status: 204 });
+		};
+
+		await makeE2bRequest(
+			e2bOperationRoutes['sandboxes.kill'],
+			'project-api-key',
+			{
+				path: { sandboxID: '../volumes/volume-test' },
+			},
+		);
+
+		expect(calls[0]?.url).toBe(
+			'https://api.e2b.app/sandboxes/..%2Fvolumes%2Fvolume-test',
+		);
+		expect(calls[0]?.init?.method).toBe('DELETE');
+	});
 });

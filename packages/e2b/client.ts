@@ -365,6 +365,8 @@ export async function makeE2bRequest(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: baseHeaders,
+		// encodeURI (core's default) keeps '/', so an ID like '../volumes/x' would change the route.
+		ENCODE_PATH: encodeURIComponent,
 	};
 	const requestOptions: ApiRequestOptions = {
 		method: route.method,
