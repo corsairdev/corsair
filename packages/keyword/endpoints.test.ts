@@ -123,6 +123,22 @@ describe('projects.list', () => {
 		);
 	});
 
+	it('reads a subproject whose crawl time is a Unix timestamp', async () => {
+		respond({
+			data: [
+				{
+					...project,
+					id: 'Disney[sub]Disney Classics',
+					attributes: { ...project.attributes, crawled_at: 1681467537 },
+				},
+			],
+		});
+
+		await expect(invoke(Projects.list, {})).resolves.toMatchObject({
+			data: [{ attributes: { crawled_at: 1681467537 } }],
+		});
+	});
+
 	it('keeps fields it does not know', async () => {
 		respond({
 			data: [{ type: 'group', id: 'X', attributes: { brandNew: 'kept' } }],
@@ -215,6 +231,26 @@ describe('projects.create', () => {
 			},
 		});
 		expect(lastRequest().headers.get('content-type')).toBe('application/json');
+	});
+
+	it('reads a new project, whose keyword count is an empty array', async () => {
+		respond(
+			{
+				data: {
+					...project,
+					attributes: {
+						...project.attributes,
+						keywords_count: [],
+						crawled_at: null,
+					},
+				},
+			},
+			201,
+		);
+
+		await expect(
+			invoke(Projects.create, { category: 'Disney' }),
+		).resolves.toMatchObject({ data: { attributes: { keywords_count: [] } } });
 	});
 
 	it('sends only the required field when that is all it is given', async () => {
@@ -437,6 +473,39 @@ describe('keywords.get', () => {
 });
 
 describe('keywords.add', () => {
+	it('reads a just-added keyword, whose competition is still a label', async () => {
+		respond(
+			{
+				data: [
+					{
+						...keyword,
+						attributes: {
+							...keyword.attributes,
+							competition: 'Low',
+							rankingurl: 'NOT FOUND',
+							grank: null,
+							crawled_at: null,
+						},
+					},
+				],
+				meta: {
+					title: '1 keyword has been added',
+					counts: { duplicates: 0, added: 1 },
+				},
+			},
+			201,
+		);
+
+		await expect(
+			invoke(Keywords.add, {
+				projectName: 'Disney',
+				keywords: [{ kw: 'jungle book', url: 'disney.com' }],
+			}),
+		).resolves.toMatchObject({
+			data: [{ attributes: { competition: 'Low' } }],
+		});
+	});
+
 	it('POSTs a JSON:API keyword document with the project category', async () => {
 		respond({ data: [keyword] }, 201);
 
@@ -807,14 +876,27 @@ describe('mindshare', () => {
 		});
 	});
 
-	it('GETs the history by project ID', async () => {
+	it('GETs the history by project ID, keyed by date', async () => {
 		respond(mindshareHistory);
 
-		await invoke(Mindshare.history, {
-			projectId: 3057417,
-			start_date: '2026-11-01',
-			end_date: '2026-11-12',
+		await expect(
+			invoke(Mindshare.history, {
+				projectId: 3057417,
+				start_date: '2026-11-01',
+				end_date: '2026-11-12',
+			}),
+		).resolves.toMatchObject({
+			data: {
+				latest: [{ url: 'en.wikipedia.org', domain_exist_in_project: false }],
+				'2026-11-08': [{ percentage: 24.55 }],
+			},
 		});
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'keyword.mindshare.history',
+			{ projectId: 3057417, points: 2 },
+			'completed',
+		);
 
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',

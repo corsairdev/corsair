@@ -62,15 +62,17 @@ export const KeywordProjectSchema = z
 				project_id: z.number().nullish(),
 				name: z.string().nullish(),
 				shortkey: z.string().nullish(),
+				// A count, a count per status, or `[]` on a project created just now.
 				keywords_count: z
-					.union([z.number(), z.record(z.string(), z.number())])
+					.union([z.number(), z.record(z.string(), z.number()), z.tuple([])])
 					.nullish(),
 				tags_count: z.number().nullish(),
 				tags: z.array(TagSchema).nullish(),
 				keywords_last_updated_at: z.string().nullish(),
 				notes_count: z.number().nullish(),
 				updated_at: z.string().nullish(),
-				crawled_at: z.string().nullish(),
+				// Keyword sends a Unix timestamp in seconds.
+				crawled_at: z.union([z.number(), z.string()]).nullish(),
 				url: z.string().nullish(),
 				currency_code: z.string().nullish(),
 				company_name: z.string().nullish(),
@@ -260,7 +262,8 @@ const KeywordAttributesSchema = z
 		impressions: z.number().nullish(),
 		ctr: z.number().nullish(),
 		ms: z.number().nullish(),
-		competition: z.number().nullish(),
+		// A 0-1 score once ranked, a label such as `Low` right after an add.
+		competition: z.union([z.number(), z.string()]).nullish(),
 		cpc: z.number().nullish(),
 		gpage: z.number().nullish(),
 		grank: z.number().nullish(),
@@ -716,19 +719,20 @@ const MindshareHistoryInputSchema = z.object({
 
 export type MindshareHistoryInput = z.input<typeof MindshareHistoryInputSchema>;
 
+// `data` maps `latest` and one `YYYY-MM-DD` key per data point to that
+// day's top domains.
+const MindshareHistoryEntrySchema = z
+	.object({
+		url: z.string().nullish(),
+		clicks: z.number().nullish(),
+		percentage: z.number().nullish(),
+		domain_exist_in_project: z.boolean().nullish(),
+	})
+	.loose();
+
 const MindshareHistoryResponseSchema = z
 	.object({
-		data: z.array(
-			z
-				.object({
-					date: z.string().nullish(),
-					title: z.string().nullish(),
-					url: z.string().nullish(),
-					percentage: z.number().nullish(),
-					clicks: z.number().nullish(),
-				})
-				.loose(),
-		),
+		data: z.record(z.string(), z.array(MindshareHistoryEntrySchema)),
 	})
 	.loose();
 

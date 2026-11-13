@@ -220,15 +220,22 @@ export const mindshareLatest = {
 };
 
 export const mindshareHistory = {
-	data: [
-		{
-			date: '2026-11-01',
-			title: 'Tinker Bell',
-			url: 'en.wikipedia.org',
-			percentage: 28.85,
-			clicks: 2750049.64,
-		},
-	],
+	data: {
+		latest: [
+			{
+				url: 'en.wikipedia.org',
+				clicks: 1072333.488,
+				percentage: 19.93,
+				domain_exist_in_project: false,
+			},
+		],
+		'2026-11-08': [
+			{ url: 'en.wikipedia.org', clicks: 1321317.479, percentage: 24.55 },
+		],
+		'2026-11-01': [
+			{ url: 'en.wikipedia.org', clicks: 1248335.619, percentage: 23.2 },
+		],
+	},
 };
 
 export const alerts = {

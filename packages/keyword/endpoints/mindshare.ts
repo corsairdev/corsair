@@ -40,7 +40,8 @@ export const history: KeywordEndpoints['mindshareHistory'] = (ctx, input) =>
 		{
 			log: ({ projectId }, result) => ({
 				projectId,
-				entries: result.data.length,
+				points: Object.keys(result.data).filter((key) => key !== 'latest')
+					.length,
 			}),
 		},
 	);
