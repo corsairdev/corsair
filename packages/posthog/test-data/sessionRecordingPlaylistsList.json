@@ -1,0 +1,39 @@
+{
+  "count": 12,
+  "next": "https://us.posthog.com/api/projects/309833/session_recording_playlists/?limit=2&offset=2",
+  "previous": null,
+  "results": [
+    {
+      "id": -1,
+      "short_id": "synthetic-watch-history",
+      "name": "Watch history",
+      "derived_name": null,
+      "description": "Recordings you have watched",
+      "pinned": false,
+      "created_at": null,
+      "created_by": null,
+      "deleted": false,
+      "filters": {},
+      "last_modified_at": null,
+      "last_modified_by": null,
+      "recordings_counts": {
+        "saved_filters": {
+          "count": null,
+          "has_more": null,
+          "watched_count": null,
+          "increased": null,
+          "last_refreshed_at": null
+        },
+        "collection": {
+          "count": 16,
+          "has_more": false,
+          "watched_count": 16,
+          "increased": null,
+          "last_refreshed_at": null
+        }
+      },
+      "type": "collection",
+      "is_synthetic": true
+    }
+  ]
+}

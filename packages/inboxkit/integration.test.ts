@@ -182,7 +182,24 @@ describe('a root error handler that asks for retries', () => {
 	});
 
 	it('can retry a refusal, since nothing was done', async () => {
-		const { corsair, testDb } = await createRetryingClient();
+		// The retry is asked for at plugin level, which comes before every other
+		// handler; a root handler only runs when no plugin handler matches.
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'inboxkit', 'default');
+		const corsair = createCorsair({
+			plugins: [
+				inboxkit({
+					key: API_KEY,
+					workspaceId: WORKSPACE,
+					errorHandlers: {
+						RATE_LIMIT_ERROR: retryEverything.DEFAULT,
+					},
+				}),
+			],
+			database: testDb.db,
+			kek: KEK,
+		});
+		await corsair.inboxkit.keys.issue_new_dek();
 		try {
 			fetchMock
 				.mockResolvedValueOnce(jsonResponse({ message: 'slow down' }, 429))
