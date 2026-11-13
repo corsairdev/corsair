@@ -210,6 +210,14 @@ describe('verify.verify', () => {
 		).rejects.toMatchObject({ status: 400, isValidationError: true });
 	});
 
+	it('keeps a result value Kickbox adds later instead of failing', async () => {
+		respond({ ...deliverable, result: 'suspicious' });
+
+		await expect(
+			invoke(Verify.verify, { email: 'test@example.com' }),
+		).resolves.toMatchObject({ result: 'suspicious' });
+	});
+
 	it('rejects a body with no result before reporting an answer', async () => {
 		respond({ success: true });
 
@@ -274,6 +282,19 @@ describe('verify.disposable', () => {
 			'completed',
 		);
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('someone@');
+	});
+
+	it('logs a bare domain as the domain', async () => {
+		respond(disposableHost);
+
+		await invoke(Verify.disposable, { address: 'Mailinator.com' });
+
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'kickbox.verify.disposable',
+			{ domain: 'mailinator.com' },
+			'completed',
+		);
 	});
 
 	it('rejects an address too short to be one', async () => {

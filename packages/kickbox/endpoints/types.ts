@@ -55,8 +55,10 @@ export type VerifyInput = z.input<typeof VerifyInputSchema>;
 
 const VerifyResponseSchema = z
 	.object({
+		// A result Kickbox adds later is kept as a string rather than failing a
+		// verification that has already been charged.
 		result: z
-			.enum(KICKBOX_RESULTS)
+			.union([z.enum(KICKBOX_RESULTS), z.string()])
 			.describe('`deliverable`, `undeliverable`, `risky` or `unknown`.'),
 		reason: z
 			.string()

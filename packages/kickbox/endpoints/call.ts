@@ -41,10 +41,13 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	return result;
 }
 
-/** The domain half of an address, for a log line that omits the local part. */
-export function domainOf(address: string): string | undefined {
+/**
+ * The domain half of an address, for a log line that omits the local part. A
+ * bare domain, which `verify.disposable` accepts, is already the domain.
+ */
+export function domainOf(address: string): string {
 	const at = address.lastIndexOf('@');
-	return at === -1 ? undefined : address.slice(at + 1).toLowerCase();
+	return (at === -1 ? address : address.slice(at + 1)).toLowerCase();
 }
 
 /**
