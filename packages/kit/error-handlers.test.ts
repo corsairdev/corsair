@@ -33,6 +33,8 @@ async function resolve(
 	for (const entry of Object.values(handlers)) {
 		if (!entry) continue;
 		if (entry.match(error, context)) {
+			// unknown: a handler's result type is a union per handler; the tests
+			// compare it with toEqual, so a plain record is all they need.
 			return (await entry.handler(error, context)) as Record<string, unknown>;
 		}
 	}

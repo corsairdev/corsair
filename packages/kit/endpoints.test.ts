@@ -11,7 +11,6 @@ import {
 	invalidKey,
 	missingKey,
 	notFound,
-	payloadTooLarge,
 	subscriber,
 	subscriberCreated,
 	subscriberDetail,
@@ -35,7 +34,9 @@ const API_KEY = 'kit-test-key';
 // the shared return is unknown.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
-// unknown: negative cases pass values no schema accepts.
+// unknown: negative cases pass values no schema accepts. The result is
+// unknown too, so a test that reads it casts to the fixture it just made fetch
+// answer with, which the output schema has already accepted.
 function invoke(endpoint: AnyEndpoint, input: unknown) {
 	// The fake context only carries what the endpoints read (ctx.key).
 	return endpoint({ key: API_KEY } as never, input as never);
@@ -58,6 +59,8 @@ function respondEmpty(status = 204) {
 }
 
 function lastRequest() {
+	// jest types mock.calls as any[]; every call here is fetch(url, init) from
+	// corsair/http, so the last one is that pair.
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
 	const parsed = new URL(url);
 	return {

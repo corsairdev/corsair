@@ -15,6 +15,8 @@ function respond(body: unknown, status = 200) {
 }
 
 function lastRequest() {
+	// jest types mock.calls as any[]; every call here is fetch(url, init) from
+	// corsair/http, so the last one is that pair.
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
 	const parsed = new URL(url);
 	return {
