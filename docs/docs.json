@@ -3607,6 +3607,14 @@
                 ]
               },
               {
+                "group": "Sendbird",
+                "pages": [
+                  "plugins/sendbird/overview",
+                  "plugins/sendbird/api",
+                  "plugins/sendbird/database"
+                ]
+              },
+              {
                 "group": "SendGrid",
                 "pages": [
                   "plugins/sendgrid/overview",

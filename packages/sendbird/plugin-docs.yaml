@@ -1,0 +1,29 @@
+displayName: Sendbird
+description: Manage Sendbird Chat users, group channels, and text messages.
+overviewNote: |
+  API calls do not automatically sync entities to the local database. Configure a matching API token and application ID together; mismatched credentials may target the token's application.
+factory:
+  note: Provide a matching API token and application ID, or store both on the same tenant using `set_api_key` and `set_applicationId`.
+examples:
+  read:
+    path: channels.get
+    args: { channel_url: example-channel }
+  write:
+    path: channels.create
+    args: { user_ids: [user-1] }
+apiNotes:
+  messages.list: Supply at least one of `message_ts` or `message_id`.
+apiExamples:
+  channels.create: { user_ids: [user-1] }
+  channels.delete: { channel_url: example-channel }
+  channels.get: { channel_url: example-channel }
+  channels.update: { channel_url: example-channel, body: { name: Updated } }
+  messages.delete: { call: "{ channel_type: 'group_channels', channel_url: 'example-channel', message_id: 42 }" }
+  messages.get: { call: "{ channel_type: 'group_channels', channel_url: 'example-channel', message_id: 42 }" }
+  messages.list: { call: "{ channel_type: 'group_channels', channel_url: 'example-channel', message_ts: 1700000000000 }" }
+  messages.send: { call: "{ channel_type: 'group_channels', channel_url: 'example-channel', body: { message_type: 'MESG', user_id: 'user-1', message: 'Hello' } }" }
+  messages.update: { call: "{ channel_type: 'group_channels', channel_url: 'example-channel', message_id: 42, body: { message_type: 'MESG', message: 'Updated' } }" }
+  users.create: { user_id: user-1, nickname: User, profile_url: '' }
+  users.delete: { user_id: user-1 }
+  users.get: { user_id: user-1 }
+  users.update: { user_id: user-1, body: { nickname: Updated } }
