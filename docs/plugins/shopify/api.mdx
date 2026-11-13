@@ -262,7 +262,6 @@ await corsair.shopify.api.customers.create({ email: 'buyer@example.com', firstNa
 ```ts
 {
   id: string,
-  displayName: string,
   firstName?: string | null,
   lastName?: string | null,
   state: string,
@@ -311,6 +310,8 @@ await corsair.shopify.api.customers.get({ id: 'gid://shopify/Customer/1' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 
+Personal data needs a paid plan. On a development or Basic plan the name, email and phone come back null with an ACCESS_DENIED warning; the rest of the customer is returned.
+
 
 
 **Output**
@@ -325,7 +326,6 @@ await corsair.shopify.api.customers.get({ id: 'gid://shopify/Customer/1' });
 ```ts
 {
   id: string,
-  displayName: string,
   firstName?: string | null,
   lastName?: string | null,
   state: string,
@@ -376,6 +376,8 @@ await corsair.shopify.api.customers.list({ first: 10 });
 | `after` | `string` | No | Cursor from a previous page. |
 | `query` | `string` | No | — |
 
+Personal data needs a paid plan. On a development or Basic plan Shopify nulls every PII field and returns an ACCESS_DENIED error beside the rows; the plugin keeps the rows and logs a warning. Ids, order counts and spend are still returned.
+
 
 
 **Output**
@@ -392,7 +394,6 @@ await corsair.shopify.api.customers.list({ first: 10 });
   edges: {
     node: {
       id: string,
-      displayName: string,
       firstName?: string | null,
       lastName?: string | null,
       state: string,
@@ -473,7 +474,6 @@ Passing tags replaces the full tag set. Use the Shopify admin or a tagsAdd mutat
 ```ts
 {
   id: string,
-  displayName: string,
   firstName?: string | null,
   lastName?: string | null,
   state: string,
@@ -1746,10 +1746,13 @@ Returns the inventory locations. Pass a location id to inventory.adjust to chang
       id: string,
       name: string,
       isActive: boolean,
-      address1?: string | null,
-      city?: string | null,
-      province?: string | null,
-      countryCode?: string | null
+      address: {
+        address1?: string | null,
+        city?: string | null,
+        province?: string | null,
+        countryCode?: string | null,
+        zip?: string | null
+      }
     },
     cursor?: string | null
   }[],

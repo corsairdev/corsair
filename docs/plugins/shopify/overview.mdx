@@ -24,6 +24,15 @@ A mutation that the store rejects also answers HTTP 200, with the reason in
 `userErrors`. The plugin treats a populated `userErrors` as a failure, so a
 caller is never told a write succeeded when it did not.
 
+Reading customer details needs a paid plan. On a development or Basic plan,
+Shopify returns the customer rows with every personally identifiable field
+nulled and an `ACCESS_DENIED` error beside the data. The plugin accepts that
+partial result and logs a warning rather than failing the call, so
+`customers.list` still returns ids, order counts and spend. The `Customer`
+object's `displayName` is the one exception: asking for it returns no data at
+all, so this plugin never selects it and callers build a name from
+`firstName` and `lastName`.
+
 Webhook deliveries are JSON and signed with `X-Shopify-Hmac-Sha256`. Set the
 app's signing secret as the plugin's webhook secret. Verification runs over
 the raw request body, so the handler must receive a `rawBody`.
