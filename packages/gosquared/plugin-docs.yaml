@@ -1,0 +1,155 @@
+displayName: GoSquared
+description: Real-time web analytics, historical trends, customer CRM, event tracking, and live chat messaging.
+
+examples:
+  read:
+    path: now.getOverview
+    title: Get real-time overview
+    args:
+      site_token: GSN-123456-X
+  write:
+    path: tracking.trackEvent
+    title: Track custom event
+    args:
+      site_token: GSN-123456-X
+      event:
+        name: Signed Up
+
+apiExamples:
+  account.getSites:
+    args: {}
+  account.createSite:
+    args:
+      domain_name: example.com
+      name: Example Site
+  account.getSite:
+    args:
+      site_token: GSN-123456-X
+  account.getSharedUsers:
+    args: {}
+  account.getBlocked:
+    args: {}
+  now.getOverview:
+    args: {}
+  now.getConcurrents:
+    args: {}
+  now.getPages:
+    args: {}
+  now.getSources:
+    args: {}
+  now.getTimeSeries:
+    args: {}
+  now.getBrowsers:
+    args: {}
+  now.getCountries:
+    args: {}
+  now.getPlatforms:
+    args: {}
+  now.getVisitors:
+    args: {}
+  now.getGeo:
+    args: {}
+  now.getCampaigns:
+    args: {}
+  trends.getAggregate:
+    args:
+      from: "2026-01-01"
+      to: "2026-01-07"
+  trends.getBrowser:
+    args:
+      from: "2026-01-01"
+      to: "2026-01-07"
+  trends.getCountry:
+    args:
+      from: "2026-01-01"
+      to: "2026-01-07"
+  trends.getEvent:
+    args:
+      from: "2026-01-01"
+      to: "2026-01-07"
+  trends.getLanguage:
+    args:
+      from: "2026-01-01"
+      to: "2026-01-07"
+  trends.getOrganisation:
+    args:
+      from: "2026-01-01"
+      to: "2026-01-07"
+  trends.getOs:
+    args:
+      from: "2026-01-01"
+      to: "2026-01-07"
+  trends.getPage:
+    args:
+      from: "2026-01-01"
+      to: "2026-01-07"
+  trends.getPath1:
+    args:
+      from: "2026-01-01"
+      to: "2026-01-07"
+  trends.getScreenDimensions:
+    args:
+      from: "2026-01-01"
+      to: "2026-01-07"
+  trends.getSources:
+    args:
+      from: "2026-01-01"
+      to: "2026-01-07"
+  people.getPeople:
+    args: {}
+  people.getPerson:
+    args:
+      person_id: person_123
+  people.getPersonFeed:
+    args:
+      person_id: person_123
+  people.getPersonDevices:
+    args:
+      person_id: person_123
+  people.getSmartGroups:
+    args: {}
+  people.getDevices:
+    args: {}
+  people.getDevice:
+    args:
+      device_id: dev_123
+  people.getEventTypes:
+    args: {}
+  people.getPropertyTypes:
+    args: {}
+  tracking.trackEvent:
+    args:
+      event:
+        name: Signed Up
+  tracking.identify:
+    args:
+      properties:
+        email: user@example.com
+  tracking.trackTransaction:
+    args:
+      transaction:
+        id: tx_123
+  tracking.trackPageview:
+    args:
+      page:
+        url: https://example.com
+  chat.getChats:
+    args: {}
+  chat.getChat:
+    args:
+      chat_id: chat_123
+  chat.getChatFeed:
+    args:
+      chat_id: chat_123
+  chat.archiveChat:
+    args:
+      chat_id: chat_123
+  chat.unarchiveChat:
+    args:
+      chat_id: chat_123
+  chat.sendMessage:
+    args:
+      chat_id: chat_123
+      content: Hello customer
+  auth.getTokenInfo:
+    args: {}
