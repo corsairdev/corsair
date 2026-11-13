@@ -342,7 +342,7 @@ const eventeeEndpointMeta = {
 		description: 'Delete a partner and all of its detail page sections',
 	},
 	'partnerSections.patch': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Replace a partner detail page sections list',
 	},
 	'partner.get': {
