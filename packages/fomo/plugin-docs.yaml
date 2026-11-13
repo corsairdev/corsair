@@ -51,7 +51,7 @@ apiExamples:
   templates.delete:
     call: "{ id: 52 }"
   application.get:
-    call: "{ id: 1 }"
+    call: "{}"
   application.update:
     call: "{ name: 'My Online Store', position: 'bottom_left', theme: 'theme1' }"
   application.getStats:

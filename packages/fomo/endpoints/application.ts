@@ -15,14 +15,20 @@ import {
 	ApplicationUpdateOutputSchema,
 } from './types';
 
+// The token's own application is `/applications/me`; another application of the same
+// user is `/users/me/applications/:id` (Fomo's curl sample). `/applications/me/:id` is a 404.
+function applicationPath(id: number | string | undefined): string {
+	return id !== undefined
+		? `/users/me/applications/${encodeURIComponent(String(id))}`
+		: '/applications/me';
+}
+
 export const getApplication: FomoEndpoints['application.get'] = async (
 	ctx,
 	input,
 ) => {
 	const parsedInput = ApplicationGetInputSchema.parse(input);
-	const path = parsedInput.id
-		? `/applications/me/${encodeURIComponent(String(parsedInput.id))}`
-		: '/applications/me';
+	const path = applicationPath(parsedInput.id);
 
 	const response = await makeFomoRequest<ApplicationGetOutput>(path, ctx.key, {
 		method: 'GET',
@@ -46,9 +52,7 @@ export const updateApplication: FomoEndpoints['application.update'] = async (
 ) => {
 	const parsedInput = ApplicationUpdateInputSchema.parse(input);
 	const { id, ...appData } = parsedInput;
-	const path = id
-		? `/applications/me/${encodeURIComponent(String(id))}`
-		: '/applications/me';
+	const path = applicationPath(id);
 
 	const response = await makeFomoRequest<ApplicationUpdateOutput>(
 		path,

@@ -428,6 +428,30 @@ describe('application endpoints', () => {
 		);
 	});
 
+	it('application.get with an id reads /users/me/applications/:id (/applications/me/:id is a 404)', async () => {
+		mockedRequest.mockResolvedValue({ id: 7, name: 'Other Store' });
+
+		await Application.get(ctx, { id: 7 });
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/users/me/applications/7',
+			'test-fomo-token',
+			{ method: 'GET' },
+		);
+	});
+
+	it('application.update without an id patches /applications/me', async () => {
+		mockedRequest.mockResolvedValue({ id: 1, name: 'Store' });
+
+		await Application.update(ctx, { name: 'Store' });
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/applications/me',
+			'test-fomo-token',
+			{ method: 'PATCH', body: { application: { name: 'Store' } } },
+		);
+	});
+
 	it('application.update modifies application settings', async () => {
 		const mockResponse = {
 			id: 1,
@@ -444,7 +468,7 @@ describe('application endpoints', () => {
 
 		expect(result).toEqual(mockResponse);
 		expect(mockedRequest).toHaveBeenCalledWith(
-			'/applications/me/1',
+			'/users/me/applications/1',
 			'test-fomo-token',
 			{
 				method: 'PATCH',
