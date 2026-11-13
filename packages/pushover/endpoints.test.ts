@@ -1,6 +1,8 @@
 const requestMock = jest.fn();
 jest.mock('corsair/http', () => ({
 	...jest.requireActual('corsair/http'),
+	// The mocked shared request accepts several heterogeneous arguments; preserve
+	// them without assuming their runtime shapes before the seam assertions.
 	request: (...args: unknown[]) => requestMock(...args),
 }));
 
@@ -21,6 +23,8 @@ import { pushover, pushoverEndpointSchemas } from './index';
 
 const ctx = { key: 'test-token' } as never;
 const status = { status: 1, request: 'request-id' };
+// Endpoint results differ by operation and are checked against each fixture below;
+// no single concrete result type represents this heterogeneous test table.
 type Endpoint = (context: never, input: never) => Promise<unknown>;
 type Case = {
 	call: Endpoint;
