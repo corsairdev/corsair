@@ -1,20 +1,26 @@
 import { z } from 'zod';
 
+// Dialpad's JSON encodes 64-bit integers (ids, millisecond timestamps, many counts) as decimal
+// strings, so integer fields accept a number or a decimal string, in requests and responses alike.
+function dialpadInteger(schema: z.ZodNumber) {
+	return z.union([schema, z.string().regex(/^-?\d+$/)]);
+}
+
 const Input0 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				target_id: z.number().int().nullable().optional(),
+				target_id: dialpadInteger(z.number().int()).nullable().optional(),
 				target_type: z
 					.enum(['callcenter', 'company', 'department', 'office'])
 					.nullable()
 					.optional(),
-				user_id: z.number().int(),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -27,20 +33,24 @@ const Output0 = z
 			.array(
 				z
 					.object({
-						target_id: z.number().int(),
+						target_id: dialpadInteger(z.number().int()),
 						target_type: z
 							.enum(['callcenter', 'company', 'department', 'office'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 		user: z
 			.object({
-				admin_office_ids: z.array(z.number().int()).nullable().optional(),
-				company_id: z.number().int().nullable().optional(),
+				admin_office_ids: z
+					.array(dialpadInteger(z.number().int()))
+					.nullable()
+					.optional(),
+				company_id: dialpadInteger(z.number().int()).nullable().optional(),
 				country: z.string().nullable().optional(),
 				date_active: z.string().nullable().optional(),
 				date_added: z.string().nullable().optional(),
@@ -59,7 +69,9 @@ const Output0 = z
 						z
 							.object({
 								do_not_disturb: z.boolean().nullable().optional(),
-								group_id: z.number().int().nullable().optional(),
+								group_id: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
 								group_type: z
 									.enum([
 										'callcenter',
@@ -74,18 +86,20 @@ const Output0 = z
 										'unknown',
 										'user',
 									])
+									.or(z.string())
 									.nullable()
 									.optional(),
 								role: z
 									.enum(['admin', 'operator', 'supervisor'])
+									.or(z.string())
 									.nullable()
 									.optional(),
 							})
-							.strict(),
+							.loose(),
 					)
 					.nullable()
 					.optional(),
-				id: z.number().int().nullable().optional(),
+				id: dialpadInteger(z.number().int()).nullable().optional(),
 				image_url: z.string().nullable().optional(),
 				international_dialing_enabled: z.boolean().nullable().optional(),
 				is_admin: z.boolean().nullable().optional(),
@@ -109,11 +123,12 @@ const Output0 = z
 						'talk',
 						'user',
 					])
+					.or(z.string())
 					.nullable()
 					.optional(),
 				location: z.string().nullable().optional(),
 				muted: z.boolean().nullable().optional(),
-				office_id: z.number().int().nullable().optional(),
+				office_id: dialpadInteger(z.number().int()).nullable().optional(),
 				on_duty_started: z.string().nullable().optional(),
 				on_duty_status: z
 					.enum([
@@ -125,14 +140,20 @@ const Output0 = z
 						'wrapup',
 						'wrapup-end',
 					])
+					.or(z.string())
 					.nullable()
 					.optional(),
 				onboarding_completed: z.boolean(),
 				phone_numbers: z.array(z.string()).nullable().optional(),
 				remote_service: z.string().nullable().optional(),
-				session_type: z.enum(['call', 'digital']).nullable().optional(),
+				session_type: z
+					.enum(['call', 'digital'])
+					.or(z.string())
+					.nullable()
+					.optional(),
 				state: z
 					.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+					.or(z.string())
 					.nullable()
 					.optional(),
 				status_message: z.string().nullable().optional(),
@@ -143,18 +164,18 @@ const Output0 = z
 						name: z.string().nullable().optional(),
 						voicemail_notifications_enabled: z.boolean().optional(),
 					})
-					.strict(),
+					.loose(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input1 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -162,68 +183,71 @@ const Input1 = z
 
 const Output1 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		date_created: z.string().nullable().optional(),
 		date_updated: z.string().nullable().optional(),
 		description: z.string().nullable().optional(),
-		id: z.number().int(),
+		id: dialpadInteger(z.number().int()),
 		name: z.string(),
-		owner_id: z.number().int(),
+		owner_id: dialpadInteger(z.number().int()),
 		permission_sets: z
 			.array(
-				z.enum([
-					'agent_settings_read',
-					'agent_settings_write',
-					'agents_admins_manage_agents_settings_read',
-					'agents_admins_manage_agents_settings_write',
-					'agents_admins_skill_level_read',
-					'agents_admins_skill_level_write',
-					'auto_call_recording_and_transcription_settings_read',
-					'auto_call_recording_and_transcription_settings_write',
-					'business_hours_read',
-					'business_hours_write',
-					'call_blocking_spam_prevention_settings_read',
-					'call_blocking_spam_prevention_settings_write',
-					'call_dispositions_settings_read',
-					'call_dispositions_settings_write',
-					'call_routing_hours_settings_read',
-					'call_routing_hours_settings_write',
-					'cc_call_settings_read',
-					'cc_call_settings_write',
-					'chrome_extension_compliance_settings_read',
-					'chrome_extension_compliance_settings_write',
-					'csat_surveys_read',
-					'csat_surveys_write',
-					'dashboard_and_alerts_read',
-					'dashboard_and_alerts_write',
-					'dialpad_ai_settings_read',
-					'dialpad_ai_settings_write',
-					'holiday_hours_settings_read',
-					'holiday_hours_settings_write',
-					'integrations_settings_read',
-					'integrations_settings_write',
-					'name_language_description_settings_read',
-					'name_language_description_settings_write',
-					'number_settings_read',
-					'number_settings_write',
-					'supervisor_settings_read',
-					'supervisor_settings_write',
-				]),
+				z
+					.enum([
+						'agent_settings_read',
+						'agent_settings_write',
+						'agents_admins_manage_agents_settings_read',
+						'agents_admins_manage_agents_settings_write',
+						'agents_admins_skill_level_read',
+						'agents_admins_skill_level_write',
+						'auto_call_recording_and_transcription_settings_read',
+						'auto_call_recording_and_transcription_settings_write',
+						'business_hours_read',
+						'business_hours_write',
+						'call_blocking_spam_prevention_settings_read',
+						'call_blocking_spam_prevention_settings_write',
+						'call_dispositions_settings_read',
+						'call_dispositions_settings_write',
+						'call_routing_hours_settings_read',
+						'call_routing_hours_settings_write',
+						'cc_call_settings_read',
+						'cc_call_settings_write',
+						'chrome_extension_compliance_settings_read',
+						'chrome_extension_compliance_settings_write',
+						'csat_surveys_read',
+						'csat_surveys_write',
+						'dashboard_and_alerts_read',
+						'dashboard_and_alerts_write',
+						'dialpad_ai_settings_read',
+						'dialpad_ai_settings_write',
+						'holiday_hours_settings_read',
+						'holiday_hours_settings_write',
+						'integrations_settings_read',
+						'integrations_settings_write',
+						'name_language_description_settings_read',
+						'name_language_description_settings_write',
+						'number_settings_read',
+						'number_settings_write',
+						'supervisor_settings_read',
+						'supervisor_settings_write',
+					])
+					.or(z.string()),
 			)
 			.nullable(),
-		state: z.enum(['active', 'deleted']),
+		state: z.enum(['active', 'deleted']).or(z.string()),
 		target_type: z
 			.enum(['callcenter', 'company', 'department', 'office'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input2 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -256,7 +280,7 @@ const Input2 = z
 					.nullable()
 					.optional(),
 				state: z.enum(['active']).nullable().optional(),
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
 			.strict()
 			.optional(),
@@ -265,62 +289,65 @@ const Input2 = z
 
 const Output2 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		date_created: z.string().nullable().optional(),
 		date_updated: z.string().nullable().optional(),
 		description: z.string().nullable().optional(),
-		id: z.number().int(),
+		id: dialpadInteger(z.number().int()),
 		name: z.string(),
-		owner_id: z.number().int(),
+		owner_id: dialpadInteger(z.number().int()),
 		permission_sets: z
 			.array(
-				z.enum([
-					'agent_settings_read',
-					'agent_settings_write',
-					'agents_admins_manage_agents_settings_read',
-					'agents_admins_manage_agents_settings_write',
-					'agents_admins_skill_level_read',
-					'agents_admins_skill_level_write',
-					'auto_call_recording_and_transcription_settings_read',
-					'auto_call_recording_and_transcription_settings_write',
-					'business_hours_read',
-					'business_hours_write',
-					'call_blocking_spam_prevention_settings_read',
-					'call_blocking_spam_prevention_settings_write',
-					'call_dispositions_settings_read',
-					'call_dispositions_settings_write',
-					'call_routing_hours_settings_read',
-					'call_routing_hours_settings_write',
-					'cc_call_settings_read',
-					'cc_call_settings_write',
-					'chrome_extension_compliance_settings_read',
-					'chrome_extension_compliance_settings_write',
-					'csat_surveys_read',
-					'csat_surveys_write',
-					'dashboard_and_alerts_read',
-					'dashboard_and_alerts_write',
-					'dialpad_ai_settings_read',
-					'dialpad_ai_settings_write',
-					'holiday_hours_settings_read',
-					'holiday_hours_settings_write',
-					'integrations_settings_read',
-					'integrations_settings_write',
-					'name_language_description_settings_read',
-					'name_language_description_settings_write',
-					'number_settings_read',
-					'number_settings_write',
-					'supervisor_settings_read',
-					'supervisor_settings_write',
-				]),
+				z
+					.enum([
+						'agent_settings_read',
+						'agent_settings_write',
+						'agents_admins_manage_agents_settings_read',
+						'agents_admins_manage_agents_settings_write',
+						'agents_admins_skill_level_read',
+						'agents_admins_skill_level_write',
+						'auto_call_recording_and_transcription_settings_read',
+						'auto_call_recording_and_transcription_settings_write',
+						'business_hours_read',
+						'business_hours_write',
+						'call_blocking_spam_prevention_settings_read',
+						'call_blocking_spam_prevention_settings_write',
+						'call_dispositions_settings_read',
+						'call_dispositions_settings_write',
+						'call_routing_hours_settings_read',
+						'call_routing_hours_settings_write',
+						'cc_call_settings_read',
+						'cc_call_settings_write',
+						'chrome_extension_compliance_settings_read',
+						'chrome_extension_compliance_settings_write',
+						'csat_surveys_read',
+						'csat_surveys_write',
+						'dashboard_and_alerts_read',
+						'dashboard_and_alerts_write',
+						'dialpad_ai_settings_read',
+						'dialpad_ai_settings_write',
+						'holiday_hours_settings_read',
+						'holiday_hours_settings_write',
+						'integrations_settings_read',
+						'integrations_settings_write',
+						'name_language_description_settings_read',
+						'name_language_description_settings_write',
+						'number_settings_read',
+						'number_settings_write',
+						'supervisor_settings_read',
+						'supervisor_settings_write',
+					])
+					.or(z.string()),
 			)
 			.nullable(),
-		state: z.enum(['active', 'deleted']),
+		state: z.enum(['active', 'deleted']).or(z.string()),
 		target_type: z
 			.enum(['callcenter', 'company', 'department', 'office'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input3 = z
 	.object({
@@ -334,14 +361,14 @@ const Input3 = z
 
 const Output3 = z
 	.object({
-		created_at: z.number().int(),
+		created_at: dialpadInteger(z.number().int()),
 		group_description: z.string().optional(),
 		id: z.string(),
 		name: z.string(),
 		office_id: z.string(),
-		updated_at: z.number().int().nullable().optional(),
+		updated_at: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input4 = z
 	.object({
@@ -355,15 +382,15 @@ const Input4 = z
 
 const Output4 = z
 	.object({
-		completed_count: z.number().int(),
+		completed_count: dialpadInteger(z.number().int()),
 		date_completed: z.string().nullable().optional(),
 		date_created: z.string(),
-		failed_count: z.number().int(),
+		failed_count: dialpadInteger(z.number().int()),
 		request_id: z.string(),
 		status: z.string(),
-		total: z.number().int(),
+		total: dialpadInteger(z.number().int()),
 	})
-	.strict();
+	.loose();
 
 const Input5 = z
 	.object({
@@ -383,84 +410,87 @@ const Output5 = z
 			.array(
 				z
 					.object({
-						company_id: z.number().int(),
+						company_id: dialpadInteger(z.number().int()),
 						date_created: z.string().nullable().optional(),
 						date_updated: z.string().nullable().optional(),
 						description: z.string().nullable().optional(),
-						id: z.number().int(),
+						id: dialpadInteger(z.number().int()),
 						name: z.string(),
-						owner_id: z.number().int(),
+						owner_id: dialpadInteger(z.number().int()),
 						permission_sets: z
 							.array(
-								z.enum([
-									'agent_settings_read',
-									'agent_settings_write',
-									'agents_admins_manage_agents_settings_read',
-									'agents_admins_manage_agents_settings_write',
-									'agents_admins_skill_level_read',
-									'agents_admins_skill_level_write',
-									'auto_call_recording_and_transcription_settings_read',
-									'auto_call_recording_and_transcription_settings_write',
-									'business_hours_read',
-									'business_hours_write',
-									'call_blocking_spam_prevention_settings_read',
-									'call_blocking_spam_prevention_settings_write',
-									'call_dispositions_settings_read',
-									'call_dispositions_settings_write',
-									'call_routing_hours_settings_read',
-									'call_routing_hours_settings_write',
-									'cc_call_settings_read',
-									'cc_call_settings_write',
-									'chrome_extension_compliance_settings_read',
-									'chrome_extension_compliance_settings_write',
-									'csat_surveys_read',
-									'csat_surveys_write',
-									'dashboard_and_alerts_read',
-									'dashboard_and_alerts_write',
-									'dialpad_ai_settings_read',
-									'dialpad_ai_settings_write',
-									'holiday_hours_settings_read',
-									'holiday_hours_settings_write',
-									'integrations_settings_read',
-									'integrations_settings_write',
-									'name_language_description_settings_read',
-									'name_language_description_settings_write',
-									'number_settings_read',
-									'number_settings_write',
-									'supervisor_settings_read',
-									'supervisor_settings_write',
-								]),
+								z
+									.enum([
+										'agent_settings_read',
+										'agent_settings_write',
+										'agents_admins_manage_agents_settings_read',
+										'agents_admins_manage_agents_settings_write',
+										'agents_admins_skill_level_read',
+										'agents_admins_skill_level_write',
+										'auto_call_recording_and_transcription_settings_read',
+										'auto_call_recording_and_transcription_settings_write',
+										'business_hours_read',
+										'business_hours_write',
+										'call_blocking_spam_prevention_settings_read',
+										'call_blocking_spam_prevention_settings_write',
+										'call_dispositions_settings_read',
+										'call_dispositions_settings_write',
+										'call_routing_hours_settings_read',
+										'call_routing_hours_settings_write',
+										'cc_call_settings_read',
+										'cc_call_settings_write',
+										'chrome_extension_compliance_settings_read',
+										'chrome_extension_compliance_settings_write',
+										'csat_surveys_read',
+										'csat_surveys_write',
+										'dashboard_and_alerts_read',
+										'dashboard_and_alerts_write',
+										'dialpad_ai_settings_read',
+										'dialpad_ai_settings_write',
+										'holiday_hours_settings_read',
+										'holiday_hours_settings_write',
+										'integrations_settings_read',
+										'integrations_settings_write',
+										'name_language_description_settings_read',
+										'name_language_description_settings_write',
+										'number_settings_read',
+										'number_settings_write',
+										'supervisor_settings_read',
+										'supervisor_settings_write',
+									])
+									.or(z.string()),
 							)
 							.nullable(),
-						state: z.enum(['active', 'deleted']),
+						state: z.enum(['active', 'deleted']).or(z.string()),
 						target_type: z
 							.enum(['callcenter', 'company', 'department', 'office'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input6 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				target_id: z.number().int().nullable().optional(),
+				target_id: dialpadInteger(z.number().int()).nullable().optional(),
 				target_type: z
 					.enum(['callcenter', 'company', 'department', 'office'])
 					.nullable()
 					.optional(),
 				unassign_all: z.boolean().nullable().optional(),
-				user_id: z.number().int(),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -473,20 +503,24 @@ const Output6 = z
 			.array(
 				z
 					.object({
-						target_id: z.number().int(),
+						target_id: dialpadInteger(z.number().int()),
 						target_type: z
 							.enum(['callcenter', 'company', 'department', 'office'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 		user: z
 			.object({
-				admin_office_ids: z.array(z.number().int()).nullable().optional(),
-				company_id: z.number().int().nullable().optional(),
+				admin_office_ids: z
+					.array(dialpadInteger(z.number().int()))
+					.nullable()
+					.optional(),
+				company_id: dialpadInteger(z.number().int()).nullable().optional(),
 				country: z.string().nullable().optional(),
 				date_active: z.string().nullable().optional(),
 				date_added: z.string().nullable().optional(),
@@ -505,7 +539,9 @@ const Output6 = z
 						z
 							.object({
 								do_not_disturb: z.boolean().nullable().optional(),
-								group_id: z.number().int().nullable().optional(),
+								group_id: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
 								group_type: z
 									.enum([
 										'callcenter',
@@ -520,18 +556,20 @@ const Output6 = z
 										'unknown',
 										'user',
 									])
+									.or(z.string())
 									.nullable()
 									.optional(),
 								role: z
 									.enum(['admin', 'operator', 'supervisor'])
+									.or(z.string())
 									.nullable()
 									.optional(),
 							})
-							.strict(),
+							.loose(),
 					)
 					.nullable()
 					.optional(),
-				id: z.number().int().nullable().optional(),
+				id: dialpadInteger(z.number().int()).nullable().optional(),
 				image_url: z.string().nullable().optional(),
 				international_dialing_enabled: z.boolean().nullable().optional(),
 				is_admin: z.boolean().nullable().optional(),
@@ -555,11 +593,12 @@ const Output6 = z
 						'talk',
 						'user',
 					])
+					.or(z.string())
 					.nullable()
 					.optional(),
 				location: z.string().nullable().optional(),
 				muted: z.boolean().nullable().optional(),
-				office_id: z.number().int().nullable().optional(),
+				office_id: dialpadInteger(z.number().int()).nullable().optional(),
 				on_duty_started: z.string().nullable().optional(),
 				on_duty_status: z
 					.enum([
@@ -571,14 +610,20 @@ const Output6 = z
 						'wrapup',
 						'wrapup-end',
 					])
+					.or(z.string())
 					.nullable()
 					.optional(),
 				onboarding_completed: z.boolean(),
 				phone_numbers: z.array(z.string()).nullable().optional(),
 				remote_service: z.string().nullable().optional(),
-				session_type: z.enum(['call', 'digital']).nullable().optional(),
+				session_type: z
+					.enum(['call', 'digital'])
+					.or(z.string())
+					.nullable()
+					.optional(),
 				state: z
 					.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+					.or(z.string())
 					.nullable()
 					.optional(),
 				status_message: z.string().nullable().optional(),
@@ -589,12 +634,12 @@ const Output6 = z
 						name: z.string().nullable().optional(),
 						voicemail_notifications_enabled: z.boolean().optional(),
 					})
-					.strict(),
+					.loose(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input7 = z
 	.object({
@@ -602,7 +647,7 @@ const Input7 = z
 			.object({
 				description: z.string().nullable().optional(),
 				name: z.string(),
-				owner_id: z.number().int(),
+				owner_id: dialpadInteger(z.number().int()),
 				permission_sets: z
 					.array(
 						z.enum([
@@ -639,68 +684,71 @@ const Input7 = z
 
 const Output7 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		date_created: z.string().nullable().optional(),
 		date_updated: z.string().nullable().optional(),
 		description: z.string().nullable().optional(),
-		id: z.number().int(),
+		id: dialpadInteger(z.number().int()),
 		name: z.string(),
-		owner_id: z.number().int(),
+		owner_id: dialpadInteger(z.number().int()),
 		permission_sets: z
 			.array(
-				z.enum([
-					'agent_settings_read',
-					'agent_settings_write',
-					'agents_admins_manage_agents_settings_read',
-					'agents_admins_manage_agents_settings_write',
-					'agents_admins_skill_level_read',
-					'agents_admins_skill_level_write',
-					'auto_call_recording_and_transcription_settings_read',
-					'auto_call_recording_and_transcription_settings_write',
-					'business_hours_read',
-					'business_hours_write',
-					'call_blocking_spam_prevention_settings_read',
-					'call_blocking_spam_prevention_settings_write',
-					'call_dispositions_settings_read',
-					'call_dispositions_settings_write',
-					'call_routing_hours_settings_read',
-					'call_routing_hours_settings_write',
-					'cc_call_settings_read',
-					'cc_call_settings_write',
-					'chrome_extension_compliance_settings_read',
-					'chrome_extension_compliance_settings_write',
-					'csat_surveys_read',
-					'csat_surveys_write',
-					'dashboard_and_alerts_read',
-					'dashboard_and_alerts_write',
-					'dialpad_ai_settings_read',
-					'dialpad_ai_settings_write',
-					'holiday_hours_settings_read',
-					'holiday_hours_settings_write',
-					'integrations_settings_read',
-					'integrations_settings_write',
-					'name_language_description_settings_read',
-					'name_language_description_settings_write',
-					'number_settings_read',
-					'number_settings_write',
-					'supervisor_settings_read',
-					'supervisor_settings_write',
-				]),
+				z
+					.enum([
+						'agent_settings_read',
+						'agent_settings_write',
+						'agents_admins_manage_agents_settings_read',
+						'agents_admins_manage_agents_settings_write',
+						'agents_admins_skill_level_read',
+						'agents_admins_skill_level_write',
+						'auto_call_recording_and_transcription_settings_read',
+						'auto_call_recording_and_transcription_settings_write',
+						'business_hours_read',
+						'business_hours_write',
+						'call_blocking_spam_prevention_settings_read',
+						'call_blocking_spam_prevention_settings_write',
+						'call_dispositions_settings_read',
+						'call_dispositions_settings_write',
+						'call_routing_hours_settings_read',
+						'call_routing_hours_settings_write',
+						'cc_call_settings_read',
+						'cc_call_settings_write',
+						'chrome_extension_compliance_settings_read',
+						'chrome_extension_compliance_settings_write',
+						'csat_surveys_read',
+						'csat_surveys_write',
+						'dashboard_and_alerts_read',
+						'dashboard_and_alerts_write',
+						'dialpad_ai_settings_read',
+						'dialpad_ai_settings_write',
+						'holiday_hours_settings_read',
+						'holiday_hours_settings_write',
+						'integrations_settings_read',
+						'integrations_settings_write',
+						'name_language_description_settings_read',
+						'name_language_description_settings_write',
+						'number_settings_read',
+						'number_settings_write',
+						'supervisor_settings_read',
+						'supervisor_settings_write',
+					])
+					.or(z.string()),
 			)
 			.nullable(),
-		state: z.enum(['active', 'deleted']),
+		state: z.enum(['active', 'deleted']).or(z.string()),
 		target_type: z
 			.enum(['callcenter', 'company', 'department', 'office'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input8 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		query: z
@@ -723,23 +771,26 @@ const Output8 = z
 							.array(
 								z
 									.object({
-										target_id: z.number().int(),
+										target_id: dialpadInteger(z.number().int()),
 										target_type: z
 											.enum(['callcenter', 'company', 'department', 'office'])
+											.or(z.string())
 											.nullable()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
 						user: z
 							.object({
 								admin_office_ids: z
-									.array(z.number().int())
+									.array(dialpadInteger(z.number().int()))
 									.nullable()
 									.optional(),
-								company_id: z.number().int().nullable().optional(),
+								company_id: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
 								country: z.string().nullable().optional(),
 								date_active: z.string().nullable().optional(),
 								date_added: z.string().nullable().optional(),
@@ -758,7 +809,9 @@ const Output8 = z
 										z
 											.object({
 												do_not_disturb: z.boolean().nullable().optional(),
-												group_id: z.number().int().nullable().optional(),
+												group_id: dialpadInteger(z.number().int())
+													.nullable()
+													.optional(),
 												group_type: z
 													.enum([
 														'callcenter',
@@ -773,18 +826,20 @@ const Output8 = z
 														'unknown',
 														'user',
 													])
+													.or(z.string())
 													.nullable()
 													.optional(),
 												role: z
 													.enum(['admin', 'operator', 'supervisor'])
+													.or(z.string())
 													.nullable()
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 									)
 									.nullable()
 									.optional(),
-								id: z.number().int().nullable().optional(),
+								id: dialpadInteger(z.number().int()).nullable().optional(),
 								image_url: z.string().nullable().optional(),
 								international_dialing_enabled: z
 									.boolean()
@@ -811,11 +866,14 @@ const Output8 = z
 										'talk',
 										'user',
 									])
+									.or(z.string())
 									.nullable()
 									.optional(),
 								location: z.string().nullable().optional(),
 								muted: z.boolean().nullable().optional(),
-								office_id: z.number().int().nullable().optional(),
+								office_id: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
 								on_duty_started: z.string().nullable().optional(),
 								on_duty_status: z
 									.enum([
@@ -827,12 +885,17 @@ const Output8 = z
 										'wrapup',
 										'wrapup-end',
 									])
+									.or(z.string())
 									.nullable()
 									.optional(),
 								onboarding_completed: z.boolean(),
 								phone_numbers: z.array(z.string()).nullable().optional(),
 								remote_service: z.string().nullable().optional(),
-								session_type: z.enum(['call', 'digital']).nullable().optional(),
+								session_type: z
+									.enum(['call', 'digital'])
+									.or(z.string())
+									.nullable()
+									.optional(),
 								state: z
 									.enum([
 										'active',
@@ -841,6 +904,7 @@ const Output8 = z
 										'pending',
 										'suspended',
 									])
+									.or(z.string())
 									.nullable()
 									.optional(),
 								status_message: z.string().nullable().optional(),
@@ -851,17 +915,17 @@ const Output8 = z
 										name: z.string().nullable().optional(),
 										voicemail_notifications_enabled: z.boolean().optional(),
 									})
-									.strict(),
+									.loose(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input9 = z
 	.object({
@@ -876,21 +940,21 @@ const Input9 = z
 
 const Output9 = z
 	.object({
-		completed_count: z.number().int(),
+		completed_count: dialpadInteger(z.number().int()),
 		date_completed: z.string().nullable().optional(),
 		date_created: z.string(),
-		failed_count: z.number().int(),
+		failed_count: dialpadInteger(z.number().int()),
 		request_id: z.string(),
 		status: z.string(),
-		total: z.number().int(),
+		total: dialpadInteger(z.number().int()),
 	})
-	.strict();
+	.loose();
 
 const Input10 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -898,68 +962,71 @@ const Input10 = z
 
 const Output10 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		date_created: z.string().nullable().optional(),
 		date_updated: z.string().nullable().optional(),
 		description: z.string().nullable().optional(),
-		id: z.number().int(),
+		id: dialpadInteger(z.number().int()),
 		name: z.string(),
-		owner_id: z.number().int(),
+		owner_id: dialpadInteger(z.number().int()),
 		permission_sets: z
 			.array(
-				z.enum([
-					'agent_settings_read',
-					'agent_settings_write',
-					'agents_admins_manage_agents_settings_read',
-					'agents_admins_manage_agents_settings_write',
-					'agents_admins_skill_level_read',
-					'agents_admins_skill_level_write',
-					'auto_call_recording_and_transcription_settings_read',
-					'auto_call_recording_and_transcription_settings_write',
-					'business_hours_read',
-					'business_hours_write',
-					'call_blocking_spam_prevention_settings_read',
-					'call_blocking_spam_prevention_settings_write',
-					'call_dispositions_settings_read',
-					'call_dispositions_settings_write',
-					'call_routing_hours_settings_read',
-					'call_routing_hours_settings_write',
-					'cc_call_settings_read',
-					'cc_call_settings_write',
-					'chrome_extension_compliance_settings_read',
-					'chrome_extension_compliance_settings_write',
-					'csat_surveys_read',
-					'csat_surveys_write',
-					'dashboard_and_alerts_read',
-					'dashboard_and_alerts_write',
-					'dialpad_ai_settings_read',
-					'dialpad_ai_settings_write',
-					'holiday_hours_settings_read',
-					'holiday_hours_settings_write',
-					'integrations_settings_read',
-					'integrations_settings_write',
-					'name_language_description_settings_read',
-					'name_language_description_settings_write',
-					'number_settings_read',
-					'number_settings_write',
-					'supervisor_settings_read',
-					'supervisor_settings_write',
-				]),
+				z
+					.enum([
+						'agent_settings_read',
+						'agent_settings_write',
+						'agents_admins_manage_agents_settings_read',
+						'agents_admins_manage_agents_settings_write',
+						'agents_admins_skill_level_read',
+						'agents_admins_skill_level_write',
+						'auto_call_recording_and_transcription_settings_read',
+						'auto_call_recording_and_transcription_settings_write',
+						'business_hours_read',
+						'business_hours_write',
+						'call_blocking_spam_prevention_settings_read',
+						'call_blocking_spam_prevention_settings_write',
+						'call_dispositions_settings_read',
+						'call_dispositions_settings_write',
+						'call_routing_hours_settings_read',
+						'call_routing_hours_settings_write',
+						'cc_call_settings_read',
+						'cc_call_settings_write',
+						'chrome_extension_compliance_settings_read',
+						'chrome_extension_compliance_settings_write',
+						'csat_surveys_read',
+						'csat_surveys_write',
+						'dashboard_and_alerts_read',
+						'dashboard_and_alerts_write',
+						'dialpad_ai_settings_read',
+						'dialpad_ai_settings_write',
+						'holiday_hours_settings_read',
+						'holiday_hours_settings_write',
+						'integrations_settings_read',
+						'integrations_settings_write',
+						'name_language_description_settings_read',
+						'name_language_description_settings_write',
+						'number_settings_read',
+						'number_settings_write',
+						'supervisor_settings_read',
+						'supervisor_settings_write',
+					])
+					.or(z.string()),
 			)
 			.nullable(),
-		state: z.enum(['active', 'deleted']),
+		state: z.enum(['active', 'deleted']).or(z.string()),
 		target_type: z
 			.enum(['callcenter', 'company', 'department', 'office'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input11 = z
 	.object({
 		query: z
 			.object({
-				target_id: z.number().int().optional(),
+				target_id: dialpadInteger(z.number().int()).optional(),
 				target_type: z
 					.enum([
 						'callcenter',
@@ -988,7 +1055,7 @@ const Output11 = z
 		// unknown values are required because Dialpad documents this settings map as provider-defined.
 		settings: z.record(z.string(), z.unknown()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input12 = z
 	.object({
@@ -1004,7 +1071,7 @@ const Output12 = z
 	.object({
 		number: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input13 = z
 	.object({
@@ -1012,7 +1079,7 @@ const Input13 = z
 			.object({
 				cursor: z.string().optional(),
 				query: z.string().optional(),
-				limit: z.number().int().optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				type: z.enum(['local', 'tollfree']).optional(),
 				country_fallback: z.boolean().optional(),
 			})
@@ -1031,14 +1098,14 @@ const Output13 = z
 						display_number: z.string().nullable().optional(),
 						number: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 		overlaying_area_codes: z.array(z.string()).nullable().optional(),
 		search_extended_to_country: z.boolean().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input14 = z
 	.object({
@@ -1051,7 +1118,9 @@ const Input14 = z
 	})
 	.strict();
 
-const Output14 = z.undefined();
+const Output14 =
+	// Dialpad documents no response body here; core passes through whatever arrives (nothing, '' or {}).
+	z.unknown();
 
 const Input15 = z
 	.object({
@@ -1073,12 +1142,12 @@ const Output15 = z
 					.object({
 						number: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input16 = z
 	.object({
@@ -1091,18 +1160,20 @@ const Input16 = z
 	})
 	.strict();
 
-const Output16 = z.undefined();
+const Output16 =
+	// Dialpad documents no response body here; core passes through whatever arrives (nothing, '' or {}).
+	z.unknown();
 
 const Input17 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				operator_ids: z.array(z.number().int()).optional(),
+				operator_ids: z.array(dialpadInteger(z.number().int())).optional(),
 			})
 			.strict()
 			.optional(),
@@ -1113,34 +1184,41 @@ const Output17 = z
 	.object({
 		assigned_operators: z
 			.object({
-				count: z.number().int().nullable().optional(),
-				operator_ids: z.array(z.number().int()).nullable().optional(),
+				count: dialpadInteger(z.number().int()).nullable().optional(),
+				operator_ids: z
+					.array(dialpadInteger(z.number().int()))
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		operators: z
 			.array(
 				z
 					.object({
-						code: z.number().int().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						code: dialpadInteger(z.number().int()).nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						message: z.string().nullable().optional(),
-						status: z.enum(['error', 'success']).nullable().optional(),
+						status: z
+							.enum(['error', 'success'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		status: z.enum(['error', 'success']).nullable().optional(),
+		status: z.enum(['error', 'success']).or(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input18 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -1148,17 +1226,20 @@ const Input18 = z
 
 const Output18 = z
 	.object({
-		call_id: z.number().int(),
-		count: z.number().int().nullable().optional(),
-		operator_ids: z.array(z.number().int()).nullable().optional(),
+		call_id: dialpadInteger(z.number().int()),
+		count: dialpadInteger(z.number().int()).nullable().optional(),
+		operator_ids: z
+			.array(dialpadInteger(z.number().int()))
+			.nullable()
+			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input19 = z
 	.object({
 		body: z
 			.object({
-				call_ids: z.array(z.number().int()),
+				call_ids: z.array(dialpadInteger(z.number().int())),
 			})
 			.strict()
 			.optional(),
@@ -1167,21 +1248,21 @@ const Input19 = z
 
 const Output19 = z
 	.object({
-		completed_count: z.number().int(),
+		completed_count: dialpadInteger(z.number().int()),
 		date_completed: z.string().nullable().optional(),
 		date_created: z.string(),
-		failed_count: z.number().int(),
+		failed_count: dialpadInteger(z.number().int()),
 		request_id: z.string(),
 		status: z.string(),
-		total: z.number().int(),
+		total: dialpadInteger(z.number().int()),
 	})
-	.strict();
+	.loose();
 
 const Input20 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		query: z
@@ -1207,13 +1288,13 @@ const Output20 = z
 						id: z.string().nullable().optional(),
 						target_short_key: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 		call_id: z.string().nullable().optional(),
-		date_created: z.number().int().nullable().optional(),
-		date_modified: z.number().int().nullable().optional(),
+		date_created: dialpadInteger(z.number().int()).nullable().optional(),
+		date_modified: dialpadInteger(z.number().int()).nullable().optional(),
 		disposition: z
 			.object({
 				content: z.string().nullable().optional(),
@@ -1222,7 +1303,7 @@ const Output20 = z
 				id: z.string().nullable().optional(),
 				target_short_key: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		is_internal_call: z.boolean().nullable().optional(),
 		purposes: z
@@ -1236,7 +1317,7 @@ const Output20 = z
 						id: z.string().nullable().optional(),
 						target_short_key: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
@@ -1244,23 +1325,25 @@ const Output20 = z
 		summary: z
 			.object({
 				content: z.string().nullable().optional(),
-				date_text_last_edited: z.number().int().nullable().optional(),
+				date_text_last_edited: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				edited: z.boolean().nullable().optional(),
 				format: z.string().nullable().optional(),
 				id: z.string().nullable().optional(),
 				null_summary: z.boolean().nullable().optional(),
 				target_short_key: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input21 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -1273,7 +1356,7 @@ const Input21 = z
 						.strict(),
 					z
 						.object({
-							target_id: z.number().int(),
+							target_id: dialpadInteger(z.number().int()),
 							target_type: z.enum([
 								'callcenter',
 								'department',
@@ -1291,9 +1374,9 @@ const Input21 = z
 
 const Output21 = z
 	.object({
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input22 = z
 	.object({
@@ -1301,9 +1384,9 @@ const Input22 = z
 			.object({
 				cursor: z.string().optional(),
 				include_anonymized: z.boolean().optional(),
-				started_after: z.number().int().optional(),
-				started_before: z.number().int().optional(),
-				target_id: z.number().int().optional(),
+				started_after: dialpadInteger(z.number().int()).optional(),
+				started_before: dialpadInteger(z.number().int()).optional(),
+				target_id: dialpadInteger(z.number().int()).optional(),
 				target_type: z
 					.enum([
 						'callcenter',
@@ -1336,7 +1419,7 @@ const Output22 = z
 							.array(z.string())
 							.nullable()
 							.optional(),
-						call_id: z.number().int().nullable().optional(),
+						call_id: dialpadInteger(z.number().int()).nullable().optional(),
 						call_recording_share_links: z
 							.array(z.string())
 							.nullable()
@@ -1349,19 +1432,25 @@ const Output22 = z
 								phone: z.string().nullable().optional(),
 								type: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						csat_recording_urls: z.array(z.string()).nullable().optional(),
 						csat_score: z.string().nullable().optional(),
 						csat_transcriptions: z.array(z.string()).nullable().optional(),
 						custom_data: z.string().nullable().optional(),
-						date_connected: z.number().int().nullable().optional(),
-						date_ended: z.number().int().nullable().optional(),
-						date_rang: z.number().int().nullable().optional(),
-						date_started: z.number().int().nullable().optional(),
+						date_connected: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
+						date_ended: dialpadInteger(z.number().int()).nullable().optional(),
+						date_rang: dialpadInteger(z.number().int()).nullable().optional(),
+						date_started: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						direction: z.string().nullable().optional(),
 						duration: z.number().nullable().optional(),
-						entry_point_call_id: z.number().int().nullable().optional(),
+						entry_point_call_id: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						entry_point_target: z
 							.object({
 								email: z.string().nullable().optional(),
@@ -1370,17 +1459,23 @@ const Output22 = z
 								phone: z.string().nullable().optional(),
 								type: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
-						event_timestamp: z.number().int().nullable().optional(),
+						event_timestamp: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						external_number: z.string().nullable().optional(),
 						group_id: z.string().nullable().optional(),
 						internal_number: z.string().nullable().optional(),
 						is_transferred: z.boolean().nullable().optional(),
 						labels: z.array(z.string()).nullable().optional(),
-						master_call_id: z.number().int().nullable().optional(),
+						master_call_id: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						mos_score: z.number().nullable().optional(),
-						operator_call_id: z.number().int().nullable().optional(),
+						operator_call_id: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						proxy_target: z
 							.object({
 								email: z.string().nullable().optional(),
@@ -1389,13 +1484,15 @@ const Output22 = z
 								phone: z.string().nullable().optional(),
 								type: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						recording_details: z
 							.array(
 								z
 									.object({
-										duration: z.number().int().nullable().optional(),
+										duration: dialpadInteger(z.number().int())
+											.nullable()
+											.optional(),
 										id: z.string().nullable().optional(),
 										recording_type: z
 											.enum([
@@ -1403,12 +1500,15 @@ const Output22 = z
 												'callrecording',
 												'voicemail',
 											])
+											.or(z.string())
 											.nullable()
 											.optional(),
-										start_time: z.number().int().nullable().optional(),
+										start_time: dialpadInteger(z.number().int())
+											.nullable()
+											.optional(),
 										url: z.string().nullable().optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
@@ -1418,16 +1518,21 @@ const Output22 = z
 									.object({
 										breadcrumb_type: z
 											.enum(['callrouter', 'external_api'])
+											.or(z.string())
 											.nullable()
 											.optional(),
-										date: z.number().int().nullable().optional(),
-										request: z.object({}).strict().nullable().optional(),
-										response: z.object({}).strict().nullable().optional(),
-										target_id: z.number().int().nullable().optional(),
+										date: dialpadInteger(z.number().int())
+											.nullable()
+											.optional(),
+										request: z.object({}).loose().nullable().optional(),
+										response: z.object({}).loose().nullable().optional(),
+										target_id: dialpadInteger(z.number().int())
+											.nullable()
+											.optional(),
 										target_type: z.string().nullable().optional(),
 										url: z.string().nullable().optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
@@ -1441,7 +1546,7 @@ const Output22 = z
 								phone: z.string().nullable().optional(),
 								type: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						total_duration: z.number().nullable().optional(),
 						transcription_text: z.string().nullable().optional(),
@@ -1450,12 +1555,12 @@ const Output22 = z
 						voicemail_share_link: z.string().nullable().optional(),
 						was_recorded: z.boolean().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input23 = z
 	.object({
@@ -1464,7 +1569,7 @@ const Input23 = z
 				custom_data: z.string().nullable().optional(),
 				outbound_caller_id: z.string().nullable().optional(),
 				phone_number: z.string(),
-				target_id: z.number().int(),
+				target_id: dialpadInteger(z.number().int()),
 				target_type: z.enum(['callcenter', 'department', 'office']),
 			})
 			.strict()
@@ -1474,15 +1579,15 @@ const Input23 = z
 
 const Output23 = z
 	.object({
-		call_id: z.number().int(),
+		call_id: dialpadInteger(z.number().int()),
 	})
-	.strict();
+	.loose();
 
 const Input24 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -1490,17 +1595,20 @@ const Input24 = z
 
 const Output24 = z
 	.object({
-		call_id: z.number().int(),
-		count: z.number().int().nullable().optional(),
-		operator_ids: z.array(z.number().int()).nullable().optional(),
+		call_id: dialpadInteger(z.number().int()),
+		count: dialpadInteger(z.number().int()).nullable().optional(),
+		operator_ids: z
+			.array(dialpadInteger(z.number().int()))
+			.nullable()
+			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input25 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -1510,13 +1618,13 @@ const Input25 = z
 					.union([
 						z
 							.object({
-								operator_id: z.number().int(),
-								target_id: z.number().int(),
+								operator_id: dialpadInteger(z.number().int()),
+								target_id: dialpadInteger(z.number().int()),
 							})
 							.strict(),
 						z
 							.object({
-								call_id: z.number().int(),
+								call_id: dialpadInteger(z.number().int()),
 							})
 							.strict(),
 						z
@@ -1526,7 +1634,7 @@ const Input25 = z
 							.strict(),
 						z
 							.object({
-								target_id: z.number().int(),
+								target_id: dialpadInteger(z.number().int()),
 								target_type: z.enum([
 									'callcenter',
 									'department',
@@ -1549,20 +1657,21 @@ const Input25 = z
 
 const Output25 = z
 	.object({
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		transferred_to_number: z.string().nullable().optional(),
 		transferred_to_state: z
 			.enum(['hold', 'parked', 'preanswer', 'voicemail'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input26 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -1571,7 +1680,7 @@ const Input26 = z
 const Output26 = z
 	.object({
 		admin_call_recording_share_links: z.array(z.string()).nullable().optional(),
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		call_recording_share_links: z.array(z.string()).nullable().optional(),
 		contact: z
 			.object({
@@ -1581,19 +1690,19 @@ const Output26 = z
 				phone: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		csat_recording_urls: z.array(z.string()).nullable().optional(),
 		csat_score: z.string().nullable().optional(),
 		csat_transcriptions: z.array(z.string()).nullable().optional(),
 		custom_data: z.string().nullable().optional(),
-		date_connected: z.number().int().nullable().optional(),
-		date_ended: z.number().int().nullable().optional(),
-		date_rang: z.number().int().nullable().optional(),
-		date_started: z.number().int().nullable().optional(),
+		date_connected: dialpadInteger(z.number().int()).nullable().optional(),
+		date_ended: dialpadInteger(z.number().int()).nullable().optional(),
+		date_rang: dialpadInteger(z.number().int()).nullable().optional(),
+		date_started: dialpadInteger(z.number().int()).nullable().optional(),
 		direction: z.string().nullable().optional(),
 		duration: z.number().nullable().optional(),
-		entry_point_call_id: z.number().int().nullable().optional(),
+		entry_point_call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		entry_point_target: z
 			.object({
 				email: z.string().nullable().optional(),
@@ -1602,17 +1711,17 @@ const Output26 = z
 				phone: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		event_timestamp: z.number().int().nullable().optional(),
+		event_timestamp: dialpadInteger(z.number().int()).nullable().optional(),
 		external_number: z.string().nullable().optional(),
 		group_id: z.string().nullable().optional(),
 		internal_number: z.string().nullable().optional(),
 		is_transferred: z.boolean().nullable().optional(),
 		labels: z.array(z.string()).nullable().optional(),
-		master_call_id: z.number().int().nullable().optional(),
+		master_call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		mos_score: z.number().nullable().optional(),
-		operator_call_id: z.number().int().nullable().optional(),
+		operator_call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		proxy_target: z
 			.object({
 				email: z.string().nullable().optional(),
@@ -1621,22 +1730,23 @@ const Output26 = z
 				phone: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		recording_details: z
 			.array(
 				z
 					.object({
-						duration: z.number().int().nullable().optional(),
+						duration: dialpadInteger(z.number().int()).nullable().optional(),
 						id: z.string().nullable().optional(),
 						recording_type: z
 							.enum(['admincallrecording', 'callrecording', 'voicemail'])
+							.or(z.string())
 							.nullable()
 							.optional(),
-						start_time: z.number().int().nullable().optional(),
+						start_time: dialpadInteger(z.number().int()).nullable().optional(),
 						url: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
@@ -1646,16 +1756,17 @@ const Output26 = z
 					.object({
 						breadcrumb_type: z
 							.enum(['callrouter', 'external_api'])
+							.or(z.string())
 							.nullable()
 							.optional(),
-						date: z.number().int().nullable().optional(),
-						request: z.object({}).strict().nullable().optional(),
-						response: z.object({}).strict().nullable().optional(),
-						target_id: z.number().int().nullable().optional(),
+						date: dialpadInteger(z.number().int()).nullable().optional(),
+						request: z.object({}).loose().nullable().optional(),
+						response: z.object({}).loose().nullable().optional(),
+						target_id: dialpadInteger(z.number().int()).nullable().optional(),
 						target_type: z.string().nullable().optional(),
 						url: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
@@ -1669,7 +1780,7 @@ const Output26 = z
 				phone: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		total_duration: z.number().nullable().optional(),
 		transcription_text: z.string().nullable().optional(),
@@ -1678,18 +1789,18 @@ const Output26 = z
 		voicemail_share_link: z.string().nullable().optional(),
 		was_recorded: z.boolean().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input27 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				operator_ids: z.array(z.number().int()).optional(),
+				operator_ids: z.array(dialpadInteger(z.number().int())).optional(),
 			})
 			.strict()
 			.optional(),
@@ -1700,39 +1811,46 @@ const Output27 = z
 	.object({
 		assigned_operators: z
 			.object({
-				count: z.number().int().nullable().optional(),
-				operator_ids: z.array(z.number().int()).nullable().optional(),
+				count: dialpadInteger(z.number().int()).nullable().optional(),
+				operator_ids: z
+					.array(dialpadInteger(z.number().int()))
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		operators: z
 			.array(
 				z
 					.object({
-						code: z.number().int().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						code: dialpadInteger(z.number().int()).nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						message: z.string().nullable().optional(),
-						status: z.enum(['error', 'success']).nullable().optional(),
+						status: z
+							.enum(['error', 'success'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		status: z.enum(['error', 'success']).nullable().optional(),
+		status: z.enum(['error', 'success']).or(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input28 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				user_id: z.number().int(),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -1741,9 +1859,9 @@ const Input28 = z
 
 const Output28 = z
 	.object({
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input29 = z
 	.object({
@@ -1751,7 +1869,7 @@ const Input29 = z
 			.object({
 				custom_data: z.string().nullable().optional(),
 				device_id: z.string().nullable().optional(),
-				group_id: z.number().int().nullable().optional(),
+				group_id: dialpadInteger(z.number().int()).nullable().optional(),
 				group_type: z
 					.enum(['callcenter', 'department', 'office'])
 					.nullable()
@@ -1759,7 +1877,7 @@ const Input29 = z
 				is_consult: z.boolean().optional(),
 				outbound_caller_id: z.string().nullable().optional(),
 				phone_number: z.string(),
-				user_id: z.number().int(),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -1768,15 +1886,15 @@ const Input29 = z
 
 const Output29 = z
 	.object({
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input30 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -1791,7 +1909,7 @@ const Input30 = z
 const Output30 = z
 	.object({
 		admin_call_recording_share_links: z.array(z.string()).nullable().optional(),
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		call_recording_share_links: z.array(z.string()).nullable().optional(),
 		contact: z
 			.object({
@@ -1801,19 +1919,19 @@ const Output30 = z
 				phone: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		csat_recording_urls: z.array(z.string()).nullable().optional(),
 		csat_score: z.string().nullable().optional(),
 		csat_transcriptions: z.array(z.string()).nullable().optional(),
 		custom_data: z.string().nullable().optional(),
-		date_connected: z.number().int().nullable().optional(),
-		date_ended: z.number().int().nullable().optional(),
-		date_rang: z.number().int().nullable().optional(),
-		date_started: z.number().int().nullable().optional(),
+		date_connected: dialpadInteger(z.number().int()).nullable().optional(),
+		date_ended: dialpadInteger(z.number().int()).nullable().optional(),
+		date_rang: dialpadInteger(z.number().int()).nullable().optional(),
+		date_started: dialpadInteger(z.number().int()).nullable().optional(),
 		direction: z.string().nullable().optional(),
 		duration: z.number().nullable().optional(),
-		entry_point_call_id: z.number().int().nullable().optional(),
+		entry_point_call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		entry_point_target: z
 			.object({
 				email: z.string().nullable().optional(),
@@ -1822,17 +1940,17 @@ const Output30 = z
 				phone: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		event_timestamp: z.number().int().nullable().optional(),
+		event_timestamp: dialpadInteger(z.number().int()).nullable().optional(),
 		external_number: z.string().nullable().optional(),
 		group_id: z.string().nullable().optional(),
 		internal_number: z.string().nullable().optional(),
 		is_transferred: z.boolean().nullable().optional(),
 		labels: z.array(z.string()).nullable().optional(),
-		master_call_id: z.number().int().nullable().optional(),
+		master_call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		mos_score: z.number().nullable().optional(),
-		operator_call_id: z.number().int().nullable().optional(),
+		operator_call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		proxy_target: z
 			.object({
 				email: z.string().nullable().optional(),
@@ -1841,22 +1959,23 @@ const Output30 = z
 				phone: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		recording_details: z
 			.array(
 				z
 					.object({
-						duration: z.number().int().nullable().optional(),
+						duration: dialpadInteger(z.number().int()).nullable().optional(),
 						id: z.string().nullable().optional(),
 						recording_type: z
 							.enum(['admincallrecording', 'callrecording', 'voicemail'])
+							.or(z.string())
 							.nullable()
 							.optional(),
-						start_time: z.number().int().nullable().optional(),
+						start_time: dialpadInteger(z.number().int()).nullable().optional(),
 						url: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
@@ -1866,16 +1985,17 @@ const Output30 = z
 					.object({
 						breadcrumb_type: z
 							.enum(['callrouter', 'external_api'])
+							.or(z.string())
 							.nullable()
 							.optional(),
-						date: z.number().int().nullable().optional(),
-						request: z.object({}).strict().nullable().optional(),
-						response: z.object({}).strict().nullable().optional(),
-						target_id: z.number().int().nullable().optional(),
+						date: dialpadInteger(z.number().int()).nullable().optional(),
+						request: z.object({}).loose().nullable().optional(),
+						response: z.object({}).loose().nullable().optional(),
+						target_id: dialpadInteger(z.number().int()).nullable().optional(),
 						target_type: z.string().nullable().optional(),
 						url: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
@@ -1889,7 +2009,7 @@ const Output30 = z
 				phone: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		total_duration: z.number().nullable().optional(),
 		transcription_text: z.string().nullable().optional(),
@@ -1898,27 +2018,29 @@ const Output30 = z
 		voicemail_share_link: z.string().nullable().optional(),
 		was_recorded: z.boolean().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input31 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
 	.strict();
 
-const Output31 = z.undefined();
+const Output31 =
+	// Dialpad documents no response body here; core passes through whatever arrives (nothing, '' or {}).
+	z.unknown();
 
 const Input32 = z
 	.object({
 		query: z
 			.object({
 				cursor: z.string().optional(),
-				limit: z.number().int().optional(),
-				call_center_id: z.number().int(),
+				limit: dialpadInteger(z.number().int()).optional(),
+				call_center_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -1939,17 +2061,17 @@ const Output32 = z
 						queue_position: z.string().nullable().optional(),
 						status: z.string(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input33 = z
 	.object({
 		body: z
 			.object({
-				call_center_id: z.number().int(),
+				call_center_id: dialpadInteger(z.number().int()),
 				phone_number: z.string(),
 			})
 			.strict()
@@ -1961,7 +2083,7 @@ const Output33 = z
 	.object({
 		success: z.boolean().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input34 = z
 	.object({
@@ -1969,7 +2091,7 @@ const Input34 = z
 			.object({
 				cursor: z.string().optional(),
 				include_alerts: z.boolean().optional(),
-				office_id: z.number().int().optional(),
+				office_id: dialpadInteger(z.number().int()).optional(),
 				name_search: z.string().optional(),
 			})
 			.strict()
@@ -1992,29 +2114,36 @@ const Output34 = z
 										call_recording_inbound: z.boolean().nullable().optional(),
 										call_recording_outbound: z.boolean().nullable().optional(),
 									})
-									.strict()
+									.loose()
 									.optional(),
-								max_wrap_up_seconds: z.number().int().nullable().optional(),
-							})
-							.strict()
-							.optional(),
-						alerts: z
-							.object({
-								cc_service_level: z.number().int().nullable().optional(),
-								cc_service_level_seconds: z
-									.number()
-									.int()
+								max_wrap_up_seconds: dialpadInteger(z.number().int())
 									.nullable()
 									.optional(),
 							})
-							.strict()
+							.loose()
+							.optional(),
+						alerts: z
+							.object({
+								cc_service_level: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
+								cc_service_level_seconds: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
+							})
+							.loose()
 							.optional(),
 						availability_status: z
 							.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						country: z.string().nullable().optional(),
-						first_action: z.enum(['menu', 'operators']).nullable().optional(),
+						first_action: z
+							.enum(['menu', 'operators'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						friday_hours: z.array(z.string()).nullable().optional(),
 						group_description: z.string().nullable().optional(),
 						hold_queue: z
@@ -2022,28 +2151,30 @@ const Output34 = z
 								allow_queue_callback: z.boolean().nullable().optional(),
 								announce_estimated_wait_time: z.boolean().nullable().optional(),
 								announce_position: z.boolean().nullable().optional(),
-								announcement_interval_seconds: z
-									.number()
-									.int()
+								announcement_interval_seconds: dialpadInteger(z.number().int())
 									.nullable()
 									.optional(),
-								estimated_wait_time_max: z.number().int().nullable().optional(),
-								max_hold_count: z.number().int().nullable().optional(),
-								max_hold_seconds: z.number().int().nullable().optional(),
+								estimated_wait_time_max: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
+								max_hold_count: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
+								max_hold_seconds: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
 								queue_callback_dtmf: z.string().nullable().optional(),
-								queue_callback_threshold: z
-									.number()
-									.int()
+								queue_callback_threshold: dialpadInteger(z.number().int())
 									.nullable()
 									.optional(),
 								queue_escape_dtmf: z.string().nullable().optional(),
 								stay_in_queue_after_closing: z.boolean().nullable().optional(),
 								unattended_queue: z.boolean().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						hours_on: z.boolean().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						is_digital: z.boolean().nullable().optional(),
 						monday_hours: z.array(z.string()).nullable().optional(),
 						name: z.string().nullable().optional(),
@@ -2068,36 +2199,43 @@ const Output34 = z
 								'scripted_ivr',
 								'voicemail',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
-						ring_seconds: z.number().int().nullable().optional(),
+						ring_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						routing_options: z
 							.object({
 								closed: z
 									.object({
-										action: z.enum([
-											'ai_agent',
-											'bridge_target',
-											'call_service_target',
-											'company_directory',
-											'department',
-											'directory',
-											'disabled',
-											'extension',
-											'google_dialogflow',
-											'last_name_company_directory',
-											'last_name_directory',
-											'menu',
-											'message',
-											'operator',
-											'person',
-											'recursive_transfer',
-											'scripted_ivr',
-											'voicemail',
-										]),
-										action_target_id: z.number().int().optional(),
+										action: z
+											.enum([
+												'ai_agent',
+												'bridge_target',
+												'call_service_target',
+												'company_directory',
+												'department',
+												'directory',
+												'disabled',
+												'extension',
+												'google_dialogflow',
+												'last_name_company_directory',
+												'last_name_directory',
+												'menu',
+												'message',
+												'operator',
+												'person',
+												'recursive_transfer',
+												'scripted_ivr',
+												'voicemail',
+											])
+											.or(z.string()),
+										action_target_id: dialpadInteger(
+											z.number().int(),
+										).optional(),
 										action_target_type: z
 											.enum([
 												'callcenter',
@@ -2113,6 +2251,7 @@ const Output34 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.optional(),
 										dtmf: z
 											.array(
@@ -2132,33 +2271,38 @@ const Output34 = z
 												'simultaneous',
 												'skills_based',
 											])
+											.or(z.string())
 											.optional(),
 										try_dial_operators: z.boolean(),
 									})
-									.strict(),
+									.loose(),
 								open: z
 									.object({
-										action: z.enum([
-											'ai_agent',
-											'bridge_target',
-											'call_service_target',
-											'company_directory',
-											'department',
-											'directory',
-											'disabled',
-											'extension',
-											'google_dialogflow',
-											'last_name_company_directory',
-											'last_name_directory',
-											'menu',
-											'message',
-											'operator',
-											'person',
-											'recursive_transfer',
-											'scripted_ivr',
-											'voicemail',
-										]),
-										action_target_id: z.number().int().optional(),
+										action: z
+											.enum([
+												'ai_agent',
+												'bridge_target',
+												'call_service_target',
+												'company_directory',
+												'department',
+												'directory',
+												'disabled',
+												'extension',
+												'google_dialogflow',
+												'last_name_company_directory',
+												'last_name_directory',
+												'menu',
+												'message',
+												'operator',
+												'person',
+												'recursive_transfer',
+												'scripted_ivr',
+												'voicemail',
+											])
+											.or(z.string()),
+										action_target_id: dialpadInteger(
+											z.number().int(),
+										).optional(),
 										action_target_type: z
 											.enum([
 												'callcenter',
@@ -2174,6 +2318,7 @@ const Output34 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.optional(),
 										dtmf: z
 											.array(
@@ -2193,16 +2338,18 @@ const Output34 = z
 												'simultaneous',
 												'skills_based',
 											])
+											.or(z.string())
 											.optional(),
 										try_dial_operators: z.boolean(),
 									})
-									.strict(),
+									.loose(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						saturday_hours: z.array(z.string()).nullable().optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						sunday_hours: z.array(z.string()).nullable().optional(),
@@ -2214,7 +2361,7 @@ const Output34 = z
 								allow_pause: z.boolean().nullable().optional(),
 								auto_start: z.boolean().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						voicemail_notification_emails: z
 							.array(z.string())
@@ -2222,18 +2369,18 @@ const Output34 = z
 							.optional(),
 						wednesday_hours: z.array(z.string()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input35 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -2249,25 +2396,36 @@ const Output35 = z
 						call_recording_inbound: z.boolean().nullable().optional(),
 						call_recording_outbound: z.boolean().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
-				max_wrap_up_seconds: z.number().int().nullable().optional(),
+				max_wrap_up_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		alerts: z
 			.object({
-				cc_service_level: z.number().int().nullable().optional(),
-				cc_service_level_seconds: z.number().int().nullable().optional(),
+				cc_service_level: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				cc_service_level_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		availability_status: z
 			.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		country: z.string().nullable().optional(),
-		first_action: z.enum(['menu', 'operators']).nullable().optional(),
+		first_action: z
+			.enum(['menu', 'operators'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		friday_hours: z.array(z.string()).nullable().optional(),
 		group_description: z.string().nullable().optional(),
 		hold_queue: z
@@ -2275,20 +2433,28 @@ const Output35 = z
 				allow_queue_callback: z.boolean().nullable().optional(),
 				announce_estimated_wait_time: z.boolean().nullable().optional(),
 				announce_position: z.boolean().nullable().optional(),
-				announcement_interval_seconds: z.number().int().nullable().optional(),
-				estimated_wait_time_max: z.number().int().nullable().optional(),
-				max_hold_count: z.number().int().nullable().optional(),
-				max_hold_seconds: z.number().int().nullable().optional(),
+				announcement_interval_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				estimated_wait_time_max: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				max_hold_count: dialpadInteger(z.number().int()).nullable().optional(),
+				max_hold_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				queue_callback_dtmf: z.string().nullable().optional(),
-				queue_callback_threshold: z.number().int().nullable().optional(),
+				queue_callback_threshold: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				queue_escape_dtmf: z.string().nullable().optional(),
 				stay_in_queue_after_closing: z.boolean().nullable().optional(),
 				unattended_queue: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		hours_on: z.boolean().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		is_digital: z.boolean().nullable().optional(),
 		monday_hours: z.array(z.string()).nullable().optional(),
 		name: z.string().nullable().optional(),
@@ -2313,36 +2479,39 @@ const Output35 = z
 				'scripted_ivr',
 				'voicemail',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
-		ring_seconds: z.number().int().nullable().optional(),
+		ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 		routing_options: z
 			.object({
 				closed: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -2358,6 +2527,7 @@ const Output35 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -2379,10 +2549,10 @@ const Output35 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -2398,33 +2568,36 @@ const Output35 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 				open: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -2440,6 +2613,7 @@ const Output35 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -2461,10 +2635,10 @@ const Output35 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -2480,16 +2654,18 @@ const Output35 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		saturday_hours: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		sunday_hours: z.array(z.string()).nullable().optional(),
@@ -2501,18 +2677,18 @@ const Output35 = z
 				allow_pause: z.boolean().nullable().optional(),
 				auto_start: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		voicemail_notification_emails: z.array(z.string()).nullable().optional(),
 		wednesday_hours: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input36 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -2527,14 +2703,20 @@ const Input36 = z
 							})
 							.strict()
 							.optional(),
-						max_wrap_up_seconds: z.number().int().nullable().optional(),
+						max_wrap_up_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 					})
 					.strict()
 					.optional(),
 				alerts: z
 					.object({
-						cc_service_level: z.number().int().nullable().optional(),
-						cc_service_level_seconds: z.number().int().nullable().optional(),
+						cc_service_level: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
+						cc_service_level_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 					})
 					.strict()
 					.optional(),
@@ -2545,16 +2727,22 @@ const Input36 = z
 						allow_queue_callback: z.boolean().nullable().optional(),
 						announce_estimated_wait_time: z.boolean().nullable().optional(),
 						announce_position: z.boolean().nullable().optional(),
-						announcement_interval_seconds: z
-							.number()
-							.int()
+						announcement_interval_seconds: dialpadInteger(z.number().int())
 							.nullable()
 							.optional(),
-						estimated_wait_time_max: z.number().int().nullable().optional(),
-						max_hold_count: z.number().int().nullable().optional(),
-						max_hold_seconds: z.number().int().nullable().optional(),
+						estimated_wait_time_max: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
+						max_hold_count: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
+						max_hold_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						queue_callback_dtmf: z.string().nullable().optional(),
-						queue_callback_threshold: z.number().int().nullable().optional(),
+						queue_callback_threshold: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						queue_escape_dtmf: z.string().nullable().optional(),
 						stay_in_queue_after_closing: z.boolean().nullable().optional(),
 						unattended_queue: z.boolean().nullable().optional(),
@@ -2564,7 +2752,7 @@ const Input36 = z
 				hours_on: z.boolean().nullable().optional(),
 				monday_hours: z.array(z.string()).nullable().optional(),
 				name: z.string().nullable().optional(),
-				ring_seconds: z.number().int().nullable().optional(),
+				ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 				routing_options: z
 					.object({
 						closed: z
@@ -2589,7 +2777,7 @@ const Input36 = z
 									'scripted_ivr',
 									'voicemail',
 								]),
-								action_target_id: z.number().int().optional(),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -2671,7 +2859,7 @@ const Input36 = z
 									'scripted_ivr',
 									'voicemail',
 								]),
-								action_target_id: z.number().int().optional(),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -2762,25 +2950,36 @@ const Output36 = z
 						call_recording_inbound: z.boolean().nullable().optional(),
 						call_recording_outbound: z.boolean().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
-				max_wrap_up_seconds: z.number().int().nullable().optional(),
+				max_wrap_up_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		alerts: z
 			.object({
-				cc_service_level: z.number().int().nullable().optional(),
-				cc_service_level_seconds: z.number().int().nullable().optional(),
+				cc_service_level: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				cc_service_level_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		availability_status: z
 			.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		country: z.string().nullable().optional(),
-		first_action: z.enum(['menu', 'operators']).nullable().optional(),
+		first_action: z
+			.enum(['menu', 'operators'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		friday_hours: z.array(z.string()).nullable().optional(),
 		group_description: z.string().nullable().optional(),
 		hold_queue: z
@@ -2788,20 +2987,28 @@ const Output36 = z
 				allow_queue_callback: z.boolean().nullable().optional(),
 				announce_estimated_wait_time: z.boolean().nullable().optional(),
 				announce_position: z.boolean().nullable().optional(),
-				announcement_interval_seconds: z.number().int().nullable().optional(),
-				estimated_wait_time_max: z.number().int().nullable().optional(),
-				max_hold_count: z.number().int().nullable().optional(),
-				max_hold_seconds: z.number().int().nullable().optional(),
+				announcement_interval_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				estimated_wait_time_max: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				max_hold_count: dialpadInteger(z.number().int()).nullable().optional(),
+				max_hold_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				queue_callback_dtmf: z.string().nullable().optional(),
-				queue_callback_threshold: z.number().int().nullable().optional(),
+				queue_callback_threshold: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				queue_escape_dtmf: z.string().nullable().optional(),
 				stay_in_queue_after_closing: z.boolean().nullable().optional(),
 				unattended_queue: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		hours_on: z.boolean().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		is_digital: z.boolean().nullable().optional(),
 		monday_hours: z.array(z.string()).nullable().optional(),
 		name: z.string().nullable().optional(),
@@ -2826,36 +3033,39 @@ const Output36 = z
 				'scripted_ivr',
 				'voicemail',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
-		ring_seconds: z.number().int().nullable().optional(),
+		ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 		routing_options: z
 			.object({
 				closed: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -2871,6 +3081,7 @@ const Output36 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -2892,10 +3103,10 @@ const Output36 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -2911,33 +3122,36 @@ const Output36 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 				open: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -2953,6 +3167,7 @@ const Output36 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -2974,10 +3189,10 @@ const Output36 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -2993,16 +3208,18 @@ const Output36 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		saturday_hours: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		sunday_hours: z.array(z.string()).nullable().optional(),
@@ -3014,12 +3231,12 @@ const Output36 = z
 				allow_pause: z.boolean().nullable().optional(),
 				auto_start: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		voicemail_notification_emails: z.array(z.string()).nullable().optional(),
 		wednesday_hours: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input37 = z
 	.object({
@@ -3035,14 +3252,20 @@ const Input37 = z
 							})
 							.strict()
 							.optional(),
-						max_wrap_up_seconds: z.number().int().nullable().optional(),
+						max_wrap_up_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 					})
 					.strict()
 					.optional(),
 				alerts: z
 					.object({
-						cc_service_level: z.number().int().nullable().optional(),
-						cc_service_level_seconds: z.number().int().nullable().optional(),
+						cc_service_level: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
+						cc_service_level_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 					})
 					.strict()
 					.optional(),
@@ -3053,16 +3276,22 @@ const Input37 = z
 						allow_queue_callback: z.boolean().nullable().optional(),
 						announce_estimated_wait_time: z.boolean().nullable().optional(),
 						announce_position: z.boolean().nullable().optional(),
-						announcement_interval_seconds: z
-							.number()
-							.int()
+						announcement_interval_seconds: dialpadInteger(z.number().int())
 							.nullable()
 							.optional(),
-						estimated_wait_time_max: z.number().int().nullable().optional(),
-						max_hold_count: z.number().int().nullable().optional(),
-						max_hold_seconds: z.number().int().nullable().optional(),
+						estimated_wait_time_max: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
+						max_hold_count: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
+						max_hold_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						queue_callback_dtmf: z.string().nullable().optional(),
-						queue_callback_threshold: z.number().int().nullable().optional(),
+						queue_callback_threshold: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						queue_escape_dtmf: z.string().nullable().optional(),
 						stay_in_queue_after_closing: z.boolean().nullable().optional(),
 						unattended_queue: z.boolean().nullable().optional(),
@@ -3072,8 +3301,8 @@ const Input37 = z
 				hours_on: z.boolean().nullable().optional(),
 				monday_hours: z.array(z.string()).nullable().optional(),
 				name: z.string(),
-				office_id: z.number().int(),
-				ring_seconds: z.number().int().nullable().optional(),
+				office_id: dialpadInteger(z.number().int()),
+				ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 				routing_options: z
 					.object({
 						closed: z
@@ -3098,7 +3327,7 @@ const Input37 = z
 									'scripted_ivr',
 									'voicemail',
 								]),
-								action_target_id: z.number().int().optional(),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -3180,7 +3409,7 @@ const Input37 = z
 									'scripted_ivr',
 									'voicemail',
 								]),
-								action_target_id: z.number().int().optional(),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -3271,25 +3500,36 @@ const Output37 = z
 						call_recording_inbound: z.boolean().nullable().optional(),
 						call_recording_outbound: z.boolean().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
-				max_wrap_up_seconds: z.number().int().nullable().optional(),
+				max_wrap_up_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		alerts: z
 			.object({
-				cc_service_level: z.number().int().nullable().optional(),
-				cc_service_level_seconds: z.number().int().nullable().optional(),
+				cc_service_level: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				cc_service_level_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		availability_status: z
 			.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		country: z.string().nullable().optional(),
-		first_action: z.enum(['menu', 'operators']).nullable().optional(),
+		first_action: z
+			.enum(['menu', 'operators'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		friday_hours: z.array(z.string()).nullable().optional(),
 		group_description: z.string().nullable().optional(),
 		hold_queue: z
@@ -3297,20 +3537,28 @@ const Output37 = z
 				allow_queue_callback: z.boolean().nullable().optional(),
 				announce_estimated_wait_time: z.boolean().nullable().optional(),
 				announce_position: z.boolean().nullable().optional(),
-				announcement_interval_seconds: z.number().int().nullable().optional(),
-				estimated_wait_time_max: z.number().int().nullable().optional(),
-				max_hold_count: z.number().int().nullable().optional(),
-				max_hold_seconds: z.number().int().nullable().optional(),
+				announcement_interval_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				estimated_wait_time_max: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				max_hold_count: dialpadInteger(z.number().int()).nullable().optional(),
+				max_hold_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				queue_callback_dtmf: z.string().nullable().optional(),
-				queue_callback_threshold: z.number().int().nullable().optional(),
+				queue_callback_threshold: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				queue_escape_dtmf: z.string().nullable().optional(),
 				stay_in_queue_after_closing: z.boolean().nullable().optional(),
 				unattended_queue: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		hours_on: z.boolean().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		is_digital: z.boolean().nullable().optional(),
 		monday_hours: z.array(z.string()).nullable().optional(),
 		name: z.string().nullable().optional(),
@@ -3335,36 +3583,39 @@ const Output37 = z
 				'scripted_ivr',
 				'voicemail',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
-		ring_seconds: z.number().int().nullable().optional(),
+		ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 		routing_options: z
 			.object({
 				closed: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -3380,6 +3631,7 @@ const Output37 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -3401,10 +3653,10 @@ const Output37 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -3420,33 +3672,36 @@ const Output37 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 				open: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -3462,6 +3717,7 @@ const Output37 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -3483,10 +3739,10 @@ const Output37 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -3502,16 +3758,18 @@ const Output37 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		saturday_hours: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		sunday_hours: z.array(z.string()).nullable().optional(),
@@ -3523,18 +3781,18 @@ const Output37 = z
 				allow_pause: z.boolean().nullable().optional(),
 				auto_start: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		voicemail_notification_emails: z.array(z.string()).nullable().optional(),
 		wednesday_hours: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input38 = z
 	.object({
 		body: z
 			.object({
-				call_center_id: z.number().int(),
+				call_center_id: dialpadInteger(z.number().int()),
 				phone_number: z.string(),
 			})
 			.strict()
@@ -3544,15 +3802,15 @@ const Input38 = z
 
 const Output38 = z
 	.object({
-		position: z.number().int().nullable().optional(),
+		position: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input39 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -3568,25 +3826,36 @@ const Output39 = z
 						call_recording_inbound: z.boolean().nullable().optional(),
 						call_recording_outbound: z.boolean().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
-				max_wrap_up_seconds: z.number().int().nullable().optional(),
+				max_wrap_up_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		alerts: z
 			.object({
-				cc_service_level: z.number().int().nullable().optional(),
-				cc_service_level_seconds: z.number().int().nullable().optional(),
+				cc_service_level: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				cc_service_level_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		availability_status: z
 			.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		country: z.string().nullable().optional(),
-		first_action: z.enum(['menu', 'operators']).nullable().optional(),
+		first_action: z
+			.enum(['menu', 'operators'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		friday_hours: z.array(z.string()).nullable().optional(),
 		group_description: z.string().nullable().optional(),
 		hold_queue: z
@@ -3594,20 +3863,28 @@ const Output39 = z
 				allow_queue_callback: z.boolean().nullable().optional(),
 				announce_estimated_wait_time: z.boolean().nullable().optional(),
 				announce_position: z.boolean().nullable().optional(),
-				announcement_interval_seconds: z.number().int().nullable().optional(),
-				estimated_wait_time_max: z.number().int().nullable().optional(),
-				max_hold_count: z.number().int().nullable().optional(),
-				max_hold_seconds: z.number().int().nullable().optional(),
+				announcement_interval_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				estimated_wait_time_max: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				max_hold_count: dialpadInteger(z.number().int()).nullable().optional(),
+				max_hold_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				queue_callback_dtmf: z.string().nullable().optional(),
-				queue_callback_threshold: z.number().int().nullable().optional(),
+				queue_callback_threshold: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				queue_escape_dtmf: z.string().nullable().optional(),
 				stay_in_queue_after_closing: z.boolean().nullable().optional(),
 				unattended_queue: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		hours_on: z.boolean().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		is_digital: z.boolean().nullable().optional(),
 		monday_hours: z.array(z.string()).nullable().optional(),
 		name: z.string().nullable().optional(),
@@ -3632,36 +3909,39 @@ const Output39 = z
 				'scripted_ivr',
 				'voicemail',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
-		ring_seconds: z.number().int().nullable().optional(),
+		ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 		routing_options: z
 			.object({
 				closed: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -3677,6 +3957,7 @@ const Output39 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -3698,10 +3979,10 @@ const Output39 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -3717,33 +3998,36 @@ const Output39 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 				open: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -3759,6 +4043,7 @@ const Output39 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -3780,10 +4065,10 @@ const Output39 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -3799,16 +4084,18 @@ const Output39 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		saturday_hours: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		sunday_hours: z.array(z.string()).nullable().optional(),
@@ -3820,18 +4107,18 @@ const Output39 = z
 				allow_pause: z.boolean().nullable().optional(),
 				auto_start: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		voicemail_notification_emails: z.array(z.string()).nullable().optional(),
 		wednesday_hours: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input40 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -3844,19 +4131,19 @@ const Output40 = z
 				name: z.string().nullable().optional(),
 				status: z.string(),
 			})
-			.strict(),
-		capacity: z.number().int(),
-		longest_call_wait_time: z.number().int(),
-		on_duty_operators: z.number().int(),
-		pending: z.number().int(),
+			.loose(),
+		capacity: dialpadInteger(z.number().int()),
+		longest_call_wait_time: dialpadInteger(z.number().int()),
+		on_duty_operators: dialpadInteger(z.number().int()),
+		pending: dialpadInteger(z.number().int()),
 	})
-	.strict();
+	.loose();
 
 const Input41 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -3872,9 +4159,9 @@ const Input41 = z
 const Output41 = z
 	.object({
 		duty_status_reason: z.string().nullable().optional(),
-		duty_status_started: z.number().int().nullable().optional(),
+		duty_status_started: dialpadInteger(z.number().int()).nullable().optional(),
 		on_duty: z.boolean().nullable().optional(),
-		on_duty_started: z.number().int().nullable().optional(),
+		on_duty_started: dialpadInteger(z.number().int()).nullable().optional(),
 		on_duty_status: z
 			.enum([
 				'available',
@@ -3885,19 +4172,24 @@ const Output41 = z
 				'wrapup',
 				'wrapup-end',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		session_type: z.enum(['call', 'digital']).nullable().optional(),
-		user_id: z.number().int().nullable().optional(),
+		session_type: z
+			.enum(['call', 'digital'])
+			.or(z.string())
+			.nullable()
+			.optional(),
+		user_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input42 = z
 	.object({
 		path: z
 			.object({
-				call_center_id: z.number().int(),
-				user_id: z.number().int(),
+				call_center_id: dialpadInteger(z.number().int()),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -3905,17 +4197,17 @@ const Input42 = z
 
 const Output42 = z
 	.object({
-		call_center_id: z.number().int().nullable().optional(),
-		skill_level: z.number().int().nullable().optional(),
-		user_id: z.number().int().nullable().optional(),
+		call_center_id: dialpadInteger(z.number().int()).nullable().optional(),
+		skill_level: dialpadInteger(z.number().int()).nullable().optional(),
+		user_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input43 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -3924,9 +4216,9 @@ const Input43 = z
 const Output43 = z
 	.object({
 		duty_status_reason: z.string().nullable().optional(),
-		duty_status_started: z.number().int().nullable().optional(),
+		duty_status_started: dialpadInteger(z.number().int()).nullable().optional(),
 		on_duty: z.boolean().nullable().optional(),
-		on_duty_started: z.number().int().nullable().optional(),
+		on_duty_started: dialpadInteger(z.number().int()).nullable().optional(),
 		on_duty_status: z
 			.enum([
 				'available',
@@ -3937,24 +4229,29 @@ const Output43 = z
 				'wrapup',
 				'wrapup-end',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		session_type: z.enum(['call', 'digital']).nullable().optional(),
-		user_id: z.number().int().nullable().optional(),
+		session_type: z
+			.enum(['call', 'digital'])
+			.or(z.string())
+			.nullable()
+			.optional(),
+		user_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input44 = z
 	.object({
 		path: z
 			.object({
-				call_center_id: z.number().int(),
-				user_id: z.number().int(),
+				call_center_id: dialpadInteger(z.number().int()),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				skill_level: z.number().int(),
+				skill_level: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -3963,17 +4260,17 @@ const Input44 = z
 
 const Output44 = z
 	.object({
-		call_center_id: z.number().int().nullable().optional(),
-		skill_level: z.number().int().nullable().optional(),
-		user_id: z.number().int().nullable().optional(),
+		call_center_id: dialpadInteger(z.number().int()).nullable().optional(),
+		skill_level: dialpadInteger(z.number().int()).nullable().optional(),
+		user_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input45 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -3984,8 +4281,8 @@ const Input45 = z
 					.nullable()
 					.optional(),
 				role: z.enum(['admin', 'operator', 'supervisor']).nullable().optional(),
-				skill_level: z.number().int().nullable().optional(),
-				user_id: z.number().int(),
+				skill_level: dialpadInteger(z.number().int()).nullable().optional(),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -3994,32 +4291,33 @@ const Input45 = z
 
 const Output45 = z
 	.object({
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		is_on_duty: z.boolean().nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input46 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		query: z
 			.object({
 				cursor: z.string().optional(),
-				limit: z.number().int().optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				compact: z.boolean().optional(),
 			})
 			.strict()
@@ -4044,22 +4342,22 @@ const Output46 = z
 						state: z.string().nullable().optional(),
 						target_id: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input47 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				user_id: z.number().int(),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -4068,26 +4366,27 @@ const Input47 = z
 
 const Output47 = z
 	.object({
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		is_on_duty: z.boolean().nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input48 = z
 	.object({
 		query: z
 			.object({
-				limit: z.number().int().optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 			})
 			.strict()
 			.optional(),
@@ -4098,7 +4397,7 @@ const Output48 = z
 	.object({
 		labels: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input49 = z
 	.object({
@@ -4113,17 +4412,17 @@ const Input49 = z
 const Output49 = z
 	.object({
 		access_link: z.string().nullable().optional(),
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		id: z.string().nullable().optional(),
-		privacy: z.enum(['company', 'public']).nullable().optional(),
+		privacy: z.enum(['company', 'public']).or(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input50 = z
 	.object({
 		body: z
 			.object({
-				call_id: z.number().int().nullable().optional(),
+				call_id: dialpadInteger(z.number().int()).nullable().optional(),
 				privacy: z.enum(['company', 'public']).nullable().optional(),
 			})
 			.strict()
@@ -4134,11 +4433,11 @@ const Input50 = z
 const Output50 = z
 	.object({
 		access_link: z.string().nullable().optional(),
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		id: z.string().nullable().optional(),
-		privacy: z.enum(['company', 'public']).nullable().optional(),
+		privacy: z.enum(['company', 'public']).or(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input51 = z
 	.object({
@@ -4153,18 +4452,18 @@ const Input51 = z
 const Output51 = z
 	.object({
 		access_link: z.string().nullable().optional(),
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		id: z.string().nullable().optional(),
-		privacy: z.enum(['company', 'public']).nullable().optional(),
+		privacy: z.enum(['company', 'public']).or(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input52 = z
 	.object({
 		query: z
 			.object({
 				cursor: z.string().optional(),
-				office_id: z.number().int().optional(),
+				office_id: dialpadInteger(z.number().int()).optional(),
 			})
 			.strict()
 			.optional(),
@@ -4178,7 +4477,9 @@ const Output52 = z
 			.array(
 				z
 					.object({
-						default_target_id: z.number().int().nullable().optional(),
+						default_target_id: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						default_target_type: z
 							.enum([
 								'callcenter',
@@ -4193,12 +4494,13 @@ const Output52 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						enabled: z.boolean().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						name: z.string().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
 						routing_url: z.string().nullable().optional(),
 						signature: z
@@ -4207,21 +4509,21 @@ const Output52 = z
 								secret: z.string().nullable().optional(),
 								type: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input53 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -4233,21 +4535,22 @@ const Output53 = z
 			.array(
 				z
 					.object({
-						company_id: z.number().int().nullable().optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						country: z.string().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						image_url: z.string().nullable().optional(),
 						is_free: z.boolean().nullable().optional(),
 						is_on_duty: z.boolean().nullable().optional(),
 						name: z.string().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
@@ -4255,8 +4558,11 @@ const Output53 = z
 			.array(
 				z
 					.object({
-						admin_office_ids: z.array(z.number().int()).nullable().optional(),
-						company_id: z.number().int().nullable().optional(),
+						admin_office_ids: z
+							.array(dialpadInteger(z.number().int()))
+							.nullable()
+							.optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						country: z.string().nullable().optional(),
 						date_active: z.string().nullable().optional(),
 						date_added: z.string().nullable().optional(),
@@ -4275,7 +4581,9 @@ const Output53 = z
 								z
 									.object({
 										do_not_disturb: z.boolean().nullable().optional(),
-										group_id: z.number().int().nullable().optional(),
+										group_id: dialpadInteger(z.number().int())
+											.nullable()
+											.optional(),
 										group_type: z
 											.enum([
 												'callcenter',
@@ -4290,18 +4598,20 @@ const Output53 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.nullable()
 											.optional(),
 										role: z
 											.enum(['admin', 'operator', 'supervisor'])
+											.or(z.string())
 											.nullable()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						image_url: z.string().nullable().optional(),
 						international_dialing_enabled: z.boolean().nullable().optional(),
 						is_admin: z.boolean().nullable().optional(),
@@ -4325,11 +4635,12 @@ const Output53 = z
 								'talk',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						location: z.string().nullable().optional(),
 						muted: z.boolean().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						on_duty_started: z.string().nullable().optional(),
 						on_duty_status: z
 							.enum([
@@ -4341,14 +4652,20 @@ const Output53 = z
 								'wrapup',
 								'wrapup-end',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						onboarding_completed: z.boolean(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
 						remote_service: z.string().nullable().optional(),
-						session_type: z.enum(['call', 'digital']).nullable().optional(),
+						session_type: z
+							.enum(['call', 'digital'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						status_message: z.string().nullable().optional(),
@@ -4359,14 +4676,14 @@ const Output53 = z
 								name: z.string().nullable().optional(),
 								voicemail_notifications_enabled: z.boolean().optional(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input54 = z
 	.object({
@@ -4378,13 +4695,15 @@ const Input54 = z
 	})
 	.strict();
 
-const Output54 = z.undefined();
+const Output54 =
+	// Dialpad documents no response body here; core passes through whatever arrives (nothing, '' or {}).
+	z.unknown();
 
 const Input55 = z
 	.object({
 		body: z
 			.object({
-				default_target_id: z.number().int(),
+				default_target_id: dialpadInteger(z.number().int()),
 				default_target_type: z.enum([
 					'callcenter',
 					'callrouter',
@@ -4400,7 +4719,7 @@ const Input55 = z
 				]),
 				enabled: z.boolean().nullable().optional(),
 				name: z.string(),
-				office_id: z.number().int(),
+				office_id: dialpadInteger(z.number().int()),
 				routing_url: z.string(),
 				secret: z.string().nullable().optional(),
 			})
@@ -4411,7 +4730,7 @@ const Input55 = z
 
 const Output55 = z
 	.object({
-		default_target_id: z.number().int().nullable().optional(),
+		default_target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		default_target_type: z
 			.enum([
 				'callcenter',
@@ -4426,12 +4745,13 @@ const Output55 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		enabled: z.boolean().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		routing_url: z.string().nullable().optional(),
 		signature: z
@@ -4440,16 +4760,16 @@ const Output55 = z
 				secret: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input56 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -4457,7 +4777,7 @@ const Input56 = z
 
 const Output56 = z
 	.object({
-		default_target_id: z.number().int().nullable().optional(),
+		default_target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		default_target_type: z
 			.enum([
 				'callcenter',
@@ -4472,12 +4792,13 @@ const Output56 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		enabled: z.boolean().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		routing_url: z.string().nullable().optional(),
 		signature: z
@@ -4486,10 +4807,10 @@ const Output56 = z
 				secret: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input57 = z
 	.object({
@@ -4510,11 +4831,11 @@ const Input57 = z
 const Output57 = z
 	.object({
 		access_link: z.string().nullable().optional(),
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		id: z.string().nullable().optional(),
-		privacy: z.enum(['company', 'public']).nullable().optional(),
+		privacy: z.enum(['company', 'public']).or(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input58 = z
 	.object({
@@ -4525,7 +4846,9 @@ const Input58 = z
 			.strict(),
 		body: z
 			.object({
-				default_target_id: z.number().int().nullable().optional(),
+				default_target_id: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				default_target_type: z
 					.enum([
 						'callcenter',
@@ -4544,7 +4867,7 @@ const Input58 = z
 					.optional(),
 				enabled: z.boolean().nullable().optional(),
 				name: z.string().nullable().optional(),
-				office_id: z.number().int().nullable().optional(),
+				office_id: dialpadInteger(z.number().int()).nullable().optional(),
 				reset_error_count: z.boolean().nullable().optional(),
 				routing_url: z.string().nullable().optional(),
 				secret: z.string().nullable().optional(),
@@ -4556,7 +4879,7 @@ const Input58 = z
 
 const Output58 = z
 	.object({
-		default_target_id: z.number().int().nullable().optional(),
+		default_target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		default_target_type: z
 			.enum([
 				'callcenter',
@@ -4571,12 +4894,13 @@ const Output58 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		enabled: z.boolean().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		routing_url: z.string().nullable().optional(),
 		signature: z
@@ -4585,16 +4909,16 @@ const Output58 = z
 				secret: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input59 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -4611,10 +4935,10 @@ const Input59 = z
 const Output59 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		deleted: z.boolean().nullable().optional(),
 		number: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		status: z
 			.enum([
 				'available',
@@ -4631,9 +4955,10 @@ const Output59 = z
 				'sip_trunk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -4648,32 +4973,36 @@ const Output59 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input60 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
 	.strict();
 
-const Output60 = z.undefined();
+const Output60 =
+	// Dialpad documents no response body here; core passes through whatever arrives (nothing, '' or {}).
+	z.unknown();
 
 const Input61 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -4682,19 +5011,19 @@ const Input61 = z
 const Output61 = z
 	.object({
 		hashtag: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
-		member_count: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
+		member_count: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string(),
-		office_id: z.number().int().nullable().optional(),
-		privacy: z.enum(['private', 'public']).nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
+		privacy: z.enum(['private', 'public']).or(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input62 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		query: z
@@ -4713,15 +5042,15 @@ const Output62 = z
 			.array(
 				z
 					.object({
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						name: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input63 = z
 	.object({
@@ -4743,24 +5072,30 @@ const Output63 = z
 				z
 					.object({
 						hashtag: z.string().nullable().optional(),
-						id: z.number().int().nullable().optional(),
-						member_count: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
+						member_count: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						name: z.string(),
-						office_id: z.number().int().nullable().optional(),
-						privacy: z.enum(['private', 'public']).nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
+						privacy: z
+							.enum(['private', 'public'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input64 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -4769,26 +5104,27 @@ const Input64 = z
 const Output64 = z
 	.object({
 		allow_trainee_eavesdrop: z.boolean().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
-		ring_seconds: z.number().int().nullable().optional(),
+		ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		team_description: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input65 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		query: z
@@ -4809,8 +5145,11 @@ const Output65 = z
 				z
 					.object({
 						accept_powerdialer_calls: z.boolean().nullable().optional(),
-						admin_office_ids: z.array(z.number().int()).nullable().optional(),
-						company_id: z.number().int().nullable().optional(),
+						admin_office_ids: z
+							.array(dialpadInteger(z.number().int()))
+							.nullable()
+							.optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						country: z.string().nullable().optional(),
 						date_active: z.string().nullable().optional(),
 						date_added: z.string().nullable().optional(),
@@ -4820,7 +5159,7 @@ const Output65 = z
 						extension: z.string().nullable().optional(),
 						first_name: z.string().nullable().optional(),
 						forwarding_numbers: z.array(z.string()).nullable().optional(),
-						id: z.number().int(),
+						id: dialpadInteger(z.number().int()),
 						image_url: z.string().nullable().optional(),
 						is_admin: z.boolean().nullable().optional(),
 						is_available: z.boolean().nullable().optional(),
@@ -4842,26 +5181,28 @@ const Output65 = z
 								'talk',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						location: z.string().nullable().optional(),
 						muted: z.boolean().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
-						role: z.enum(['coach', 'trainee']),
+						role: z.enum(['coach', 'trainee']).or(z.string()),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						status_message: z.string().nullable().optional(),
 						timezone: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input66 = z
 	.object({
@@ -4870,7 +5211,7 @@ const Input66 = z
 				description: z.string(),
 				name: z.string(),
 				privacy_type: z.enum(['private', 'public']),
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
 			.strict()
 			.optional(),
@@ -4880,42 +5221,44 @@ const Input66 = z
 const Output66 = z
 	.object({
 		hashtag: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
-		member_count: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
+		member_count: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string(),
-		office_id: z.number().int().nullable().optional(),
-		privacy: z.enum(['private', 'public']).nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
+		privacy: z.enum(['private', 'public']).or(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input67 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				user_id: z.number().int(),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
 	})
 	.strict();
 
-const Output67 = z.undefined();
+const Output67 =
+	// Dialpad documents no response body here; core passes through whatever arrives (nothing, '' or {}).
+	z.unknown();
 
 const Input68 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				user_id: z.number().int(),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -4924,17 +5267,17 @@ const Input68 = z
 
 const Output68 = z
 	.object({
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input69 = z
 	.object({
 		query: z
 			.object({
 				cursor: z.string().optional(),
-				office_id: z.number().int().optional(),
+				office_id: dialpadInteger(z.number().int()).optional(),
 				name_search: z.string().optional(),
 			})
 			.strict()
@@ -4950,25 +5293,28 @@ const Output69 = z
 				z
 					.object({
 						allow_trainee_eavesdrop: z.boolean().nullable().optional(),
-						company_id: z.number().int().nullable().optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						country: z.string().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						name: z.string().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
-						ring_seconds: z.number().int().nullable().optional(),
+						ring_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						team_description: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input70 = z.object({}).strict();
 
@@ -4976,27 +5322,29 @@ const Output70 = z
 	.object({
 		account_type: z
 			.enum(['enterprise', 'free', 'pro', 'standard'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		admin_email: z.string().nullable().optional(),
 		country: z.string().nullable().optional(),
 		domain: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_count: z.number().int().nullable().optional(),
+		office_count: dialpadInteger(z.number().int()).nullable().optional(),
 		settings: z
 			.object({
 				allow_ai_training: z.boolean().nullable().optional(),
 				has_callai: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input71 = z
 	.object({
@@ -5007,7 +5355,7 @@ const Input71 = z
 			.strict(),
 		query: z
 			.object({
-				a2p_campaign_id: z.number().int().optional(),
+				a2p_campaign_id: dialpadInteger(z.number().int()).optional(),
 				cursor: z.string().optional(),
 				opt_out_state: z.enum(['opted_back_in', 'opted_out']),
 			})
@@ -5022,23 +5370,27 @@ const Output71 = z
 			.array(
 				z
 					.object({
-						date: z.number().int().nullable().optional(),
+						date: dialpadInteger(z.number().int()).nullable().optional(),
 						external_endpoint: z.string(),
 						opt_out_scope_info: z
 							.object({
-								opt_out_scope_level: z.enum(['a2p_campaign', 'company']),
-								scope_id: z.number().int(),
+								opt_out_scope_level: z
+									.enum(['a2p_campaign', 'company'])
+									.or(z.string()),
+								scope_id: dialpadInteger(z.number().int()),
 							})
-							.strict()
+							.loose()
 							.optional(),
-						opt_out_state: z.enum(['opted_back_in', 'opted_out']),
+						opt_out_state: z
+							.enum(['opted_back_in', 'opted_out'])
+							.or(z.string()),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input72 = z
 	.object({
@@ -5055,33 +5407,35 @@ const Output72 = z
 	.object({
 		account_type: z
 			.enum(['enterprise', 'free', 'pro', 'standard'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		admin_email: z.string().nullable().optional(),
 		country: z.string().nullable().optional(),
 		domain: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_count: z.number().int().nullable().optional(),
+		office_count: dialpadInteger(z.number().int()).nullable().optional(),
 		settings: z
 			.object({
 				allow_ai_training: z.boolean().nullable().optional(),
 				has_callai: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input73 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -5097,8 +5451,11 @@ const Input73 = z
 const Output73 = z
 	.object({
 		accept_powerdialer_calls: z.boolean().nullable().optional(),
-		admin_office_ids: z.array(z.number().int()).nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		admin_office_ids: z
+			.array(dialpadInteger(z.number().int()))
+			.nullable()
+			.optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
 		date_active: z.string().nullable().optional(),
 		date_added: z.string().nullable().optional(),
@@ -5108,7 +5465,7 @@ const Output73 = z
 		extension: z.string().nullable().optional(),
 		first_name: z.string().nullable().optional(),
 		forwarding_numbers: z.array(z.string()).nullable().optional(),
-		id: z.number().int(),
+		id: dialpadInteger(z.number().int()),
 		image_url: z.string().nullable().optional(),
 		is_admin: z.boolean().nullable().optional(),
 		is_available: z.boolean().nullable().optional(),
@@ -5130,21 +5487,23 @@ const Output73 = z
 				'talk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		location: z.string().nullable().optional(),
 		muted: z.boolean().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
-		role: z.enum(['coach', 'trainee']),
+		role: z.enum(['coach', 'trainee']).or(z.string()),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		status_message: z.string().nullable().optional(),
 		timezone: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input74 = z.object({}).strict();
 
@@ -5153,7 +5512,7 @@ const Output74 = z
 		allow_ai_training: z.boolean().nullable().optional(),
 		enable_ai: z.boolean().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input75 = z
 	.object({
@@ -5170,27 +5529,29 @@ const Output75 = z
 	.object({
 		account_type: z
 			.enum(['enterprise', 'free', 'pro', 'standard'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		admin_email: z.string().nullable().optional(),
 		country: z.string().nullable().optional(),
 		domain: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_count: z.number().int().nullable().optional(),
+		office_count: dialpadInteger(z.number().int()).nullable().optional(),
 		settings: z
 			.object({
 				allow_ai_training: z.boolean().nullable().optional(),
 				has_callai: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input76 = z
 	.object({
@@ -5209,7 +5570,7 @@ const Output76 = z
 		allow_ai_training: z.boolean().nullable().optional(),
 		enable_ai: z.boolean().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input77 = z
 	.object({
@@ -5236,10 +5597,14 @@ const Output77 = z
 		primary_email: z.string().nullable().optional(),
 		primary_phone: z.string().nullable().optional(),
 		trunk_group: z.string().nullable().optional(),
-		type: z.enum(['lead', 'local', 'shared']).nullable().optional(),
+		type: z
+			.enum(['lead', 'local', 'shared'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		urls: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input78 = z
 	.object({
@@ -5280,10 +5645,14 @@ const Output78 = z
 		primary_email: z.string().nullable().optional(),
 		primary_phone: z.string().nullable().optional(),
 		trunk_group: z.string().nullable().optional(),
-		type: z.enum(['lead', 'local', 'shared']).nullable().optional(),
+		type: z
+			.enum(['lead', 'local', 'shared'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		urls: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input79 = z
 	.object({
@@ -5319,15 +5688,19 @@ const Output79 = z
 						primary_email: z.string().nullable().optional(),
 						primary_phone: z.string().nullable().optional(),
 						trunk_group: z.string().nullable().optional(),
-						type: z.enum(['lead', 'local', 'shared']).nullable().optional(),
+						type: z
+							.enum(['lead', 'local', 'shared'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						urls: z.array(z.string()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input80 = z
 	.object({
@@ -5354,10 +5727,14 @@ const Output80 = z
 		primary_email: z.string().nullable().optional(),
 		primary_phone: z.string().nullable().optional(),
 		trunk_group: z.string().nullable().optional(),
-		type: z.enum(['lead', 'local', 'shared']).nullable().optional(),
+		type: z
+			.enum(['lead', 'local', 'shared'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		urls: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input81 = z
 	.object({
@@ -5394,10 +5771,14 @@ const Output81 = z
 		primary_email: z.string().nullable().optional(),
 		primary_phone: z.string().nullable().optional(),
 		trunk_group: z.string().nullable().optional(),
-		type: z.enum(['lead', 'local', 'shared']).nullable().optional(),
+		type: z
+			.enum(['lead', 'local', 'shared'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		urls: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input82 = z
 	.object({
@@ -5434,10 +5815,14 @@ const Output82 = z
 		primary_email: z.string().nullable().optional(),
 		primary_phone: z.string().nullable().optional(),
 		trunk_group: z.string().nullable().optional(),
-		type: z.enum(['lead', 'local', 'shared']).nullable().optional(),
+		type: z
+			.enum(['lead', 'local', 'shared'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		urls: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input83 = z
 	.object({
@@ -5456,7 +5841,7 @@ const Input83 = z
 					'unknown',
 					'user',
 				]),
-				target_id: z.number().int(),
+				target_id: dialpadInteger(z.number().int()),
 				ivr_type: z.enum([
 					'ADMIN_AUTO_RECORDING',
 					'ASK_FIRST_OPERATOR_NOT_AVAILABLE',
@@ -5540,7 +5925,7 @@ const Input83 = z
 			.strict(),
 		body: z
 			.object({
-				ivr_id: z.number().int(),
+				ivr_id: dialpadInteger(z.number().int()),
 				select_option: z.enum(['inbound', 'outbound']).nullable().optional(),
 			})
 			.strict()
@@ -5550,14 +5935,14 @@ const Input83 = z
 
 const Output83 = z
 	.object({
-		date_added: z.number().int().nullable().optional(),
+		date_added: dialpadInteger(z.number().int()).nullable().optional(),
 		description: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
 		selected: z.boolean().nullable().optional(),
 		text: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input84 = z
 	.object({
@@ -5569,7 +5954,7 @@ const Input84 = z
 				group_key: z.string().optional(),
 				external_id: z.string().optional(),
 				external_service: z.string().optional(),
-				limit: z.number().int().optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				cursor: z.string().optional(),
 				external_scope: z.string().optional(),
 			})
@@ -5597,7 +5982,7 @@ const Output84 = z
 										scope: z.string(),
 										service: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						first_name: z.string().nullable().optional(),
@@ -5609,14 +5994,18 @@ const Output84 = z
 						primary_email: z.string().nullable().optional(),
 						primary_phone: z.string().nullable().optional(),
 						trunk_group: z.string().nullable().optional(),
-						type: z.enum(['lead', 'local', 'shared']).nullable().optional(),
+						type: z
+							.enum(['lead', 'local', 'shared'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						urls: z.array(z.string()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input85 = z
 	.object({
@@ -5635,7 +6024,7 @@ const Input85 = z
 					'unknown',
 					'user',
 				]),
-				target_id: z.number().int(),
+				target_id: dialpadInteger(z.number().int()),
 				ivr_type: z.enum([
 					'ADMIN_AUTO_RECORDING',
 					'ASK_FIRST_OPERATOR_NOT_AVAILABLE',
@@ -5719,7 +6108,7 @@ const Input85 = z
 			.strict(),
 		body: z
 			.object({
-				ivr_id: z.number().int(),
+				ivr_id: dialpadInteger(z.number().int()),
 				select_option: z.enum(['inbound', 'outbound']).nullable().optional(),
 			})
 			.strict()
@@ -5809,25 +6198,26 @@ const Output85 = z
 				'VM_UNAVAILABLE',
 				'VM_UNAVAILABLE_CLOSED',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		ivrs: z
 			.array(
 				z
 					.object({
-						date_added: z.number().int().nullable().optional(),
+						date_added: dialpadInteger(z.number().int()).nullable().optional(),
 						description: z.string().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						name: z.string().nullable().optional(),
 						selected: z.boolean().nullable().optional(),
 						text: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input86 = z
 	.object({
@@ -5928,7 +6318,7 @@ const Input86 = z
 					'unknown',
 					'user',
 				]),
-				target_id: z.number().int(),
+				target_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -6021,30 +6411,33 @@ const Output86 = z
 								'VM_UNAVAILABLE',
 								'VM_UNAVAILABLE_CLOSED',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						ivrs: z
 							.array(
 								z
 									.object({
-										date_added: z.number().int().nullable().optional(),
+										date_added: dialpadInteger(z.number().int())
+											.nullable()
+											.optional(),
 										description: z.string().nullable().optional(),
-										id: z.number().int().nullable().optional(),
+										id: dialpadInteger(z.number().int()).nullable().optional(),
 										name: z.string().nullable().optional(),
 										selected: z.boolean().nullable().optional(),
 										text: z.string().nullable().optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input87 = z
 	.object({
@@ -6065,20 +6458,20 @@ const Input87 = z
 
 const Output87 = z
 	.object({
-		date_added: z.number().int().nullable().optional(),
+		date_added: dialpadInteger(z.number().int()).nullable().optional(),
 		description: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
 		selected: z.boolean().nullable().optional(),
 		text: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input88 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -6089,22 +6482,29 @@ const Output88 = z
 		auto_call_recording: z.boolean().nullable().optional(),
 		availability_status: z
 			.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		country: z.string().nullable().optional(),
-		first_action: z.enum(['menu', 'operators']).nullable().optional(),
+		first_action: z
+			.enum(['menu', 'operators'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		friday_hours: z.array(z.string()).nullable().optional(),
 		group_description: z.string().nullable().optional(),
 		hold_queue: z
 			.object({
 				allow_queuing: z.boolean().nullable().optional(),
-				max_hold_count: z.number().int().nullable().optional(),
-				max_hold_seconds: z.number().int().nullable().optional(),
+				max_hold_count: dialpadInteger(z.number().int()).nullable().optional(),
+				max_hold_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		hours_on: z.boolean().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		monday_hours: z.array(z.string()).nullable().optional(),
 		name: z.string().nullable().optional(),
 		no_operators_action: z
@@ -6128,36 +6528,39 @@ const Output88 = z
 				'scripted_ivr',
 				'voicemail',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
-		ring_seconds: z.number().int().nullable().optional(),
+		ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 		routing_options: z
 			.object({
 				closed: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -6173,6 +6576,7 @@ const Output88 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -6194,10 +6598,10 @@ const Output88 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -6213,33 +6617,36 @@ const Output88 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 				open: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -6255,6 +6662,7 @@ const Output88 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -6276,10 +6684,10 @@ const Output88 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -6295,16 +6703,18 @@ const Output88 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		saturday_hours: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		sunday_hours: z.array(z.string()).nullable().optional(),
@@ -6316,12 +6726,12 @@ const Output88 = z
 				allow_pause: z.boolean().nullable().optional(),
 				auto_start: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		voicemail_notification_emails: z.array(z.string()).nullable().optional(),
 		wednesday_hours: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input89 = z
 	.object({
@@ -6409,7 +6819,7 @@ const Input89 = z
 					'VM_UNAVAILABLE_CLOSED',
 				]),
 				name: z.string().nullable().optional(),
-				target_id: z.number().int(),
+				target_id: dialpadInteger(z.number().int()),
 				target_type: z.enum([
 					'callcenter',
 					'coachingteam',
@@ -6425,20 +6835,20 @@ const Input89 = z
 
 const Output89 = z
 	.object({
-		date_added: z.number().int().nullable().optional(),
+		date_added: dialpadInteger(z.number().int()).nullable().optional(),
 		description: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
 		selected: z.boolean().nullable().optional(),
 		text: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input90 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -6449,15 +6859,19 @@ const Input90 = z
 				hold_queue: z
 					.object({
 						allow_queuing: z.boolean().nullable().optional(),
-						max_hold_count: z.number().int().nullable().optional(),
-						max_hold_seconds: z.number().int().nullable().optional(),
+						max_hold_count: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
+						max_hold_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 					})
 					.strict()
 					.optional(),
 				hours_on: z.boolean().nullable().optional(),
 				monday_hours: z.array(z.string()).nullable().optional(),
 				name: z.string().nullable().optional(),
-				ring_seconds: z.number().int().nullable().optional(),
+				ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 				routing_options: z
 					.object({
 						closed: z
@@ -6482,7 +6896,7 @@ const Input90 = z
 									'scripted_ivr',
 									'voicemail',
 								]),
-								action_target_id: z.number().int().optional(),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -6564,7 +6978,7 @@ const Input90 = z
 									'scripted_ivr',
 									'voicemail',
 								]),
-								action_target_id: z.number().int().optional(),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -6650,22 +7064,29 @@ const Output90 = z
 		auto_call_recording: z.boolean().nullable().optional(),
 		availability_status: z
 			.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		country: z.string().nullable().optional(),
-		first_action: z.enum(['menu', 'operators']).nullable().optional(),
+		first_action: z
+			.enum(['menu', 'operators'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		friday_hours: z.array(z.string()).nullable().optional(),
 		group_description: z.string().nullable().optional(),
 		hold_queue: z
 			.object({
 				allow_queuing: z.boolean().nullable().optional(),
-				max_hold_count: z.number().int().nullable().optional(),
-				max_hold_seconds: z.number().int().nullable().optional(),
+				max_hold_count: dialpadInteger(z.number().int()).nullable().optional(),
+				max_hold_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		hours_on: z.boolean().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		monday_hours: z.array(z.string()).nullable().optional(),
 		name: z.string().nullable().optional(),
 		no_operators_action: z
@@ -6689,36 +7110,39 @@ const Output90 = z
 				'scripted_ivr',
 				'voicemail',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
-		ring_seconds: z.number().int().nullable().optional(),
+		ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 		routing_options: z
 			.object({
 				closed: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -6734,6 +7158,7 @@ const Output90 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -6755,10 +7180,10 @@ const Output90 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -6774,33 +7199,36 @@ const Output90 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 				open: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -6816,6 +7244,7 @@ const Output90 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -6837,10 +7266,10 @@ const Output90 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -6856,16 +7285,18 @@ const Output90 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		saturday_hours: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		sunday_hours: z.array(z.string()).nullable().optional(),
@@ -6877,12 +7308,12 @@ const Output90 = z
 				allow_pause: z.boolean().nullable().optional(),
 				auto_start: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		voicemail_notification_emails: z.array(z.string()).nullable().optional(),
 		wednesday_hours: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input91 = z
 	.object({
@@ -6894,16 +7325,20 @@ const Input91 = z
 				hold_queue: z
 					.object({
 						allow_queuing: z.boolean().nullable().optional(),
-						max_hold_count: z.number().int().nullable().optional(),
-						max_hold_seconds: z.number().int().nullable().optional(),
+						max_hold_count: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
+						max_hold_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 					})
 					.strict()
 					.optional(),
 				hours_on: z.boolean().nullable().optional(),
 				monday_hours: z.array(z.string()).nullable().optional(),
 				name: z.string(),
-				office_id: z.number().int(),
-				ring_seconds: z.number().int().nullable().optional(),
+				office_id: dialpadInteger(z.number().int()),
+				ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 				routing_options: z
 					.object({
 						closed: z
@@ -6928,7 +7363,7 @@ const Input91 = z
 									'scripted_ivr',
 									'voicemail',
 								]),
-								action_target_id: z.number().int().optional(),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -7010,7 +7445,7 @@ const Input91 = z
 									'scripted_ivr',
 									'voicemail',
 								]),
-								action_target_id: z.number().int().optional(),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -7096,22 +7531,29 @@ const Output91 = z
 		auto_call_recording: z.boolean().nullable().optional(),
 		availability_status: z
 			.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		country: z.string().nullable().optional(),
-		first_action: z.enum(['menu', 'operators']).nullable().optional(),
+		first_action: z
+			.enum(['menu', 'operators'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		friday_hours: z.array(z.string()).nullable().optional(),
 		group_description: z.string().nullable().optional(),
 		hold_queue: z
 			.object({
 				allow_queuing: z.boolean().nullable().optional(),
-				max_hold_count: z.number().int().nullable().optional(),
-				max_hold_seconds: z.number().int().nullable().optional(),
+				max_hold_count: dialpadInteger(z.number().int()).nullable().optional(),
+				max_hold_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		hours_on: z.boolean().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		monday_hours: z.array(z.string()).nullable().optional(),
 		name: z.string().nullable().optional(),
 		no_operators_action: z
@@ -7135,36 +7577,39 @@ const Output91 = z
 				'scripted_ivr',
 				'voicemail',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
-		ring_seconds: z.number().int().nullable().optional(),
+		ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 		routing_options: z
 			.object({
 				closed: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -7180,6 +7625,7 @@ const Output91 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -7201,10 +7647,10 @@ const Output91 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -7220,33 +7666,36 @@ const Output91 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 				open: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -7262,6 +7711,7 @@ const Output91 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -7283,10 +7733,10 @@ const Output91 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -7302,16 +7752,18 @@ const Output91 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		saturday_hours: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		sunday_hours: z.array(z.string()).nullable().optional(),
@@ -7323,19 +7775,19 @@ const Output91 = z
 				allow_pause: z.boolean().nullable().optional(),
 				auto_start: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		voicemail_notification_emails: z.array(z.string()).nullable().optional(),
 		wednesday_hours: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input92 = z
 	.object({
 		query: z
 			.object({
 				cursor: z.string().optional(),
-				office_id: z.number().int().optional(),
+				office_id: dialpadInteger(z.number().int()).optional(),
 				name_search: z.string().optional(),
 			})
 			.strict()
@@ -7353,22 +7805,31 @@ const Output92 = z
 						auto_call_recording: z.boolean().nullable().optional(),
 						availability_status: z
 							.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						country: z.string().nullable().optional(),
-						first_action: z.enum(['menu', 'operators']).nullable().optional(),
+						first_action: z
+							.enum(['menu', 'operators'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						friday_hours: z.array(z.string()).nullable().optional(),
 						group_description: z.string().nullable().optional(),
 						hold_queue: z
 							.object({
 								allow_queuing: z.boolean().nullable().optional(),
-								max_hold_count: z.number().int().nullable().optional(),
-								max_hold_seconds: z.number().int().nullable().optional(),
+								max_hold_count: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
+								max_hold_seconds: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						hours_on: z.boolean().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						monday_hours: z.array(z.string()).nullable().optional(),
 						name: z.string().nullable().optional(),
 						no_operators_action: z
@@ -7392,36 +7853,43 @@ const Output92 = z
 								'scripted_ivr',
 								'voicemail',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
-						ring_seconds: z.number().int().nullable().optional(),
+						ring_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						routing_options: z
 							.object({
 								closed: z
 									.object({
-										action: z.enum([
-											'ai_agent',
-											'bridge_target',
-											'call_service_target',
-											'company_directory',
-											'department',
-											'directory',
-											'disabled',
-											'extension',
-											'google_dialogflow',
-											'last_name_company_directory',
-											'last_name_directory',
-											'menu',
-											'message',
-											'operator',
-											'person',
-											'recursive_transfer',
-											'scripted_ivr',
-											'voicemail',
-										]),
-										action_target_id: z.number().int().optional(),
+										action: z
+											.enum([
+												'ai_agent',
+												'bridge_target',
+												'call_service_target',
+												'company_directory',
+												'department',
+												'directory',
+												'disabled',
+												'extension',
+												'google_dialogflow',
+												'last_name_company_directory',
+												'last_name_directory',
+												'menu',
+												'message',
+												'operator',
+												'person',
+												'recursive_transfer',
+												'scripted_ivr',
+												'voicemail',
+											])
+											.or(z.string()),
+										action_target_id: dialpadInteger(
+											z.number().int(),
+										).optional(),
 										action_target_type: z
 											.enum([
 												'callcenter',
@@ -7437,6 +7905,7 @@ const Output92 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.optional(),
 										dtmf: z
 											.array(
@@ -7456,33 +7925,38 @@ const Output92 = z
 												'simultaneous',
 												'skills_based',
 											])
+											.or(z.string())
 											.optional(),
 										try_dial_operators: z.boolean(),
 									})
-									.strict(),
+									.loose(),
 								open: z
 									.object({
-										action: z.enum([
-											'ai_agent',
-											'bridge_target',
-											'call_service_target',
-											'company_directory',
-											'department',
-											'directory',
-											'disabled',
-											'extension',
-											'google_dialogflow',
-											'last_name_company_directory',
-											'last_name_directory',
-											'menu',
-											'message',
-											'operator',
-											'person',
-											'recursive_transfer',
-											'scripted_ivr',
-											'voicemail',
-										]),
-										action_target_id: z.number().int().optional(),
+										action: z
+											.enum([
+												'ai_agent',
+												'bridge_target',
+												'call_service_target',
+												'company_directory',
+												'department',
+												'directory',
+												'disabled',
+												'extension',
+												'google_dialogflow',
+												'last_name_company_directory',
+												'last_name_directory',
+												'menu',
+												'message',
+												'operator',
+												'person',
+												'recursive_transfer',
+												'scripted_ivr',
+												'voicemail',
+											])
+											.or(z.string()),
+										action_target_id: dialpadInteger(
+											z.number().int(),
+										).optional(),
 										action_target_type: z
 											.enum([
 												'callcenter',
@@ -7498,6 +7972,7 @@ const Output92 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.optional(),
 										dtmf: z
 											.array(
@@ -7517,16 +7992,18 @@ const Output92 = z
 												'simultaneous',
 												'skills_based',
 											])
+											.or(z.string())
 											.optional(),
 										try_dial_operators: z.boolean(),
 									})
-									.strict(),
+									.loose(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						saturday_hours: z.array(z.string()).nullable().optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						sunday_hours: z.array(z.string()).nullable().optional(),
@@ -7538,7 +8015,7 @@ const Output92 = z
 								allow_pause: z.boolean().nullable().optional(),
 								auto_start: z.boolean().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						voicemail_notification_emails: z
 							.array(z.string())
@@ -7546,18 +8023,18 @@ const Output92 = z
 							.optional(),
 						wednesday_hours: z.array(z.string()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input93 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -7568,22 +8045,29 @@ const Output93 = z
 		auto_call_recording: z.boolean().nullable().optional(),
 		availability_status: z
 			.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		country: z.string().nullable().optional(),
-		first_action: z.enum(['menu', 'operators']).nullable().optional(),
+		first_action: z
+			.enum(['menu', 'operators'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		friday_hours: z.array(z.string()).nullable().optional(),
 		group_description: z.string().nullable().optional(),
 		hold_queue: z
 			.object({
 				allow_queuing: z.boolean().nullable().optional(),
-				max_hold_count: z.number().int().nullable().optional(),
-				max_hold_seconds: z.number().int().nullable().optional(),
+				max_hold_count: dialpadInteger(z.number().int()).nullable().optional(),
+				max_hold_seconds: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		hours_on: z.boolean().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		monday_hours: z.array(z.string()).nullable().optional(),
 		name: z.string().nullable().optional(),
 		no_operators_action: z
@@ -7607,36 +8091,39 @@ const Output93 = z
 				'scripted_ivr',
 				'voicemail',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
-		ring_seconds: z.number().int().nullable().optional(),
+		ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 		routing_options: z
 			.object({
 				closed: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -7652,6 +8139,7 @@ const Output93 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -7673,10 +8161,10 @@ const Output93 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -7692,33 +8180,36 @@ const Output93 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 				open: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -7734,6 +8225,7 @@ const Output93 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -7755,10 +8247,10 @@ const Output93 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -7774,16 +8266,18 @@ const Output93 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		saturday_hours: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		sunday_hours: z.array(z.string()).nullable().optional(),
@@ -7795,23 +8289,23 @@ const Output93 = z
 				allow_pause: z.boolean().nullable().optional(),
 				auto_start: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		voicemail_notification_emails: z.array(z.string()).nullable().optional(),
 		wednesday_hours: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input94 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				operator_id: z.number().int(),
+				operator_id: dialpadInteger(z.number().int()),
 				operator_type: z.enum(['room', 'user']),
 			})
 			.strict()
@@ -7821,32 +8315,35 @@ const Input94 = z
 
 const Output94 = z
 	.object({
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		is_on_duty: z.boolean().nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input95 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
 	.strict();
 
-const Output95 = z.undefined();
+const Output95 =
+	// Dialpad documents no response body here; core passes through whatever arrives (nothing, '' or {}).
+	z.unknown();
 
 const Input96 = z
 	.object({
@@ -7854,7 +8351,7 @@ const Input96 = z
 			.object({
 				cursor: z.string().optional(),
 				end_date: z.string(),
-				target_id: z.number().int().optional(),
+				target_id: dialpadInteger(z.number().int()).optional(),
 				target_type: z.enum(['callcenter', 'department', 'office']).optional(),
 				start_date: z.string(),
 			})
@@ -7872,7 +8369,9 @@ const Output96 = z
 						agent_group_id: z.array(z.string()).nullable().optional(),
 						agent_group_name: z.array(z.string()).nullable().optional(),
 						agent_handled: z.boolean().nullable().optional(),
-						agent_message_count: z.number().int().nullable().optional(),
+						agent_message_count: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						agent_transfer: z.boolean().nullable().optional(),
 						aicsat_score: z.number().nullable().optional(),
 						bot_time: z.string().nullable().optional(),
@@ -7886,7 +8385,7 @@ const Output96 = z
 								name: z.string().nullable().optional(),
 								phone: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						customer_channel_info: z
 							.object({
@@ -7895,7 +8394,7 @@ const Output96 = z
 								name: z.string().nullable().optional(),
 								phone: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						customer_csat_score: z.number().nullable().optional(),
 						customer_session_id: z.string(),
@@ -7909,7 +8408,7 @@ const Output96 = z
 								id: z.string().nullable().optional(),
 								name: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						queue_time: z.string().nullable().optional(),
 						queued_status: z.string().nullable().optional(),
@@ -7920,7 +8419,7 @@ const Output96 = z
 								name: z.string().nullable().optional(),
 								phone: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						session_channel: z.string().nullable().optional(),
 						session_id: z.string(),
@@ -7932,7 +8431,7 @@ const Output96 = z
 								name: z.string().nullable().optional(),
 								type: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						user: z
 							.object({
@@ -7940,22 +8439,22 @@ const Output96 = z
 								id: z.string().nullable().optional(),
 								primary_email: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						wrap_up_time: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input97 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -7963,7 +8462,7 @@ const Input97 = z
 				action: z.enum(['add_target', 'remove_target']).nullable().optional(),
 				dispositions: z.object({}).strict().nullable().optional(),
 				name: z.string().nullable().optional(),
-				target_id: z.number().int().nullable().optional(),
+				target_id: dialpadInteger(z.number().int()).nullable().optional(),
 				target_type: z
 					.enum(['callcenter', 'coachinggroup', 'coachingteam', 'unknown'])
 					.nullable()
@@ -7977,7 +8476,7 @@ const Input97 = z
 const Output97 = z
 	.object({
 		date_modified: z.string().nullable().optional(),
-		dispositions: z.object({}).strict().nullable().optional(),
+		dispositions: z.object({}).loose().nullable().optional(),
 		formatted_dispositions: z
 			.array(
 				z
@@ -7989,32 +8488,33 @@ const Output97 = z
 										name: z.string().nullable().optional(),
 										usage: z.string().nullable().optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
 						name: z.string().nullable().optional(),
 						usage: z
 							.enum(['everything', 'inbound', 'outbound'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
-		targets: z.array(z.object({}).strict()).nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
+		targets: z.array(z.object({}).loose()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input98 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -8023,7 +8523,7 @@ const Input98 = z
 const Output98 = z
 	.object({
 		date_modified: z.string().nullable().optional(),
-		dispositions: z.object({}).strict().nullable().optional(),
+		dispositions: z.object({}).loose().nullable().optional(),
 		formatted_dispositions: z
 			.array(
 				z
@@ -8035,32 +8535,33 @@ const Output98 = z
 										name: z.string().nullable().optional(),
 										usage: z.string().nullable().optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
 						name: z.string().nullable().optional(),
 						usage: z
 							.enum(['everything', 'inbound', 'outbound'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
-		targets: z.array(z.object({}).strict()).nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
+		targets: z.array(z.object({}).loose()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input99 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		query: z
@@ -8079,21 +8580,22 @@ const Output99 = z
 			.array(
 				z
 					.object({
-						company_id: z.number().int().nullable().optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						country: z.string().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						image_url: z.string().nullable().optional(),
 						is_free: z.boolean().nullable().optional(),
 						is_on_duty: z.boolean().nullable().optional(),
 						name: z.string().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
@@ -8101,8 +8603,11 @@ const Output99 = z
 			.array(
 				z
 					.object({
-						admin_office_ids: z.array(z.number().int()).nullable().optional(),
-						company_id: z.number().int().nullable().optional(),
+						admin_office_ids: z
+							.array(dialpadInteger(z.number().int()))
+							.nullable()
+							.optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						country: z.string().nullable().optional(),
 						date_active: z.string().nullable().optional(),
 						date_added: z.string().nullable().optional(),
@@ -8121,7 +8626,9 @@ const Output99 = z
 								z
 									.object({
 										do_not_disturb: z.boolean().nullable().optional(),
-										group_id: z.number().int().nullable().optional(),
+										group_id: dialpadInteger(z.number().int())
+											.nullable()
+											.optional(),
 										group_type: z
 											.enum([
 												'callcenter',
@@ -8136,18 +8643,20 @@ const Output99 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.nullable()
 											.optional(),
 										role: z
 											.enum(['admin', 'operator', 'supervisor'])
+											.or(z.string())
 											.nullable()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						image_url: z.string().nullable().optional(),
 						international_dialing_enabled: z.boolean().nullable().optional(),
 						is_admin: z.boolean().nullable().optional(),
@@ -8171,11 +8680,12 @@ const Output99 = z
 								'talk',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						location: z.string().nullable().optional(),
 						muted: z.boolean().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						on_duty_started: z.string().nullable().optional(),
 						on_duty_status: z
 							.enum([
@@ -8187,14 +8697,20 @@ const Output99 = z
 								'wrapup',
 								'wrapup-end',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						onboarding_completed: z.boolean(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
 						remote_service: z.string().nullable().optional(),
-						session_type: z.enum(['call', 'digital']).nullable().optional(),
+						session_type: z
+							.enum(['call', 'digital'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						status_message: z.string().nullable().optional(),
@@ -8205,21 +8721,21 @@ const Output99 = z
 								name: z.string().nullable().optional(),
 								voicemail_notifications_enabled: z.boolean().optional(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input100 = z
 	.object({
 		query: z
 			.object({
 				cursor: z.string().optional(),
-				target_id: z.number().int().optional(),
+				target_id: dialpadInteger(z.number().int()).optional(),
 				target_type: z
 					.enum([
 						'callcenter',
@@ -8243,7 +8759,7 @@ const Output100 = z
 				z
 					.object({
 						date_modified: z.string().nullable().optional(),
-						dispositions: z.object({}).strict().nullable().optional(),
+						dispositions: z.object({}).loose().nullable().optional(),
 						formatted_dispositions: z
 							.array(
 								z
@@ -8260,31 +8776,32 @@ const Output100 = z
 																.unknown()
 																.optional(),
 													})
-													.strict(),
+													.loose(),
 											)
 											.nullable()
 											.optional(),
 										name: z.string().nullable().optional(),
 										usage: z
 											.enum(['everything', 'inbound', 'outbound'])
+											.or(z.string())
 											.nullable()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						name: z.string().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
-						targets: z.array(z.object({}).strict()).nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
+						targets: z.array(z.object({}).loose()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input101 = z
 	.object({
@@ -8292,7 +8809,7 @@ const Input101 = z
 			.object({
 				dispositions: z.object({}).strict().nullable().optional(),
 				name: z.string(),
-				office_id: z.number().int(),
+				office_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -8302,7 +8819,7 @@ const Input101 = z
 const Output101 = z
 	.object({
 		date_modified: z.string().nullable().optional(),
-		dispositions: z.object({}).strict().nullable().optional(),
+		dispositions: z.object({}).loose().nullable().optional(),
 		formatted_dispositions: z
 			.array(
 				z
@@ -8314,37 +8831,38 @@ const Output101 = z
 										name: z.string().nullable().optional(),
 										usage: z.string().nullable().optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
 						name: z.string().nullable().optional(),
 						usage: z
 							.enum(['everything', 'inbound', 'outbound'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
-		targets: z.array(z.object({}).strict()).nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
+		targets: z.array(z.object({}).loose()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input102 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				operator_id: z.number().int(),
+				operator_id: dialpadInteger(z.number().int()),
 				operator_type: z.enum(['room', 'user']),
 				role: z.enum(['admin', 'operator']).nullable().optional(),
 			})
@@ -8355,20 +8873,21 @@ const Input102 = z
 
 const Output102 = z
 	.object({
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		is_on_duty: z.boolean().nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input103 = z
 	.object({
@@ -8395,7 +8914,7 @@ const Input103 = z
 				]),
 				target: z
 					.object({
-						target_id: z.number().int(),
+						target_id: dialpadInteger(z.number().int()),
 						target_type: z.enum(['department', 'user']),
 					})
 					.strict(),
@@ -8408,10 +8927,10 @@ const Input103 = z
 const Output103 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		number: z.string(),
-		office_id: z.number().int().nullable().optional(),
-		target_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -8426,10 +8945,11 @@ const Output103 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input104 = z
 	.object({
@@ -8440,7 +8960,7 @@ const Input104 = z
 			.strict(),
 		query: z
 			.object({
-				user_id: z.number().int().optional(),
+				user_id: dialpadInteger(z.number().int()).optional(),
 			})
 			.strict()
 			.optional(),
@@ -8451,10 +8971,10 @@ const Output104 = z
 	.object({
 		bulk_message_id: z.string().nullable().optional(),
 		classified_spam: z.boolean().nullable().optional(),
-		created_date: z.number().int().nullable().optional(),
+		created_date: dialpadInteger(z.number().int()).nullable().optional(),
 		from_number: z.string().nullable().optional(),
 		media: z.string().nullable().optional(),
-		num_recipients: z.number().int().nullable().optional(),
+		num_recipients: dialpadInteger(z.number().int()).nullable().optional(),
 		recipients: z
 			.array(
 				z
@@ -8464,22 +8984,28 @@ const Output104 = z
 						delivery_error_details: z.string().nullable().optional(),
 						delivery_method: z.string().nullable().optional(),
 						delivery_status: z.string().nullable().optional(),
-						delivery_status_timestamp: z.number().int().nullable().optional(),
+						delivery_status_timestamp: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						display_name: z.string().nullable().optional(),
 						error_message: z.string().nullable().optional(),
 						phone_number: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 		sms_has_errors: z.boolean().nullable().optional(),
-		status: z.enum(['complete', 'pending']).nullable().optional(),
+		status: z
+			.enum(['complete', 'pending'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		text: z.string(),
 		title: z.string().nullable().optional(),
-		user_id: z.number().int().nullable().optional(),
+		user_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input105 = z
 	.object({
@@ -8488,7 +9014,7 @@ const Input105 = z
 				from_number: z.string().nullable().optional(),
 				infer_country_code: z.boolean().nullable().optional(),
 				to_number: z.string(),
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
 			.strict()
 			.optional(),
@@ -8497,28 +9023,33 @@ const Input105 = z
 
 const Output105 = z
 	.object({
-		contact_id: z.number().int().nullable().optional(),
+		contact_id: dialpadInteger(z.number().int()).nullable().optional(),
 		created_date: z.string().nullable().optional(),
-		direction: z.enum(['inbound', 'outbound']).nullable().optional(),
+		direction: z
+			.enum(['inbound', 'outbound'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		fax_status: z
 			.enum(['error', 'pending', 'success', 'suspended', 'transmitting'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		fax_transaction: z
 			.object({
 				is_billed: z.boolean().nullable().optional(),
-				num_pages: z.number().int().nullable().optional(),
+				num_pages: dialpadInteger(z.number().int()).nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		fax_url: z.string().nullable().optional(),
 		from_number: z.string().nullable().optional(),
 		id: z.string().nullable().optional(),
-		sender_id: z.number().int().nullable().optional(),
+		sender_id: dialpadInteger(z.number().int()).nullable().optional(),
 		to_number: z.string().nullable().optional(),
-		user_id: z.number().int().nullable().optional(),
+		user_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input106 = z
 	.object({
@@ -8529,7 +9060,7 @@ const Input106 = z
 				text: z.string(),
 				title: z.string().nullable().optional(),
 				to_numbers: z.array(z.string()),
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
 			.strict()
 			.optional(),
@@ -8542,10 +9073,10 @@ const Output106 = z
 			.object({
 				bulk_message_id: z.string().nullable().optional(),
 				classified_spam: z.boolean().nullable().optional(),
-				created_date: z.number().int().nullable().optional(),
+				created_date: dialpadInteger(z.number().int()).nullable().optional(),
 				from_number: z.string().nullable().optional(),
 				media: z.string().nullable().optional(),
-				num_recipients: z.number().int().nullable().optional(),
+				num_recipients: dialpadInteger(z.number().int()).nullable().optional(),
 				recipients: z
 					.array(
 						z
@@ -8555,31 +9086,33 @@ const Output106 = z
 								delivery_error_details: z.string().nullable().optional(),
 								delivery_method: z.string().nullable().optional(),
 								delivery_status: z.string().nullable().optional(),
-								delivery_status_timestamp: z
-									.number()
-									.int()
+								delivery_status_timestamp: dialpadInteger(z.number().int())
 									.nullable()
 									.optional(),
 								display_name: z.string().nullable().optional(),
 								error_message: z.string().nullable().optional(),
 								phone_number: z.string().nullable().optional(),
 							})
-							.strict(),
+							.loose(),
 					)
 					.nullable()
 					.optional(),
 				sms_has_errors: z.boolean().nullable().optional(),
-				status: z.enum(['complete', 'pending']).nullable().optional(),
+				status: z
+					.enum(['complete', 'pending'])
+					.or(z.string())
+					.nullable()
+					.optional(),
 				text: z.string(),
 				title: z.string().nullable().optional(),
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		message: z.string().nullable().optional(),
 		success: z.boolean().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input107 = z
 	.object({
@@ -8589,11 +9122,11 @@ const Input107 = z
 				from_number: z.string().nullable().optional(),
 				is_bulk: z.boolean().nullable().optional(),
 				media: z.string().nullable().optional(),
-				start_date: z.number().int(),
+				start_date: dialpadInteger(z.number().int()),
 				text: z.string().nullable().optional(),
 				timezone: z.string().nullable().optional(),
 				to_numbers: z.array(z.string()).nullable().optional(),
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
 			.strict()
 			.optional(),
@@ -8603,18 +9136,22 @@ const Input107 = z
 const Output107 = z
 	.object({
 		channel_hashtag: z.string().nullable().optional(),
-		created_date: z.number().int().nullable().optional(),
+		created_date: dialpadInteger(z.number().int()).nullable().optional(),
 		from_number: z.string().nullable().optional(),
 		media: z.string().nullable().optional(),
 		schedule_id: z.string().nullable().optional(),
-		scheduled_time: z.number().int().nullable().optional(),
-		status: z.enum(['active', 'deleted', 'sent']).nullable().optional(),
+		scheduled_time: dialpadInteger(z.number().int()).nullable().optional(),
+		status: z
+			.enum(['active', 'deleted', 'sent'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		text: z.string().nullable().optional(),
 		timezone: z.string().nullable().optional(),
 		to_numbers: z.array(z.string()).nullable().optional(),
-		user_id: z.number().int().nullable().optional(),
+		user_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input108 = z
 	.object({
@@ -8625,7 +9162,7 @@ const Input108 = z
 			.strict(),
 		query: z
 			.object({
-				user_id: z.number().int().optional(),
+				user_id: dialpadInteger(z.number().int()).optional(),
 			})
 			.strict()
 			.optional(),
@@ -8638,7 +9175,7 @@ const Output108 = z
 		schedule_id: z.string().nullable().optional(),
 		success: z.boolean().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input109 = z
 	.object({
@@ -8651,7 +9188,7 @@ const Input109 = z
 			.object({
 				media: z.string().nullable().optional(),
 				text: z.string().nullable().optional(),
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
 			.strict()
 			.optional(),
@@ -8664,10 +9201,10 @@ const Output109 = z
 			.object({
 				bulk_message_id: z.string().nullable().optional(),
 				classified_spam: z.boolean().nullable().optional(),
-				created_date: z.number().int().nullable().optional(),
+				created_date: dialpadInteger(z.number().int()).nullable().optional(),
 				from_number: z.string().nullable().optional(),
 				media: z.string().nullable().optional(),
-				num_recipients: z.number().int().nullable().optional(),
+				num_recipients: dialpadInteger(z.number().int()).nullable().optional(),
 				recipients: z
 					.array(
 						z
@@ -8677,38 +9214,40 @@ const Output109 = z
 								delivery_error_details: z.string().nullable().optional(),
 								delivery_method: z.string().nullable().optional(),
 								delivery_status: z.string().nullable().optional(),
-								delivery_status_timestamp: z
-									.number()
-									.int()
+								delivery_status_timestamp: dialpadInteger(z.number().int())
 									.nullable()
 									.optional(),
 								display_name: z.string().nullable().optional(),
 								error_message: z.string().nullable().optional(),
 								phone_number: z.string().nullable().optional(),
 							})
-							.strict(),
+							.loose(),
 					)
 					.nullable()
 					.optional(),
 				sms_has_errors: z.boolean().nullable().optional(),
-				status: z.enum(['complete', 'pending']).nullable().optional(),
+				status: z
+					.enum(['complete', 'pending'])
+					.or(z.string())
+					.nullable()
+					.optional(),
 				text: z.string(),
 				title: z.string().nullable().optional(),
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		message: z.string().nullable().optional(),
 		success: z.boolean().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input110 = z
 	.object({
 		query: z
 			.object({
-				limit: z.number().int().optional(),
-				user_id: z.number().int().optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
+				user_id: dialpadInteger(z.number().int()).optional(),
 				cursor: z.string().optional(),
 			})
 			.strict()
@@ -8724,10 +9263,14 @@ const Output110 = z
 					.object({
 						bulk_message_id: z.string().nullable().optional(),
 						classified_spam: z.boolean().nullable().optional(),
-						created_date: z.number().int().nullable().optional(),
+						created_date: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						from_number: z.string().nullable().optional(),
 						media: z.string().nullable().optional(),
-						num_recipients: z.number().int().nullable().optional(),
+						num_recipients: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						recipients: z
 							.array(
 								z
@@ -8737,40 +9280,42 @@ const Output110 = z
 										delivery_error_details: z.string().nullable().optional(),
 										delivery_method: z.string().nullable().optional(),
 										delivery_status: z.string().nullable().optional(),
-										delivery_status_timestamp: z
-											.number()
-											.int()
+										delivery_status_timestamp: dialpadInteger(z.number().int())
 											.nullable()
 											.optional(),
 										display_name: z.string().nullable().optional(),
 										error_message: z.string().nullable().optional(),
 										phone_number: z.string().nullable().optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
 						sms_has_errors: z.boolean().nullable().optional(),
-						status: z.enum(['complete', 'pending']).nullable().optional(),
+						status: z
+							.enum(['complete', 'pending'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						text: z.string(),
 						title: z.string().nullable().optional(),
-						user_id: z.number().int().nullable().optional(),
+						user_id: dialpadInteger(z.number().int()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 		cursor: z.string().nullable().optional(),
 		has_more: z.boolean().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input111 = z
 	.object({
 		query: z
 			.object({
-				limit: z.number().int().optional(),
-				user_id: z.number().int().optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
+				user_id: dialpadInteger(z.number().int()).optional(),
 				cursor: z.string().optional(),
 			})
 			.strict()
@@ -8787,23 +9332,31 @@ const Output111 = z
 				z
 					.object({
 						channel_hashtag: z.string().nullable().optional(),
-						created_date: z.number().int().nullable().optional(),
+						created_date: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						from_number: z.string().nullable().optional(),
 						media: z.string().nullable().optional(),
 						schedule_id: z.string().nullable().optional(),
-						scheduled_time: z.number().int().nullable().optional(),
-						status: z.enum(['active', 'deleted', 'sent']).nullable().optional(),
+						scheduled_time: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
+						status: z
+							.enum(['active', 'deleted', 'sent'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						text: z.string().nullable().optional(),
 						timezone: z.string().nullable().optional(),
 						to_numbers: z.array(z.string()).nullable().optional(),
-						user_id: z.number().int().nullable().optional(),
+						user_id: dialpadInteger(z.number().int()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input112 = z
 	.object({
@@ -8824,10 +9377,10 @@ const Input112 = z
 const Output112 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		deleted: z.boolean().nullable().optional(),
 		number: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		status: z
 			.enum([
 				'available',
@@ -8844,9 +9397,10 @@ const Output112 = z
 				'sip_trunk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -8861,14 +9415,16 @@ const Output112 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input113 = z
 	.object({
@@ -8879,7 +9435,7 @@ const Input113 = z
 			.strict(),
 		query: z
 			.object({
-				user_id: z.number().int().optional(),
+				user_id: dialpadInteger(z.number().int()).optional(),
 			})
 			.strict()
 			.optional(),
@@ -8889,18 +9445,22 @@ const Input113 = z
 const Output113 = z
 	.object({
 		channel_hashtag: z.string().nullable().optional(),
-		created_date: z.number().int().nullable().optional(),
+		created_date: dialpadInteger(z.number().int()).nullable().optional(),
 		from_number: z.string().nullable().optional(),
 		media: z.string().nullable().optional(),
 		schedule_id: z.string().nullable().optional(),
-		scheduled_time: z.number().int().nullable().optional(),
-		status: z.enum(['active', 'deleted', 'sent']).nullable().optional(),
+		scheduled_time: dialpadInteger(z.number().int()).nullable().optional(),
+		status: z
+			.enum(['active', 'deleted', 'sent'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		text: z.string().nullable().optional(),
 		timezone: z.string().nullable().optional(),
 		to_numbers: z.array(z.string()).nullable().optional(),
-		user_id: z.number().int().nullable().optional(),
+		user_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input114 = z
 	.object({
@@ -8912,7 +9472,7 @@ const Input114 = z
 		body: z
 			.object({
 				primary: z.boolean().nullable().optional(),
-				target_id: z.number().int(),
+				target_id: dialpadInteger(z.number().int()),
 				target_type: z.enum([
 					'callcenter',
 					'callrouter',
@@ -8935,10 +9495,10 @@ const Input114 = z
 const Output114 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		deleted: z.boolean().nullable().optional(),
 		number: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		status: z
 			.enum([
 				'available',
@@ -8955,9 +9515,10 @@ const Output114 = z
 				'sip_trunk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -8972,14 +9533,16 @@ const Output114 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input115 = z
 	.object({
@@ -8990,7 +9553,7 @@ const Input115 = z
 			.strict(),
 		body: z
 			.object({
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
 			.strict()
 			.optional(),
@@ -9003,7 +9566,7 @@ const Output115 = z
 		schedule_id: z.string().nullable().optional(),
 		success: z.boolean().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input116 = z
 	.object({
@@ -9026,10 +9589,10 @@ const Output116 = z
 				z
 					.object({
 						area_code: z.string().nullable().optional(),
-						company_id: z.number().int().nullable().optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						deleted: z.boolean().nullable().optional(),
 						number: z.string().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						status: z
 							.enum([
 								'available',
@@ -9046,9 +9609,10 @@ const Output116 = z
 								'sip_trunk',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
-						target_id: z.number().int().nullable().optional(),
+						target_id: dialpadInteger(z.number().int()).nullable().optional(),
 						target_type: z
 							.enum([
 								'callcenter',
@@ -9063,19 +9627,21 @@ const Output116 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						type: z
 							.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input117 = z
 	.object({
@@ -9084,7 +9650,7 @@ const Input117 = z
 				area_code: z.string().nullable().optional(),
 				number: z.string().nullable().optional(),
 				primary: z.boolean().nullable().optional(),
-				target_id: z.number().int(),
+				target_id: dialpadInteger(z.number().int()),
 				target_type: z.enum([
 					'callcenter',
 					'callrouter',
@@ -9107,10 +9673,10 @@ const Input117 = z
 const Output117 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		deleted: z.boolean().nullable().optional(),
 		number: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		status: z
 			.enum([
 				'available',
@@ -9127,9 +9693,10 @@ const Output117 = z
 				'sip_trunk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -9144,14 +9711,16 @@ const Output117 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input118 = z
 	.object({
@@ -9180,7 +9749,7 @@ const Input118 = z
 					.optional(),
 				target: z
 					.object({
-						target_id: z.number().int(),
+						target_id: dialpadInteger(z.number().int()),
 						target_type: z.enum([
 							'callcenter',
 							'callrouter',
@@ -9205,10 +9774,10 @@ const Input118 = z
 const Output118 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		deleted: z.boolean().nullable().optional(),
 		number: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		status: z
 			.enum([
 				'available',
@@ -9225,9 +9794,10 @@ const Output118 = z
 				'sip_trunk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -9242,14 +9812,16 @@ const Output118 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input119 = z
 	.object({
@@ -9270,7 +9842,7 @@ const Output119 = z
 		do_not_text: z.boolean().nullable().optional(),
 		phone: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input120 = z
 	.object({
@@ -9284,11 +9856,11 @@ const Input120 = z
 				channel_hashtag: z.string().nullable().optional(),
 				from_number: z.string().nullable().optional(),
 				media: z.string().nullable().optional(),
-				start_date: z.number().int().nullable().optional(),
+				start_date: dialpadInteger(z.number().int()).nullable().optional(),
 				text: z.string().nullable().optional(),
 				timezone: z.string().nullable().optional(),
 				to_numbers: z.array(z.string()).nullable().optional(),
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
 			.strict()
 			.optional(),
@@ -9298,18 +9870,22 @@ const Input120 = z
 const Output120 = z
 	.object({
 		channel_hashtag: z.string().nullable().optional(),
-		created_date: z.number().int().nullable().optional(),
+		created_date: dialpadInteger(z.number().int()).nullable().optional(),
 		from_number: z.string().nullable().optional(),
 		media: z.string().nullable().optional(),
 		schedule_id: z.string().nullable().optional(),
-		scheduled_time: z.number().int().nullable().optional(),
-		status: z.enum(['active', 'deleted', 'sent']).nullable().optional(),
+		scheduled_time: dialpadInteger(z.number().int()).nullable().optional(),
+		status: z
+			.enum(['active', 'deleted', 'sent'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		text: z.string().nullable().optional(),
 		timezone: z.string().nullable().optional(),
 		to_numbers: z.array(z.string()).nullable().optional(),
-		user_id: z.number().int().nullable().optional(),
+		user_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input121 = z
 	.object({
@@ -9324,10 +9900,10 @@ const Input121 = z
 const Output121 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		deleted: z.boolean().nullable().optional(),
 		number: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		status: z
 			.enum([
 				'available',
@@ -9344,9 +9920,10 @@ const Output121 = z
 				'sip_trunk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -9361,20 +9938,22 @@ const Output121 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input122 = z
 	.object({
 		path: z
 			.object({
-				office_id: z.number().int(),
+				office_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		query: z
@@ -9394,31 +9973,34 @@ const Output122 = z
 				z
 					.object({
 						allow_trainee_eavesdrop: z.boolean().nullable().optional(),
-						company_id: z.number().int().nullable().optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						country: z.string().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						name: z.string().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
-						ring_seconds: z.number().int().nullable().optional(),
+						ring_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						team_description: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input123 = z
 	.object({
 		path: z
 			.object({
-				office_id: z.number().int(),
+				office_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -9426,11 +10008,15 @@ const Input123 = z
 
 const Output123 = z
 	.object({
-		additional_number_lines: z.number().int().nullable().optional(),
+		additional_number_lines: dialpadInteger(z.number().int())
+			.nullable()
+			.optional(),
 		balance: z.string().nullable().optional(),
-		contact_center_lines: z.number().int().nullable().optional(),
-		fax_lines: z.number().int().nullable().optional(),
-		next_billing_date: z.number().int().nullable().optional(),
+		contact_center_lines: dialpadInteger(z.number().int())
+			.nullable()
+			.optional(),
+		fax_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		next_billing_date: dialpadInteger(z.number().int()).nullable().optional(),
 		ppu_address: z
 			.object({
 				address_line_1: z.string().nullable().optional(),
@@ -9440,21 +10026,28 @@ const Output123 = z
 				postal_code: z.string().nullable().optional(),
 				region: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		room_lines: z.number().int().nullable().optional(),
-		sell_lines: z.number().int().nullable().optional(),
+		room_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		sell_lines: dialpadInteger(z.number().int()).nullable().optional(),
 		state: z
 			.enum(['archived', 'disputed', 'free', 'hold', 'paid', 'trial'])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		talk_lines: z.number().int().nullable().optional(),
-		tollfree_additional_number_lines: z.number().int().nullable().optional(),
-		tollfree_room_lines: z.number().int().nullable().optional(),
-		tollfree_uberconference_lines: z.number().int().nullable().optional(),
-		uberconference_lines: z.number().int().nullable().optional(),
+		talk_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		tollfree_additional_number_lines: dialpadInteger(z.number().int())
+			.nullable()
+			.optional(),
+		tollfree_room_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		tollfree_uberconference_lines: dialpadInteger(z.number().int())
+			.nullable()
+			.optional(),
+		uberconference_lines: dialpadInteger(z.number().int())
+			.nullable()
+			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input124 = z
 	.object({
@@ -9475,13 +10068,13 @@ const Output124 = z
 		e164_number: z.string().nullable().optional(),
 		local_number: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input125 = z
 	.object({
 		path: z
 			.object({
-				office_id: z.number().int(),
+				office_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		query: z
@@ -9503,22 +10096,31 @@ const Output125 = z
 						auto_call_recording: z.boolean().nullable().optional(),
 						availability_status: z
 							.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						country: z.string().nullable().optional(),
-						first_action: z.enum(['menu', 'operators']).nullable().optional(),
+						first_action: z
+							.enum(['menu', 'operators'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						friday_hours: z.array(z.string()).nullable().optional(),
 						group_description: z.string().nullable().optional(),
 						hold_queue: z
 							.object({
 								allow_queuing: z.boolean().nullable().optional(),
-								max_hold_count: z.number().int().nullable().optional(),
-								max_hold_seconds: z.number().int().nullable().optional(),
+								max_hold_count: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
+								max_hold_seconds: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						hours_on: z.boolean().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						monday_hours: z.array(z.string()).nullable().optional(),
 						name: z.string().nullable().optional(),
 						no_operators_action: z
@@ -9542,36 +10144,43 @@ const Output125 = z
 								'scripted_ivr',
 								'voicemail',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
-						ring_seconds: z.number().int().nullable().optional(),
+						ring_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						routing_options: z
 							.object({
 								closed: z
 									.object({
-										action: z.enum([
-											'ai_agent',
-											'bridge_target',
-											'call_service_target',
-											'company_directory',
-											'department',
-											'directory',
-											'disabled',
-											'extension',
-											'google_dialogflow',
-											'last_name_company_directory',
-											'last_name_directory',
-											'menu',
-											'message',
-											'operator',
-											'person',
-											'recursive_transfer',
-											'scripted_ivr',
-											'voicemail',
-										]),
-										action_target_id: z.number().int().optional(),
+										action: z
+											.enum([
+												'ai_agent',
+												'bridge_target',
+												'call_service_target',
+												'company_directory',
+												'department',
+												'directory',
+												'disabled',
+												'extension',
+												'google_dialogflow',
+												'last_name_company_directory',
+												'last_name_directory',
+												'menu',
+												'message',
+												'operator',
+												'person',
+												'recursive_transfer',
+												'scripted_ivr',
+												'voicemail',
+											])
+											.or(z.string()),
+										action_target_id: dialpadInteger(
+											z.number().int(),
+										).optional(),
 										action_target_type: z
 											.enum([
 												'callcenter',
@@ -9587,6 +10196,7 @@ const Output125 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.optional(),
 										dtmf: z
 											.array(
@@ -9606,33 +10216,38 @@ const Output125 = z
 												'simultaneous',
 												'skills_based',
 											])
+											.or(z.string())
 											.optional(),
 										try_dial_operators: z.boolean(),
 									})
-									.strict(),
+									.loose(),
 								open: z
 									.object({
-										action: z.enum([
-											'ai_agent',
-											'bridge_target',
-											'call_service_target',
-											'company_directory',
-											'department',
-											'directory',
-											'disabled',
-											'extension',
-											'google_dialogflow',
-											'last_name_company_directory',
-											'last_name_directory',
-											'menu',
-											'message',
-											'operator',
-											'person',
-											'recursive_transfer',
-											'scripted_ivr',
-											'voicemail',
-										]),
-										action_target_id: z.number().int().optional(),
+										action: z
+											.enum([
+												'ai_agent',
+												'bridge_target',
+												'call_service_target',
+												'company_directory',
+												'department',
+												'directory',
+												'disabled',
+												'extension',
+												'google_dialogflow',
+												'last_name_company_directory',
+												'last_name_directory',
+												'menu',
+												'message',
+												'operator',
+												'person',
+												'recursive_transfer',
+												'scripted_ivr',
+												'voicemail',
+											])
+											.or(z.string()),
+										action_target_id: dialpadInteger(
+											z.number().int(),
+										).optional(),
 										action_target_type: z
 											.enum([
 												'callcenter',
@@ -9648,6 +10263,7 @@ const Output125 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.optional(),
 										dtmf: z
 											.array(
@@ -9667,16 +10283,18 @@ const Output125 = z
 												'simultaneous',
 												'skills_based',
 											])
+											.or(z.string())
 											.optional(),
 										try_dial_operators: z.boolean(),
 									})
-									.strict(),
+									.loose(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						saturday_hours: z.array(z.string()).nullable().optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						sunday_hours: z.array(z.string()).nullable().optional(),
@@ -9688,7 +10306,7 @@ const Output125 = z
 								allow_pause: z.boolean().nullable().optional(),
 								auto_start: z.boolean().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						voicemail_notification_emails: z
 							.array(z.string())
@@ -9696,18 +10314,18 @@ const Output125 = z
 							.optional(),
 						wednesday_hours: z.array(z.string()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input126 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -9722,10 +10340,10 @@ const Input126 = z
 const Output126 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		deleted: z.boolean().nullable().optional(),
 		number: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		status: z
 			.enum([
 				'available',
@@ -9742,9 +10360,10 @@ const Output126 = z
 				'sip_trunk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -9759,20 +10378,22 @@ const Output126 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input127 = z
 	.object({
 		path: z
 			.object({
-				office_id: z.number().int(),
+				office_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		query: z
@@ -9799,29 +10420,36 @@ const Output127 = z
 										call_recording_inbound: z.boolean().nullable().optional(),
 										call_recording_outbound: z.boolean().nullable().optional(),
 									})
-									.strict()
+									.loose()
 									.optional(),
-								max_wrap_up_seconds: z.number().int().nullable().optional(),
-							})
-							.strict()
-							.optional(),
-						alerts: z
-							.object({
-								cc_service_level: z.number().int().nullable().optional(),
-								cc_service_level_seconds: z
-									.number()
-									.int()
+								max_wrap_up_seconds: dialpadInteger(z.number().int())
 									.nullable()
 									.optional(),
 							})
-							.strict()
+							.loose()
+							.optional(),
+						alerts: z
+							.object({
+								cc_service_level: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
+								cc_service_level_seconds: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
+							})
+							.loose()
 							.optional(),
 						availability_status: z
 							.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						country: z.string().nullable().optional(),
-						first_action: z.enum(['menu', 'operators']).nullable().optional(),
+						first_action: z
+							.enum(['menu', 'operators'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						friday_hours: z.array(z.string()).nullable().optional(),
 						group_description: z.string().nullable().optional(),
 						hold_queue: z
@@ -9829,28 +10457,30 @@ const Output127 = z
 								allow_queue_callback: z.boolean().nullable().optional(),
 								announce_estimated_wait_time: z.boolean().nullable().optional(),
 								announce_position: z.boolean().nullable().optional(),
-								announcement_interval_seconds: z
-									.number()
-									.int()
+								announcement_interval_seconds: dialpadInteger(z.number().int())
 									.nullable()
 									.optional(),
-								estimated_wait_time_max: z.number().int().nullable().optional(),
-								max_hold_count: z.number().int().nullable().optional(),
-								max_hold_seconds: z.number().int().nullable().optional(),
+								estimated_wait_time_max: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
+								max_hold_count: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
+								max_hold_seconds: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
 								queue_callback_dtmf: z.string().nullable().optional(),
-								queue_callback_threshold: z
-									.number()
-									.int()
+								queue_callback_threshold: dialpadInteger(z.number().int())
 									.nullable()
 									.optional(),
 								queue_escape_dtmf: z.string().nullable().optional(),
 								stay_in_queue_after_closing: z.boolean().nullable().optional(),
 								unattended_queue: z.boolean().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						hours_on: z.boolean().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						is_digital: z.boolean().nullable().optional(),
 						monday_hours: z.array(z.string()).nullable().optional(),
 						name: z.string().nullable().optional(),
@@ -9875,36 +10505,43 @@ const Output127 = z
 								'scripted_ivr',
 								'voicemail',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
-						ring_seconds: z.number().int().nullable().optional(),
+						ring_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						routing_options: z
 							.object({
 								closed: z
 									.object({
-										action: z.enum([
-											'ai_agent',
-											'bridge_target',
-											'call_service_target',
-											'company_directory',
-											'department',
-											'directory',
-											'disabled',
-											'extension',
-											'google_dialogflow',
-											'last_name_company_directory',
-											'last_name_directory',
-											'menu',
-											'message',
-											'operator',
-											'person',
-											'recursive_transfer',
-											'scripted_ivr',
-											'voicemail',
-										]),
-										action_target_id: z.number().int().optional(),
+										action: z
+											.enum([
+												'ai_agent',
+												'bridge_target',
+												'call_service_target',
+												'company_directory',
+												'department',
+												'directory',
+												'disabled',
+												'extension',
+												'google_dialogflow',
+												'last_name_company_directory',
+												'last_name_directory',
+												'menu',
+												'message',
+												'operator',
+												'person',
+												'recursive_transfer',
+												'scripted_ivr',
+												'voicemail',
+											])
+											.or(z.string()),
+										action_target_id: dialpadInteger(
+											z.number().int(),
+										).optional(),
 										action_target_type: z
 											.enum([
 												'callcenter',
@@ -9920,6 +10557,7 @@ const Output127 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.optional(),
 										dtmf: z
 											.array(
@@ -9939,33 +10577,38 @@ const Output127 = z
 												'simultaneous',
 												'skills_based',
 											])
+											.or(z.string())
 											.optional(),
 										try_dial_operators: z.boolean(),
 									})
-									.strict(),
+									.loose(),
 								open: z
 									.object({
-										action: z.enum([
-											'ai_agent',
-											'bridge_target',
-											'call_service_target',
-											'company_directory',
-											'department',
-											'directory',
-											'disabled',
-											'extension',
-											'google_dialogflow',
-											'last_name_company_directory',
-											'last_name_directory',
-											'menu',
-											'message',
-											'operator',
-											'person',
-											'recursive_transfer',
-											'scripted_ivr',
-											'voicemail',
-										]),
-										action_target_id: z.number().int().optional(),
+										action: z
+											.enum([
+												'ai_agent',
+												'bridge_target',
+												'call_service_target',
+												'company_directory',
+												'department',
+												'directory',
+												'disabled',
+												'extension',
+												'google_dialogflow',
+												'last_name_company_directory',
+												'last_name_directory',
+												'menu',
+												'message',
+												'operator',
+												'person',
+												'recursive_transfer',
+												'scripted_ivr',
+												'voicemail',
+											])
+											.or(z.string()),
+										action_target_id: dialpadInteger(
+											z.number().int(),
+										).optional(),
 										action_target_type: z
 											.enum([
 												'callcenter',
@@ -9981,6 +10624,7 @@ const Output127 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.optional(),
 										dtmf: z
 											.array(
@@ -10000,16 +10644,18 @@ const Output127 = z
 												'simultaneous',
 												'skills_based',
 											])
+											.or(z.string())
 											.optional(),
 										try_dial_operators: z.boolean(),
 									})
-									.strict(),
+									.loose(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						saturday_hours: z.array(z.string()).nullable().optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						sunday_hours: z.array(z.string()).nullable().optional(),
@@ -10021,7 +10667,7 @@ const Output127 = z
 								allow_pause: z.boolean().nullable().optional(),
 								auto_start: z.boolean().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						voicemail_notification_emails: z
 							.array(z.string())
@@ -10029,18 +10675,18 @@ const Output127 = z
 							.optional(),
 						wednesday_hours: z.array(z.string()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input128 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -10057,10 +10703,10 @@ const Input128 = z
 const Output128 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		deleted: z.boolean().nullable().optional(),
 		number: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		status: z
 			.enum([
 				'available',
@@ -10077,9 +10723,10 @@ const Output128 = z
 				'sip_trunk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -10094,20 +10741,22 @@ const Output128 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input129 = z
 	.object({
 		path: z
 			.object({
-				office_id: z.number().int(),
+				office_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -10115,29 +10764,39 @@ const Input129 = z
 
 const Output129 = z
 	.object({
-		additional_number_lines: z.number().int().nullable().optional(),
-		admin_lines: z.number().int().nullable().optional(),
-		base_user_lines: z.number().int().nullable().optional(),
-		contact_center_lines: z.number().int().nullable().optional(),
-		dpde_all_lines: z.number().int().nullable().optional(),
-		dpde_one_lines: z.number().int().nullable().optional(),
-		fax_lines: z.number().int().nullable().optional(),
-		lite_lines: z.number().int().nullable().optional(),
-		room_lines: z.number().int().nullable().optional(),
-		sell_lines: z.number().int().nullable().optional(),
-		talk_lines: z.number().int().nullable().optional(),
-		tollfree_additional_number_lines: z.number().int().nullable().optional(),
-		tollfree_room_lines: z.number().int().nullable().optional(),
-		tollfree_uberconference_lines: z.number().int().nullable().optional(),
-		uberconference_lines: z.number().int().nullable().optional(),
+		additional_number_lines: dialpadInteger(z.number().int())
+			.nullable()
+			.optional(),
+		admin_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		base_user_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		contact_center_lines: dialpadInteger(z.number().int())
+			.nullable()
+			.optional(),
+		dpde_all_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		dpde_one_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		fax_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		lite_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		room_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		sell_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		talk_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		tollfree_additional_number_lines: dialpadInteger(z.number().int())
+			.nullable()
+			.optional(),
+		tollfree_room_lines: dialpadInteger(z.number().int()).nullable().optional(),
+		tollfree_uberconference_lines: dialpadInteger(z.number().int())
+			.nullable()
+			.optional(),
+		uberconference_lines: dialpadInteger(z.number().int())
+			.nullable()
+			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input130 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -10152,13 +10811,13 @@ const Output130 = z
 		state: z.string().nullable().optional(),
 		zip: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input131 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -10166,16 +10825,16 @@ const Input131 = z
 
 const Output131 = z
 	.object({
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		off_duty_statuses: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input132 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -10203,13 +10862,13 @@ const Output132 = z
 		state: z.string().nullable().optional(),
 		zip: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input133 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -10234,6 +10893,7 @@ const Output133 = z
 			.object({
 				availability_status: z
 					.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+					.or(z.string())
 					.nullable()
 					.optional(),
 				country: z.string().nullable().optional(),
@@ -10246,11 +10906,15 @@ const Output133 = z
 						state: z.string().nullable().optional(),
 						zip: z.string().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
-				first_action: z.enum(['menu', 'operators']).nullable().optional(),
+				first_action: z
+					.enum(['menu', 'operators'])
+					.or(z.string())
+					.nullable()
+					.optional(),
 				friday_hours: z.array(z.string()).nullable().optional(),
-				id: z.number().int().nullable().optional(),
+				id: dialpadInteger(z.number().int()).nullable().optional(),
 				is_primary_office: z.boolean().nullable().optional(),
 				monday_hours: z.array(z.string()).nullable().optional(),
 				name: z.string().nullable().optional(),
@@ -10275,9 +10939,10 @@ const Output133 = z
 						'scripted_ivr',
 						'voicemail',
 					])
+					.or(z.string())
 					.nullable()
 					.optional(),
-				office_id: z.number().int().nullable().optional(),
+				office_id: dialpadInteger(z.number().int()).nullable().optional(),
 				office_settings: z
 					.object({
 						allow_device_guest_login: z.boolean().nullable().optional(),
@@ -10294,35 +10959,37 @@ const Output133 = z
 							.optional(),
 						set_caller_id_disabled: z.boolean().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				phone_numbers: z.array(z.string()).nullable().optional(),
-				ring_seconds: z.number().int().nullable().optional(),
+				ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 				routing_options: z
 					.object({
 						closed: z
 							.object({
-								action: z.enum([
-									'ai_agent',
-									'bridge_target',
-									'call_service_target',
-									'company_directory',
-									'department',
-									'directory',
-									'disabled',
-									'extension',
-									'google_dialogflow',
-									'last_name_company_directory',
-									'last_name_directory',
-									'menu',
-									'message',
-									'operator',
-									'person',
-									'recursive_transfer',
-									'scripted_ivr',
-									'voicemail',
-								]),
-								action_target_id: z.number().int().optional(),
+								action: z
+									.enum([
+										'ai_agent',
+										'bridge_target',
+										'call_service_target',
+										'company_directory',
+										'department',
+										'directory',
+										'disabled',
+										'extension',
+										'google_dialogflow',
+										'last_name_company_directory',
+										'last_name_directory',
+										'menu',
+										'message',
+										'operator',
+										'person',
+										'recursive_transfer',
+										'scripted_ivr',
+										'voicemail',
+									])
+									.or(z.string()),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -10338,6 +11005,7 @@ const Output133 = z
 										'unknown',
 										'user',
 									])
+									.or(z.string())
 									.optional(),
 								dtmf: z
 									.array(
@@ -10352,7 +11020,7 @@ const Output133 = z
 														.unknown()
 														.optional(),
 											})
-											.strict(),
+											.loose(),
 									)
 									.optional(),
 								operator_routing: z
@@ -10368,33 +11036,36 @@ const Output133 = z
 										'simultaneous',
 										'skills_based',
 									])
+									.or(z.string())
 									.optional(),
 								try_dial_operators: z.boolean(),
 							})
-							.strict(),
+							.loose(),
 						open: z
 							.object({
-								action: z.enum([
-									'ai_agent',
-									'bridge_target',
-									'call_service_target',
-									'company_directory',
-									'department',
-									'directory',
-									'disabled',
-									'extension',
-									'google_dialogflow',
-									'last_name_company_directory',
-									'last_name_directory',
-									'menu',
-									'message',
-									'operator',
-									'person',
-									'recursive_transfer',
-									'scripted_ivr',
-									'voicemail',
-								]),
-								action_target_id: z.number().int().optional(),
+								action: z
+									.enum([
+										'ai_agent',
+										'bridge_target',
+										'call_service_target',
+										'company_directory',
+										'department',
+										'directory',
+										'disabled',
+										'extension',
+										'google_dialogflow',
+										'last_name_company_directory',
+										'last_name_directory',
+										'menu',
+										'message',
+										'operator',
+										'person',
+										'recursive_transfer',
+										'scripted_ivr',
+										'voicemail',
+									])
+									.or(z.string()),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -10410,6 +11081,7 @@ const Output133 = z
 										'unknown',
 										'user',
 									])
+									.or(z.string())
 									.optional(),
 								dtmf: z
 									.array(
@@ -10424,7 +11096,7 @@ const Output133 = z
 														.unknown()
 														.optional(),
 											})
-											.strict(),
+											.loose(),
 									)
 									.optional(),
 								operator_routing: z
@@ -10440,16 +11112,18 @@ const Output133 = z
 										'simultaneous',
 										'skills_based',
 									])
+									.or(z.string())
 									.optional(),
 								try_dial_operators: z.boolean(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				saturday_hours: z.array(z.string()).nullable().optional(),
 				state: z
 					.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+					.or(z.string())
 					.nullable()
 					.optional(),
 				sunday_hours: z.array(z.string()).nullable().optional(),
@@ -10462,15 +11136,21 @@ const Output133 = z
 					.optional(),
 				wednesday_hours: z.array(z.string()).nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		plan: z
 			.object({
-				additional_number_lines: z.number().int().nullable().optional(),
+				additional_number_lines: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				balance: z.string().nullable().optional(),
-				contact_center_lines: z.number().int().nullable().optional(),
-				fax_lines: z.number().int().nullable().optional(),
-				next_billing_date: z.number().int().nullable().optional(),
+				contact_center_lines: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				fax_lines: dialpadInteger(z.number().int()).nullable().optional(),
+				next_billing_date: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				ppu_address: z
 					.object({
 						address_line_1: z.string().nullable().optional(),
@@ -10480,34 +11160,39 @@ const Output133 = z
 						postal_code: z.string().nullable().optional(),
 						region: z.string().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
-				room_lines: z.number().int().nullable().optional(),
-				sell_lines: z.number().int().nullable().optional(),
+				room_lines: dialpadInteger(z.number().int()).nullable().optional(),
+				sell_lines: dialpadInteger(z.number().int()).nullable().optional(),
 				state: z
 					.enum(['archived', 'disputed', 'free', 'hold', 'paid', 'trial'])
+					.or(z.string())
 					.nullable()
 					.optional(),
-				talk_lines: z.number().int().nullable().optional(),
-				tollfree_additional_number_lines: z
-					.number()
-					.int()
+				talk_lines: dialpadInteger(z.number().int()).nullable().optional(),
+				tollfree_additional_number_lines: dialpadInteger(z.number().int())
 					.nullable()
 					.optional(),
-				tollfree_room_lines: z.number().int().nullable().optional(),
-				tollfree_uberconference_lines: z.number().int().nullable().optional(),
-				uberconference_lines: z.number().int().nullable().optional(),
+				tollfree_room_lines: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				tollfree_uberconference_lines: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				uberconference_lines: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input134 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -10517,6 +11202,7 @@ const Output134 = z
 	.object({
 		availability_status: z
 			.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		country: z.string().nullable().optional(),
@@ -10529,11 +11215,15 @@ const Output134 = z
 				state: z.string().nullable().optional(),
 				zip: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		first_action: z.enum(['menu', 'operators']).nullable().optional(),
+		first_action: z
+			.enum(['menu', 'operators'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		friday_hours: z.array(z.string()).nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		is_primary_office: z.boolean().nullable().optional(),
 		monday_hours: z.array(z.string()).nullable().optional(),
 		name: z.string().nullable().optional(),
@@ -10558,9 +11248,10 @@ const Output134 = z
 				'scripted_ivr',
 				'voicemail',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		office_settings: z
 			.object({
 				allow_device_guest_login: z.boolean().nullable().optional(),
@@ -10571,35 +11262,37 @@ const Output134 = z
 				no_recording_message_on_user_calls: z.boolean().nullable().optional(),
 				set_caller_id_disabled: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
-		ring_seconds: z.number().int().nullable().optional(),
+		ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 		routing_options: z
 			.object({
 				closed: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -10615,6 +11308,7 @@ const Output134 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -10636,10 +11330,10 @@ const Output134 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -10655,33 +11349,36 @@ const Output134 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 				open: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -10697,6 +11394,7 @@ const Output134 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -10718,10 +11416,10 @@ const Output134 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -10737,16 +11435,18 @@ const Output134 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		saturday_hours: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		sunday_hours: z.array(z.string()).nullable().optional(),
@@ -10756,7 +11456,7 @@ const Output134 = z
 		voicemail_notification_emails: z.array(z.string()).nullable().optional(),
 		wednesday_hours: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input135 = z.object({}).strict();
 
@@ -10764,6 +11464,7 @@ const Output135 = z
 	.object({
 		availability_status: z
 			.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		country: z.string().nullable().optional(),
@@ -10776,11 +11477,15 @@ const Output135 = z
 				state: z.string().nullable().optional(),
 				zip: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		first_action: z.enum(['menu', 'operators']).nullable().optional(),
+		first_action: z
+			.enum(['menu', 'operators'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		friday_hours: z.array(z.string()).nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		is_primary_office: z.boolean().nullable().optional(),
 		monday_hours: z.array(z.string()).nullable().optional(),
 		name: z.string().nullable().optional(),
@@ -10805,9 +11510,10 @@ const Output135 = z
 				'scripted_ivr',
 				'voicemail',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		office_settings: z
 			.object({
 				allow_device_guest_login: z.boolean().nullable().optional(),
@@ -10818,35 +11524,37 @@ const Output135 = z
 				no_recording_message_on_user_calls: z.boolean().nullable().optional(),
 				set_caller_id_disabled: z.boolean().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
-		ring_seconds: z.number().int().nullable().optional(),
+		ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 		routing_options: z
 			.object({
 				closed: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -10862,6 +11570,7 @@ const Output135 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -10883,10 +11592,10 @@ const Output135 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -10902,33 +11611,36 @@ const Output135 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 				open: z
 					.object({
-						action: z.enum([
-							'ai_agent',
-							'bridge_target',
-							'call_service_target',
-							'company_directory',
-							'department',
-							'directory',
-							'disabled',
-							'extension',
-							'google_dialogflow',
-							'last_name_company_directory',
-							'last_name_directory',
-							'menu',
-							'message',
-							'operator',
-							'person',
-							'recursive_transfer',
-							'scripted_ivr',
-							'voicemail',
-						]),
-						action_target_id: z.number().int().optional(),
+						action: z
+							.enum([
+								'ai_agent',
+								'bridge_target',
+								'call_service_target',
+								'company_directory',
+								'department',
+								'directory',
+								'disabled',
+								'extension',
+								'google_dialogflow',
+								'last_name_company_directory',
+								'last_name_directory',
+								'menu',
+								'message',
+								'operator',
+								'person',
+								'recursive_transfer',
+								'scripted_ivr',
+								'voicemail',
+							])
+							.or(z.string()),
+						action_target_id: dialpadInteger(z.number().int()).optional(),
 						action_target_type: z
 							.enum([
 								'callcenter',
@@ -10944,6 +11656,7 @@ const Output135 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.optional(),
 						dtmf: z
 							.array(
@@ -10965,10 +11678,10 @@ const Output135 = z
 														.unknown()
 														.optional(),
 											})
-											.strict()
+											.loose()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						operator_routing: z
@@ -10984,16 +11697,18 @@ const Output135 = z
 								'simultaneous',
 								'skills_based',
 							])
+							.or(z.string())
 							.optional(),
 						try_dial_operators: z.boolean(),
 					})
-					.strict(),
+					.loose(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		saturday_hours: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		sunday_hours: z.array(z.string()).nullable().optional(),
@@ -11003,7 +11718,7 @@ const Output135 = z
 		voicemail_notification_emails: z.array(z.string()).nullable().optional(),
 		wednesday_hours: z.array(z.string()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input136 = z
 	.object({
@@ -11027,6 +11742,7 @@ const Output136 = z
 					.object({
 						availability_status: z
 							.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						country: z.string().nullable().optional(),
@@ -11039,11 +11755,15 @@ const Output136 = z
 								state: z.string().nullable().optional(),
 								zip: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
-						first_action: z.enum(['menu', 'operators']).nullable().optional(),
+						first_action: z
+							.enum(['menu', 'operators'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						friday_hours: z.array(z.string()).nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						is_primary_office: z.boolean().nullable().optional(),
 						monday_hours: z.array(z.string()).nullable().optional(),
 						name: z.string().nullable().optional(),
@@ -11068,9 +11788,10 @@ const Output136 = z
 								'scripted_ivr',
 								'voicemail',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						office_settings: z
 							.object({
 								allow_device_guest_login: z.boolean().nullable().optional(),
@@ -11090,35 +11811,41 @@ const Output136 = z
 									.optional(),
 								set_caller_id_disabled: z.boolean().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
-						ring_seconds: z.number().int().nullable().optional(),
+						ring_seconds: dialpadInteger(z.number().int())
+							.nullable()
+							.optional(),
 						routing_options: z
 							.object({
 								closed: z
 									.object({
-										action: z.enum([
-											'ai_agent',
-											'bridge_target',
-											'call_service_target',
-											'company_directory',
-											'department',
-											'directory',
-											'disabled',
-											'extension',
-											'google_dialogflow',
-											'last_name_company_directory',
-											'last_name_directory',
-											'menu',
-											'message',
-											'operator',
-											'person',
-											'recursive_transfer',
-											'scripted_ivr',
-											'voicemail',
-										]),
-										action_target_id: z.number().int().optional(),
+										action: z
+											.enum([
+												'ai_agent',
+												'bridge_target',
+												'call_service_target',
+												'company_directory',
+												'department',
+												'directory',
+												'disabled',
+												'extension',
+												'google_dialogflow',
+												'last_name_company_directory',
+												'last_name_directory',
+												'menu',
+												'message',
+												'operator',
+												'person',
+												'recursive_transfer',
+												'scripted_ivr',
+												'voicemail',
+											])
+											.or(z.string()),
+										action_target_id: dialpadInteger(
+											z.number().int(),
+										).optional(),
 										action_target_type: z
 											.enum([
 												'callcenter',
@@ -11134,6 +11861,7 @@ const Output136 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.optional(),
 										dtmf: z
 											.array(
@@ -11153,33 +11881,38 @@ const Output136 = z
 												'simultaneous',
 												'skills_based',
 											])
+											.or(z.string())
 											.optional(),
 										try_dial_operators: z.boolean(),
 									})
-									.strict(),
+									.loose(),
 								open: z
 									.object({
-										action: z.enum([
-											'ai_agent',
-											'bridge_target',
-											'call_service_target',
-											'company_directory',
-											'department',
-											'directory',
-											'disabled',
-											'extension',
-											'google_dialogflow',
-											'last_name_company_directory',
-											'last_name_directory',
-											'menu',
-											'message',
-											'operator',
-											'person',
-											'recursive_transfer',
-											'scripted_ivr',
-											'voicemail',
-										]),
-										action_target_id: z.number().int().optional(),
+										action: z
+											.enum([
+												'ai_agent',
+												'bridge_target',
+												'call_service_target',
+												'company_directory',
+												'department',
+												'directory',
+												'disabled',
+												'extension',
+												'google_dialogflow',
+												'last_name_company_directory',
+												'last_name_directory',
+												'menu',
+												'message',
+												'operator',
+												'person',
+												'recursive_transfer',
+												'scripted_ivr',
+												'voicemail',
+											])
+											.or(z.string()),
+										action_target_id: dialpadInteger(
+											z.number().int(),
+										).optional(),
 										action_target_type: z
 											.enum([
 												'callcenter',
@@ -11195,6 +11928,7 @@ const Output136 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.optional(),
 										dtmf: z
 											.array(
@@ -11214,16 +11948,18 @@ const Output136 = z
 												'simultaneous',
 												'skills_based',
 											])
+											.or(z.string())
 											.optional(),
 										try_dial_operators: z.boolean(),
 									})
-									.strict(),
+									.loose(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						saturday_hours: z.array(z.string()).nullable().optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						sunday_hours: z.array(z.string()).nullable().optional(),
@@ -11236,23 +11972,23 @@ const Output136 = z
 							.optional(),
 						wednesday_hours: z.array(z.string()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input137 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				operator_id: z.number().int(),
+				operator_id: dialpadInteger(z.number().int()),
 				operator_type: z.enum(['room', 'user']),
 			})
 			.strict()
@@ -11262,20 +11998,21 @@ const Input137 = z
 
 const Output137 = z
 	.object({
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		is_on_duty: z.boolean().nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input138 = z
 	.object({
@@ -11438,7 +12175,7 @@ const Input138 = z
 					.nullable()
 					.optional(),
 				plan_period: z.enum(['monthly', 'yearly']),
-				ring_seconds: z.number().int().nullable().optional(),
+				ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 				routing_options: z
 					.object({
 						closed: z
@@ -11463,7 +12200,7 @@ const Input138 = z
 									'scripted_ivr',
 									'voicemail',
 								]),
-								action_target_id: z.number().int().optional(),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -11545,7 +12282,7 @@ const Input138 = z
 									'scripted_ivr',
 									'voicemail',
 								]),
-								action_target_id: z.number().int().optional(),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -11635,6 +12372,7 @@ const Output138 = z
 			.object({
 				availability_status: z
 					.enum(['closed', 'holiday_closed', 'holiday_open', 'open'])
+					.or(z.string())
 					.nullable()
 					.optional(),
 				country: z.string().nullable().optional(),
@@ -11647,11 +12385,15 @@ const Output138 = z
 						state: z.string().nullable().optional(),
 						zip: z.string().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
-				first_action: z.enum(['menu', 'operators']).nullable().optional(),
+				first_action: z
+					.enum(['menu', 'operators'])
+					.or(z.string())
+					.nullable()
+					.optional(),
 				friday_hours: z.array(z.string()).nullable().optional(),
-				id: z.number().int().nullable().optional(),
+				id: dialpadInteger(z.number().int()).nullable().optional(),
 				is_primary_office: z.boolean().nullable().optional(),
 				monday_hours: z.array(z.string()).nullable().optional(),
 				name: z.string().nullable().optional(),
@@ -11676,9 +12418,10 @@ const Output138 = z
 						'scripted_ivr',
 						'voicemail',
 					])
+					.or(z.string())
 					.nullable()
 					.optional(),
-				office_id: z.number().int().nullable().optional(),
+				office_id: dialpadInteger(z.number().int()).nullable().optional(),
 				office_settings: z
 					.object({
 						allow_device_guest_login: z.boolean().nullable().optional(),
@@ -11695,35 +12438,37 @@ const Output138 = z
 							.optional(),
 						set_caller_id_disabled: z.boolean().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				phone_numbers: z.array(z.string()).nullable().optional(),
-				ring_seconds: z.number().int().nullable().optional(),
+				ring_seconds: dialpadInteger(z.number().int()).nullable().optional(),
 				routing_options: z
 					.object({
 						closed: z
 							.object({
-								action: z.enum([
-									'ai_agent',
-									'bridge_target',
-									'call_service_target',
-									'company_directory',
-									'department',
-									'directory',
-									'disabled',
-									'extension',
-									'google_dialogflow',
-									'last_name_company_directory',
-									'last_name_directory',
-									'menu',
-									'message',
-									'operator',
-									'person',
-									'recursive_transfer',
-									'scripted_ivr',
-									'voicemail',
-								]),
-								action_target_id: z.number().int().optional(),
+								action: z
+									.enum([
+										'ai_agent',
+										'bridge_target',
+										'call_service_target',
+										'company_directory',
+										'department',
+										'directory',
+										'disabled',
+										'extension',
+										'google_dialogflow',
+										'last_name_company_directory',
+										'last_name_directory',
+										'menu',
+										'message',
+										'operator',
+										'person',
+										'recursive_transfer',
+										'scripted_ivr',
+										'voicemail',
+									])
+									.or(z.string()),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -11739,6 +12484,7 @@ const Output138 = z
 										'unknown',
 										'user',
 									])
+									.or(z.string())
 									.optional(),
 								dtmf: z
 									.array(
@@ -11753,7 +12499,7 @@ const Output138 = z
 														.unknown()
 														.optional(),
 											})
-											.strict(),
+											.loose(),
 									)
 									.optional(),
 								operator_routing: z
@@ -11769,33 +12515,36 @@ const Output138 = z
 										'simultaneous',
 										'skills_based',
 									])
+									.or(z.string())
 									.optional(),
 								try_dial_operators: z.boolean(),
 							})
-							.strict(),
+							.loose(),
 						open: z
 							.object({
-								action: z.enum([
-									'ai_agent',
-									'bridge_target',
-									'call_service_target',
-									'company_directory',
-									'department',
-									'directory',
-									'disabled',
-									'extension',
-									'google_dialogflow',
-									'last_name_company_directory',
-									'last_name_directory',
-									'menu',
-									'message',
-									'operator',
-									'person',
-									'recursive_transfer',
-									'scripted_ivr',
-									'voicemail',
-								]),
-								action_target_id: z.number().int().optional(),
+								action: z
+									.enum([
+										'ai_agent',
+										'bridge_target',
+										'call_service_target',
+										'company_directory',
+										'department',
+										'directory',
+										'disabled',
+										'extension',
+										'google_dialogflow',
+										'last_name_company_directory',
+										'last_name_directory',
+										'menu',
+										'message',
+										'operator',
+										'person',
+										'recursive_transfer',
+										'scripted_ivr',
+										'voicemail',
+									])
+									.or(z.string()),
+								action_target_id: dialpadInteger(z.number().int()).optional(),
 								action_target_type: z
 									.enum([
 										'callcenter',
@@ -11811,6 +12560,7 @@ const Output138 = z
 										'unknown',
 										'user',
 									])
+									.or(z.string())
 									.optional(),
 								dtmf: z
 									.array(
@@ -11825,7 +12575,7 @@ const Output138 = z
 														.unknown()
 														.optional(),
 											})
-											.strict(),
+											.loose(),
 									)
 									.optional(),
 								operator_routing: z
@@ -11841,16 +12591,18 @@ const Output138 = z
 										'simultaneous',
 										'skills_based',
 									])
+									.or(z.string())
 									.optional(),
 								try_dial_operators: z.boolean(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				saturday_hours: z.array(z.string()).nullable().optional(),
 				state: z
 					.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+					.or(z.string())
 					.nullable()
 					.optional(),
 				sunday_hours: z.array(z.string()).nullable().optional(),
@@ -11863,15 +12615,21 @@ const Output138 = z
 					.optional(),
 				wednesday_hours: z.array(z.string()).nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		plan: z
 			.object({
-				additional_number_lines: z.number().int().nullable().optional(),
+				additional_number_lines: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				balance: z.string().nullable().optional(),
-				contact_center_lines: z.number().int().nullable().optional(),
-				fax_lines: z.number().int().nullable().optional(),
-				next_billing_date: z.number().int().nullable().optional(),
+				contact_center_lines: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				fax_lines: dialpadInteger(z.number().int()).nullable().optional(),
+				next_billing_date: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 				ppu_address: z
 					.object({
 						address_line_1: z.string().nullable().optional(),
@@ -11881,34 +12639,39 @@ const Output138 = z
 						postal_code: z.string().nullable().optional(),
 						region: z.string().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
-				room_lines: z.number().int().nullable().optional(),
-				sell_lines: z.number().int().nullable().optional(),
+				room_lines: dialpadInteger(z.number().int()).nullable().optional(),
+				sell_lines: dialpadInteger(z.number().int()).nullable().optional(),
 				state: z
 					.enum(['archived', 'disputed', 'free', 'hold', 'paid', 'trial'])
+					.or(z.string())
 					.nullable()
 					.optional(),
-				talk_lines: z.number().int().nullable().optional(),
-				tollfree_additional_number_lines: z
-					.number()
-					.int()
+				talk_lines: dialpadInteger(z.number().int()).nullable().optional(),
+				tollfree_additional_number_lines: dialpadInteger(z.number().int())
 					.nullable()
 					.optional(),
-				tollfree_room_lines: z.number().int().nullable().optional(),
-				tollfree_uberconference_lines: z.number().int().nullable().optional(),
-				uberconference_lines: z.number().int().nullable().optional(),
+				tollfree_room_lines: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				tollfree_uberconference_lines: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				uberconference_lines: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input139 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -11920,21 +12683,22 @@ const Output139 = z
 			.array(
 				z
 					.object({
-						company_id: z.number().int().nullable().optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						country: z.string().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						image_url: z.string().nullable().optional(),
 						is_free: z.boolean().nullable().optional(),
 						is_on_duty: z.boolean().nullable().optional(),
 						name: z.string().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
@@ -11942,8 +12706,11 @@ const Output139 = z
 			.array(
 				z
 					.object({
-						admin_office_ids: z.array(z.number().int()).nullable().optional(),
-						company_id: z.number().int().nullable().optional(),
+						admin_office_ids: z
+							.array(dialpadInteger(z.number().int()))
+							.nullable()
+							.optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						country: z.string().nullable().optional(),
 						date_active: z.string().nullable().optional(),
 						date_added: z.string().nullable().optional(),
@@ -11962,7 +12729,9 @@ const Output139 = z
 								z
 									.object({
 										do_not_disturb: z.boolean().nullable().optional(),
-										group_id: z.number().int().nullable().optional(),
+										group_id: dialpadInteger(z.number().int())
+											.nullable()
+											.optional(),
 										group_type: z
 											.enum([
 												'callcenter',
@@ -11977,18 +12746,20 @@ const Output139 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.nullable()
 											.optional(),
 										role: z
 											.enum(['admin', 'operator', 'supervisor'])
+											.or(z.string())
 											.nullable()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						image_url: z.string().nullable().optional(),
 						international_dialing_enabled: z.boolean().nullable().optional(),
 						is_admin: z.boolean().nullable().optional(),
@@ -12012,11 +12783,12 @@ const Output139 = z
 								'talk',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						location: z.string().nullable().optional(),
 						muted: z.boolean().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						on_duty_started: z.string().nullable().optional(),
 						on_duty_status: z
 							.enum([
@@ -12028,14 +12800,20 @@ const Output139 = z
 								'wrapup',
 								'wrapup-end',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						onboarding_completed: z.boolean(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
 						remote_service: z.string().nullable().optional(),
-						session_type: z.enum(['call', 'digital']).nullable().optional(),
+						session_type: z
+							.enum(['call', 'digital'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						status_message: z.string().nullable().optional(),
@@ -12046,25 +12824,25 @@ const Output139 = z
 								name: z.string().nullable().optional(),
 								voicemail_notifications_enabled: z.boolean().optional(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input140 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				operator_id: z.number().int(),
+				operator_id: dialpadInteger(z.number().int()),
 				operator_type: z.enum(['room', 'user']),
 				role: z.enum(['admin', 'operator']).nullable().optional(),
 			})
@@ -12075,20 +12853,21 @@ const Input140 = z
 
 const Output140 = z
 	.object({
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		is_on_duty: z.boolean().nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input141 = z
 	.object({
@@ -12113,21 +12892,23 @@ const Input141 = z
 const Output141 = z
 	.object({
 		access_link: z.string().nullable().optional(),
-		call_id: z.number().int().nullable().optional(),
-		created_by_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
+		created_by_id: dialpadInteger(z.number().int()).nullable().optional(),
 		date_added: z.string().nullable().optional(),
 		id: z.string().nullable().optional(),
 		item_id: z.string().nullable().optional(),
 		privacy: z
 			.enum(['admin', 'company', 'owner', 'public'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['admincallrecording', 'callrecording', 'voicemail'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input142 = z
 	.object({
@@ -12142,27 +12923,29 @@ const Input142 = z
 const Output142 = z
 	.object({
 		access_link: z.string().nullable().optional(),
-		call_id: z.number().int().nullable().optional(),
-		created_by_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
+		created_by_id: dialpadInteger(z.number().int()).nullable().optional(),
 		date_added: z.string().nullable().optional(),
 		id: z.string().nullable().optional(),
 		item_id: z.string().nullable().optional(),
 		privacy: z
 			.enum(['admin', 'company', 'owner', 'public'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['admincallrecording', 'callrecording', 'voicemail'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input143 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -12179,10 +12962,10 @@ const Input143 = z
 const Output143 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		deleted: z.boolean().nullable().optional(),
 		number: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		status: z
 			.enum([
 				'available',
@@ -12199,9 +12982,10 @@ const Output143 = z
 				'sip_trunk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -12216,20 +13000,22 @@ const Output143 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input144 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -12244,10 +13030,10 @@ const Input144 = z
 const Output144 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		deleted: z.boolean().nullable().optional(),
 		number: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		status: z
 			.enum([
 				'available',
@@ -12264,9 +13050,10 @@ const Output144 = z
 				'sip_trunk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -12281,20 +13068,22 @@ const Output144 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input145 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -12302,27 +13091,28 @@ const Input145 = z
 
 const Output145 = z
 	.object({
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		is_free: z.boolean().nullable().optional(),
 		is_on_duty: z.boolean().nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input146 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -12330,21 +13120,22 @@ const Input146 = z
 
 const Output146 = z
 	.object({
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		is_free: z.boolean().nullable().optional(),
 		is_on_duty: z.boolean().nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input147 = z
 	.object({
@@ -12359,28 +13150,30 @@ const Input147 = z
 const Output147 = z
 	.object({
 		access_link: z.string().nullable().optional(),
-		call_id: z.number().int().nullable().optional(),
-		created_by_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
+		created_by_id: dialpadInteger(z.number().int()).nullable().optional(),
 		date_added: z.string().nullable().optional(),
 		id: z.string().nullable().optional(),
 		item_id: z.string().nullable().optional(),
 		privacy: z
 			.enum(['admin', 'company', 'owner', 'public'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['admincallrecording', 'callrecording', 'voicemail'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input148 = z
 	.object({
 		body: z
 			.object({
 				name: z.string(),
-				office_id: z.number().int(),
+				office_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -12389,21 +13182,22 @@ const Input148 = z
 
 const Output148 = z
 	.object({
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		is_free: z.boolean().nullable().optional(),
 		is_on_duty: z.boolean().nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input149 = z
 	.object({
@@ -12424,21 +13218,23 @@ const Input149 = z
 const Output149 = z
 	.object({
 		access_link: z.string().nullable().optional(),
-		call_id: z.number().int().nullable().optional(),
-		created_by_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
+		created_by_id: dialpadInteger(z.number().int()).nullable().optional(),
 		date_added: z.string().nullable().optional(),
 		id: z.string().nullable().optional(),
 		item_id: z.string().nullable().optional(),
 		privacy: z
 			.enum(['admin', 'company', 'owner', 'public'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['admincallrecording', 'callrecording', 'voicemail'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input150 = z
 	.object({
@@ -12457,14 +13253,14 @@ const Output150 = z
 		expires_on: z.string().nullable().optional(),
 		pin: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input151 = z
 	.object({
 		query: z
 			.object({
 				cursor: z.string().optional(),
-				office_id: z.number().int().optional(),
+				office_id: dialpadInteger(z.number().int()).optional(),
 			})
 			.strict()
 			.optional(),
@@ -12478,33 +13274,34 @@ const Output151 = z
 			.array(
 				z
 					.object({
-						company_id: z.number().int().nullable().optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						country: z.string().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						image_url: z.string().nullable().optional(),
 						is_free: z.boolean().nullable().optional(),
 						is_on_duty: z.boolean().nullable().optional(),
 						name: z.string().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input152 = z
 	.object({
 		path: z
 			.object({
 				id: z.string(),
-				parent_id: z.number().int(),
+				parent_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -12518,14 +13315,14 @@ const Output152 = z
 		id: z.string().nullable().optional(),
 		mac_address: z.string().nullable().optional(),
 		name: z.string().nullable().optional(),
-		owner_id: z.number().int().nullable().optional(),
-		owner_type: z.enum(['room', 'user']).nullable().optional(),
+		owner_id: dialpadInteger(z.number().int()).nullable().optional(),
+		owner_type: z.enum(['room', 'user']).or(z.string()).nullable().optional(),
 		password: z.string().nullable().optional(),
 		phone_number: z.string().nullable().optional(),
-		port: z.number().int().nullable().optional(),
+		port: dialpadInteger(z.number().int()).nullable().optional(),
 		realm: z.string().nullable().optional(),
 		ring_notification: z.boolean().nullable().optional(),
-		sip_transport_type: z.enum(['tls']).nullable().optional(),
+		sip_transport_type: z.enum(['tls']).or(z.string()).nullable().optional(),
 		type: z
 			.enum([
 				'ata',
@@ -12545,16 +13342,17 @@ const Output152 = z
 				'tickiot',
 				'yealink',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input153 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -12569,27 +13367,28 @@ const Input153 = z
 
 const Output153 = z
 	.object({
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		is_free: z.boolean().nullable().optional(),
 		is_on_duty: z.boolean().nullable().optional(),
 		name: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input154 = z
 	.object({
 		path: z
 			.object({
-				parent_id: z.number().int(),
+				parent_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -12607,14 +13406,22 @@ const Output154 = z
 						id: z.string().nullable().optional(),
 						mac_address: z.string().nullable().optional(),
 						name: z.string().nullable().optional(),
-						owner_id: z.number().int().nullable().optional(),
-						owner_type: z.enum(['room', 'user']).nullable().optional(),
+						owner_id: dialpadInteger(z.number().int()).nullable().optional(),
+						owner_type: z
+							.enum(['room', 'user'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						password: z.string().nullable().optional(),
 						phone_number: z.string().nullable().optional(),
-						port: z.number().int().nullable().optional(),
+						port: dialpadInteger(z.number().int()).nullable().optional(),
 						realm: z.string().nullable().optional(),
 						ring_notification: z.boolean().nullable().optional(),
-						sip_transport_type: z.enum(['tls']).nullable().optional(),
+						sip_transport_type: z
+							.enum(['tls'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						type: z
 							.enum([
 								'ata',
@@ -12634,45 +13441,48 @@ const Output154 = z
 								'tickiot',
 								'yealink',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input155 = z
 	.object({
 		path: z
 			.object({
 				id: z.string(),
-				parent_id: z.number().int(),
+				parent_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
 	.strict();
 
-const Output155 = z.undefined();
+const Output155 =
+	// Dialpad documents no response body here; core passes through whatever arrives (nothing, '' or {}).
+	z.unknown();
 
 const Input156 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				at: z.number().int(),
+				at: dialpadInteger(z.number().int()),
 				coaching_group: z.boolean().nullable().optional(),
 				enabled: z.boolean().nullable().optional(),
-				endpoint_id: z.number().int(),
+				endpoint_id: dialpadInteger(z.number().int()),
 				frequency: z.enum(['daily', 'monthly', 'weekly']),
 				name: z.string(),
-				on_day: z.number().int(),
+				on_day: dialpadInteger(z.number().int()),
 				report_type: z.enum([
 					'call_logs',
 					'daily_statistics',
@@ -12680,7 +13490,7 @@ const Input156 = z
 					'user_statistics',
 					'voicemails',
 				]),
-				target_id: z.number().int().nullable().optional(),
+				target_id: dialpadInteger(z.number().int()).nullable().optional(),
 				target_type: z
 					.enum([
 						'callcenter',
@@ -12706,21 +13516,23 @@ const Input156 = z
 
 const Output156 = z
 	.object({
-		at: z.number().int().nullable().optional(),
+		at: dialpadInteger(z.number().int()).nullable().optional(),
 		coaching_group: z.boolean().nullable().optional(),
 		enabled: z.boolean().nullable().optional(),
 		frequency: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		on_day: z.number().int().nullable().optional(),
-		report_type: z.enum([
-			'call_logs',
-			'daily_statistics',
-			'recordings',
-			'user_statistics',
-			'voicemails',
-		]),
-		target_id: z.number().int().nullable().optional(),
+		on_day: dialpadInteger(z.number().int()).nullable().optional(),
+		report_type: z
+			.enum([
+				'call_logs',
+				'daily_statistics',
+				'recordings',
+				'user_statistics',
+				'voicemails',
+			])
+			.or(z.string()),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -12736,53 +13548,54 @@ const Output156 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		timezone: z.string().nullable().optional(),
 		webhook: z
 			.object({
 				hook_url: z.string().nullable().optional(),
-				id: z.number().int().nullable().optional(),
+				id: dialpadInteger(z.number().int()).nullable().optional(),
 				signature: z
 					.object({
 						algo: z.string().nullable().optional(),
 						secret: z.string().nullable().optional(),
 						type: z.string().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		websocket: z
 			.object({
-				id: z.number().int().nullable().optional(),
+				id: dialpadInteger(z.number().int()).nullable().optional(),
 				signature: z
 					.object({
 						algo: z.string().nullable().optional(),
 						secret: z.string().nullable().optional(),
 						type: z.string().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				websocket_url: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input157 = z
 	.object({
 		body: z
 			.object({
-				at: z.number().int(),
+				at: dialpadInteger(z.number().int()),
 				coaching_group: z.boolean().nullable().optional(),
 				enabled: z.boolean().nullable().optional(),
-				endpoint_id: z.number().int(),
+				endpoint_id: dialpadInteger(z.number().int()),
 				frequency: z.enum(['daily', 'monthly', 'weekly']),
 				name: z.string(),
-				on_day: z.number().int(),
+				on_day: dialpadInteger(z.number().int()),
 				report_type: z.enum([
 					'call_logs',
 					'daily_statistics',
@@ -12790,7 +13603,7 @@ const Input157 = z
 					'user_statistics',
 					'voicemails',
 				]),
-				target_id: z.number().int().nullable().optional(),
+				target_id: dialpadInteger(z.number().int()).nullable().optional(),
 				target_type: z
 					.enum([
 						'callcenter',
@@ -12816,21 +13629,23 @@ const Input157 = z
 
 const Output157 = z
 	.object({
-		at: z.number().int().nullable().optional(),
+		at: dialpadInteger(z.number().int()).nullable().optional(),
 		coaching_group: z.boolean().nullable().optional(),
 		enabled: z.boolean().nullable().optional(),
 		frequency: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		on_day: z.number().int().nullable().optional(),
-		report_type: z.enum([
-			'call_logs',
-			'daily_statistics',
-			'recordings',
-			'user_statistics',
-			'voicemails',
-		]),
-		target_id: z.number().int().nullable().optional(),
+		on_day: dialpadInteger(z.number().int()).nullable().optional(),
+		report_type: z
+			.enum([
+				'call_logs',
+				'daily_statistics',
+				'recordings',
+				'user_statistics',
+				'voicemails',
+			])
+			.or(z.string()),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -12846,47 +13661,48 @@ const Output157 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		timezone: z.string().nullable().optional(),
 		webhook: z
 			.object({
 				hook_url: z.string().nullable().optional(),
-				id: z.number().int().nullable().optional(),
+				id: dialpadInteger(z.number().int()).nullable().optional(),
 				signature: z
 					.object({
 						algo: z.string().nullable().optional(),
 						secret: z.string().nullable().optional(),
 						type: z.string().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		websocket: z
 			.object({
-				id: z.number().int().nullable().optional(),
+				id: dialpadInteger(z.number().int()).nullable().optional(),
 				signature: z
 					.object({
 						algo: z.string().nullable().optional(),
 						secret: z.string().nullable().optional(),
 						type: z.string().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				websocket_url: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input158 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -12894,21 +13710,23 @@ const Input158 = z
 
 const Output158 = z
 	.object({
-		at: z.number().int().nullable().optional(),
+		at: dialpadInteger(z.number().int()).nullable().optional(),
 		coaching_group: z.boolean().nullable().optional(),
 		enabled: z.boolean().nullable().optional(),
 		frequency: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		on_day: z.number().int().nullable().optional(),
-		report_type: z.enum([
-			'call_logs',
-			'daily_statistics',
-			'recordings',
-			'user_statistics',
-			'voicemails',
-		]),
-		target_id: z.number().int().nullable().optional(),
+		on_day: dialpadInteger(z.number().int()).nullable().optional(),
+		report_type: z
+			.enum([
+				'call_logs',
+				'daily_statistics',
+				'recordings',
+				'user_statistics',
+				'voicemails',
+			])
+			.or(z.string()),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -12924,41 +13742,42 @@ const Output158 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		timezone: z.string().nullable().optional(),
 		webhook: z
 			.object({
 				hook_url: z.string().nullable().optional(),
-				id: z.number().int().nullable().optional(),
+				id: dialpadInteger(z.number().int()).nullable().optional(),
 				signature: z
 					.object({
 						algo: z.string().nullable().optional(),
 						secret: z.string().nullable().optional(),
 						type: z.string().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		websocket: z
 			.object({
-				id: z.number().int().nullable().optional(),
+				id: dialpadInteger(z.number().int()).nullable().optional(),
 				signature: z
 					.object({
 						algo: z.string().nullable().optional(),
 						secret: z.string().nullable().optional(),
 						type: z.string().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				websocket_url: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input159 = z
 	.object({
@@ -12975,20 +13794,33 @@ const Output159 = z
 		download_url: z.string().nullable().optional(),
 		file_type: z.string().nullable().optional(),
 		reason: z.string().nullable().optional(),
-		status: z.enum(['complete', 'failed', 'processing']).nullable().optional(),
+		status: z
+			.enum(['complete', 'failed', 'processing'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input160 = z
 	.object({
 		body: z
 			.object({
-				days_ago_end: z.number().int().nullable().optional(),
-				days_ago_start: z.number().int().nullable().optional(),
-				graded_days_ago_end: z.number().int().nullable().optional(),
-				graded_days_ago_start: z.number().int().nullable().optional(),
-				scorecard_grader_id: z.number().int().nullable().optional(),
-				scorecard_ids: z.array(z.number().int()).nullable().optional(),
+				days_ago_end: dialpadInteger(z.number().int()).nullable().optional(),
+				days_ago_start: dialpadInteger(z.number().int()).nullable().optional(),
+				graded_days_ago_end: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				graded_days_ago_start: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				scorecard_grader_id: dialpadInteger(z.number().int())
+					.nullable()
+					.optional(),
+				scorecard_ids: z
+					.array(dialpadInteger(z.number().int()))
+					.nullable()
+					.optional(),
 				scorecards_type: z.enum([
 					'scorecard_export_agent_leaderboard',
 					'scorecard_export_calls',
@@ -12997,7 +13829,7 @@ const Input160 = z
 					'scorecard_export_teamgroup_leaderboard',
 				]),
 				send_to: z.string().nullable().optional(),
-				target_id: z.number().int().nullable().optional(),
+				target_id: dialpadInteger(z.number().int()).nullable().optional(),
 				target_type: z
 					.enum(['callcenter', 'coachingteam', 'office', 'unknown', 'user'])
 					.nullable()
@@ -13012,9 +13844,13 @@ const Input160 = z
 const Output160 = z
 	.object({
 		request_id: z.string().nullable().optional(),
-		status: z.enum(['complete', 'failed', 'processing']).nullable().optional(),
+		status: z
+			.enum(['complete', 'failed', 'processing'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input161 = z
 	.object({
@@ -13032,32 +13868,38 @@ const Output161 = z
 		date_created: z.string().nullable().optional(),
 		date_modified: z.string().nullable().optional(),
 		has_ai_question: z.boolean().nullable().optional(),
-		id: z.number().int(),
+		id: dialpadInteger(z.number().int()),
 		name: z.string(),
 		questions: z
 			.array(
 				z
 					.object({
-						id: z.number().int(),
-						options: z.object({}).strict().nullable().optional(),
+						id: dialpadInteger(z.number().int()),
+						options: z.object({}).loose().nullable().optional(),
 						text: z.string(),
-						type: z.enum([
-							'likertAgreement',
-							'likertFrequency',
-							'likertImportance',
-							'likertLikelihood',
-							'likertQuality',
-							'multipleChoice',
-							'yesNo',
-						]),
+						type: z
+							.enum([
+								'likertAgreement',
+								'likertFrequency',
+								'likertImportance',
+								'likertLikelihood',
+								'likertQuality',
+								'multipleChoice',
+								'yesNo',
+							])
+							.or(z.string()),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		state: z.enum(['active', 'archived', 'draft']).nullable().optional(),
+		state: z
+			.enum(['active', 'archived', 'draft'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input162 = z
 	.object({
@@ -13065,7 +13907,7 @@ const Input162 = z
 			.object({
 				cursor: z.string().optional(),
 				state: z.enum(['active', 'archived', 'draft']).optional(),
-				target_id: z.number().int().optional(),
+				target_id: dialpadInteger(z.number().int()).optional(),
 				target_type: z
 					.enum(['callcenter', 'coachingteam', 'office', 'unknown'])
 					.optional(),
@@ -13086,46 +13928,49 @@ const Output162 = z
 						date_created: z.string().nullable().optional(),
 						date_modified: z.string().nullable().optional(),
 						has_ai_question: z.boolean().nullable().optional(),
-						id: z.number().int(),
+						id: dialpadInteger(z.number().int()),
 						name: z.string(),
 						questions: z
 							.array(
 								z
 									.object({
-										id: z.number().int(),
-										options: z.object({}).strict().nullable().optional(),
+										id: dialpadInteger(z.number().int()),
+										options: z.object({}).loose().nullable().optional(),
 										text: z.string(),
-										type: z.enum([
-											'likertAgreement',
-											'likertFrequency',
-											'likertImportance',
-											'likertLikelihood',
-											'likertQuality',
-											'multipleChoice',
-											'yesNo',
-										]),
+										type: z
+											.enum([
+												'likertAgreement',
+												'likertFrequency',
+												'likertImportance',
+												'likertLikelihood',
+												'likertQuality',
+												'multipleChoice',
+												'yesNo',
+											])
+											.or(z.string()),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
 						state: z
 							.enum(['active', 'archived', 'draft'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input163 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -13133,21 +13978,23 @@ const Input163 = z
 
 const Output163 = z
 	.object({
-		at: z.number().int().nullable().optional(),
+		at: dialpadInteger(z.number().int()).nullable().optional(),
 		coaching_group: z.boolean().nullable().optional(),
 		enabled: z.boolean().nullable().optional(),
 		frequency: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		name: z.string().nullable().optional(),
-		on_day: z.number().int().nullable().optional(),
-		report_type: z.enum([
-			'call_logs',
-			'daily_statistics',
-			'recordings',
-			'user_statistics',
-			'voicemails',
-		]),
-		target_id: z.number().int().nullable().optional(),
+		on_day: dialpadInteger(z.number().int()).nullable().optional(),
+		report_type: z
+			.enum([
+				'call_logs',
+				'daily_statistics',
+				'recordings',
+				'user_statistics',
+				'voicemails',
+			])
+			.or(z.string()),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -13163,41 +14010,42 @@ const Output163 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		timezone: z.string().nullable().optional(),
 		webhook: z
 			.object({
 				hook_url: z.string().nullable().optional(),
-				id: z.number().int().nullable().optional(),
+				id: dialpadInteger(z.number().int()).nullable().optional(),
 				signature: z
 					.object({
 						algo: z.string().nullable().optional(),
 						secret: z.string().nullable().optional(),
 						type: z.string().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		websocket: z
 			.object({
-				id: z.number().int().nullable().optional(),
+				id: dialpadInteger(z.number().int()).nullable().optional(),
 				signature: z
 					.object({
 						algo: z.string().nullable().optional(),
 						secret: z.string().nullable().optional(),
 						type: z.string().nullable().optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				websocket_url: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input164 = z
 	.object({
@@ -13217,21 +14065,23 @@ const Output164 = z
 			.array(
 				z
 					.object({
-						at: z.number().int().nullable().optional(),
+						at: dialpadInteger(z.number().int()).nullable().optional(),
 						coaching_group: z.boolean().nullable().optional(),
 						enabled: z.boolean().nullable().optional(),
 						frequency: z.string().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						name: z.string().nullable().optional(),
-						on_day: z.number().int().nullable().optional(),
-						report_type: z.enum([
-							'call_logs',
-							'daily_statistics',
-							'recordings',
-							'user_statistics',
-							'voicemails',
-						]),
-						target_id: z.number().int().nullable().optional(),
+						on_day: dialpadInteger(z.number().int()).nullable().optional(),
+						report_type: z
+							.enum([
+								'call_logs',
+								'daily_statistics',
+								'recordings',
+								'user_statistics',
+								'voicemails',
+							])
+							.or(z.string()),
+						target_id: dialpadInteger(z.number().int()).nullable().optional(),
 						target_type: z
 							.enum([
 								'callcenter',
@@ -13247,46 +14097,47 @@ const Output164 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						timezone: z.string().nullable().optional(),
 						webhook: z
 							.object({
 								hook_url: z.string().nullable().optional(),
-								id: z.number().int().nullable().optional(),
+								id: dialpadInteger(z.number().int()).nullable().optional(),
 								signature: z
 									.object({
 										algo: z.string().nullable().optional(),
 										secret: z.string().nullable().optional(),
 										type: z.string().nullable().optional(),
 									})
-									.strict()
+									.loose()
 									.optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						websocket: z
 							.object({
-								id: z.number().int().nullable().optional(),
+								id: dialpadInteger(z.number().int()).nullable().optional(),
 								signature: z
 									.object({
 										algo: z.string().nullable().optional(),
 										secret: z.string().nullable().optional(),
 										type: z.string().nullable().optional(),
 									})
-									.strict()
+									.loose()
 									.optional(),
 								websocket_url: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input165 = z
 	.object({
@@ -13294,12 +14145,12 @@ const Input165 = z
 			.object({
 				coaching_group: z.boolean().nullable().optional(),
 				coaching_team: z.boolean().nullable().optional(),
-				days_ago_end: z.number().int().nullable().optional(),
-				days_ago_start: z.number().int().nullable().optional(),
+				days_ago_end: dialpadInteger(z.number().int()).nullable().optional(),
+				days_ago_start: dialpadInteger(z.number().int()).nullable().optional(),
 				export_type: z.enum(['records', 'stats']),
 				group_by: z.enum(['date', 'group', 'user']).nullable().optional(),
 				is_today: z.boolean().nullable().optional(),
-				office_id: z.number().int().nullable().optional(),
+				office_id: dialpadInteger(z.number().int()).nullable().optional(),
 				stat_type: z.enum([
 					'calls',
 					'csat',
@@ -13310,7 +14161,7 @@ const Input165 = z
 					'texts',
 					'voicemails',
 				]),
-				target_id: z.number().int().nullable().optional(),
+				target_id: dialpadInteger(z.number().int()).nullable().optional(),
 				target_type: z
 					.enum([
 						'callcenter',
@@ -13337,7 +14188,7 @@ const Output165 = z
 		already_started: z.boolean().nullable().optional(),
 		request_id: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input166 = z
 	.object({
@@ -13354,9 +14205,13 @@ const Output166 = z
 		download_url: z.string().nullable().optional(),
 		file_type: z.string().nullable().optional(),
 		reason: z.string().nullable().optional(),
-		status: z.enum(['complete', 'failed', 'processing']).nullable().optional(),
+		status: z
+			.enum(['complete', 'failed', 'processing'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input167 = z
 	.object({
@@ -13366,14 +14221,14 @@ const Input167 = z
 				from_number: z.string().nullable().optional(),
 				infer_country_code: z.boolean().nullable().optional(),
 				media: z.string().nullable().optional(),
-				sender_group_id: z.number().int().nullable().optional(),
+				sender_group_id: dialpadInteger(z.number().int()).nullable().optional(),
 				sender_group_type: z
 					.enum(['callcenter', 'department', 'office'])
 					.nullable()
 					.optional(),
 				text: z.string().nullable().optional(),
 				to_numbers: z.array(z.string()).nullable().optional(),
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
 			.strict()
 			.optional(),
@@ -13424,11 +14279,16 @@ const Output167 = z
 				'web',
 				'yealink',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		direction: z.enum(['inbound', 'outbound']).nullable().optional(),
+		direction: z
+			.enum(['inbound', 'outbound'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		from_number: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		message_delivery_result: z
 			.enum([
 				'accepted',
@@ -13442,13 +14302,15 @@ const Output167 = z
 				'rejected_spam_internal',
 				'time_out',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		message_status: z
 			.enum(['failed', 'pending', 'success'])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -13463,13 +14325,14 @@ const Output167 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		text: z.string().nullable().optional(),
 		to_numbers: z.array(z.string()).nullable().optional(),
-		user_id: z.number().int().nullable().optional(),
+		user_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input168 = z
 	.object({
@@ -13481,7 +14344,7 @@ const Input168 = z
 		body: z
 			.object({
 				custom_data: z.string().nullable().optional(),
-				group_id: z.number().int().nullable().optional(),
+				group_id: dialpadInteger(z.number().int()).nullable().optional(),
 				group_type: z
 					.enum(['callcenter', 'department', 'office'])
 					.nullable()
@@ -13545,20 +14408,21 @@ const Output168 = z
 						'web',
 						'yealink',
 					])
+					.or(z.string())
 					.nullable()
 					.optional(),
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input169 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -13601,10 +14465,10 @@ const Output169 = z
 	.object({
 		call_state: z.string().nullable().optional(),
 		enable_vi: z.boolean().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		vi_locale: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input170 = z
 	.object({
@@ -13665,17 +14529,18 @@ const Output170 = z
 				'web',
 				'yealink',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		user_id: z.number().int().nullable().optional(),
+		user_id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input171 = z
 	.object({
 		path: z
 			.object({
-				call_id: z.number().int(),
+				call_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -13683,7 +14548,7 @@ const Input171 = z
 
 const Output171 = z
 	.object({
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		lines: z
 			.array(
 				z
@@ -13700,16 +14565,17 @@ const Output171 = z
 								'real_time_moment',
 								'transcript',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
-						user_id: z.number().int().nullable().optional(),
+						user_id: dialpadInteger(z.number().int()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input172 = z
 	.object({
@@ -13777,22 +14643,23 @@ const Output172 = z
 								'web',
 								'yealink',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
-						user_id: z.number().int().nullable().optional(),
+						user_id: dialpadInteger(z.number().int()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input173 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -13809,16 +14676,16 @@ const Input173 = z
 const Output173 = z
 	.object({
 		call_state: z.string().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		is_recording: z.boolean().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input174 = z
 	.object({
 		path: z
 			.object({
-				call_id: z.number().int(),
+				call_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -13826,10 +14693,10 @@ const Input174 = z
 
 const Output174 = z
 	.object({
-		call_id: z.number().int().nullable().optional(),
+		call_id: dialpadInteger(z.number().int()).nullable().optional(),
 		url: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input175 = z
 	.object({
@@ -13858,29 +14725,31 @@ const Output175 = z
 						caller_id: z.string().nullable().optional(),
 						display_name: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		id: z.number().int(),
+		id: dialpadInteger(z.number().int()),
 		office_main_line: z.string().nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		primary_phone: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input176 = z
 	.object({
 		path: z
 			.object({
 				id: z.string(),
-				parent_id: z.number().int(),
+				parent_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
 	.strict();
 
-const Output176 = z.undefined();
+const Output176 =
+	// Dialpad documents no response body here; core passes through whatever arrives (nothing, '' or {}).
+	z.unknown();
 
 const Input177 = z
 	.object({
@@ -13903,23 +14772,23 @@ const Output177 = z
 						caller_id: z.string().nullable().optional(),
 						display_name: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		id: z.number().int(),
+		id: dialpadInteger(z.number().int()),
 		office_main_line: z.string().nullable().optional(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		primary_phone: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input178 = z
 	.object({
 		path: z
 			.object({
 				id: z.string(),
-				parent_id: z.number().int(),
+				parent_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -13933,14 +14802,14 @@ const Output178 = z
 		id: z.string().nullable().optional(),
 		mac_address: z.string().nullable().optional(),
 		name: z.string().nullable().optional(),
-		owner_id: z.number().int().nullable().optional(),
-		owner_type: z.enum(['room', 'user']).nullable().optional(),
+		owner_id: dialpadInteger(z.number().int()).nullable().optional(),
+		owner_type: z.enum(['room', 'user']).or(z.string()).nullable().optional(),
 		password: z.string().nullable().optional(),
 		phone_number: z.string().nullable().optional(),
-		port: z.number().int().nullable().optional(),
+		port: dialpadInteger(z.number().int()).nullable().optional(),
 		realm: z.string().nullable().optional(),
 		ring_notification: z.boolean().nullable().optional(),
-		sip_transport_type: z.enum(['tls']).nullable().optional(),
+		sip_transport_type: z.enum(['tls']).or(z.string()).nullable().optional(),
 		type: z
 			.enum([
 				'ata',
@@ -13960,16 +14829,17 @@ const Output178 = z
 				'tickiot',
 				'yealink',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input179 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -13996,7 +14866,7 @@ const Output179 = z
 		state: z.string().nullable().optional(),
 		zip: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input180 = z
 	.object({
@@ -14008,7 +14878,7 @@ const Input180 = z
 		body: z
 			.object({
 				do_not_disturb: z.boolean(),
-				group_id: z.number().int().nullable().optional(),
+				group_id: dialpadInteger(z.number().int()).nullable().optional(),
 				group_type: z
 					.enum(['callcenter', 'department', 'office'])
 					.nullable()
@@ -14022,20 +14892,21 @@ const Input180 = z
 const Output180 = z
 	.object({
 		do_not_disturb: z.boolean().nullable().optional(),
-		group_id: z.number().int().nullable().optional(),
+		group_id: dialpadInteger(z.number().int()).nullable().optional(),
 		group_type: z
 			.enum(['callcenter', 'department', 'office'])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input181 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -14050,10 +14921,10 @@ const Input181 = z
 const Output181 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		deleted: z.boolean().nullable().optional(),
 		number: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		status: z
 			.enum([
 				'available',
@@ -14070,9 +14941,10 @@ const Output181 = z
 				'sip_trunk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -14087,20 +14959,22 @@ const Output181 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input182 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -14117,10 +14991,10 @@ const Input182 = z
 const Output182 = z
 	.object({
 		area_code: z.string().nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		deleted: z.boolean().nullable().optional(),
 		number: z.string().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		status: z
 			.enum([
 				'available',
@@ -14137,9 +15011,10 @@ const Output182 = z
 				'sip_trunk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
-		target_id: z.number().int().nullable().optional(),
+		target_id: dialpadInteger(z.number().int()).nullable().optional(),
 		target_type: z
 			.enum([
 				'callcenter',
@@ -14154,14 +15029,16 @@ const Output182 = z
 				'unknown',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		type: z
 			.enum(['free', 'local', 'mobile', 'softbank', 'tollfree'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input183 = z
 	.object({
@@ -14180,24 +15057,24 @@ const Output183 = z
 				z
 					.object({
 						caller_id: z.string().nullable().optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						image_url: z.string().nullable().optional(),
 						name: z.string().nullable().optional(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
 						type: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input184 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -14212,13 +15089,13 @@ const Output184 = z
 		state: z.string().nullable().optional(),
 		zip: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input185 = z
 	.object({
 		path: z
 			.object({
-				parent_id: z.number().int(),
+				parent_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -14236,14 +15113,22 @@ const Output185 = z
 						id: z.string().nullable().optional(),
 						mac_address: z.string().nullable().optional(),
 						name: z.string().nullable().optional(),
-						owner_id: z.number().int().nullable().optional(),
-						owner_type: z.enum(['room', 'user']).nullable().optional(),
+						owner_id: dialpadInteger(z.number().int()).nullable().optional(),
+						owner_type: z
+							.enum(['room', 'user'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						password: z.string().nullable().optional(),
 						phone_number: z.string().nullable().optional(),
-						port: z.number().int().nullable().optional(),
+						port: dialpadInteger(z.number().int()).nullable().optional(),
 						realm: z.string().nullable().optional(),
 						ring_notification: z.boolean().nullable().optional(),
-						sip_transport_type: z.enum(['tls']).nullable().optional(),
+						sip_transport_type: z
+							.enum(['tls'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						type: z
 							.enum([
 								'ata',
@@ -14263,21 +15148,22 @@ const Output185 = z
 								'tickiot',
 								'yealink',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input186 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -14340,14 +15226,15 @@ const Output186 = z
 						'web',
 						'yealink',
 					])
+					.or(z.string())
 					.nullable()
 					.optional(),
-				user_id: z.number().int().nullable().optional(),
+				user_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input187 = z
 	.object({
@@ -14361,8 +15248,11 @@ const Input187 = z
 
 const Output187 = z
 	.object({
-		admin_office_ids: z.array(z.number().int()).nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		admin_office_ids: z
+			.array(dialpadInteger(z.number().int()))
+			.nullable()
+			.optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
 		date_active: z.string().nullable().optional(),
 		date_added: z.string().nullable().optional(),
@@ -14381,7 +15271,7 @@ const Output187 = z
 				z
 					.object({
 						do_not_disturb: z.boolean().nullable().optional(),
-						group_id: z.number().int().nullable().optional(),
+						group_id: dialpadInteger(z.number().int()).nullable().optional(),
 						group_type: z
 							.enum([
 								'callcenter',
@@ -14396,18 +15286,20 @@ const Output187 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						role: z
 							.enum(['admin', 'operator', 'supervisor'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		international_dialing_enabled: z.boolean().nullable().optional(),
 		is_admin: z.boolean().nullable().optional(),
@@ -14431,11 +15323,12 @@ const Output187 = z
 				'talk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		location: z.string().nullable().optional(),
 		muted: z.boolean().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		on_duty_started: z.string().nullable().optional(),
 		on_duty_status: z
 			.enum([
@@ -14447,14 +15340,20 @@ const Output187 = z
 				'wrapup',
 				'wrapup-end',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		onboarding_completed: z.boolean(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		remote_service: z.string().nullable().optional(),
-		session_type: z.enum(['call', 'digital']).nullable().optional(),
+		session_type: z
+			.enum(['call', 'digital'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		status_message: z.string().nullable().optional(),
@@ -14465,9 +15364,9 @@ const Output187 = z
 				name: z.string().nullable().optional(),
 				voicemail_notifications_enabled: z.boolean().optional(),
 			})
-			.strict(),
+			.loose(),
 	})
-	.strict();
+	.loose();
 
 const Input188 = z
 	.object({
@@ -14481,8 +15380,11 @@ const Input188 = z
 
 const Output188 = z
 	.object({
-		admin_office_ids: z.array(z.number().int()).nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		admin_office_ids: z
+			.array(dialpadInteger(z.number().int()))
+			.nullable()
+			.optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
 		date_active: z.string().nullable().optional(),
 		date_added: z.string().nullable().optional(),
@@ -14501,7 +15403,7 @@ const Output188 = z
 				z
 					.object({
 						do_not_disturb: z.boolean().nullable().optional(),
-						group_id: z.number().int().nullable().optional(),
+						group_id: dialpadInteger(z.number().int()).nullable().optional(),
 						group_type: z
 							.enum([
 								'callcenter',
@@ -14516,18 +15418,20 @@ const Output188 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						role: z
 							.enum(['admin', 'operator', 'supervisor'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		international_dialing_enabled: z.boolean().nullable().optional(),
 		is_admin: z.boolean().nullable().optional(),
@@ -14551,11 +15455,12 @@ const Output188 = z
 				'talk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		location: z.string().nullable().optional(),
 		muted: z.boolean().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		on_duty_started: z.string().nullable().optional(),
 		on_duty_status: z
 			.enum([
@@ -14567,14 +15472,20 @@ const Output188 = z
 				'wrapup',
 				'wrapup-end',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		onboarding_completed: z.boolean(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		remote_service: z.string().nullable().optional(),
-		session_type: z.enum(['call', 'digital']).nullable().optional(),
+		session_type: z
+			.enum(['call', 'digital'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		status_message: z.string().nullable().optional(),
@@ -14585,9 +15496,9 @@ const Output188 = z
 				name: z.string().nullable().optional(),
 				voicemail_notifications_enabled: z.boolean().optional(),
 			})
-			.strict(),
+			.loose(),
 	})
-	.strict();
+	.loose();
 
 const Input189 = z
 	.object({
@@ -14623,8 +15534,11 @@ const Output189 = z
 			.array(
 				z
 					.object({
-						admin_office_ids: z.array(z.number().int()).nullable().optional(),
-						company_id: z.number().int().nullable().optional(),
+						admin_office_ids: z
+							.array(dialpadInteger(z.number().int()))
+							.nullable()
+							.optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						country: z.string().nullable().optional(),
 						date_active: z.string().nullable().optional(),
 						date_added: z.string().nullable().optional(),
@@ -14643,7 +15557,9 @@ const Output189 = z
 								z
 									.object({
 										do_not_disturb: z.boolean().nullable().optional(),
-										group_id: z.number().int().nullable().optional(),
+										group_id: dialpadInteger(z.number().int())
+											.nullable()
+											.optional(),
 										group_type: z
 											.enum([
 												'callcenter',
@@ -14658,18 +15574,20 @@ const Output189 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.nullable()
 											.optional(),
 										role: z
 											.enum(['admin', 'operator', 'supervisor'])
+											.or(z.string())
 											.nullable()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						image_url: z.string().nullable().optional(),
 						international_dialing_enabled: z.boolean().nullable().optional(),
 						is_admin: z.boolean().nullable().optional(),
@@ -14693,11 +15611,12 @@ const Output189 = z
 								'talk',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						location: z.string().nullable().optional(),
 						muted: z.boolean().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						on_duty_started: z.string().nullable().optional(),
 						on_duty_status: z
 							.enum([
@@ -14709,14 +15628,20 @@ const Output189 = z
 								'wrapup',
 								'wrapup-end',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						onboarding_completed: z.boolean(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
 						remote_service: z.string().nullable().optional(),
-						session_type: z.enum(['call', 'digital']).nullable().optional(),
+						session_type: z
+							.enum(['call', 'digital'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						status_message: z.string().nullable().optional(),
@@ -14727,14 +15652,14 @@ const Output189 = z
 								name: z.string().nullable().optional(),
 								voicemail_notifications_enabled: z.boolean().optional(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input190 = z
 	.object({
@@ -14745,7 +15670,10 @@ const Input190 = z
 			.strict(),
 		body: z
 			.object({
-				admin_office_ids: z.array(z.number().int()).nullable().optional(),
+				admin_office_ids: z
+					.array(dialpadInteger(z.number().int()))
+					.nullable()
+					.optional(),
 				emails: z.array(z.string()).nullable().optional(),
 				extension: z.string().nullable().optional(),
 				first_name: z.string().nullable().optional(),
@@ -14769,7 +15697,7 @@ const Input190 = z
 					])
 					.nullable()
 					.optional(),
-				office_id: z.number().int().nullable().optional(),
+				office_id: dialpadInteger(z.number().int()).nullable().optional(),
 				phone_numbers: z.array(z.string()).nullable().optional(),
 				presence_status: z
 					.object({
@@ -14789,8 +15717,11 @@ const Input190 = z
 
 const Output190 = z
 	.object({
-		admin_office_ids: z.array(z.number().int()).nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		admin_office_ids: z
+			.array(dialpadInteger(z.number().int()))
+			.nullable()
+			.optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
 		date_active: z.string().nullable().optional(),
 		date_added: z.string().nullable().optional(),
@@ -14809,7 +15740,7 @@ const Output190 = z
 				z
 					.object({
 						do_not_disturb: z.boolean().nullable().optional(),
-						group_id: z.number().int().nullable().optional(),
+						group_id: dialpadInteger(z.number().int()).nullable().optional(),
 						group_type: z
 							.enum([
 								'callcenter',
@@ -14824,18 +15755,20 @@ const Output190 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						role: z
 							.enum(['admin', 'operator', 'supervisor'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		international_dialing_enabled: z.boolean().nullable().optional(),
 		is_admin: z.boolean().nullable().optional(),
@@ -14859,11 +15792,12 @@ const Output190 = z
 				'talk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		location: z.string().nullable().optional(),
 		muted: z.boolean().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		on_duty_started: z.string().nullable().optional(),
 		on_duty_status: z
 			.enum([
@@ -14875,14 +15809,20 @@ const Output190 = z
 				'wrapup',
 				'wrapup-end',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		onboarding_completed: z.boolean(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		remote_service: z.string().nullable().optional(),
-		session_type: z.enum(['call', 'digital']).nullable().optional(),
+		session_type: z
+			.enum(['call', 'digital'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		status_message: z.string().nullable().optional(),
@@ -14893,9 +15833,9 @@ const Output190 = z
 				name: z.string().nullable().optional(),
 				voicemail_notifications_enabled: z.boolean().optional(),
 			})
-			.strict(),
+			.loose(),
 	})
-	.strict();
+	.loose();
 
 const Input191 = z
 	.object({
@@ -14919,7 +15859,7 @@ const Input191 = z
 					])
 					.nullable()
 					.optional(),
-				office_id: z.number().int(),
+				office_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -14928,8 +15868,11 @@ const Input191 = z
 
 const Output191 = z
 	.object({
-		admin_office_ids: z.array(z.number().int()).nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		admin_office_ids: z
+			.array(dialpadInteger(z.number().int()))
+			.nullable()
+			.optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
 		date_active: z.string().nullable().optional(),
 		date_added: z.string().nullable().optional(),
@@ -14948,7 +15891,7 @@ const Output191 = z
 				z
 					.object({
 						do_not_disturb: z.boolean().nullable().optional(),
-						group_id: z.number().int().nullable().optional(),
+						group_id: dialpadInteger(z.number().int()).nullable().optional(),
 						group_type: z
 							.enum([
 								'callcenter',
@@ -14963,18 +15906,20 @@ const Output191 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						role: z
 							.enum(['admin', 'operator', 'supervisor'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		international_dialing_enabled: z.boolean().nullable().optional(),
 		is_admin: z.boolean().nullable().optional(),
@@ -14998,11 +15943,12 @@ const Output191 = z
 				'talk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		location: z.string().nullable().optional(),
 		muted: z.boolean().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		on_duty_started: z.string().nullable().optional(),
 		on_duty_status: z
 			.enum([
@@ -15014,14 +15960,20 @@ const Output191 = z
 				'wrapup',
 				'wrapup-end',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		onboarding_completed: z.boolean(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		remote_service: z.string().nullable().optional(),
-		session_type: z.enum(['call', 'digital']).nullable().optional(),
+		session_type: z
+			.enum(['call', 'digital'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		status_message: z.string().nullable().optional(),
@@ -15032,9 +15984,9 @@ const Output191 = z
 				name: z.string().nullable().optional(),
 				voicemail_notifications_enabled: z.boolean().optional(),
 			})
-			.strict(),
+			.loose(),
 	})
-	.strict();
+	.loose();
 
 const Input192 = z
 	.object({
@@ -15045,7 +15997,7 @@ const Input192 = z
 			.strict(),
 		body: z
 			.object({
-				office_id: z.number().int().nullable().optional(),
+				office_id: dialpadInteger(z.number().int()).nullable().optional(),
 			})
 			.strict()
 			.optional(),
@@ -15054,8 +16006,11 @@ const Input192 = z
 
 const Output192 = z
 	.object({
-		admin_office_ids: z.array(z.number().int()).nullable().optional(),
-		company_id: z.number().int().nullable().optional(),
+		admin_office_ids: z
+			.array(dialpadInteger(z.number().int()))
+			.nullable()
+			.optional(),
+		company_id: dialpadInteger(z.number().int()).nullable().optional(),
 		country: z.string().nullable().optional(),
 		date_active: z.string().nullable().optional(),
 		date_added: z.string().nullable().optional(),
@@ -15074,7 +16029,7 @@ const Output192 = z
 				z
 					.object({
 						do_not_disturb: z.boolean().nullable().optional(),
-						group_id: z.number().int().nullable().optional(),
+						group_id: dialpadInteger(z.number().int()).nullable().optional(),
 						group_type: z
 							.enum([
 								'callcenter',
@@ -15089,18 +16044,20 @@ const Output192 = z
 								'unknown',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						role: z
 							.enum(['admin', 'operator', 'supervisor'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		image_url: z.string().nullable().optional(),
 		international_dialing_enabled: z.boolean().nullable().optional(),
 		is_admin: z.boolean().nullable().optional(),
@@ -15124,11 +16081,12 @@ const Output192 = z
 				'talk',
 				'user',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		location: z.string().nullable().optional(),
 		muted: z.boolean().nullable().optional(),
-		office_id: z.number().int().nullable().optional(),
+		office_id: dialpadInteger(z.number().int()).nullable().optional(),
 		on_duty_started: z.string().nullable().optional(),
 		on_duty_status: z
 			.enum([
@@ -15140,14 +16098,20 @@ const Output192 = z
 				'wrapup',
 				'wrapup-end',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		onboarding_completed: z.boolean(),
 		phone_numbers: z.array(z.string()).nullable().optional(),
 		remote_service: z.string().nullable().optional(),
-		session_type: z.enum(['call', 'digital']).nullable().optional(),
+		session_type: z
+			.enum(['call', 'digital'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		state: z
 			.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		status_message: z.string().nullable().optional(),
@@ -15158,9 +16122,9 @@ const Output192 = z
 				name: z.string().nullable().optional(),
 				voicemail_notifications_enabled: z.boolean().optional(),
 			})
-			.strict(),
+			.loose(),
 	})
-	.strict();
+	.loose();
 
 const Input193 = z
 	.object({
@@ -15187,7 +16151,7 @@ const Input193 = z
 								])
 								.nullable()
 								.optional(),
-							office_id: z.number().int(),
+							office_id: dialpadInteger(z.number().int()),
 						})
 						.strict(),
 				),
@@ -15216,19 +16180,22 @@ const Output193 = z
 										'office_not_active',
 										'user_exists',
 									])
+									.or(z.string())
 									.nullable()
 									.optional(),
 								message: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						user: z
 							.object({
 								admin_office_ids: z
-									.array(z.number().int())
+									.array(dialpadInteger(z.number().int()))
 									.nullable()
 									.optional(),
-								company_id: z.number().int().nullable().optional(),
+								company_id: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
 								country: z.string().nullable().optional(),
 								date_active: z.string().nullable().optional(),
 								date_added: z.string().nullable().optional(),
@@ -15247,7 +16214,9 @@ const Output193 = z
 										z
 											.object({
 												do_not_disturb: z.boolean().nullable().optional(),
-												group_id: z.number().int().nullable().optional(),
+												group_id: dialpadInteger(z.number().int())
+													.nullable()
+													.optional(),
 												group_type: z
 													.enum([
 														'callcenter',
@@ -15262,18 +16231,20 @@ const Output193 = z
 														'unknown',
 														'user',
 													])
+													.or(z.string())
 													.nullable()
 													.optional(),
 												role: z
 													.enum(['admin', 'operator', 'supervisor'])
+													.or(z.string())
 													.nullable()
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 									)
 									.nullable()
 									.optional(),
-								id: z.number().int().nullable().optional(),
+								id: dialpadInteger(z.number().int()).nullable().optional(),
 								image_url: z.string().nullable().optional(),
 								international_dialing_enabled: z
 									.boolean()
@@ -15300,11 +16271,14 @@ const Output193 = z
 										'talk',
 										'user',
 									])
+									.or(z.string())
 									.nullable()
 									.optional(),
 								location: z.string().nullable().optional(),
 								muted: z.boolean().nullable().optional(),
-								office_id: z.number().int().nullable().optional(),
+								office_id: dialpadInteger(z.number().int())
+									.nullable()
+									.optional(),
 								on_duty_started: z.string().nullable().optional(),
 								on_duty_status: z
 									.enum([
@@ -15316,12 +16290,17 @@ const Output193 = z
 										'wrapup',
 										'wrapup-end',
 									])
+									.or(z.string())
 									.nullable()
 									.optional(),
 								onboarding_completed: z.boolean(),
 								phone_numbers: z.array(z.string()).nullable().optional(),
 								remote_service: z.string().nullable().optional(),
-								session_type: z.enum(['call', 'digital']).nullable().optional(),
+								session_type: z
+									.enum(['call', 'digital'])
+									.or(z.string())
+									.nullable()
+									.optional(),
 								state: z
 									.enum([
 										'active',
@@ -15330,6 +16309,7 @@ const Output193 = z
 										'pending',
 										'suspended',
 									])
+									.or(z.string())
 									.nullable()
 									.optional(),
 								status_message: z.string().nullable().optional(),
@@ -15340,28 +16320,28 @@ const Output193 = z
 										name: z.string().nullable().optional(),
 										voicemail_notifications_enabled: z.boolean().optional(),
 									})
-									.strict(),
+									.loose(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input194 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
-				expiration: z.number().int().nullable().optional(),
+				expiration: dialpadInteger(z.number().int()).nullable().optional(),
 				status_message: z.string().nullable().optional(),
 			})
 			.strict()
@@ -15371,11 +16351,11 @@ const Input194 = z
 
 const Output194 = z
 	.object({
-		expiration: z.number().int().nullable().optional(),
-		id: z.number().int().nullable().optional(),
+		expiration: dialpadInteger(z.number().int()).nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		status_message: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input195 = z
 	.object({
@@ -15396,8 +16376,11 @@ const Output195 = z
 			.array(
 				z
 					.object({
-						admin_office_ids: z.array(z.number().int()).nullable().optional(),
-						company_id: z.number().int().nullable().optional(),
+						admin_office_ids: z
+							.array(dialpadInteger(z.number().int()))
+							.nullable()
+							.optional(),
+						company_id: dialpadInteger(z.number().int()).nullable().optional(),
 						country: z.string().nullable().optional(),
 						date_active: z.string().nullable().optional(),
 						date_added: z.string().nullable().optional(),
@@ -15416,7 +16399,9 @@ const Output195 = z
 								z
 									.object({
 										do_not_disturb: z.boolean().nullable().optional(),
-										group_id: z.number().int().nullable().optional(),
+										group_id: dialpadInteger(z.number().int())
+											.nullable()
+											.optional(),
 										group_type: z
 											.enum([
 												'callcenter',
@@ -15431,18 +16416,20 @@ const Output195 = z
 												'unknown',
 												'user',
 											])
+											.or(z.string())
 											.nullable()
 											.optional(),
 										role: z
 											.enum(['admin', 'operator', 'supervisor'])
+											.or(z.string())
 											.nullable()
 											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						image_url: z.string().nullable().optional(),
 						international_dialing_enabled: z.boolean().nullable().optional(),
 						is_admin: z.boolean().nullable().optional(),
@@ -15466,11 +16453,12 @@ const Output195 = z
 								'talk',
 								'user',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						location: z.string().nullable().optional(),
 						muted: z.boolean().nullable().optional(),
-						office_id: z.number().int().nullable().optional(),
+						office_id: dialpadInteger(z.number().int()).nullable().optional(),
 						on_duty_started: z.string().nullable().optional(),
 						on_duty_status: z
 							.enum([
@@ -15482,14 +16470,20 @@ const Output195 = z
 								'wrapup',
 								'wrapup-end',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						onboarding_completed: z.boolean(),
 						phone_numbers: z.array(z.string()).nullable().optional(),
 						remote_service: z.string().nullable().optional(),
-						session_type: z.enum(['call', 'digital']).nullable().optional(),
+						session_type: z
+							.enum(['call', 'digital'])
+							.or(z.string())
+							.nullable()
+							.optional(),
 						state: z
 							.enum(['active', 'cancelled', 'deleted', 'pending', 'suspended'])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						status_message: z.string().nullable().optional(),
@@ -15500,20 +16494,20 @@ const Output195 = z
 								name: z.string().nullable().optional(),
 								voicemail_notifications_enabled: z.boolean().optional(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input196 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -15521,18 +16515,18 @@ const Input196 = z
 
 const Output196 = z
 	.object({
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		signature: z
 			.object({
 				algo: z.string().nullable().optional(),
 				secret: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		websocket_url: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input197 = z
 	.object({
@@ -15552,23 +16546,23 @@ const Output197 = z
 			.array(
 				z
 					.object({
-						id: z.number().int().nullable().optional(),
+						id: dialpadInteger(z.number().int()).nullable().optional(),
 						signature: z
 							.object({
 								algo: z.string().nullable().optional(),
 								secret: z.string().nullable().optional(),
 								type: z.string().nullable().optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						websocket_url: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input198 = z
 	.object({
@@ -15583,26 +16577,26 @@ const Input198 = z
 
 const Output198 = z
 	.object({
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		signature: z
 			.object({
 				algo: z.string().nullable().optional(),
 				secret: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		websocket_url: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input199 = z
 	.object({
 		query: z
 			.object({
 				cursor: z.string().optional(),
-				start_date: z.number().int().optional(),
-				end_date: z.number().int().optional(),
+				start_date: dialpadInteger(z.number().int()).optional(),
+				end_date: dialpadInteger(z.number().int()).optional(),
 				room_id: z.string().optional(),
 			})
 			.strict()
@@ -15617,7 +16611,7 @@ const Output199 = z
 			.array(
 				z
 					.object({
-						duration_ms: z.number().int().nullable().optional(),
+						duration_ms: dialpadInteger(z.number().int()).nullable().optional(),
 						end_time: z.string().nullable().optional(),
 						host_name: z.string().nullable().optional(),
 						id: z.string().nullable().optional(),
@@ -15633,9 +16627,11 @@ const Output199 = z
 										name: z.string().nullable().optional(),
 										phone: z.string().nullable().optional(),
 										phone_number: z.string().nullable().optional(),
-										talk_time: z.number().int().nullable().optional(),
+										talk_time: dialpadInteger(z.number().int())
+											.nullable()
+											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
@@ -15646,7 +16642,7 @@ const Output199 = z
 										size: z.string().nullable().optional(),
 										url: z.string().nullable().optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
@@ -15660,17 +16656,17 @@ const Output199 = z
 									.object({
 										url: z.string().nullable().optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input200 = z
 	.object({
@@ -15697,18 +16693,18 @@ const Output200 = z
 						number: z.string().nullable().optional(),
 						path: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input201 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -15722,29 +16718,29 @@ const Input201 = z
 
 const Output201 = z
 	.object({
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		signature: z
 			.object({
 				algo: z.string().nullable().optional(),
 				secret: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		websocket_url: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input202 = z
 	.object({
 		path: z
 			.object({
-				scheduled_conference_id: z.number().int(),
+				scheduled_conference_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		query: z
 			.object({
-				user_id: z.number().int().optional(),
+				user_id: dialpadInteger(z.number().int()).optional(),
 			})
 			.strict()
 			.optional(),
@@ -15755,7 +16751,7 @@ const Output202 = z
 	.object({
 		call_out: z.boolean().nullable().optional(),
 		dial_in_number: z.string().nullable().optional(),
-		duration: z.number().int().nullable().optional(),
+		duration: dialpadInteger(z.number().int()).nullable().optional(),
 		end_datetime: z.string().nullable().optional(),
 		id: z.string().nullable().optional(),
 		instance_id: z.string().nullable().optional(),
@@ -15767,6 +16763,7 @@ const Output202 = z
 				'PERSONAL',
 				'UNIQUE_MEETING',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		meeting_url: z.string().nullable().optional(),
@@ -15784,9 +16781,9 @@ const Output202 = z
 						name: z.string().nullable().optional(),
 						phone: z.string().nullable().optional(),
 						phone_number: z.string().nullable().optional(),
-						talk_time: z.number().int().nullable().optional(),
+						talk_time: dialpadInteger(z.number().int()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
@@ -15796,13 +16793,13 @@ const Output202 = z
 		timezone: z.string().nullable().optional(),
 		title: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input203 = z
 	.object({
 		path: z
 			.object({
-				id: z.number().int(),
+				id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -15810,37 +16807,37 @@ const Input203 = z
 
 const Output203 = z
 	.object({
-		id: z.number().int().nullable().optional(),
+		id: dialpadInteger(z.number().int()).nullable().optional(),
 		signature: z
 			.object({
 				algo: z.string().nullable().optional(),
 				secret: z.string().nullable().optional(),
 				type: z.string().nullable().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		websocket_url: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input204 = z
 	.object({
 		path: z
 			.object({
-				scheduled_conference_id: z.number().int(),
+				scheduled_conference_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
 			.object({
 				call_out: z.boolean().nullable().optional(),
 				contact_ids: z.array(z.string()).nullable().optional(),
-				duration: z.number().int().nullable().optional(),
-				end_datetime: z.number().int().nullable().optional(),
+				duration: dialpadInteger(z.number().int()).nullable().optional(),
+				end_datetime: dialpadInteger(z.number().int()).nullable().optional(),
 				instance_id: z.string().nullable().optional(),
 				recurrence: z.string().nullable().optional(),
-				start_datetime: z.number().int().nullable().optional(),
+				start_datetime: dialpadInteger(z.number().int()).nullable().optional(),
 				title: z.string().nullable().optional(),
-				user_id: z.number().int(),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -15851,7 +16848,7 @@ const Output204 = z
 	.object({
 		call_out: z.boolean().nullable().optional(),
 		dial_in_number: z.string().nullable().optional(),
-		duration: z.number().int().nullable().optional(),
+		duration: dialpadInteger(z.number().int()).nullable().optional(),
 		end_datetime: z.string().nullable().optional(),
 		id: z.string().nullable().optional(),
 		instance_id: z.string().nullable().optional(),
@@ -15863,6 +16860,7 @@ const Output204 = z
 				'PERSONAL',
 				'UNIQUE_MEETING',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		meeting_url: z.string().nullable().optional(),
@@ -15880,9 +16878,9 @@ const Output204 = z
 						name: z.string().nullable().optional(),
 						phone: z.string().nullable().optional(),
 						phone_number: z.string().nullable().optional(),
-						talk_time: z.number().int().nullable().optional(),
+						talk_time: dialpadInteger(z.number().int()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
@@ -15892,18 +16890,18 @@ const Output204 = z
 		timezone: z.string().nullable().optional(),
 		title: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input205 = z
 	.object({
 		path: z
 			.object({
-				scheduled_conference_id: z.number().int(),
+				scheduled_conference_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		query: z
 			.object({
-				user_id: z.number().int().optional(),
+				user_id: dialpadInteger(z.number().int()).optional(),
 				timestamp: z.string().optional(),
 			})
 			.strict()
@@ -15915,7 +16913,7 @@ const Output205 = z
 	.object({
 		call_out: z.boolean().nullable().optional(),
 		dial_in_number: z.string().nullable().optional(),
-		duration: z.number().int().nullable().optional(),
+		duration: dialpadInteger(z.number().int()).nullable().optional(),
 		end_datetime: z.string().nullable().optional(),
 		id: z.string().nullable().optional(),
 		instance_id: z.string().nullable().optional(),
@@ -15927,6 +16925,7 @@ const Output205 = z
 				'PERSONAL',
 				'UNIQUE_MEETING',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		meeting_url: z.string().nullable().optional(),
@@ -15944,9 +16943,9 @@ const Output205 = z
 						name: z.string().nullable().optional(),
 						phone: z.string().nullable().optional(),
 						phone_number: z.string().nullable().optional(),
-						talk_time: z.number().int().nullable().optional(),
+						talk_time: dialpadInteger(z.number().int()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
@@ -15956,7 +16955,7 @@ const Output205 = z
 		timezone: z.string().nullable().optional(),
 		title: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input206 = z
 	.object({
@@ -15964,8 +16963,8 @@ const Input206 = z
 			.object({
 				call_out: z.boolean().nullable().optional(),
 				contact_ids: z.array(z.string()).nullable().optional(),
-				duration: z.number().int().nullable().optional(),
-				end_datetime: z.number().int().nullable().optional(),
+				duration: dialpadInteger(z.number().int()).nullable().optional(),
+				end_datetime: dialpadInteger(z.number().int()).nullable().optional(),
 				meeting_id: z.string().nullable().optional(),
 				meeting_type: z
 					.enum([
@@ -15977,9 +16976,9 @@ const Input206 = z
 					.nullable()
 					.optional(),
 				recurrence: z.string().nullable().optional(),
-				start_datetime: z.number().int(),
+				start_datetime: dialpadInteger(z.number().int()),
 				title: z.string(),
-				user_id: z.number().int(),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict()
 			.optional(),
@@ -15990,7 +16989,7 @@ const Output206 = z
 	.object({
 		call_out: z.boolean().nullable().optional(),
 		dial_in_number: z.string().nullable().optional(),
-		duration: z.number().int().nullable().optional(),
+		duration: dialpadInteger(z.number().int()).nullable().optional(),
 		end_datetime: z.string().nullable().optional(),
 		id: z.string().nullable().optional(),
 		instance_id: z.string().nullable().optional(),
@@ -16002,6 +17001,7 @@ const Output206 = z
 				'PERSONAL',
 				'UNIQUE_MEETING',
 			])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		meeting_url: z.string().nullable().optional(),
@@ -16019,9 +17019,9 @@ const Output206 = z
 						name: z.string().nullable().optional(),
 						phone: z.string().nullable().optional(),
 						phone_number: z.string().nullable().optional(),
-						talk_time: z.number().int().nullable().optional(),
+						talk_time: dialpadInteger(z.number().int()).nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
@@ -16031,7 +17031,7 @@ const Output206 = z
 		timezone: z.string().nullable().optional(),
 		title: z.string().nullable().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input207 = z
 	.object({
@@ -16039,7 +17039,7 @@ const Input207 = z
 			.object({
 				meeting_id: z.string().optional(),
 				meeting_type: z.string().optional(),
-				user_id: z.number().int(),
+				user_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -16055,7 +17055,7 @@ const Output207 = z
 		url: z.string(),
 		user_id: z.string(),
 	})
-	.strict();
+	.loose();
 
 const Input208 = z
 	.object({
@@ -16082,52 +17082,54 @@ const Output208 = z
 							name: z.string().optional(),
 							type: z.string().optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					adherence_score: z.number().optional(),
 					average_conversation_time: z.number().optional(),
 					average_interaction_time: z.number().optional(),
-					conversations_closed: z.number().int().optional(),
+					conversations_closed: dialpadInteger(z.number().int()).optional(),
 					conversations_closed_per_hour: z.number().optional(),
-					conversations_commented_on: z.number().int().optional(),
-					conversations_on_hold: z.number().int().optional(),
-					conversations_opened: z.number().int().optional(),
+					conversations_commented_on: dialpadInteger(
+						z.number().int(),
+					).optional(),
+					conversations_on_hold: dialpadInteger(z.number().int()).optional(),
+					conversations_opened: dialpadInteger(z.number().int()).optional(),
 					interval: z
 						.object({
 							end: z.string().optional(),
 							start: z.string().optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					scheduled_hours: z.number().optional(),
 					time_in_adherence: z
 						.object({
-							percentage: z.number().optional(),
-							seconds: z.number().int().optional(),
+							percentage: z.number().nullable().optional(),
+							seconds: dialpadInteger(z.number().int()).optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					time_in_exception: z
 						.object({
-							percentage: z.number().optional(),
-							seconds: z.number().int().optional(),
+							percentage: z.number().nullable().optional(),
+							seconds: dialpadInteger(z.number().int()).optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					time_on_task: z.number().optional(),
 					time_out_of_adherence: z
 						.object({
-							percentage: z.number().optional(),
-							seconds: z.number().int().optional(),
+							percentage: z.number().nullable().optional(),
+							seconds: dialpadInteger(z.number().int()).optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
-					wrong_task_snapshots: z.number().int().optional(),
+					wrong_task_snapshots: dialpadInteger(z.number().int()).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 const Input209 = z
 	.object({
@@ -16151,10 +17153,10 @@ const Output209 = z
 				.object({
 					actual_occupancy: z
 						.object({
-							percentage: z.number().optional(),
-							seconds_lost: z.number().int().optional(),
+							percentage: z.number().nullable().optional(),
+							seconds_lost: dialpadInteger(z.number().int()).optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					adherence_score: z.number().optional(),
 					agent: z
@@ -16162,111 +17164,113 @@ const Output209 = z
 							email: z.string().optional(),
 							name: z.string().optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					conversations_closed_per_hour: z.number().optional(),
 					conversations_closed_per_service_hour: z.number().optional(),
 					dialpad_availability: z
 						.object({
-							percentage: z.number().optional(),
-							seconds_lost: z.number().int().optional(),
+							percentage: z.number().nullable().optional(),
+							seconds_lost: dialpadInteger(z.number().int()).optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					dialpad_time_in_status: z
 						.object({
 							available: z
 								.object({
-									percentage: z.number().optional(),
-									seconds: z.number().int().optional(),
+									percentage: z.number().nullable().optional(),
+									seconds: dialpadInteger(z.number().int()).optional(),
 								})
-								.strict()
+								.loose()
 								.optional(),
 							busy: z
 								.object({
-									percentage: z.number().optional(),
-									seconds: z.number().int().optional(),
+									percentage: z.number().nullable().optional(),
+									seconds: dialpadInteger(z.number().int()).optional(),
 								})
-								.strict()
+								.loose()
 								.optional(),
 							occupied: z
 								.object({
-									percentage: z.number().optional(),
-									seconds: z.number().int().optional(),
+									percentage: z.number().nullable().optional(),
+									seconds: dialpadInteger(z.number().int()).optional(),
 								})
-								.strict()
+								.loose()
 								.optional(),
 							unavailable: z
 								.object({
-									percentage: z.number().optional(),
-									seconds: z.number().int().optional(),
+									percentage: z.number().nullable().optional(),
+									seconds: dialpadInteger(z.number().int()).optional(),
 								})
-								.strict()
+								.loose()
 								.optional(),
 							wrapup: z
 								.object({
-									percentage: z.number().optional(),
-									seconds: z.number().int().optional(),
+									percentage: z.number().nullable().optional(),
+									seconds: dialpadInteger(z.number().int()).optional(),
 								})
-								.strict()
+								.loose()
 								.optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					interval: z
 						.object({
 							end: z.string().optional(),
 							start: z.string().optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					occupancy: z.number().optional(),
 					planned_occupancy: z
 						.object({
-							percentage: z.number().optional(),
-							seconds_lost: z.number().int().optional(),
+							percentage: z.number().nullable().optional(),
+							seconds_lost: dialpadInteger(z.number().int()).optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					scheduled_hours: z.number().optional(),
 					time_in_adherence: z
 						.object({
-							percentage: z.number().optional(),
-							seconds: z.number().int().optional(),
+							percentage: z.number().nullable().optional(),
+							seconds: dialpadInteger(z.number().int()).optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					time_in_exception: z
 						.object({
-							percentage: z.number().optional(),
-							seconds: z.number().int().optional(),
+							percentage: z.number().nullable().optional(),
+							seconds: dialpadInteger(z.number().int()).optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					time_on_task: z.number().optional(),
 					time_out_of_adherence: z
 						.object({
-							percentage: z.number().optional(),
-							seconds: z.number().int().optional(),
+							percentage: z.number().nullable().optional(),
+							seconds: dialpadInteger(z.number().int()).optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
-					total_conversations_closed: z.number().int().optional(),
+					total_conversations_closed: dialpadInteger(
+						z.number().int(),
+					).optional(),
 					utilisation: z.number().optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 const Input210 = z
 	.object({
 		query: z
 			.object({
 				cursor: z.string().optional(),
-				user_id: z.number().int(),
-				end_datetime: z.number().int().optional(),
-				start_datetime: z.number().int(),
+				user_id: dialpadInteger(z.number().int()),
+				end_datetime: dialpadInteger(z.number().int()).optional(),
+				start_datetime: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -16281,7 +17285,7 @@ const Output210 = z
 					.object({
 						call_out: z.boolean().nullable().optional(),
 						dial_in_number: z.string().nullable().optional(),
-						duration: z.number().int().nullable().optional(),
+						duration: dialpadInteger(z.number().int()).nullable().optional(),
 						end_datetime: z.string().nullable().optional(),
 						id: z.string().nullable().optional(),
 						instance_id: z.string().nullable().optional(),
@@ -16293,6 +17297,7 @@ const Output210 = z
 								'PERSONAL',
 								'UNIQUE_MEETING',
 							])
+							.or(z.string())
 							.nullable()
 							.optional(),
 						meeting_url: z.string().nullable().optional(),
@@ -16310,9 +17315,11 @@ const Output210 = z
 										name: z.string().nullable().optional(),
 										phone: z.string().nullable().optional(),
 										phone_number: z.string().nullable().optional(),
-										talk_time: z.number().int().nullable().optional(),
+										talk_time: dialpadInteger(z.number().int())
+											.nullable()
+											.optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.nullable()
 							.optional(),
@@ -16322,12 +17329,12 @@ const Output210 = z
 						timezone: z.string().nullable().optional(),
 						title: z.string().nullable().optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.nullable()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input211 = z
 	.object({
@@ -16341,7 +17348,7 @@ const Input211 = z
 	})
 	.strict();
 
-const Output211 = z.array(z.object({}).strict());
+const Output211 = z.array(z.object({}).loose());
 
 const Input212 = z.object({}).strict();
 
@@ -16349,12 +17356,12 @@ const Output212 = z
 	.object({
 		capability: z.string(),
 		clientId: z.string(),
-		expires: z.number().int(),
-		issued: z.number().int(),
+		expires: dialpadInteger(z.number().int()),
+		issued: dialpadInteger(z.number().int()),
 		keyName: z.string(),
 		token: z.string(),
 	})
-	.strict();
+	.loose();
 
 const Input213 = z
 	.object({
@@ -16370,7 +17377,7 @@ const Output213 = z
 	.object({
 		company_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -16386,7 +17393,7 @@ const Output213 = z
 			.optional(),
 		contact_id: z.string().max(1500),
 		contact_type: z.string().max(1500),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		email: z
 			.union([
@@ -16449,7 +17456,7 @@ const Output213 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input214 = z
 	.object({
@@ -16468,7 +17475,7 @@ const Input214 = z
 	})
 	.strict();
 
-const Output214 = z.array(z.object({}).strict());
+const Output214 = z.array(z.object({}).loose());
 
 const Input215 = z
 	.object({
@@ -16487,7 +17494,9 @@ const Input215 = z
 	})
 	.strict();
 
-const Output215 = z.undefined();
+const Output215 =
+	// Dialpad documents no response body here; core passes through whatever arrives (nothing, '' or {}).
+	z.unknown();
 
 const Input216 = z
 	.object({
@@ -16516,10 +17525,10 @@ const Input216 = z
 const Output216 = z.array(
 	z
 		.object({
-			company_id: z.number().int(),
-			date_created: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			display_name: z
 				.union([
@@ -16541,7 +17550,7 @@ const Output216 = z.array(
 				])
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input217 = z
@@ -16552,8 +17561,8 @@ const Input217 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				name: z.string().optional(),
 			})
 			.strict()
@@ -16564,10 +17573,10 @@ const Input217 = z
 const Output217 = z.array(
 	z
 		.object({
-			company_id: z.number().int(),
-			date_created: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			display_name: z
 				.union([
@@ -16589,7 +17598,7 @@ const Output217 = z.array(
 				])
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input218 = z
@@ -16604,10 +17613,10 @@ const Input218 = z
 
 const Output218 = z
 	.object({
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		display_name: z
 			.union([
@@ -16629,7 +17638,7 @@ const Output218 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input219 = z
 	.object({
@@ -16656,10 +17665,10 @@ const Input219 = z
 
 const Output219 = z
 	.object({
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		display_name: z
 			.union([
@@ -16681,7 +17690,7 @@ const Output219 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input220 = z
 	.object({
@@ -16695,12 +17704,12 @@ const Input220 = z
 
 const Output220 = z
 	.object({
-		access_expiration: z.number().int().optional(),
+		access_expiration: dialpadInteger(z.number().int()).optional(),
 		access_expiration_iso: z.string().optional(),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		instance_url: z.string().max(1500),
@@ -16713,17 +17722,17 @@ const Output220 = z
 					.nullable(),
 			])
 			.optional(),
-		service: z.enum(['salesforce']),
+		service: z.enum(['salesforce']).or(z.string()),
 		target_id: z.string().optional(),
 		target_key: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input221 = z
 	.object({
 		path: z
 			.object({
-				company_id: z.number().int(),
+				company_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 		body: z
@@ -16740,20 +17749,28 @@ const Input221 = z
 					.object({
 						all_campaigns: z
 							.object({
-								daily_limit: z.number().int().min(1).optional(),
+								daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 								enabled: z.boolean().optional(),
-								rolling_in_days: z.number().int().min(1).optional(),
-								rolling_limit: z.number().int().min(1).optional(),
+								rolling_in_days: dialpadInteger(
+									z.number().int().min(1),
+								).optional(),
+								rolling_limit: dialpadInteger(
+									z.number().int().min(1),
+								).optional(),
 							})
 							.strict()
 							.optional(),
 						per_campaign: z
 							.object({
-								daily_limit: z.number().int().min(1).optional(),
+								daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 								enabled: z.boolean().optional(),
-								rolling_in_days: z.number().int().min(1).optional(),
-								rolling_limit: z.number().int().min(1).optional(),
-								total_limit: z.number().int().min(1).optional(),
+								rolling_in_days: dialpadInteger(
+									z.number().int().min(1),
+								).optional(),
+								rolling_limit: dialpadInteger(
+									z.number().int().min(1),
+								).optional(),
+								total_limit: dialpadInteger(z.number().int().min(1)).optional(),
 							})
 							.strict()
 							.optional(),
@@ -16764,20 +17781,28 @@ const Input221 = z
 					.object({
 						all_campaigns: z
 							.object({
-								daily_limit: z.number().int().min(1).optional(),
+								daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 								enabled: z.boolean().optional(),
-								rolling_in_days: z.number().int().min(1).optional(),
-								rolling_limit: z.number().int().min(1).optional(),
+								rolling_in_days: dialpadInteger(
+									z.number().int().min(1),
+								).optional(),
+								rolling_limit: dialpadInteger(
+									z.number().int().min(1),
+								).optional(),
 							})
 							.strict()
 							.optional(),
 						per_campaign: z
 							.object({
-								daily_limit: z.number().int().min(1).optional(),
+								daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 								enabled: z.boolean().optional(),
-								rolling_in_days: z.number().int().min(1).optional(),
-								rolling_limit: z.number().int().min(1).optional(),
-								total_limit: z.number().int().min(1).optional(),
+								rolling_in_days: dialpadInteger(
+									z.number().int().min(1),
+								).optional(),
+								rolling_limit: dialpadInteger(
+									z.number().int().min(1),
+								).optional(),
+								total_limit: dialpadInteger(z.number().int().min(1)).optional(),
 							})
 							.strict()
 							.optional(),
@@ -16786,33 +17811,51 @@ const Input221 = z
 					.optional(),
 				fdcpa_settings: z
 					.object({
-						attempted_call_rolling_days: z.number().int().gt(0).optional(),
-						connected_call_rolling_days: z.number().int().gt(0).optional(),
+						attempted_call_rolling_days: dialpadInteger(
+							z.number().int().gt(0),
+						).optional(),
+						connected_call_rolling_days: dialpadInteger(
+							z.number().int().gt(0),
+						).optional(),
 						enabled: z.boolean().optional(),
-						max_attempted_calls: z.number().int().gt(0).optional(),
-						max_connected_calls: z.number().int().gt(0).optional(),
+						max_attempted_calls: dialpadInteger(
+							z.number().int().gt(0),
+						).optional(),
+						max_connected_calls: dialpadInteger(
+							z.number().int().gt(0),
+						).optional(),
 					})
 					.strict()
 					.optional(),
-				idle_boost_threshold_seconds: z.number().int().optional(),
+				idle_boost_threshold_seconds: dialpadInteger(
+					z.number().int(),
+				).optional(),
 				phone_attempt_limits: z
 					.object({
 						all_campaigns: z
 							.object({
-								daily_limit: z.number().int().min(1).optional(),
+								daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 								enabled: z.boolean().optional(),
-								rolling_in_days: z.number().int().min(1).optional(),
-								rolling_limit: z.number().int().min(1).optional(),
+								rolling_in_days: dialpadInteger(
+									z.number().int().min(1),
+								).optional(),
+								rolling_limit: dialpadInteger(
+									z.number().int().min(1),
+								).optional(),
 							})
 							.strict()
 							.optional(),
 						per_campaign: z
 							.object({
-								daily_limit: z.number().int().min(1).optional(),
+								daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 								enabled: z.boolean().optional(),
-								rolling_in_days: z.number().int().min(1).optional(),
-								rolling_limit: z.number().int().min(1).optional(),
-								total_limit: z.number().int().min(1).optional(),
+								rolling_in_days: dialpadInteger(
+									z.number().int().min(1),
+								).optional(),
+								rolling_limit: dialpadInteger(
+									z.number().int().min(1),
+								).optional(),
+								total_limit: dialpadInteger(z.number().int().min(1)).optional(),
 							})
 							.strict()
 							.optional(),
@@ -16875,91 +17918,95 @@ const Output221 = z
 			.object({
 				all_campaigns: z
 					.object({
-						daily_limit: z.number().int().min(1).optional(),
+						daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 						enabled: z.boolean().optional(),
-						rolling_in_days: z.number().int().min(1).optional(),
-						rolling_limit: z.number().int().min(1).optional(),
+						rolling_in_days: dialpadInteger(z.number().int().min(1)).optional(),
+						rolling_limit: dialpadInteger(z.number().int().min(1)).optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				per_campaign: z
 					.object({
-						daily_limit: z.number().int().min(1).optional(),
+						daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 						enabled: z.boolean().optional(),
-						rolling_in_days: z.number().int().min(1).optional(),
-						rolling_limit: z.number().int().min(1).optional(),
-						total_limit: z.number().int().min(1).optional(),
+						rolling_in_days: dialpadInteger(z.number().int().min(1)).optional(),
+						rolling_limit: dialpadInteger(z.number().int().min(1)).optional(),
+						total_limit: dialpadInteger(z.number().int().min(1)).optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		contact_attempt_limits: z
 			.object({
 				all_campaigns: z
 					.object({
-						daily_limit: z.number().int().min(1).optional(),
+						daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 						enabled: z.boolean().optional(),
-						rolling_in_days: z.number().int().min(1).optional(),
-						rolling_limit: z.number().int().min(1).optional(),
+						rolling_in_days: dialpadInteger(z.number().int().min(1)).optional(),
+						rolling_limit: dialpadInteger(z.number().int().min(1)).optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				per_campaign: z
 					.object({
-						daily_limit: z.number().int().min(1).optional(),
+						daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 						enabled: z.boolean().optional(),
-						rolling_in_days: z.number().int().min(1).optional(),
-						rolling_limit: z.number().int().min(1).optional(),
-						total_limit: z.number().int().min(1).optional(),
+						rolling_in_days: dialpadInteger(z.number().int().min(1)).optional(),
+						rolling_limit: dialpadInteger(z.number().int().min(1)).optional(),
+						total_limit: dialpadInteger(z.number().int().min(1)).optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		fdcpa_settings: z
 			.object({
-				attempted_call_rolling_days: z.number().int().gt(0).optional(),
-				connected_call_rolling_days: z.number().int().gt(0).optional(),
+				attempted_call_rolling_days: dialpadInteger(
+					z.number().int().gt(0),
+				).optional(),
+				connected_call_rolling_days: dialpadInteger(
+					z.number().int().gt(0),
+				).optional(),
 				enabled: z.boolean().optional(),
-				max_attempted_calls: z.number().int().gt(0).optional(),
-				max_connected_calls: z.number().int().gt(0).optional(),
+				max_attempted_calls: dialpadInteger(z.number().int().gt(0)).optional(),
+				max_connected_calls: dialpadInteger(z.number().int().gt(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		id: z.string(),
-		idle_boost_threshold_seconds: z.number().int().optional(),
+		idle_boost_threshold_seconds: dialpadInteger(z.number().int()).optional(),
 		key: z.string(),
 		phone_attempt_limits: z
 			.object({
 				all_campaigns: z
 					.object({
-						daily_limit: z.number().int().min(1).optional(),
+						daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 						enabled: z.boolean().optional(),
-						rolling_in_days: z.number().int().min(1).optional(),
-						rolling_limit: z.number().int().min(1).optional(),
+						rolling_in_days: dialpadInteger(z.number().int().min(1)).optional(),
+						rolling_limit: dialpadInteger(z.number().int().min(1)).optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				per_campaign: z
 					.object({
-						daily_limit: z.number().int().min(1).optional(),
+						daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 						enabled: z.boolean().optional(),
-						rolling_in_days: z.number().int().min(1).optional(),
-						rolling_limit: z.number().int().min(1).optional(),
-						total_limit: z.number().int().min(1).optional(),
+						rolling_in_days: dialpadInteger(z.number().int().min(1)).optional(),
+						rolling_limit: dialpadInteger(z.number().int().min(1)).optional(),
+						total_limit: dialpadInteger(z.number().int().min(1)).optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		salesforce: z
 			.object({
@@ -16974,7 +18021,7 @@ const Output221 = z
 								.unknown()
 								.optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				sfdc_lead: z
 					.object({
@@ -16987,7 +18034,7 @@ const Output221 = z
 								.unknown()
 								.optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				sfdc_opportunity: z
 					.object({
@@ -17000,13 +18047,13 @@ const Output221 = z
 								.unknown()
 								.optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input222 = z
 	.object({
@@ -17025,7 +18072,7 @@ const Input223 = z
 	.object({
 		path: z
 			.object({
-				company_id: z.number().int(),
+				company_id: dialpadInteger(z.number().int()),
 			})
 			.strict(),
 	})
@@ -17037,91 +18084,95 @@ const Output223 = z
 			.object({
 				all_campaigns: z
 					.object({
-						daily_limit: z.number().int().min(1).optional(),
+						daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 						enabled: z.boolean().optional(),
-						rolling_in_days: z.number().int().min(1).optional(),
-						rolling_limit: z.number().int().min(1).optional(),
+						rolling_in_days: dialpadInteger(z.number().int().min(1)).optional(),
+						rolling_limit: dialpadInteger(z.number().int().min(1)).optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				per_campaign: z
 					.object({
-						daily_limit: z.number().int().min(1).optional(),
+						daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 						enabled: z.boolean().optional(),
-						rolling_in_days: z.number().int().min(1).optional(),
-						rolling_limit: z.number().int().min(1).optional(),
-						total_limit: z.number().int().min(1).optional(),
+						rolling_in_days: dialpadInteger(z.number().int().min(1)).optional(),
+						rolling_limit: dialpadInteger(z.number().int().min(1)).optional(),
+						total_limit: dialpadInteger(z.number().int().min(1)).optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		contact_attempt_limits: z
 			.object({
 				all_campaigns: z
 					.object({
-						daily_limit: z.number().int().min(1).optional(),
+						daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 						enabled: z.boolean().optional(),
-						rolling_in_days: z.number().int().min(1).optional(),
-						rolling_limit: z.number().int().min(1).optional(),
+						rolling_in_days: dialpadInteger(z.number().int().min(1)).optional(),
+						rolling_limit: dialpadInteger(z.number().int().min(1)).optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				per_campaign: z
 					.object({
-						daily_limit: z.number().int().min(1).optional(),
+						daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 						enabled: z.boolean().optional(),
-						rolling_in_days: z.number().int().min(1).optional(),
-						rolling_limit: z.number().int().min(1).optional(),
-						total_limit: z.number().int().min(1).optional(),
+						rolling_in_days: dialpadInteger(z.number().int().min(1)).optional(),
+						rolling_limit: dialpadInteger(z.number().int().min(1)).optional(),
+						total_limit: dialpadInteger(z.number().int().min(1)).optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		fdcpa_settings: z
 			.object({
-				attempted_call_rolling_days: z.number().int().gt(0).optional(),
-				connected_call_rolling_days: z.number().int().gt(0).optional(),
+				attempted_call_rolling_days: dialpadInteger(
+					z.number().int().gt(0),
+				).optional(),
+				connected_call_rolling_days: dialpadInteger(
+					z.number().int().gt(0),
+				).optional(),
 				enabled: z.boolean().optional(),
-				max_attempted_calls: z.number().int().gt(0).optional(),
-				max_connected_calls: z.number().int().gt(0).optional(),
+				max_attempted_calls: dialpadInteger(z.number().int().gt(0)).optional(),
+				max_connected_calls: dialpadInteger(z.number().int().gt(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		id: z.string(),
-		idle_boost_threshold_seconds: z.number().int().optional(),
+		idle_boost_threshold_seconds: dialpadInteger(z.number().int()).optional(),
 		key: z.string(),
 		phone_attempt_limits: z
 			.object({
 				all_campaigns: z
 					.object({
-						daily_limit: z.number().int().min(1).optional(),
+						daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 						enabled: z.boolean().optional(),
-						rolling_in_days: z.number().int().min(1).optional(),
-						rolling_limit: z.number().int().min(1).optional(),
+						rolling_in_days: dialpadInteger(z.number().int().min(1)).optional(),
+						rolling_limit: dialpadInteger(z.number().int().min(1)).optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				per_campaign: z
 					.object({
-						daily_limit: z.number().int().min(1).optional(),
+						daily_limit: dialpadInteger(z.number().int().min(1)).optional(),
 						enabled: z.boolean().optional(),
-						rolling_in_days: z.number().int().min(1).optional(),
-						rolling_limit: z.number().int().min(1).optional(),
-						total_limit: z.number().int().min(1).optional(),
+						rolling_in_days: dialpadInteger(z.number().int().min(1)).optional(),
+						rolling_limit: dialpadInteger(z.number().int().min(1)).optional(),
+						total_limit: dialpadInteger(z.number().int().min(1)).optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		salesforce: z
 			.object({
@@ -17136,7 +18187,7 @@ const Output223 = z
 								.unknown()
 								.optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				sfdc_lead: z
 					.object({
@@ -17149,7 +18200,7 @@ const Output223 = z
 								.unknown()
 								.optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				sfdc_opportunity: z
 					.object({
@@ -17162,13 +18213,13 @@ const Output223 = z
 								.unknown()
 								.optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input224 = z
 	.object({
@@ -17195,12 +18246,12 @@ const Output224 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			company_id: z.number().int(),
-			date_created: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
-			details: z.object({}).strict().optional(),
+			details: z.object({}).loose().optional(),
 			event_id: z.string().max(64),
 			id: z.string(),
 			key: z.string(),
@@ -17212,7 +18263,7 @@ const Output224 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			severity: z.enum(['info', 'warn', 'error']).optional(),
+			severity: z.enum(['info', 'warn', 'error']).or(z.string()).optional(),
 			subject: z
 				.union([
 					z
@@ -17248,11 +18299,11 @@ const Output224 = z.array(
 													.unknown()
 													.optional(),
 										})
-										.strict(),
+										.loose(),
 								)
 								.max(20)
 								.optional(),
-							company_id: z.number().int(),
+							company_id: dialpadInteger(z.number().int()),
 							contact_id: z
 								.union([
 									z.string().max(1024),
@@ -17279,20 +18330,20 @@ const Output224 = z.array(
 								.optional(),
 							csv_line: z
 								.union([
-									z.number().int(),
+									dialpadInteger(z.number().int()),
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z
 										.unknown()
 										.nullable(),
 								])
 								.optional(),
-							custom: z.object({}).strict().optional(),
-							date_created: z.number().int().optional(),
+							custom: z.object({}).loose().optional(),
+							date_created: dialpadInteger(z.number().int()).optional(),
 							date_created_iso: z.string().optional(),
-							date_first_contacted: z.number().int().optional(),
+							date_first_contacted: dialpadInteger(z.number().int()).optional(),
 							date_first_contacted_iso: z.string().optional(),
-							date_last_contacted: z.number().int().optional(),
+							date_last_contacted: dialpadInteger(z.number().int()).optional(),
 							date_last_contacted_iso: z.string().optional(),
-							date_modified: z.number().int().optional(),
+							date_modified: dialpadInteger(z.number().int()).optional(),
 							date_modified_iso: z.string().optional(),
 							department: z
 								.union([
@@ -17317,13 +18368,13 @@ const Output224 = z.array(
 													.unknown()
 													.optional(),
 										})
-										.strict(),
+										.loose(),
 								)
 								.max(50)
 								.optional(),
 							engagement_score: z
 								.union([
-									z.number().int(),
+									dialpadInteger(z.number().int()),
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z
 										.unknown()
 										.nullable(),
@@ -17407,7 +18458,7 @@ const Output224 = z.array(
 							lead_id: z.string().max(64),
 							lead_score: z
 								.union([
-									z.number().int(),
+									dialpadInteger(z.number().int()),
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z
 										.unknown()
 										.nullable(),
@@ -17422,6 +18473,7 @@ const Output224 = z.array(
 									'salesforce',
 									'receptionist',
 								])
+								.or(z.string())
 								.optional(),
 							mobile_phone: z
 								.union([
@@ -17467,7 +18519,7 @@ const Output224 = z.array(
 											number:
 												/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
 										})
-										.strict(),
+										.loose(),
 								)
 								.max(20)
 								.optional(),
@@ -17481,7 +18533,7 @@ const Output224 = z.array(
 								.optional(),
 							primary_address: z
 								.union([
-									z.object({}).strict(),
+									z.object({}).loose(),
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z
 										.unknown()
 										.nullable(),
@@ -17535,7 +18587,10 @@ const Output224 = z.array(
 										.nullable(),
 								])
 								.optional(),
-							state: z.enum(['pending', 'active', 'deleted']).optional(),
+							state: z
+								.enum(['pending', 'active', 'deleted'])
+								.or(z.string())
+								.optional(),
 							tags: z
 								.array(
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -17550,24 +18605,25 @@ const Output224 = z.array(
 								])
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 					z
 						.object({
-							company_id: z.number().int(),
+							company_id: dialpadInteger(z.number().int()),
 							consent: z
 								.enum(['implied', 'consent', 'written_consent', 'revoked'])
+								.or(z.string())
 								.optional(),
-							date_created: z.number().int().optional(),
+							date_created: dialpadInteger(z.number().int()).optional(),
 							date_created_iso: z.string().optional(),
-							date_dnc_expires: z.number().int().optional(),
+							date_dnc_expires: dialpadInteger(z.number().int()).optional(),
 							date_dnc_expires_iso: z.string().optional(),
-							date_dnc_opt_out: z.number().int().optional(),
+							date_dnc_opt_out: dialpadInteger(z.number().int()).optional(),
 							date_dnc_opt_out_iso: z.string().optional(),
-							date_dnt_expires: z.number().int().optional(),
+							date_dnt_expires: dialpadInteger(z.number().int()).optional(),
 							date_dnt_expires_iso: z.string().optional(),
-							date_dnt_opt_out: z.number().int().optional(),
+							date_dnt_opt_out: dialpadInteger(z.number().int()).optional(),
 							date_dnt_opt_out_iso: z.string().optional(),
-							date_modified: z.number().int().optional(),
+							date_modified: dialpadInteger(z.number().int()).optional(),
 							date_modified_iso: z.string().optional(),
 							dnc: z
 								.union([
@@ -17577,7 +18633,10 @@ const Output224 = z.array(
 										.nullable(),
 								])
 								.optional(),
-							dnc_scope: z.enum(['powerdialer', 'ever']).optional(),
+							dnc_scope: z
+								.enum(['powerdialer', 'ever'])
+								.or(z.string())
+								.optional(),
 							dnt: z
 								.union([
 									z.boolean(),
@@ -17586,7 +18645,10 @@ const Output224 = z.array(
 										.nullable(),
 								])
 								.optional(),
-							dnt_scope: z.enum(['powerdialer', 'ever']).optional(),
+							dnt_scope: z
+								.enum(['powerdialer', 'ever'])
+								.or(z.string())
+								.optional(),
 							e164: z.string().max(20),
 							formatted_phone: z
 								.union([
@@ -17600,7 +18662,10 @@ const Output224 = z.array(
 							is_dnc_expired: z.boolean().optional(),
 							is_dnt_expired: z.boolean().optional(),
 							key: z.string(),
-							label: z.enum(['mobile', 'work', 'home', 'other']).optional(),
+							label: z
+								.enum(['mobile', 'work', 'home', 'other'])
+								.or(z.string())
+								.optional(),
 							last_author_dp_key: z
 								.union([
 									z.string(),
@@ -17625,8 +18690,11 @@ const Output224 = z.array(
 										.nullable(),
 								])
 								.optional(),
-							last_source: z.enum(['api', 'csv', 'dp_contact']).optional(),
-							state: z.enum(['active', 'deleted']).optional(),
+							last_source: z
+								.enum(['api', 'csv', 'dp_contact'])
+								.or(z.string())
+								.optional(),
+							state: z.enum(['active', 'deleted']).or(z.string()).optional(),
 							tags: z
 								.array(
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -17649,9 +18717,10 @@ const Output224 = z.array(
 									'spam',
 									'wrong_number',
 								])
+								.or(z.string())
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 					z
 						.object({
 							call_id: z.string().optional(),
@@ -17664,24 +18733,26 @@ const Output224 = z.array(
 										.nullable(),
 								])
 								.optional(),
-							company_id: z.number().int(),
+							company_id: dialpadInteger(z.number().int()),
 							contact_id: z.string().optional(),
 							contact_key: z.string().optional(),
-							csv: z.object({}).strict().optional(),
+							csv: z.object({}).loose().optional(),
 							current_rule_id: z.string().optional(),
 							current_rule_key: z.string().optional(),
-							date_created: z.number().int().optional(),
+							date_created: dialpadInteger(z.number().int()).optional(),
 							date_created_iso: z.string().optional(),
-							date_estimate: z.number().int().optional(),
+							date_estimate: dialpadInteger(z.number().int()).optional(),
 							date_estimate_iso: z.string().optional(),
-							date_modified: z.number().int().optional(),
+							date_modified: dialpadInteger(z.number().int()).optional(),
 							date_modified_iso: z.string().optional(),
 							history: z
 								.object({
-									call_attempts: z.number().int().min(0).optional(),
+									call_attempts: dialpadInteger(
+										z.number().int().min(0),
+									).optional(),
 									last_call_id: z
 										.union([
-											z.number().int(),
+											dialpadInteger(z.number().int()),
 											/* unknown because the official OpenAPI schema is not documented for this value. */ z
 												.unknown()
 												.nullable(),
@@ -17713,7 +18784,7 @@ const Output224 = z.array(
 											)
 											.optional(),
 								})
-								.strict()
+								.loose()
 								.optional(),
 							id: z.string(),
 							index: z.number().optional(),
@@ -17792,6 +18863,7 @@ const Output224 = z.array(
 									'sms:not_in_free_company',
 									'sms:invalid_number',
 								])
+								.or(z.string())
 								.optional(),
 							sms_id: z.string().optional(),
 							sms_key: z.string().optional(),
@@ -17808,6 +18880,7 @@ const Output224 = z.array(
 									'cancelled',
 									'incomplete',
 								])
+								.or(z.string())
 								.optional(),
 							status: z
 								.enum([
@@ -17819,6 +18892,7 @@ const Output224 = z.array(
 									'Excluded',
 									'Incomplete',
 								])
+								.or(z.string())
 								.optional(),
 							tags: z
 								.array(
@@ -17826,7 +18900,7 @@ const Output224 = z.array(
 								)
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 					z
 						.object({
 							audience_ids: z
@@ -17849,7 +18923,7 @@ const Output224 = z.array(
 								.optional(),
 							author_id: z.string().optional(),
 							author_key: z.string().optional(),
-							company_id: z.number().int(),
+							company_id: dialpadInteger(z.number().int()),
 							csv_columns: z
 								.array(
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -17865,11 +18939,11 @@ const Output224 = z.array(
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 								)
 								.optional(),
-							date_created: z.number().int().optional(),
+							date_created: dialpadInteger(z.number().int()).optional(),
 							date_created_iso: z.string().optional(),
-							date_modified: z.number().int().optional(),
+							date_modified: dialpadInteger(z.number().int()).optional(),
 							date_modified_iso: z.string().optional(),
-							date_user_modified: z.number().int().optional(),
+							date_user_modified: dialpadInteger(z.number().int()).optional(),
 							date_user_modified_iso: z.string().optional(),
 							id: z.string(),
 							is_shared: z.boolean().optional(),
@@ -17891,14 +18965,14 @@ const Output224 = z.array(
 								.optional(),
 							list_id: z.string().max(1500),
 							name: z.string().max(1500).optional(),
-							num_csv_rows: z.number().int().optional(),
-							num_manual_rows: z.number().int().optional(),
-							num_query_rows: z.number().int().optional(),
-							num_rows: z.number().int().optional(),
-							num_snapshot_rows: z.number().int().optional(),
+							num_csv_rows: dialpadInteger(z.number().int()).optional(),
+							num_manual_rows: dialpadInteger(z.number().int()).optional(),
+							num_query_rows: dialpadInteger(z.number().int()).optional(),
+							num_rows: dialpadInteger(z.number().int()).optional(),
+							num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 							office_id: z
 								.union([
-									z.number().int(),
+									dialpadInteger(z.number().int()),
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z
 										.unknown()
 										.nullable(),
@@ -17936,7 +19010,7 @@ const Output224 = z.array(
 								)
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -17952,6 +19026,7 @@ const Output224 = z.array(
 				.optional(),
 			subject_type: z
 				.enum(['Lead', 'Phone', 'LeadListItem', 'LeadList'])
+				.or(z.string())
 				.nullable()
 				.optional(),
 			tags: z
@@ -17960,7 +19035,7 @@ const Output224 = z.array(
 				)
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input225 = z
@@ -17971,8 +19046,8 @@ const Input225 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				tag: z.string().optional(),
 			})
 			.strict()
@@ -17983,10 +19058,10 @@ const Input225 = z
 const Output225 = z.array(
 	z
 		.object({
-			company_id: z.number().int(),
-			date_created: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			id: z.string(),
 			job_id: z.string().max(1500),
@@ -18029,6 +19104,7 @@ const Output225 = z.array(
 					'complete',
 					'error',
 				])
+				.or(z.string())
 				.optional(),
 			tags: z
 				.array(
@@ -18036,7 +19112,7 @@ const Output225 = z.array(
 				)
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input226 = z
@@ -18051,10 +19127,10 @@ const Input226 = z
 
 const Output226 = z
 	.object({
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		job_id: z.string().max(1500),
@@ -18090,6 +19166,7 @@ const Output226 = z
 			.optional(),
 		state: z
 			.enum(['pending', 'mapping', 'batching', 'reducing', 'complete', 'error'])
+			.or(z.string())
 			.optional(),
 		tags: z
 			.array(
@@ -18097,7 +19174,7 @@ const Output226 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input227 = z
 	.object({
@@ -18111,10 +19188,10 @@ const Input227 = z
 
 const Output227 = z
 	.object({
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -18143,11 +19220,11 @@ const Output227 = z
 			])
 			.optional(),
 		token_tail: z.string().optional(),
-		type: z.enum(['base', 'public', 'dialer']),
+		type: z.enum(['base', 'public', 'dialer']).or(z.string()),
 		user_id: z.string().optional(),
 		user_key: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input228 = z
 	.object({
@@ -18157,8 +19234,8 @@ const Input228 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				mine: z.boolean().optional(),
 				service_account_id: z.string().optional(),
 			})
@@ -18170,10 +19247,10 @@ const Input228 = z
 const Output228 = z.array(
 	z
 		.object({
-			company_id: z.number().int(),
-			date_created: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			id: z.string(),
 			key: z.string(),
@@ -18202,11 +19279,11 @@ const Output228 = z.array(
 				])
 				.optional(),
 			token_tail: z.string().optional(),
-			type: z.enum(['base', 'public', 'dialer']),
+			type: z.enum(['base', 'public', 'dialer']).or(z.string()),
 			user_id: z.string().optional(),
 			user_key: z.string().optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input229 = z
@@ -18225,13 +19302,13 @@ const Output229 = z.array(
 		.object({
 			company_id: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
 				])
 				.optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			duty_status_reason: z
 				.union([
@@ -18246,7 +19323,7 @@ const Output229 = z.array(
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 				)
 				.optional(),
-			group_details: z.object({}).strict().optional(),
+			group_details: z.object({}).loose().optional(),
 			group_ids: z
 				.array(
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -18257,7 +19334,7 @@ const Output229 = z.array(
 			key: z.string(),
 			max_wrap_up_seconds: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -18273,7 +19350,7 @@ const Output229 = z.array(
 				.optional(),
 			office_id: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -18299,7 +19376,7 @@ const Output229 = z.array(
 				.optional(),
 			ring_seconds: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -18322,15 +19399,17 @@ const Output229 = z.array(
 				])
 				.optional(),
 			target_id: z.string().max(1500),
-			target_type: z.enum([
-				'user',
-				'room',
-				'callcenter',
-				'department',
-				'office',
-				'company',
-				'service_account',
-			]),
+			target_type: z
+				.enum([
+					'user',
+					'room',
+					'callcenter',
+					'department',
+					'office',
+					'company',
+					'service_account',
+				])
+				.or(z.string()),
 			timezone: z
 				.union([
 					z.string().max(1500),
@@ -18340,7 +19419,7 @@ const Output229 = z.array(
 				])
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input230 = z.object({}).strict();
@@ -18365,7 +19444,7 @@ const Output230 = z
 							.nullable(),
 					])
 					.optional(),
-				company_id: z.number().int(),
+				company_id: dialpadInteger(z.number().int()),
 				country: z
 					.union([
 						z.string().max(1500),
@@ -18374,7 +19453,7 @@ const Output230 = z
 							.nullable(),
 					])
 					.optional(),
-				date_modified: z.number().int().optional(),
+				date_modified: dialpadInteger(z.number().int()).optional(),
 				date_modified_iso: z.string().optional(),
 				display_name: z
 					.union([
@@ -18395,20 +19474,20 @@ const Output230 = z
 					])
 					.optional(),
 			})
-			.strict(),
+			.loose(),
 		config:
 			/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 		user: z
 			.object({
 				company_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
 					])
 					.optional(),
-				date_modified: z.number().int().optional(),
+				date_modified: dialpadInteger(z.number().int()).optional(),
 				date_modified_iso: z.string().optional(),
 				duty_status_reason: z
 					.union([
@@ -18423,7 +19502,7 @@ const Output230 = z
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 					)
 					.optional(),
-				group_details: z.object({}).strict().optional(),
+				group_details: z.object({}).loose().optional(),
 				group_ids: z
 					.array(
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -18434,7 +19513,7 @@ const Output230 = z
 				key: z.string(),
 				max_wrap_up_seconds: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -18450,7 +19529,7 @@ const Output230 = z
 					.optional(),
 				office_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -18476,7 +19555,7 @@ const Output230 = z
 					.optional(),
 				ring_seconds: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -18499,15 +19578,17 @@ const Output230 = z
 					])
 					.optional(),
 				target_id: z.string().max(1500),
-				target_type: z.enum([
-					'user',
-					'room',
-					'callcenter',
-					'department',
-					'office',
-					'company',
-					'service_account',
-				]),
+				target_type: z
+					.enum([
+						'user',
+						'room',
+						'callcenter',
+						'department',
+						'office',
+						'company',
+						'service_account',
+					])
+					.or(z.string()),
 				timezone: z
 					.union([
 						z.string().max(1500),
@@ -18517,9 +19598,9 @@ const Output230 = z
 					])
 					.optional(),
 			})
-			.strict(),
+			.loose(),
 	})
-	.strict();
+	.loose();
 
 const Input231 = z
 	.object({
@@ -18559,10 +19640,10 @@ const Input232 = z
 
 const Output232 = z
 	.object({
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -18591,11 +19672,11 @@ const Output232 = z
 			])
 			.optional(),
 		token_tail: z.string().optional(),
-		type: z.enum(['base', 'public', 'dialer']),
+		type: z.enum(['base', 'public', 'dialer']).or(z.string()),
 		user_id: z.string().optional(),
 		user_key: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input233 = z
 	.object({
@@ -18628,7 +19709,7 @@ const Output233 = z
 							.nullable(),
 					])
 					.optional(),
-				company_id: z.number().int(),
+				company_id: dialpadInteger(z.number().int()),
 				country: z
 					.union([
 						z.string().max(1500),
@@ -18637,7 +19718,7 @@ const Output233 = z
 							.nullable(),
 					])
 					.optional(),
-				date_modified: z.number().int().optional(),
+				date_modified: dialpadInteger(z.number().int()).optional(),
 				date_modified_iso: z.string().optional(),
 				display_name: z
 					.union([
@@ -18658,20 +19739,20 @@ const Output233 = z
 					])
 					.optional(),
 			})
-			.strict(),
+			.loose(),
 		config:
 			/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 		user: z
 			.object({
 				company_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
 					])
 					.optional(),
-				date_modified: z.number().int().optional(),
+				date_modified: dialpadInteger(z.number().int()).optional(),
 				date_modified_iso: z.string().optional(),
 				duty_status_reason: z
 					.union([
@@ -18686,7 +19767,7 @@ const Output233 = z
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 					)
 					.optional(),
-				group_details: z.object({}).strict().optional(),
+				group_details: z.object({}).loose().optional(),
 				group_ids: z
 					.array(
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -18697,7 +19778,7 @@ const Output233 = z
 				key: z.string(),
 				max_wrap_up_seconds: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -18713,7 +19794,7 @@ const Output233 = z
 					.optional(),
 				office_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -18739,7 +19820,7 @@ const Output233 = z
 					.optional(),
 				ring_seconds: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -18762,15 +19843,17 @@ const Output233 = z
 					])
 					.optional(),
 				target_id: z.string().max(1500),
-				target_type: z.enum([
-					'user',
-					'room',
-					'callcenter',
-					'department',
-					'office',
-					'company',
-					'service_account',
-				]),
+				target_type: z
+					.enum([
+						'user',
+						'room',
+						'callcenter',
+						'department',
+						'office',
+						'company',
+						'service_account',
+					])
+					.or(z.string()),
 				timezone: z
 					.union([
 						z.string().max(1500),
@@ -18780,9 +19863,9 @@ const Output233 = z
 					])
 					.optional(),
 			})
-			.strict(),
+			.loose(),
 	})
-	.strict();
+	.loose();
 
 const Input234 = z
 	.object({
@@ -18812,10 +19895,10 @@ const Input234 = z
 
 const Output234 = z
 	.object({
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -18845,11 +19928,11 @@ const Output234 = z
 			])
 			.optional(),
 		token_tail: z.string().optional(),
-		type: z.enum(['base', 'public', 'dialer']),
+		type: z.enum(['base', 'public', 'dialer']).or(z.string()),
 		user_id: z.string().optional(),
 		user_key: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input235 = z
 	.object({
@@ -18876,13 +19959,13 @@ const Output235 = z
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		dialpad_user_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -18900,13 +19983,13 @@ const Output235 = z
 		name: z.string().max(100),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
-		role: z.enum(['admin', 'read_only']).optional(),
+		role: z.enum(['admin', 'read_only']).or(z.string()).optional(),
 		roles: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -18916,7 +19999,7 @@ const Output235 = z
 		user_id: z.string().optional(),
 		user_key: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input236 = z
 	.object({
@@ -18942,13 +20025,13 @@ const Output236 = z
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		dialpad_user_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -18966,13 +20049,13 @@ const Output236 = z
 		name: z.string().max(100),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
-		role: z.enum(['admin', 'read_only']).optional(),
+		role: z.enum(['admin', 'read_only']).or(z.string()).optional(),
 		roles: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -18982,7 +20065,7 @@ const Output236 = z
 		user_id: z.string().optional(),
 		user_key: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input237 = z
 	.object({
@@ -19029,13 +20112,13 @@ const Output237 = z
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		dialpad_user_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -19053,13 +20136,13 @@ const Output237 = z
 		name: z.string().max(100),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
-		role: z.enum(['admin', 'read_only']).optional(),
+		role: z.enum(['admin', 'read_only']).or(z.string()).optional(),
 		roles: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -19069,7 +20152,7 @@ const Output237 = z
 		user_id: z.string().optional(),
 		user_key: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input238 = z
 	.object({
@@ -19092,8 +20175,8 @@ const Input239 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				target_type: z.string(),
 				target_id: z.string(),
 			})
@@ -19108,13 +20191,13 @@ const Output239 = z.array(
 			contact_key: z.string().optional(),
 			date_created: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
 				])
 				.optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			delivery_status: z
 				.enum([
@@ -19128,8 +20211,9 @@ const Output239 = z.array(
 					'not_supported',
 					'unknown',
 				])
+				.or(z.string())
 				.optional(),
-			direction: z.enum(['inbound', 'outbound']),
+			direction: z.enum(['inbound', 'outbound']).or(z.string()),
 			from_number: z
 				.union([
 					z.string().max(1500),
@@ -19156,7 +20240,7 @@ const Output239 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			sms_id: z.number().int(),
+			sms_id: dialpadInteger(z.number().int()),
 			target_id: z.string().optional(),
 			target_key: z.string().optional(),
 			text: z
@@ -19173,7 +20257,7 @@ const Output239 = z.array(
 				)
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input240 = z
@@ -19202,24 +20286,24 @@ const Output240 = z
 					.nullable(),
 			])
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		contact_id: z.string().optional(),
 		contact_key: z.string().optional(),
-		csv: z.object({}).strict().optional(),
+		csv: z.object({}).loose().optional(),
 		current_rule_id: z.string().optional(),
 		current_rule_key: z.string().optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_estimate: z.number().int().optional(),
+		date_estimate: dialpadInteger(z.number().int()).optional(),
 		date_estimate_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		history: z
 			.object({
-				call_attempts: z.number().int().min(0).optional(),
+				call_attempts: dialpadInteger(z.number().int().min(0)).optional(),
 				last_call_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -19229,69 +20313,75 @@ const Output240 = z
 					.union([
 						z.array(
 							z.union([
-								z.enum([
-									'call:powerdialer_no_available_agent',
-									'call:human_agent',
-									'call:ai_agent',
-									'call:outbound_connected',
-									'call:powerdialer_vm_drop',
-									'call:machine_detected',
-									'call:powerdialer_call',
-									'call:active',
-									'call:outbound',
-									'call:cancelled',
-									'call:inbound',
-									'call:missed',
-									'call:abandoned',
-									'call:user_initiated',
-								]),
-								z.enum([
-									'sms:accepted',
-									'sms:invalid_destination',
-									'sms:invalid_source',
-									'sms:no_route',
-									'sms:rejected_spam',
-									'sms:internal_error',
-									'sms:rejected',
-									'sms:not_supported',
-									'sms:time_out',
-									'sms:error',
-									'sms:unknown',
-									'sms:forbidden',
-									'sms:owner_no_international_messaging',
-									'sms:unregistered_a2p_not_allowed',
-									'sms:owner_not_enough_sms_credits',
-									'sms:owner_not_enough_credits',
-									'sms:messaging_disabled',
-									'sms:owner_free_user',
-									'sms:contact_missing_number',
-									'sms:contact_is_room',
-									'sms:contact_is_shared_line',
-									'sms:staff_contact',
-									'sms:company_affinity',
-									'sms:not_in_free_company',
-									'sms:invalid_number',
-								]),
-								z.enum([
-									'call:max_attempts_item',
-									'call:max_attempts_delay_not_met',
-									'call:max_attempts_criteria_not_met',
-									'call:max_attempts_campaign_phone_total',
-									'call:max_attempts_campaign_phone_daily',
-									'call:max_attempts_campaign_phone_rolling',
-									'call:max_attempts_campaign_contact_total',
-									'call:max_attempts_campaign_contact_daily',
-									'call:max_attempts_campaign_contact_rolling',
-									'call:max_attempts_campaign_company_total',
-									'call:max_attempts_campaign_company_daily',
-									'call:max_attempts_campaign_company_rolling',
-									'call:max_attempts_global_phone_daily',
-									'call:max_attempts_global_phone_rolling',
-									'call:max_attempts_global_contact_daily',
-									'call:max_attempts_global_contact_rolling',
-									'call:max_attempts_global_company_daily',
-									'call:max_attempts_global_company_rolling',
-								]),
+								z
+									.enum([
+										'call:powerdialer_no_available_agent',
+										'call:human_agent',
+										'call:ai_agent',
+										'call:outbound_connected',
+										'call:powerdialer_vm_drop',
+										'call:machine_detected',
+										'call:powerdialer_call',
+										'call:active',
+										'call:outbound',
+										'call:cancelled',
+										'call:inbound',
+										'call:missed',
+										'call:abandoned',
+										'call:user_initiated',
+									])
+									.or(z.string()),
+								z
+									.enum([
+										'sms:accepted',
+										'sms:invalid_destination',
+										'sms:invalid_source',
+										'sms:no_route',
+										'sms:rejected_spam',
+										'sms:internal_error',
+										'sms:rejected',
+										'sms:not_supported',
+										'sms:time_out',
+										'sms:error',
+										'sms:unknown',
+										'sms:forbidden',
+										'sms:owner_no_international_messaging',
+										'sms:unregistered_a2p_not_allowed',
+										'sms:owner_not_enough_sms_credits',
+										'sms:owner_not_enough_credits',
+										'sms:messaging_disabled',
+										'sms:owner_free_user',
+										'sms:contact_missing_number',
+										'sms:contact_is_room',
+										'sms:contact_is_shared_line',
+										'sms:staff_contact',
+										'sms:company_affinity',
+										'sms:not_in_free_company',
+										'sms:invalid_number',
+									])
+									.or(z.string()),
+								z
+									.enum([
+										'call:max_attempts_item',
+										'call:max_attempts_delay_not_met',
+										'call:max_attempts_criteria_not_met',
+										'call:max_attempts_campaign_phone_total',
+										'call:max_attempts_campaign_phone_daily',
+										'call:max_attempts_campaign_phone_rolling',
+										'call:max_attempts_campaign_contact_total',
+										'call:max_attempts_campaign_contact_daily',
+										'call:max_attempts_campaign_contact_rolling',
+										'call:max_attempts_campaign_company_total',
+										'call:max_attempts_campaign_company_daily',
+										'call:max_attempts_campaign_company_rolling',
+										'call:max_attempts_global_phone_daily',
+										'call:max_attempts_global_phone_rolling',
+										'call:max_attempts_global_contact_daily',
+										'call:max_attempts_global_contact_rolling',
+										'call:max_attempts_global_company_daily',
+										'call:max_attempts_global_company_rolling',
+									])
+									.or(z.string()),
 								z.string(),
 							]),
 						),
@@ -19323,11 +20413,11 @@ const Output240 = z
 											.optional(),
 									rule_type: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						)
 						.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		id: z.string(),
 		index: z.number().optional(),
@@ -19406,6 +20496,7 @@ const Output240 = z
 				'sms:not_in_free_company',
 				'sms:invalid_number',
 			])
+			.or(z.string())
 			.optional(),
 		sms_id: z.string().optional(),
 		sms_key: z.string().optional(),
@@ -19422,6 +20513,7 @@ const Output240 = z
 				'cancelled',
 				'incomplete',
 			])
+			.or(z.string())
 			.optional(),
 		status: z
 			.enum([
@@ -19433,6 +20525,7 @@ const Output240 = z
 				'Excluded',
 				'Incomplete',
 			])
+			.or(z.string())
 			.optional(),
 		tags: z
 			.array(
@@ -19440,7 +20533,7 @@ const Output240 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input241 = z
 	.object({
@@ -19450,8 +20543,8 @@ const Input241 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 			})
 			.strict()
 			.optional(),
@@ -19473,13 +20566,13 @@ const Output241 = z.array(
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 				)
 				.optional(),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			dialpad_user_id: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -19497,13 +20590,13 @@ const Output241 = z.array(
 			name: z.string().max(100),
 			office_id: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
 				])
 				.optional(),
-			role: z.enum(['admin', 'read_only']).optional(),
+			role: z.enum(['admin', 'read_only']).or(z.string()).optional(),
 			roles: z
 				.array(
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -19513,7 +20606,7 @@ const Output241 = z.array(
 			user_id: z.string().optional(),
 			user_key: z.string().optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input242 = z.object({}).strict();
@@ -19522,13 +20615,13 @@ const Output242 = z
 	.object({
 		company_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		duty_status_reason: z
 			.union([
@@ -19543,7 +20636,7 @@ const Output242 = z
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
-		group_details: z.object({}).strict().optional(),
+		group_details: z.object({}).loose().optional(),
 		group_ids: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -19554,7 +20647,7 @@ const Output242 = z
 		key: z.string(),
 		max_wrap_up_seconds: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -19570,7 +20663,7 @@ const Output242 = z
 			.optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -19596,7 +20689,7 @@ const Output242 = z
 			.optional(),
 		ring_seconds: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -19619,15 +20712,17 @@ const Output242 = z
 			])
 			.optional(),
 		target_id: z.string().max(1500),
-		target_type: z.enum([
-			'user',
-			'room',
-			'callcenter',
-			'department',
-			'office',
-			'company',
-			'service_account',
-		]),
+		target_type: z
+			.enum([
+				'user',
+				'room',
+				'callcenter',
+				'department',
+				'office',
+				'company',
+				'service_account',
+			])
+			.or(z.string()),
 		timezone: z
 			.union([
 				z.string().max(1500),
@@ -19637,7 +20732,7 @@ const Output242 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input243 = z
 	.object({
@@ -19652,12 +20747,12 @@ const Input243 = z
 const Output243 = z
 	.object({
 		campaign_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_expiration: z.number().int().optional(),
+		date_expiration: dialpadInteger(z.number().int()).optional(),
 		date_expiration_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		is_temporary: z.boolean().optional(),
@@ -19679,7 +20774,7 @@ const Output243 = z
 			.optional(),
 		worker_id: z.string().max(1500),
 	})
-	.strict();
+	.loose();
 
 const Input244 = z
 	.object({
@@ -19700,12 +20795,12 @@ const Input244 = z
 const Output244 = z
 	.object({
 		campaign_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_expiration: z.number().int().optional(),
+		date_expiration: dialpadInteger(z.number().int()).optional(),
 		date_expiration_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		is_temporary: z.boolean().optional(),
@@ -19727,7 +20822,7 @@ const Output244 = z
 			.optional(),
 		worker_id: z.string().max(1500),
 	})
-	.strict();
+	.loose();
 
 const Input245 = z
 	.object({
@@ -19745,12 +20840,12 @@ const Output245 = z.array(
 	z
 		.object({
 			campaign_id: z.string().max(1500),
-			company_id: z.number().int(),
-			date_created: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_expiration: z.number().int().optional(),
+			date_expiration: dialpadInteger(z.number().int()).optional(),
 			date_expiration_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			id: z.string(),
 			is_temporary: z.boolean().optional(),
@@ -19772,7 +20867,7 @@ const Output245 = z.array(
 				.optional(),
 			worker_id: z.string().max(1500),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input246 = z
@@ -19808,7 +20903,7 @@ const Input246 = z
 								value: z
 									.union([
 										z.string(),
-										z.number().int(),
+										dialpadInteger(z.number().int()),
 										/* unknown because the official OpenAPI schema is not documented for this value. */ z
 											.unknown()
 											.nullable(),
@@ -19849,10 +20944,10 @@ const Output246 = z
 			.optional(),
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -19864,39 +20959,41 @@ const Output246 = z
 					.nullable(),
 			])
 			.optional(),
-		num_rows: z.number().int().optional(),
+		num_rows: dialpadInteger(z.number().int()).optional(),
 		query: z
 			.union([
 				z
 					.object({
 						field: z.string(),
-						op: z.enum([
-							'=',
-							'~=',
-							'!=',
-							'>',
-							'<',
-							'>=',
-							'<=',
-							'^=',
-							'$=',
-							'!!',
-							'~~',
-						]),
+						op: z
+							.enum([
+								'=',
+								'~=',
+								'!=',
+								'>',
+								'<',
+								'>=',
+								'<=',
+								'^=',
+								'$=',
+								'!!',
+								'~~',
+							])
+							.or(z.string()),
 						value: z
 							.union([
 								z.string(),
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
-						combiner: z.enum(['AND', 'OR']),
+						combiner: z.enum(['AND', 'OR']).or(z.string()),
 						conditions: z.array(
 							z.union([
 								/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -19904,7 +21001,7 @@ const Output246 = z
 							]),
 						),
 					})
-					.strict(),
+					.loose(),
 			])
 			.optional(),
 		sort_name: z
@@ -19915,14 +21012,14 @@ const Output246 = z
 					.nullable(),
 			])
 			.optional(),
-		state: z.enum(['pending', 'active', 'deleted']).optional(),
+		state: z.enum(['pending', 'active', 'deleted']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input247 = z
 	.object({
@@ -19932,8 +21029,8 @@ const Input247 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				target_ids: z.string().optional(),
 				state: z
 					.enum([
@@ -19970,10 +21067,10 @@ const Output247 = z.array(
 				.optional(),
 			author_id: z.string().optional(),
 			author_key: z.string().optional(),
-			company_id: z.number().int(),
-			date_created: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			id: z.string(),
 			key: z.string(),
@@ -19985,39 +21082,41 @@ const Output247 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			num_rows: z.number().int().optional(),
+			num_rows: dialpadInteger(z.number().int()).optional(),
 			query: z
 				.union([
 					z
 						.object({
 							field: z.string(),
-							op: z.enum([
-								'=',
-								'~=',
-								'!=',
-								'>',
-								'<',
-								'>=',
-								'<=',
-								'^=',
-								'$=',
-								'!!',
-								'~~',
-							]),
+							op: z
+								.enum([
+									'=',
+									'~=',
+									'!=',
+									'>',
+									'<',
+									'>=',
+									'<=',
+									'^=',
+									'$=',
+									'!!',
+									'~~',
+								])
+								.or(z.string()),
 							value: z
 								.union([
 									z.string(),
-									z.number().int(),
+									dialpadInteger(z.number().int()),
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z
 										.unknown()
 										.nullable(),
 								])
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 					z
 						.object({
-							combiner: z.enum(['AND', 'OR']),
+							combiner: z.enum(['AND', 'OR']).or(z.string()),
 							conditions: z.array(
 								z.union([
 									/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -20025,7 +21124,7 @@ const Output247 = z.array(
 								]),
 							),
 						})
-						.strict(),
+						.loose(),
 				])
 				.optional(),
 			sort_name: z
@@ -20036,14 +21135,14 @@ const Output247 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			state: z.enum(['pending', 'active', 'deleted']).optional(),
+			state: z.enum(['pending', 'active', 'deleted']).or(z.string()).optional(),
 			tags: z
 				.array(
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 				)
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input248 = z
@@ -20084,7 +21183,7 @@ const Input248 = z
 								value: z
 									.union([
 										z.string(),
-										z.number().int(),
+										dialpadInteger(z.number().int()),
 										/* unknown because the official OpenAPI schema is not documented for this value. */ z
 											.unknown()
 											.nullable(),
@@ -20125,10 +21224,10 @@ const Output248 = z
 			.optional(),
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -20140,39 +21239,41 @@ const Output248 = z
 					.nullable(),
 			])
 			.optional(),
-		num_rows: z.number().int().optional(),
+		num_rows: dialpadInteger(z.number().int()).optional(),
 		query: z
 			.union([
 				z
 					.object({
 						field: z.string(),
-						op: z.enum([
-							'=',
-							'~=',
-							'!=',
-							'>',
-							'<',
-							'>=',
-							'<=',
-							'^=',
-							'$=',
-							'!!',
-							'~~',
-						]),
+						op: z
+							.enum([
+								'=',
+								'~=',
+								'!=',
+								'>',
+								'<',
+								'>=',
+								'<=',
+								'^=',
+								'$=',
+								'!!',
+								'~~',
+							])
+							.or(z.string()),
 						value: z
 							.union([
 								z.string(),
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
-						combiner: z.enum(['AND', 'OR']),
+						combiner: z.enum(['AND', 'OR']).or(z.string()),
 						conditions: z.array(
 							z.union([
 								/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -20180,7 +21281,7 @@ const Output248 = z
 							]),
 						),
 					})
-					.strict(),
+					.loose(),
 			])
 			.optional(),
 		sort_name: z
@@ -20191,14 +21292,14 @@ const Output248 = z
 					.nullable(),
 			])
 			.optional(),
-		state: z.enum(['pending', 'active', 'deleted']).optional(),
+		state: z.enum(['pending', 'active', 'deleted']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input249 = z
 	.object({
@@ -20223,10 +21324,10 @@ const Output249 = z
 			.optional(),
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -20238,39 +21339,41 @@ const Output249 = z
 					.nullable(),
 			])
 			.optional(),
-		num_rows: z.number().int().optional(),
+		num_rows: dialpadInteger(z.number().int()).optional(),
 		query: z
 			.union([
 				z
 					.object({
 						field: z.string(),
-						op: z.enum([
-							'=',
-							'~=',
-							'!=',
-							'>',
-							'<',
-							'>=',
-							'<=',
-							'^=',
-							'$=',
-							'!!',
-							'~~',
-						]),
+						op: z
+							.enum([
+								'=',
+								'~=',
+								'!=',
+								'>',
+								'<',
+								'>=',
+								'<=',
+								'^=',
+								'$=',
+								'!!',
+								'~~',
+							])
+							.or(z.string()),
 						value: z
 							.union([
 								z.string(),
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
-						combiner: z.enum(['AND', 'OR']),
+						combiner: z.enum(['AND', 'OR']).or(z.string()),
 						conditions: z.array(
 							z.union([
 								/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -20278,7 +21381,7 @@ const Output249 = z
 							]),
 						),
 					})
-					.strict(),
+					.loose(),
 			])
 			.optional(),
 		sort_name: z
@@ -20289,14 +21392,14 @@ const Output249 = z
 					.nullable(),
 			])
 			.optional(),
-		state: z.enum(['pending', 'active', 'deleted']).optional(),
+		state: z.enum(['pending', 'active', 'deleted']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input250 = z
 	.object({
@@ -20332,10 +21435,10 @@ const Output250 = z
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
 		bot_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -20370,7 +21473,7 @@ const Output250 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input251 = z
 	.object({
@@ -20395,10 +21498,10 @@ const Output251 = z
 			.optional(),
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -20410,39 +21513,41 @@ const Output251 = z
 					.nullable(),
 			])
 			.optional(),
-		num_rows: z.number().int().optional(),
+		num_rows: dialpadInteger(z.number().int()).optional(),
 		query: z
 			.union([
 				z
 					.object({
 						field: z.string(),
-						op: z.enum([
-							'=',
-							'~=',
-							'!=',
-							'>',
-							'<',
-							'>=',
-							'<=',
-							'^=',
-							'$=',
-							'!!',
-							'~~',
-						]),
+						op: z
+							.enum([
+								'=',
+								'~=',
+								'!=',
+								'>',
+								'<',
+								'>=',
+								'<=',
+								'^=',
+								'$=',
+								'!!',
+								'~~',
+							])
+							.or(z.string()),
 						value: z
 							.union([
 								z.string(),
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
-						combiner: z.enum(['AND', 'OR']),
+						combiner: z.enum(['AND', 'OR']).or(z.string()),
 						conditions: z.array(
 							z.union([
 								/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -20450,7 +21555,7 @@ const Output251 = z
 							]),
 						),
 					})
-					.strict(),
+					.loose(),
 			])
 			.optional(),
 		sort_name: z
@@ -20461,14 +21566,14 @@ const Output251 = z
 					.nullable(),
 			])
 			.optional(),
-		state: z.enum(['pending', 'active', 'deleted']).optional(),
+		state: z.enum(['pending', 'active', 'deleted']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input252 = z
 	.object({
@@ -20478,8 +21583,8 @@ const Input252 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				search: z.string().optional(),
 				order: z.string().optional(),
 			})
@@ -20503,10 +21608,10 @@ const Output252 = z.array(
 			author_id: z.string().optional(),
 			author_key: z.string().optional(),
 			bot_id: z.string().max(1500),
-			company_id: z.number().int(),
-			date_created: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			id: z.string(),
 			key: z.string(),
@@ -20541,7 +21646,7 @@ const Output252 = z.array(
 				])
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input253 = z
@@ -20583,10 +21688,10 @@ const Output253 = z
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
 		bot_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -20621,7 +21726,7 @@ const Output253 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input254 = z
 	.object({
@@ -20673,10 +21778,10 @@ const Output256 = z
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
 		bot_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -20711,7 +21816,7 @@ const Output256 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input257 = z
 	.object({
@@ -20721,8 +21826,8 @@ const Input257 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				bot_id: z.string().optional(),
 			})
 			.strict()
@@ -20745,7 +21850,7 @@ const Output257 = z.array(
 			author_key: z.string().optional(),
 			bot_dialog_id: z.string().max(1500),
 			bot_id: z.string().max(1500),
-			company_id: z.number().int(),
+			company_id: dialpadInteger(z.number().int()),
 			conv_id: z
 				.union([
 					z.string().max(1500),
@@ -20754,18 +21859,21 @@ const Output257 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_last_message: z.number().int().optional(),
+			date_last_message: dialpadInteger(z.number().int()).optional(),
 			date_last_message_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			id: z.string(),
 			key: z.string(),
-			state: z.enum(['pending', 'active', 'ended', 'error']).optional(),
-			template_data: z.object({}).strict().optional(),
+			state: z
+				.enum(['pending', 'active', 'ended', 'error'])
+				.or(z.string())
+				.optional(),
+			template_data: z.object({}).loose().optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input258 = z
@@ -20795,7 +21903,7 @@ const Output258 = z
 		author_key: z.string().optional(),
 		bot_dialog_id: z.string().max(1500),
 		bot_id: z.string().max(1500),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		conv_id: z
 			.union([
 				z.string().max(1500),
@@ -20804,18 +21912,21 @@ const Output258 = z
 					.nullable(),
 			])
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_last_message: z.number().int().optional(),
+		date_last_message: dialpadInteger(z.number().int()).optional(),
 		date_last_message_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
-		state: z.enum(['pending', 'active', 'ended', 'error']).optional(),
-		template_data: z.object({}).strict().optional(),
+		state: z
+			.enum(['pending', 'active', 'ended', 'error'])
+			.or(z.string())
+			.optional(),
+		template_data: z.object({}).loose().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input259 = z
 	.object({
@@ -20838,8 +21949,8 @@ const Input260 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				state: z.string().optional(),
 				bot_dialog_id: z.string(),
 			})
@@ -20852,15 +21963,18 @@ const Output260 = z.array(
 		.object({
 			bot_dialog_id: z.string().max(1500),
 			bot_message_id: z.string().max(1500),
-			company_id: z.number().int(),
-			date_created: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
-			direction: z.enum(['in', 'out']),
+			direction: z.enum(['in', 'out']).or(z.string()),
 			id: z.string(),
 			key: z.string(),
-			state: z.enum(['pending', 'sent', 'received', 'error']).optional(),
+			state: z
+				.enum(['pending', 'sent', 'received', 'error'])
+				.or(z.string())
+				.optional(),
 			text: z
 				.union([
 					z.string(),
@@ -20870,7 +21984,7 @@ const Output260 = z.array(
 				])
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input261 = z
@@ -20896,15 +22010,18 @@ const Output261 = z
 	.object({
 		bot_dialog_id: z.string().max(1500),
 		bot_message_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		direction: z.enum(['in', 'out']),
+		direction: z.enum(['in', 'out']).or(z.string()),
 		id: z.string(),
 		key: z.string(),
-		state: z.enum(['pending', 'sent', 'received', 'error']).optional(),
+		state: z
+			.enum(['pending', 'sent', 'received', 'error'])
+			.or(z.string())
+			.optional(),
 		text: z
 			.union([
 				z.string(),
@@ -20914,7 +22031,7 @@ const Output261 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input262 = z
 	.object({
@@ -20943,15 +22060,18 @@ const Output263 = z
 	.object({
 		bot_dialog_id: z.string().max(1500),
 		bot_message_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		direction: z.enum(['in', 'out']),
+		direction: z.enum(['in', 'out']).or(z.string()),
 		id: z.string(),
 		key: z.string(),
-		state: z.enum(['pending', 'sent', 'received', 'error']).optional(),
+		state: z
+			.enum(['pending', 'sent', 'received', 'error'])
+			.or(z.string())
+			.optional(),
 		text: z
 			.union([
 				z.string(),
@@ -20961,7 +22081,7 @@ const Output263 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input264 = z
 	.object({
@@ -20993,7 +22113,7 @@ const Output264 = z
 		author_key: z.string().optional(),
 		bot_dialog_id: z.string().max(1500),
 		bot_id: z.string().max(1500),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		conv_id: z
 			.union([
 				z.string().max(1500),
@@ -21002,18 +22122,21 @@ const Output264 = z
 					.nullable(),
 			])
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_last_message: z.number().int().optional(),
+		date_last_message: dialpadInteger(z.number().int()).optional(),
 		date_last_message_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
-		state: z.enum(['pending', 'active', 'ended', 'error']).optional(),
-		template_data: z.object({}).strict().optional(),
+		state: z
+			.enum(['pending', 'active', 'ended', 'error'])
+			.or(z.string())
+			.optional(),
+		template_data: z.object({}).loose().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input265 = z
 	.object({
@@ -21023,8 +22146,8 @@ const Input265 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				date_modified_to: z.string().optional(),
 				date_modified_from: z.string().optional(),
 				date_created_to: z.string().optional(),
@@ -21084,51 +22207,51 @@ const Output265 = z.array(
 			campaign_group_key: z.string().optional(),
 			campaign_group_order: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
 				])
 				.optional(),
 			campaign_id: z.string().max(1500),
-			company_id: z.number().int(),
-			date_archived: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_archived: dialpadInteger(z.number().int()).optional(),
 			date_archived_iso: z.string().optional(),
-			date_audience_computed: z.number().int().optional(),
+			date_audience_computed: dialpadInteger(z.number().int()).optional(),
 			date_audience_computed_iso: z.string().optional(),
-			date_computed: z.number().int().optional(),
+			date_computed: dialpadInteger(z.number().int()).optional(),
 			date_computed_iso: z.string().optional(),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_ended: z.number().int().optional(),
+			date_ended: dialpadInteger(z.number().int()).optional(),
 			date_ended_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
-			date_paused: z.number().int().optional(),
+			date_paused: dialpadInteger(z.number().int()).optional(),
 			date_paused_iso: z.string().optional(),
-			date_scheduled_end: z.number().int().optional(),
+			date_scheduled_end: dialpadInteger(z.number().int()).optional(),
 			date_scheduled_end_iso: z.string().optional(),
-			date_scheduled_start: z.number().int().optional(),
+			date_scheduled_start: dialpadInteger(z.number().int()).optional(),
 			date_scheduled_start_iso: z.string().optional(),
-			date_started: z.number().int().optional(),
+			date_started: dialpadInteger(z.number().int()).optional(),
 			date_started_iso: z.string().optional(),
 			description: z.string().max(300).optional(),
 			event_logs_gcs_filename: z.string().max(1500).optional(),
 			flow_id: z.string().optional(),
 			flow_key: z.string().optional(),
 			gcs_filename: z.string().max(1500).optional(),
-			group_id: z.number().int().optional(),
+			group_id: dialpadInteger(z.number().int()).optional(),
 			id: z.string(),
 			is_dynamic: z.boolean().optional(),
 			key: z.string(),
 			lead_list_id: z.string().optional(),
 			lead_list_key: z.string().optional(),
 			name: z.string().max(1500).optional(),
-			num_items: z.number().int().optional(),
-			num_pending: z.number().int().optional(),
+			num_items: dialpadInteger(z.number().int()).optional(),
+			num_pending: dialpadInteger(z.number().int()).optional(),
 			office_id: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -21136,7 +22259,7 @@ const Output265 = z.array(
 				.optional(),
 			priority: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -21156,19 +22279,21 @@ const Output265 = z.array(
 						z
 							.object({
 								field: z.string(),
-								op: z.enum([
-									'=',
-									'~=',
-									'!=',
-									'>',
-									'<',
-									'>=',
-									'<=',
-									'^=',
-									'$=',
-									'!!',
-									'~~',
-								]),
+								op: z
+									.enum([
+										'=',
+										'~=',
+										'!=',
+										'>',
+										'<',
+										'>=',
+										'<=',
+										'^=',
+										'$=',
+										'!!',
+										'~~',
+									])
+									.or(z.string()),
 								value: z
 									.union([
 										/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -21177,15 +22302,15 @@ const Output265 = z.array(
 									])
 									.optional(),
 							})
-							.strict(),
+							.loose(),
 						z
 							.object({
-								combiner: z.enum(['AND', 'OR']),
+								combiner: z.enum(['AND', 'OR']).or(z.string()),
 								conditions: z.array(
 									/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
 								),
 							})
-							.strict(),
+							.loose(),
 					]),
 				)
 				.max(20)
@@ -21219,6 +22344,7 @@ const Output265 = z.array(
 					'deleted',
 					'cancelled',
 				])
+				.or(z.string())
 				.optional(),
 			strategy: z
 				.enum([
@@ -21228,6 +22354,7 @@ const Output265 = z.array(
 					'ai_progressive',
 					'ai_predictive',
 				])
+				.or(z.string())
 				.optional(),
 			tags: z
 				.array(
@@ -21237,7 +22364,7 @@ const Output265 = z.array(
 			target_id: z.string().optional(),
 			target_key: z.string().optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input266 = z
@@ -21379,51 +22506,51 @@ const Output266 = z.array(
 			campaign_group_key: z.string().optional(),
 			campaign_group_order: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
 				])
 				.optional(),
 			campaign_id: z.string().max(1500),
-			company_id: z.number().int(),
-			date_archived: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_archived: dialpadInteger(z.number().int()).optional(),
 			date_archived_iso: z.string().optional(),
-			date_audience_computed: z.number().int().optional(),
+			date_audience_computed: dialpadInteger(z.number().int()).optional(),
 			date_audience_computed_iso: z.string().optional(),
-			date_computed: z.number().int().optional(),
+			date_computed: dialpadInteger(z.number().int()).optional(),
 			date_computed_iso: z.string().optional(),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_ended: z.number().int().optional(),
+			date_ended: dialpadInteger(z.number().int()).optional(),
 			date_ended_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
-			date_paused: z.number().int().optional(),
+			date_paused: dialpadInteger(z.number().int()).optional(),
 			date_paused_iso: z.string().optional(),
-			date_scheduled_end: z.number().int().optional(),
+			date_scheduled_end: dialpadInteger(z.number().int()).optional(),
 			date_scheduled_end_iso: z.string().optional(),
-			date_scheduled_start: z.number().int().optional(),
+			date_scheduled_start: dialpadInteger(z.number().int()).optional(),
 			date_scheduled_start_iso: z.string().optional(),
-			date_started: z.number().int().optional(),
+			date_started: dialpadInteger(z.number().int()).optional(),
 			date_started_iso: z.string().optional(),
 			description: z.string().max(300).optional(),
 			event_logs_gcs_filename: z.string().max(1500).optional(),
 			flow_id: z.string().optional(),
 			flow_key: z.string().optional(),
 			gcs_filename: z.string().max(1500).optional(),
-			group_id: z.number().int().optional(),
+			group_id: dialpadInteger(z.number().int()).optional(),
 			id: z.string(),
 			is_dynamic: z.boolean().optional(),
 			key: z.string(),
 			lead_list_id: z.string().optional(),
 			lead_list_key: z.string().optional(),
 			name: z.string().max(1500).optional(),
-			num_items: z.number().int().optional(),
-			num_pending: z.number().int().optional(),
+			num_items: dialpadInteger(z.number().int()).optional(),
+			num_pending: dialpadInteger(z.number().int()).optional(),
 			office_id: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -21431,7 +22558,7 @@ const Output266 = z.array(
 				.optional(),
 			priority: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -21451,19 +22578,21 @@ const Output266 = z.array(
 						z
 							.object({
 								field: z.string(),
-								op: z.enum([
-									'=',
-									'~=',
-									'!=',
-									'>',
-									'<',
-									'>=',
-									'<=',
-									'^=',
-									'$=',
-									'!!',
-									'~~',
-								]),
+								op: z
+									.enum([
+										'=',
+										'~=',
+										'!=',
+										'>',
+										'<',
+										'>=',
+										'<=',
+										'^=',
+										'$=',
+										'!!',
+										'~~',
+									])
+									.or(z.string()),
 								value: z
 									.union([
 										/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -21472,15 +22601,15 @@ const Output266 = z.array(
 									])
 									.optional(),
 							})
-							.strict(),
+							.loose(),
 						z
 							.object({
-								combiner: z.enum(['AND', 'OR']),
+								combiner: z.enum(['AND', 'OR']).or(z.string()),
 								conditions: z.array(
 									/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
 								),
 							})
-							.strict(),
+							.loose(),
 					]),
 				)
 				.max(20)
@@ -21514,6 +22643,7 @@ const Output266 = z.array(
 					'deleted',
 					'cancelled',
 				])
+				.or(z.string())
 				.optional(),
 			strategy: z
 				.enum([
@@ -21523,6 +22653,7 @@ const Output266 = z.array(
 					'ai_progressive',
 					'ai_predictive',
 				])
+				.or(z.string())
 				.optional(),
 			tags: z
 				.array(
@@ -21532,7 +22663,7 @@ const Output266 = z.array(
 			target_id: z.string().optional(),
 			target_key: z.string().optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input267 = z
@@ -21605,12 +22736,12 @@ const Input268 = z
 					])
 					.optional(),
 				description: z.string().max(300).optional(),
-				group_id: z.number().int(),
+				group_id: dialpadInteger(z.number().int()),
 				is_dynamic: z.boolean().optional(),
 				name: z.string().max(1500).optional(),
 				office_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -21720,51 +22851,51 @@ const Output268 = z
 		campaign_group_key: z.string().optional(),
 		campaign_group_order: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
 		campaign_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_archived: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_archived: dialpadInteger(z.number().int()).optional(),
 		date_archived_iso: z.string().optional(),
-		date_audience_computed: z.number().int().optional(),
+		date_audience_computed: dialpadInteger(z.number().int()).optional(),
 		date_audience_computed_iso: z.string().optional(),
-		date_computed: z.number().int().optional(),
+		date_computed: dialpadInteger(z.number().int()).optional(),
 		date_computed_iso: z.string().optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_ended: z.number().int().optional(),
+		date_ended: dialpadInteger(z.number().int()).optional(),
 		date_ended_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_paused: z.number().int().optional(),
+		date_paused: dialpadInteger(z.number().int()).optional(),
 		date_paused_iso: z.string().optional(),
-		date_scheduled_end: z.number().int().optional(),
+		date_scheduled_end: dialpadInteger(z.number().int()).optional(),
 		date_scheduled_end_iso: z.string().optional(),
-		date_scheduled_start: z.number().int().optional(),
+		date_scheduled_start: dialpadInteger(z.number().int()).optional(),
 		date_scheduled_start_iso: z.string().optional(),
-		date_started: z.number().int().optional(),
+		date_started: dialpadInteger(z.number().int()).optional(),
 		date_started_iso: z.string().optional(),
 		description: z.string().max(300).optional(),
 		event_logs_gcs_filename: z.string().max(1500).optional(),
 		flow_id: z.string().optional(),
 		flow_key: z.string().optional(),
 		gcs_filename: z.string().max(1500).optional(),
-		group_id: z.number().int().optional(),
+		group_id: dialpadInteger(z.number().int()).optional(),
 		id: z.string(),
 		is_dynamic: z.boolean().optional(),
 		key: z.string(),
 		lead_list_id: z.string().optional(),
 		lead_list_key: z.string().optional(),
 		name: z.string().max(1500).optional(),
-		num_items: z.number().int().optional(),
-		num_pending: z.number().int().optional(),
+		num_items: dialpadInteger(z.number().int()).optional(),
+		num_pending: dialpadInteger(z.number().int()).optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -21772,7 +22903,7 @@ const Output268 = z
 			.optional(),
 		priority: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -21792,19 +22923,21 @@ const Output268 = z
 					z
 						.object({
 							field: z.string(),
-							op: z.enum([
-								'=',
-								'~=',
-								'!=',
-								'>',
-								'<',
-								'>=',
-								'<=',
-								'^=',
-								'$=',
-								'!!',
-								'~~',
-							]),
+							op: z
+								.enum([
+									'=',
+									'~=',
+									'!=',
+									'>',
+									'<',
+									'>=',
+									'<=',
+									'^=',
+									'$=',
+									'!!',
+									'~~',
+								])
+								.or(z.string()),
 							value: z
 								.union([
 									/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -21813,15 +22946,15 @@ const Output268 = z
 								])
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 					z
 						.object({
-							combiner: z.enum(['AND', 'OR']),
+							combiner: z.enum(['AND', 'OR']).or(z.string()),
 							conditions: z.array(
 								/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
 							),
 						})
-						.strict(),
+						.loose(),
 				]),
 			)
 			.max(20)
@@ -21855,6 +22988,7 @@ const Output268 = z
 				'deleted',
 				'cancelled',
 			])
+			.or(z.string())
 			.optional(),
 		strategy: z
 			.enum([
@@ -21864,6 +22998,7 @@ const Output268 = z
 				'ai_progressive',
 				'ai_predictive',
 			])
+			.or(z.string())
 			.optional(),
 		tags: z
 			.array(
@@ -21873,7 +23008,7 @@ const Output268 = z
 		target_id: z.string().optional(),
 		target_key: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input269 = z
 	.object({
@@ -21909,51 +23044,51 @@ const Output269 = z
 		campaign_group_key: z.string().optional(),
 		campaign_group_order: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
 		campaign_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_archived: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_archived: dialpadInteger(z.number().int()).optional(),
 		date_archived_iso: z.string().optional(),
-		date_audience_computed: z.number().int().optional(),
+		date_audience_computed: dialpadInteger(z.number().int()).optional(),
 		date_audience_computed_iso: z.string().optional(),
-		date_computed: z.number().int().optional(),
+		date_computed: dialpadInteger(z.number().int()).optional(),
 		date_computed_iso: z.string().optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_ended: z.number().int().optional(),
+		date_ended: dialpadInteger(z.number().int()).optional(),
 		date_ended_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_paused: z.number().int().optional(),
+		date_paused: dialpadInteger(z.number().int()).optional(),
 		date_paused_iso: z.string().optional(),
-		date_scheduled_end: z.number().int().optional(),
+		date_scheduled_end: dialpadInteger(z.number().int()).optional(),
 		date_scheduled_end_iso: z.string().optional(),
-		date_scheduled_start: z.number().int().optional(),
+		date_scheduled_start: dialpadInteger(z.number().int()).optional(),
 		date_scheduled_start_iso: z.string().optional(),
-		date_started: z.number().int().optional(),
+		date_started: dialpadInteger(z.number().int()).optional(),
 		date_started_iso: z.string().optional(),
 		description: z.string().max(300).optional(),
 		event_logs_gcs_filename: z.string().max(1500).optional(),
 		flow_id: z.string().optional(),
 		flow_key: z.string().optional(),
 		gcs_filename: z.string().max(1500).optional(),
-		group_id: z.number().int().optional(),
+		group_id: dialpadInteger(z.number().int()).optional(),
 		id: z.string(),
 		is_dynamic: z.boolean().optional(),
 		key: z.string(),
 		lead_list_id: z.string().optional(),
 		lead_list_key: z.string().optional(),
 		name: z.string().max(1500).optional(),
-		num_items: z.number().int().optional(),
-		num_pending: z.number().int().optional(),
+		num_items: dialpadInteger(z.number().int()).optional(),
+		num_pending: dialpadInteger(z.number().int()).optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -21961,7 +23096,7 @@ const Output269 = z
 			.optional(),
 		priority: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -21981,19 +23116,21 @@ const Output269 = z
 					z
 						.object({
 							field: z.string(),
-							op: z.enum([
-								'=',
-								'~=',
-								'!=',
-								'>',
-								'<',
-								'>=',
-								'<=',
-								'^=',
-								'$=',
-								'!!',
-								'~~',
-							]),
+							op: z
+								.enum([
+									'=',
+									'~=',
+									'!=',
+									'>',
+									'<',
+									'>=',
+									'<=',
+									'^=',
+									'$=',
+									'!!',
+									'~~',
+								])
+								.or(z.string()),
 							value: z
 								.union([
 									/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -22002,15 +23139,15 @@ const Output269 = z
 								])
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 					z
 						.object({
-							combiner: z.enum(['AND', 'OR']),
+							combiner: z.enum(['AND', 'OR']).or(z.string()),
 							conditions: z.array(
 								/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
 							),
 						})
-						.strict(),
+						.loose(),
 				]),
 			)
 			.max(20)
@@ -22044,6 +23181,7 @@ const Output269 = z
 				'deleted',
 				'cancelled',
 			])
+			.or(z.string())
 			.optional(),
 		strategy: z
 			.enum([
@@ -22053,6 +23191,7 @@ const Output269 = z
 				'ai_progressive',
 				'ai_predictive',
 			])
+			.or(z.string())
 			.optional(),
 		tags: z
 			.array(
@@ -22062,7 +23201,7 @@ const Output269 = z
 		target_id: z.string().optional(),
 		target_key: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input270 = z
 	.object({
@@ -22113,7 +23252,7 @@ const Input270 = z
 				description: z.string().max(300).optional(),
 				group_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -22123,7 +23262,7 @@ const Input270 = z
 				name: z.string().max(1500).optional(),
 				office_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -22224,51 +23363,51 @@ const Output270 = z
 		campaign_group_key: z.string().optional(),
 		campaign_group_order: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
 		campaign_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_archived: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_archived: dialpadInteger(z.number().int()).optional(),
 		date_archived_iso: z.string().optional(),
-		date_audience_computed: z.number().int().optional(),
+		date_audience_computed: dialpadInteger(z.number().int()).optional(),
 		date_audience_computed_iso: z.string().optional(),
-		date_computed: z.number().int().optional(),
+		date_computed: dialpadInteger(z.number().int()).optional(),
 		date_computed_iso: z.string().optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_ended: z.number().int().optional(),
+		date_ended: dialpadInteger(z.number().int()).optional(),
 		date_ended_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_paused: z.number().int().optional(),
+		date_paused: dialpadInteger(z.number().int()).optional(),
 		date_paused_iso: z.string().optional(),
-		date_scheduled_end: z.number().int().optional(),
+		date_scheduled_end: dialpadInteger(z.number().int()).optional(),
 		date_scheduled_end_iso: z.string().optional(),
-		date_scheduled_start: z.number().int().optional(),
+		date_scheduled_start: dialpadInteger(z.number().int()).optional(),
 		date_scheduled_start_iso: z.string().optional(),
-		date_started: z.number().int().optional(),
+		date_started: dialpadInteger(z.number().int()).optional(),
 		date_started_iso: z.string().optional(),
 		description: z.string().max(300).optional(),
 		event_logs_gcs_filename: z.string().max(1500).optional(),
 		flow_id: z.string().optional(),
 		flow_key: z.string().optional(),
 		gcs_filename: z.string().max(1500).optional(),
-		group_id: z.number().int().optional(),
+		group_id: dialpadInteger(z.number().int()).optional(),
 		id: z.string(),
 		is_dynamic: z.boolean().optional(),
 		key: z.string(),
 		lead_list_id: z.string().optional(),
 		lead_list_key: z.string().optional(),
 		name: z.string().max(1500).optional(),
-		num_items: z.number().int().optional(),
-		num_pending: z.number().int().optional(),
+		num_items: dialpadInteger(z.number().int()).optional(),
+		num_pending: dialpadInteger(z.number().int()).optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -22276,7 +23415,7 @@ const Output270 = z
 			.optional(),
 		priority: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -22296,19 +23435,21 @@ const Output270 = z
 					z
 						.object({
 							field: z.string(),
-							op: z.enum([
-								'=',
-								'~=',
-								'!=',
-								'>',
-								'<',
-								'>=',
-								'<=',
-								'^=',
-								'$=',
-								'!!',
-								'~~',
-							]),
+							op: z
+								.enum([
+									'=',
+									'~=',
+									'!=',
+									'>',
+									'<',
+									'>=',
+									'<=',
+									'^=',
+									'$=',
+									'!!',
+									'~~',
+								])
+								.or(z.string()),
 							value: z
 								.union([
 									/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -22317,15 +23458,15 @@ const Output270 = z
 								])
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 					z
 						.object({
-							combiner: z.enum(['AND', 'OR']),
+							combiner: z.enum(['AND', 'OR']).or(z.string()),
 							conditions: z.array(
 								/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
 							),
 						})
-						.strict(),
+						.loose(),
 				]),
 			)
 			.max(20)
@@ -22359,6 +23500,7 @@ const Output270 = z
 				'deleted',
 				'cancelled',
 			])
+			.or(z.string())
 			.optional(),
 		strategy: z
 			.enum([
@@ -22368,6 +23510,7 @@ const Output270 = z
 				'ai_progressive',
 				'ai_predictive',
 			])
+			.or(z.string())
 			.optional(),
 		tags: z
 			.array(
@@ -22377,7 +23520,7 @@ const Output270 = z
 		target_id: z.string().optional(),
 		target_key: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input271 = z
 	.object({
@@ -22413,51 +23556,51 @@ const Output271 = z
 		campaign_group_key: z.string().optional(),
 		campaign_group_order: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
 		campaign_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_archived: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_archived: dialpadInteger(z.number().int()).optional(),
 		date_archived_iso: z.string().optional(),
-		date_audience_computed: z.number().int().optional(),
+		date_audience_computed: dialpadInteger(z.number().int()).optional(),
 		date_audience_computed_iso: z.string().optional(),
-		date_computed: z.number().int().optional(),
+		date_computed: dialpadInteger(z.number().int()).optional(),
 		date_computed_iso: z.string().optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_ended: z.number().int().optional(),
+		date_ended: dialpadInteger(z.number().int()).optional(),
 		date_ended_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_paused: z.number().int().optional(),
+		date_paused: dialpadInteger(z.number().int()).optional(),
 		date_paused_iso: z.string().optional(),
-		date_scheduled_end: z.number().int().optional(),
+		date_scheduled_end: dialpadInteger(z.number().int()).optional(),
 		date_scheduled_end_iso: z.string().optional(),
-		date_scheduled_start: z.number().int().optional(),
+		date_scheduled_start: dialpadInteger(z.number().int()).optional(),
 		date_scheduled_start_iso: z.string().optional(),
-		date_started: z.number().int().optional(),
+		date_started: dialpadInteger(z.number().int()).optional(),
 		date_started_iso: z.string().optional(),
 		description: z.string().max(300).optional(),
 		event_logs_gcs_filename: z.string().max(1500).optional(),
 		flow_id: z.string().optional(),
 		flow_key: z.string().optional(),
 		gcs_filename: z.string().max(1500).optional(),
-		group_id: z.number().int().optional(),
+		group_id: dialpadInteger(z.number().int()).optional(),
 		id: z.string(),
 		is_dynamic: z.boolean().optional(),
 		key: z.string(),
 		lead_list_id: z.string().optional(),
 		lead_list_key: z.string().optional(),
 		name: z.string().max(1500).optional(),
-		num_items: z.number().int().optional(),
-		num_pending: z.number().int().optional(),
+		num_items: dialpadInteger(z.number().int()).optional(),
+		num_pending: dialpadInteger(z.number().int()).optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -22465,7 +23608,7 @@ const Output271 = z
 			.optional(),
 		priority: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -22485,19 +23628,21 @@ const Output271 = z
 					z
 						.object({
 							field: z.string(),
-							op: z.enum([
-								'=',
-								'~=',
-								'!=',
-								'>',
-								'<',
-								'>=',
-								'<=',
-								'^=',
-								'$=',
-								'!!',
-								'~~',
-							]),
+							op: z
+								.enum([
+									'=',
+									'~=',
+									'!=',
+									'>',
+									'<',
+									'>=',
+									'<=',
+									'^=',
+									'$=',
+									'!!',
+									'~~',
+								])
+								.or(z.string()),
 							value: z
 								.union([
 									/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -22506,15 +23651,15 @@ const Output271 = z
 								])
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 					z
 						.object({
-							combiner: z.enum(['AND', 'OR']),
+							combiner: z.enum(['AND', 'OR']).or(z.string()),
 							conditions: z.array(
 								/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
 							),
 						})
-						.strict(),
+						.loose(),
 				]),
 			)
 			.max(20)
@@ -22548,6 +23693,7 @@ const Output271 = z
 				'deleted',
 				'cancelled',
 			])
+			.or(z.string())
 			.optional(),
 		strategy: z
 			.enum([
@@ -22557,6 +23703,7 @@ const Output271 = z
 				'ai_progressive',
 				'ai_predictive',
 			])
+			.or(z.string())
 			.optional(),
 		tags: z
 			.array(
@@ -22566,7 +23713,7 @@ const Output271 = z
 		target_id: z.string().optional(),
 		target_key: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input272 = z
 	.object({
@@ -22588,14 +23735,14 @@ const Output272 = z
 	.object({
 		url: z.string(),
 	})
-	.strict();
+	.loose();
 
 const Input273 = z
 	.object({
 		body: z
 			.object({
 				description: z.string().max(300).optional(),
-				group_id: z.number().int(),
+				group_id: dialpadInteger(z.number().int()),
 				name: z.string().max(1500).optional(),
 			})
 			.strict()
@@ -22616,12 +23763,12 @@ const Output273 = z
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
 		campaign_group_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_computed: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_computed: dialpadInteger(z.number().int()).optional(),
 		date_computed_iso: z.string().optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		description: z.string().max(300).optional(),
 		id: z.string(),
@@ -22629,7 +23776,7 @@ const Output273 = z
 		name: z.string().max(1500).optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -22647,6 +23794,7 @@ const Output273 = z
 				'deleted',
 				'cancelled',
 			])
+			.or(z.string())
 			.optional(),
 		tags: z
 			.array(
@@ -22655,9 +23803,9 @@ const Output273 = z
 			.optional(),
 		target_id: z.string().optional(),
 		target_key: z.string().optional(),
-		wrr_credits: z.object({}).strict().optional(),
+		wrr_credits: z.object({}).loose().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input274 = z
 	.object({
@@ -22669,7 +23817,9 @@ const Input274 = z
 	})
 	.strict();
 
-const Output274 = z.undefined();
+const Output274 =
+	// Dialpad documents no response body here; core passes through whatever arrives (nothing, '' or {}).
+	z.unknown();
 
 const Input275 = z
 	.object({
@@ -22694,12 +23844,12 @@ const Output275 = z
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
 		campaign_group_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_computed: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_computed: dialpadInteger(z.number().int()).optional(),
 		date_computed_iso: z.string().optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		description: z.string().max(300).optional(),
 		id: z.string(),
@@ -22707,7 +23857,7 @@ const Output275 = z
 		name: z.string().max(1500).optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -22725,6 +23875,7 @@ const Output275 = z
 				'deleted',
 				'cancelled',
 			])
+			.or(z.string())
 			.optional(),
 		tags: z
 			.array(
@@ -22733,9 +23884,9 @@ const Output275 = z
 			.optional(),
 		target_id: z.string().optional(),
 		target_key: z.string().optional(),
-		wrr_credits: z.object({}).strict().optional(),
+		wrr_credits: z.object({}).loose().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input276 = z
 	.object({
@@ -22745,8 +23896,8 @@ const Input276 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				state: z
 					.enum([
 						'pending',
@@ -22784,12 +23935,12 @@ const Output276 = z.array(
 			author_id: z.string().optional(),
 			author_key: z.string().optional(),
 			campaign_group_id: z.string().max(1500),
-			company_id: z.number().int(),
-			date_computed: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_computed: dialpadInteger(z.number().int()).optional(),
 			date_computed_iso: z.string().optional(),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			description: z.string().max(300).optional(),
 			id: z.string(),
@@ -22797,7 +23948,7 @@ const Output276 = z.array(
 			name: z.string().max(1500).optional(),
 			office_id: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -22815,6 +23966,7 @@ const Output276 = z.array(
 					'deleted',
 					'cancelled',
 				])
+				.or(z.string())
 				.optional(),
 			tags: z
 				.array(
@@ -22823,9 +23975,9 @@ const Output276 = z.array(
 				.optional(),
 			target_id: z.string().optional(),
 			target_key: z.string().optional(),
-			wrr_credits: z.object({}).strict().optional(),
+			wrr_credits: z.object({}).loose().optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input277 = z
@@ -22844,7 +23996,7 @@ const Input277 = z
 	})
 	.strict();
 
-const Output277 = z.object({}).strict();
+const Output277 = z.object({}).loose();
 
 const Input278 = z
 	.object({
@@ -22858,13 +24010,16 @@ const Input278 = z
 
 const Output278 = z
 	.object({
-		agent_multiplier: z.number().int().optional(),
+		agent_multiplier: dialpadInteger(z.number().int()).optional(),
 		campaign_settings_id: z.string().max(1500),
-		classification: z.enum(['marketing', 'informational']).optional(),
-		company_id: z.number().int(),
+		classification: z
+			.enum(['marketing', 'informational'])
+			.or(z.string())
+			.optional(),
+		company_id: dialpadInteger(z.number().int()),
 		current_dial_rate: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -22872,17 +24027,17 @@ const Output278 = z
 			.optional(),
 		custom_ivr_details_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		dial_rate: z.number().int().optional(),
+		dial_rate: dialpadInteger(z.number().int()).optional(),
 		enable_internal_dnc: z.boolean().optional(),
 		enable_national_dnc: z.boolean().optional(),
 		enable_screen_pop: z.boolean().optional(),
@@ -22890,68 +24045,72 @@ const Output278 = z
 		key: z.string(),
 		max_call_attempt_settings: z
 			.object({
-				delay_in_seconds: z.number().int().min(0).optional(),
+				delay_in_seconds: dialpadInteger(z.number().int().min(0)).optional(),
 				enabled: z.boolean().optional(),
 				last_result_criteria: z
 					.array(
-						z.enum([
-							'call:powerdialer_no_available_agent',
-							'call:powerdialer_vm_drop',
-							'call:machine_detected',
-							'call:cancelled',
-							'call:missed',
-							'call:abandoned',
-							'sms:invalid_destination',
-							'sms:invalid_source',
-							'sms:no_route',
-							'sms:rejected_spam',
-							'sms:internal_error',
-							'sms:rejected',
-							'sms:not_supported',
-							'sms:time_out',
-							'sms:error',
-							'sms:unknown',
-						]),
+						z
+							.enum([
+								'call:powerdialer_no_available_agent',
+								'call:powerdialer_vm_drop',
+								'call:machine_detected',
+								'call:cancelled',
+								'call:missed',
+								'call:abandoned',
+								'sms:invalid_destination',
+								'sms:invalid_source',
+								'sms:no_route',
+								'sms:rejected_spam',
+								'sms:internal_error',
+								'sms:rejected',
+								'sms:not_supported',
+								'sms:time_out',
+								'sms:error',
+								'sms:unknown',
+							])
+							.or(z.string()),
 					)
 					.optional(),
-				max_attempts: z.number().int().gt(0).optional(),
+				max_attempts: dialpadInteger(z.number().int().gt(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		max_call_attempts: z.number().int().optional(),
+		max_call_attempts: dialpadInteger(z.number().int()).optional(),
 		max_sms_attempt_settings: z
 			.object({
-				delay_in_seconds: z.number().int().min(0).optional(),
+				delay_in_seconds: dialpadInteger(z.number().int().min(0)).optional(),
 				enabled: z.boolean().optional(),
 				last_result_criteria: z
 					.array(
-						z.enum([
-							'call:powerdialer_no_available_agent',
-							'call:powerdialer_vm_drop',
-							'call:machine_detected',
-							'call:cancelled',
-							'call:missed',
-							'call:abandoned',
-							'sms:invalid_destination',
-							'sms:invalid_source',
-							'sms:no_route',
-							'sms:rejected_spam',
-							'sms:internal_error',
-							'sms:rejected',
-							'sms:not_supported',
-							'sms:time_out',
-							'sms:error',
-							'sms:unknown',
-						]),
+						z
+							.enum([
+								'call:powerdialer_no_available_agent',
+								'call:powerdialer_vm_drop',
+								'call:machine_detected',
+								'call:cancelled',
+								'call:missed',
+								'call:abandoned',
+								'sms:invalid_destination',
+								'sms:invalid_source',
+								'sms:no_route',
+								'sms:rejected_spam',
+								'sms:internal_error',
+								'sms:rejected',
+								'sms:not_supported',
+								'sms:time_out',
+								'sms:error',
+								'sms:unknown',
+							])
+							.or(z.string()),
 					)
 					.optional(),
-				max_attempts: z.number().int().gt(0).optional(),
+				max_attempts: dialpadInteger(z.number().int().gt(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		playbook_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -22970,10 +24129,10 @@ const Output278 = z
 				z
 					.object({
 						display_name: z.string().optional(),
-						display_order: z.number().int().min(0).optional(),
+						display_order: dialpadInteger(z.number().int().min(0)).optional(),
 						name: z.string().min(1),
 					})
-					.strict(),
+					.loose(),
 			)
 			.max(10)
 			.optional(),
@@ -22993,10 +24152,10 @@ const Output278 = z
 				timezone: z.string().optional(),
 				timezone_mode: z.string().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input279 = z
 	.object({
@@ -23030,12 +24189,12 @@ const Output279 = z
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
 		campaign_group_id: z.string().max(1500),
-		company_id: z.number().int(),
-		date_computed: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_computed: dialpadInteger(z.number().int()).optional(),
 		date_computed_iso: z.string().optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		description: z.string().max(300).optional(),
 		id: z.string(),
@@ -23043,7 +24202,7 @@ const Output279 = z
 		name: z.string().max(1500).optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -23061,6 +24220,7 @@ const Output279 = z
 				'deleted',
 				'cancelled',
 			])
+			.or(z.string())
 			.optional(),
 		tags: z
 			.array(
@@ -23069,9 +24229,9 @@ const Output279 = z
 			.optional(),
 		target_id: z.string().optional(),
 		target_key: z.string().optional(),
-		wrr_credits: z.object({}).strict().optional(),
+		wrr_credits: z.object({}).loose().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input280 = z
 	.object({
@@ -23082,11 +24242,11 @@ const Input280 = z
 			.strict(),
 		body: z
 			.object({
-				agent_multiplier: z.number().int().optional(),
+				agent_multiplier: dialpadInteger(z.number().int()).optional(),
 				classification: z.enum(['marketing', 'informational']).optional(),
 				current_dial_rate: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -23094,20 +24254,22 @@ const Input280 = z
 					.optional(),
 				custom_ivr_details_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
 					])
 					.optional(),
-				dial_rate: z.number().int().max(1000).optional(),
+				dial_rate: dialpadInteger(z.number().int().max(1000)).optional(),
 				enable_internal_dnc: z.boolean().optional(),
 				enable_national_dnc: z.boolean().optional(),
 				enable_screen_pop: z.boolean().optional(),
 				hours: z.object({}).strict().optional(),
 				max_call_attempt_settings: z
 					.object({
-						delay_in_seconds: z.number().int().min(0).optional(),
+						delay_in_seconds: dialpadInteger(
+							z.number().int().min(0),
+						).optional(),
 						enabled: z.boolean().optional(),
 						last_result_criteria: z
 							.array(
@@ -23131,14 +24293,16 @@ const Input280 = z
 								]),
 							)
 							.optional(),
-						max_attempts: z.number().int().gt(0).optional(),
+						max_attempts: dialpadInteger(z.number().int().gt(0)).optional(),
 					})
 					.strict()
 					.optional(),
-				max_call_attempts: z.number().int().optional(),
+				max_call_attempts: dialpadInteger(z.number().int()).optional(),
 				max_sms_attempt_settings: z
 					.object({
-						delay_in_seconds: z.number().int().min(0).optional(),
+						delay_in_seconds: dialpadInteger(
+							z.number().int().min(0),
+						).optional(),
 						enabled: z.boolean().optional(),
 						last_result_criteria: z
 							.array(
@@ -23162,13 +24326,13 @@ const Input280 = z
 								]),
 							)
 							.optional(),
-						max_attempts: z.number().int().gt(0).optional(),
+						max_attempts: dialpadInteger(z.number().int().gt(0)).optional(),
 					})
 					.strict()
 					.optional(),
 				playbook_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -23187,7 +24351,9 @@ const Input280 = z
 						z
 							.object({
 								display_name: z.string().optional(),
-								display_order: z.number().int().min(0).optional(),
+								display_order: dialpadInteger(
+									z.number().int().min(0),
+								).optional(),
 								name: z.string().min(1),
 							})
 							.strict(),
@@ -23213,13 +24379,16 @@ const Input280 = z
 
 const Output280 = z
 	.object({
-		agent_multiplier: z.number().int().optional(),
+		agent_multiplier: dialpadInteger(z.number().int()).optional(),
 		campaign_settings_id: z.string().max(1500),
-		classification: z.enum(['marketing', 'informational']).optional(),
-		company_id: z.number().int(),
+		classification: z
+			.enum(['marketing', 'informational'])
+			.or(z.string())
+			.optional(),
+		company_id: dialpadInteger(z.number().int()),
 		current_dial_rate: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -23227,17 +24396,17 @@ const Output280 = z
 			.optional(),
 		custom_ivr_details_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		dial_rate: z.number().int().optional(),
+		dial_rate: dialpadInteger(z.number().int()).optional(),
 		enable_internal_dnc: z.boolean().optional(),
 		enable_national_dnc: z.boolean().optional(),
 		enable_screen_pop: z.boolean().optional(),
@@ -23245,68 +24414,72 @@ const Output280 = z
 		key: z.string(),
 		max_call_attempt_settings: z
 			.object({
-				delay_in_seconds: z.number().int().min(0).optional(),
+				delay_in_seconds: dialpadInteger(z.number().int().min(0)).optional(),
 				enabled: z.boolean().optional(),
 				last_result_criteria: z
 					.array(
-						z.enum([
-							'call:powerdialer_no_available_agent',
-							'call:powerdialer_vm_drop',
-							'call:machine_detected',
-							'call:cancelled',
-							'call:missed',
-							'call:abandoned',
-							'sms:invalid_destination',
-							'sms:invalid_source',
-							'sms:no_route',
-							'sms:rejected_spam',
-							'sms:internal_error',
-							'sms:rejected',
-							'sms:not_supported',
-							'sms:time_out',
-							'sms:error',
-							'sms:unknown',
-						]),
+						z
+							.enum([
+								'call:powerdialer_no_available_agent',
+								'call:powerdialer_vm_drop',
+								'call:machine_detected',
+								'call:cancelled',
+								'call:missed',
+								'call:abandoned',
+								'sms:invalid_destination',
+								'sms:invalid_source',
+								'sms:no_route',
+								'sms:rejected_spam',
+								'sms:internal_error',
+								'sms:rejected',
+								'sms:not_supported',
+								'sms:time_out',
+								'sms:error',
+								'sms:unknown',
+							])
+							.or(z.string()),
 					)
 					.optional(),
-				max_attempts: z.number().int().gt(0).optional(),
+				max_attempts: dialpadInteger(z.number().int().gt(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
-		max_call_attempts: z.number().int().optional(),
+		max_call_attempts: dialpadInteger(z.number().int()).optional(),
 		max_sms_attempt_settings: z
 			.object({
-				delay_in_seconds: z.number().int().min(0).optional(),
+				delay_in_seconds: dialpadInteger(z.number().int().min(0)).optional(),
 				enabled: z.boolean().optional(),
 				last_result_criteria: z
 					.array(
-						z.enum([
-							'call:powerdialer_no_available_agent',
-							'call:powerdialer_vm_drop',
-							'call:machine_detected',
-							'call:cancelled',
-							'call:missed',
-							'call:abandoned',
-							'sms:invalid_destination',
-							'sms:invalid_source',
-							'sms:no_route',
-							'sms:rejected_spam',
-							'sms:internal_error',
-							'sms:rejected',
-							'sms:not_supported',
-							'sms:time_out',
-							'sms:error',
-							'sms:unknown',
-						]),
+						z
+							.enum([
+								'call:powerdialer_no_available_agent',
+								'call:powerdialer_vm_drop',
+								'call:machine_detected',
+								'call:cancelled',
+								'call:missed',
+								'call:abandoned',
+								'sms:invalid_destination',
+								'sms:invalid_source',
+								'sms:no_route',
+								'sms:rejected_spam',
+								'sms:internal_error',
+								'sms:rejected',
+								'sms:not_supported',
+								'sms:time_out',
+								'sms:error',
+								'sms:unknown',
+							])
+							.or(z.string()),
 					)
 					.optional(),
-				max_attempts: z.number().int().gt(0).optional(),
+				max_attempts: dialpadInteger(z.number().int().gt(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		playbook_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -23325,10 +24498,10 @@ const Output280 = z
 				z
 					.object({
 						display_name: z.string().optional(),
-						display_order: z.number().int().min(0).optional(),
+						display_order: dialpadInteger(z.number().int().min(0)).optional(),
 						name: z.string().min(1),
 					})
-					.strict(),
+					.loose(),
 			)
 			.max(10)
 			.optional(),
@@ -23348,10 +24521,10 @@ const Output280 = z
 				timezone: z.string().optional(),
 				timezone_mode: z.string().optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input281 = z
 	.object({
@@ -23380,7 +24553,7 @@ const Output282 = z
 	.object({
 		url: z.string(),
 	})
-	.strict();
+	.loose();
 
 const Input283 = z
 	.object({
@@ -23395,13 +24568,13 @@ const Input283 = z
 				custom_mapping: z.object({}).strict().optional(),
 				import_results: z
 					.object({
-						collisions: z.number().int().min(0).optional(),
-						created: z.number().int().min(0).optional(),
-						duplicates: z.number().int().min(0).optional(),
-						failed_batches: z.number().int().min(0).optional(),
-						skipped: z.number().int().min(0).optional(),
-						total: z.number().int().min(0).optional(),
-						updated: z.number().int().min(0).optional(),
+						collisions: dialpadInteger(z.number().int().min(0)).optional(),
+						created: dialpadInteger(z.number().int().min(0)).optional(),
+						duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+						failed_batches: dialpadInteger(z.number().int().min(0)).optional(),
+						skipped: dialpadInteger(z.number().int().min(0)).optional(),
+						total: dialpadInteger(z.number().int().min(0)).optional(),
+						updated: dialpadInteger(z.number().int().min(0)).optional(),
 					})
 					.strict()
 					.optional(),
@@ -23414,7 +24587,7 @@ const Input283 = z
 				name: z.string().max(1500).optional(),
 				office_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -23444,18 +24617,18 @@ const Output283 = z
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		csv_id: z.string().max(1500),
 		custom_mapping:
 			/* OpenAPI documents arbitrary fields on this response object. */ z
 				.record(z.string(), z.string())
 				.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		download_url: z.string().optional(),
-		file_type: z.enum(['CSV', 'XLSX']).optional(),
+		file_type: z.enum(['CSV', 'XLSX']).or(z.string()).optional(),
 		filename: z.string().max(1500).optional(),
 		gcs_filename: z
 			.union([
@@ -23468,15 +24641,15 @@ const Output283 = z
 		id: z.string(),
 		import_results: z
 			.object({
-				collisions: z.number().int().min(0).optional(),
-				created: z.number().int().min(0).optional(),
-				duplicates: z.number().int().min(0).optional(),
-				failed_batches: z.number().int().min(0).optional(),
-				skipped: z.number().int().min(0).optional(),
-				total: z.number().int().min(0).optional(),
-				updated: z.number().int().min(0).optional(),
+				collisions: dialpadInteger(z.number().int().min(0)).optional(),
+				created: dialpadInteger(z.number().int().min(0)).optional(),
+				duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+				failed_batches: dialpadInteger(z.number().int().min(0)).optional(),
+				skipped: dialpadInteger(z.number().int().min(0)).optional(),
+				total: dialpadInteger(z.number().int().min(0)).optional(),
+				updated: dialpadInteger(z.number().int().min(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		key: z.string(),
 		labels: z
@@ -23488,50 +24661,52 @@ const Output283 = z
 			/* OpenAPI documents arbitrary fields on this response object. */ z
 				.record(
 					z.string(),
-					z.enum([
-						'do_not_import',
-						'first_name',
-						'last_name',
-						'job_title',
-						'industry',
-						'role',
-						'department',
-						'external_id',
-						'timezone',
-						'lang',
-						'primary_phone',
-						'secondary_phone',
-						'primary_email',
-						'secondary_email',
-						'address_name',
-						'address_line1',
-						'address_line2',
-						'city',
-						'region',
-						'postal_code',
-						'country',
-						'company_name',
-						'company_phone',
-						'company_address_line1',
-						'company_address_line2',
-						'company_city',
-						'company_region',
-						'company_postal_code',
-						'company_country',
-						'company_sic_code',
-						'company_naics_code',
-						'company_blacklisted',
-						'company_annual_revenue',
-						'company_currency',
-						'company_num_employees',
-						'primary_phone_fallback',
-					]),
+					z
+						.enum([
+							'do_not_import',
+							'first_name',
+							'last_name',
+							'job_title',
+							'industry',
+							'role',
+							'department',
+							'external_id',
+							'timezone',
+							'lang',
+							'primary_phone',
+							'secondary_phone',
+							'primary_email',
+							'secondary_email',
+							'address_name',
+							'address_line1',
+							'address_line2',
+							'city',
+							'region',
+							'postal_code',
+							'country',
+							'company_name',
+							'company_phone',
+							'company_address_line1',
+							'company_address_line2',
+							'company_city',
+							'company_region',
+							'company_postal_code',
+							'company_country',
+							'company_sic_code',
+							'company_naics_code',
+							'company_blacklisted',
+							'company_annual_revenue',
+							'company_currency',
+							'company_num_employees',
+							'primary_phone_fallback',
+						])
+						.or(z.string()),
 				)
 				.optional(),
 		name: z.string().max(1500).optional(),
 		num_rows: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -23539,7 +24714,7 @@ const Output283 = z
 			.optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -23565,15 +24740,16 @@ const Output283 = z
 				'deleted',
 				'cancelled',
 			])
+			.or(z.string())
 			.optional(),
-		strategy: z.enum(['skip', 'merge']).optional(),
+		strategy: z.enum(['skip', 'merge']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input284 = z
 	.object({
@@ -23615,18 +24791,18 @@ const Output285 = z
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		csv_id: z.string().max(1500),
 		custom_mapping:
 			/* OpenAPI documents arbitrary fields on this response object. */ z
 				.record(z.string(), z.string())
 				.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		download_url: z.string().optional(),
-		file_type: z.enum(['CSV', 'XLSX']).optional(),
+		file_type: z.enum(['CSV', 'XLSX']).or(z.string()).optional(),
 		filename: z.string().max(1500).optional(),
 		gcs_filename: z
 			.union([
@@ -23639,15 +24815,15 @@ const Output285 = z
 		id: z.string(),
 		import_results: z
 			.object({
-				collisions: z.number().int().min(0).optional(),
-				created: z.number().int().min(0).optional(),
-				duplicates: z.number().int().min(0).optional(),
-				failed_batches: z.number().int().min(0).optional(),
-				skipped: z.number().int().min(0).optional(),
-				total: z.number().int().min(0).optional(),
-				updated: z.number().int().min(0).optional(),
+				collisions: dialpadInteger(z.number().int().min(0)).optional(),
+				created: dialpadInteger(z.number().int().min(0)).optional(),
+				duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+				failed_batches: dialpadInteger(z.number().int().min(0)).optional(),
+				skipped: dialpadInteger(z.number().int().min(0)).optional(),
+				total: dialpadInteger(z.number().int().min(0)).optional(),
+				updated: dialpadInteger(z.number().int().min(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		key: z.string(),
 		labels: z
@@ -23659,50 +24835,52 @@ const Output285 = z
 			/* OpenAPI documents arbitrary fields on this response object. */ z
 				.record(
 					z.string(),
-					z.enum([
-						'do_not_import',
-						'first_name',
-						'last_name',
-						'job_title',
-						'industry',
-						'role',
-						'department',
-						'external_id',
-						'timezone',
-						'lang',
-						'primary_phone',
-						'secondary_phone',
-						'primary_email',
-						'secondary_email',
-						'address_name',
-						'address_line1',
-						'address_line2',
-						'city',
-						'region',
-						'postal_code',
-						'country',
-						'company_name',
-						'company_phone',
-						'company_address_line1',
-						'company_address_line2',
-						'company_city',
-						'company_region',
-						'company_postal_code',
-						'company_country',
-						'company_sic_code',
-						'company_naics_code',
-						'company_blacklisted',
-						'company_annual_revenue',
-						'company_currency',
-						'company_num_employees',
-						'primary_phone_fallback',
-					]),
+					z
+						.enum([
+							'do_not_import',
+							'first_name',
+							'last_name',
+							'job_title',
+							'industry',
+							'role',
+							'department',
+							'external_id',
+							'timezone',
+							'lang',
+							'primary_phone',
+							'secondary_phone',
+							'primary_email',
+							'secondary_email',
+							'address_name',
+							'address_line1',
+							'address_line2',
+							'city',
+							'region',
+							'postal_code',
+							'country',
+							'company_name',
+							'company_phone',
+							'company_address_line1',
+							'company_address_line2',
+							'company_city',
+							'company_region',
+							'company_postal_code',
+							'company_country',
+							'company_sic_code',
+							'company_naics_code',
+							'company_blacklisted',
+							'company_annual_revenue',
+							'company_currency',
+							'company_num_employees',
+							'primary_phone_fallback',
+						])
+						.or(z.string()),
 				)
 				.optional(),
 		name: z.string().max(1500).optional(),
 		num_rows: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -23710,7 +24888,7 @@ const Output285 = z
 			.optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -23736,15 +24914,16 @@ const Output285 = z
 				'deleted',
 				'cancelled',
 			])
+			.or(z.string())
 			.optional(),
-		strategy: z.enum(['skip', 'merge']).optional(),
+		strategy: z.enum(['skip', 'merge']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input286 = z
 	.object({
@@ -23754,8 +24933,8 @@ const Input286 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				target_ids: z.string().optional(),
 				tag: z
 					.enum([
@@ -23813,14 +24992,14 @@ const Output286 = z.array(
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 				)
 				.optional(),
-			company_id: z.number().int(),
+			company_id: dialpadInteger(z.number().int()),
 			csv_id: z.string().max(1500),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			download_url: z.string().optional(),
-			file_type: z.enum(['CSV', 'XLSX']).optional(),
+			file_type: z.enum(['CSV', 'XLSX']).or(z.string()).optional(),
 			filename: z.string().max(1500).optional(),
 			gcs_filename: z
 				.union([
@@ -23833,15 +25012,15 @@ const Output286 = z.array(
 			id: z.string(),
 			import_results: z
 				.object({
-					collisions: z.number().int().min(0).optional(),
-					created: z.number().int().min(0).optional(),
-					duplicates: z.number().int().min(0).optional(),
-					failed_batches: z.number().int().min(0).optional(),
-					skipped: z.number().int().min(0).optional(),
-					total: z.number().int().min(0).optional(),
-					updated: z.number().int().min(0).optional(),
+					collisions: dialpadInteger(z.number().int().min(0)).optional(),
+					created: dialpadInteger(z.number().int().min(0)).optional(),
+					duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+					failed_batches: dialpadInteger(z.number().int().min(0)).optional(),
+					skipped: dialpadInteger(z.number().int().min(0)).optional(),
+					total: dialpadInteger(z.number().int().min(0)).optional(),
+					updated: dialpadInteger(z.number().int().min(0)).optional(),
 				})
-				.strict()
+				.loose()
 				.optional(),
 			key: z.string(),
 			labels: z
@@ -23853,26 +25032,28 @@ const Output286 = z.array(
 				/* OpenAPI documents arbitrary fields on this response object. */ z
 					.record(
 						z.string(),
-						z.enum([
-							'e164',
-							'dnc',
-							'dnc_scope',
-							'dnc_expiration',
-							'dnt',
-							'dnt_scope',
-							'dnt_expiration',
-							'consent',
-							'validity',
-							'date_dnc_opt_out',
-							'date_dnt_opt_out',
-							'do_not_import',
-						]),
+						z
+							.enum([
+								'e164',
+								'dnc',
+								'dnc_scope',
+								'dnc_expiration',
+								'dnt',
+								'dnt_scope',
+								'dnt_expiration',
+								'consent',
+								'validity',
+								'date_dnc_opt_out',
+								'date_dnt_opt_out',
+								'do_not_import',
+							])
+							.or(z.string()),
 					)
 					.optional(),
 			name: z.string().max(1500).optional(),
 			num_rows: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -23898,6 +25079,7 @@ const Output286 = z.array(
 					'deleted',
 					'cancelled',
 				])
+				.or(z.string())
 				.optional(),
 			tags: z
 				.array(
@@ -23905,7 +25087,7 @@ const Output286 = z.array(
 				)
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input287 = z
@@ -23916,8 +25098,8 @@ const Input287 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				target_ids: z.string().optional(),
 				tag: z
 					.enum([
@@ -23975,18 +25157,18 @@ const Output287 = z.array(
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 				)
 				.optional(),
-			company_id: z.number().int(),
+			company_id: dialpadInteger(z.number().int()),
 			csv_id: z.string().max(1500),
 			custom_mapping:
 				/* OpenAPI documents arbitrary fields on this response object. */ z
 					.record(z.string(), z.string())
 					.optional(),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			download_url: z.string().optional(),
-			file_type: z.enum(['CSV', 'XLSX']).optional(),
+			file_type: z.enum(['CSV', 'XLSX']).or(z.string()).optional(),
 			filename: z.string().max(1500).optional(),
 			gcs_filename: z
 				.union([
@@ -23999,15 +25181,15 @@ const Output287 = z.array(
 			id: z.string(),
 			import_results: z
 				.object({
-					collisions: z.number().int().min(0).optional(),
-					created: z.number().int().min(0).optional(),
-					duplicates: z.number().int().min(0).optional(),
-					failed_batches: z.number().int().min(0).optional(),
-					skipped: z.number().int().min(0).optional(),
-					total: z.number().int().min(0).optional(),
-					updated: z.number().int().min(0).optional(),
+					collisions: dialpadInteger(z.number().int().min(0)).optional(),
+					created: dialpadInteger(z.number().int().min(0)).optional(),
+					duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+					failed_batches: dialpadInteger(z.number().int().min(0)).optional(),
+					skipped: dialpadInteger(z.number().int().min(0)).optional(),
+					total: dialpadInteger(z.number().int().min(0)).optional(),
+					updated: dialpadInteger(z.number().int().min(0)).optional(),
 				})
-				.strict()
+				.loose()
 				.optional(),
 			key: z.string(),
 			labels: z
@@ -24019,50 +25201,52 @@ const Output287 = z.array(
 				/* OpenAPI documents arbitrary fields on this response object. */ z
 					.record(
 						z.string(),
-						z.enum([
-							'do_not_import',
-							'first_name',
-							'last_name',
-							'job_title',
-							'industry',
-							'role',
-							'department',
-							'external_id',
-							'timezone',
-							'lang',
-							'primary_phone',
-							'secondary_phone',
-							'primary_email',
-							'secondary_email',
-							'address_name',
-							'address_line1',
-							'address_line2',
-							'city',
-							'region',
-							'postal_code',
-							'country',
-							'company_name',
-							'company_phone',
-							'company_address_line1',
-							'company_address_line2',
-							'company_city',
-							'company_region',
-							'company_postal_code',
-							'company_country',
-							'company_sic_code',
-							'company_naics_code',
-							'company_blacklisted',
-							'company_annual_revenue',
-							'company_currency',
-							'company_num_employees',
-							'primary_phone_fallback',
-						]),
+						z
+							.enum([
+								'do_not_import',
+								'first_name',
+								'last_name',
+								'job_title',
+								'industry',
+								'role',
+								'department',
+								'external_id',
+								'timezone',
+								'lang',
+								'primary_phone',
+								'secondary_phone',
+								'primary_email',
+								'secondary_email',
+								'address_name',
+								'address_line1',
+								'address_line2',
+								'city',
+								'region',
+								'postal_code',
+								'country',
+								'company_name',
+								'company_phone',
+								'company_address_line1',
+								'company_address_line2',
+								'company_city',
+								'company_region',
+								'company_postal_code',
+								'company_country',
+								'company_sic_code',
+								'company_naics_code',
+								'company_blacklisted',
+								'company_annual_revenue',
+								'company_currency',
+								'company_num_employees',
+								'primary_phone_fallback',
+							])
+							.or(z.string()),
 					)
 					.optional(),
 			name: z.string().max(1500).optional(),
 			num_rows: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -24070,7 +25254,7 @@ const Output287 = z.array(
 				.optional(),
 			office_id: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -24096,15 +25280,16 @@ const Output287 = z.array(
 					'deleted',
 					'cancelled',
 				])
+				.or(z.string())
 				.optional(),
-			strategy: z.enum(['skip', 'merge']).optional(),
+			strategy: z.enum(['skip', 'merge']).or(z.string()).optional(),
 			tags: z
 				.array(
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 				)
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input288 = z
@@ -24134,14 +25319,14 @@ const Output288 = z
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		csv_id: z.string().max(1500),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		download_url: z.string().optional(),
-		file_type: z.enum(['CSV', 'XLSX']).optional(),
+		file_type: z.enum(['CSV', 'XLSX']).or(z.string()).optional(),
 		filename: z.string().max(1500).optional(),
 		gcs_filename: z
 			.union([
@@ -24154,15 +25339,15 @@ const Output288 = z
 		id: z.string(),
 		import_results: z
 			.object({
-				collisions: z.number().int().min(0).optional(),
-				created: z.number().int().min(0).optional(),
-				duplicates: z.number().int().min(0).optional(),
-				failed_batches: z.number().int().min(0).optional(),
-				skipped: z.number().int().min(0).optional(),
-				total: z.number().int().min(0).optional(),
-				updated: z.number().int().min(0).optional(),
+				collisions: dialpadInteger(z.number().int().min(0)).optional(),
+				created: dialpadInteger(z.number().int().min(0)).optional(),
+				duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+				failed_batches: dialpadInteger(z.number().int().min(0)).optional(),
+				skipped: dialpadInteger(z.number().int().min(0)).optional(),
+				total: dialpadInteger(z.number().int().min(0)).optional(),
+				updated: dialpadInteger(z.number().int().min(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		key: z.string(),
 		labels: z
@@ -24173,26 +25358,28 @@ const Output288 = z
 		mapping: /* OpenAPI documents arbitrary fields on this response object. */ z
 			.record(
 				z.string(),
-				z.enum([
-					'e164',
-					'dnc',
-					'dnc_scope',
-					'dnc_expiration',
-					'dnt',
-					'dnt_scope',
-					'dnt_expiration',
-					'consent',
-					'validity',
-					'date_dnc_opt_out',
-					'date_dnt_opt_out',
-					'do_not_import',
-				]),
+				z
+					.enum([
+						'e164',
+						'dnc',
+						'dnc_scope',
+						'dnc_expiration',
+						'dnt',
+						'dnt_scope',
+						'dnt_expiration',
+						'consent',
+						'validity',
+						'date_dnc_opt_out',
+						'date_dnt_opt_out',
+						'do_not_import',
+					])
+					.or(z.string()),
 			)
 			.optional(),
 		name: z.string().max(1500).optional(),
 		num_rows: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -24218,6 +25405,7 @@ const Output288 = z
 				'deleted',
 				'cancelled',
 			])
+			.or(z.string())
 			.optional(),
 		tags: z
 			.array(
@@ -24225,7 +25413,7 @@ const Output288 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input289 = z
 	.object({
@@ -24239,13 +25427,13 @@ const Input289 = z
 				action: z.enum(['import']).optional(),
 				import_results: z
 					.object({
-						collisions: z.number().int().min(0).optional(),
-						created: z.number().int().min(0).optional(),
-						duplicates: z.number().int().min(0).optional(),
-						failed_batches: z.number().int().min(0).optional(),
-						skipped: z.number().int().min(0).optional(),
-						total: z.number().int().min(0).optional(),
-						updated: z.number().int().min(0).optional(),
+						collisions: dialpadInteger(z.number().int().min(0)).optional(),
+						created: dialpadInteger(z.number().int().min(0)).optional(),
+						duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+						failed_batches: dialpadInteger(z.number().int().min(0)).optional(),
+						skipped: dialpadInteger(z.number().int().min(0)).optional(),
+						total: dialpadInteger(z.number().int().min(0)).optional(),
+						updated: dialpadInteger(z.number().int().min(0)).optional(),
 					})
 					.strict()
 					.optional(),
@@ -24279,14 +25467,14 @@ const Output289 = z
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		csv_id: z.string().max(1500),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		download_url: z.string().optional(),
-		file_type: z.enum(['CSV', 'XLSX']).optional(),
+		file_type: z.enum(['CSV', 'XLSX']).or(z.string()).optional(),
 		filename: z.string().max(1500).optional(),
 		gcs_filename: z
 			.union([
@@ -24299,15 +25487,15 @@ const Output289 = z
 		id: z.string(),
 		import_results: z
 			.object({
-				collisions: z.number().int().min(0).optional(),
-				created: z.number().int().min(0).optional(),
-				duplicates: z.number().int().min(0).optional(),
-				failed_batches: z.number().int().min(0).optional(),
-				skipped: z.number().int().min(0).optional(),
-				total: z.number().int().min(0).optional(),
-				updated: z.number().int().min(0).optional(),
+				collisions: dialpadInteger(z.number().int().min(0)).optional(),
+				created: dialpadInteger(z.number().int().min(0)).optional(),
+				duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+				failed_batches: dialpadInteger(z.number().int().min(0)).optional(),
+				skipped: dialpadInteger(z.number().int().min(0)).optional(),
+				total: dialpadInteger(z.number().int().min(0)).optional(),
+				updated: dialpadInteger(z.number().int().min(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		key: z.string(),
 		labels: z
@@ -24318,26 +25506,28 @@ const Output289 = z
 		mapping: /* OpenAPI documents arbitrary fields on this response object. */ z
 			.record(
 				z.string(),
-				z.enum([
-					'e164',
-					'dnc',
-					'dnc_scope',
-					'dnc_expiration',
-					'dnt',
-					'dnt_scope',
-					'dnt_expiration',
-					'consent',
-					'validity',
-					'date_dnc_opt_out',
-					'date_dnt_opt_out',
-					'do_not_import',
-				]),
+				z
+					.enum([
+						'e164',
+						'dnc',
+						'dnc_scope',
+						'dnc_expiration',
+						'dnt',
+						'dnt_scope',
+						'dnt_expiration',
+						'consent',
+						'validity',
+						'date_dnc_opt_out',
+						'date_dnt_opt_out',
+						'do_not_import',
+					])
+					.or(z.string()),
 			)
 			.optional(),
 		name: z.string().max(1500).optional(),
 		num_rows: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -24363,6 +25553,7 @@ const Output289 = z
 				'deleted',
 				'cancelled',
 			])
+			.or(z.string())
 			.optional(),
 		tags: z
 			.array(
@@ -24370,7 +25561,7 @@ const Output289 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input290 = z
 	.object({
@@ -24408,7 +25599,7 @@ const Input291 = z
 				name: z.string().max(1500).optional(),
 				office_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -24455,7 +25646,7 @@ const Output291 = z
 			.optional(),
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		csv_columns: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -24471,11 +25662,11 @@ const Output291 = z
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_user_modified: z.number().int().optional(),
+		date_user_modified: dialpadInteger(z.number().int()).optional(),
 		date_user_modified_iso: z.string().optional(),
 		id: z.string(),
 		is_shared: z.boolean().optional(),
@@ -24497,14 +25688,14 @@ const Output291 = z
 			.optional(),
 		list_id: z.string().max(1500),
 		name: z.string().max(1500).optional(),
-		num_csv_rows: z.number().int().optional(),
-		num_manual_rows: z.number().int().optional(),
-		num_query_rows: z.number().int().optional(),
-		num_rows: z.number().int().optional(),
-		num_snapshot_rows: z.number().int().optional(),
+		num_csv_rows: dialpadInteger(z.number().int()).optional(),
+		num_manual_rows: dialpadInteger(z.number().int()).optional(),
+		num_query_rows: dialpadInteger(z.number().int()).optional(),
+		num_rows: dialpadInteger(z.number().int()).optional(),
+		num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -24542,7 +25733,7 @@ const Output291 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input292 = z
 	.object({
@@ -24568,7 +25759,7 @@ const Output292 = z
 		author_key: z.string().optional(),
 		bot_dialog_id: z.string().max(1500),
 		bot_id: z.string().max(1500),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		conv_id: z
 			.union([
 				z.string().max(1500),
@@ -24577,18 +25768,21 @@ const Output292 = z
 					.nullable(),
 			])
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_last_message: z.number().int().optional(),
+		date_last_message: dialpadInteger(z.number().int()).optional(),
 		date_last_message_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
-		state: z.enum(['pending', 'active', 'ended', 'error']).optional(),
-		template_data: z.object({}).strict().optional(),
+		state: z
+			.enum(['pending', 'active', 'ended', 'error'])
+			.or(z.string())
+			.optional(),
+		template_data: z.object({}).loose().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input293 = z
 	.object({
@@ -24598,8 +25792,8 @@ const Input293 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				tag: z.string().optional(),
 				list_id: z.string().optional(),
 				campaign_id: z.string().optional(),
@@ -24622,24 +25816,24 @@ const Output293 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			company_id: z.number().int(),
+			company_id: dialpadInteger(z.number().int()),
 			contact_id: z.string().optional(),
 			contact_key: z.string().optional(),
-			csv: z.object({}).strict().optional(),
+			csv: z.object({}).loose().optional(),
 			current_rule_id: z.string().optional(),
 			current_rule_key: z.string().optional(),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_estimate: z.number().int().optional(),
+			date_estimate: dialpadInteger(z.number().int()).optional(),
 			date_estimate_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			history: z
 				.object({
-					call_attempts: z.number().int().min(0).optional(),
+					call_attempts: dialpadInteger(z.number().int().min(0)).optional(),
 					last_call_id: z
 						.union([
-							z.number().int(),
+							dialpadInteger(z.number().int()),
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z
 								.unknown()
 								.nullable(),
@@ -24649,69 +25843,75 @@ const Output293 = z.array(
 						.union([
 							z.array(
 								z.union([
-									z.enum([
-										'call:powerdialer_no_available_agent',
-										'call:human_agent',
-										'call:ai_agent',
-										'call:outbound_connected',
-										'call:powerdialer_vm_drop',
-										'call:machine_detected',
-										'call:powerdialer_call',
-										'call:active',
-										'call:outbound',
-										'call:cancelled',
-										'call:inbound',
-										'call:missed',
-										'call:abandoned',
-										'call:user_initiated',
-									]),
-									z.enum([
-										'sms:accepted',
-										'sms:invalid_destination',
-										'sms:invalid_source',
-										'sms:no_route',
-										'sms:rejected_spam',
-										'sms:internal_error',
-										'sms:rejected',
-										'sms:not_supported',
-										'sms:time_out',
-										'sms:error',
-										'sms:unknown',
-										'sms:forbidden',
-										'sms:owner_no_international_messaging',
-										'sms:unregistered_a2p_not_allowed',
-										'sms:owner_not_enough_sms_credits',
-										'sms:owner_not_enough_credits',
-										'sms:messaging_disabled',
-										'sms:owner_free_user',
-										'sms:contact_missing_number',
-										'sms:contact_is_room',
-										'sms:contact_is_shared_line',
-										'sms:staff_contact',
-										'sms:company_affinity',
-										'sms:not_in_free_company',
-										'sms:invalid_number',
-									]),
-									z.enum([
-										'call:max_attempts_item',
-										'call:max_attempts_delay_not_met',
-										'call:max_attempts_criteria_not_met',
-										'call:max_attempts_campaign_phone_total',
-										'call:max_attempts_campaign_phone_daily',
-										'call:max_attempts_campaign_phone_rolling',
-										'call:max_attempts_campaign_contact_total',
-										'call:max_attempts_campaign_contact_daily',
-										'call:max_attempts_campaign_contact_rolling',
-										'call:max_attempts_campaign_company_total',
-										'call:max_attempts_campaign_company_daily',
-										'call:max_attempts_campaign_company_rolling',
-										'call:max_attempts_global_phone_daily',
-										'call:max_attempts_global_phone_rolling',
-										'call:max_attempts_global_contact_daily',
-										'call:max_attempts_global_contact_rolling',
-										'call:max_attempts_global_company_daily',
-										'call:max_attempts_global_company_rolling',
-									]),
+									z
+										.enum([
+											'call:powerdialer_no_available_agent',
+											'call:human_agent',
+											'call:ai_agent',
+											'call:outbound_connected',
+											'call:powerdialer_vm_drop',
+											'call:machine_detected',
+											'call:powerdialer_call',
+											'call:active',
+											'call:outbound',
+											'call:cancelled',
+											'call:inbound',
+											'call:missed',
+											'call:abandoned',
+											'call:user_initiated',
+										])
+										.or(z.string()),
+									z
+										.enum([
+											'sms:accepted',
+											'sms:invalid_destination',
+											'sms:invalid_source',
+											'sms:no_route',
+											'sms:rejected_spam',
+											'sms:internal_error',
+											'sms:rejected',
+											'sms:not_supported',
+											'sms:time_out',
+											'sms:error',
+											'sms:unknown',
+											'sms:forbidden',
+											'sms:owner_no_international_messaging',
+											'sms:unregistered_a2p_not_allowed',
+											'sms:owner_not_enough_sms_credits',
+											'sms:owner_not_enough_credits',
+											'sms:messaging_disabled',
+											'sms:owner_free_user',
+											'sms:contact_missing_number',
+											'sms:contact_is_room',
+											'sms:contact_is_shared_line',
+											'sms:staff_contact',
+											'sms:company_affinity',
+											'sms:not_in_free_company',
+											'sms:invalid_number',
+										])
+										.or(z.string()),
+									z
+										.enum([
+											'call:max_attempts_item',
+											'call:max_attempts_delay_not_met',
+											'call:max_attempts_criteria_not_met',
+											'call:max_attempts_campaign_phone_total',
+											'call:max_attempts_campaign_phone_daily',
+											'call:max_attempts_campaign_phone_rolling',
+											'call:max_attempts_campaign_contact_total',
+											'call:max_attempts_campaign_contact_daily',
+											'call:max_attempts_campaign_contact_rolling',
+											'call:max_attempts_campaign_company_total',
+											'call:max_attempts_campaign_company_daily',
+											'call:max_attempts_campaign_company_rolling',
+											'call:max_attempts_global_phone_daily',
+											'call:max_attempts_global_phone_rolling',
+											'call:max_attempts_global_contact_daily',
+											'call:max_attempts_global_contact_rolling',
+											'call:max_attempts_global_company_daily',
+											'call:max_attempts_global_company_rolling',
+										])
+										.or(z.string()),
 									z.string(),
 								]),
 							),
@@ -24743,11 +25943,11 @@ const Output293 = z.array(
 												.optional(),
 										rule_type: z.string().optional(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 				})
-				.strict()
+				.loose()
 				.optional(),
 			id: z.string(),
 			index: z.number().optional(),
@@ -24826,6 +26026,7 @@ const Output293 = z.array(
 					'sms:not_in_free_company',
 					'sms:invalid_number',
 				])
+				.or(z.string())
 				.optional(),
 			sms_id: z.string().optional(),
 			sms_key: z.string().optional(),
@@ -24842,6 +26043,7 @@ const Output293 = z.array(
 					'cancelled',
 					'incomplete',
 				])
+				.or(z.string())
 				.optional(),
 			status: z
 				.enum([
@@ -24853,6 +26055,7 @@ const Output293 = z.array(
 					'Excluded',
 					'Incomplete',
 				])
+				.or(z.string())
 				.optional(),
 			tags: z
 				.array(
@@ -24860,7 +26063,7 @@ const Output293 = z.array(
 				)
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input294 = z
@@ -24908,7 +26111,7 @@ const Output295 = z
 			.optional(),
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		csv_columns: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -24924,11 +26127,11 @@ const Output295 = z
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_user_modified: z.number().int().optional(),
+		date_user_modified: dialpadInteger(z.number().int()).optional(),
 		date_user_modified_iso: z.string().optional(),
 		id: z.string(),
 		is_shared: z.boolean().optional(),
@@ -24950,14 +26153,14 @@ const Output295 = z
 			.optional(),
 		list_id: z.string().max(1500),
 		name: z.string().max(1500).optional(),
-		num_csv_rows: z.number().int().optional(),
-		num_manual_rows: z.number().int().optional(),
-		num_query_rows: z.number().int().optional(),
-		num_rows: z.number().int().optional(),
-		num_snapshot_rows: z.number().int().optional(),
+		num_csv_rows: dialpadInteger(z.number().int()).optional(),
+		num_manual_rows: dialpadInteger(z.number().int()).optional(),
+		num_query_rows: dialpadInteger(z.number().int()).optional(),
+		num_rows: dialpadInteger(z.number().int()).optional(),
+		num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -24995,7 +26198,7 @@ const Output295 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input296 = z
 	.object({
@@ -25019,24 +26222,24 @@ const Output296 = z
 					.nullable(),
 			])
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		contact_id: z.string().optional(),
 		contact_key: z.string().optional(),
-		csv: z.object({}).strict().optional(),
+		csv: z.object({}).loose().optional(),
 		current_rule_id: z.string().optional(),
 		current_rule_key: z.string().optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_estimate: z.number().int().optional(),
+		date_estimate: dialpadInteger(z.number().int()).optional(),
 		date_estimate_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		history: z
 			.object({
-				call_attempts: z.number().int().min(0).optional(),
+				call_attempts: dialpadInteger(z.number().int().min(0)).optional(),
 				last_call_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -25046,69 +26249,75 @@ const Output296 = z
 					.union([
 						z.array(
 							z.union([
-								z.enum([
-									'call:powerdialer_no_available_agent',
-									'call:human_agent',
-									'call:ai_agent',
-									'call:outbound_connected',
-									'call:powerdialer_vm_drop',
-									'call:machine_detected',
-									'call:powerdialer_call',
-									'call:active',
-									'call:outbound',
-									'call:cancelled',
-									'call:inbound',
-									'call:missed',
-									'call:abandoned',
-									'call:user_initiated',
-								]),
-								z.enum([
-									'sms:accepted',
-									'sms:invalid_destination',
-									'sms:invalid_source',
-									'sms:no_route',
-									'sms:rejected_spam',
-									'sms:internal_error',
-									'sms:rejected',
-									'sms:not_supported',
-									'sms:time_out',
-									'sms:error',
-									'sms:unknown',
-									'sms:forbidden',
-									'sms:owner_no_international_messaging',
-									'sms:unregistered_a2p_not_allowed',
-									'sms:owner_not_enough_sms_credits',
-									'sms:owner_not_enough_credits',
-									'sms:messaging_disabled',
-									'sms:owner_free_user',
-									'sms:contact_missing_number',
-									'sms:contact_is_room',
-									'sms:contact_is_shared_line',
-									'sms:staff_contact',
-									'sms:company_affinity',
-									'sms:not_in_free_company',
-									'sms:invalid_number',
-								]),
-								z.enum([
-									'call:max_attempts_item',
-									'call:max_attempts_delay_not_met',
-									'call:max_attempts_criteria_not_met',
-									'call:max_attempts_campaign_phone_total',
-									'call:max_attempts_campaign_phone_daily',
-									'call:max_attempts_campaign_phone_rolling',
-									'call:max_attempts_campaign_contact_total',
-									'call:max_attempts_campaign_contact_daily',
-									'call:max_attempts_campaign_contact_rolling',
-									'call:max_attempts_campaign_company_total',
-									'call:max_attempts_campaign_company_daily',
-									'call:max_attempts_campaign_company_rolling',
-									'call:max_attempts_global_phone_daily',
-									'call:max_attempts_global_phone_rolling',
-									'call:max_attempts_global_contact_daily',
-									'call:max_attempts_global_contact_rolling',
-									'call:max_attempts_global_company_daily',
-									'call:max_attempts_global_company_rolling',
-								]),
+								z
+									.enum([
+										'call:powerdialer_no_available_agent',
+										'call:human_agent',
+										'call:ai_agent',
+										'call:outbound_connected',
+										'call:powerdialer_vm_drop',
+										'call:machine_detected',
+										'call:powerdialer_call',
+										'call:active',
+										'call:outbound',
+										'call:cancelled',
+										'call:inbound',
+										'call:missed',
+										'call:abandoned',
+										'call:user_initiated',
+									])
+									.or(z.string()),
+								z
+									.enum([
+										'sms:accepted',
+										'sms:invalid_destination',
+										'sms:invalid_source',
+										'sms:no_route',
+										'sms:rejected_spam',
+										'sms:internal_error',
+										'sms:rejected',
+										'sms:not_supported',
+										'sms:time_out',
+										'sms:error',
+										'sms:unknown',
+										'sms:forbidden',
+										'sms:owner_no_international_messaging',
+										'sms:unregistered_a2p_not_allowed',
+										'sms:owner_not_enough_sms_credits',
+										'sms:owner_not_enough_credits',
+										'sms:messaging_disabled',
+										'sms:owner_free_user',
+										'sms:contact_missing_number',
+										'sms:contact_is_room',
+										'sms:contact_is_shared_line',
+										'sms:staff_contact',
+										'sms:company_affinity',
+										'sms:not_in_free_company',
+										'sms:invalid_number',
+									])
+									.or(z.string()),
+								z
+									.enum([
+										'call:max_attempts_item',
+										'call:max_attempts_delay_not_met',
+										'call:max_attempts_criteria_not_met',
+										'call:max_attempts_campaign_phone_total',
+										'call:max_attempts_campaign_phone_daily',
+										'call:max_attempts_campaign_phone_rolling',
+										'call:max_attempts_campaign_contact_total',
+										'call:max_attempts_campaign_contact_daily',
+										'call:max_attempts_campaign_contact_rolling',
+										'call:max_attempts_campaign_company_total',
+										'call:max_attempts_campaign_company_daily',
+										'call:max_attempts_campaign_company_rolling',
+										'call:max_attempts_global_phone_daily',
+										'call:max_attempts_global_phone_rolling',
+										'call:max_attempts_global_contact_daily',
+										'call:max_attempts_global_contact_rolling',
+										'call:max_attempts_global_company_daily',
+										'call:max_attempts_global_company_rolling',
+									])
+									.or(z.string()),
 								z.string(),
 							]),
 						),
@@ -25140,11 +26349,11 @@ const Output296 = z
 											.optional(),
 									rule_type: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						)
 						.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		id: z.string(),
 		index: z.number().optional(),
@@ -25223,6 +26432,7 @@ const Output296 = z
 				'sms:not_in_free_company',
 				'sms:invalid_number',
 			])
+			.or(z.string())
 			.optional(),
 		sms_id: z.string().optional(),
 		sms_key: z.string().optional(),
@@ -25239,6 +26449,7 @@ const Output296 = z
 				'cancelled',
 				'incomplete',
 			])
+			.or(z.string())
 			.optional(),
 		status: z
 			.enum([
@@ -25250,6 +26461,7 @@ const Output296 = z
 				'Excluded',
 				'Incomplete',
 			])
+			.or(z.string())
 			.optional(),
 		tags: z
 			.array(
@@ -25257,7 +26469,7 @@ const Output296 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input297 = z
 	.object({
@@ -25304,7 +26516,7 @@ const Output298 = z
 			.optional(),
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		csv_columns: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -25320,11 +26532,11 @@ const Output298 = z
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_user_modified: z.number().int().optional(),
+		date_user_modified: dialpadInteger(z.number().int()).optional(),
 		date_user_modified_iso: z.string().optional(),
 		id: z.string(),
 		is_shared: z.boolean().optional(),
@@ -25346,14 +26558,14 @@ const Output298 = z
 			.optional(),
 		list_id: z.string().max(1500),
 		name: z.string().max(1500).optional(),
-		num_csv_rows: z.number().int().optional(),
-		num_manual_rows: z.number().int().optional(),
-		num_query_rows: z.number().int().optional(),
-		num_rows: z.number().int().optional(),
-		num_snapshot_rows: z.number().int().optional(),
+		num_csv_rows: dialpadInteger(z.number().int()).optional(),
+		num_manual_rows: dialpadInteger(z.number().int()).optional(),
+		num_query_rows: dialpadInteger(z.number().int()).optional(),
+		num_rows: dialpadInteger(z.number().int()).optional(),
+		num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -25391,7 +26603,7 @@ const Output298 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input299 = z
 	.object({
@@ -25401,8 +26613,8 @@ const Input299 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 			})
 			.strict()
 			.optional(),
@@ -25432,7 +26644,7 @@ const Output299 = z.array(
 				.optional(),
 			author_id: z.string().optional(),
 			author_key: z.string().optional(),
-			company_id: z.number().int(),
+			company_id: dialpadInteger(z.number().int()),
 			csv_columns: z
 				.array(
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -25448,11 +26660,11 @@ const Output299 = z.array(
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 				)
 				.optional(),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
-			date_user_modified: z.number().int().optional(),
+			date_user_modified: dialpadInteger(z.number().int()).optional(),
 			date_user_modified_iso: z.string().optional(),
 			id: z.string(),
 			is_shared: z.boolean().optional(),
@@ -25474,14 +26686,14 @@ const Output299 = z.array(
 				.optional(),
 			list_id: z.string().max(1500),
 			name: z.string().max(1500).optional(),
-			num_csv_rows: z.number().int().optional(),
-			num_manual_rows: z.number().int().optional(),
-			num_query_rows: z.number().int().optional(),
-			num_rows: z.number().int().optional(),
-			num_snapshot_rows: z.number().int().optional(),
+			num_csv_rows: dialpadInteger(z.number().int()).optional(),
+			num_manual_rows: dialpadInteger(z.number().int()).optional(),
+			num_query_rows: dialpadInteger(z.number().int()).optional(),
+			num_rows: dialpadInteger(z.number().int()).optional(),
+			num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 			office_id: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -25519,7 +26731,7 @@ const Output299 = z.array(
 				)
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input300 = z
@@ -25577,7 +26789,7 @@ const Input300 = z
 				name: z.string().max(1500).optional(),
 				office_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -25632,7 +26844,7 @@ const Output300 = z
 			.optional(),
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		csv_columns: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -25648,11 +26860,11 @@ const Output300 = z
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 			)
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_user_modified: z.number().int().optional(),
+		date_user_modified: dialpadInteger(z.number().int()).optional(),
 		date_user_modified_iso: z.string().optional(),
 		id: z.string(),
 		is_shared: z.boolean().optional(),
@@ -25674,14 +26886,14 @@ const Output300 = z
 			.optional(),
 		list_id: z.string().max(1500),
 		name: z.string().max(1500).optional(),
-		num_csv_rows: z.number().int().optional(),
-		num_manual_rows: z.number().int().optional(),
-		num_query_rows: z.number().int().optional(),
-		num_rows: z.number().int().optional(),
-		num_snapshot_rows: z.number().int().optional(),
+		num_csv_rows: dialpadInteger(z.number().int()).optional(),
+		num_manual_rows: dialpadInteger(z.number().int()).optional(),
+		num_query_rows: dialpadInteger(z.number().int()).optional(),
+		num_rows: dialpadInteger(z.number().int()).optional(),
+		num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 		office_id: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -25719,7 +26931,7 @@ const Output300 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input301 = z
 	.object({
@@ -25729,8 +26941,8 @@ const Input301 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				list_ids: z.string().optional(),
 				campaign_counts: z.boolean().optional(),
 				target_ids: z.string().optional(),
@@ -25747,13 +26959,13 @@ const Output301 = z.array(
 	z
 		.object({
 			active_campaigns: z.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			]),
 			all_campaigns: z.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -25772,10 +26984,10 @@ const Output301 = z.array(
 							.optional(),
 						author_id: z.string().optional(),
 						author_key: z.string().optional(),
-						company_id: z.number().int(),
-						date_created: z.number().int().optional(),
+						company_id: dialpadInteger(z.number().int()),
+						date_created: dialpadInteger(z.number().int()).optional(),
 						date_created_iso: z.string().optional(),
-						date_modified: z.number().int().optional(),
+						date_modified: dialpadInteger(z.number().int()).optional(),
 						date_modified_iso: z.string().optional(),
 						id: z.string(),
 						key: z.string(),
@@ -25787,7 +26999,7 @@ const Output301 = z.array(
 									.nullable(),
 							])
 							.optional(),
-						num_rows: z.number().int().optional(),
+						num_rows: dialpadInteger(z.number().int()).optional(),
 						query: z
 							.union([
 								z
@@ -25800,7 +27012,7 @@ const Output301 = z.array(
 												.unknown()
 												.optional(),
 									})
-									.strict(),
+									.loose(),
 								z
 									.object({
 										combiner:
@@ -25808,7 +27020,7 @@ const Output301 = z.array(
 										conditions:
 											/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
 									})
-									.strict(),
+									.loose(),
 							])
 							.optional(),
 						sort_name: z
@@ -25819,14 +27031,17 @@ const Output301 = z.array(
 									.nullable(),
 							])
 							.optional(),
-						state: z.enum(['pending', 'active', 'deleted']).optional(),
+						state: z
+							.enum(['pending', 'active', 'deleted'])
+							.or(z.string())
+							.optional(),
 						tags: z
 							.array(
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 							)
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -25849,18 +27064,18 @@ const Output301 = z.array(
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 							)
 							.optional(),
-						company_id: z.number().int(),
+						company_id: dialpadInteger(z.number().int()),
 						csv_id: z.string().max(1500),
 						custom_mapping:
 							/* OpenAPI documents arbitrary fields on this response object. */ z
 								.record(z.string(), z.string())
 								.optional(),
-						date_created: z.number().int().optional(),
+						date_created: dialpadInteger(z.number().int()).optional(),
 						date_created_iso: z.string().optional(),
-						date_modified: z.number().int().optional(),
+						date_modified: dialpadInteger(z.number().int()).optional(),
 						date_modified_iso: z.string().optional(),
 						download_url: z.string().optional(),
-						file_type: z.enum(['CSV', 'XLSX']).optional(),
+						file_type: z.enum(['CSV', 'XLSX']).or(z.string()).optional(),
 						filename: z.string().max(1500).optional(),
 						gcs_filename: z
 							.union([
@@ -25873,15 +27088,17 @@ const Output301 = z.array(
 						id: z.string(),
 						import_results: z
 							.object({
-								collisions: z.number().int().min(0).optional(),
-								created: z.number().int().min(0).optional(),
-								duplicates: z.number().int().min(0).optional(),
-								failed_batches: z.number().int().min(0).optional(),
-								skipped: z.number().int().min(0).optional(),
-								total: z.number().int().min(0).optional(),
-								updated: z.number().int().min(0).optional(),
+								collisions: dialpadInteger(z.number().int().min(0)).optional(),
+								created: dialpadInteger(z.number().int().min(0)).optional(),
+								duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+								failed_batches: dialpadInteger(
+									z.number().int().min(0),
+								).optional(),
+								skipped: dialpadInteger(z.number().int().min(0)).optional(),
+								total: dialpadInteger(z.number().int().min(0)).optional(),
+								updated: dialpadInteger(z.number().int().min(0)).optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						key: z.string(),
 						labels: z
@@ -25893,50 +27110,52 @@ const Output301 = z.array(
 							/* OpenAPI documents arbitrary fields on this response object. */ z
 								.record(
 									z.string(),
-									z.enum([
-										'do_not_import',
-										'first_name',
-										'last_name',
-										'job_title',
-										'industry',
-										'role',
-										'department',
-										'external_id',
-										'timezone',
-										'lang',
-										'primary_phone',
-										'secondary_phone',
-										'primary_email',
-										'secondary_email',
-										'address_name',
-										'address_line1',
-										'address_line2',
-										'city',
-										'region',
-										'postal_code',
-										'country',
-										'company_name',
-										'company_phone',
-										'company_address_line1',
-										'company_address_line2',
-										'company_city',
-										'company_region',
-										'company_postal_code',
-										'company_country',
-										'company_sic_code',
-										'company_naics_code',
-										'company_blacklisted',
-										'company_annual_revenue',
-										'company_currency',
-										'company_num_employees',
-										'primary_phone_fallback',
-									]),
+									z
+										.enum([
+											'do_not_import',
+											'first_name',
+											'last_name',
+											'job_title',
+											'industry',
+											'role',
+											'department',
+											'external_id',
+											'timezone',
+											'lang',
+											'primary_phone',
+											'secondary_phone',
+											'primary_email',
+											'secondary_email',
+											'address_name',
+											'address_line1',
+											'address_line2',
+											'city',
+											'region',
+											'postal_code',
+											'country',
+											'company_name',
+											'company_phone',
+											'company_address_line1',
+											'company_address_line2',
+											'company_city',
+											'company_region',
+											'company_postal_code',
+											'company_country',
+											'company_sic_code',
+											'company_naics_code',
+											'company_blacklisted',
+											'company_annual_revenue',
+											'company_currency',
+											'company_num_employees',
+											'primary_phone_fallback',
+										])
+										.or(z.string()),
 								)
 								.optional(),
 						name: z.string().max(1500).optional(),
 						num_rows: z
 							.union([
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
@@ -25944,7 +27163,7 @@ const Output301 = z.array(
 							.optional(),
 						office_id: z
 							.union([
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
@@ -25970,22 +27189,23 @@ const Output301 = z.array(
 								'deleted',
 								'cancelled',
 							])
+							.or(z.string())
 							.optional(),
-						strategy: z.enum(['skip', 'merge']).optional(),
+						strategy: z.enum(['skip', 'merge']).or(z.string()).optional(),
 						tags: z
 							.array(
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 							)
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			]),
 			key: z.string(),
 			paused_campaigns: z.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -26003,12 +27223,12 @@ const Output301 = z.array(
 							.optional(),
 						author_id: z.string().optional(),
 						author_key: z.string().optional(),
-						company_id: z.number().int(),
-						date_created: z.number().int().optional(),
+						company_id: dialpadInteger(z.number().int()),
+						date_created: dialpadInteger(z.number().int()).optional(),
 						date_created_iso: z.string().optional(),
-						date_modified: z.number().int().optional(),
+						date_modified: dialpadInteger(z.number().int()).optional(),
 						date_modified_iso: z.string().optional(),
-						date_query: z.number().int().optional(),
+						date_query: dialpadInteger(z.number().int()).optional(),
 						date_query_iso: z.string().optional(),
 						id: z.string(),
 						key: z.string(),
@@ -26024,7 +27244,7 @@ const Output301 = z.array(
 												.unknown()
 												.optional(),
 									})
-									.strict(),
+									.loose(),
 								z
 									.object({
 										combiner:
@@ -26032,7 +27252,7 @@ const Output301 = z.array(
 										conditions:
 											/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
 									})
-									.strict(),
+									.loose(),
 							])
 							.optional(),
 						name: z
@@ -26043,7 +27263,7 @@ const Output301 = z.array(
 									.nullable(),
 							])
 							.optional(),
-						num_manual_rows: z.number().int().optional(),
+						num_manual_rows: dialpadInteger(z.number().int()).optional(),
 						num_rows: z
 							.union([
 								z.string(),
@@ -26052,7 +27272,7 @@ const Output301 = z.array(
 									.nullable(),
 							])
 							.optional(),
-						num_snapshot_rows: z.number().int().optional(),
+						num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 						sort_name: z
 							.union([
 								z.string(),
@@ -26063,6 +27283,7 @@ const Output301 = z.array(
 							.optional(),
 						state: z
 							.enum(['active', 'importing', 'clearing', 'error'])
+							.or(z.string())
 							.optional(),
 						static_list_id: z.string().max(1500),
 						tags: z
@@ -26071,13 +27292,13 @@ const Output301 = z.array(
 							)
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			]),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input302 = z
@@ -26111,12 +27332,12 @@ const Output302 = z
 			.optional(),
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_query: z.number().int().optional(),
+		date_query: dialpadInteger(z.number().int()).optional(),
 		date_query_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -26125,33 +27346,35 @@ const Output302 = z
 				z
 					.object({
 						field: z.string(),
-						op: z.enum([
-							'=',
-							'~=',
-							'!=',
-							'>',
-							'<',
-							'>=',
-							'<=',
-							'^=',
-							'$=',
-							'!!',
-							'~~',
-						]),
+						op: z
+							.enum([
+								'=',
+								'~=',
+								'!=',
+								'>',
+								'<',
+								'>=',
+								'<=',
+								'^=',
+								'$=',
+								'!!',
+								'~~',
+							])
+							.or(z.string()),
 						value: z
 							.union([
 								z.string(),
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
-						combiner: z.enum(['AND', 'OR']),
+						combiner: z.enum(['AND', 'OR']).or(z.string()),
 						conditions: z.array(
 							z.union([
 								/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -26159,7 +27382,7 @@ const Output302 = z
 							]),
 						),
 					})
-					.strict(),
+					.loose(),
 			])
 			.optional(),
 		name: z
@@ -26170,7 +27393,7 @@ const Output302 = z
 					.nullable(),
 			])
 			.optional(),
-		num_manual_rows: z.number().int().optional(),
+		num_manual_rows: dialpadInteger(z.number().int()).optional(),
 		num_rows: z
 			.union([
 				z.string(),
@@ -26179,7 +27402,7 @@ const Output302 = z
 					.nullable(),
 			])
 			.optional(),
-		num_snapshot_rows: z.number().int().optional(),
+		num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 		sort_name: z
 			.union([
 				z.string(),
@@ -26188,7 +27411,10 @@ const Output302 = z
 					.nullable(),
 			])
 			.optional(),
-		state: z.enum(['active', 'importing', 'clearing', 'error']).optional(),
+		state: z
+			.enum(['active', 'importing', 'clearing', 'error'])
+			.or(z.string())
+			.optional(),
 		static_list_id: z.string().max(1500),
 		tags: z
 			.array(
@@ -26196,7 +27422,7 @@ const Output302 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input303 = z
 	.object({
@@ -26206,8 +27432,8 @@ const Input303 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				target_ids: z.string().optional(),
 				state: z.enum(['pending', 'active', 'deleted']).optional(),
 				search: z.string().optional(),
@@ -26231,12 +27457,12 @@ const Output303 = z.array(
 				.optional(),
 			author_id: z.string().optional(),
 			author_key: z.string().optional(),
-			company_id: z.number().int(),
-			date_created: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
-			date_query: z.number().int().optional(),
+			date_query: dialpadInteger(z.number().int()).optional(),
 			date_query_iso: z.string().optional(),
 			id: z.string(),
 			key: z.string(),
@@ -26245,33 +27471,35 @@ const Output303 = z.array(
 					z
 						.object({
 							field: z.string(),
-							op: z.enum([
-								'=',
-								'~=',
-								'!=',
-								'>',
-								'<',
-								'>=',
-								'<=',
-								'^=',
-								'$=',
-								'!!',
-								'~~',
-							]),
+							op: z
+								.enum([
+									'=',
+									'~=',
+									'!=',
+									'>',
+									'<',
+									'>=',
+									'<=',
+									'^=',
+									'$=',
+									'!!',
+									'~~',
+								])
+								.or(z.string()),
 							value: z
 								.union([
 									z.string(),
-									z.number().int(),
+									dialpadInteger(z.number().int()),
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z
 										.unknown()
 										.nullable(),
 								])
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 					z
 						.object({
-							combiner: z.enum(['AND', 'OR']),
+							combiner: z.enum(['AND', 'OR']).or(z.string()),
 							conditions: z.array(
 								z.union([
 									/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -26279,7 +27507,7 @@ const Output303 = z.array(
 								]),
 							),
 						})
-						.strict(),
+						.loose(),
 				])
 				.optional(),
 			name: z
@@ -26290,7 +27518,7 @@ const Output303 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			num_manual_rows: z.number().int().optional(),
+			num_manual_rows: dialpadInteger(z.number().int()).optional(),
 			num_rows: z
 				.union([
 					z.string(),
@@ -26299,7 +27527,7 @@ const Output303 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			num_snapshot_rows: z.number().int().optional(),
+			num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 			sort_name: z
 				.union([
 					z.string(),
@@ -26308,7 +27536,10 @@ const Output303 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			state: z.enum(['active', 'importing', 'clearing', 'error']).optional(),
+			state: z
+				.enum(['active', 'importing', 'clearing', 'error'])
+				.or(z.string())
+				.optional(),
 			static_list_id: z.string().max(1500),
 			tags: z
 				.array(
@@ -26316,7 +27547,7 @@ const Output303 = z.array(
 				)
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input304 = z
@@ -26341,12 +27572,12 @@ const Output304 = z
 			.optional(),
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_query: z.number().int().optional(),
+		date_query: dialpadInteger(z.number().int()).optional(),
 		date_query_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -26355,33 +27586,35 @@ const Output304 = z
 				z
 					.object({
 						field: z.string(),
-						op: z.enum([
-							'=',
-							'~=',
-							'!=',
-							'>',
-							'<',
-							'>=',
-							'<=',
-							'^=',
-							'$=',
-							'!!',
-							'~~',
-						]),
+						op: z
+							.enum([
+								'=',
+								'~=',
+								'!=',
+								'>',
+								'<',
+								'>=',
+								'<=',
+								'^=',
+								'$=',
+								'!!',
+								'~~',
+							])
+							.or(z.string()),
 						value: z
 							.union([
 								z.string(),
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
-						combiner: z.enum(['AND', 'OR']),
+						combiner: z.enum(['AND', 'OR']).or(z.string()),
 						conditions: z.array(
 							z.union([
 								/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -26389,7 +27622,7 @@ const Output304 = z
 							]),
 						),
 					})
-					.strict(),
+					.loose(),
 			])
 			.optional(),
 		name: z
@@ -26400,7 +27633,7 @@ const Output304 = z
 					.nullable(),
 			])
 			.optional(),
-		num_manual_rows: z.number().int().optional(),
+		num_manual_rows: dialpadInteger(z.number().int()).optional(),
 		num_rows: z
 			.union([
 				z.string(),
@@ -26409,7 +27642,7 @@ const Output304 = z
 					.nullable(),
 			])
 			.optional(),
-		num_snapshot_rows: z.number().int().optional(),
+		num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 		sort_name: z
 			.union([
 				z.string(),
@@ -26418,7 +27651,10 @@ const Output304 = z
 					.nullable(),
 			])
 			.optional(),
-		state: z.enum(['active', 'importing', 'clearing', 'error']).optional(),
+		state: z
+			.enum(['active', 'importing', 'clearing', 'error'])
+			.or(z.string())
+			.optional(),
 		static_list_id: z.string().max(1500),
 		tags: z
 			.array(
@@ -26426,7 +27662,7 @@ const Output304 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input305 = z
 	.object({
@@ -26463,12 +27699,12 @@ const Output306 = z
 			.optional(),
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_query: z.number().int().optional(),
+		date_query: dialpadInteger(z.number().int()).optional(),
 		date_query_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -26477,33 +27713,35 @@ const Output306 = z
 				z
 					.object({
 						field: z.string(),
-						op: z.enum([
-							'=',
-							'~=',
-							'!=',
-							'>',
-							'<',
-							'>=',
-							'<=',
-							'^=',
-							'$=',
-							'!!',
-							'~~',
-						]),
+						op: z
+							.enum([
+								'=',
+								'~=',
+								'!=',
+								'>',
+								'<',
+								'>=',
+								'<=',
+								'^=',
+								'$=',
+								'!!',
+								'~~',
+							])
+							.or(z.string()),
 						value: z
 							.union([
 								z.string(),
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
-						combiner: z.enum(['AND', 'OR']),
+						combiner: z.enum(['AND', 'OR']).or(z.string()),
 						conditions: z.array(
 							z.union([
 								/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -26511,7 +27749,7 @@ const Output306 = z
 							]),
 						),
 					})
-					.strict(),
+					.loose(),
 			])
 			.optional(),
 		name: z
@@ -26522,7 +27760,7 @@ const Output306 = z
 					.nullable(),
 			])
 			.optional(),
-		num_manual_rows: z.number().int().optional(),
+		num_manual_rows: dialpadInteger(z.number().int()).optional(),
 		num_rows: z
 			.union([
 				z.string(),
@@ -26531,7 +27769,7 @@ const Output306 = z
 					.nullable(),
 			])
 			.optional(),
-		num_snapshot_rows: z.number().int().optional(),
+		num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 		sort_name: z
 			.union([
 				z.string(),
@@ -26540,7 +27778,10 @@ const Output306 = z
 					.nullable(),
 			])
 			.optional(),
-		state: z.enum(['active', 'importing', 'clearing', 'error']).optional(),
+		state: z
+			.enum(['active', 'importing', 'clearing', 'error'])
+			.or(z.string())
+			.optional(),
 		static_list_id: z.string().max(1500),
 		tags: z
 			.array(
@@ -26548,7 +27789,7 @@ const Output306 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input307 = z
 	.object({
@@ -26657,7 +27898,7 @@ const Input307 = z
 					.optional(),
 				engagement_score: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -26721,7 +27962,7 @@ const Input307 = z
 					.optional(),
 				lead_score: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -26868,11 +28109,11 @@ const Output307 = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.max(20)
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		contact_id: z
 			.union([
 				z.string().max(1024),
@@ -26899,20 +28140,20 @@ const Output307 = z
 			.optional(),
 		csv_line: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
-		custom: z.object({}).strict().optional(),
-		date_created: z.number().int().optional(),
+		custom: z.object({}).loose().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_first_contacted: z.number().int().optional(),
+		date_first_contacted: dialpadInteger(z.number().int()).optional(),
 		date_first_contacted_iso: z.string().optional(),
-		date_last_contacted: z.number().int().optional(),
+		date_last_contacted: dialpadInteger(z.number().int()).optional(),
 		date_last_contacted_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		department: z
 			.union([
@@ -26944,13 +28185,13 @@ const Output307 = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.max(50)
 			.optional(),
 		engagement_score: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -27034,7 +28275,7 @@ const Output307 = z
 		lead_id: z.string().max(64),
 		lead_score: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -27042,6 +28283,7 @@ const Output307 = z
 			.optional(),
 		lead_source: z
 			.enum(['hubspot', 'csv', 'callback', 'api', 'salesforce', 'receptionist'])
+			.or(z.string())
 			.optional(),
 		mobile_phone: z
 			.union([
@@ -27098,7 +28340,7 @@ const Output307 = z
 							.optional(),
 						number: z.string(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.max(20)
 			.optional(),
@@ -27112,7 +28354,7 @@ const Output307 = z
 			.optional(),
 		primary_address: z
 			.union([
-				z.object({}).strict(),
+				z.object({}).loose(),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -27166,7 +28408,7 @@ const Output307 = z
 					.nullable(),
 			])
 			.optional(),
-		state: z.enum(['pending', 'active', 'deleted']).optional(),
+		state: z.enum(['pending', 'active', 'deleted']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -27181,7 +28423,7 @@ const Output307 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input308 = z
 	.object({
@@ -27191,8 +28433,8 @@ const Input308 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				source: z.string().optional(),
 				include_deleted: z.boolean().optional(),
 				order: z.string().optional(),
@@ -27227,7 +28469,7 @@ const Input308 = z
 							value: z
 								.union([
 									z.string(),
-									z.number().int(),
+									dialpadInteger(z.number().int()),
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z
 										.unknown()
 										.nullable(),
@@ -27259,7 +28501,7 @@ const Input308 = z
 											value: z
 												.union([
 													z.string(),
-													z.number().int(),
+													dialpadInteger(z.number().int()),
 													/* unknown because the official OpenAPI schema is not documented for this value. */ z
 														.unknown()
 														.nullable(),
@@ -27333,11 +28575,11 @@ const Output308 = z.array(
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 						)
 						.max(20)
 						.optional(),
-					company_id: z.number().int(),
+					company_id: dialpadInteger(z.number().int()),
 					contact_id: z
 						.union([
 							z.string().max(1024),
@@ -27364,20 +28606,20 @@ const Output308 = z.array(
 						.optional(),
 					csv_line: z
 						.union([
-							z.number().int(),
+							dialpadInteger(z.number().int()),
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z
 								.unknown()
 								.nullable(),
 						])
 						.optional(),
-					custom: z.object({}).strict().optional(),
-					date_created: z.number().int().optional(),
+					custom: z.object({}).loose().optional(),
+					date_created: dialpadInteger(z.number().int()).optional(),
 					date_created_iso: z.string().optional(),
-					date_first_contacted: z.number().int().optional(),
+					date_first_contacted: dialpadInteger(z.number().int()).optional(),
 					date_first_contacted_iso: z.string().optional(),
-					date_last_contacted: z.number().int().optional(),
+					date_last_contacted: dialpadInteger(z.number().int()).optional(),
 					date_last_contacted_iso: z.string().optional(),
-					date_modified: z.number().int().optional(),
+					date_modified: dialpadInteger(z.number().int()).optional(),
 					date_modified_iso: z.string().optional(),
 					department: z
 						.union([
@@ -27405,13 +28647,13 @@ const Output308 = z.array(
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 						)
 						.max(50)
 						.optional(),
 					engagement_score: z
 						.union([
-							z.number().int(),
+							dialpadInteger(z.number().int()),
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z
 								.unknown()
 								.nullable(),
@@ -27495,7 +28737,7 @@ const Output308 = z.array(
 					lead_id: z.string().max(64),
 					lead_score: z
 						.union([
-							z.number().int(),
+							dialpadInteger(z.number().int()),
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z
 								.unknown()
 								.nullable(),
@@ -27510,6 +28752,7 @@ const Output308 = z.array(
 							'salesforce',
 							'receptionist',
 						])
+						.or(z.string())
 						.optional(),
 					mobile_phone: z
 						.union([
@@ -27560,7 +28803,7 @@ const Output308 = z.array(
 										.optional(),
 									number: z.string(),
 								})
-								.strict(),
+								.loose(),
 						)
 						.max(20)
 						.optional(),
@@ -27574,7 +28817,7 @@ const Output308 = z.array(
 						.optional(),
 					primary_address: z
 						.union([
-							z.object({}).strict(),
+							z.object({}).loose(),
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z
 								.unknown()
 								.nullable(),
@@ -27628,7 +28871,10 @@ const Output308 = z.array(
 								.nullable(),
 						])
 						.optional(),
-					state: z.enum(['pending', 'active', 'deleted']).optional(),
+					state: z
+						.enum(['pending', 'active', 'deleted'])
+						.or(z.string())
+						.optional(),
 					tags: z
 						.array(
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -27643,7 +28889,7 @@ const Output308 = z.array(
 						])
 						.optional(),
 				})
-				.strict(),
+				.loose(),
 			lead_company: z.union([
 				z
 					.object({
@@ -27706,11 +28952,11 @@ const Output308 = z.array(
 									])
 									.optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						annual_revenue: z
 							.union([
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
@@ -27724,7 +28970,7 @@ const Output308 = z.array(
 									.nullable(),
 							])
 							.optional(),
-						company_id: z.number().int(),
+						company_id: dialpadInteger(z.number().int()),
 						currency: z
 							.union([
 								z.string().max(3),
@@ -27733,16 +28979,16 @@ const Output308 = z.array(
 									.nullable(),
 							])
 							.optional(),
-						date_created: z.number().int().optional(),
+						date_created: dialpadInteger(z.number().int()).optional(),
 						date_created_iso: z.string().optional(),
-						date_modified: z.number().int().optional(),
+						date_modified: dialpadInteger(z.number().int()).optional(),
 						date_modified_iso: z.string().optional(),
 						id: z.string(),
 						key: z.string(),
 						lead_company_id: z.string().max(64),
 						naics_code: z
 							.union([
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
@@ -27758,7 +29004,7 @@ const Output308 = z.array(
 							.optional(),
 						num_employees: z
 							.union([
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
@@ -27782,14 +29028,14 @@ const Output308 = z.array(
 							.optional(),
 						sic_code: z
 							.union([
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -27804,18 +29050,18 @@ const Output308 = z.array(
 			static_list: z.union([
 				z
 					.object({
-						company_id: z.number().int(),
-						date_created: z.number().int().optional(),
+						company_id: dialpadInteger(z.number().int()),
+						date_created: dialpadInteger(z.number().int()).optional(),
 						date_created_iso: z.string().optional(),
-						date_modified: z.number().int().optional(),
+						date_modified: dialpadInteger(z.number().int()).optional(),
 						date_modified_iso: z.string().optional(),
 						id: z.string(),
 						key: z.string(),
 						lead_id: z.string().max(64),
-						source: z.enum(['manual', 'snapshot']).optional(),
+						source: z.enum(['manual', 'snapshot']).or(z.string()).optional(),
 						static_list_id: z.string().max(64),
 					})
-					.strict(),
+					.loose(),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -27827,7 +29073,7 @@ const Output308 = z.array(
 					.nullable(),
 			]),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input309 = z
@@ -27909,11 +29155,11 @@ const Output309 = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.max(20)
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		contact_id: z
 			.union([
 				z.string().max(1024),
@@ -27940,20 +29186,20 @@ const Output309 = z
 			.optional(),
 		csv_line: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
-		custom: z.object({}).strict().optional(),
-		date_created: z.number().int().optional(),
+		custom: z.object({}).loose().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_first_contacted: z.number().int().optional(),
+		date_first_contacted: dialpadInteger(z.number().int()).optional(),
 		date_first_contacted_iso: z.string().optional(),
-		date_last_contacted: z.number().int().optional(),
+		date_last_contacted: dialpadInteger(z.number().int()).optional(),
 		date_last_contacted_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		department: z
 			.union([
@@ -27985,13 +29231,13 @@ const Output309 = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.max(50)
 			.optional(),
 		engagement_score: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -28075,7 +29321,7 @@ const Output309 = z
 		lead_id: z.string().max(64),
 		lead_score: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -28083,6 +29329,7 @@ const Output309 = z
 			.optional(),
 		lead_source: z
 			.enum(['hubspot', 'csv', 'callback', 'api', 'salesforce', 'receptionist'])
+			.or(z.string())
 			.optional(),
 		mobile_phone: z
 			.union([
@@ -28139,7 +29386,7 @@ const Output309 = z
 							.optional(),
 						number: z.string(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.max(20)
 			.optional(),
@@ -28153,7 +29400,7 @@ const Output309 = z
 			.optional(),
 		primary_address: z
 			.union([
-				z.object({}).strict(),
+				z.object({}).loose(),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -28207,7 +29454,7 @@ const Output309 = z
 					.nullable(),
 			])
 			.optional(),
-		state: z.enum(['pending', 'active', 'deleted']).optional(),
+		state: z.enum(['pending', 'active', 'deleted']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -28222,7 +29469,7 @@ const Output309 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input310 = z
 	.object({
@@ -28335,7 +29582,7 @@ const Input310 = z
 					.optional(),
 				engagement_score: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -28399,7 +29646,7 @@ const Input310 = z
 					.optional(),
 				lead_score: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -28537,11 +29784,11 @@ const Output310 = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.max(20)
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		contact_id: z
 			.union([
 				z.string().max(1024),
@@ -28568,20 +29815,20 @@ const Output310 = z
 			.optional(),
 		csv_line: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
-		custom: z.object({}).strict().optional(),
-		date_created: z.number().int().optional(),
+		custom: z.object({}).loose().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_first_contacted: z.number().int().optional(),
+		date_first_contacted: dialpadInteger(z.number().int()).optional(),
 		date_first_contacted_iso: z.string().optional(),
-		date_last_contacted: z.number().int().optional(),
+		date_last_contacted: dialpadInteger(z.number().int()).optional(),
 		date_last_contacted_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		department: z
 			.union([
@@ -28613,13 +29860,13 @@ const Output310 = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.max(50)
 			.optional(),
 		engagement_score: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -28703,7 +29950,7 @@ const Output310 = z
 		lead_id: z.string().max(64),
 		lead_score: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -28711,6 +29958,7 @@ const Output310 = z
 			.optional(),
 		lead_source: z
 			.enum(['hubspot', 'csv', 'callback', 'api', 'salesforce', 'receptionist'])
+			.or(z.string())
 			.optional(),
 		mobile_phone: z
 			.union([
@@ -28767,7 +30015,7 @@ const Output310 = z
 							.optional(),
 						number: z.string(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.max(20)
 			.optional(),
@@ -28781,7 +30029,7 @@ const Output310 = z
 			.optional(),
 		primary_address: z
 			.union([
-				z.object({}).strict(),
+				z.object({}).loose(),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -28835,7 +30083,7 @@ const Output310 = z
 					.nullable(),
 			])
 			.optional(),
-		state: z.enum(['pending', 'active', 'deleted']).optional(),
+		state: z.enum(['pending', 'active', 'deleted']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -28850,7 +30098,7 @@ const Output310 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input311 = z
 	.object({
@@ -28923,11 +30171,11 @@ const Output311 = z
 					])
 					.optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		annual_revenue: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -28941,7 +30189,7 @@ const Output311 = z
 					.nullable(),
 			])
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		currency: z
 			.union([
 				z.string().max(3),
@@ -28950,16 +30198,16 @@ const Output311 = z
 					.nullable(),
 			])
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
 		lead_company_id: z.string().max(64),
 		naics_code: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -28975,7 +30223,7 @@ const Output311 = z
 			.optional(),
 		num_employees: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -28999,14 +30247,14 @@ const Output311 = z
 			.optional(),
 		sic_code: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input312 = z
 	.object({
@@ -29016,8 +30264,8 @@ const Input312 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				order: z.string().optional(),
 				search: z.string().optional(),
 			})
@@ -29088,11 +30336,11 @@ const Output312 = z.array(
 						])
 						.optional(),
 				})
-				.strict()
+				.loose()
 				.optional(),
 			annual_revenue: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -29106,7 +30354,7 @@ const Output312 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			company_id: z.number().int(),
+			company_id: dialpadInteger(z.number().int()),
 			currency: z
 				.union([
 					z.string().max(3),
@@ -29115,16 +30363,16 @@ const Output312 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			id: z.string(),
 			key: z.string(),
 			lead_company_id: z.string().max(64),
 			naics_code: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -29140,7 +30388,7 @@ const Output312 = z.array(
 				.optional(),
 			num_employees: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -29164,14 +30412,14 @@ const Output312 = z.array(
 				.optional(),
 			sic_code: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
 				])
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input313 = z
@@ -29233,12 +30481,12 @@ const Output313 = z
 			.optional(),
 		author_id: z.string().optional(),
 		author_key: z.string().optional(),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_query: z.number().int().optional(),
+		date_query: dialpadInteger(z.number().int()).optional(),
 		date_query_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -29247,33 +30495,35 @@ const Output313 = z
 				z
 					.object({
 						field: z.string(),
-						op: z.enum([
-							'=',
-							'~=',
-							'!=',
-							'>',
-							'<',
-							'>=',
-							'<=',
-							'^=',
-							'$=',
-							'!!',
-							'~~',
-						]),
+						op: z
+							.enum([
+								'=',
+								'~=',
+								'!=',
+								'>',
+								'<',
+								'>=',
+								'<=',
+								'^=',
+								'$=',
+								'!!',
+								'~~',
+							])
+							.or(z.string()),
 						value: z
 							.union([
 								z.string(),
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
-						combiner: z.enum(['AND', 'OR']),
+						combiner: z.enum(['AND', 'OR']).or(z.string()),
 						conditions: z.array(
 							z.union([
 								/* unknown because a recursive OpenAPI schema cannot be expanded safely. */ z.unknown(),
@@ -29281,7 +30531,7 @@ const Output313 = z
 							]),
 						),
 					})
-					.strict(),
+					.loose(),
 			])
 			.optional(),
 		name: z
@@ -29292,7 +30542,7 @@ const Output313 = z
 					.nullable(),
 			])
 			.optional(),
-		num_manual_rows: z.number().int().optional(),
+		num_manual_rows: dialpadInteger(z.number().int()).optional(),
 		num_rows: z
 			.union([
 				z.string(),
@@ -29301,7 +30551,7 @@ const Output313 = z
 					.nullable(),
 			])
 			.optional(),
-		num_snapshot_rows: z.number().int().optional(),
+		num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 		sort_name: z
 			.union([
 				z.string(),
@@ -29310,7 +30560,10 @@ const Output313 = z
 					.nullable(),
 			])
 			.optional(),
-		state: z.enum(['active', 'importing', 'clearing', 'error']).optional(),
+		state: z
+			.enum(['active', 'importing', 'clearing', 'error'])
+			.or(z.string())
+			.optional(),
 		static_list_id: z.string().max(1500),
 		tags: z
 			.array(
@@ -29318,7 +30571,7 @@ const Output313 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input314 = z
 	.object({
@@ -29328,8 +30581,8 @@ const Input314 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				include_deleted: z.boolean().optional(),
 				order: z.string().optional(),
 				static_list_id: z.string().optional(),
@@ -29407,11 +30660,11 @@ const Output314 = z.array(
 								])
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 				)
 				.max(20)
 				.optional(),
-			company_id: z.number().int(),
+			company_id: dialpadInteger(z.number().int()),
 			contact_id: z
 				.union([
 					z.string().max(1024),
@@ -29438,20 +30691,20 @@ const Output314 = z.array(
 				.optional(),
 			csv_line: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
 				])
 				.optional(),
-			custom: z.object({}).strict().optional(),
-			date_created: z.number().int().optional(),
+			custom: z.object({}).loose().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_first_contacted: z.number().int().optional(),
+			date_first_contacted: dialpadInteger(z.number().int()).optional(),
 			date_first_contacted_iso: z.string().optional(),
-			date_last_contacted: z.number().int().optional(),
+			date_last_contacted: dialpadInteger(z.number().int()).optional(),
 			date_last_contacted_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			department: z
 				.union([
@@ -29483,13 +30736,13 @@ const Output314 = z.array(
 								])
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 				)
 				.max(50)
 				.optional(),
 			engagement_score: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -29573,7 +30826,7 @@ const Output314 = z.array(
 			lead_id: z.string().max(64),
 			lead_score: z
 				.union([
-					z.number().int(),
+					dialpadInteger(z.number().int()),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -29588,6 +30841,7 @@ const Output314 = z.array(
 					'salesforce',
 					'receptionist',
 				])
+				.or(z.string())
 				.optional(),
 			mobile_phone: z
 				.union([
@@ -29644,7 +30898,7 @@ const Output314 = z.array(
 								.optional(),
 							number: z.string(),
 						})
-						.strict(),
+						.loose(),
 				)
 				.max(20)
 				.optional(),
@@ -29658,7 +30912,7 @@ const Output314 = z.array(
 				.optional(),
 			primary_address: z
 				.union([
-					z.object({}).strict(),
+					z.object({}).loose(),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -29712,7 +30966,7 @@ const Output314 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			state: z.enum(['pending', 'active', 'deleted']).optional(),
+			state: z.enum(['pending', 'active', 'deleted']).or(z.string()).optional(),
 			tags: z
 				.array(
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -29727,7 +30981,7 @@ const Output314 = z.array(
 				])
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input315 = z
@@ -29759,7 +31013,7 @@ const Input315 = z
 					.optional(),
 				limit: z
 					.union([
-						z.number().int().min(1),
+						dialpadInteger(z.number().int().min(1)),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -29781,10 +31035,10 @@ const Input315 = z
 
 const Output315 = z
 	.object({
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		error: z
 			.union([
@@ -29816,7 +31070,7 @@ const Output315 = z
 		request_user_id: z.string().max(1500),
 		url: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input316 = z
 	.object({
@@ -29826,8 +31080,8 @@ const Input316 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				shared_only: z.boolean().optional(),
 				campaign_counts: z.boolean().optional(),
 				tags: z.string().optional(),
@@ -29847,11 +31101,11 @@ const Output316 = z.array(
 				.union([
 					z
 						.object({
-							active_campaigns: z.number().int().optional(),
-							all_campaigns: z.number().int().optional(),
-							paused_campaigns: z.number().int().optional(),
+							active_campaigns: dialpadInteger(z.number().int()).optional(),
+							all_campaigns: dialpadInteger(z.number().int()).optional(),
+							paused_campaigns: dialpadInteger(z.number().int()).optional(),
 						})
-						.strict(),
+						.loose(),
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z
 						.unknown()
 						.nullable(),
@@ -29879,7 +31133,7 @@ const Output316 = z.array(
 						.optional(),
 					author_id: z.string().optional(),
 					author_key: z.string().optional(),
-					company_id: z.number().int(),
+					company_id: dialpadInteger(z.number().int()),
 					csv_columns: z
 						.array(
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -29895,11 +31149,11 @@ const Output316 = z.array(
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 						)
 						.optional(),
-					date_created: z.number().int().optional(),
+					date_created: dialpadInteger(z.number().int()).optional(),
 					date_created_iso: z.string().optional(),
-					date_modified: z.number().int().optional(),
+					date_modified: dialpadInteger(z.number().int()).optional(),
 					date_modified_iso: z.string().optional(),
-					date_user_modified: z.number().int().optional(),
+					date_user_modified: dialpadInteger(z.number().int()).optional(),
 					date_user_modified_iso: z.string().optional(),
 					id: z.string(),
 					is_shared: z.boolean().optional(),
@@ -29921,14 +31175,14 @@ const Output316 = z.array(
 						.optional(),
 					list_id: z.string().max(1500),
 					name: z.string().max(1500).optional(),
-					num_csv_rows: z.number().int().optional(),
-					num_manual_rows: z.number().int().optional(),
-					num_query_rows: z.number().int().optional(),
-					num_rows: z.number().int().optional(),
-					num_snapshot_rows: z.number().int().optional(),
+					num_csv_rows: dialpadInteger(z.number().int()).optional(),
+					num_manual_rows: dialpadInteger(z.number().int()).optional(),
+					num_query_rows: dialpadInteger(z.number().int()).optional(),
+					num_rows: dialpadInteger(z.number().int()).optional(),
+					num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 					office_id: z
 						.union([
-							z.number().int(),
+							dialpadInteger(z.number().int()),
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z
 								.unknown()
 								.nullable(),
@@ -29966,9 +31220,9 @@ const Output316 = z.array(
 						)
 						.optional(),
 				})
-				.strict(),
+				.loose(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input317 = z
@@ -30006,17 +31260,17 @@ const Output317 = z
 					id: z.string(),
 					reason: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 		successful_ids: z.array(z.string()),
 		summary: z
 			.object({
-				successful_count: z.number().int(),
-				total_processed: z.number().int(),
+				successful_count: dialpadInteger(z.number().int()),
+				total_processed: dialpadInteger(z.number().int()),
 			})
-			.strict(),
+			.loose(),
 	})
-	.strict();
+	.loose();
 
 const Input318 = z
 	.object({
@@ -30042,24 +31296,24 @@ const Output318 = z
 							.nullable(),
 					])
 					.optional(),
-				company_id: z.number().int(),
+				company_id: dialpadInteger(z.number().int()),
 				contact_id: z.string().optional(),
 				contact_key: z.string().optional(),
-				csv: z.object({}).strict().optional(),
+				csv: z.object({}).loose().optional(),
 				current_rule_id: z.string().optional(),
 				current_rule_key: z.string().optional(),
-				date_created: z.number().int().optional(),
+				date_created: dialpadInteger(z.number().int()).optional(),
 				date_created_iso: z.string().optional(),
-				date_estimate: z.number().int().optional(),
+				date_estimate: dialpadInteger(z.number().int()).optional(),
 				date_estimate_iso: z.string().optional(),
-				date_modified: z.number().int().optional(),
+				date_modified: dialpadInteger(z.number().int()).optional(),
 				date_modified_iso: z.string().optional(),
 				history: z
 					.object({
-						call_attempts: z.number().int().min(0).optional(),
+						call_attempts: dialpadInteger(z.number().int().min(0)).optional(),
 						last_call_id: z
 							.union([
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
@@ -30069,69 +31323,75 @@ const Output318 = z
 							.union([
 								z.array(
 									z.union([
-										z.enum([
-											'call:powerdialer_no_available_agent',
-											'call:human_agent',
-											'call:ai_agent',
-											'call:outbound_connected',
-											'call:powerdialer_vm_drop',
-											'call:machine_detected',
-											'call:powerdialer_call',
-											'call:active',
-											'call:outbound',
-											'call:cancelled',
-											'call:inbound',
-											'call:missed',
-											'call:abandoned',
-											'call:user_initiated',
-										]),
-										z.enum([
-											'sms:accepted',
-											'sms:invalid_destination',
-											'sms:invalid_source',
-											'sms:no_route',
-											'sms:rejected_spam',
-											'sms:internal_error',
-											'sms:rejected',
-											'sms:not_supported',
-											'sms:time_out',
-											'sms:error',
-											'sms:unknown',
-											'sms:forbidden',
-											'sms:owner_no_international_messaging',
-											'sms:unregistered_a2p_not_allowed',
-											'sms:owner_not_enough_sms_credits',
-											'sms:owner_not_enough_credits',
-											'sms:messaging_disabled',
-											'sms:owner_free_user',
-											'sms:contact_missing_number',
-											'sms:contact_is_room',
-											'sms:contact_is_shared_line',
-											'sms:staff_contact',
-											'sms:company_affinity',
-											'sms:not_in_free_company',
-											'sms:invalid_number',
-										]),
-										z.enum([
-											'call:max_attempts_item',
-											'call:max_attempts_delay_not_met',
-											'call:max_attempts_criteria_not_met',
-											'call:max_attempts_campaign_phone_total',
-											'call:max_attempts_campaign_phone_daily',
-											'call:max_attempts_campaign_phone_rolling',
-											'call:max_attempts_campaign_contact_total',
-											'call:max_attempts_campaign_contact_daily',
-											'call:max_attempts_campaign_contact_rolling',
-											'call:max_attempts_campaign_company_total',
-											'call:max_attempts_campaign_company_daily',
-											'call:max_attempts_campaign_company_rolling',
-											'call:max_attempts_global_phone_daily',
-											'call:max_attempts_global_phone_rolling',
-											'call:max_attempts_global_contact_daily',
-											'call:max_attempts_global_contact_rolling',
-											'call:max_attempts_global_company_daily',
-											'call:max_attempts_global_company_rolling',
-										]),
+										z
+											.enum([
+												'call:powerdialer_no_available_agent',
+												'call:human_agent',
+												'call:ai_agent',
+												'call:outbound_connected',
+												'call:powerdialer_vm_drop',
+												'call:machine_detected',
+												'call:powerdialer_call',
+												'call:active',
+												'call:outbound',
+												'call:cancelled',
+												'call:inbound',
+												'call:missed',
+												'call:abandoned',
+												'call:user_initiated',
+											])
+											.or(z.string()),
+										z
+											.enum([
+												'sms:accepted',
+												'sms:invalid_destination',
+												'sms:invalid_source',
+												'sms:no_route',
+												'sms:rejected_spam',
+												'sms:internal_error',
+												'sms:rejected',
+												'sms:not_supported',
+												'sms:time_out',
+												'sms:error',
+												'sms:unknown',
+												'sms:forbidden',
+												'sms:owner_no_international_messaging',
+												'sms:unregistered_a2p_not_allowed',
+												'sms:owner_not_enough_sms_credits',
+												'sms:owner_not_enough_credits',
+												'sms:messaging_disabled',
+												'sms:owner_free_user',
+												'sms:contact_missing_number',
+												'sms:contact_is_room',
+												'sms:contact_is_shared_line',
+												'sms:staff_contact',
+												'sms:company_affinity',
+												'sms:not_in_free_company',
+												'sms:invalid_number',
+											])
+											.or(z.string()),
+										z
+											.enum([
+												'call:max_attempts_item',
+												'call:max_attempts_delay_not_met',
+												'call:max_attempts_criteria_not_met',
+												'call:max_attempts_campaign_phone_total',
+												'call:max_attempts_campaign_phone_daily',
+												'call:max_attempts_campaign_phone_rolling',
+												'call:max_attempts_campaign_contact_total',
+												'call:max_attempts_campaign_contact_daily',
+												'call:max_attempts_campaign_contact_rolling',
+												'call:max_attempts_campaign_company_total',
+												'call:max_attempts_campaign_company_daily',
+												'call:max_attempts_campaign_company_rolling',
+												'call:max_attempts_global_phone_daily',
+												'call:max_attempts_global_phone_rolling',
+												'call:max_attempts_global_contact_daily',
+												'call:max_attempts_global_contact_rolling',
+												'call:max_attempts_global_company_daily',
+												'call:max_attempts_global_company_rolling',
+											])
+											.or(z.string()),
 										z.string(),
 									]),
 								),
@@ -30163,11 +31423,11 @@ const Output318 = z
 													.optional(),
 											rule_type: z.string().optional(),
 										})
-										.strict(),
+										.loose(),
 								)
 								.optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				id: z.string(),
 				index: z.number().optional(),
@@ -30246,6 +31506,7 @@ const Output318 = z
 						'sms:not_in_free_company',
 						'sms:invalid_number',
 					])
+					.or(z.string())
 					.optional(),
 				sms_id: z.string().optional(),
 				sms_key: z.string().optional(),
@@ -30262,6 +31523,7 @@ const Output318 = z
 						'cancelled',
 						'incomplete',
 					])
+					.or(z.string())
 					.optional(),
 				status: z
 					.enum([
@@ -30273,6 +31535,7 @@ const Output318 = z
 						'Excluded',
 						'Incomplete',
 					])
+					.or(z.string())
 					.optional(),
 				tags: z
 					.array(
@@ -30280,7 +31543,7 @@ const Output318 = z
 					)
 					.optional(),
 			})
-			.strict(),
+			.loose(),
 		item_id: z.string(),
 		last_call: z.union([
 			z
@@ -30290,9 +31553,10 @@ const Output318 = z
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 						)
 						.optional(),
-					call_id: z.number().int(),
+					call_id: dialpadInteger(z.number().int()),
 					call_result: z
 						.enum(['connected', 'missed', 'voicemail', 'called'])
+						.or(z.string())
 						.optional(),
 					campaign_id: z
 						.union([
@@ -30302,7 +31566,7 @@ const Output318 = z
 								.nullable(),
 						])
 						.optional(),
-					company_id: z.number().int(),
+					company_id: dialpadInteger(z.number().int()),
 					contact_id: z
 						.union([
 							z.string().max(64),
@@ -30319,13 +31583,13 @@ const Output318 = z
 								.nullable(),
 						])
 						.optional(),
-					date_connected: z.number().int().optional(),
+					date_connected: dialpadInteger(z.number().int()).optional(),
 					date_connected_iso: z.string().optional(),
-					date_created: z.number().int().optional(),
+					date_created: dialpadInteger(z.number().int()).optional(),
 					date_created_iso: z.string().optional(),
-					date_ended: z.number().int().optional(),
+					date_ended: dialpadInteger(z.number().int()).optional(),
 					date_ended_iso: z.string().optional(),
-					date_modified: z.number().int().optional(),
+					date_modified: dialpadInteger(z.number().int()).optional(),
 					date_modified_iso: z.string().optional(),
 					device_type: z
 						.union([
@@ -30335,7 +31599,7 @@ const Output318 = z
 								.nullable(),
 						])
 						.optional(),
-					direction: z.enum(['inbound', 'outbound']).optional(),
+					direction: z.enum(['inbound', 'outbound']).or(z.string()).optional(),
 					dispositions: z
 						.array(
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -30398,7 +31662,7 @@ const Output318 = z
 						.optional(),
 					operator_call_id: z
 						.union([
-							z.number().int(),
+							dialpadInteger(z.number().int()),
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z
 								.unknown()
 								.nullable(),
@@ -30420,33 +31684,35 @@ const Output318 = z
 								.nullable(),
 						])
 						.optional(),
-					powerdial_info: z.object({}).strict().optional(),
-					state: z.enum([
-						'preanswer',
-						'calling',
-						'ringing',
-						'connected',
-						'merged',
-						'hold',
-						'queued',
-						'voicemail',
-						'eavesdrop',
-						'monitor',
-						'barge',
-						'hangup',
-						'blocked',
-						'admin',
-						'parked',
-						'takeover',
-						'postcall',
-						'transcription',
-						'recording',
-						'csat',
-						'dispositions',
-						'missed',
-						'voicemail_uploaded',
-						'admin_recording',
-					]),
+					powerdial_info: z.object({}).loose().optional(),
+					state: z
+						.enum([
+							'preanswer',
+							'calling',
+							'ringing',
+							'connected',
+							'merged',
+							'hold',
+							'queued',
+							'voicemail',
+							'eavesdrop',
+							'monitor',
+							'barge',
+							'hangup',
+							'blocked',
+							'admin',
+							'parked',
+							'takeover',
+							'postcall',
+							'transcription',
+							'recording',
+							'csat',
+							'dispositions',
+							'missed',
+							'voicemail_uploaded',
+							'admin_recording',
+						])
+						.or(z.string()),
 					target_id: z
 						.union([
 							z.string().max(64),
@@ -30464,7 +31730,7 @@ const Output318 = z
 						])
 						.optional(),
 				})
-				.strict(),
+				.loose(),
 			/* unknown because the official OpenAPI schema is not documented for this value. */ z
 				.unknown()
 				.nullable(),
@@ -30532,11 +31798,11 @@ const Output318 = z
 									])
 									.optional(),
 							})
-							.strict(),
+							.loose(),
 					)
 					.max(20)
 					.optional(),
-				company_id: z.number().int(),
+				company_id: dialpadInteger(z.number().int()),
 				contact_id: z
 					.union([
 						z.string().max(1024),
@@ -30563,20 +31829,20 @@ const Output318 = z
 					.optional(),
 				csv_line: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
 					])
 					.optional(),
-				custom: z.object({}).strict().optional(),
-				date_created: z.number().int().optional(),
+				custom: z.object({}).loose().optional(),
+				date_created: dialpadInteger(z.number().int()).optional(),
 				date_created_iso: z.string().optional(),
-				date_first_contacted: z.number().int().optional(),
+				date_first_contacted: dialpadInteger(z.number().int()).optional(),
 				date_first_contacted_iso: z.string().optional(),
-				date_last_contacted: z.number().int().optional(),
+				date_last_contacted: dialpadInteger(z.number().int()).optional(),
 				date_last_contacted_iso: z.string().optional(),
-				date_modified: z.number().int().optional(),
+				date_modified: dialpadInteger(z.number().int()).optional(),
 				date_modified_iso: z.string().optional(),
 				department: z
 					.union([
@@ -30608,13 +31874,13 @@ const Output318 = z
 									])
 									.optional(),
 							})
-							.strict(),
+							.loose(),
 					)
 					.max(50)
 					.optional(),
 				engagement_score: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -30698,7 +31964,7 @@ const Output318 = z
 				lead_id: z.string().max(64),
 				lead_score: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -30713,6 +31979,7 @@ const Output318 = z
 						'salesforce',
 						'receptionist',
 					])
+					.or(z.string())
 					.optional(),
 				mobile_phone: z
 					.union([
@@ -30769,7 +32036,7 @@ const Output318 = z
 									.optional(),
 								number: z.string(),
 							})
-							.strict(),
+							.loose(),
 					)
 					.max(20)
 					.optional(),
@@ -30783,7 +32050,7 @@ const Output318 = z
 					.optional(),
 				primary_address: z
 					.union([
-						z.object({}).strict(),
+						z.object({}).loose(),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -30837,7 +32104,10 @@ const Output318 = z
 							.nullable(),
 					])
 					.optional(),
-				state: z.enum(['pending', 'active', 'deleted']).optional(),
+				state: z
+					.enum(['pending', 'active', 'deleted'])
+					.or(z.string())
+					.optional(),
 				tags: z
 					.array(
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -30852,9 +32122,9 @@ const Output318 = z
 					])
 					.optional(),
 			})
-			.strict(),
+			.loose(),
 	})
-	.strict();
+	.loose();
 
 const Input319 = z
 	.object({
@@ -30864,8 +32134,8 @@ const Input319 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				search: z.string().optional(),
 				order: z.string().optional(),
 				list_id: z.string().optional(),
@@ -30891,24 +32161,24 @@ const Output319 = z.array(
 								.nullable(),
 						])
 						.optional(),
-					company_id: z.number().int(),
+					company_id: dialpadInteger(z.number().int()),
 					contact_id: z.string().optional(),
 					contact_key: z.string().optional(),
-					csv: z.object({}).strict().optional(),
+					csv: z.object({}).loose().optional(),
 					current_rule_id: z.string().optional(),
 					current_rule_key: z.string().optional(),
-					date_created: z.number().int().optional(),
+					date_created: dialpadInteger(z.number().int()).optional(),
 					date_created_iso: z.string().optional(),
-					date_estimate: z.number().int().optional(),
+					date_estimate: dialpadInteger(z.number().int()).optional(),
 					date_estimate_iso: z.string().optional(),
-					date_modified: z.number().int().optional(),
+					date_modified: dialpadInteger(z.number().int()).optional(),
 					date_modified_iso: z.string().optional(),
 					history: z
 						.object({
-							call_attempts: z.number().int().min(0).optional(),
+							call_attempts: dialpadInteger(z.number().int().min(0)).optional(),
 							last_call_id: z
 								.union([
-									z.number().int(),
+									dialpadInteger(z.number().int()),
 									/* unknown because the official OpenAPI schema is not documented for this value. */ z
 										.unknown()
 										.nullable(),
@@ -30952,11 +32222,11 @@ const Output319 = z.array(
 														.unknown()
 														.optional(),
 											})
-											.strict(),
+											.loose(),
 									)
 									.optional(),
 						})
-						.strict()
+						.loose()
 						.optional(),
 					id: z.string(),
 					index: z.number().optional(),
@@ -31035,6 +32305,7 @@ const Output319 = z.array(
 							'sms:not_in_free_company',
 							'sms:invalid_number',
 						])
+						.or(z.string())
 						.optional(),
 					sms_id: z.string().optional(),
 					sms_key: z.string().optional(),
@@ -31051,6 +32322,7 @@ const Output319 = z.array(
 							'cancelled',
 							'incomplete',
 						])
+						.or(z.string())
 						.optional(),
 					status: z
 						.enum([
@@ -31062,6 +32334,7 @@ const Output319 = z.array(
 							'Excluded',
 							'Incomplete',
 						])
+						.or(z.string())
 						.optional(),
 					tags: z
 						.array(
@@ -31069,7 +32342,7 @@ const Output319 = z.array(
 						)
 						.optional(),
 				})
-				.strict(),
+				.loose(),
 			item_id: z.string(),
 			last_call: z.union([
 				z
@@ -31079,9 +32352,10 @@ const Output319 = z.array(
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 							)
 							.optional(),
-						call_id: z.number().int(),
+						call_id: dialpadInteger(z.number().int()),
 						call_result: z
 							.enum(['connected', 'missed', 'voicemail', 'called'])
+							.or(z.string())
 							.optional(),
 						campaign_id: z
 							.union([
@@ -31091,7 +32365,7 @@ const Output319 = z.array(
 									.nullable(),
 							])
 							.optional(),
-						company_id: z.number().int(),
+						company_id: dialpadInteger(z.number().int()),
 						contact_id: z
 							.union([
 								z.string().max(64),
@@ -31108,13 +32382,13 @@ const Output319 = z.array(
 									.nullable(),
 							])
 							.optional(),
-						date_connected: z.number().int().optional(),
+						date_connected: dialpadInteger(z.number().int()).optional(),
 						date_connected_iso: z.string().optional(),
-						date_created: z.number().int().optional(),
+						date_created: dialpadInteger(z.number().int()).optional(),
 						date_created_iso: z.string().optional(),
-						date_ended: z.number().int().optional(),
+						date_ended: dialpadInteger(z.number().int()).optional(),
 						date_ended_iso: z.string().optional(),
-						date_modified: z.number().int().optional(),
+						date_modified: dialpadInteger(z.number().int()).optional(),
 						date_modified_iso: z.string().optional(),
 						device_type: z
 							.union([
@@ -31124,7 +32398,10 @@ const Output319 = z.array(
 									.nullable(),
 							])
 							.optional(),
-						direction: z.enum(['inbound', 'outbound']).optional(),
+						direction: z
+							.enum(['inbound', 'outbound'])
+							.or(z.string())
+							.optional(),
 						dispositions: z
 							.array(
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -31187,7 +32464,7 @@ const Output319 = z.array(
 							.optional(),
 						operator_call_id: z
 							.union([
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
@@ -31209,33 +32486,35 @@ const Output319 = z.array(
 									.nullable(),
 							])
 							.optional(),
-						powerdial_info: z.object({}).strict().optional(),
-						state: z.enum([
-							'preanswer',
-							'calling',
-							'ringing',
-							'connected',
-							'merged',
-							'hold',
-							'queued',
-							'voicemail',
-							'eavesdrop',
-							'monitor',
-							'barge',
-							'hangup',
-							'blocked',
-							'admin',
-							'parked',
-							'takeover',
-							'postcall',
-							'transcription',
-							'recording',
-							'csat',
-							'dispositions',
-							'missed',
-							'voicemail_uploaded',
-							'admin_recording',
-						]),
+						powerdial_info: z.object({}).loose().optional(),
+						state: z
+							.enum([
+								'preanswer',
+								'calling',
+								'ringing',
+								'connected',
+								'merged',
+								'hold',
+								'queued',
+								'voicemail',
+								'eavesdrop',
+								'monitor',
+								'barge',
+								'hangup',
+								'blocked',
+								'admin',
+								'parked',
+								'takeover',
+								'postcall',
+								'transcription',
+								'recording',
+								'csat',
+								'dispositions',
+								'missed',
+								'voicemail_uploaded',
+								'admin_recording',
+							])
+							.or(z.string()),
 						target_id: z
 							.union([
 								z.string().max(64),
@@ -31253,7 +32532,7 @@ const Output319 = z.array(
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -31307,11 +32586,11 @@ const Output319 = z.array(
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 						)
 						.max(20)
 						.optional(),
-					company_id: z.number().int(),
+					company_id: dialpadInteger(z.number().int()),
 					contact_id: z
 						.union([
 							z.string().max(1024),
@@ -31338,20 +32617,20 @@ const Output319 = z.array(
 						.optional(),
 					csv_line: z
 						.union([
-							z.number().int(),
+							dialpadInteger(z.number().int()),
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z
 								.unknown()
 								.nullable(),
 						])
 						.optional(),
-					custom: z.object({}).strict().optional(),
-					date_created: z.number().int().optional(),
+					custom: z.object({}).loose().optional(),
+					date_created: dialpadInteger(z.number().int()).optional(),
 					date_created_iso: z.string().optional(),
-					date_first_contacted: z.number().int().optional(),
+					date_first_contacted: dialpadInteger(z.number().int()).optional(),
 					date_first_contacted_iso: z.string().optional(),
-					date_last_contacted: z.number().int().optional(),
+					date_last_contacted: dialpadInteger(z.number().int()).optional(),
 					date_last_contacted_iso: z.string().optional(),
-					date_modified: z.number().int().optional(),
+					date_modified: dialpadInteger(z.number().int()).optional(),
 					date_modified_iso: z.string().optional(),
 					department: z
 						.union([
@@ -31379,13 +32658,13 @@ const Output319 = z.array(
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 						)
 						.max(50)
 						.optional(),
 					engagement_score: z
 						.union([
-							z.number().int(),
+							dialpadInteger(z.number().int()),
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z
 								.unknown()
 								.nullable(),
@@ -31469,7 +32748,7 @@ const Output319 = z.array(
 					lead_id: z.string().max(64),
 					lead_score: z
 						.union([
-							z.number().int(),
+							dialpadInteger(z.number().int()),
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z
 								.unknown()
 								.nullable(),
@@ -31484,6 +32763,7 @@ const Output319 = z.array(
 							'salesforce',
 							'receptionist',
 						])
+						.or(z.string())
 						.optional(),
 					mobile_phone: z
 						.union([
@@ -31534,7 +32814,7 @@ const Output319 = z.array(
 										.optional(),
 									number: z.string(),
 								})
-								.strict(),
+								.loose(),
 						)
 						.max(20)
 						.optional(),
@@ -31548,7 +32828,7 @@ const Output319 = z.array(
 						.optional(),
 					primary_address: z
 						.union([
-							z.object({}).strict(),
+							z.object({}).loose(),
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z
 								.unknown()
 								.nullable(),
@@ -31602,7 +32882,10 @@ const Output319 = z.array(
 								.nullable(),
 						])
 						.optional(),
-					state: z.enum(['pending', 'active', 'deleted']).optional(),
+					state: z
+						.enum(['pending', 'active', 'deleted'])
+						.or(z.string())
+						.optional(),
 					tags: z
 						.array(
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -31617,9 +32900,9 @@ const Output319 = z.array(
 						])
 						.optional(),
 				})
-				.strict(),
+				.loose(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input320 = z
@@ -31644,11 +32927,11 @@ const Output320 = z
 			.union([
 				z
 					.object({
-						active_campaigns: z.number().int().optional(),
-						all_campaigns: z.number().int().optional(),
-						paused_campaigns: z.number().int().optional(),
+						active_campaigns: dialpadInteger(z.number().int()).optional(),
+						all_campaigns: dialpadInteger(z.number().int()).optional(),
+						paused_campaigns: dialpadInteger(z.number().int()).optional(),
 					})
-					.strict(),
+					.loose(),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -31676,7 +32959,7 @@ const Output320 = z
 					.optional(),
 				author_id: z.string().optional(),
 				author_key: z.string().optional(),
-				company_id: z.number().int(),
+				company_id: dialpadInteger(z.number().int()),
 				csv_columns: z
 					.array(
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -31692,11 +32975,11 @@ const Output320 = z
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 					)
 					.optional(),
-				date_created: z.number().int().optional(),
+				date_created: dialpadInteger(z.number().int()).optional(),
 				date_created_iso: z.string().optional(),
-				date_modified: z.number().int().optional(),
+				date_modified: dialpadInteger(z.number().int()).optional(),
 				date_modified_iso: z.string().optional(),
-				date_user_modified: z.number().int().optional(),
+				date_user_modified: dialpadInteger(z.number().int()).optional(),
 				date_user_modified_iso: z.string().optional(),
 				id: z.string(),
 				is_shared: z.boolean().optional(),
@@ -31718,14 +33001,14 @@ const Output320 = z
 					.optional(),
 				list_id: z.string().max(1500),
 				name: z.string().max(1500).optional(),
-				num_csv_rows: z.number().int().optional(),
-				num_manual_rows: z.number().int().optional(),
-				num_query_rows: z.number().int().optional(),
-				num_rows: z.number().int().optional(),
-				num_snapshot_rows: z.number().int().optional(),
+				num_csv_rows: dialpadInteger(z.number().int()).optional(),
+				num_manual_rows: dialpadInteger(z.number().int()).optional(),
+				num_query_rows: dialpadInteger(z.number().int()).optional(),
+				num_rows: dialpadInteger(z.number().int()).optional(),
+				num_snapshot_rows: dialpadInteger(z.number().int()).optional(),
 				office_id: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -31763,9 +33046,9 @@ const Output320 = z
 					)
 					.optional(),
 			})
-			.strict(),
+			.loose(),
 	})
-	.strict();
+	.loose();
 
 const Input321 = z
 	.object({
@@ -31779,10 +33062,10 @@ const Input321 = z
 
 const Output321 = z
 	.object({
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		error: z
 			.union([
@@ -31814,7 +33097,7 @@ const Output321 = z
 		request_user_id: z.string().max(1500),
 		url: z.string().optional(),
 	})
-	.strict();
+	.loose();
 
 const Input322 = z
 	.object({
@@ -31899,21 +33182,22 @@ const Input322 = z
 
 const Output322 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		consent: z
 			.enum(['implied', 'consent', 'written_consent', 'revoked'])
+			.or(z.string())
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_dnc_expires: z.number().int().optional(),
+		date_dnc_expires: dialpadInteger(z.number().int()).optional(),
 		date_dnc_expires_iso: z.string().optional(),
-		date_dnc_opt_out: z.number().int().optional(),
+		date_dnc_opt_out: dialpadInteger(z.number().int()).optional(),
 		date_dnc_opt_out_iso: z.string().optional(),
-		date_dnt_expires: z.number().int().optional(),
+		date_dnt_expires: dialpadInteger(z.number().int()).optional(),
 		date_dnt_expires_iso: z.string().optional(),
-		date_dnt_opt_out: z.number().int().optional(),
+		date_dnt_opt_out: dialpadInteger(z.number().int()).optional(),
 		date_dnt_opt_out_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		dnc: z
 			.union([
@@ -31923,7 +33207,7 @@ const Output322 = z
 					.nullable(),
 			])
 			.optional(),
-		dnc_scope: z.enum(['powerdialer', 'ever']).optional(),
+		dnc_scope: z.enum(['powerdialer', 'ever']).or(z.string()).optional(),
 		dnt: z
 			.union([
 				z.boolean(),
@@ -31932,7 +33216,7 @@ const Output322 = z
 					.nullable(),
 			])
 			.optional(),
-		dnt_scope: z.enum(['powerdialer', 'ever']).optional(),
+		dnt_scope: z.enum(['powerdialer', 'ever']).or(z.string()).optional(),
 		e164: z.string().max(20),
 		formatted_phone: z
 			.union([
@@ -31946,7 +33230,10 @@ const Output322 = z
 		is_dnc_expired: z.boolean().optional(),
 		is_dnt_expired: z.boolean().optional(),
 		key: z.string(),
-		label: z.enum(['mobile', 'work', 'home', 'other']).optional(),
+		label: z
+			.enum(['mobile', 'work', 'home', 'other'])
+			.or(z.string())
+			.optional(),
 		last_author_dp_key: z
 			.union([
 				z.string(),
@@ -31971,8 +33258,8 @@ const Output322 = z
 					.nullable(),
 			])
 			.optional(),
-		last_source: z.enum(['api', 'csv', 'dp_contact']).optional(),
-		state: z.enum(['active', 'deleted']).optional(),
+		last_source: z.enum(['api', 'csv', 'dp_contact']).or(z.string()).optional(),
+		state: z.enum(['active', 'deleted']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -31995,9 +33282,10 @@ const Output322 = z
 				'spam',
 				'wrong_number',
 			])
+			.or(z.string())
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input323 = z
 	.object({
@@ -32011,21 +33299,22 @@ const Input323 = z
 
 const Output323 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		consent: z
 			.enum(['implied', 'consent', 'written_consent', 'revoked'])
+			.or(z.string())
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_dnc_expires: z.number().int().optional(),
+		date_dnc_expires: dialpadInteger(z.number().int()).optional(),
 		date_dnc_expires_iso: z.string().optional(),
-		date_dnc_opt_out: z.number().int().optional(),
+		date_dnc_opt_out: dialpadInteger(z.number().int()).optional(),
 		date_dnc_opt_out_iso: z.string().optional(),
-		date_dnt_expires: z.number().int().optional(),
+		date_dnt_expires: dialpadInteger(z.number().int()).optional(),
 		date_dnt_expires_iso: z.string().optional(),
-		date_dnt_opt_out: z.number().int().optional(),
+		date_dnt_opt_out: dialpadInteger(z.number().int()).optional(),
 		date_dnt_opt_out_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		dnc: z
 			.union([
@@ -32035,7 +33324,7 @@ const Output323 = z
 					.nullable(),
 			])
 			.optional(),
-		dnc_scope: z.enum(['powerdialer', 'ever']).optional(),
+		dnc_scope: z.enum(['powerdialer', 'ever']).or(z.string()).optional(),
 		dnt: z
 			.union([
 				z.boolean(),
@@ -32044,7 +33333,7 @@ const Output323 = z
 					.nullable(),
 			])
 			.optional(),
-		dnt_scope: z.enum(['powerdialer', 'ever']).optional(),
+		dnt_scope: z.enum(['powerdialer', 'ever']).or(z.string()).optional(),
 		e164: z.string().max(20),
 		formatted_phone: z
 			.union([
@@ -32058,7 +33347,10 @@ const Output323 = z
 		is_dnc_expired: z.boolean().optional(),
 		is_dnt_expired: z.boolean().optional(),
 		key: z.string(),
-		label: z.enum(['mobile', 'work', 'home', 'other']).optional(),
+		label: z
+			.enum(['mobile', 'work', 'home', 'other'])
+			.or(z.string())
+			.optional(),
 		last_author_dp_key: z
 			.union([
 				z.string(),
@@ -32083,8 +33375,8 @@ const Output323 = z
 					.nullable(),
 			])
 			.optional(),
-		last_source: z.enum(['api', 'csv', 'dp_contact']).optional(),
-		state: z.enum(['active', 'deleted']).optional(),
+		last_source: z.enum(['api', 'csv', 'dp_contact']).or(z.string()).optional(),
+		state: z.enum(['active', 'deleted']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -32107,9 +33399,10 @@ const Output323 = z
 				'spam',
 				'wrong_number',
 			])
+			.or(z.string())
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input324 = z
 	.object({
@@ -32148,24 +33441,24 @@ const Output324 = z
 							.nullable(),
 					])
 					.optional(),
-				company_id: z.number().int(),
+				company_id: dialpadInteger(z.number().int()),
 				contact_id: z.string().optional(),
 				contact_key: z.string().optional(),
-				csv: z.object({}).strict().optional(),
+				csv: z.object({}).loose().optional(),
 				current_rule_id: z.string().optional(),
 				current_rule_key: z.string().optional(),
-				date_created: z.number().int().optional(),
+				date_created: dialpadInteger(z.number().int()).optional(),
 				date_created_iso: z.string().optional(),
-				date_estimate: z.number().int().optional(),
+				date_estimate: dialpadInteger(z.number().int()).optional(),
 				date_estimate_iso: z.string().optional(),
-				date_modified: z.number().int().optional(),
+				date_modified: dialpadInteger(z.number().int()).optional(),
 				date_modified_iso: z.string().optional(),
 				history: z
 					.object({
-						call_attempts: z.number().int().min(0).optional(),
+						call_attempts: dialpadInteger(z.number().int().min(0)).optional(),
 						last_call_id: z
 							.union([
-								z.number().int(),
+								dialpadInteger(z.number().int()),
 								/* unknown because the official OpenAPI schema is not documented for this value. */ z
 									.unknown()
 									.nullable(),
@@ -32175,69 +33468,75 @@ const Output324 = z
 							.union([
 								z.array(
 									z.union([
-										z.enum([
-											'call:powerdialer_no_available_agent',
-											'call:human_agent',
-											'call:ai_agent',
-											'call:outbound_connected',
-											'call:powerdialer_vm_drop',
-											'call:machine_detected',
-											'call:powerdialer_call',
-											'call:active',
-											'call:outbound',
-											'call:cancelled',
-											'call:inbound',
-											'call:missed',
-											'call:abandoned',
-											'call:user_initiated',
-										]),
-										z.enum([
-											'sms:accepted',
-											'sms:invalid_destination',
-											'sms:invalid_source',
-											'sms:no_route',
-											'sms:rejected_spam',
-											'sms:internal_error',
-											'sms:rejected',
-											'sms:not_supported',
-											'sms:time_out',
-											'sms:error',
-											'sms:unknown',
-											'sms:forbidden',
-											'sms:owner_no_international_messaging',
-											'sms:unregistered_a2p_not_allowed',
-											'sms:owner_not_enough_sms_credits',
-											'sms:owner_not_enough_credits',
-											'sms:messaging_disabled',
-											'sms:owner_free_user',
-											'sms:contact_missing_number',
-											'sms:contact_is_room',
-											'sms:contact_is_shared_line',
-											'sms:staff_contact',
-											'sms:company_affinity',
-											'sms:not_in_free_company',
-											'sms:invalid_number',
-										]),
-										z.enum([
-											'call:max_attempts_item',
-											'call:max_attempts_delay_not_met',
-											'call:max_attempts_criteria_not_met',
-											'call:max_attempts_campaign_phone_total',
-											'call:max_attempts_campaign_phone_daily',
-											'call:max_attempts_campaign_phone_rolling',
-											'call:max_attempts_campaign_contact_total',
-											'call:max_attempts_campaign_contact_daily',
-											'call:max_attempts_campaign_contact_rolling',
-											'call:max_attempts_campaign_company_total',
-											'call:max_attempts_campaign_company_daily',
-											'call:max_attempts_campaign_company_rolling',
-											'call:max_attempts_global_phone_daily',
-											'call:max_attempts_global_phone_rolling',
-											'call:max_attempts_global_contact_daily',
-											'call:max_attempts_global_contact_rolling',
-											'call:max_attempts_global_company_daily',
-											'call:max_attempts_global_company_rolling',
-										]),
+										z
+											.enum([
+												'call:powerdialer_no_available_agent',
+												'call:human_agent',
+												'call:ai_agent',
+												'call:outbound_connected',
+												'call:powerdialer_vm_drop',
+												'call:machine_detected',
+												'call:powerdialer_call',
+												'call:active',
+												'call:outbound',
+												'call:cancelled',
+												'call:inbound',
+												'call:missed',
+												'call:abandoned',
+												'call:user_initiated',
+											])
+											.or(z.string()),
+										z
+											.enum([
+												'sms:accepted',
+												'sms:invalid_destination',
+												'sms:invalid_source',
+												'sms:no_route',
+												'sms:rejected_spam',
+												'sms:internal_error',
+												'sms:rejected',
+												'sms:not_supported',
+												'sms:time_out',
+												'sms:error',
+												'sms:unknown',
+												'sms:forbidden',
+												'sms:owner_no_international_messaging',
+												'sms:unregistered_a2p_not_allowed',
+												'sms:owner_not_enough_sms_credits',
+												'sms:owner_not_enough_credits',
+												'sms:messaging_disabled',
+												'sms:owner_free_user',
+												'sms:contact_missing_number',
+												'sms:contact_is_room',
+												'sms:contact_is_shared_line',
+												'sms:staff_contact',
+												'sms:company_affinity',
+												'sms:not_in_free_company',
+												'sms:invalid_number',
+											])
+											.or(z.string()),
+										z
+											.enum([
+												'call:max_attempts_item',
+												'call:max_attempts_delay_not_met',
+												'call:max_attempts_criteria_not_met',
+												'call:max_attempts_campaign_phone_total',
+												'call:max_attempts_campaign_phone_daily',
+												'call:max_attempts_campaign_phone_rolling',
+												'call:max_attempts_campaign_contact_total',
+												'call:max_attempts_campaign_contact_daily',
+												'call:max_attempts_campaign_contact_rolling',
+												'call:max_attempts_campaign_company_total',
+												'call:max_attempts_campaign_company_daily',
+												'call:max_attempts_campaign_company_rolling',
+												'call:max_attempts_global_phone_daily',
+												'call:max_attempts_global_phone_rolling',
+												'call:max_attempts_global_contact_daily',
+												'call:max_attempts_global_contact_rolling',
+												'call:max_attempts_global_company_daily',
+												'call:max_attempts_global_company_rolling',
+											])
+											.or(z.string()),
 										z.string(),
 									]),
 								),
@@ -32269,11 +33568,11 @@ const Output324 = z
 													.optional(),
 											rule_type: z.string().optional(),
 										})
-										.strict(),
+										.loose(),
 								)
 								.optional(),
 					})
-					.strict()
+					.loose()
 					.optional(),
 				id: z.string(),
 				index: z.number().optional(),
@@ -32352,6 +33651,7 @@ const Output324 = z
 						'sms:not_in_free_company',
 						'sms:invalid_number',
 					])
+					.or(z.string())
 					.optional(),
 				sms_id: z.string().optional(),
 				sms_key: z.string().optional(),
@@ -32368,6 +33668,7 @@ const Output324 = z
 						'cancelled',
 						'incomplete',
 					])
+					.or(z.string())
 					.optional(),
 				status: z
 					.enum([
@@ -32379,6 +33680,7 @@ const Output324 = z
 						'Excluded',
 						'Incomplete',
 					])
+					.or(z.string())
 					.optional(),
 				tags: z
 					.array(
@@ -32386,7 +33688,7 @@ const Output324 = z
 					)
 					.optional(),
 			})
-			.strict(),
+			.loose(),
 		item_id: z.string(),
 		last_call: z.union([
 			z
@@ -32396,9 +33698,10 @@ const Output324 = z
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
 						)
 						.optional(),
-					call_id: z.number().int(),
+					call_id: dialpadInteger(z.number().int()),
 					call_result: z
 						.enum(['connected', 'missed', 'voicemail', 'called'])
+						.or(z.string())
 						.optional(),
 					campaign_id: z
 						.union([
@@ -32408,7 +33711,7 @@ const Output324 = z
 								.nullable(),
 						])
 						.optional(),
-					company_id: z.number().int(),
+					company_id: dialpadInteger(z.number().int()),
 					contact_id: z
 						.union([
 							z.string().max(64),
@@ -32425,13 +33728,13 @@ const Output324 = z
 								.nullable(),
 						])
 						.optional(),
-					date_connected: z.number().int().optional(),
+					date_connected: dialpadInteger(z.number().int()).optional(),
 					date_connected_iso: z.string().optional(),
-					date_created: z.number().int().optional(),
+					date_created: dialpadInteger(z.number().int()).optional(),
 					date_created_iso: z.string().optional(),
-					date_ended: z.number().int().optional(),
+					date_ended: dialpadInteger(z.number().int()).optional(),
 					date_ended_iso: z.string().optional(),
-					date_modified: z.number().int().optional(),
+					date_modified: dialpadInteger(z.number().int()).optional(),
 					date_modified_iso: z.string().optional(),
 					device_type: z
 						.union([
@@ -32441,7 +33744,7 @@ const Output324 = z
 								.nullable(),
 						])
 						.optional(),
-					direction: z.enum(['inbound', 'outbound']).optional(),
+					direction: z.enum(['inbound', 'outbound']).or(z.string()).optional(),
 					dispositions: z
 						.array(
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -32504,7 +33807,7 @@ const Output324 = z
 						.optional(),
 					operator_call_id: z
 						.union([
-							z.number().int(),
+							dialpadInteger(z.number().int()),
 							/* unknown because the official OpenAPI schema is not documented for this value. */ z
 								.unknown()
 								.nullable(),
@@ -32526,33 +33829,35 @@ const Output324 = z
 								.nullable(),
 						])
 						.optional(),
-					powerdial_info: z.object({}).strict().optional(),
-					state: z.enum([
-						'preanswer',
-						'calling',
-						'ringing',
-						'connected',
-						'merged',
-						'hold',
-						'queued',
-						'voicemail',
-						'eavesdrop',
-						'monitor',
-						'barge',
-						'hangup',
-						'blocked',
-						'admin',
-						'parked',
-						'takeover',
-						'postcall',
-						'transcription',
-						'recording',
-						'csat',
-						'dispositions',
-						'missed',
-						'voicemail_uploaded',
-						'admin_recording',
-					]),
+					powerdial_info: z.object({}).loose().optional(),
+					state: z
+						.enum([
+							'preanswer',
+							'calling',
+							'ringing',
+							'connected',
+							'merged',
+							'hold',
+							'queued',
+							'voicemail',
+							'eavesdrop',
+							'monitor',
+							'barge',
+							'hangup',
+							'blocked',
+							'admin',
+							'parked',
+							'takeover',
+							'postcall',
+							'transcription',
+							'recording',
+							'csat',
+							'dispositions',
+							'missed',
+							'voicemail_uploaded',
+							'admin_recording',
+						])
+						.or(z.string()),
 					target_id: z
 						.union([
 							z.string().max(64),
@@ -32570,7 +33875,7 @@ const Output324 = z
 						])
 						.optional(),
 				})
-				.strict(),
+				.loose(),
 			/* unknown because the official OpenAPI schema is not documented for this value. */ z
 				.unknown()
 				.nullable(),
@@ -32638,11 +33943,11 @@ const Output324 = z
 									])
 									.optional(),
 							})
-							.strict(),
+							.loose(),
 					)
 					.max(20)
 					.optional(),
-				company_id: z.number().int(),
+				company_id: dialpadInteger(z.number().int()),
 				contact_id: z
 					.union([
 						z.string().max(1024),
@@ -32669,20 +33974,20 @@ const Output324 = z
 					.optional(),
 				csv_line: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
 					])
 					.optional(),
-				custom: z.object({}).strict().optional(),
-				date_created: z.number().int().optional(),
+				custom: z.object({}).loose().optional(),
+				date_created: dialpadInteger(z.number().int()).optional(),
 				date_created_iso: z.string().optional(),
-				date_first_contacted: z.number().int().optional(),
+				date_first_contacted: dialpadInteger(z.number().int()).optional(),
 				date_first_contacted_iso: z.string().optional(),
-				date_last_contacted: z.number().int().optional(),
+				date_last_contacted: dialpadInteger(z.number().int()).optional(),
 				date_last_contacted_iso: z.string().optional(),
-				date_modified: z.number().int().optional(),
+				date_modified: dialpadInteger(z.number().int()).optional(),
 				date_modified_iso: z.string().optional(),
 				department: z
 					.union([
@@ -32714,13 +34019,13 @@ const Output324 = z
 									])
 									.optional(),
 							})
-							.strict(),
+							.loose(),
 					)
 					.max(50)
 					.optional(),
 				engagement_score: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -32804,7 +34109,7 @@ const Output324 = z
 				lead_id: z.string().max(64),
 				lead_score: z
 					.union([
-						z.number().int(),
+						dialpadInteger(z.number().int()),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -32819,6 +34124,7 @@ const Output324 = z
 						'salesforce',
 						'receptionist',
 					])
+					.or(z.string())
 					.optional(),
 				mobile_phone: z
 					.union([
@@ -32875,7 +34181,7 @@ const Output324 = z
 									.optional(),
 								number: z.string(),
 							})
-							.strict(),
+							.loose(),
 					)
 					.max(20)
 					.optional(),
@@ -32889,7 +34195,7 @@ const Output324 = z
 					.optional(),
 				primary_address: z
 					.union([
-						z.object({}).strict(),
+						z.object({}).loose(),
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z
 							.unknown()
 							.nullable(),
@@ -32943,7 +34249,10 @@ const Output324 = z
 							.nullable(),
 					])
 					.optional(),
-				state: z.enum(['pending', 'active', 'deleted']).optional(),
+				state: z
+					.enum(['pending', 'active', 'deleted'])
+					.or(z.string())
+					.optional(),
 				tags: z
 					.array(
 						/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -32958,9 +34267,9 @@ const Output324 = z
 					])
 					.optional(),
 			})
-			.strict(),
+			.loose(),
 	})
-	.strict();
+	.loose();
 
 const Input325 = z
 	.object({
@@ -32974,21 +34283,22 @@ const Input325 = z
 
 const Output325 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		consent: z
 			.enum(['implied', 'consent', 'written_consent', 'revoked'])
+			.or(z.string())
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_dnc_expires: z.number().int().optional(),
+		date_dnc_expires: dialpadInteger(z.number().int()).optional(),
 		date_dnc_expires_iso: z.string().optional(),
-		date_dnc_opt_out: z.number().int().optional(),
+		date_dnc_opt_out: dialpadInteger(z.number().int()).optional(),
 		date_dnc_opt_out_iso: z.string().optional(),
-		date_dnt_expires: z.number().int().optional(),
+		date_dnt_expires: dialpadInteger(z.number().int()).optional(),
 		date_dnt_expires_iso: z.string().optional(),
-		date_dnt_opt_out: z.number().int().optional(),
+		date_dnt_opt_out: dialpadInteger(z.number().int()).optional(),
 		date_dnt_opt_out_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		dnc: z
 			.union([
@@ -32998,7 +34308,7 @@ const Output325 = z
 					.nullable(),
 			])
 			.optional(),
-		dnc_scope: z.enum(['powerdialer', 'ever']).optional(),
+		dnc_scope: z.enum(['powerdialer', 'ever']).or(z.string()).optional(),
 		dnt: z
 			.union([
 				z.boolean(),
@@ -33007,7 +34317,7 @@ const Output325 = z
 					.nullable(),
 			])
 			.optional(),
-		dnt_scope: z.enum(['powerdialer', 'ever']).optional(),
+		dnt_scope: z.enum(['powerdialer', 'ever']).or(z.string()).optional(),
 		e164: z.string().max(20),
 		formatted_phone: z
 			.union([
@@ -33021,7 +34331,10 @@ const Output325 = z
 		is_dnc_expired: z.boolean().optional(),
 		is_dnt_expired: z.boolean().optional(),
 		key: z.string(),
-		label: z.enum(['mobile', 'work', 'home', 'other']).optional(),
+		label: z
+			.enum(['mobile', 'work', 'home', 'other'])
+			.or(z.string())
+			.optional(),
 		last_author_dp_key: z
 			.union([
 				z.string(),
@@ -33046,8 +34359,8 @@ const Output325 = z
 					.nullable(),
 			])
 			.optional(),
-		last_source: z.enum(['api', 'csv', 'dp_contact']).optional(),
-		state: z.enum(['active', 'deleted']).optional(),
+		last_source: z.enum(['api', 'csv', 'dp_contact']).or(z.string()).optional(),
+		state: z.enum(['active', 'deleted']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -33070,16 +34383,17 @@ const Output325 = z
 				'spam',
 				'wrong_number',
 			])
+			.or(z.string())
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input326 = z
 	.object({
 		query: z
 			.object({
-				limit: z.number().int().optional(),
-				offset: z.number().int().optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
 				sobject_types: z.string().optional(),
 				search: z.string().optional(),
 			})
@@ -33106,7 +34420,7 @@ const Output326 = z.array(
 			sfdc_id: z.string(),
 			sobject_type: z.string(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input327 = z
@@ -33197,21 +34511,22 @@ const Input327 = z
 
 const Output327 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		consent: z
 			.enum(['implied', 'consent', 'written_consent', 'revoked'])
+			.or(z.string())
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_dnc_expires: z.number().int().optional(),
+		date_dnc_expires: dialpadInteger(z.number().int()).optional(),
 		date_dnc_expires_iso: z.string().optional(),
-		date_dnc_opt_out: z.number().int().optional(),
+		date_dnc_opt_out: dialpadInteger(z.number().int()).optional(),
 		date_dnc_opt_out_iso: z.string().optional(),
-		date_dnt_expires: z.number().int().optional(),
+		date_dnt_expires: dialpadInteger(z.number().int()).optional(),
 		date_dnt_expires_iso: z.string().optional(),
-		date_dnt_opt_out: z.number().int().optional(),
+		date_dnt_opt_out: dialpadInteger(z.number().int()).optional(),
 		date_dnt_opt_out_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		dnc: z
 			.union([
@@ -33221,7 +34536,7 @@ const Output327 = z
 					.nullable(),
 			])
 			.optional(),
-		dnc_scope: z.enum(['powerdialer', 'ever']).optional(),
+		dnc_scope: z.enum(['powerdialer', 'ever']).or(z.string()).optional(),
 		dnt: z
 			.union([
 				z.boolean(),
@@ -33230,7 +34545,7 @@ const Output327 = z
 					.nullable(),
 			])
 			.optional(),
-		dnt_scope: z.enum(['powerdialer', 'ever']).optional(),
+		dnt_scope: z.enum(['powerdialer', 'ever']).or(z.string()).optional(),
 		e164: z.string().max(20),
 		formatted_phone: z
 			.union([
@@ -33244,7 +34559,10 @@ const Output327 = z
 		is_dnc_expired: z.boolean().optional(),
 		is_dnt_expired: z.boolean().optional(),
 		key: z.string(),
-		label: z.enum(['mobile', 'work', 'home', 'other']).optional(),
+		label: z
+			.enum(['mobile', 'work', 'home', 'other'])
+			.or(z.string())
+			.optional(),
 		last_author_dp_key: z
 			.union([
 				z.string(),
@@ -33269,8 +34587,8 @@ const Output327 = z
 					.nullable(),
 			])
 			.optional(),
-		last_source: z.enum(['api', 'csv', 'dp_contact']).optional(),
-		state: z.enum(['active', 'deleted']).optional(),
+		last_source: z.enum(['api', 'csv', 'dp_contact']).or(z.string()).optional(),
+		state: z.enum(['active', 'deleted']).or(z.string()).optional(),
 		tags: z
 			.array(
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -33293,9 +34611,10 @@ const Output327 = z
 				'spam',
 				'wrong_number',
 			])
+			.or(z.string())
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input328 = z
 	.object({
@@ -33314,7 +34633,7 @@ const Output328 = z.array(
 			name: z.string(),
 			type: z.string(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input329 = z
@@ -33329,10 +34648,10 @@ const Input329 = z
 
 const Output329 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		count: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -33346,11 +34665,11 @@ const Output329 = z
 					.nullable(),
 			])
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_updated_count: z.number().int().optional(),
+		date_updated_count: dialpadInteger(z.number().int()).optional(),
 		date_updated_count_iso: z.string().optional(),
 		developer_name: z
 			.union([
@@ -33380,7 +34699,9 @@ const Output329 = z
 					.nullable(),
 			])
 			.optional(),
-		sobject_type: z.enum(['Lead', 'Contact', 'Opportunity', 'Account']),
+		sobject_type: z
+			.enum(['Lead', 'Contact', 'Opportunity', 'Account'])
+			.or(z.string()),
 		where_clause: z
 			.union([
 				z.string(),
@@ -33390,7 +34711,7 @@ const Output329 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input330 = z
 	.object({
@@ -33451,24 +34772,24 @@ const Output330 = z
 					.nullable(),
 			])
 			.optional(),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		import_id: z.string().max(1500),
 		import_results: z
 			.object({
-				collisions: z.number().int().min(0).optional(),
-				created: z.number().int().min(0).optional(),
-				duplicates: z.number().int().min(0).optional(),
-				failed_batches: z.number().int().min(0).optional(),
-				skipped: z.number().int().min(0).optional(),
-				total: z.number().int().min(0).optional(),
-				updated: z.number().int().min(0).optional(),
+				collisions: dialpadInteger(z.number().int().min(0)).optional(),
+				created: dialpadInteger(z.number().int().min(0)).optional(),
+				duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+				failed_batches: dialpadInteger(z.number().int().min(0)).optional(),
+				skipped: dialpadInteger(z.number().int().min(0)).optional(),
+				total: dialpadInteger(z.number().int().min(0)).optional(),
+				updated: dialpadInteger(z.number().int().min(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		key: z.string(),
 		listview_id: z
@@ -33489,11 +34810,15 @@ const Output330 = z
 			.optional(),
 		sobject_type: z
 			.enum(['Lead', 'Contact', 'Opportunity', 'Account'])
+			.or(z.string())
 			.optional(),
-		state: z.enum(['pending', 'active', 'complete', 'error']).optional(),
-		strategy: z.enum(['skip', 'merge']).optional(),
+		state: z
+			.enum(['pending', 'active', 'complete', 'error'])
+			.or(z.string())
+			.optional(),
+		strategy: z.enum(['skip', 'merge']).or(z.string()).optional(),
 	})
-	.strict();
+	.loose();
 
 const Input331 = z
 	.object({
@@ -33526,24 +34851,24 @@ const Output331 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			company_id: z.number().int(),
-			date_created: z.number().int().optional(),
+			company_id: dialpadInteger(z.number().int()),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			id: z.string(),
 			import_id: z.string().max(1500),
 			import_results: z
 				.object({
-					collisions: z.number().int().min(0).optional(),
-					created: z.number().int().min(0).optional(),
-					duplicates: z.number().int().min(0).optional(),
-					failed_batches: z.number().int().min(0).optional(),
-					skipped: z.number().int().min(0).optional(),
-					total: z.number().int().min(0).optional(),
-					updated: z.number().int().min(0).optional(),
+					collisions: dialpadInteger(z.number().int().min(0)).optional(),
+					created: dialpadInteger(z.number().int().min(0)).optional(),
+					duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+					failed_batches: dialpadInteger(z.number().int().min(0)).optional(),
+					skipped: dialpadInteger(z.number().int().min(0)).optional(),
+					total: dialpadInteger(z.number().int().min(0)).optional(),
+					updated: dialpadInteger(z.number().int().min(0)).optional(),
 				})
-				.strict()
+				.loose()
 				.optional(),
 			key: z.string(),
 			listview_id: z
@@ -33564,11 +34889,15 @@ const Output331 = z.array(
 				.optional(),
 			sobject_type: z
 				.enum(['Lead', 'Contact', 'Opportunity', 'Account'])
+				.or(z.string())
 				.optional(),
-			state: z.enum(['pending', 'active', 'complete', 'error']).optional(),
-			strategy: z.enum(['skip', 'merge']).optional(),
+			state: z
+				.enum(['pending', 'active', 'complete', 'error'])
+				.or(z.string())
+				.optional(),
+			strategy: z.enum(['skip', 'merge']).or(z.string()).optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input332 = z
@@ -33579,8 +34908,8 @@ const Input332 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				campaign_id: z.string().optional(),
 				scope: z.string().optional(),
 				sobject_type: z.string().optional(),
@@ -33602,14 +34931,14 @@ const Output332 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			company_id: z.number().int(),
+			company_id: dialpadInteger(z.number().int()),
 			custom_mapping:
 				/* OpenAPI documents arbitrary fields on this response object. */ z
 					.record(z.string(), z.string())
 					.optional(),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			id: z.string(),
 			key: z.string(),
@@ -33617,44 +34946,46 @@ const Output332 = z.array(
 				/* OpenAPI documents arbitrary fields on this response object. */ z
 					.record(
 						z.string(),
-						z.enum([
-							'do_not_import',
-							'first_name',
-							'last_name',
-							'job_title',
-							'industry',
-							'role',
-							'department',
-							'external_id',
-							'timezone',
-							'lang',
-							'primary_phone',
-							'secondary_phone',
-							'primary_email',
-							'secondary_email',
-							'address_name',
-							'address_line1',
-							'address_line2',
-							'city',
-							'region',
-							'postal_code',
-							'country',
-							'company_name',
-							'company_phone',
-							'company_address_line1',
-							'company_address_line2',
-							'company_city',
-							'company_region',
-							'company_postal_code',
-							'company_country',
-							'company_sic_code',
-							'company_naics_code',
-							'company_blacklisted',
-							'company_annual_revenue',
-							'company_currency',
-							'company_num_employees',
-							'primary_phone_fallback',
-						]),
+						z
+							.enum([
+								'do_not_import',
+								'first_name',
+								'last_name',
+								'job_title',
+								'industry',
+								'role',
+								'department',
+								'external_id',
+								'timezone',
+								'lang',
+								'primary_phone',
+								'secondary_phone',
+								'primary_email',
+								'secondary_email',
+								'address_name',
+								'address_line1',
+								'address_line2',
+								'city',
+								'region',
+								'postal_code',
+								'country',
+								'company_name',
+								'company_phone',
+								'company_address_line1',
+								'company_address_line2',
+								'company_city',
+								'company_region',
+								'company_postal_code',
+								'company_country',
+								'company_sic_code',
+								'company_naics_code',
+								'company_blacklisted',
+								'company_annual_revenue',
+								'company_currency',
+								'company_num_employees',
+								'primary_phone_fallback',
+							])
+							.or(z.string()),
 					)
 					.optional(),
 			object_mapping_id: z.string().max(1500),
@@ -33672,7 +35003,7 @@ const Output332 = z.array(
 				)
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input333 = z
@@ -33719,14 +35050,14 @@ const Output333 = z
 					.nullable(),
 			])
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		custom_mapping:
 			/* OpenAPI documents arbitrary fields on this response object. */ z
 				.record(z.string(), z.string())
 				.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -33734,44 +35065,46 @@ const Output333 = z
 			/* OpenAPI documents arbitrary fields on this response object. */ z
 				.record(
 					z.string(),
-					z.enum([
-						'do_not_import',
-						'first_name',
-						'last_name',
-						'job_title',
-						'industry',
-						'role',
-						'department',
-						'external_id',
-						'timezone',
-						'lang',
-						'primary_phone',
-						'secondary_phone',
-						'primary_email',
-						'secondary_email',
-						'address_name',
-						'address_line1',
-						'address_line2',
-						'city',
-						'region',
-						'postal_code',
-						'country',
-						'company_name',
-						'company_phone',
-						'company_address_line1',
-						'company_address_line2',
-						'company_city',
-						'company_region',
-						'company_postal_code',
-						'company_country',
-						'company_sic_code',
-						'company_naics_code',
-						'company_blacklisted',
-						'company_annual_revenue',
-						'company_currency',
-						'company_num_employees',
-						'primary_phone_fallback',
-					]),
+					z
+						.enum([
+							'do_not_import',
+							'first_name',
+							'last_name',
+							'job_title',
+							'industry',
+							'role',
+							'department',
+							'external_id',
+							'timezone',
+							'lang',
+							'primary_phone',
+							'secondary_phone',
+							'primary_email',
+							'secondary_email',
+							'address_name',
+							'address_line1',
+							'address_line2',
+							'city',
+							'region',
+							'postal_code',
+							'country',
+							'company_name',
+							'company_phone',
+							'company_address_line1',
+							'company_address_line2',
+							'company_city',
+							'company_region',
+							'company_postal_code',
+							'company_country',
+							'company_sic_code',
+							'company_naics_code',
+							'company_blacklisted',
+							'company_annual_revenue',
+							'company_currency',
+							'company_num_employees',
+							'primary_phone_fallback',
+						])
+						.or(z.string()),
 				)
 				.optional(),
 		object_mapping_id: z.string().max(1500),
@@ -33789,7 +35122,7 @@ const Output333 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input334 = z
 	.object({
@@ -33855,24 +35188,24 @@ const Output334 = z
 					.nullable(),
 			])
 			.optional(),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		import_id: z.string().max(1500),
 		import_results: z
 			.object({
-				collisions: z.number().int().min(0).optional(),
-				created: z.number().int().min(0).optional(),
-				duplicates: z.number().int().min(0).optional(),
-				failed_batches: z.number().int().min(0).optional(),
-				skipped: z.number().int().min(0).optional(),
-				total: z.number().int().min(0).optional(),
-				updated: z.number().int().min(0).optional(),
+				collisions: dialpadInteger(z.number().int().min(0)).optional(),
+				created: dialpadInteger(z.number().int().min(0)).optional(),
+				duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+				failed_batches: dialpadInteger(z.number().int().min(0)).optional(),
+				skipped: dialpadInteger(z.number().int().min(0)).optional(),
+				total: dialpadInteger(z.number().int().min(0)).optional(),
+				updated: dialpadInteger(z.number().int().min(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		key: z.string(),
 		listview_id: z
@@ -33893,11 +35226,15 @@ const Output334 = z
 			.optional(),
 		sobject_type: z
 			.enum(['Lead', 'Contact', 'Opportunity', 'Account'])
+			.or(z.string())
 			.optional(),
-		state: z.enum(['pending', 'active', 'complete', 'error']).optional(),
-		strategy: z.enum(['skip', 'merge']).optional(),
+		state: z
+			.enum(['pending', 'active', 'complete', 'error'])
+			.or(z.string())
+			.optional(),
+		strategy: z.enum(['skip', 'merge']).or(z.string()).optional(),
 	})
-	.strict();
+	.loose();
 
 const Input335 = z
 	.object({
@@ -33909,7 +35246,7 @@ const Input335 = z
 	})
 	.strict();
 
-const Output335 = z.object({}).strict();
+const Output335 = z.object({}).loose();
 
 const Input336 = z
 	.object({
@@ -33941,24 +35278,24 @@ const Output336 = z
 					.nullable(),
 			])
 			.optional(),
-		company_id: z.number().int(),
-		date_created: z.number().int().optional(),
+		company_id: dialpadInteger(z.number().int()),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		import_id: z.string().max(1500),
 		import_results: z
 			.object({
-				collisions: z.number().int().min(0).optional(),
-				created: z.number().int().min(0).optional(),
-				duplicates: z.number().int().min(0).optional(),
-				failed_batches: z.number().int().min(0).optional(),
-				skipped: z.number().int().min(0).optional(),
-				total: z.number().int().min(0).optional(),
-				updated: z.number().int().min(0).optional(),
+				collisions: dialpadInteger(z.number().int().min(0)).optional(),
+				created: dialpadInteger(z.number().int().min(0)).optional(),
+				duplicates: dialpadInteger(z.number().int().min(0)).optional(),
+				failed_batches: dialpadInteger(z.number().int().min(0)).optional(),
+				skipped: dialpadInteger(z.number().int().min(0)).optional(),
+				total: dialpadInteger(z.number().int().min(0)).optional(),
+				updated: dialpadInteger(z.number().int().min(0)).optional(),
 			})
-			.strict()
+			.loose()
 			.optional(),
 		key: z.string(),
 		listview_id: z
@@ -33979,11 +35316,15 @@ const Output336 = z
 			.optional(),
 		sobject_type: z
 			.enum(['Lead', 'Contact', 'Opportunity', 'Account'])
+			.or(z.string())
 			.optional(),
-		state: z.enum(['pending', 'active', 'complete', 'error']).optional(),
-		strategy: z.enum(['skip', 'merge']).optional(),
+		state: z
+			.enum(['pending', 'active', 'complete', 'error'])
+			.or(z.string())
+			.optional(),
+		strategy: z.enum(['skip', 'merge']).or(z.string()).optional(),
 	})
-	.strict();
+	.loose();
 
 const Input337 = z
 	.object({
@@ -34005,14 +35346,14 @@ const Output337 = z
 					.nullable(),
 			])
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		custom_mapping:
 			/* OpenAPI documents arbitrary fields on this response object. */ z
 				.record(z.string(), z.string())
 				.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -34020,44 +35361,46 @@ const Output337 = z
 			/* OpenAPI documents arbitrary fields on this response object. */ z
 				.record(
 					z.string(),
-					z.enum([
-						'do_not_import',
-						'first_name',
-						'last_name',
-						'job_title',
-						'industry',
-						'role',
-						'department',
-						'external_id',
-						'timezone',
-						'lang',
-						'primary_phone',
-						'secondary_phone',
-						'primary_email',
-						'secondary_email',
-						'address_name',
-						'address_line1',
-						'address_line2',
-						'city',
-						'region',
-						'postal_code',
-						'country',
-						'company_name',
-						'company_phone',
-						'company_address_line1',
-						'company_address_line2',
-						'company_city',
-						'company_region',
-						'company_postal_code',
-						'company_country',
-						'company_sic_code',
-						'company_naics_code',
-						'company_blacklisted',
-						'company_annual_revenue',
-						'company_currency',
-						'company_num_employees',
-						'primary_phone_fallback',
-					]),
+					z
+						.enum([
+							'do_not_import',
+							'first_name',
+							'last_name',
+							'job_title',
+							'industry',
+							'role',
+							'department',
+							'external_id',
+							'timezone',
+							'lang',
+							'primary_phone',
+							'secondary_phone',
+							'primary_email',
+							'secondary_email',
+							'address_name',
+							'address_line1',
+							'address_line2',
+							'city',
+							'region',
+							'postal_code',
+							'country',
+							'company_name',
+							'company_phone',
+							'company_address_line1',
+							'company_address_line2',
+							'company_city',
+							'company_region',
+							'company_postal_code',
+							'company_country',
+							'company_sic_code',
+							'company_naics_code',
+							'company_blacklisted',
+							'company_annual_revenue',
+							'company_currency',
+							'company_num_employees',
+							'primary_phone_fallback',
+						])
+						.or(z.string()),
 				)
 				.optional(),
 		object_mapping_id: z.string().max(1500),
@@ -34075,7 +35418,7 @@ const Output337 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input338 = z
 	.object({
@@ -34095,10 +35438,10 @@ const Input338 = z
 
 const Output338 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		count: z
 			.union([
-				z.number().int(),
+				dialpadInteger(z.number().int()),
 				/* unknown because the official OpenAPI schema is not documented for this value. */ z
 					.unknown()
 					.nullable(),
@@ -34112,11 +35455,11 @@ const Output338 = z
 					.nullable(),
 			])
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
-		date_updated_count: z.number().int().optional(),
+		date_updated_count: dialpadInteger(z.number().int()).optional(),
 		date_updated_count_iso: z.string().optional(),
 		developer_name: z
 			.union([
@@ -34146,7 +35489,9 @@ const Output338 = z
 					.nullable(),
 			])
 			.optional(),
-		sobject_type: z.enum(['Lead', 'Contact', 'Opportunity', 'Account']),
+		sobject_type: z
+			.enum(['Lead', 'Contact', 'Opportunity', 'Account'])
+			.or(z.string()),
 		where_clause: z
 			.union([
 				z.string(),
@@ -34156,7 +35501,7 @@ const Output338 = z
 			])
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input339 = z
 	.object({
@@ -34201,14 +35546,14 @@ const Output339 = z
 					.nullable(),
 			])
 			.optional(),
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		custom_mapping:
 			/* OpenAPI documents arbitrary fields on this response object. */ z
 				.record(z.string(), z.string())
 				.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		id: z.string(),
 		key: z.string(),
@@ -34216,44 +35561,46 @@ const Output339 = z
 			/* OpenAPI documents arbitrary fields on this response object. */ z
 				.record(
 					z.string(),
-					z.enum([
-						'do_not_import',
-						'first_name',
-						'last_name',
-						'job_title',
-						'industry',
-						'role',
-						'department',
-						'external_id',
-						'timezone',
-						'lang',
-						'primary_phone',
-						'secondary_phone',
-						'primary_email',
-						'secondary_email',
-						'address_name',
-						'address_line1',
-						'address_line2',
-						'city',
-						'region',
-						'postal_code',
-						'country',
-						'company_name',
-						'company_phone',
-						'company_address_line1',
-						'company_address_line2',
-						'company_city',
-						'company_region',
-						'company_postal_code',
-						'company_country',
-						'company_sic_code',
-						'company_naics_code',
-						'company_blacklisted',
-						'company_annual_revenue',
-						'company_currency',
-						'company_num_employees',
-						'primary_phone_fallback',
-					]),
+					z
+						.enum([
+							'do_not_import',
+							'first_name',
+							'last_name',
+							'job_title',
+							'industry',
+							'role',
+							'department',
+							'external_id',
+							'timezone',
+							'lang',
+							'primary_phone',
+							'secondary_phone',
+							'primary_email',
+							'secondary_email',
+							'address_name',
+							'address_line1',
+							'address_line2',
+							'city',
+							'region',
+							'postal_code',
+							'country',
+							'company_name',
+							'company_phone',
+							'company_address_line1',
+							'company_address_line2',
+							'company_city',
+							'company_region',
+							'company_postal_code',
+							'company_country',
+							'company_sic_code',
+							'company_naics_code',
+							'company_blacklisted',
+							'company_annual_revenue',
+							'company_currency',
+							'company_num_employees',
+							'primary_phone_fallback',
+						])
+						.or(z.string()),
 				)
 				.optional(),
 		object_mapping_id: z.string().max(1500),
@@ -34271,7 +35618,7 @@ const Output339 = z
 			)
 			.optional(),
 	})
-	.strict();
+	.loose();
 
 const Input340 = z
 	.object({
@@ -34281,8 +35628,8 @@ const Input340 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				flow_id: z.string().optional(),
 				campaign_id: z.string().optional(),
 			})
@@ -34294,12 +35641,14 @@ const Input340 = z
 const Output340 = z.array(
 	z
 		.object({
-			company_id: z.number().int(),
+			company_id: dialpadInteger(z.number().int()),
 			conditions: z
 				.array(
 					z
 						.object({
-							action: z.enum(['complete', 'next', 'retry', 'flow', 'drop_vm']),
+							action: z
+								.enum(['complete', 'next', 'retry', 'flow', 'drop_vm'])
+								.or(z.string()),
 							config: z
 								.object({
 									custom_ivr_details_id:
@@ -34319,64 +35668,68 @@ const Output340 = z.array(
 											.unknown()
 											.optional(),
 								})
-								.strict()
+								.loose()
 								.optional(),
 							states: z
 								.array(
 									z.union([
-										z.enum([
-											'call:powerdialer_no_available_agent',
-											'call:human_agent',
-											'call:ai_agent',
-											'call:outbound_connected',
-											'call:powerdialer_vm_drop',
-											'call:machine_detected',
-											'call:powerdialer_call',
-											'call:active',
-											'call:outbound',
-											'call:cancelled',
-											'call:inbound',
-											'call:missed',
-											'call:abandoned',
-											'call:user_initiated',
-										]),
-										z.enum([
-											'sms:accepted',
-											'sms:invalid_destination',
-											'sms:invalid_source',
-											'sms:no_route',
-											'sms:rejected_spam',
-											'sms:internal_error',
-											'sms:rejected',
-											'sms:not_supported',
-											'sms:time_out',
-											'sms:error',
-											'sms:unknown',
-											'sms:forbidden',
-											'sms:owner_no_international_messaging',
-											'sms:unregistered_a2p_not_allowed',
-											'sms:owner_not_enough_sms_credits',
-											'sms:owner_not_enough_credits',
-											'sms:messaging_disabled',
-											'sms:owner_free_user',
-											'sms:contact_missing_number',
-											'sms:contact_is_room',
-											'sms:contact_is_shared_line',
-											'sms:staff_contact',
-											'sms:company_affinity',
-											'sms:not_in_free_company',
-											'sms:invalid_number',
-										]),
+										z
+											.enum([
+												'call:powerdialer_no_available_agent',
+												'call:human_agent',
+												'call:ai_agent',
+												'call:outbound_connected',
+												'call:powerdialer_vm_drop',
+												'call:machine_detected',
+												'call:powerdialer_call',
+												'call:active',
+												'call:outbound',
+												'call:cancelled',
+												'call:inbound',
+												'call:missed',
+												'call:abandoned',
+												'call:user_initiated',
+											])
+											.or(z.string()),
+										z
+											.enum([
+												'sms:accepted',
+												'sms:invalid_destination',
+												'sms:invalid_source',
+												'sms:no_route',
+												'sms:rejected_spam',
+												'sms:internal_error',
+												'sms:rejected',
+												'sms:not_supported',
+												'sms:time_out',
+												'sms:error',
+												'sms:unknown',
+												'sms:forbidden',
+												'sms:owner_no_international_messaging',
+												'sms:unregistered_a2p_not_allowed',
+												'sms:owner_not_enough_sms_credits',
+												'sms:owner_not_enough_credits',
+												'sms:messaging_disabled',
+												'sms:owner_free_user',
+												'sms:contact_missing_number',
+												'sms:contact_is_room',
+												'sms:contact_is_shared_line',
+												'sms:staff_contact',
+												'sms:company_affinity',
+												'sms:not_in_free_company',
+												'sms:invalid_number',
+											])
+											.or(z.string()),
 									]),
 								)
 								.optional(),
 						})
-						.strict(),
+						.loose(),
 				)
 				.optional(),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			flow_ids: z
 				.array(
@@ -34395,7 +35748,7 @@ const Output340 = z.array(
 							phone_field: z.string().optional(),
 							text: z.string(),
 						})
-						.strict(),
+						.loose(),
 					z
 						.object({
 							ai_agent_settings: z
@@ -34409,16 +35762,16 @@ const Output340 = z.array(
 											.unknown()
 											.optional(),
 								})
-								.strict()
+								.loose()
 								.optional(),
 							phone_field: z.string().optional(),
 						})
-						.strict(),
+						.loose(),
 				])
 				.optional(),
-			type: z.enum(['call', 'sms']),
+			type: z.enum(['call', 'sms']).or(z.string()),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input341 = z
@@ -34548,12 +35901,14 @@ const Input341 = z
 
 const Output341 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		conditions: z
 			.array(
 				z
 					.object({
-						action: z.enum(['complete', 'next', 'retry', 'flow', 'drop_vm']),
+						action: z
+							.enum(['complete', 'next', 'retry', 'flow', 'drop_vm'])
+							.or(z.string()),
 						config: z
 							.object({
 								custom_ivr_details_id:
@@ -34573,64 +35928,68 @@ const Output341 = z
 										.unknown()
 										.optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						states: z
 							.array(
 								z.union([
-									z.enum([
-										'call:powerdialer_no_available_agent',
-										'call:human_agent',
-										'call:ai_agent',
-										'call:outbound_connected',
-										'call:powerdialer_vm_drop',
-										'call:machine_detected',
-										'call:powerdialer_call',
-										'call:active',
-										'call:outbound',
-										'call:cancelled',
-										'call:inbound',
-										'call:missed',
-										'call:abandoned',
-										'call:user_initiated',
-									]),
-									z.enum([
-										'sms:accepted',
-										'sms:invalid_destination',
-										'sms:invalid_source',
-										'sms:no_route',
-										'sms:rejected_spam',
-										'sms:internal_error',
-										'sms:rejected',
-										'sms:not_supported',
-										'sms:time_out',
-										'sms:error',
-										'sms:unknown',
-										'sms:forbidden',
-										'sms:owner_no_international_messaging',
-										'sms:unregistered_a2p_not_allowed',
-										'sms:owner_not_enough_sms_credits',
-										'sms:owner_not_enough_credits',
-										'sms:messaging_disabled',
-										'sms:owner_free_user',
-										'sms:contact_missing_number',
-										'sms:contact_is_room',
-										'sms:contact_is_shared_line',
-										'sms:staff_contact',
-										'sms:company_affinity',
-										'sms:not_in_free_company',
-										'sms:invalid_number',
-									]),
+									z
+										.enum([
+											'call:powerdialer_no_available_agent',
+											'call:human_agent',
+											'call:ai_agent',
+											'call:outbound_connected',
+											'call:powerdialer_vm_drop',
+											'call:machine_detected',
+											'call:powerdialer_call',
+											'call:active',
+											'call:outbound',
+											'call:cancelled',
+											'call:inbound',
+											'call:missed',
+											'call:abandoned',
+											'call:user_initiated',
+										])
+										.or(z.string()),
+									z
+										.enum([
+											'sms:accepted',
+											'sms:invalid_destination',
+											'sms:invalid_source',
+											'sms:no_route',
+											'sms:rejected_spam',
+											'sms:internal_error',
+											'sms:rejected',
+											'sms:not_supported',
+											'sms:time_out',
+											'sms:error',
+											'sms:unknown',
+											'sms:forbidden',
+											'sms:owner_no_international_messaging',
+											'sms:unregistered_a2p_not_allowed',
+											'sms:owner_not_enough_sms_credits',
+											'sms:owner_not_enough_credits',
+											'sms:messaging_disabled',
+											'sms:owner_free_user',
+											'sms:contact_missing_number',
+											'sms:contact_is_room',
+											'sms:contact_is_shared_line',
+											'sms:staff_contact',
+											'sms:company_affinity',
+											'sms:not_in_free_company',
+											'sms:invalid_number',
+										])
+										.or(z.string()),
 								]),
 							)
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		flow_ids: z
 			.array(
@@ -34649,7 +36008,7 @@ const Output341 = z
 						phone_field: z.string().optional(),
 						text: z.string(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						ai_agent_settings: z
@@ -34663,16 +36022,16 @@ const Output341 = z
 										.unknown()
 										.optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						phone_field: z.string().optional(),
 					})
-					.strict(),
+					.loose(),
 			])
 			.optional(),
-		type: z.enum(['call', 'sms']),
+		type: z.enum(['call', 'sms']).or(z.string()),
 	})
-	.strict();
+	.loose();
 
 const Input342 = z
 	.object({
@@ -34682,8 +36041,8 @@ const Input342 = z
 				keys_only: z.boolean().optional(),
 				total: z.boolean().optional(),
 				cursor: z.string().optional(),
-				offset: z.number().int().optional(),
-				limit: z.number().int().optional(),
+				offset: dialpadInteger(z.number().int()).optional(),
+				limit: dialpadInteger(z.number().int()).optional(),
 				filters: z.string().optional(),
 				search: z.string().optional(),
 				order: z.string().optional(),
@@ -34696,21 +36055,22 @@ const Input342 = z
 const Output342 = z.array(
 	z
 		.object({
-			company_id: z.number().int(),
+			company_id: dialpadInteger(z.number().int()),
 			consent: z
 				.enum(['implied', 'consent', 'written_consent', 'revoked'])
+				.or(z.string())
 				.optional(),
-			date_created: z.number().int().optional(),
+			date_created: dialpadInteger(z.number().int()).optional(),
 			date_created_iso: z.string().optional(),
-			date_dnc_expires: z.number().int().optional(),
+			date_dnc_expires: dialpadInteger(z.number().int()).optional(),
 			date_dnc_expires_iso: z.string().optional(),
-			date_dnc_opt_out: z.number().int().optional(),
+			date_dnc_opt_out: dialpadInteger(z.number().int()).optional(),
 			date_dnc_opt_out_iso: z.string().optional(),
-			date_dnt_expires: z.number().int().optional(),
+			date_dnt_expires: dialpadInteger(z.number().int()).optional(),
 			date_dnt_expires_iso: z.string().optional(),
-			date_dnt_opt_out: z.number().int().optional(),
+			date_dnt_opt_out: dialpadInteger(z.number().int()).optional(),
 			date_dnt_opt_out_iso: z.string().optional(),
-			date_modified: z.number().int().optional(),
+			date_modified: dialpadInteger(z.number().int()).optional(),
 			date_modified_iso: z.string().optional(),
 			dnc: z
 				.union([
@@ -34720,7 +36080,7 @@ const Output342 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			dnc_scope: z.enum(['powerdialer', 'ever']).optional(),
+			dnc_scope: z.enum(['powerdialer', 'ever']).or(z.string()).optional(),
 			dnt: z
 				.union([
 					z.boolean(),
@@ -34729,7 +36089,7 @@ const Output342 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			dnt_scope: z.enum(['powerdialer', 'ever']).optional(),
+			dnt_scope: z.enum(['powerdialer', 'ever']).or(z.string()).optional(),
 			e164: z.string().max(20),
 			formatted_phone: z
 				.union([
@@ -34743,7 +36103,10 @@ const Output342 = z.array(
 			is_dnc_expired: z.boolean().optional(),
 			is_dnt_expired: z.boolean().optional(),
 			key: z.string(),
-			label: z.enum(['mobile', 'work', 'home', 'other']).optional(),
+			label: z
+				.enum(['mobile', 'work', 'home', 'other'])
+				.or(z.string())
+				.optional(),
 			last_author_dp_key: z
 				.union([
 					z.string(),
@@ -34768,8 +36131,11 @@ const Output342 = z.array(
 						.nullable(),
 				])
 				.optional(),
-			last_source: z.enum(['api', 'csv', 'dp_contact']).optional(),
-			state: z.enum(['active', 'deleted']).optional(),
+			last_source: z
+				.enum(['api', 'csv', 'dp_contact'])
+				.or(z.string())
+				.optional(),
+			state: z.enum(['active', 'deleted']).or(z.string()).optional(),
 			tags: z
 				.array(
 					/* unknown because the official OpenAPI schema is not documented for this value. */ z.unknown(),
@@ -34792,9 +36158,10 @@ const Output342 = z.array(
 					'spam',
 					'wrong_number',
 				])
+				.or(z.string())
 				.optional(),
 		})
-		.strict(),
+		.loose(),
 );
 
 const Input343 = z
@@ -34941,12 +36308,14 @@ const Input344 = z
 
 const Output344 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		conditions: z
 			.array(
 				z
 					.object({
-						action: z.enum(['complete', 'next', 'retry', 'flow', 'drop_vm']),
+						action: z
+							.enum(['complete', 'next', 'retry', 'flow', 'drop_vm'])
+							.or(z.string()),
 						config: z
 							.object({
 								custom_ivr_details_id:
@@ -34966,64 +36335,68 @@ const Output344 = z
 										.unknown()
 										.optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						states: z
 							.array(
 								z.union([
-									z.enum([
-										'call:powerdialer_no_available_agent',
-										'call:human_agent',
-										'call:ai_agent',
-										'call:outbound_connected',
-										'call:powerdialer_vm_drop',
-										'call:machine_detected',
-										'call:powerdialer_call',
-										'call:active',
-										'call:outbound',
-										'call:cancelled',
-										'call:inbound',
-										'call:missed',
-										'call:abandoned',
-										'call:user_initiated',
-									]),
-									z.enum([
-										'sms:accepted',
-										'sms:invalid_destination',
-										'sms:invalid_source',
-										'sms:no_route',
-										'sms:rejected_spam',
-										'sms:internal_error',
-										'sms:rejected',
-										'sms:not_supported',
-										'sms:time_out',
-										'sms:error',
-										'sms:unknown',
-										'sms:forbidden',
-										'sms:owner_no_international_messaging',
-										'sms:unregistered_a2p_not_allowed',
-										'sms:owner_not_enough_sms_credits',
-										'sms:owner_not_enough_credits',
-										'sms:messaging_disabled',
-										'sms:owner_free_user',
-										'sms:contact_missing_number',
-										'sms:contact_is_room',
-										'sms:contact_is_shared_line',
-										'sms:staff_contact',
-										'sms:company_affinity',
-										'sms:not_in_free_company',
-										'sms:invalid_number',
-									]),
+									z
+										.enum([
+											'call:powerdialer_no_available_agent',
+											'call:human_agent',
+											'call:ai_agent',
+											'call:outbound_connected',
+											'call:powerdialer_vm_drop',
+											'call:machine_detected',
+											'call:powerdialer_call',
+											'call:active',
+											'call:outbound',
+											'call:cancelled',
+											'call:inbound',
+											'call:missed',
+											'call:abandoned',
+											'call:user_initiated',
+										])
+										.or(z.string()),
+									z
+										.enum([
+											'sms:accepted',
+											'sms:invalid_destination',
+											'sms:invalid_source',
+											'sms:no_route',
+											'sms:rejected_spam',
+											'sms:internal_error',
+											'sms:rejected',
+											'sms:not_supported',
+											'sms:time_out',
+											'sms:error',
+											'sms:unknown',
+											'sms:forbidden',
+											'sms:owner_no_international_messaging',
+											'sms:unregistered_a2p_not_allowed',
+											'sms:owner_not_enough_sms_credits',
+											'sms:owner_not_enough_credits',
+											'sms:messaging_disabled',
+											'sms:owner_free_user',
+											'sms:contact_missing_number',
+											'sms:contact_is_room',
+											'sms:contact_is_shared_line',
+											'sms:staff_contact',
+											'sms:company_affinity',
+											'sms:not_in_free_company',
+											'sms:invalid_number',
+										])
+										.or(z.string()),
 								]),
 							)
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		flow_ids: z
 			.array(
@@ -35042,7 +36415,7 @@ const Output344 = z
 						phone_field: z.string().optional(),
 						text: z.string(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						ai_agent_settings: z
@@ -35056,16 +36429,16 @@ const Output344 = z
 										.unknown()
 										.optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						phone_field: z.string().optional(),
 					})
-					.strict(),
+					.loose(),
 			])
 			.optional(),
-		type: z.enum(['call', 'sms']),
+		type: z.enum(['call', 'sms']).or(z.string()),
 	})
-	.strict();
+	.loose();
 
 const Input345 = z
 	.object({
@@ -35079,12 +36452,14 @@ const Input345 = z
 
 const Output345 = z
 	.object({
-		company_id: z.number().int(),
+		company_id: dialpadInteger(z.number().int()),
 		conditions: z
 			.array(
 				z
 					.object({
-						action: z.enum(['complete', 'next', 'retry', 'flow', 'drop_vm']),
+						action: z
+							.enum(['complete', 'next', 'retry', 'flow', 'drop_vm'])
+							.or(z.string()),
 						config: z
 							.object({
 								custom_ivr_details_id:
@@ -35104,64 +36479,68 @@ const Output345 = z
 										.unknown()
 										.optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						states: z
 							.array(
 								z.union([
-									z.enum([
-										'call:powerdialer_no_available_agent',
-										'call:human_agent',
-										'call:ai_agent',
-										'call:outbound_connected',
-										'call:powerdialer_vm_drop',
-										'call:machine_detected',
-										'call:powerdialer_call',
-										'call:active',
-										'call:outbound',
-										'call:cancelled',
-										'call:inbound',
-										'call:missed',
-										'call:abandoned',
-										'call:user_initiated',
-									]),
-									z.enum([
-										'sms:accepted',
-										'sms:invalid_destination',
-										'sms:invalid_source',
-										'sms:no_route',
-										'sms:rejected_spam',
-										'sms:internal_error',
-										'sms:rejected',
-										'sms:not_supported',
-										'sms:time_out',
-										'sms:error',
-										'sms:unknown',
-										'sms:forbidden',
-										'sms:owner_no_international_messaging',
-										'sms:unregistered_a2p_not_allowed',
-										'sms:owner_not_enough_sms_credits',
-										'sms:owner_not_enough_credits',
-										'sms:messaging_disabled',
-										'sms:owner_free_user',
-										'sms:contact_missing_number',
-										'sms:contact_is_room',
-										'sms:contact_is_shared_line',
-										'sms:staff_contact',
-										'sms:company_affinity',
-										'sms:not_in_free_company',
-										'sms:invalid_number',
-									]),
+									z
+										.enum([
+											'call:powerdialer_no_available_agent',
+											'call:human_agent',
+											'call:ai_agent',
+											'call:outbound_connected',
+											'call:powerdialer_vm_drop',
+											'call:machine_detected',
+											'call:powerdialer_call',
+											'call:active',
+											'call:outbound',
+											'call:cancelled',
+											'call:inbound',
+											'call:missed',
+											'call:abandoned',
+											'call:user_initiated',
+										])
+										.or(z.string()),
+									z
+										.enum([
+											'sms:accepted',
+											'sms:invalid_destination',
+											'sms:invalid_source',
+											'sms:no_route',
+											'sms:rejected_spam',
+											'sms:internal_error',
+											'sms:rejected',
+											'sms:not_supported',
+											'sms:time_out',
+											'sms:error',
+											'sms:unknown',
+											'sms:forbidden',
+											'sms:owner_no_international_messaging',
+											'sms:unregistered_a2p_not_allowed',
+											'sms:owner_not_enough_sms_credits',
+											'sms:owner_not_enough_credits',
+											'sms:messaging_disabled',
+											'sms:owner_free_user',
+											'sms:contact_missing_number',
+											'sms:contact_is_room',
+											'sms:contact_is_shared_line',
+											'sms:staff_contact',
+											'sms:company_affinity',
+											'sms:not_in_free_company',
+											'sms:invalid_number',
+										])
+										.or(z.string()),
 								]),
 							)
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 			)
 			.optional(),
-		date_created: z.number().int().optional(),
+		date_created: dialpadInteger(z.number().int()).optional(),
 		date_created_iso: z.string().optional(),
-		date_modified: z.number().int().optional(),
+		date_modified: dialpadInteger(z.number().int()).optional(),
 		date_modified_iso: z.string().optional(),
 		flow_ids: z
 			.array(
@@ -35180,7 +36559,7 @@ const Output345 = z
 						phone_field: z.string().optional(),
 						text: z.string(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						ai_agent_settings: z
@@ -35194,16 +36573,16 @@ const Output345 = z
 										.unknown()
 										.optional(),
 							})
-							.strict()
+							.loose()
 							.optional(),
 						phone_field: z.string().optional(),
 					})
-					.strict(),
+					.loose(),
 			])
 			.optional(),
-		type: z.enum(['call', 'sms']),
+		type: z.enum(['call', 'sms']).or(z.string()),
 	})
-	.strict();
+	.loose();
 
 const Input346 = z
 	.object({
