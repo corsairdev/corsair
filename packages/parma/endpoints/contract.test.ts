@@ -48,15 +48,20 @@ const relationship = {
 	...timestamps,
 };
 const user = { id: 4079, name: 'Tad Haley', email: 'deloris@hammes.example' };
-const one = (data: unknown) => ({ data });
-const list = (data: unknown) => ({ data: [data] });
+const one = <T>(data: T) => ({ data });
+const list = <T>(data: T) => ({ data: [data] });
 
+// The table combines endpoints with different validated payload and result
+// types; these values are compared at the HTTP seam rather than accessed here.
 type Case = {
 	name: string;
+	// The undocumented get-user response can be any value, unlike the other outputs.
 	run: () => Promise<unknown>;
 	method: string;
 	path: string;
+	// Requests and responses differ by operation, including bodyless deletes.
 	body?: unknown;
+	// The undocumented get-user fixture has no stricter provider-defined type.
 	result?: unknown;
 	status?: number;
 };
@@ -305,6 +310,7 @@ test('preserves rate-limit headers without replaying writes', async () => {
 			headers: { 'content-type': 'application/json', 'retry-after': '7' },
 		}),
 	);
+	// A rejected promise may throw any JavaScript value; assert its type below.
 	let thrown: unknown;
 	try {
 		await endpoints.notes.create(ctx, { body: 'text', relationship_ids: [1] });

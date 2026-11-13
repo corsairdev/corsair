@@ -9,6 +9,8 @@ function context(authType: 'api_key' | 'oauth_2', token: string | null) {
 		get_access_token: jest.fn(async () => token),
 	};
 	return {
+		// This isolated key-builder test supplies only the credential methods it
+		// exercises; constructing a full tenant key manager would require storage.
 		ctx: { authType, keys } as unknown as Parameters<KeyBuilder>[0],
 		keys,
 	};

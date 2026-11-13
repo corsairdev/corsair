@@ -43,6 +43,11 @@ Both modes send a Bearer token. Set `key` to a Parma API token or OAuth access
 token, or use Corsair's credential store. OAuth authorization and token refresh
 must be handled by the application; the plugin does not refresh tokens itself,
 including when credentials are stored through Corsair Hub.
+To use stored OAuth credentials, configure `parma({ authType: 'oauth_2' })`
+and call `tenant.parma.keys.set_access_token(accessToken)` after initializing
+that tenant's key storage. Replace the stored token when your application
+refreshes it. Parma's Hub OAuth connect flow is not configured by this plugin;
+client ID and secret alone do not connect an account.
 Parma documents API tokens at https://app.parma.ai/api and the OAuth flow in its
 [API reference](https://developers.parma.ai/api-docs/index.html).
 

@@ -30,6 +30,8 @@ const get = (
 const write = (
 	method: 'POST' | 'PATCH',
 	url: string,
+	// Each validated write has a different JSON object shape; the endpoint
+	// input schemas enforce the specific properties before reaching transport.
 	body: Record<string, unknown>,
 ): ApiRequestOptions => ({ method, url, body, mediaType: 'application/json' });
 

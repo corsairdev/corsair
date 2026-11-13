@@ -75,23 +75,32 @@ More: [API Key](/concepts/api-key)
 </Tab>
 <Tab title="OAuth 2.0">
 
-Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Parma OAuth app.
+Obtain an OAuth access token in your application using [Parma's OAuth flow](https://developers.parma.ai/api-docs/index.html). The plugin does not implement the authorization flow or refresh tokens; your application must refresh and replace expired tokens. Entering client credentials in Hub alone is not sufficient.
 
 ```ts
 parma({
 	authType: 'oauth_2',
-})
+	key: process.env.PARMA_ACCESS_TOKEN!,
+});
 ```
 
-More: [OAuth 2.0](/concepts/oauth)
+Alternatively, omit `key` and store the access token for a tenant using Corsair's credential store. Configure `parma({ authType: 'oauth_2' })` in `createCorsair`, then:
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.parma.keys.issue_new_dek(); // only when initializing the tenant's key storage
+await tenant.parma.keys.set_access_token(process.env.PARMA_ACCESS_TOKEN!);
+```
+
+When the token expires, update the stored access token after refreshing it in your application. Do not create a new DEK when replacing an existing token.
 
 </Tab>
 </Tabs>
 
 </Step>
 
-<Step title="Connect a tenant">
-Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+<Step title="Connect a tenant (API key only)">
+For API key authentication, mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect](/management/connect). OAuth tokens must be supplied as described above instead; Hub's OAuth connect flow is not configured for Parma.
 
 ```ts
 const { connectUrl } = await corsair.manage.connect.createLink({
@@ -111,7 +120,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.parma.api.deals.get({});
+await tenant.parma.api.deals.get({ id: '123' });
 ```
 
 
@@ -119,7 +128,10 @@ await tenant.parma.api.deals.get({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.parma.api.notes.create({});
+await tenant.parma.api.notes.create({
+	body: 'Follow up next week',
+	relationship_ids: [123],
+});
 ```
 
 

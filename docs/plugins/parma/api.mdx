@@ -19,7 +19,7 @@ Get a deal
 **Risk:** `read`
 
 ```ts
-await corsair.parma.api.deals.get({});
+await corsair.parma.api.deals.get({ id: '123' });
 ```
 
 **Input**
@@ -191,7 +191,10 @@ Create a note
 **Risk:** `write`
 
 ```ts
-await corsair.parma.api.notes.create({});
+await corsair.parma.api.notes.create({
+	body: 'Follow up next week',
+	relationship_ids: [123],
+});
 ```
 
 **Input**
@@ -295,7 +298,7 @@ Update a note
 **Risk:** `write`
 
 ```ts
-await corsair.parma.api.notes.update({});
+await corsair.parma.api.notes.update({ id: '123', body: 'Updated note' });
 ```
 
 **Input**
@@ -346,7 +349,7 @@ Get a pipeline
 **Risk:** `read`
 
 ```ts
-await corsair.parma.api.pipelines.get({});
+await corsair.parma.api.pipelines.get({ id: '123' });
 ```
 
 **Input**
@@ -443,7 +446,7 @@ Add a relationship to a group
 **Risk:** `write`
 
 ```ts
-await corsair.parma.api.relationships.addGroup({});
+await corsair.parma.api.relationships.addGroup({ relationship_id: '123', group_id: 456 });
 ```
 
 **Input**
@@ -488,7 +491,10 @@ Create a relationship
 **Risk:** `write`
 
 ```ts
-await corsair.parma.api.relationships.create({});
+await corsair.parma.api.relationships.create({
+	name: 'Example relationship',
+	group_ids: [456],
+});
 ```
 
 **Input**
@@ -549,7 +555,7 @@ Delete a relationship
 **Risk:** `destructive`
 
 ```ts
-await corsair.parma.api.relationships.delete({});
+await corsair.parma.api.relationships.delete({ id: '123' });
 ```
 
 **Input**
@@ -574,7 +580,7 @@ Get a relationship
 **Risk:** `read`
 
 ```ts
-await corsair.parma.api.relationships.get({});
+await corsair.parma.api.relationships.get({ id: '123' });
 ```
 
 **Input**
@@ -709,7 +715,7 @@ List relationship groups
 **Risk:** `read`
 
 ```ts
-await corsair.parma.api.relationships.listGroups({});
+await corsair.parma.api.relationships.listGroups({ relationship_id: '123' });
 ```
 
 **Input**
@@ -763,7 +769,7 @@ List relationship notes
 **Risk:** `read`
 
 ```ts
-await corsair.parma.api.relationships.listNotes({});
+await corsair.parma.api.relationships.listNotes({ relationship_id: '123' });
 ```
 
 **Input**
@@ -820,7 +826,7 @@ Remove a relationship from a group
 **Risk:** `destructive`
 
 ```ts
-await corsair.parma.api.relationships.removeGroup({});
+await corsair.parma.api.relationships.removeGroup({ relationship_id: '123', relationship_group_id: '456' });
 ```
 
 **Input**
@@ -846,7 +852,7 @@ Update a relationship
 **Risk:** `write`
 
 ```ts
-await corsair.parma.api.relationships.update({});
+await corsair.parma.api.relationships.update({ id: '123', name: 'Updated relationship' });
 ```
 
 **Input**
@@ -923,7 +929,7 @@ Get a stage
 **Risk:** `read`
 
 ```ts
-await corsair.parma.api.stages.get({});
+await corsair.parma.api.stages.get({ id: '123' });
 ```
 
 **Input**
@@ -1022,7 +1028,7 @@ Get a user
 **Risk:** `read`
 
 ```ts
-await corsair.parma.api.users.get({});
+await corsair.parma.api.users.get({ id: '123' });
 ```
 
 **Input**
