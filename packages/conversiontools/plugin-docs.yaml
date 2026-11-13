@@ -51,10 +51,18 @@ apiNotes:
   account.getConfig: >-
     These snippets use a single-tenant client. With `multiTenancy: true`, bind a
     tenant first (`const tenant = corsair.withTenant('acme')`) and replace
-    `corsair` with `tenant` in the API calls. In the expanded output types, enum
-    values render bare, so `type?: string | boolean | enum | number` lists the
-    literal strings `'string'`, `'boolean'`, `'enum'`, and `'number'` that a
-    converter option accepts; it is not a TypeScript primitive type.
+    `corsair` with `tenant` in the API calls. The generated expanded output type
+    renders this enum as `type?: string | boolean | enum | number`; that display
+    is not valid TypeScript. The valid TypeScript declaration is
+    `type?: 'string' | 'boolean' | 'enum' | 'number'`.
+  conversions.get: >-
+    In this expanded conversion type, the generated enum display
+    `type?: string | boolean | enum | number` is not valid TypeScript. The valid
+    TypeScript declaration is `type?: 'string' | 'boolean' | 'enum' | 'number'`.
+  conversions.list: >-
+    In this expanded conversion type, the generated enum display
+    `type?: string | boolean | enum | number` is not valid TypeScript. The valid
+    TypeScript declaration is `type?: 'string' | 'boolean' | 'enum' | 'number'`.
   files.downloadById: >-
     The JSON/base64 download response is capped at 10 MiB of raw file bytes.
     For larger files, create a temporary download link and have the consumer

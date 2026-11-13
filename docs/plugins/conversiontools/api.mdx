@@ -24,7 +24,7 @@ await corsair.conversiontools.api.account.getConfig({});
 
 **Input:** _empty object_
 
-These snippets use a single-tenant client. With `multiTenancy: true`, bind a tenant first (`const tenant = corsair.withTenant('acme')`) and replace `corsair` with `tenant` in the API calls. In the expanded output types, enum values render bare, so `type?: string | boolean | enum | number` lists the literal strings `'string'`, `'boolean'`, `'enum'`, and `'number'` that a converter option accepts; it is not a TypeScript primitive type.
+These snippets use a single-tenant client. With `multiTenancy: true`, bind a tenant first (`const tenant = corsair.withTenant('acme')`) and replace `corsair` with `tenant` in the API calls. The generated expanded output type renders this enum as `type?: string | boolean | enum | number`; that display is not valid TypeScript. The valid TypeScript declaration is `type?: 'string' | 'boolean' | 'enum' | 'number'`.
 
 
 **Output**
@@ -132,6 +132,8 @@ await corsair.conversiontools.api.conversions.get({ type: 'convert.xml_to_json' 
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 
+In this expanded conversion type, the generated enum display `type?: string | boolean | enum | number` is not valid TypeScript. The valid TypeScript declaration is `type?: 'string' | 'boolean' | 'enum' | 'number'`.
+
 
 
 **Output**
@@ -196,6 +198,8 @@ await corsair.conversiontools.api.conversions.list({ input: 'xml', output: 'json
 | `input` | `string` | No | — |
 | `output` | `string` | No | — |
 | `ai` | `boolean` | No | — |
+
+In this expanded conversion type, the generated enum display `type?: string | boolean | enum | number` is not valid TypeScript. The valid TypeScript declaration is `type?: 'string' | 'boolean' | 'enum' | 'number'`.
 
 
 
