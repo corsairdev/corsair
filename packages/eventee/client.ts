@@ -59,8 +59,12 @@ export async function makeEventeeRequest<T>(
 	} catch (error: unknown) {
 		// Shared transport rejections are not statically typed; ApiError is narrowed below.
 		if (error instanceof ApiError) {
+			const safeUrl = new URL(error.url);
+			// Eventee's removal filters put attendee emails in the query string; never retain queries in errors.
+			safeUrl.search = '';
+			safeUrl.hash = '';
 			const safeResponse: ApiResult = {
-				url: error.url,
+				url: safeUrl.toString(),
 				ok: false,
 				status: error.status,
 				statusText: error.statusText,

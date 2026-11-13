@@ -113,6 +113,43 @@ describe('Eventee HTTP client', () => {
 		}
 	});
 
+	it.each([
+		['attendee', '/public/api/v1/attendee'],
+		['registration', '/public/api/v1/registration'],
+	] as const)(
+		'redacts email from failed %s removal URLs',
+		async (_resource, path) => {
+			const email = 'private.person@example.com';
+			const responseUrl = `https://eventee.com${path}?email=${encodeURIComponent(email)}`;
+			mockedRequest.mockRejectedValue(
+				new ApiError(
+					{ method: 'DELETE', url: path, query: { email } },
+					{
+						url: responseUrl,
+						ok: false,
+						status: 404,
+						statusText: 'Not Found',
+						body: { message: 'No matching record' },
+					},
+					'No matching record',
+				),
+			);
+			const result = await makeEventeeRequest(path, 'token', {
+				method: 'DELETE',
+				query: { email },
+			}).catch((caught: unknown) => caught); // Transport rejection values are untyped; narrow to ApiError below.
+			expect(result).toBeInstanceOf(ApiError);
+			if (result instanceof ApiError) {
+				expect(result.url).toBe(`https://eventee.com${path}`);
+				expect(result.url).not.toContain(email);
+				expect(result.request.query).toBeUndefined();
+				expect(result.body).toEqual({
+					error: 'Eventee response details redacted',
+				});
+			}
+		},
+	);
+
 	it('extracts Retry-After with the real shared transport without automatic retries', async () => {
 		const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response(JSON.stringify({ error: 'slow down' }), {

@@ -17,6 +17,7 @@ type RequestParts<Input> = {
 	query?: (
 		input: Input,
 	) => Record<string, string | number | boolean | undefined>;
+	// Operation bodies have different documented field sets; the strict input Zod schema narrows each one before this JSON record is built.
 	body?: (input: Input) => Record<string, unknown>;
 };
 
