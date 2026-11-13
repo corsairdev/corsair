@@ -1,0 +1,153 @@
+---
+title: "Remarkety plugin"
+sidebarTitle: "Overview"
+description: "Manage stores and their sync status, create and unsubscribe contacts, build and update email campaigns with their rules and templates, and read products, rules and segments with Remarkety."
+---
+
+Use **Remarkety** through Corsair: one client, typed API calls.
+
+The token comes from your Remarkety account and goes in the `X-Token` header. The API also accepts `token` as a query parameter, but the plugin never uses it: a key in a URL is logged by every proxy.
+
+**`Accept: application/json` is load-bearing.** Sent without it, a failed call comes back as an HTML login page instead of the JSON error `{"message":"Missing or invalid API Key","status":"ERROR","guid":"…"}`. The plugin always sends it, and it keeps the `guid` on the error because that is what support asks for.
+
+**The store ID** is the short string on Settings > API Keys (for example `AbC123xy`); every store route takes it as `storeId`.
+
+**Building a campaign takes two reads first:**
+
+- **`rules.list`** gives every rule type, keyed by type (`CART_FOLLOWUP_TIME`, …), with its `operators`, `possibleValues` and `defaultValue`. A campaign action's `rules` must use those exact operator strings.
+- **`campaigns.types`** gives the campaign types the store supports (`TRIGGER_CART_RECOVERY`, …) with their mandatory and optional rules.
+
+Things worth knowing before a write:
+
+- **`contacts.create` emails the contact by default.** Remarkety's `doubleOptin` defaults to true and sends a confirmation request; pass `doubleOptin: false` to add a contact without it. `properties` is one object, not a list.
+- **`stores.create` and `stores.update` carry a *different* secret.** The `apiKey` there is the key Remarkety uses to sync that store; it is not the token this plugin authenticates with.
+- **`stores.update` is `PUT /stores` with the id in the body**, not `PUT /stores/{id}`. The same is true of `campaigns.update`, which is `PUT /stores/{storeId}/campaigns`.
+- **`mode` decides whether a campaign sends.** `run` starts it contacting shoppers, `test` sends a sample to `testEmail`, and `stop` halts it. Check the current mode with `campaigns.get` before updating, and remember a `stop` is the safe state to build in.
+- **An email action needs a subject and a `baseTemplate`; an api action needs a `webhook`.** The plugin rejects either omission rather than creating a campaign Remarkety cannot run. This endpoint version expects exactly one action.
+- **`stores.status` is the sync health check, and `syncStatus` is the field to read.** `syncLastError` holds the last runner message even on a healthy store (for example `Campaign runner completed ( success: 0 )` with `syncStatus: OK`), so a non-empty value is not a failure.
+- **Deleting a store is destructive and final.** There is no archive state, and a store's campaigns and contacts go with it.
+
+**What you get:**
+
+- 20 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/remarkety better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/remarkety better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/remarkety better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/remarkety better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { remarkety } from '@corsair-dev/remarkety';
+
+export const corsair = createCorsair({
+	plugins: [
+		remarkety(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+remarkety()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'remarkety',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the rules a campaign can use**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.remarkety.api.rules.list({ storeId: 'AbC123xy' });
+```
+
+
+**Create a contact with marketing permission**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.remarkety.api.contacts.create({
+	storeId: 'AbC123xy',
+	email: 'jane@example.com',
+	firstName: 'Jane',
+	allowedMarketing: true,
+});
+```
+
+
+See the full list on the [API](/plugins/remarkety/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/remarkety/api">
+    Every `remarkety.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

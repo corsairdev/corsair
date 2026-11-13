@@ -1,0 +1,171 @@
+{
+  "id": "webscraperio",
+  "displayName": "Web Scraper Cloud",
+  "description": "Web scraping with Web Scraper Cloud - list and read sitemaps with their selectors and start URLs, create a sitemap from an exported definition, and read the account's page credits.",
+  "npmPackageName": "@corsair-dev/webscraperio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 4,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "webscraperio.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read the account user and the page credits left; the cheapest way to check a token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ email?: string | null, firstname?: string | null, lastname?: string | null, page_credits?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webscraperio.api.sitemaps.create",
+      "shortPath": "sitemaps.create",
+      "description": "Create a sitemap from the definition the browser extension exports, selectors included",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sitemap",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The sitemap definition in the form the browser extension exports: `_id`, `startUrl` (an array of URLs) and `selectors`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, sitemap?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webscraperio.api.sitemaps.get",
+      "shortPath": "sitemaps.get",
+      "description": "Read one sitemap: its id, name and definition (start URLs and selectors) as a JSON string",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The sitemap id, from sitemaps.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, sitemap?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "webscraperio.api.sitemaps.list",
+      "shortPath": "sitemaps.list",
+      "description": "List the sitemaps on the account (id and name), a page at a time, optionally filtered by tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, 1-based. Defaults to 1."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Only return sitemaps carrying this tag."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, sitemap?: string | null }[] | null"
+          },
+          {
+            "key": "current_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "last_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

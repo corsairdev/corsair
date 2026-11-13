@@ -1,0 +1,54 @@
+displayName: VectorShift
+description: AI pipelines and agents with VectorShift - run pipelines singly or in bulk, create them from a graph, create and query knowledge bases, run chatbots, and execute Python transformations in VectorShift's sandbox.
+domain: vectorshift.ai
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in VectorShift: click the logo, then Profile, then the API Keys tab. Calls go to `https://api.vectorshift.ai/v1` with the key as a Bearer token.
+
+  - **The API is published as a beta.** The docs say so explicitly and warn that error codes and response formats may change. Nothing here depends on that changing, but treat any surprise in the response bodies as possible rather than impossible.
+  - **A 200 can still mean failure.** Every response carries a `status`, and a run that failed arrives with HTTP 200 and `status: 'failed'`. The plugin raises a `VectorshiftRunFailedError` carrying the `error` text for `failed` only. Any other value, `success` or a status the beta API adds later such as `queued`, is returned as is, so check `status` before reading outputs. A failed run is never retried, since a pipeline may already have had side effects.
+  - **`GET /v1` is not the API root.** `https://api.vectorshift.ai/v1` is a 404 and `https://api.vectorshift.ai/` answers `{"Ping":"Pong"}`. The routes live under `/v1`, so the base carries it.
+  - **Errors are `{ error: "..." }`.** A missing key sends its own messages — `Missing authorization header`, `Invalid authorization header format`, `Invalid API key` — rather than a code, and a bad key adds a parser detail after the prefix, so the plugin matches on the start of the message.
+  - **One knowledge base lives on the singular route.** It is fetched with `GET /knowledge-base?id=…` and queried with `POST /knowledge-base/{id}/query`, as VectorShift's reference and Python SDK do. The plural `GET /knowledge-bases` is the list, which the plugin does not wrap.
+  - **A knowledge base is looked up by id or by name, never both.** `username` and `org_name` narrow a name lookup and are rejected with an id.
+  - **Creating a chatbot needs the node names.** `input` and `output` are required, not optional — a wrong node name produces a chatbot that answers nothing, so the schema keeps them required instead of defaulting them.
+  - **A chatbot takes text or audio, never both**, and a reply carries a `conversation_id` to continue the thread. `stream: true` is not offered: the plugin reads JSON, and the streamed variant is server-sent events.
+  - **A pipeline can be run once or many times.** `pipelines.bulkRun` takes one entry per run and executes them in parallel, each with its own `run_id` and outputs.
+  - **A pipeline `config` is passed through unchanged.** Its shape belongs to the visual builder; the API only requires that it is present, so the plugin does not try to model it.
+  - **Outputs are typed but open.** A pipeline output is a string, number, boolean, list, map or file; a file arrives as base64 `raw_bytes` with `metadata`. All of them pass through as-is.
+examples:
+  read:
+    path: pipelines.list
+    title: List pipelines
+    args:
+      verbose: true
+  write:
+    path: pipelines.run
+    title: Run a pipeline with a question
+    args:
+      id: pl_7f3a2b
+      inputs:
+        question: Where is my refund?
+apiExamples:
+  pipelines.list:
+    call: "{ include_shared: true, verbose: true }"
+  pipelines.run:
+    call: "{ id: 'pl_7f3a2b', inputs: { question: 'Where is my refund?' } }"
+  pipelines.bulkRun:
+    call: "{ id: 'pl_7f3a2b', runs: [{ inputs: { question: 'one' } }, { inputs: { question: 'two' } }] }"
+  pipelines.create:
+    call: "{ name: 'Support triage', description: 'Routes tickets by intent', config: { nodes: [], edges: [] } }"
+  knowledgeBases.create:
+    call: "{ name: 'Product docs', description: 'Everything from the help centre', file_processing_implementation: 'LlamaParse', chunk_size: 1000, chunk_overlap: 200 }"
+  knowledgeBases.get:
+    call: "{ id: 'kb_4d2f9a' }"
+  knowledgeBases.query:
+    call: "{ id: 'kb_4d2f9a', queries: ['How do I reset my password?'], config: { rerank_documents: true } }"
+  chatbots.create:
+    call: "{ pipeline: { id: 'pl_7f3a2b' }, name: 'Support bot', description: 'Answers support questions', deployment_options: {}, access_config: {}, twilio_config: {}, slack_config: {}, deployed: true, input: 'question', output: 'answer' }"
+  chatbots.run:
+    call: "{ id: 'cb_1a2b3c', text: 'When does my order ship?', conversation_id: 'conv_9f8e7d' }"
+  transformations.create:
+    call: "{ name: 'Order total', description: 'Sums the line items', function_name: 'total', function: 'def total(items):\\n    return sum(items)', input_schema: { items: 'list[float]' }, output_schema: { total: 'float' } }"
+  transformations.run:
+    call: "{ id: 'tr_5e6f7a', inputs: { items: [19.5, 22.5] } }"

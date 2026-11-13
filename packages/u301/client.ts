@@ -1,0 +1,319 @@
+import { asRecord } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
+
+/**
+ * The REST host. The docs site is `u301.com/docs`; the API lives on its own host
+ * and is versioned in the path, and the official SDK hard-codes version `3`.
+ */
+export const U301_API_BASE = 'https://api.u301.com/v3';
+
+/**
+ * U301 takes an API key, and optionally a workspace ID that routes the call to
+ * another workspace than the key's own. The key goes in `Authorization: Bearer`,
+ * and the workspace in the `workspaceId` query parameter.
+ *
+ * They are carried together in the one key string a Corsair plugin receives,
+ * separated by a newline, because there is no second key slot. `parseU301Key`
+ * is the only place that layout is known.
+ */
+export const U301_KEY_SEPARATOR = '\n';
+
+/** The code U301 documents for an exhausted monthly link allowance. */
+export const U301_MONTHLY_LIMIT_CODE = 'MONTHLY_LINK_LIMIT_REACHED';
+
+/** A refusal is `{message, code?, requestId?, errors?}`; live it is just a message. */
+export class U301APIError extends Error {
+	readonly status?: number;
+	/** The body's `code`, such as UNAUTHORIZED or RATE_LIMITED. */
+	readonly code?: string;
+	/** The body's `requestId`, which U301 support asks for. */
+	readonly requestId?: string;
+	/** Per-field problems, when the API named them. */
+	readonly details?: { field: string; message: string }[];
+	/** Milliseconds from a Retry-After header, when U301 sent one. */
+	readonly retryAfter?: number;
+	/** The HTTP method of the failed request. */
+	readonly method?: string;
+	/** Whether the failing call may be sent again; declared per operation. */
+	readonly replayable: boolean;
+
+	constructor(
+		message: string,
+		options: {
+			cause?: Error;
+			status?: number;
+			code?: string;
+			requestId?: string;
+			details?: { field: string; message: string }[];
+			retryAfter?: number;
+			method?: string;
+			replayable?: boolean;
+		} = {},
+	) {
+		super(message, options.cause ? { cause: options.cause } : undefined);
+		this.name = 'U301APIError';
+		this.status = options.status;
+		this.code = options.code;
+		this.requestId = options.requestId;
+		this.details = options.details;
+		this.retryAfter = options.retryAfter;
+		this.method = options.method;
+		this.replayable = options.replayable ?? false;
+	}
+
+	/** The key or workspace is wrong, so no call on this key can succeed. */
+	get isAuthError(): boolean {
+		return (
+			this.status === 401 ||
+			this.status === 403 ||
+			this.code === 'UNAUTHORIZED' ||
+			this.code === 'FORBIDDEN'
+		);
+	}
+
+	/** The short link or domain does not exist. */
+	get isNotFound(): boolean {
+		return this.status === 404 || this.code === 'NOT_FOUND';
+	}
+
+	/** A body U301 refused, including a bad destination URL. */
+	get isValidationError(): boolean {
+		return (
+			this.status === 400 ||
+			this.status === 422 ||
+			this.code === 'BAD_REQUEST' ||
+			this.code === 'VALIDATION_FAILED' ||
+			this.name === 'ZodError'
+		);
+	}
+
+	/**
+	 * The monthly link allowance is spent. Only `MONTHLY_LINK_LIMIT_REACHED` means
+	 * that; a bare 429 is a temporary request rate and must stay retryable, so the
+	 * two are kept apart rather than folded into one flag.
+	 */
+	get isQuotaError(): boolean {
+		// RATE_LIMITED is the code U301 documents for "too many requests in a given
+		// amount of time", the temporary kind, so it is not matched here.
+		return this.code === U301_MONTHLY_LIMIT_CODE;
+	}
+
+	/** A 429 that is only a throughput limit, so waiting and resending can work. */
+	get isRateLimited(): boolean {
+		return this.status === 429 && !this.isQuotaError;
+	}
+}
+
+/**
+ * Reads a refusal body.
+ * unknown: the body is provider JSON until this reader narrows it.
+ */
+function failure(body: unknown): {
+	message?: string;
+	code?: string;
+	requestId?: string;
+	details?: { field: string; message: string }[];
+} {
+	const record = asRecord(body);
+	const message = record?.message;
+	// The monthly-quota body names its reason in `error`, not `message`, so both
+	// are read and `message` wins when a body carries both.
+	const errorText = record?.error;
+	const code = record?.code;
+	const requestId = record?.requestId;
+	// A query the API's own validator refuses answers
+	// `{ success: false, error: { issues: [{ path, message }] } }`, so the issues
+	// are read as the per-field details when there is no top-level `errors`.
+	const nested = asRecord(errorText);
+	const rawErrors =
+		record?.errors ??
+		(Array.isArray(nested?.issues)
+			? nested.issues.map((issue) => {
+					const problem = asRecord(issue);
+					const path = problem?.path;
+					return {
+						field: Array.isArray(path) ? path.join('.') : undefined,
+						message: problem?.message,
+					};
+				})
+			: undefined);
+	const details = Array.isArray(rawErrors)
+		? rawErrors.flatMap((entry) => {
+				const problem = asRecord(entry);
+				const field = problem?.field;
+				const text = problem?.message;
+				return typeof field === 'string' && typeof text === 'string'
+					? [{ field, message: text }]
+					: [];
+			})
+		: undefined;
+	const nestedMessage = nested?.message;
+	return {
+		message:
+			typeof message === 'string' && message.length > 0
+				? message
+				: typeof errorText === 'string' && errorText.length > 0
+					? errorText
+					: typeof nestedMessage === 'string' && nestedMessage.length > 0
+						? nestedMessage
+						: undefined,
+		code: typeof code === 'string' && code.length > 0 ? code : undefined,
+		requestId:
+			typeof requestId === 'string' && requestId.length > 0
+				? requestId
+				: undefined,
+		details: details && details.length > 0 ? details : undefined,
+	};
+}
+
+/**
+ * Builds the message for an error body. A keyless call answers a bare
+ * `{"message":""}`, so an empty message falls back to something a caller can read.
+ * unknown: the body is untyped until `failure` narrows it.
+ */
+export function describeU301Error(
+	status: number | undefined,
+	body: unknown,
+	fallback: string,
+): string {
+	const { message, code, requestId, details } = failure(body);
+	const text = message ?? fallback;
+	const label = [status, code].filter((part) => part !== undefined).join(' ');
+	const head = label ? `U301 ${label}: ${text}` : text;
+	const withFields = details
+		? `${head} (${details.map((d) => `${d.field}: ${d.message}`).join('; ')})`
+		: head;
+	return requestId ? `${withFields} [request ${requestId}]` : withFields;
+}
+
+/** The credentials a U301 call needs. */
+export type U301Credentials = { apiKey: string; workspaceId: string };
+
+/**
+ * Packs the two credentials into the single key string Corsair passes around.
+ *
+ * The workspace ID is not a secret, but it is per-account configuration and there
+ * is no other slot for it, so it rides with the key rather than being a required
+ * plugin option a caller could forget.
+ */
+export function composeU301Key(apiKey: string, workspaceId: string): string {
+	return `${apiKey}${U301_KEY_SEPARATOR}${workspaceId}`;
+}
+
+/**
+ * Unpacks the key. A value that looks like `<key>\n<workspace>` is split; anything
+ * else is a bare key with no workspace, sent without `workspaceId`.
+ */
+export function parseU301Key(composite: string): {
+	apiKey: string;
+	workspaceId: string | null;
+} {
+	const index = composite.indexOf(U301_KEY_SEPARATOR);
+	if (index <= 0) return { apiKey: composite, workspaceId: null };
+	const apiKey = composite.slice(0, index).trim();
+	const workspaceId = composite.slice(index + 1).trim();
+	return {
+		apiKey,
+		workspaceId: workspaceId.length > 0 ? workspaceId : null,
+	};
+}
+
+/** A query value. `workspaceId` is added to every call. */
+export type U301Query = Record<string, string | number | boolean | undefined>;
+
+export type U301Request = {
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+	/** Path below `/v3`, starting with a slash. */
+	path: string;
+	query?: U301Query;
+	// unknown: the endpoint's input schema has already validated the body.
+	body?: unknown;
+	/** Declared per operation so a write is never replayed. */
+	replayable: boolean;
+};
+
+/**
+ * A U301 `429` is either the monthly link allowance (`MONTHLY_LINK_LIMIT_REACHED`)
+ * or a short-term request rate (`RATE_LIMITED`). `corsair/http` must not resend
+ * either on its own: a resent create could spend the allowance again. Retries
+ * live in error-handlers.ts, which tells the two apart.
+ */
+const U301_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: { retryAfter: 'retry-after' },
+	// Core still treats every 429 as a rate limit and reads Retry-After into the
+	// ApiError; with maxRetries 0 it does not resend, and error-handlers.ts decides.
+	isRateLimitError: () => false,
+};
+
+function configWith(apiKey: string): OpenAPIConfig {
+	return {
+		BASE: U301_API_BASE,
+		VERSION: 'v3',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		HEADERS: { Accept: 'application/json', Authorization: `Bearer ${apiKey}` },
+	};
+}
+
+// unknown: callers parse the body with the endpoint's zod output schema.
+export async function makeU301Request(
+	compositeKey: string,
+	{ method, path, query, body, replayable }: U301Request,
+): Promise<unknown> {
+	const { apiKey, workspaceId } = parseU301Key(compositeKey);
+
+	const requestOptions: ApiRequestOptions = {
+		method,
+		url: path,
+		// Without a workspace ID U301 answers for the key's own workspace (live
+		// 11-12, a user key, on the list, domain and analytics routes), so it is
+		// sent only when one was given.
+		query: workspaceId ? { ...query, workspaceId } : query,
+		body,
+		mediaType: body === undefined ? undefined : 'application/json',
+	};
+
+	try {
+		// unknown: the body is provider JSON until the caller's output schema
+		// parses it; `request` cannot know the operation's shape.
+		return await request<unknown>(configWith(apiKey), requestOptions, {
+			rateLimitConfig: U301_RATE_LIMIT_CONFIG,
+		});
+	} catch (error) {
+		if (error instanceof ApiError) {
+			const fields = failure(error.body);
+			// The cause holds the request, and with it the bearer token, so the fields
+			// the handlers need are copied and the cause is dropped.
+			throw new U301APIError(
+				describeU301Error(error.status, error.body, error.message),
+				{
+					status: error.status,
+					code: fields.code,
+					requestId: fields.requestId,
+					details: fields.details,
+					retryAfter: error.retryAfter,
+					method,
+					replayable,
+				},
+			);
+		}
+		// DOMException (fetch timeouts) can fail instanceof Error across realms.
+		if (error instanceof Error || error instanceof DOMException) {
+			throw new U301APIError(error.message, {
+				cause: error,
+				method,
+				replayable,
+			});
+		}
+		throw new U301APIError('Unknown U301 error', { method, replayable });
+	}
+}

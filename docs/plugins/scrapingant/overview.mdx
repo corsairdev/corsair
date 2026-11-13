@@ -1,0 +1,142 @@
+---
+title: "ScrapingAnt plugin"
+sidebarTitle: "Overview"
+description: "Web scraping with ScrapingAnt - fetch a page as rendered HTML, as Markdown or as structured AI-extracted JSON, read the extended page data (cookies, headers, XHRs, iframes), and check credit usage."
+---
+
+Use **ScrapingAnt** through Corsair: one client, typed API calls.
+
+Create an API token at https://app.scrapingant.com/dashboard. An existing token keeps working; reset it from the Profile page if it leaks.
+
+Things to know before you scrape:
+
+- **Every call spends credits.** A request costs 1 credit with neither browser nor rendering, 2 with the browser but no JavaScript, 10 with full JavaScript rendering, and 25, 50 or 125 with the residential proxy. A Google domain costs 10 even without the browser. Each result carries `credits_cost` from the `Ant-credits-cost` header. `account.usage` costs nothing.
+- **The API answers 200 whatever the target page did.** Read `page_status` (from `Ant-page-status-code`) on `scrape.html`, or `status_code` on `scrape.extended`, before trusting the content. Only those two expose it: `scrape.markdown` and `extract.data` convert a target 404 as if it were a page.
+- **The provider's defaults are not the cheapest ones.** `browser` defaults to true at 10 credits. Send `browser: false` for a plain HTTP fetch at 1.
+- **Browser-only options are rejected here, not ignored.** `return_page_source`, `js_snippet`, `wait_for_selector` and `block_resource` do nothing without the browser, so sending one with `browser: false` fails before the request instead of silently applying nothing. `return_page_source: true` returns the server HTML without running browser actions, so `js_snippet` or `wait_for_selector` beside it fails the same way.
+- **`js_snippet` is base64.** ScrapingAnt runs the decoded JavaScript; sending raw source is a `422`. `Buffer.from('window.scrollTo(0,0)').toString('base64')` is the shape expected.
+- **A 403 has three meanings.** The token is wrong, the plan's credits are exhausted, or the caller's IP is not on the account allowlist. The message tells them apart and the error exposes `isAuthError`, `isQuotaExhausted` and `isIpBlocked`, so a failure does not send you to re-enter a working key.
+- **Retries.** A 423 (the target detected the browser), a 404 (the site was unreachable or a worker timed out) and a 500 are retried a bounded number of times; a 409 on the free plan waits and retries; an exhausted balance, a bad token, an IP block and a `422` are not retried. ScrapingAnt sends no `Retry-After`, so the delays are fixed rather than header-driven.
+- **`extract.data` is free-form.** `extract_properties` is the prompt, and the answer is an object keyed by camelCased property names. A property the model cannot find comes back as `null` rather than failing the call.
+- **Chaining a session.** `scrape.extended` returns the page cookies in `cookies`; pass that string to the next call's `cookies` to keep the session.
+- **No webhooks.** ScrapingAnt does not send them.
+
+**What you get:**
+
+- 5 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/scrapingant better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/scrapingant better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/scrapingant better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/scrapingant better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { scrapingant } from '@corsair-dev/scrapingant';
+
+export const corsair = createCorsair({
+	plugins: [
+		scrapingant(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+scrapingant()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'scrapingant',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Convert a page to Markdown for an LLM**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scrapingant.api.scrape.markdown({ url: 'https://example.com/', browser: false });
+```
+
+
+**Extract a product title and price**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.scrapingant.api.extract.data({ url: 'https://example.com/product', extract_properties: 'product title, price(number)' });
+```
+
+
+See the full list on the [API](/plugins/scrapingant/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/scrapingant/api">
+    Every `scrapingant.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
