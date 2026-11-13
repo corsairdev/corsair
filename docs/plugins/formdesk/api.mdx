@@ -185,6 +185,7 @@ await corsair.formdesk.api.files.get({ host: 'fd7.formdesk.com', domain: 'apites
 
 
 ---
+
 ### list
 
 `files.list`
@@ -1393,7 +1394,7 @@ await corsair.formdesk.api.users.add({ host: 'fd7.formdesk.com', domain: 'apites
 | `external_userid` | `string` | No | — |
 | `external_force` | `boolean` | No | — |
 | `external_provider` | `string` | No | — |
-| `lastlogin` | `string` | No | — |
+| `lastlogin` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -1459,7 +1460,7 @@ await corsair.formdesk.api.users.get({ host: 'fd7.formdesk.com', domain: 'apites
 | `external_userid` | `string` | No | — |
 | `external_force` | `boolean` | No | — |
 | `external_provider` | `string` | No | — |
-| `lastlogin` | `string` | No | — |
+| `lastlogin` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -1525,7 +1526,7 @@ await corsair.formdesk.api.users.getExternal({ host: 'fd7.formdesk.com', domain:
 | `external_userid` | `string` | No | — |
 | `external_force` | `boolean` | No | — |
 | `external_provider` | `string` | No | — |
-| `lastlogin` | `string` | No | — |
+| `lastlogin` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -1598,7 +1599,7 @@ await corsair.formdesk.api.users.list({ host: 'fd7.formdesk.com', domain: 'apite
   external_userid?: string,
   external_force?: boolean,
   external_provider?: string,
-  lastlogin?: string
+  lastlogin?: string | null
 }[]
 ```
 </Accordion>
@@ -1757,7 +1758,7 @@ await corsair.formdesk.api.users.update({ host: 'fd7.formdesk.com', domain: 'api
 | `external_userid` | `string` | No | — |
 | `external_force` | `boolean` | No | — |
 | `external_provider` | `string` | No | — |
-| `lastlogin` | `string` | No | — |
+| `lastlogin` | `string \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="meta full type">
@@ -2232,3 +2233,4 @@ await corsair.formdesk.api.visitors.update({ host: 'fd7.formdesk.com', domain: '
 
 
 ---
+
