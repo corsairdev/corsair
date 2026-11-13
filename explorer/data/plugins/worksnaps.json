@@ -1,0 +1,1132 @@
+{
+  "id": "worksnaps",
+  "displayName": "Worksnaps",
+  "description": "Time tracking for remote work with Worksnaps - manage projects and tasks, log and read time entries, assign users to tasks and projects, read users, and pull project and summary reports.",
+  "npmPackageName": "@corsair-dev/worksnaps",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 30,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "worksnaps.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project with a name and description",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ id?: number | string | null, name?: string | null, description?: string | null, status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Archive a project; it is not erased and projects.update with status active restores it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Read one project with its name and description",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ id?: number | string | null, name?: string | null, description?: string | null, status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the projects the token is involved in, optionally with each project members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_user_assignment",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return each project user assignments, which are its members."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id?: number | string | null, name?: string | null, description?: string | null, status?: string | null }[] | {} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Change a project name or description, or restore an archived project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | archived",
+            "description": "Set active to restore a project that projects.delete archived."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project",
+            "optional": false,
+            "type": "{ id?: number | string | null, name?: string | null, description?: string | null, status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.reports.project",
+      "shortPath": "reports.project",
+      "description": "Read time per user and task in one project over at most 30 days",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "time_summary | time_entries",
+            "description": "time_summary (the default) totals time per user and task; time_entries lists each entry."
+          },
+          {
+            "key": "user_ids",
+            "optional": false,
+            "type": "number[]",
+            "description": "The users to report on."
+          },
+          {
+            "key": "from_timestamp",
+            "optional": false,
+            "type": "number",
+            "description": "Start of the range in Unix seconds, on a 10-minute boundary (a multiple of 600)."
+          },
+          {
+            "key": "to_timestamp",
+            "optional": false,
+            "type": "number",
+            "description": "End of the range in Unix seconds, on a 10-minute boundary."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_summary",
+            "optional": true,
+            "type": "{ project_id?: number | string | null, user_id?: number | string | null, task_id?: number | string | null, task_name?: string | null, user_comment?: string | null, time_entry_type?: string | null, duration_in_minutes?: number | string | null }[] | {} | \"\""
+          },
+          {
+            "key": "time_entries",
+            "optional": true,
+            "type": "{ id?: number | string | null, task_id?: number | string | null, user_id?: number | string | null, project_id?: number | string | null, user_comment?: string | null, from_timestamp?: string | null, logged_timestamp?: string | null, duration_in_minutes?: number | string | null, type?: string | null, task_name?: string | null, thumbnail_url?: string | null }[] | {} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.reports.summary",
+      "shortPath": "reports.summary",
+      "description": "Read time by user, project, task and day across the projects you manage, over at most 30 days",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string",
+            "description": "First day, YYYY-MM-DD."
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string",
+            "description": "Last day, YYYY-MM-DD; at most 30 days after from_date."
+          },
+          {
+            "key": "timezone_offset",
+            "optional": true,
+            "type": "number",
+            "description": "Hours from UTC for the day boundaries, e.g. -8 or 5.5; defaults to the user timezone."
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Defaults to every project you manage."
+          },
+          {
+            "key": "user_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Defaults to every user in those projects."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "manager_report",
+            "optional": false,
+            "type": "{ user_id?: number | string | null, user_name?: string | null, project_id?: number | string | null, project_name?: string | null, date?: string | null, task_id?: number | string | null, task_name?: string | null, type?: string | null, duration_in_minutes?: number | string | null }[] | {} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.taskAssignments.create",
+      "shortPath": "taskAssignments.create",
+      "description": "Assign a user to a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_assignment",
+            "optional": false,
+            "type": "{ id?: number | string | null, user_id?: number | string | null, task_id?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.taskAssignments.delete",
+      "shortPath": "taskAssignments.delete",
+      "description": "Remove a user from a task",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "task_assignment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.taskAssignments.list",
+      "shortPath": "taskAssignments.list",
+      "description": "List which users are assigned to which tasks in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_assignments",
+            "optional": false,
+            "type": "{ id?: number | string | null, user_id?: number | string | null, task_id?: number | string | null }[] | {} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ id?: number | string | null, name?: string | null, description?: string | null, project_id?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Delete a task with the time logged against it; this cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Read one task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ id?: number | string | null, name?: string | null, description?: string | null, project_id?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List the tasks in a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ id?: number | string | null, name?: string | null, description?: string | null, project_id?: number | string | null }[] | {} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Change a task name or description",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task",
+            "optional": false,
+            "type": "{ id?: number | string | null, name?: string | null, description?: string | null, project_id?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.timeEntries.byUser",
+      "shortPath": "timeEntries.byUser",
+      "description": "List the time one user logged on a project between two Unix timestamps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "from_timestamp",
+            "optional": false,
+            "type": "number",
+            "description": "Start of the range in Unix seconds, on a 10-minute boundary (a multiple of 600)."
+          },
+          {
+            "key": "to_timestamp",
+            "optional": false,
+            "type": "number",
+            "description": "End of the range in Unix seconds, on a 10-minute boundary."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entries",
+            "optional": false,
+            "type": "{ id?: number | string | null, task_id?: number | string | null, user_id?: number | string | null, project_id?: number | string | null, user_comment?: string | null, from_timestamp?: string | null, logged_timestamp?: string | null, duration_in_minutes?: number | string | null, type?: string | null, task_name?: string | null, thumbnail_url?: string | null }[] | {} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.timeEntries.create",
+      "shortPath": "timeEntries.create",
+      "description": "Log offline time for yourself on an assigned task, from a Unix start time and a duration in minutes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "from_timestamp",
+            "optional": false,
+            "type": "number",
+            "description": "When the work started, in Unix seconds on a 10-minute boundary."
+          },
+          {
+            "key": "duration_in_minutes",
+            "optional": false,
+            "type": "number",
+            "description": "Worksnaps splits the time into 10-minute entries."
+          },
+          {
+            "key": "user_comment",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entries",
+            "optional": false,
+            "type": "{ id?: number | string | null, task_id?: number | string | null, user_id?: number | string | null, project_id?: number | string | null, user_comment?: string | null, from_timestamp?: string | null, logged_timestamp?: string | null, duration_in_minutes?: number | string | null, type?: string | null, task_name?: string | null, thumbnail_url?: string | null }[] | {} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.timeEntries.delete",
+      "shortPath": "timeEntries.delete",
+      "description": "Delete a logged time entry; this cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.timeEntries.get",
+      "shortPath": "timeEntries.get",
+      "description": "Read one time entry, optionally with full-resolution screenshot URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "full_resolution_url",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the full-resolution screenshot URLs rather than the thumbnails."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entry",
+            "optional": false,
+            "type": "{ id?: number | string | null, task_id?: number | string | null, user_id?: number | string | null, project_id?: number | string | null, user_comment?: string | null, from_timestamp?: string | null, logged_timestamp?: string | null, duration_in_minutes?: number | string | null, type?: string | null, task_name?: string | null, thumbnail_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.timeEntries.list",
+      "shortPath": "timeEntries.list",
+      "description": "List the time some users logged on a project between two Unix timestamps",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_ids",
+            "optional": false,
+            "type": "number[]",
+            "description": "The users whose time to list; the API requires at least one."
+          },
+          {
+            "key": "from_timestamp",
+            "optional": false,
+            "type": "number",
+            "description": "Start of the range in Unix seconds, on a 10-minute boundary (a multiple of 600)."
+          },
+          {
+            "key": "to_timestamp",
+            "optional": false,
+            "type": "number",
+            "description": "End of the range in Unix seconds, on a 10-minute boundary."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entries",
+            "optional": false,
+            "type": "{ id?: number | string | null, task_id?: number | string | null, user_id?: number | string | null, project_id?: number | string | null, user_comment?: string | null, from_timestamp?: string | null, logged_timestamp?: string | null, duration_in_minutes?: number | string | null, type?: string | null, task_name?: string | null, thumbnail_url?: string | null }[] | {} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.timeEntries.update",
+      "shortPath": "timeEntries.update",
+      "description": "Move a time entry to another task or change its comment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "time_entry_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "user_comment",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "time_entries",
+            "optional": false,
+            "type": "{ id?: number | string | null, task_id?: number | string | null, user_id?: number | string | null, project_id?: number | string | null, user_comment?: string | null, from_timestamp?: string | null, logged_timestamp?: string | null, duration_in_minutes?: number | string | null, type?: string | null, task_name?: string | null, thumbnail_url?: string | null }[] | {} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.userAssignments.create",
+      "shortPath": "userAssignments.create",
+      "description": "Add a member to a project with a role, rate and time-logging windows",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string",
+            "description": "The member role in this project, such as member or manager."
+          },
+          {
+            "key": "hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "flag_allow_logging_time",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "window_for_deleting_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "window_for_adding_offline_time",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_assignment",
+            "optional": false,
+            "type": "{ id?: number | string | null, user_id?: number | string | null, project_id?: number | string | null, role?: string | null, hourly_rate?: number | string | null, flag_allow_logging_time?: boolean | string | number | null, window_for_deleting_time?: number | string | null, window_for_adding_offline_time?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.userAssignments.get",
+      "shortPath": "userAssignments.get",
+      "description": "Read one project membership",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_assignment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_assignment",
+            "optional": false,
+            "type": "{ id?: number | string | null, user_id?: number | string | null, project_id?: number | string | null, role?: string | null, hourly_rate?: number | string | null, flag_allow_logging_time?: boolean | string | number | null, window_for_deleting_time?: number | string | null, window_for_adding_offline_time?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.userAssignments.list",
+      "shortPath": "userAssignments.list",
+      "description": "List the members of a project with their roles and rates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_assignments",
+            "optional": false,
+            "type": "{ id?: number | string | null, user_id?: number | string | null, project_id?: number | string | null, role?: string | null, hourly_rate?: number | string | null, flag_allow_logging_time?: boolean | string | number | null, window_for_deleting_time?: number | string | null, window_for_adding_offline_time?: number | string | null }[] | {} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.userAssignments.update",
+      "shortPath": "userAssignments.update",
+      "description": "Change a member hourly rate, time logging or time-logging windows in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hourly_rate",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "flag_allow_logging_time",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "window_for_deleting_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "window_for_adding_offline_time",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "project_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "user_assignment_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_assignment",
+            "optional": false,
+            "type": "{ id?: number | string | null, user_id?: number | string | null, project_id?: number | string | null, role?: string | null, hourly_rate?: number | string | null, flag_allow_logging_time?: boolean | string | number | null, window_for_deleting_time?: number | string | null, window_for_adding_offline_time?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.users.create",
+      "shortPath": "users.create",
+      "description": "Create a user; a privileged call that needs the partner API token rather than a normal one",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "login",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timezone_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id?: number | string | null, login?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, timezone_id?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read one user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id?: number | string | null, login?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, timezone_id?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.users.list",
+      "shortPath": "users.list",
+      "description": "List the users on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id?: number | string | null, login?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, timezone_id?: number | string | null }[] | {} | \"\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.users.me",
+      "shortPath": "users.me",
+      "description": "Read the account behind the token (without the token itself), which is the cheapest way to check it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id?: number | string | null, login?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, timezone_id?: number | string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "worksnaps.api.users.update",
+      "shortPath": "users.update",
+      "description": "Change a user email, name or timezone",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timezone_id",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id?: number | string | null, login?: string | null, first_name?: string | null, last_name?: string | null, email?: string | null, timezone_id?: number | string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

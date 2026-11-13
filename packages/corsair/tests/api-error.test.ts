@@ -138,3 +138,57 @@ describe('ApiError Redaction', () => {
 		expect(apiError.url).toContain('#frag');
 	});
 });
+
+describe('ApiError redaction of spelling variants', () => {
+	it.each([
+		'apiKey',
+		'API_KEY',
+		'x-api-key',
+		'accessToken',
+		'access_token',
+		'apiToken',
+		'client_secret',
+		'password',
+	])('redacts %s in the URL and the query', (name) => {
+		const request: ApiRequestOptions = {
+			method: 'GET',
+			url: `/v1/events?${name}=s3cr3t&page=2`,
+			query: { [name]: 's3cr3t', page: 2 },
+		};
+		const response: ApiResult = {
+			url: `https://api.example.com/v1/events?${name}=s3cr3t&page=2`,
+			ok: false,
+			status: 404,
+			statusText: 'Not Found',
+			body: { message: 'no such route' },
+		};
+
+		const apiError = new ApiError(request, response, 'Not Found');
+
+		expect(apiError.url).not.toContain('s3cr3t');
+		expect(apiError.request.url).not.toContain('s3cr3t');
+		expect(apiError.request.query?.[name]).toBe('[REDACTED]');
+		expect(apiError.url).toContain('page=2');
+		expect(apiError.request.query?.page).toBe(2);
+	});
+
+	it('leaves look-alike names alone', () => {
+		const request: ApiRequestOptions = {
+			method: 'GET',
+			url: '/v1/items',
+			query: { page_token: 'p2', keyword: 'shoes', monkey: 'yes' },
+		};
+		const response: ApiResult = {
+			url: 'https://api.example.com/v1/items?page_token=p2&keyword=shoes',
+			ok: false,
+			status: 500,
+			statusText: 'Internal Server Error',
+			body: undefined,
+		};
+
+		const apiError = new ApiError(request, response, 'boom');
+
+		expect(apiError.request).toBe(request);
+		expect(apiError.url).toBe(response.url);
+	});
+});

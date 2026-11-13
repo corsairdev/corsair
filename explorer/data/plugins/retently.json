@@ -1,0 +1,912 @@
+{
+  "id": "retently",
+  "displayName": "Retently",
+  "description": "NPS, CSAT and CES surveys with Retently - list and upsert customers, send transactional surveys, import historical feedback, read campaign reports, and manage tags, topics and suppressions.",
+  "npmPackageName": "@corsair-dev/retently",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 18,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "retently.api.account.ping",
+      "shortPath": "account.ping",
+      "description": "Read the account identity, plan, remaining survey credits and usage counters in one call",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ account?: { id?: string | null, name?: string | null, createdAt?: string | null, timezone?: string | null } | null, plan?: { code?: string | null, billingCycle?: string | null, renewsAt?: string | null, credits?: { surveys?: { period?: string | null, periodStart?: string | null, periodEnd?: string | null, included?: number | null, purchased?: number | null, limit?: number | null, used?: number | null, remaining?: number | null, dailyLimit?: number | null } | null } | null } | null, usage?: { contacts?: number | null, feedback?: number | null, outbox?: number | null, queue?: number | null, suppressions?: number | null } | null, cache?: { updatedAt?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List survey campaigns with their metric, template, channel, type and active state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "campaigns",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, isActive?: boolean | null, templateId?: string | null, metric?: string | null, type?: string | null, channel?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.companies.get",
+      "shortPath": "companies.get",
+      "description": "Get one company by ID or domain, including its NPS, CSAT, CES and STAR scores",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companyId",
+            "optional": false,
+            "type": "string",
+            "description": "The company ID, or its domain such as acme.com."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, createdDate?: string | null, domain?: string | null, companyName?: string | null, industryName?: string | null, tags?: string[] | null, cxMetrics?: { NPS?: number | null, CSAT?: number | null, CES?: number | null, STAR?: number | null } | null, contactsCount?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.companies.list",
+      "shortPath": "companies.list",
+      "description": "List companies with their domain, industry, tags, CX metrics and contact count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based, defaults to 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 20, maximum 1,000."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by; prefix with - for descending, such as -createdDate."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ total?: number | null, page?: number | null, limit?: number | null, sort?: string | null, companies?: { id?: string | null, createdDate?: string | null, domain?: string | null, companyName?: string | null, industryName?: string | null, tags?: string[] | null, cxMetrics?: { NPS?: number | null, CSAT?: number | null, CES?: number | null, STAR?: number | null } | null, contactsCount?: number | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.customers.delete",
+      "shortPath": "customers.delete",
+      "description": "Permanently delete customers and all their associated data, identified by email address",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ email: string }[]",
+            "description": "The customers to delete, with all their associated data."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ email?: string | null, deleted?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Get one customer by ID, including tags, custom properties, queue state and last survey",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The Retently customer ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyId?: string | null, first_name?: string | null, last_name?: string | null, company?: string | null, jobTitle?: string | null, phoneNumber?: string | null, tags?: string[] | null, createdDate?: string | null, updatedDate?: string | null, properties?: { label?: string | null, name?: string | null, type?: string | null, value?: string | number | boolean | null | null }[] | null, location?: { countryCode?: string | null, region?: string | null, country?: string | null, city?: string | null, state?: string | null, zipCode?: string | null, timezone?: string | null } | null, integrationsLists?: { name?: string | null, source?: string | null }[] | null, surveySubscriptionStatus?: { isOptedOut?: boolean | null, optOutDate?: string | null, optOutMessage?: string | null, optOutBy?: string | null, isSuppressed?: boolean | null, suppressedDate?: string | null, suppressedReason?: string | null } | null, isInQueue?: boolean | null, isInQueueSetAt?: string | null, lastSurveySent?: { openedDate?: string | null, surveyId?: string | null, metric?: string | null, receivedDate?: string | null, status?: string | null, campaignId?: string | null, resent?: boolean | null, sentBy?: string | null, channel?: string | null, isNegative?: boolean | null, isNeutral?: boolean | null, isPositive?: boolean | null, respondedDate?: string | null } | null, isEmailDeliverable?: boolean | null, syncId?: string | null, isAtRisk?: boolean | null, source?: string | null, isAnonymous?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers with paging, sorting, a creation-date window, an email lookup and property filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based, defaults to 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 20, maximum 1,000."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by; prefix with - for descending, such as -createdDate."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Find one customer by email."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only customers created at or after this instant. A bare YYYY-MM-DD means 00:00:00 UTC."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only customers created at or before this instant. Not expanded to the end of the day."
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{ name: string, op: equal | not_equal | exists | not_exists | contains | not_contains | greater_than | less_than | greater_than_ago | less_than_ago | in | not_in, value?: JsonValue }[]",
+            "description": "Property filters. The operators allowed depend on the property type."
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "all | any",
+            "description": "How to combine several attributes: all (AND, default) or any (OR)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ subscribers?: { id?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyId?: string | null, first_name?: string | null, last_name?: string | null, company?: string | null, jobTitle?: string | null, phoneNumber?: string | null, tags?: string[] | null, createdDate?: string | null, updatedDate?: string | null, properties?: { label?: string | null, name?: string | null, type?: string | null, value?: string | number | boolean | null | null }[] | null, location?: { countryCode?: string | null, region?: string | null, country?: string | null, city?: string | null, state?: string | null, zipCode?: string | null, timezone?: string | null } | null, integrationsLists?: { name?: string | null, source?: string | null }[] | null, surveySubscriptionStatus?: { isOptedOut?: boolean | null, optOutDate?: string | null, optOutMessage?: string | null, optOutBy?: string | null, isSuppressed?: boolean | null, suppressedDate?: string | null, suppressedReason?: string | null } | null, isInQueue?: boolean | null, isInQueueSetAt?: string | null, lastSurveySent?: { openedDate?: string | null, surveyId?: string | null, metric?: string | null, receivedDate?: string | null, status?: string | null, campaignId?: string | null, resent?: boolean | null, sentBy?: string | null, channel?: string | null, isNegative?: boolean | null, isNeutral?: boolean | null, isPositive?: boolean | null, respondedDate?: string | null } | null, isEmailDeliverable?: boolean | null, syncId?: string | null, isAtRisk?: boolean | null, source?: string | null, isAnonymous?: boolean | null }[] | null, page?: number | null, pages?: number | null, limit?: number | null, sort?: string | null, total?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.customers.resubscribe",
+      "shortPath": "customers.resubscribe",
+      "description": "Resubscribe previously unsubscribed customers; self-unsubscribed and bounced contacts are skipped",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ email: string }[]",
+            "description": "The customers to resubscribe."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ email?: string | null, status?: string | null, reason?: string | null, suppressed?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.customers.unsubscribe",
+      "shortPath": "customers.unsubscribe",
+      "description": "Unsubscribe customers from future surveys, optionally recording a custom opt-out message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ email: string }[]",
+            "description": "The customers to unsubscribe."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "A custom opt-out message recorded with the unsubscribe."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ email?: string | null, unsubscribed?: boolean | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.customers.upsert",
+      "shortPath": "customers.upsert",
+      "description": "Create or update up to 1,000 customers in one call, setting tags and custom properties",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ email: string, first_name?: string, last_name?: string, company?: string, tags?: string[], properties?: { label: string, type?: string | text | integer | number | date | boolean | collection, value: string | number | boolean | null }[], unset_properties?: string[], unset_tags?: string[] }[]",
+            "description": "Up to 1,000 customers. An existing email is updated."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, { id?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, company?: string | null, tags?: string[] | null, properties?: { label?: string | null, name?: string | null, dataType?: string | null, value?: JsonValue | null }[] | null, status?: string | null, reason?: string | null }> | { subscribers?: { id?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyId?: string | null, first_name?: string | null, last_name?: string | null, company?: string | null, jobTitle?: string | null, phoneNumber?: string | null, tags?: string[] | null, createdDate?: string | null, updatedDate?: string | null, properties?: { label?: string | null, name?: string | null, type?: string | null, value?: string | number | boolean | null | null }[] | null, location?: { countryCode?: string | null, region?: string | null, country?: string | null, city?: string | null, state?: string | null, zipCode?: string | null, timezone?: string | null } | null, integrationsLists?: { name?: string | null, source?: string | null }[] | null, surveySubscriptionStatus?: { isOptedOut?: boolean | null, optOutDate?: string | null, optOutMessage?: string | null, optOutBy?: string | null, isSuppressed?: boolean | null, suppressedDate?: string | null, suppressedReason?: string | null } | null, isInQueue?: boolean | null, isInQueueSetAt?: string | null, lastSurveySent?: { openedDate?: string | null, surveyId?: string | null, metric?: string | null, receivedDate?: string | null, status?: string | null, campaignId?: string | null, resent?: boolean | null, sentBy?: string | null, channel?: string | null, isNegative?: boolean | null, isNeutral?: boolean | null, isPositive?: boolean | null, respondedDate?: string | null } | null, isEmailDeliverable?: boolean | null, syncId?: string | null, isAtRisk?: boolean | null, source?: string | null, isAnonymous?: boolean | null }[] | null } | null"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.feedback.get",
+      "shortPath": "feedback.get",
+      "description": "Get one survey response by feedback ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "feedbackId",
+            "optional": false,
+            "type": "string",
+            "description": "The response ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ responses?: { id?: string | null, surveyId?: string | null, customerId?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyId?: string | null, jobTitle?: string | null, country?: string | null, state?: string | null, city?: string | null, tags?: string[] | null, customProps?: { label?: string | null, name?: string | null, type?: string | null, value?: string | number | boolean | null | null }[] | null, campaignName?: string | null, campaignId?: string | null, createdDate?: string | null, score?: number | null, comment?: string | null, checkbox?: boolean | null, additionalQuestions?: { type?: string | null, questionText?: string | null, metricsType?: string | null, answer?: JsonValue }[] | null, feedbackTags?: string[] | null, feedbackTagsNew?: string[] | null, feedbackTopics?: { name?: string | null, sentiment?: string | null }[] | null, notes?: { author?: string | null, content?: string | null, metricsType?: string | null, date?: string | null }[] | null, status?: string | null, assigned?: string | null, ratingCategory?: string | null, resolved?: boolean | null, channel?: string | null, metricsType?: string | null, isBogus?: boolean | null, isSubmitted?: boolean | null }[] | null, page?: number | null, pages?: number | null, limit?: number | null, sort?: string | null, total?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.feedback.import",
+      "shortPath": "feedback.import",
+      "description": "Import up to 200 historical survey responses into a campaign, with scores, comments, topics and additional answers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign to import into; it decides the metric and template."
+          },
+          {
+            "key": "feedback",
+            "optional": false,
+            "type": "{ email: string, score: number, comment?: string, first_name?: string, last_name?: string, company?: string, job_title?: string, phone?: string, country?: string, state?: string, city?: string, tags?: string[] | string, customer_tags?: string[], topics?: { name: string, sentiment: positive | negative | neutral }[], properties?: { label: string, type?: string | text | integer | number | date | boolean | collection, value: string | number | boolean | null }[], response_date?: string, send_date?: string, open_date?: string, additional_questions?: { uuid: string, type: RATING | OPEN_ENDED | MULTIPLE_OPTIONS, answer: string | number | boolean | null | JsonValue[] | Record<string, JsonValue>, metric?: nps | csat | ces | star | thumbs | xsat | pmf }[] }[]",
+            "description": "Up to 200 responses."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ create_customers?: boolean, update_existing_customers?: boolean, skip_duplicates?: boolean, duplicate_check_window?: number, default_send_date?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ imported?: number | null, skipped?: number | null, failed?: number | null, customersCreated?: number | null, customersUpdated?: number | null, warnings?: { email?: string | null, reason?: string | null, field?: string | null }[] | null, details?: { skipped?: { email?: string | null, reason?: string | null, field?: string | null }[] | null, failed?: { email?: string | null, reason?: string | null, field?: string | null }[] | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.feedback.list",
+      "shortPath": "feedback.list",
+      "description": "List survey responses with scores, comments, topics, tags and answers, filtered by customer, campaign, date or property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based, defaults to 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 20, maximum 1,000."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by; prefix with - for descending, such as -createdDate."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Search by a customer's email."
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string",
+            "description": "Search by a customer's ID."
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string",
+            "description": "Only this campaign."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only responses at or after this instant."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only responses at or before this instant, not expanded to the end of the day."
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{ name: string, op: equal | not_equal | exists | not_exists | contains | not_contains | greater_than | less_than | greater_than_ago | less_than_ago | in | not_in, value?: JsonValue }[]"
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "all | any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ responses?: { id?: string | null, surveyId?: string | null, customerId?: string | null, email?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyId?: string | null, jobTitle?: string | null, country?: string | null, state?: string | null, city?: string | null, tags?: string[] | null, customProps?: { label?: string | null, name?: string | null, type?: string | null, value?: string | number | boolean | null | null }[] | null, campaignName?: string | null, campaignId?: string | null, createdDate?: string | null, score?: number | null, comment?: string | null, checkbox?: boolean | null, additionalQuestions?: { type?: string | null, questionText?: string | null, metricsType?: string | null, answer?: JsonValue }[] | null, feedbackTags?: string[] | null, feedbackTagsNew?: string[] | null, feedbackTopics?: { name?: string | null, sentiment?: string | null }[] | null, notes?: { author?: string | null, content?: string | null, metricsType?: string | null, date?: string | null }[] | null, status?: string | null, assigned?: string | null, ratingCategory?: string | null, resolved?: boolean | null, channel?: string | null, metricsType?: string | null, isBogus?: boolean | null, isSubmitted?: boolean | null }[] | null, page?: number | null, pages?: number | null, limit?: number | null, sort?: string | null, total?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.outbox.list",
+      "shortPath": "outbox.list",
+      "description": "List sent surveys with their channel, sender, status and opened/responded detail, filtered by customer, campaign or date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based, defaults to 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 20, maximum 1,000."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Field to sort by; prefix with - for descending, such as -createdDate."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Find a customer's sent surveys."
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "Surveys sent at or after this date, snapped to the start of the day in the account timezone."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "Surveys sent at or before this date, snapped to the end of the day in the account timezone."
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "email | link | inapp | intercom | embed"
+          },
+          {
+            "key": "sentBy",
+            "optional": true,
+            "type": "campaign | reminder | manual | test | imported"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{ name: string, op: equal | not_equal | exists | not_exists | contains | not_contains | greater_than | less_than | greater_than_ago | less_than_ago | in | not_in, value?: JsonValue }[]"
+          },
+          {
+            "key": "match",
+            "optional": true,
+            "type": "all | any"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ surveys?: { surveyId?: string | null, email?: string | null, customerId?: string | null, firstName?: string | null, lastName?: string | null, companyName?: string | null, companyId?: string | null, personTags?: string | null, sentDate?: string | null, channel?: string | null, campaign?: string | null, campaignId?: string | null, surveyTemplateId?: string | null, subject?: string | null, sentBy?: string | null, status?: string | null, detailedStatus?: { isOpened?: boolean | null, openedDate?: string | null, isResponded?: boolean | null, respondedDate?: string | null, hasFeedback?: boolean | null, isOptedOut?: boolean | null, isBounced?: boolean | null } | null, additionalRecipients?: { email?: string | null, type?: string | null, mandrillMessageId?: string | null }[] | null, mandrillMessageId?: string | null, responseId?: string | null }[] | null, page?: number | null, pages?: number | null, limit?: number | null, sort?: string | null, total?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.reports.get",
+      "shortPath": "reports.get",
+      "description": "Read campaign reports with score trend, delivery stats and per-question stats, for one campaign or all",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string",
+            "description": "Omit for every campaign in the account."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD only. ISO 8601 date-times and UNIX timestamps are a 400 here, unlike elsewhere in the API."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD only, inclusive of the whole day."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ campaignId?: string | null, name?: string | null, isActive?: boolean | null, metric?: string | null, type?: string | null, trend?: { day?: string | null, promoters?: number | null, passives?: number | null, detractors?: number | null, total?: number | null, score?: number | null, ratingDistribution?: Record<string, number> | null }[] | null, last?: { promoters?: number | null, passives?: number | null, detractors?: number | null, total?: number | null, score?: number | null, ratingDistribution?: Record<string, number> | null } | null, deliveryStats?: { totalCount?: number | null, opened?: number | null, responded?: number | null, optedOut?: number | null, isBounced?: number | null } | null, questionsStats?: { uuid?: string | null, title?: string | null, isStarred?: boolean | null, position?: number | null, isOnMain?: boolean | null, metricsType?: string | null, stats?: { last?: { day?: string | null, promoters?: number | null, passives?: number | null, detractors?: number | null, responded?: number | null, opened?: number | null, skipped?: number | null, total?: number | null, scoreSum?: number | null, score?: number | null } | null, first?: { day?: string | null, promoters?: number | null, passives?: number | null, detractors?: number | null, responded?: number | null, opened?: number | null, skipped?: number | null, total?: number | null, scoreSum?: number | null, score?: number | null } | null } | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.survey.send",
+      "shortPath": "survey.send",
+      "description": "Queue a transactional survey to up to 100 customers through a transactional campaign, optionally delayed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "string",
+            "description": "The transactional campaign to survey through. A regular campaign is a 400."
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number",
+            "description": "Days to wait, overriding the campaign's scheduling. Omit it to respect the campaign's sending time frame."
+          },
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ email: string, first_name?: string, last_name?: string, company?: string, tags?: string[], properties?: { label: string, type?: string | text | integer | number | date | boolean | collection, value: string | number | boolean | null }[], unset_properties?: string[], unset_tags?: string[] }[]",
+            "description": "Up to 100 customers."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "queued, or error on a refusal."
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get one survey template with its questions and their UUIDs, which feedback.import needs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "A template ID from templates.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, channel?: string | null, metric?: string | null, surveyQuestions?: { uuid?: string | null, type?: string | null, title?: string | null, isMain?: boolean | null, options?: { uuid?: string | null, text?: string | null }[] | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "retently.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List survey templates with their channel and metric",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "templates",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, channel?: string | null, metric?: string | null }[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
