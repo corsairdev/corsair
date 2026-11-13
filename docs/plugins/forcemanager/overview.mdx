@@ -104,11 +104,13 @@ await tenant.forcemanager.api.accountAddresses.accountAddressesSchema({});
 ```
 
 
-**`accountAddresses.createAccountAddress`**
+**Create an account address**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.forcemanager.api.accountAddresses.createAccountAddress({});
+await tenant.forcemanager.api.accountAddresses.createAccountAddress({
+	body: { accountId: 1, address1: 'Main office' },
+});
 ```
 
 

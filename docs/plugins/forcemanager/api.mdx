@@ -210,7 +210,7 @@ Create Account Address (POST /accountAddresses)
 
 ```ts
 await corsair.forcemanager.api.accountAddresses.createAccountAddress({
-	body: {},
+	body: { accountId: 1, address1: 'Main office' },
 });
 ```
 

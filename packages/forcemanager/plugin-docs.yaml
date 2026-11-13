@@ -8,7 +8,9 @@ apiExamples:
     query:
       page: 0
   accountAddresses.createAccountAddress:
-    body: {}
+    body:
+      accountId: 1
+      address1: Main office
   accountAddresses.getAccountAddress:
     path:
       id: 1
@@ -1105,6 +1107,14 @@ apiNotes:
   valueListsValues.deleteValue: Deletes the selected record permanently or archives it per ForceManager resource behavior;
     review the target ID before calling.
   warnings.deleteWarningOfAResource: Review the target identifier and business impact before deleting this ForceManager record.
+examples:
+  write:
+    path: accountAddresses.createAccountAddress
+    title: Create an account address
+    args:
+      body:
+        accountId: 1
+        address1: Main office
 overviewNote: 'Configure the stored API key as the ForceManager session key sent in X-Session-Key. Obtain that session
   key by calling POST /login with your public and private API credentials outside this plugin. Set environment to
   sandbox to target the documented sandbox host. The plugin does not manage webhooks or perform the binary upload step
