@@ -1,7 +1,22 @@
 import type { ApiRequestOptions } from './ApiRequestOptions';
 import type { ApiResult } from './ApiResult';
 
-const SENSITIVE_QUERY_PARAMS = new Set(['api_key', 'key', 'token', 'appid']);
+// Compared with case, '-' and '_' ignored, so apiKey, api_key, x-api-key and
+// API-KEY all match one entry.
+const SENSITIVE_QUERY_PARAMS = new Set([
+	'apikey',
+	'xapikey',
+	'key',
+	'appkey',
+	'appid',
+	'token',
+	'apitoken',
+	'accesstoken',
+	'authtoken',
+	'clientsecret',
+	'secret',
+	'password',
+]);
 
 function isSensitiveQueryParam(key: string): boolean {
 	let normalized = key;
@@ -10,7 +25,9 @@ function isSensitiveQueryParam(key: string): boolean {
 	} catch {
 		normalized = key;
 	}
-	return SENSITIVE_QUERY_PARAMS.has(normalized.toLowerCase());
+	return SENSITIVE_QUERY_PARAMS.has(
+		normalized.toLowerCase().replace(/[-_]/g, ''),
+	);
 }
 
 function redactQueryStringFallback(urlStr: string): string {

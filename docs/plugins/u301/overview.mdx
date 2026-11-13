@@ -1,0 +1,155 @@
+---
+title: "U301 plugin"
+sidebarTitle: "Overview"
+description: "Create and manage branded short links, configure custom domains and their redirects, and read click analytics with U301."
+---
+
+Use **U301** through Corsair: one client, typed API calls.
+
+U301 needs an **API key** (Developer > API Keys in your U301 dashboard), sent in `Authorization: Bearer`. On its own, the key reaches its own workspace. To reach another workspace, add its **workspace ID**, which goes in the `workspaceId` query parameter.
+
+There is one key slot, so to add a workspace, set the key to both values with a newline between them:
+
+```text
+<api key>
+<workspace id>
+```
+
+Or pass them as the `apiKey` and `workspaceId` options, which is clearer.
+
+**The plugin options are shared by every tenant and are read before the tenant's stored key.** Set `apiKey` and `workspaceId` only when every tenant really should reach the same U301 workspace; otherwise store the credential per account so each tenant gets its own. A stored bare key is composed with a configured `workspaceId` when one is present.
+
+Things worth knowing before you rely on an answer:
+
+- **A new link spends one slot of the monthly allowance**, and free accounts get 100 a month. Reusing a link does not: pass `reuseExisting` to return the existing link for a URL instead of making a second one, and check `isReused` on the answer. An exhausted allowance answers `429` with the `MONTHLY_LINK_LIMIT_REACHED` code, which is never retried; a bare `429` is a throughput limit, and only replayable calls are retried after `Retry-After`.
+- **A link looks different on create than on read.** A create answers `shortLink`, `url` and `isReused`; a read answers `shortUrl`, `originalUrl` and `statsClicks`. The two shapes are modelled as they are rather than merged.
+- **Links and domains are addressed by their own name, not an internal id.** `links.get` takes the short form, `u301.co/abc123`, and it is sent as a path with its slash rather than an encoded `%2F`. A `https://` prefix is stripped for you.
+- **A custom domain is not live when it is created.** `domains.create` adds it, then you create the CNAME from `dnsSettings.cnameValue` and poll `domains.active` until `actived` is true — that is U301's own spelling of the field. A domain that is still verifying answers `actived: false` with a message such as "Challenge not ready".
+- **The three domain settings share one PATCH** but are separate operations, so each sends exactly one field: `domains.pathLength` (`randomCodeLength`, 3 to 10), `domains.homeRedirect` and `domains.notFoundRedirect`. The two redirects are Pro plan features: a free workspace gets `403` "This feature is only available for Pro Plan".
+- **Analytics separate range from granularity.** `range` is how far back (`24h`, `1d`, `3d`, `7d`, `14d`, `30d`, `60d`, `1m`) and `granularity` is how the buckets are cut (`day`, `hour`). Give `timezone` when the day boundary matters.
+- **The audience breakdown puts the dimension in the path.** `analytics.audience` takes `countries`, `cities`, `referers`, `browsers`, `operating-systems` or `device-types` and calls the matching `top-<dimension>` route. Three of those are the provider's own spellings, so they are not the words you might guess.
+
+**What you get:**
+
+- 14 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/u301 better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/u301 better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/u301 better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/u301 better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { u301 } from '@corsair-dev/u301';
+
+export const corsair = createCorsair({
+	plugins: [
+		u301(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+u301()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'u301',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List short links with their click counts**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.u301.api.links.list({ page: 1, perPage: 20 });
+```
+
+
+**Shorten a URL on your own domain**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.u301.api.links.create({
+	url: 'https://example.com/spring-sale',
+	domain: 'go.example.com',
+	slug: 'spring',
+	reuseExisting: true,
+});
+```
+
+
+See the full list on the [API](/plugins/u301/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/u301/api">
+    Every `u301.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

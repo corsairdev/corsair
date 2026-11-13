@@ -1,0 +1,987 @@
+---
+title: "RiteKit API reference"
+sidebarTitle: "API"
+description: "API reference for the RiteKit plugin in Corsair: every `ritekit.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Companies
+
+### brandColors
+
+`companies.brandColors`
+
+Return a company's brand colors from its domain or name
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.companies.brandColors({ name: 'producthunt.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | A company name or a domain. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `name` | `string \| null` | No | — |
+| `data` | `string[] \| null` | No | The site's brand colors, most prominent first. |
+
+
+
+---
+
+### logo
+
+`companies.logo`
+
+Return a company's logo from its domain, with square and original variants, brand colors and a stable URL
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.companies.logo({ domain: 'evernote.com', squareLogoSize: 256, squareLogoBackground: 'original' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The company site, such as evernote.com. |
+| `generateFallbackLogo` | `boolean` | No | Generate a logo from the site's brand colors when no logo is found. |
+| `squareLogoSize` | `number` | No | Pixels, 1 to 512. |
+| `squareLogoBackground` | `remove \| original \| add` | No | remove makes it transparent, add makes it solid. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `isGenerated` | `boolean \| null` | No | True when no logo was found and one was generated. |
+| `domain` | `string \| null` | No | — |
+| `url` | `string \| null` | No | The logo itself. |
+| `permanentUrl` | `string \| null` | No | A stable URL that serves the image directly. Each view costs a credit. |
+| `originalLogo` | `object \| null` | No | — |
+| `squareLogo` | `object \| null` | No | — |
+| `brandColors` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="originalLogo full type">
+
+```ts
+{
+  url?: {
+    svg?: string | null,
+    png?: string | null
+  } | null,
+  permanentUrl?: {
+    svg?: string | null,
+    png?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="squareLogo full type">
+
+```ts
+{
+  size?: number | null,
+  background?: string | null,
+  url?: {
+    svg?: string | null,
+    png?: string | null
+  } | null,
+  permanentUrl?: {
+    svg?: string | null,
+    png?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### nameToDomain
+
+`companies.nameToDomain`
+
+Return the most probable domains for a company name, best first
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.companies.nameToDomain({ name: 'Google' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | A company name or a domain. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `name` | `string \| null` | No | The name as RiteKit read it. |
+| `data` | `string[] \| null` | No | The most probable domains, best first. |
+
+
+
+---
+
+## Emojis
+
+### auto
+
+`emojis.auto`
+
+Return a block of text with emoji added
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.emojis.auto({ text: 'Why robots may soon steal all manufacturing jobs' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | A short block of text to emoji-ify. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `text` | `string \| null` | No | The text with emoji added. |
+
+
+
+---
+
+### suggestions
+
+`emojis.suggestions`
+
+Suggest emoji for a short block of text
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.emojis.suggestions({ text: 'Why robots may soon steal all manufacturing jobs' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | A short block of text to emoji-ify. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `emojis` | `string[] \| null` | No | Suggested emoji characters. |
+
+
+
+---
+
+## Hashtags
+
+### auto
+
+`hashtags.auto`
+
+Return a post with hashtags added, either inside the sentence or appended
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.hashtags.auto({ post: 'Is artificial intelligence the future of customer service?', maxHashtags: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post` | `string` | Yes | The post to add hashtags to. |
+| `maxHashtags` | `number` | No | How many to add. Defaults to RiteKit's own choice. |
+| `hashtagPosition` | `auto \| end` | No | auto places them in the sentence, end appends them. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `post` | `string \| null` | No | The post with hashtags added. |
+
+
+
+---
+
+### cleanInstagram
+
+`hashtags.cleanInstagram`
+
+Remove the hashtags Instagram has banned from a post and report which were dropped
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.hashtags.cleanInstagram({ post: '#instaphotography #instabeauty #instagirls' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post` | `string` | Yes | A post whose hashtags should be checked. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `post` | `string \| null` | No | The same post with the banned hashtags removed. |
+| `bannedHashtags` | `string[] \| null` | No | The hashtags that were removed, each with its leading #. |
+
+
+
+---
+
+### forImage
+
+`hashtags.forImage`
+
+Suggest hashtags for an image, from its content and its engagement
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.hashtags.forImage({ image: 'https://jpeg.org/images/jpeg-home.jpg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `image` | `string` | Yes | A publicly reachable image URL. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  hashtag?: string | null,
+  tag?: string | null,
+  tweets?: number | null,
+  exposure?: number | null,
+  retweets?: number | null,
+  images?: number | null,
+  links?: number | null,
+  mentions?: number | null,
+  mediaCount?: number | null,
+  color?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forUrl
+
+`hashtags.forUrl`
+
+Suggest hashtags for the content of a URL
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.hashtags.forUrl({ url: 'https://ritekit.com/api-demo/extract-article' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to read hashtags from. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `hashtags` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="hashtags full type">
+
+```ts
+{
+  hashtag?: string | null,
+  tag?: string | null,
+  tweets?: number | null,
+  exposure?: number | null,
+  retweets?: number | null,
+  images?: number | null,
+  links?: number | null,
+  mentions?: number | null,
+  mediaCount?: number | null,
+  color?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`hashtags.stats`
+
+Read real-time stats for up to 100 hashtags: tweets per hour, exposure, retweets and the share carrying images, links and mentions
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.hashtags.stats({ tags: ['jobs', 'hello'], });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `string[]` | Yes | Up to 100 hashtags, with or without the leading #. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `hashtags` | `string[] \| null` | No | The tags as RiteKit read them. |
+| `stats` | `object[] \| null` | No | — |
+| `color` | `string[] \| null` | No | The labels for a stats entry's `color`: unused, overused, good, great. |
+
+<AccordionGroup>
+<Accordion title="stats full type">
+
+```ts
+{
+  hashtag?: string | null,
+  tag?: string | null,
+  tweets?: number | null,
+  exposure?: number | null,
+  retweets?: number | null,
+  images?: number | null,
+  links?: number | null,
+  mentions?: number | null,
+  mediaCount?: number | null,
+  color?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### suggestions
+
+`hashtags.suggestions`
+
+Suggest hashtags for a single word or a short block of text, ranked by semantic relevance and real-time popularity
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.hashtags.suggestions({ text: 'When you give Alaskans a universal basic income, they still keep working.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | A single word or a short block of text. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  hashtag?: string | null,
+  tag?: string | null,
+  tweets?: number | null,
+  exposure?: number | null,
+  retweets?: number | null,
+  images?: number | null,
+  links?: number | null,
+  mentions?: number | null,
+  mediaCount?: number | null,
+  color?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trending
+
+`hashtags.trending`
+
+List hashtags currently trending, optionally only the ones worth using and only Latin-alphabet tags
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.hashtags.trending({ green: true, latin: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `green` | `boolean` | No | Only hashtags in the "good" or "great" color band. |
+| `latin` | `boolean` | No | Only hashtags in the Latin alphabet. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `tags` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  tag?: string | null,
+  tweets?: number | null,
+  retweets?: number | null,
+  exposure?: number | null,
+  links?: number | null,
+  photos?: number | null,
+  mentions?: number | null,
+  color?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### animate
+
+`images.animate`
+
+Turn a still image into an animated GIF, returned as a data URL
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.images.animate({ url: 'https://jpeg.org/images/jpeg-home.jpg', type: 'glint' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The still image to animate. |
+| `type` | `glint` | No | The animation style. glint is the only one documented. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The image as a data URL (data:&lt;type&gt;;base64,...). |
+| `contentType` | `string` | Yes | Such as image/png or image/gif. |
+| `bytes` | `number` | Yes | Size of the image in bytes. |
+
+
+
+---
+
+### extractTopImage
+
+`images.extractTopImage`
+
+Return a page's lead image URL
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.images.extractTopImage({ url: 'https://fedoramagazine.org/secure-ntp-with-nts/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to read the lead image from. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `top_image` | `string \| null` | No | The page's lead image. Named in snake_case by RiteKit. |
+
+
+
+---
+
+### quote
+
+`images.quote`
+
+Render a quote as a PNG with chosen fonts, colors, gradient and an optional logo, returned as a data URL
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.images.quote({ text: 'If you love life, do not waste time', author: 'Bruce Lee', width: 400, height: 400, textFont: 'Lora', backgroundColor1: '#8686bd', backgroundColor2: '#1ddad6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | The quote. |
+| `author` | `string` | Yes | Who said it. |
+| `width` | `number` | No | Pixels, such as 400. |
+| `height` | `number` | No | Pixels, such as 400. |
+| `textFont` | `string` | No | A font name, such as Lora. |
+| `textColor` | `string` | No | A CSS color, such as #000000 or transparent. The # is percent-encoded for you. |
+| `textFontWeight` | `number` | No | Such as 400 or 700. |
+| `authorFont` | `string` | No | A font name, such as Lato. |
+| `authorColor` | `string` | No | A CSS color, such as #000000 or transparent. The # is percent-encoded for you. |
+| `authorFontWeight` | `number` | No | — |
+| `highlightEnabled` | `boolean` | No | Highlights part of the quote. |
+| `highlightColor` | `string` | No | transparent leaves the text unhighlighted. |
+| `backgroundColor1` | `string` | No | The gradient's first stop. |
+| `backgroundColor2` | `string` | No | The gradient's second stop. |
+| `logoUrl` | `string` | No | An image drawn onto the quote, such as a brand logo. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The image as a data URL (data:&lt;type&gt;;base64,...). |
+| `contentType` | `string` | Yes | Such as image/png or image/gif. |
+| `bytes` | `number` | Yes | Size of the image in bytes. |
+
+
+
+---
+
+## Links
+
+### listCtas
+
+`links.listCtas`
+
+List the Link Ads on the account, whose ids links.shorten takes as its cta
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.links.listCtas({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | — |
+| `list` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  code?: string | null,
+  default?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### shorten
+
+`links.shorten`
+
+Create a rite.ly short link carrying a Link Ad from links.listCtas, and report the plan balance
+
+**Risk:** `write`
+
+```ts
+await corsair.ritekit.api.links.shorten({ url: 'https://ritekit.com', cta: '6530' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL to shorten. |
+| `cta` | `string \| number` | Yes | The Link Ad to attach: an id from links.listCtas, such as bit.ly for none. RiteKit answers 500 without one. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | The short link. |
+| `original` | `string \| null` | No | — |
+| `service` | `string \| null` | No | rite.ly. |
+| `ctaId` | `string \| null` | No | — |
+| `limit` | `object \| null` | No | Short links left on the plan. |
+
+<AccordionGroup>
+<Accordion title="limit full type">
+
+```ts
+{
+  remaining?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Person
+
+### disposable
+
+`person.disposable`
+
+Report whether an address belongs to a disposable email service
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.person.disposable({ email: 'john.doe@gmail.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `email` | `string \| null` | No | The address as RiteKit read it. |
+| `disposable` | `boolean \| null` | No | — |
+
+
+
+---
+
+### emailTypo
+
+`person.emailTypo`
+
+Suggest likely corrections for an address whose domain looks mistyped
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.person.emailTypo({ email: 'john.doe@gml.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `email` | `string \| null` | No | The address as RiteKit read it. |
+| `suggestions` | `string[] \| null` | No | Likely corrections, most probable first. |
+
+
+
+---
+
+### freemail
+
+`person.freemail`
+
+Report whether an address is on a consumer email provider rather than a company domain
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.person.freemail({ domain: 'john.doe@gmail.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | An email address or a domain; the sample passes a full address under this name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `domain` | `string \| null` | No | — |
+| `freemail` | `boolean \| null` | No | True for a consumer provider such as gmail.com. |
+
+
+
+---
+
+### nameFromEmail
+
+`person.nameFromEmail`
+
+Derive a person's given name and surname from their address
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.person.nameFromEmail({ email: 'john.doe@test.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | True on success. A refusal is a non-2xx status, not a false here. |
+| `message` | `string \| null` | No | — |
+| `code` | `number \| null` | No | Repeats the HTTP status when present. |
+| `email` | `string \| null` | No | The address as RiteKit read it. |
+| `info` | `string \| object \| null` | No | The derived name: a string such as "John Doe" in live answers. |
+
+<AccordionGroup>
+<Accordion title="info full type">
+
+```ts
+string | {
+  givenName?: string | null,
+  surname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Texts
+
+### extractArticle
+
+`texts.extractArticle`
+
+Extract an article's title and body from a URL, dropping headers, footers and columns
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.texts.extractArticle({ url: 'https://ritekit.com/api-demo/extract-article' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The article to read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `text` | `string \| null` | No | The article body, without headers, footers or columns. |
+
+
+
+---
+
+### linkPreview
+
+`texts.linkPreview`
+
+Return the title, description and image for a URL preview
+
+**Risk:** `read`
+
+```ts
+await corsair.ritekit.api.texts.linkPreview({ url: 'https://ritekit.com/api-demo/extract-article' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to preview. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
+
+
+
+---
+
