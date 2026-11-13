@@ -1,21 +1,61 @@
 // Generated from DeployHQ official OpenAPI documentation. Do not edit by hand.
+// Response schemas are loose and their optional fields nullish: the live API returns null
+// for unset fields and more keys than the OpenAPI examples show (checked 11-13).
 // Source: https://api.deployhq.com/docs.json
 import { z } from 'zod';
 
+// Per-protocol connection fields from DeployHQ's server API guide
+// (https://www.deployhq.com/support/api/servers/create-a-new-server). The OpenAPI document
+// omits them, so without them only custom_action servers could be created.
+const ServerConnectionFields = {
+	hostname: z.string().optional(),
+	username: z.string().optional(),
+	password: z.string().optional(),
+	port: z.number().int().optional(),
+	passive: z.boolean().optional(),
+	force_hidden_files: z.boolean().optional(),
+	use_parallel_upload: z.boolean().optional(),
+	implicit: z.boolean().optional(),
+	ignore_certificate_errors: z.boolean().optional(),
+	use_ssh_keys: z.boolean().optional(),
+	unlink_before_upload: z.boolean().optional(),
+	use_accelerated_transfer: z.boolean().optional(),
+	bucket_name: z.string().optional(),
+	access_key_id: z.string().optional(),
+	secret_access_key: z.string().optional(),
+	custom_endpoint: z.string().optional(),
+	api_key: z.string().optional(),
+	region: z.string().optional(),
+	container_name: z.string().optional(),
+	personal_access_token: z.string().optional(),
+	droplet_id: z.string().optional(),
+	droplet_name: z.string().optional(),
+	command: z.string().optional(),
+	timeout: z.number().int().optional(),
+	store_url: z.string().optional(),
+	access_token: z.string().optional(),
+	theme_name: z.string().optional(),
+	site_id: z.string().optional(),
+	app_name: z.string().optional(),
+	api_key_heroku: z.string().optional(),
+	application_name: z.string().optional(),
+	environment_name: z.string().optional(),
+};
+
 export const NamePermalinkTimeZoneObjectSchema = z
 	.object({
-		name: z.string().optional(),
-		permalink: z.string().optional(),
-		time_zone: z.string().optional(),
-		package: z.string().optional(),
-		trialling: z.boolean().optional(),
-		suspended: z.boolean().optional(),
-		project_count: z.number().int().optional(),
-		project_limit: z.number().int().optional(),
-		users_allowed: z.boolean().optional(),
-		ai_features_disabled: z.boolean().optional(),
+		name: z.string().nullish(),
+		permalink: z.string().nullish(),
+		time_zone: z.string().nullish(),
+		package: z.string().nullish(),
+		trialling: z.boolean().nullish(),
+		suspended: z.boolean().nullish(),
+		project_count: z.number().int().nullish(),
+		project_limit: z.number().int().nullish(),
+		users_allowed: z.boolean().nullish(),
+		ai_features_disabled: z.boolean().nullish(),
 	})
-	.strict();
+	.loose();
 export const StatusErrorObjectSchema = z
 	.object({ status: z.number().int(), error: z.string().optional() })
 	.strict();
@@ -39,34 +79,34 @@ export const FieldWithErrorObjectSchema = z
 	.strict();
 export const PackageFrequencyTriallingObjectSchema = z
 	.object({
-		package: z.string().optional(),
-		frequency: z.number().int().optional(),
-		trialling: z.boolean().optional(),
-		suspended: z.boolean().optional(),
+		package: z.string().nullish(),
+		frequency: z.number().int().nullish(),
+		trialling: z.boolean().nullish(),
+		suspended: z.boolean().nullish(),
 		scheduled_change: z
 			.object({
-				target_package: z.string().optional(),
-				target_frequency: z.number().int().optional(),
-				effective_at: z.string().optional(),
+				target_package: z.string().nullish(),
+				target_frequency: z.number().int().nullish(),
+				effective_at: z.string().nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const NumberKindCurrencyListSchema = z.array(
 	z
 		.object({
-			number: z.number().int().optional(),
-			kind: z.string().optional(),
-			currency: z.string().optional(),
-			total: z.string().optional(),
-			vat: z.string().optional(),
-			paid: z.boolean().optional(),
-			paid_at: z.string().optional(),
-			created_at: z.string().optional(),
-			download_url: z.string().optional(),
+			number: z.number().int().nullish(),
+			kind: z.string().nullish(),
+			currency: z.string().nullish(),
+			total: z.string().nullish(),
+			vat: z.string().nullish(),
+			paid: z.boolean().nullish(),
+			paid_at: z.string().nullish(),
+			created_at: z.string().nullish(),
+			download_url: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const StatusSuspensionTypeSuspensionReasonObjectSchema = z
 	.object({
@@ -79,30 +119,30 @@ export const StringValueSchema = z.string();
 export const AgentListSchema = z.array(
 	z
 		.object({
-			id: z.number().int().optional(),
-			created_at: z.string().optional(),
-			identifier: z.string().optional(),
-			name: z.string().optional(),
-			online: z.boolean().optional(),
-			revoked_at: z.union([z.null(), z.string()]).optional(),
-			updated_at: z.string().optional(),
+			id: z.number().int().nullish(),
+			created_at: z.string().nullish(),
+			identifier: z.string().nullish(),
+			name: z.string().nullish(),
+			online: z.boolean().nullish(),
+			revoked_at: z.union([z.null(), z.string()]).nullish(),
+			updated_at: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const AgentObjectSchema = z
 	.object({ agent: z.object({ claim_code: z.string() }).strict() })
 	.strict();
 export const AgentSchema = z
 	.object({
-		id: z.number().int().optional(),
-		created_at: z.string().optional(),
-		identifier: z.string().optional(),
-		name: z.string().optional(),
-		online: z.boolean().optional(),
-		revoked_at: z.union([z.null(), z.string()]).optional(),
-		updated_at: z.string().optional(),
+		id: z.number().int().nullish(),
+		created_at: z.string().nullish(),
+		identifier: z.string().nullish(),
+		name: z.string().nullish(),
+		online: z.boolean().nullish(),
+		revoked_at: z.union([z.null(), z.string()]).nullish(),
+		updated_at: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const ClaimCodeObjectSchema = z
 	.object({ claim_code: z.array(z.string()) })
 	.strict();
@@ -113,8 +153,8 @@ export const ErrorsObjectSchema = z
 	.object({ errors: z.array(z.string()) })
 	.strict();
 export const StatusObjectSchema = z
-	.object({ status: z.string().optional() })
-	.strict();
+	.object({ status: z.string().nullish() })
+	.loose();
 export const FieldWithErrorObject2Schema = z
 	.object({ field_with_error: z.string().optional() })
 	.strict();
@@ -135,15 +175,15 @@ export const EmailPasswordTermsAcceptedObjectSchema = z
 	.strict();
 export const AccountApiKeySshPublicKeyObjectSchema = z
 	.object({
-		account: z.record(z.string(), z.json()).optional(),
-		api_key: z.string().optional(),
-		ssh_public_key: z.record(z.string(), z.json()).optional(),
-		oauth_urls: z.record(z.string(), z.json()).optional(),
-		mcp_config: z.record(z.string(), z.json()).optional(),
-		email_verified: z.boolean().optional(),
-		client: z.string().optional(),
+		account: z.record(z.string(), z.json()).nullish(),
+		api_key: z.string().nullish(),
+		ssh_public_key: z.record(z.string(), z.json()).nullish(),
+		oauth_urls: z.record(z.string(), z.json()).nullish(),
+		mcp_config: z.record(z.string(), z.json()).nullish(),
+		email_verified: z.boolean().nullish(),
+		client: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const StatusErrorsObjectSchema = z
 	.object({
 		status: z.string().optional(),
@@ -155,10 +195,10 @@ export const ProtocolObjectSchema = z
 	.strict();
 export const EnrolledBetaFeaturesObjectSchema = z
 	.object({
-		enrolled: z.boolean().optional(),
-		beta_features: z.boolean().optional(),
+		enrolled: z.boolean().nullish(),
+		beta_features: z.boolean().nullish(),
 	})
-	.strict();
+	.loose();
 export const ErrorMessageBetaUrlObjectSchema = z
 	.object({
 		error: z.string().optional(),
@@ -182,86 +222,86 @@ export const DetectionObjectSchema = z
 	.strict();
 export const StackVersionEvidenceObjectSchema = z
 	.object({
-		stack: z.string().optional(),
-		version: z.string().optional(),
-		evidence: z.array(z.string()).optional(),
-		description: z.string().optional(),
-		suggested_protocol: z.string().optional(),
+		stack: z.string().nullish(),
+		version: z.string().nullish(),
+		evidence: z.array(z.string()).nullish(),
+		description: z.string().nullish(),
+		suggested_protocol: z.string().nullish(),
 		static_hosting: z
 			.object({
-				eligibility: z.string().optional(),
-				root_path: z.string().optional(),
-				spa_mode: z.boolean().optional(),
-				confidence: z.string().optional(),
+				eligibility: z.string().nullish(),
+				root_path: z.string().nullish(),
+				spa_mode: z.boolean().nullish(),
+				confidence: z.string().nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 		build_commands: z
 			.array(
 				z
 					.object({
-						description: z.string().optional(),
-						command: z.string().optional(),
-						halt_on_error: z.boolean().optional(),
-						template_name: z.string().optional(),
+						description: z.string().nullish(),
+						command: z.string().nullish(),
+						halt_on_error: z.boolean().nullish(),
+						template_name: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		excluded_files: z
-			.array(z.object({ path: z.string().optional() }).strict())
-			.optional(),
+			.array(z.object({ path: z.string().nullish() }).loose())
+			.nullish(),
 		build_cache_files: z
-			.array(z.object({ path: z.string().optional() }).strict())
-			.optional(),
-		ai_assisted: z.boolean().optional(),
+			.array(z.object({ path: z.string().nullish() }).loose())
+			.nullish(),
+		ai_assisted: z.boolean().nullish(),
 	})
-	.strict();
+	.loose();
 export const ErrorObjectSchema = z.object({ error: z.string() }).strict();
 export const IdentifierNamePositionListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
-			name: z.string().optional(),
-			position: z.number().int().optional(),
-			projects_count: z.number().int().optional(),
+			identifier: z.string().nullish(),
+			name: z.string().nullish(),
+			position: z.number().int().nullish(),
+			projects_count: z.number().int().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const FolderObjectSchema = z
 	.object({ folder: z.object({ name: z.string() }).strict() })
 	.strict();
 export const IdentifierNamePositionObjectSchema = z
 	.object({
-		identifier: z.string().optional(),
-		name: z.string().optional(),
-		position: z.number().int().optional(),
-		projects_count: z.number().int().optional(),
+		identifier: z.string().nullish(),
+		name: z.string().nullish(),
+		position: z.number().int().nullish(),
+		projects_count: z.number().int().nullish(),
 	})
-	.strict();
+	.loose();
 export const FieldWithErrorObject3Schema = z
 	.object({ field_with_error: z.array(z.string()).optional() })
 	.strict();
 export const BuildCommandListSchema = z.array(
 	z
 		.object({
-			id: z.number().int().optional(),
-			project_id: z.union([z.null(), z.number().int()]).optional(),
-			description: z.string().optional(),
-			command: z.string().optional(),
-			halt_on_error: z.boolean().optional(),
-			position: z.number().int().optional(),
-			created_at: z.string().optional(),
-			updated_at: z.string().optional(),
-			identifier: z.string().optional(),
-			parent_type: z.string().optional(),
-			parent_id: z.number().int().optional(),
-			template_name: z.string().optional(),
-			enabled: z.boolean().optional(),
-			watch_files: z.string().optional(),
-			source: z.string().optional(),
+			id: z.number().int().nullish(),
+			project_id: z.union([z.null(), z.number().int()]).nullish(),
+			description: z.string().nullish(),
+			command: z.string().nullish(),
+			halt_on_error: z.boolean().nullish(),
+			position: z.number().int().nullish(),
+			created_at: z.string().nullish(),
+			updated_at: z.string().nullish(),
+			identifier: z.string().nullish(),
+			parent_type: z.string().nullish(),
+			parent_id: z.number().int().nullish(),
+			template_name: z.string().nullish(),
+			enabled: z.boolean().nullish(),
+			watch_files: z.string().nullish(),
+			source: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const BuildCommandObjectSchema = z
 	.object({
@@ -278,87 +318,87 @@ export const BuildCommandObjectSchema = z
 	.strict();
 export const BuildCommandSchema = z
 	.object({
-		id: z.number().int().optional(),
-		project_id: z.union([z.null(), z.number().int()]).optional(),
-		description: z.string().optional(),
-		command: z.string().optional(),
-		halt_on_error: z.boolean().optional(),
-		position: z.number().int().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
-		identifier: z.string().optional(),
-		parent_type: z.string().optional(),
-		parent_id: z.number().int().optional(),
-		template_name: z.string().optional(),
-		enabled: z.boolean().optional(),
-		watch_files: z.string().optional(),
-		source: z.string().optional(),
+		id: z.number().int().nullish(),
+		project_id: z.union([z.null(), z.number().int()]).nullish(),
+		description: z.string().nullish(),
+		command: z.string().nullish(),
+		halt_on_error: z.boolean().nullish(),
+		position: z.number().int().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
+		identifier: z.string().nullish(),
+		parent_type: z.string().nullish(),
+		parent_id: z.number().int().nullish(),
+		template_name: z.string().nullish(),
+		enabled: z.boolean().nullish(),
+		watch_files: z.string().nullish(),
+		source: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const ConfigFileListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
-			description: z.union([z.null(), z.string()]).optional(),
-			path: z.string().optional(),
-			body: z.string().optional(),
-			build: z.boolean().optional(),
+			identifier: z.string().nullish(),
+			description: z.union([z.null(), z.string()]).nullish(),
+			path: z.string().nullish(),
+			body: z.string().nullish(),
+			build: z.boolean().nullish(),
 			servers: z
 				.array(
 					z
 						.object({
-							id: z.number().int().optional(),
-							identifier: z.string().optional(),
-							name: z.string().optional(),
-							protocol_type: z.string().optional(),
-							server_path: z.string().optional(),
-							last_revision: z.union([z.null(), z.string()]).optional(),
-							preferred_branch: z.string().optional(),
-							branch: z.union([z.null(), z.string()]).optional(),
-							notify_email: z.string().optional(),
-							server_group_identifier: z.string().optional(),
-							auto_deploy: z.boolean().optional(),
-							environment: z.string().optional(),
-							enabled: z.boolean().optional(),
+							id: z.number().int().nullish(),
+							identifier: z.string().nullish(),
+							name: z.string().nullish(),
+							protocol_type: z.string().nullish(),
+							server_path: z.string().nullish(),
+							last_revision: z.union([z.null(), z.string()]).nullish(),
+							preferred_branch: z.string().nullish(),
+							branch: z.union([z.null(), z.string()]).nullish(),
+							notify_email: z.string().nullish(),
+							server_group_identifier: z.string().nullish(),
+							auto_deploy: z.boolean().nullish(),
+							environment: z.string().nullish(),
+							enabled: z.boolean().nullish(),
 							agent: z
 								.object({
-									id: z.number().int().optional(),
-									created_at: z.string().optional(),
-									identifier: z.string().optional(),
-									name: z.string().optional(),
-									online: z.boolean().optional(),
-									revoked_at: z.union([z.null(), z.string()]).optional(),
-									updated_at: z.string().optional(),
+									id: z.number().int().nullish(),
+									created_at: z.string().nullish(),
+									identifier: z.string().nullish(),
+									name: z.string().nullish(),
+									online: z.boolean().nullish(),
+									revoked_at: z.union([z.null(), z.string()]).nullish(),
+									updated_at: z.string().nullish(),
 								})
-								.strict()
-								.optional(),
-							atomic: z.boolean().optional(),
-							atomic_strategy: z.string().optional(),
-							atomic_retention: z.number().int().optional(),
-							use_compression: z.boolean().optional(),
-							use_accelerated_transfer: z.boolean().optional(),
-							use_parallel_upload: z.boolean().optional(),
-							root_path: z.union([z.null(), z.string()]).optional(),
-							position: z.number().int().optional(),
-							created_at: z.string().optional(),
-							updated_at: z.string().optional(),
-							connection_checked_at: z.union([z.null(), z.string()]).optional(),
+								.loose()
+								.nullish(),
+							atomic: z.boolean().nullish(),
+							atomic_strategy: z.string().nullish(),
+							atomic_retention: z.number().int().nullish(),
+							use_compression: z.boolean().nullish(),
+							use_accelerated_transfer: z.boolean().nullish(),
+							use_parallel_upload: z.boolean().nullish(),
+							root_path: z.union([z.null(), z.string()]).nullish(),
+							position: z.number().int().nullish(),
+							created_at: z.string().nullish(),
+							updated_at: z.string().nullish(),
+							connection_checked_at: z.union([z.null(), z.string()]).nullish(),
 							connection_error_message: z
 								.union([z.null(), z.string()])
-								.optional(),
-							hostname: z.string().optional(),
-							username: z.string().optional(),
-							port: z.string().optional(),
-							use_ssh_keys: z.boolean().optional(),
-							host_key: z.string().optional(),
-							unlink_before_upload: z.boolean().optional(),
-							global_key_pair_id: z.string().optional(),
+								.nullish(),
+							hostname: z.string().nullish(),
+							username: z.string().nullish(),
+							port: z.union([z.string(), z.number()]).nullish(),
+							use_ssh_keys: z.boolean().nullish(),
+							host_key: z.string().nullish(),
+							unlink_before_upload: z.boolean().nullish(),
+							global_key_pair_id: z.string().nullish(),
 						})
-						.strict(),
+						.loose(),
 				)
-				.optional(),
+				.nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const ConfigFileObjectSchema = z
 	.object({
@@ -375,79 +415,77 @@ export const ConfigFileObjectSchema = z
 	.strict();
 export const ConfigFileSchema = z
 	.object({
-		identifier: z.string().optional(),
-		description: z.union([z.null(), z.string()]).optional(),
-		path: z.string().optional(),
-		body: z.string().optional(),
-		build: z.boolean().optional(),
+		identifier: z.string().nullish(),
+		description: z.union([z.null(), z.string()]).nullish(),
+		path: z.string().nullish(),
+		body: z.string().nullish(),
+		build: z.boolean().nullish(),
 		servers: z
 			.array(
 				z
 					.object({
-						id: z.number().int().optional(),
-						identifier: z.string().optional(),
-						name: z.string().optional(),
-						protocol_type: z.string().optional(),
-						server_path: z.string().optional(),
-						last_revision: z.union([z.null(), z.string()]).optional(),
-						preferred_branch: z.string().optional(),
-						branch: z.union([z.null(), z.string()]).optional(),
-						notify_email: z.string().optional(),
-						server_group_identifier: z.string().optional(),
-						auto_deploy: z.boolean().optional(),
-						environment: z.string().optional(),
-						enabled: z.boolean().optional(),
+						id: z.number().int().nullish(),
+						identifier: z.string().nullish(),
+						name: z.string().nullish(),
+						protocol_type: z.string().nullish(),
+						server_path: z.string().nullish(),
+						last_revision: z.union([z.null(), z.string()]).nullish(),
+						preferred_branch: z.string().nullish(),
+						branch: z.union([z.null(), z.string()]).nullish(),
+						notify_email: z.string().nullish(),
+						server_group_identifier: z.string().nullish(),
+						auto_deploy: z.boolean().nullish(),
+						environment: z.string().nullish(),
+						enabled: z.boolean().nullish(),
 						agent: z
 							.object({
-								id: z.number().int().optional(),
-								created_at: z.string().optional(),
-								identifier: z.string().optional(),
-								name: z.string().optional(),
-								online: z.boolean().optional(),
-								revoked_at: z.union([z.null(), z.string()]).optional(),
-								updated_at: z.string().optional(),
+								id: z.number().int().nullish(),
+								created_at: z.string().nullish(),
+								identifier: z.string().nullish(),
+								name: z.string().nullish(),
+								online: z.boolean().nullish(),
+								revoked_at: z.union([z.null(), z.string()]).nullish(),
+								updated_at: z.string().nullish(),
 							})
-							.strict()
-							.optional(),
-						atomic: z.boolean().optional(),
-						atomic_strategy: z.string().optional(),
-						atomic_retention: z.number().int().optional(),
-						use_compression: z.boolean().optional(),
-						use_accelerated_transfer: z.boolean().optional(),
-						use_parallel_upload: z.boolean().optional(),
-						root_path: z.union([z.null(), z.string()]).optional(),
-						position: z.number().int().optional(),
-						created_at: z.string().optional(),
-						updated_at: z.string().optional(),
-						connection_checked_at: z.union([z.null(), z.string()]).optional(),
-						connection_error_message: z
-							.union([z.null(), z.string()])
-							.optional(),
-						hostname: z.string().optional(),
-						username: z.string().optional(),
-						port: z.string().optional(),
-						use_ssh_keys: z.boolean().optional(),
-						host_key: z.string().optional(),
-						unlink_before_upload: z.boolean().optional(),
-						global_key_pair_id: z.string().optional(),
+							.loose()
+							.nullish(),
+						atomic: z.boolean().nullish(),
+						atomic_strategy: z.string().nullish(),
+						atomic_retention: z.number().int().nullish(),
+						use_compression: z.boolean().nullish(),
+						use_accelerated_transfer: z.boolean().nullish(),
+						use_parallel_upload: z.boolean().nullish(),
+						root_path: z.union([z.null(), z.string()]).nullish(),
+						position: z.number().int().nullish(),
+						created_at: z.string().nullish(),
+						updated_at: z.string().nullish(),
+						connection_checked_at: z.union([z.null(), z.string()]).nullish(),
+						connection_error_message: z.union([z.null(), z.string()]).nullish(),
+						hostname: z.string().nullish(),
+						username: z.string().nullish(),
+						port: z.union([z.string(), z.number()]).nullish(),
+						use_ssh_keys: z.boolean().nullish(),
+						host_key: z.string().nullish(),
+						unlink_before_upload: z.boolean().nullish(),
+						global_key_pair_id: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const EnvironmentVariableListSchema = z.array(
 	z
 		.object({
-			identifier: z.number().int().optional(),
-			name: z.string().optional(),
-			masked_value: z.string().optional(),
-			locked: z.boolean().optional(),
-			build_pipeline: z.boolean().optional(),
-			created_at: z.string().optional(),
-			updated_at: z.string().optional(),
+			identifier: z.number().int().nullish(),
+			name: z.string().nullish(),
+			masked_value: z.string().nullish(),
+			locked: z.boolean().nullish(),
+			build_pipeline: z.boolean().nullish(),
+			created_at: z.string().nullish(),
+			updated_at: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const EnvironmentVariableObjectSchema = z
 	.object({
@@ -463,15 +501,15 @@ export const EnvironmentVariableObjectSchema = z
 	.strict();
 export const EnvironmentVariableSchema = z
 	.object({
-		identifier: z.number().int().optional(),
-		name: z.string().optional(),
-		masked_value: z.string().optional(),
-		locked: z.boolean().optional(),
-		build_pipeline: z.boolean().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
+		identifier: z.number().int().nullish(),
+		name: z.string().nullish(),
+		masked_value: z.string().nullish(),
+		locked: z.boolean().nullish(),
+		build_pipeline: z.boolean().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const ErrorsObject2Schema = z
 	.object({ errors: z.array(z.string()).optional() })
 	.strict();
@@ -490,45 +528,46 @@ export const EnvironmentVariableObject2Schema = z
 export const ServerListSchema = z.array(
 	z
 		.object({
-			id: z.number().int().optional(),
-			identifier: z.string().optional(),
-			name: z.string().optional(),
-			protocol_type: z.string().optional(),
-			server_path: z.string().optional(),
-			last_revision: z.union([z.null(), z.string()]).optional(),
-			preferred_branch: z.string().optional(),
-			branch: z.string().optional(),
-			notify_email: z.string().optional(),
-			server_group_identifier: z.union([z.null(), z.string()]).optional(),
-			auto_deploy: z.boolean().optional(),
-			environment: z.string().optional(),
-			enabled: z.boolean().optional(),
-			agent: z.union([z.null(), z.string()]).optional(),
-			atomic: z.boolean().optional(),
-			atomic_strategy: z.string().optional(),
-			atomic_retention: z.number().int().optional(),
-			use_compression: z.boolean().optional(),
-			use_accelerated_transfer: z.boolean().optional(),
-			use_parallel_upload: z.boolean().optional(),
-			root_path: z.string().optional(),
-			position: z.number().int().optional(),
-			created_at: z.string().optional(),
-			updated_at: z.string().optional(),
-			connection_checked_at: z.union([z.null(), z.string()]).optional(),
-			connection_error_message: z.union([z.null(), z.string()]).optional(),
-			hostname: z.string().optional(),
-			username: z.string().optional(),
-			port: z.string().optional(),
-			use_ssh_keys: z.boolean().optional(),
-			host_key: z.string().optional(),
-			unlink_before_upload: z.boolean().optional(),
+			id: z.number().int().nullish(),
+			identifier: z.string().nullish(),
+			name: z.string().nullish(),
+			protocol_type: z.string().nullish(),
+			server_path: z.string().nullish(),
+			last_revision: z.union([z.null(), z.string()]).nullish(),
+			preferred_branch: z.string().nullish(),
+			branch: z.string().nullish(),
+			notify_email: z.string().nullish(),
+			server_group_identifier: z.union([z.null(), z.string()]).nullish(),
+			auto_deploy: z.boolean().nullish(),
+			environment: z.string().nullish(),
+			enabled: z.boolean().nullish(),
+			agent: z.union([z.null(), z.string()]).nullish(),
+			atomic: z.boolean().nullish(),
+			atomic_strategy: z.string().nullish(),
+			atomic_retention: z.number().int().nullish(),
+			use_compression: z.boolean().nullish(),
+			use_accelerated_transfer: z.boolean().nullish(),
+			use_parallel_upload: z.boolean().nullish(),
+			root_path: z.string().nullish(),
+			position: z.number().int().nullish(),
+			created_at: z.string().nullish(),
+			updated_at: z.string().nullish(),
+			connection_checked_at: z.union([z.null(), z.string()]).nullish(),
+			connection_error_message: z.union([z.null(), z.string()]).nullish(),
+			hostname: z.string().nullish(),
+			username: z.string().nullish(),
+			port: z.union([z.string(), z.number()]).nullish(),
+			use_ssh_keys: z.boolean().nullish(),
+			host_key: z.string().nullish(),
+			unlink_before_upload: z.boolean().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const ServerRegionSizeObjectSchema = z
 	.object({
 		server: z
 			.object({
+				...ServerConnectionFields,
 				name: z.string().optional(),
 				protocol_type: z.string().optional(),
 				server_path: z.string().optional(),
@@ -550,71 +589,72 @@ export const ServerRegionSizeObjectSchema = z
 	.strict();
 export const ServerSchema = z
 	.object({
-		id: z.number().int().optional(),
-		identifier: z.string().optional(),
-		name: z.string().optional(),
-		protocol_type: z.string().optional(),
-		server_path: z.string().optional(),
-		last_revision: z.union([z.null(), z.string()]).optional(),
-		preferred_branch: z.string().optional(),
-		branch: z.string().optional(),
-		notify_email: z.string().optional(),
-		server_group_identifier: z.union([z.null(), z.string()]).optional(),
-		auto_deploy: z.boolean().optional(),
-		environment: z.string().optional(),
-		enabled: z.boolean().optional(),
-		agent: z.union([z.null(), z.string()]).optional(),
-		atomic: z.boolean().optional(),
-		atomic_strategy: z.string().optional(),
-		atomic_retention: z.number().int().optional(),
-		use_compression: z.boolean().optional(),
-		use_accelerated_transfer: z.boolean().optional(),
-		use_parallel_upload: z.boolean().optional(),
-		root_path: z.string().optional(),
-		position: z.number().int().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
-		connection_checked_at: z.union([z.null(), z.string()]).optional(),
-		connection_error_message: z.union([z.null(), z.string()]).optional(),
-		hostname: z.string().optional(),
-		username: z.string().optional(),
-		port: z.string().optional(),
-		use_ssh_keys: z.boolean().optional(),
-		host_key: z.string().optional(),
-		unlink_before_upload: z.boolean().optional(),
+		id: z.number().int().nullish(),
+		identifier: z.string().nullish(),
+		name: z.string().nullish(),
+		protocol_type: z.string().nullish(),
+		server_path: z.string().nullish(),
+		last_revision: z.union([z.null(), z.string()]).nullish(),
+		preferred_branch: z.string().nullish(),
+		branch: z.string().nullish(),
+		notify_email: z.string().nullish(),
+		server_group_identifier: z.union([z.null(), z.string()]).nullish(),
+		auto_deploy: z.boolean().nullish(),
+		environment: z.string().nullish(),
+		enabled: z.boolean().nullish(),
+		agent: z.union([z.null(), z.string()]).nullish(),
+		atomic: z.boolean().nullish(),
+		atomic_strategy: z.string().nullish(),
+		atomic_retention: z.number().int().nullish(),
+		use_compression: z.boolean().nullish(),
+		use_accelerated_transfer: z.boolean().nullish(),
+		use_parallel_upload: z.boolean().nullish(),
+		root_path: z.string().nullish(),
+		position: z.number().int().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
+		connection_checked_at: z.union([z.null(), z.string()]).nullish(),
+		connection_error_message: z.union([z.null(), z.string()]).nullish(),
+		hostname: z.string().nullish(),
+		username: z.string().nullish(),
+		port: z.union([z.string(), z.number()]).nullish(),
+		use_ssh_keys: z.boolean().nullish(),
+		host_key: z.string().nullish(),
+		unlink_before_upload: z.boolean().nullish(),
 	})
-	.strict();
+	.loose();
 export const IdIdentifierNameObjectSchema = z
 	.object({
-		id: z.number().int().optional(),
-		identifier: z.string().optional(),
-		name: z.string().optional(),
-		protocol_type: z.string().optional(),
-		enabled: z.boolean().optional(),
+		id: z.number().int().nullish(),
+		identifier: z.string().nullish(),
+		name: z.string().nullish(),
+		protocol_type: z.string().nullish(),
+		enabled: z.boolean().nullish(),
 		managed_vps: z
 			.object({
-				hosted_resource_identifier: z.string().optional(),
-				status: z.string().optional(),
-				ip_address: z.string().optional(),
-				region: z.string().optional(),
-				size: z.string().optional(),
+				hosted_resource_identifier: z.string().nullish(),
+				status: z.string().nullish(),
+				ip_address: z.string().nullish(),
+				region: z.string().nullish(),
+				size: z.string().nullish(),
 				ssh_key: z
 					.object({
-						identifier: z.string().optional(),
-						title: z.string().optional(),
-						fingerprint: z.string().optional(),
+						identifier: z.string().nullish(),
+						title: z.string().nullish(),
+						fingerprint: z.string().nullish(),
 					})
-					.strict()
-					.optional(),
+					.loose()
+					.nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const ServerObjectSchema = z
 	.object({
 		server: z
 			.object({
+				...ServerConnectionFields,
 				name: z.string().optional(),
 				protocol_type: z.string().optional(),
 				server_path: z.string().optional(),
@@ -633,61 +673,61 @@ export const ServerObjectSchema = z
 export const CommandListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
-			cback: z.string().optional(),
-			position: z.number().int().optional(),
-			description: z.string().optional(),
-			command: z.string().optional(),
-			halt_on_error: z.boolean().optional(),
+			identifier: z.string().nullish(),
+			cback: z.string().nullish(),
+			position: z.number().int().nullish(),
+			description: z.string().nullish(),
+			command: z.string().nullish(),
+			halt_on_error: z.boolean().nullish(),
 			servers: z
 				.array(
 					z
 						.object({
-							id: z.number().int().optional(),
-							identifier: z.string().optional(),
-							name: z.string().optional(),
-							protocol_type: z.string().optional(),
-							server_path: z.string().optional(),
-							last_revision: z.string().optional(),
-							preferred_branch: z.string().optional(),
-							branch: z.string().optional(),
-							notify_email: z.string().optional(),
+							id: z.number().int().nullish(),
+							identifier: z.string().nullish(),
+							name: z.string().nullish(),
+							protocol_type: z.string().nullish(),
+							server_path: z.string().nullish(),
+							last_revision: z.string().nullish(),
+							preferred_branch: z.string().nullish(),
+							branch: z.string().nullish(),
+							notify_email: z.string().nullish(),
 							server_group_identifier: z
 								.union([z.null(), z.string()])
-								.optional(),
-							auto_deploy: z.boolean().optional(),
-							environment: z.string().optional(),
-							enabled: z.boolean().optional(),
-							agent: z.union([z.null(), z.string()]).optional(),
-							atomic: z.boolean().optional(),
-							atomic_strategy: z.string().optional(),
-							atomic_retention: z.number().int().optional(),
-							use_compression: z.boolean().optional(),
-							use_accelerated_transfer: z.boolean().optional(),
-							use_parallel_upload: z.boolean().optional(),
-							root_path: z.string().optional(),
-							position: z.number().int().optional(),
-							created_at: z.string().optional(),
-							updated_at: z.string().optional(),
-							connection_checked_at: z.union([z.null(), z.string()]).optional(),
+								.nullish(),
+							auto_deploy: z.boolean().nullish(),
+							environment: z.string().nullish(),
+							enabled: z.boolean().nullish(),
+							agent: z.union([z.null(), z.string()]).nullish(),
+							atomic: z.boolean().nullish(),
+							atomic_strategy: z.string().nullish(),
+							atomic_retention: z.number().int().nullish(),
+							use_compression: z.boolean().nullish(),
+							use_accelerated_transfer: z.boolean().nullish(),
+							use_parallel_upload: z.boolean().nullish(),
+							root_path: z.string().nullish(),
+							position: z.number().int().nullish(),
+							created_at: z.string().nullish(),
+							updated_at: z.string().nullish(),
+							connection_checked_at: z.union([z.null(), z.string()]).nullish(),
 							connection_error_message: z
 								.union([z.null(), z.string()])
-								.optional(),
-							hostname: z.string().optional(),
-							username: z.string().optional(),
-							port: z.string().optional(),
-							use_ssh_keys: z.boolean().optional(),
-							host_key: z.string().optional(),
-							unlink_before_upload: z.boolean().optional(),
+								.nullish(),
+							hostname: z.string().nullish(),
+							username: z.string().nullish(),
+							port: z.union([z.string(), z.number()]).nullish(),
+							use_ssh_keys: z.boolean().nullish(),
+							host_key: z.string().nullish(),
+							unlink_before_upload: z.boolean().nullish(),
 						})
-						.strict(),
+						.loose(),
 				)
-				.optional(),
-			timing: z.string().optional(),
-			timeout: z.number().int().optional(),
-			enabled: z.boolean().optional(),
+				.nullish(),
+			timing: z.string().nullish(),
+			timeout: z.number().int().nullish(),
+			enabled: z.boolean().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const CommandObjectSchema = z
 	.object({
@@ -703,59 +743,57 @@ export const CommandObjectSchema = z
 	.strict();
 export const CommandSchema = z
 	.object({
-		identifier: z.string().optional(),
-		cback: z.string().optional(),
-		position: z.number().int().optional(),
-		description: z.string().optional(),
-		command: z.string().optional(),
-		halt_on_error: z.boolean().optional(),
+		identifier: z.string().nullish(),
+		cback: z.string().nullish(),
+		position: z.number().int().nullish(),
+		description: z.string().nullish(),
+		command: z.string().nullish(),
+		halt_on_error: z.boolean().nullish(),
 		servers: z
 			.array(
 				z
 					.object({
-						id: z.number().int().optional(),
-						identifier: z.string().optional(),
-						name: z.string().optional(),
-						protocol_type: z.string().optional(),
-						server_path: z.string().optional(),
-						last_revision: z.string().optional(),
-						preferred_branch: z.string().optional(),
-						branch: z.string().optional(),
-						notify_email: z.string().optional(),
-						server_group_identifier: z.union([z.null(), z.string()]).optional(),
-						auto_deploy: z.boolean().optional(),
-						environment: z.string().optional(),
-						enabled: z.boolean().optional(),
-						agent: z.union([z.null(), z.string()]).optional(),
-						atomic: z.boolean().optional(),
-						atomic_strategy: z.string().optional(),
-						atomic_retention: z.number().int().optional(),
-						use_compression: z.boolean().optional(),
-						use_accelerated_transfer: z.boolean().optional(),
-						use_parallel_upload: z.boolean().optional(),
-						root_path: z.string().optional(),
-						position: z.number().int().optional(),
-						created_at: z.string().optional(),
-						updated_at: z.string().optional(),
-						connection_checked_at: z.union([z.null(), z.string()]).optional(),
-						connection_error_message: z
-							.union([z.null(), z.string()])
-							.optional(),
-						hostname: z.string().optional(),
-						username: z.string().optional(),
-						port: z.string().optional(),
-						use_ssh_keys: z.boolean().optional(),
-						host_key: z.string().optional(),
-						unlink_before_upload: z.boolean().optional(),
+						id: z.number().int().nullish(),
+						identifier: z.string().nullish(),
+						name: z.string().nullish(),
+						protocol_type: z.string().nullish(),
+						server_path: z.string().nullish(),
+						last_revision: z.string().nullish(),
+						preferred_branch: z.string().nullish(),
+						branch: z.string().nullish(),
+						notify_email: z.string().nullish(),
+						server_group_identifier: z.union([z.null(), z.string()]).nullish(),
+						auto_deploy: z.boolean().nullish(),
+						environment: z.string().nullish(),
+						enabled: z.boolean().nullish(),
+						agent: z.union([z.null(), z.string()]).nullish(),
+						atomic: z.boolean().nullish(),
+						atomic_strategy: z.string().nullish(),
+						atomic_retention: z.number().int().nullish(),
+						use_compression: z.boolean().nullish(),
+						use_accelerated_transfer: z.boolean().nullish(),
+						use_parallel_upload: z.boolean().nullish(),
+						root_path: z.string().nullish(),
+						position: z.number().int().nullish(),
+						created_at: z.string().nullish(),
+						updated_at: z.string().nullish(),
+						connection_checked_at: z.union([z.null(), z.string()]).nullish(),
+						connection_error_message: z.union([z.null(), z.string()]).nullish(),
+						hostname: z.string().nullish(),
+						username: z.string().nullish(),
+						port: z.union([z.string(), z.number()]).nullish(),
+						use_ssh_keys: z.boolean().nullish(),
+						host_key: z.string().nullish(),
+						unlink_before_upload: z.boolean().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
-		timing: z.string().optional(),
-		timeout: z.number().int().optional(),
-		enabled: z.boolean().optional(),
+			.nullish(),
+		timing: z.string().nullish(),
+		timeout: z.number().int().nullish(),
+		enabled: z.boolean().nullish(),
 	})
-	.strict();
+	.loose();
 export const CommandObject2Schema = z
 	.object({
 		command: z
@@ -771,65 +809,65 @@ export const CommandObject2Schema = z
 export const KindIdentifierNameListSchema = z.array(
 	z
 		.object({
-			kind: z.string().optional(),
-			identifier: z.string().optional(),
-			name: z.string().optional(),
-			status: z.string().optional(),
-			monthly_cost: z.json().optional(),
-			region: z.string().optional(),
-			size: z.string().optional(),
-			ip_address: z.string().optional(),
+			kind: z.string().nullish(),
+			identifier: z.string().nullish(),
+			name: z.string().nullish(),
+			status: z.string().nullish(),
+			monthly_cost: z.json().nullish(),
+			region: z.string().nullish(),
+			size: z.string().nullish(),
+			ip_address: z.string().nullish(),
 			ssh_key: z
 				.object({
-					identifier: z.string().optional(),
-					title: z.string().optional(),
-					public_key: z.string().optional(),
-					key_type: z.string().optional(),
-					fingerprint: z.string().optional(),
-					account: z.string().optional(),
+					identifier: z.string().nullish(),
+					title: z.string().nullish(),
+					public_key: z.string().nullish(),
+					key_type: z.string().nullish(),
+					fingerprint: z.string().nullish(),
+					account: z.string().nullish(),
 				})
-				.strict()
-				.optional(),
-			subdomain: z.string().optional(),
-			spa_mode: z.boolean().optional(),
-			storage_bytes_total: z.number().int().optional(),
-			active_deployment_uuid: z.string().optional(),
-			deployment_count: z.number().int().optional(),
-			created_at: z.string().optional(),
-			updated_at: z.string().optional(),
+				.loose()
+				.nullish(),
+			subdomain: z.string().nullish(),
+			spa_mode: z.boolean().nullish(),
+			storage_bytes_total: z.number().int().nullish(),
+			active_deployment_uuid: z.string().nullish(),
+			deployment_count: z.number().int().nullish(),
+			created_at: z.string().nullish(),
+			updated_at: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const KindIdentifierNameObjectSchema = z
 	.object({
-		kind: z.string().optional(),
-		identifier: z.string().optional(),
-		name: z.string().optional(),
-		status: z.string().optional(),
-		monthly_cost: z.json().optional(),
-		region: z.string().optional(),
-		size: z.string().optional(),
-		ip_address: z.string().optional(),
+		kind: z.string().nullish(),
+		identifier: z.string().nullish(),
+		name: z.string().nullish(),
+		status: z.string().nullish(),
+		monthly_cost: z.json().nullish(),
+		region: z.string().nullish(),
+		size: z.string().nullish(),
+		ip_address: z.string().nullish(),
 		ssh_key: z
 			.object({
-				identifier: z.string().optional(),
-				title: z.string().optional(),
-				public_key: z.string().optional(),
-				key_type: z.string().optional(),
-				fingerprint: z.string().optional(),
-				account: z.string().optional(),
+				identifier: z.string().nullish(),
+				title: z.string().nullish(),
+				public_key: z.string().nullish(),
+				key_type: z.string().nullish(),
+				fingerprint: z.string().nullish(),
+				account: z.string().nullish(),
 			})
-			.strict()
-			.optional(),
-		subdomain: z.string().optional(),
-		spa_mode: z.boolean().optional(),
-		storage_bytes_total: z.number().int().optional(),
-		active_deployment_uuid: z.string().optional(),
-		deployment_count: z.number().int().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
+			.loose()
+			.nullish(),
+		subdomain: z.string().nullish(),
+		spa_mode: z.boolean().nullish(),
+		storage_bytes_total: z.number().int().nullish(),
+		active_deployment_uuid: z.string().nullish(),
+		deployment_count: z.number().int().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const ErrorObject2Schema = z
 	.object({ error: z.string().optional() })
 	.strict();
@@ -837,108 +875,108 @@ export const SharedZonesNetworkAgentObjectSchema = z
 	.object({
 		shared: z
 			.object({
-				ipv4: z.array(z.string()).optional(),
-				ipv6: z.array(z.string()).optional(),
+				ipv4: z.array(z.string()).nullish(),
+				ipv6: z.array(z.string()).nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 		zones: z
 			.object({
 				uk: z
 					.object({
-						name: z.string().optional(),
-						ipv4: z.array(z.string()).optional(),
-						ipv6: z.array(z.string()).optional(),
+						name: z.string().nullish(),
+						ipv4: z.array(z.string()).nullish(),
+						ipv6: z.array(z.string()).nullish(),
 					})
-					.strict()
-					.optional(),
+					.loose()
+					.nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 		network_agent: z
 			.object({
-				ipv4: z.array(z.string()).optional(),
-				ipv6: z.array(z.string()).optional(),
+				ipv4: z.array(z.string()).nullish(),
+				ipv6: z.array(z.string()).nullish(),
 			})
-			.strict()
-			.optional(),
-		all_ipv4: z.array(z.string()).optional(),
-		all_ipv6: z.array(z.string()).optional(),
+			.loose()
+			.nullish(),
+		all_ipv4: z.array(z.string()).nullish(),
+		all_ipv6: z.array(z.string()).nullish(),
 		ports: z
 			.array(
 				z
 					.object({
-						protocol: z.string().optional(),
-						description: z.string().optional(),
+						protocol: z.string().nullish(),
+						description: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const NodeRubyPhpObjectSchema = z
 	.object({
-		node: z.array(z.string()).optional(),
-		ruby: z.array(z.string()).optional(),
-		php: z.array(z.string()).optional(),
+		node: z.array(z.string()).nullish(),
+		ruby: z.array(z.string()).nullish(),
+		php: z.array(z.string()).nullish(),
 	})
-	.strict();
+	.loose();
 export const GroupedRegionsObjectSchema = z
-	.object({ grouped_regions: z.record(z.string(), z.json()).optional() })
-	.strict();
+	.object({ grouped_regions: z.record(z.string(), z.json()).nullish() })
+	.loose();
 export const SizesObjectSchema = z
 	.object({
 		sizes: z
 			.array(
 				z
 					.object({
-						slug: z.string().optional(),
-						label: z.string().optional(),
-						monthly_cost: z.json().optional(),
-						currency: z.string().optional(),
+						slug: z.string().nullish(),
+						label: z.string().nullish(),
+						monthly_cost: z.json().nullish(),
+						currency: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const PermalinkNameCurrencyListSchema = z.array(
 	z
 		.object({
-			permalink: z.string().optional(),
-			name: z.string().optional(),
-			currency: z.string().optional(),
-			price: z.json().optional(),
-			price_billed_annually: z.json().optional(),
-			features: z.array(z.string()).optional(),
+			permalink: z.string().nullish(),
+			name: z.string().nullish(),
+			currency: z.string().nullish(),
+			price: z.json().nullish(),
+			price_billed_annually: z.json().nullish(),
+			features: z.array(z.string()).nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const FirstNameLastNameEmailAddressObjectSchema = z
 	.object({
-		first_name: z.string().optional(),
-		last_name: z.string().optional(),
-		email_address: z.string().optional(),
-		time_zone: z.string().optional(),
+		first_name: z.string().nullish(),
+		last_name: z.string().nullish(),
+		email_address: z.string().nullish(),
+		time_zone: z.string().nullish(),
 		account: z
 			.object({
-				name: z.string().optional(),
-				permalink: z.string().optional(),
-				time_zone: z.string().optional(),
-				package: z.string().optional(),
-				trialling: z.boolean().optional(),
-				suspended: z.boolean().optional(),
-				project_count: z.number().int().optional(),
-				project_limit: z.number().int().optional(),
-				users_allowed: z.boolean().optional(),
-				beta_features: z.boolean().optional(),
-				static_hosting_eligible: z.boolean().optional(),
-				managed_vps_eligible: z.boolean().optional(),
+				name: z.string().nullish(),
+				permalink: z.string().nullish(),
+				time_zone: z.string().nullish(),
+				package: z.string().nullish(),
+				trialling: z.boolean().nullish(),
+				suspended: z.boolean().nullish(),
+				project_count: z.number().int().nullish(),
+				project_limit: z.number().int().nullish(),
+				users_allowed: z.boolean().nullish(),
+				beta_features: z.boolean().nullish(),
+				static_hosting_eligible: z.boolean().nullish(),
+				managed_vps_eligible: z.boolean().nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const UserObjectSchema = z
 	.object({
 		user: z
@@ -955,32 +993,32 @@ export const UserObjectSchema = z
 export const NamePermalinkIdentifierListSchema = z.array(
 	z
 		.object({
-			name: z.string().optional(),
-			permalink: z.string().optional(),
-			identifier: z.string().optional(),
-			public_key: z.string().optional(),
-			repository: z.record(z.string(), z.json()).optional(),
-			repository_url: z.string().optional(),
-			zone: z.string().optional(),
-			last_deployed_at: z.string().optional(),
+			name: z.string().nullish(),
+			permalink: z.string().nullish(),
+			identifier: z.string().nullish(),
+			public_key: z.string().nullish(),
+			repository: z.record(z.string(), z.json()).nullish(),
+			repository_url: z.string().nullish(),
+			zone: z.string().nullish(),
+			last_deployed_at: z.string().nullish(),
 			folder: z
 				.object({
-					identifier: z.string().optional(),
-					name: z.string().optional(),
+					identifier: z.string().nullish(),
+					name: z.string().nullish(),
 				})
-				.strict()
-				.optional(),
-			auto_deploy_url: z.string().optional(),
-			url: z.string().optional(),
-			app_url: z.string().optional(),
-			servers_url: z.string().optional(),
-			deployments_url: z.string().optional(),
-			config_files_url: z.string().optional(),
-			environment_variables_url: z.string().optional(),
-			build_commands_url: z.string().optional(),
-			starred: z.boolean().optional(),
+				.loose()
+				.nullish(),
+			auto_deploy_url: z.string().nullish(),
+			url: z.string().nullish(),
+			app_url: z.string().nullish(),
+			servers_url: z.string().nullish(),
+			deployments_url: z.string().nullish(),
+			config_files_url: z.string().nullish(),
+			environment_variables_url: z.string().nullish(),
+			build_commands_url: z.string().nullish(),
+			starred: z.boolean().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const ProjectObjectSchema = z
 	.object({
@@ -996,76 +1034,76 @@ export const ProjectObjectSchema = z
 	.strict();
 export const ProjectSchema = z
 	.object({
-		name: z.string().optional(),
-		permalink: z.string().optional(),
-		identifier: z.string().optional(),
-		public_key: z.string().optional(),
+		name: z.string().nullish(),
+		permalink: z.string().nullish(),
+		identifier: z.string().nullish(),
+		public_key: z.string().nullish(),
 		repository: z
 			.object({
-				scm_type: z.string().optional(),
-				url: z.string().optional(),
-				port: z.union([z.null(), z.number().int()]).optional(),
-				username: z.union([z.null(), z.string()]).optional(),
-				branch: z.string().optional(),
-				cached: z.boolean().optional(),
+				scm_type: z.string().nullish(),
+				url: z.string().nullish(),
+				port: z.union([z.null(), z.number().int()]).nullish(),
+				username: z.union([z.null(), z.string()]).nullish(),
+				branch: z.string().nullish(),
+				cached: z.boolean().nullish(),
 				hosting_service: z
 					.object({
-						name: z.string().optional(),
-						url: z.string().optional(),
-						tree_url: z.string().optional(),
-						commits_url: z.string().optional(),
+						name: z.string().nullish(),
+						url: z.string().nullish(),
+						tree_url: z.string().nullish(),
+						commits_url: z.string().nullish(),
 					})
-					.strict()
-					.optional(),
+					.loose()
+					.nullish(),
 			})
-			.strict()
-			.optional(),
-		repository_url: z.string().optional(),
-		zone: z.string().optional(),
-		last_deployed_at: z.union([z.null(), z.string()]).optional(),
-		folder: z.union([z.null(), z.string()]).optional(),
-		auto_deploy_url: z.string().optional(),
+			.loose()
+			.nullish(),
+		repository_url: z.string().nullish(),
+		zone: z.string().nullish(),
+		last_deployed_at: z.union([z.null(), z.string()]).nullish(),
+		folder: z.union([z.null(), z.string()]).nullish(),
+		auto_deploy_url: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const NamePermalinkIdentifierObjectSchema = z
 	.object({
-		name: z.string().optional(),
-		permalink: z.string().optional(),
-		identifier: z.string().optional(),
-		public_key: z.string().optional(),
-		repository: z.record(z.string(), z.json()).optional(),
-		repository_url: z.string().optional(),
-		zone: z.string().optional(),
-		last_deployed_at: z.string().optional(),
+		name: z.string().nullish(),
+		permalink: z.string().nullish(),
+		identifier: z.string().nullish(),
+		public_key: z.string().nullish(),
+		repository: z.record(z.string(), z.json()).nullish(),
+		repository_url: z.string().nullish(),
+		zone: z.string().nullish(),
+		last_deployed_at: z.string().nullish(),
 		folder: z
 			.object({
-				identifier: z.string().optional(),
-				name: z.string().optional(),
+				identifier: z.string().nullish(),
+				name: z.string().nullish(),
 			})
-			.strict()
-			.optional(),
-		auto_deploy_url: z.string().optional(),
-		url: z.string().optional(),
-		app_url: z.string().optional(),
-		servers_url: z.string().optional(),
-		deployments_url: z.string().optional(),
-		config_files_url: z.string().optional(),
-		environment_variables_url: z.string().optional(),
-		build_commands_url: z.string().optional(),
+			.loose()
+			.nullish(),
+		auto_deploy_url: z.string().nullish(),
+		url: z.string().nullish(),
+		app_url: z.string().nullish(),
+		servers_url: z.string().nullish(),
+		deployments_url: z.string().nullish(),
+		config_files_url: z.string().nullish(),
+		environment_variables_url: z.string().nullish(),
+		build_commands_url: z.string().nullish(),
 		capabilities: z
 			.array(
 				z
 					.object({
-						name: z.string().optional(),
-						enabled: z.boolean().optional(),
-						url: z.string().optional(),
+						name: z.string().nullish(),
+						enabled: z.boolean().nullish(),
+						url: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
-		starred: z.boolean().optional(),
+			.nullish(),
+		starred: z.boolean().nullish(),
 	})
-	.strict();
+	.loose();
 export const ProjectObject2Schema = z
 	.object({
 		project: z
@@ -1093,71 +1131,71 @@ export const StartRefEndRefObjectSchema = z
 	.strict();
 export const SuccessOverviewObjectSchema = z
 	.object({ success: z.boolean(), overview: z.string() })
-	.strict();
+	.loose();
 export const SuccessErrorObjectSchema = z
 	.object({ success: z.boolean(), error: z.string() })
 	.strict();
 export const PeriodServersSummaryObjectSchema = z
 	.object({
-		period: z.number().int().optional(),
+		period: z.number().int().nullish(),
 		servers: z
 			.array(
 				z
 					.object({
-						identifier: z.string().optional(),
-						name: z.string().optional(),
-						group: z.boolean().optional(),
-						latest_status: z.string().optional(),
+						identifier: z.string().nullish(),
+						name: z.string().nullish(),
+						group: z.boolean().nullish(),
+						latest_status: z.string().nullish(),
 						recent_deploys: z
 							.array(
 								z
 									.object({
-										status: z.string().optional(),
-										duration: z.number().int().optional(),
+										status: z.string().nullish(),
+										duration: z.number().int().nullish(),
 									})
-									.strict(),
+									.loose(),
 							)
-							.optional(),
-						speed: z.number().int().optional(),
-						reliability: z.json().optional(),
-						deploys_per_week: z.json().optional(),
-						total: z.number().int().optional(),
+							.nullish(),
+						speed: z.number().int().nullish(),
+						reliability: z.json().nullish(),
+						deploys_per_week: z.json().nullish(),
+						total: z.number().int().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		summary: z
 			.object({
 				total_deploys: z
 					.object({
-						value: z.number().int().optional(),
-						delta: z.json().optional(),
+						value: z.number().int().nullish(),
+						delta: z.json().nullish(),
 					})
-					.strict()
-					.optional(),
+					.loose()
+					.nullish(),
 				success_rate: z
-					.object({ value: z.json().optional(), delta: z.json().optional() })
-					.strict()
-					.optional(),
+					.object({ value: z.json().nullish(), delta: z.json().nullish() })
+					.loose()
+					.nullish(),
 				avg_duration: z
 					.object({
-						value: z.number().int().optional(),
-						delta: z.json().optional(),
+						value: z.number().int().nullish(),
+						delta: z.json().nullish(),
 					})
-					.strict()
-					.optional(),
+					.loose()
+					.nullish(),
 				active_servers: z
 					.object({
-						value: z.number().int().optional(),
-						delta: z.string().optional(),
+						value: z.number().int().nullish(),
+						delta: z.string().nullish(),
 					})
-					.strict()
-					.optional(),
+					.loose()
+					.nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const ProjectObject3Schema = z
 	.object({
 		project: z.object({ key_type: z.string().optional() }).strict().optional(),
@@ -1165,59 +1203,59 @@ export const ProjectObject3Schema = z
 	.strict();
 export const PublicKeyObjectSchema = z
 	.object({ public_key: z.string() })
-	.strict();
+	.loose();
 export const StringListSchema = z.array(z.string());
 export const MessageStarredObjectSchema = z
-	.object({ message: z.string().optional(), starred: z.boolean().optional() })
-	.strict();
+	.object({ message: z.string().nullish(), starred: z.boolean().nullish() })
+	.loose();
 export const CountTruncatedLatestDeployedRevisionObjectSchema = z
 	.object({
 		count: z.number().int(),
 		truncated: z.boolean(),
-		latest_deployed_revision: z.string().optional(),
-		current_revision: z.string().optional(),
-		last_checked_at: z.string().optional(),
+		latest_deployed_revision: z.string().nullish(),
+		current_revision: z.string().nullish(),
+		last_checked_at: z.string().nullish(),
 		check_in_progress: z.boolean(),
-		check_fail_message: z.string().optional(),
+		check_fail_message: z.string().nullish(),
 		commits: z
 			.array(
 				z
 					.object({
-						ref: z.string().optional(),
-						author: z.string().optional(),
-						email: z.string().optional(),
-						timestamp: z.string().optional(),
-						message: z.string().optional(),
-						short_message: z.string().optional(),
-						url: z.string().optional(),
+						ref: z.string().nullish(),
+						author: z.string().nullish(),
+						email: z.string().nullish(),
+						timestamp: z.string().nullish(),
+						message: z.string().nullish(),
+						short_message: z.string().nullish(),
+						url: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const ProjectObject4Schema = z
 	.object({ project: z.object({ custom_private_key: z.string() }).strict() })
 	.strict();
 export const WebhookUrlDeployablesObjectSchema = z
 	.object({
-		webhook_url: z.string().optional(),
+		webhook_url: z.string().nullish(),
 		deployables: z
 			.array(
 				z
 					.object({
-						identifier: z.string().optional(),
-						name: z.string().optional(),
-						type: z.string().optional(),
-						auto_deploy: z.boolean().optional(),
-						command_deployable: z.boolean().optional(),
-						preferred_branch: z.string().optional(),
+						identifier: z.string().nullish(),
+						name: z.string().nullish(),
+						type: z.string().nullish(),
+						auto_deploy: z.boolean().nullish(),
+						command_deployable: z.boolean().nullish(),
+						preferred_branch: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const DeployablesObjectSchema = z
 	.object({
 		deployables: z
@@ -1239,61 +1277,61 @@ export const DeployablesSkippedObjectSchema = z
 			.array(
 				z
 					.object({
-						identifier: z.string().optional(),
-						name: z.string().optional(),
-						type: z.string().optional(),
-						auto_deploy: z.boolean().optional(),
-						command_deployable: z.boolean().optional(),
-						preferred_branch: z.string().optional(),
+						identifier: z.string().nullish(),
+						name: z.string().nullish(),
+						type: z.string().nullish(),
+						auto_deploy: z.boolean().nullish(),
+						command_deployable: z.boolean().nullish(),
+						preferred_branch: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
-		skipped: z.array(z.string()).optional(),
+			.nullish(),
+		skipped: z.array(z.string()).nullish(),
 	})
-	.strict();
+	.loose();
 export const BuildCacheFileListSchema = z.array(
 	z
 		.object({
-			id: z.number().int().optional(),
-			project_id: z.union([z.null(), z.number().int()]).optional(),
-			identifier: z.string().optional(),
-			path: z.string().optional(),
-			created_at: z.string().optional(),
-			updated_at: z.string().optional(),
-			parent_type: z.string().optional(),
-			parent_id: z.number().int().optional(),
+			id: z.number().int().nullish(),
+			project_id: z.union([z.null(), z.number().int()]).nullish(),
+			identifier: z.string().nullish(),
+			path: z.string().nullish(),
+			created_at: z.string().nullish(),
+			updated_at: z.string().nullish(),
+			parent_type: z.string().nullish(),
+			parent_id: z.number().int().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const BuildCacheFileObjectSchema = z
 	.object({ build_cache_file: z.object({ path: z.string() }).strict() })
 	.strict();
 export const BuildCacheFileSchema = z
 	.object({
-		id: z.number().int().optional(),
-		project_id: z.union([z.null(), z.number().int()]).optional(),
-		identifier: z.string().optional(),
-		path: z.string().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
-		parent_type: z.string().optional(),
-		parent_id: z.number().int().optional(),
+		id: z.number().int().nullish(),
+		project_id: z.union([z.null(), z.number().int()]).nullish(),
+		identifier: z.string().nullish(),
+		path: z.string().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
+		parent_type: z.string().nullish(),
+		parent_id: z.number().int().nullish(),
 	})
-	.strict();
+	.loose();
 export const IdentifierSourceDescriptionListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
-			source: z.string().optional(),
-			description: z.string().optional(),
-			command: z.string().optional(),
-			halt_on_error: z.boolean().optional(),
-			enabled: z.boolean().optional(),
-			position: z.number().int().optional(),
-			watch_files: z.string().optional(),
+			identifier: z.string().nullish(),
+			source: z.string().nullish(),
+			description: z.string().nullish(),
+			command: z.string().nullish(),
+			halt_on_error: z.boolean().nullish(),
+			enabled: z.boolean().nullish(),
+			position: z.number().int().nullish(),
+			watch_files: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const BuildCommandObject2Schema = z
 	.object({
@@ -1311,49 +1349,49 @@ export const BuildCommandObject2Schema = z
 	.strict();
 export const BuildEnvironmentSchema = z
 	.object({
-		identifier: z.string().optional(),
+		identifier: z.string().nullish(),
 		packages: z
 			.object({
-				ruby: z.string().optional(),
-				php: z.string().optional(),
-				composer: z.string().optional(),
-				java: z.string().optional(),
-				dotnet: z.string().optional(),
-				go: z.string().optional(),
-				python2: z.string().optional(),
-				python3: z.string().optional(),
-				node: z.string().optional(),
-				phantomjs: z.string().optional(),
+				ruby: z.string().nullish(),
+				php: z.string().nullish(),
+				composer: z.string().nullish(),
+				java: z.string().nullish(),
+				dotnet: z.string().nullish(),
+				go: z.string().nullish(),
+				python2: z.string().nullish(),
+				python3: z.string().nullish(),
+				node: z.string().nullish(),
+				phantomjs: z.string().nullish(),
 			})
-			.strict()
-			.optional(),
-		default: z.boolean().optional(),
-		servers: z.array(z.json()).optional(),
+			.loose()
+			.nullish(),
+		default: z.boolean().nullish(),
+		servers: z.array(z.json()).nullish(),
 	})
-	.strict();
+	.loose();
 export const BuildEnvironmentListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
+			identifier: z.string().nullish(),
 			packages: z
 				.object({
-					ruby: z.string().optional(),
-					php: z.string().optional(),
-					composer: z.string().optional(),
-					java: z.string().optional(),
-					dotnet: z.string().optional(),
-					go: z.string().optional(),
-					python2: z.string().optional(),
-					python3: z.string().optional(),
-					node: z.string().optional(),
-					phantomjs: z.string().optional(),
+					ruby: z.string().nullish(),
+					php: z.string().nullish(),
+					composer: z.string().nullish(),
+					java: z.string().nullish(),
+					dotnet: z.string().nullish(),
+					go: z.string().nullish(),
+					python2: z.string().nullish(),
+					python3: z.string().nullish(),
+					node: z.string().nullish(),
+					phantomjs: z.string().nullish(),
 				})
-				.strict()
-				.optional(),
-			default: z.boolean().optional(),
-			servers: z.array(z.json()).optional(),
+				.loose()
+				.nullish(),
+			default: z.boolean().nullish(),
+			servers: z.array(z.json()).nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const BuildEnvironmentObjectSchema = z
 	.object({
@@ -1368,11 +1406,11 @@ export const BuildEnvironmentObject2Schema = z
 export const BuildKnownHostListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
-			hostname: z.string().optional(),
-			fingerprint: z.string().optional(),
+			identifier: z.string().nullish(),
+			hostname: z.string().nullish(),
+			fingerprint: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const BuildKnownHostObjectSchema = z
 	.object({
@@ -1383,11 +1421,11 @@ export const BuildKnownHostObjectSchema = z
 	.strict();
 export const BuildKnownHostSchema = z
 	.object({
-		identifier: z.string().optional(),
-		hostname: z.string().optional(),
-		fingerprint: z.string().optional(),
+		identifier: z.string().nullish(),
+		hostname: z.string().nullish(),
+		fingerprint: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const CommandObject3Schema = z
 	.object({
 		command: z
@@ -1438,30 +1476,30 @@ export const ConfigFileObject2Schema = z
 export const IdentifierNameStageListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
-			name: z.string().optional(),
-			stage: z.string().optional(),
-			check_type: z.string().optional(),
-			enabled: z.boolean().optional(),
-			position: z.number().int().optional(),
-			command: z.string().optional(),
-			servers: z.array(z.string()).optional(),
-			http_method: z.string().optional(),
-			http_url: z.string().optional(),
-			http_expected_status: z.number().int().optional(),
-			http_body_match: z.string().optional(),
-			timeout_seconds: z.number().int().optional(),
-			scanner: z.string().optional(),
-			scan_target_kind: z.string().optional(),
-			scan_target: z.string().optional(),
-			severity_threshold: z.string().optional(),
-			fail_on_unfixed_only: z.boolean().optional(),
-			sarif_output_path: z.string().optional(),
-			integration_identifier: z.string().optional(),
-			window_minutes: z.number().int().optional(),
-			match_by_release: z.boolean().optional(),
+			identifier: z.string().nullish(),
+			name: z.string().nullish(),
+			stage: z.string().nullish(),
+			check_type: z.string().nullish(),
+			enabled: z.boolean().nullish(),
+			position: z.number().int().nullish(),
+			command: z.string().nullish(),
+			servers: z.array(z.string()).nullish(),
+			http_method: z.string().nullish(),
+			http_url: z.string().nullish(),
+			http_expected_status: z.number().int().nullish(),
+			http_body_match: z.string().nullish(),
+			timeout_seconds: z.number().int().nullish(),
+			scanner: z.string().nullish(),
+			scan_target_kind: z.string().nullish(),
+			scan_target: z.string().nullish(),
+			severity_threshold: z.string().nullish(),
+			fail_on_unfixed_only: z.boolean().nullish(),
+			sarif_output_path: z.string().nullish(),
+			integration_identifier: z.string().nullish(),
+			window_minutes: z.number().int().nullish(),
+			match_by_release: z.boolean().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const DeploymentCheckObjectSchema = z
 	.object({
@@ -1494,30 +1532,30 @@ export const DeploymentCheckObjectSchema = z
 	.strict();
 export const IdentifierNameStageObjectSchema = z
 	.object({
-		identifier: z.string().optional(),
-		name: z.string().optional(),
-		stage: z.string().optional(),
-		check_type: z.string().optional(),
-		enabled: z.boolean().optional(),
-		position: z.number().int().optional(),
-		command: z.string().optional(),
-		servers: z.array(z.string()).optional(),
-		http_method: z.string().optional(),
-		http_url: z.string().optional(),
-		http_expected_status: z.number().int().optional(),
-		http_body_match: z.string().optional(),
-		timeout_seconds: z.number().int().optional(),
-		scanner: z.string().optional(),
-		scan_target_kind: z.string().optional(),
-		scan_target: z.string().optional(),
-		severity_threshold: z.string().optional(),
-		fail_on_unfixed_only: z.boolean().optional(),
-		sarif_output_path: z.string().optional(),
-		integration_identifier: z.string().optional(),
-		window_minutes: z.number().int().optional(),
-		match_by_release: z.boolean().optional(),
+		identifier: z.string().nullish(),
+		name: z.string().nullish(),
+		stage: z.string().nullish(),
+		check_type: z.string().nullish(),
+		enabled: z.boolean().nullish(),
+		position: z.number().int().nullish(),
+		command: z.string().nullish(),
+		servers: z.array(z.string()).nullish(),
+		http_method: z.string().nullish(),
+		http_url: z.string().nullish(),
+		http_expected_status: z.number().int().nullish(),
+		http_body_match: z.string().nullish(),
+		timeout_seconds: z.number().int().nullish(),
+		scanner: z.string().nullish(),
+		scan_target_kind: z.string().nullish(),
+		scan_target: z.string().nullish(),
+		severity_threshold: z.string().nullish(),
+		fail_on_unfixed_only: z.boolean().nullish(),
+		sarif_output_path: z.string().nullish(),
+		integration_identifier: z.string().nullish(),
+		window_minutes: z.number().int().nullish(),
+		match_by_release: z.boolean().nullish(),
 	})
-	.strict();
+	.loose();
 export const DeploymentCheckObject2Schema = z
 	.object({
 		deployment_check: z
@@ -1625,428 +1663,421 @@ export const ScheduledDeploymentObjectSchema = z
 	.strict();
 export const DeploymentSchema = z
 	.object({
-		identifier: z.string().optional(),
+		identifier: z.string().nullish(),
 		servers: z
 			.array(
 				z
 					.object({
-						id: z.number().int().optional(),
-						identifier: z.string().optional(),
-						name: z.string().optional(),
-						protocol_type: z.string().optional(),
-						server_path: z.string().optional(),
-						last_revision: z.string().optional(),
-						preferred_branch: z.string().optional(),
-						branch: z.string().optional(),
-						notify_email: z.string().optional(),
-						server_group_identifier: z.union([z.null(), z.string()]).optional(),
-						auto_deploy: z.boolean().optional(),
-						environment: z.string().optional(),
-						enabled: z.boolean().optional(),
-						agent: z.union([z.null(), z.string()]).optional(),
-						atomic: z.boolean().optional(),
-						atomic_strategy: z.string().optional(),
-						atomic_retention: z.number().int().optional(),
-						use_compression: z.boolean().optional(),
-						use_accelerated_transfer: z.boolean().optional(),
-						use_parallel_upload: z.boolean().optional(),
-						root_path: z.string().optional(),
-						position: z.number().int().optional(),
-						created_at: z.string().optional(),
-						updated_at: z.string().optional(),
-						connection_checked_at: z.union([z.null(), z.string()]).optional(),
-						connection_error_message: z
-							.union([z.null(), z.string()])
-							.optional(),
-						hostname: z.string().optional(),
-						username: z.string().optional(),
-						port: z.string().optional(),
-						use_ssh_keys: z.boolean().optional(),
-						host_key: z.string().optional(),
-						unlink_before_upload: z.boolean().optional(),
+						id: z.number().int().nullish(),
+						identifier: z.string().nullish(),
+						name: z.string().nullish(),
+						protocol_type: z.string().nullish(),
+						server_path: z.string().nullish(),
+						last_revision: z.string().nullish(),
+						preferred_branch: z.string().nullish(),
+						branch: z.string().nullish(),
+						notify_email: z.string().nullish(),
+						server_group_identifier: z.union([z.null(), z.string()]).nullish(),
+						auto_deploy: z.boolean().nullish(),
+						environment: z.string().nullish(),
+						enabled: z.boolean().nullish(),
+						agent: z.union([z.null(), z.string()]).nullish(),
+						atomic: z.boolean().nullish(),
+						atomic_strategy: z.string().nullish(),
+						atomic_retention: z.number().int().nullish(),
+						use_compression: z.boolean().nullish(),
+						use_accelerated_transfer: z.boolean().nullish(),
+						use_parallel_upload: z.boolean().nullish(),
+						root_path: z.string().nullish(),
+						position: z.number().int().nullish(),
+						created_at: z.string().nullish(),
+						updated_at: z.string().nullish(),
+						connection_checked_at: z.union([z.null(), z.string()]).nullish(),
+						connection_error_message: z.union([z.null(), z.string()]).nullish(),
+						hostname: z.string().nullish(),
+						username: z.string().nullish(),
+						port: z.union([z.string(), z.number()]).nullish(),
+						use_ssh_keys: z.boolean().nullish(),
+						host_key: z.string().nullish(),
+						unlink_before_upload: z.boolean().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		project: z
 			.object({
-				name: z.string().optional(),
-				permalink: z.string().optional(),
-				identifier: z.string().optional(),
-				public_key: z.string().optional(),
+				name: z.string().nullish(),
+				permalink: z.string().nullish(),
+				identifier: z.string().nullish(),
+				public_key: z.string().nullish(),
 				repository: z
 					.object({
-						scm_type: z.string().optional(),
-						url: z.string().optional(),
-						port: z.union([z.null(), z.number().int()]).optional(),
-						username: z.union([z.null(), z.string()]).optional(),
-						branch: z.string().optional(),
-						cached: z.boolean().optional(),
+						scm_type: z.string().nullish(),
+						url: z.string().nullish(),
+						port: z.union([z.null(), z.number().int()]).nullish(),
+						username: z.union([z.null(), z.string()]).nullish(),
+						branch: z.string().nullish(),
+						cached: z.boolean().nullish(),
 						hosting_service: z
 							.object({
-								name: z.string().optional(),
-								url: z.string().optional(),
-								tree_url: z.string().optional(),
-								commits_url: z.string().optional(),
+								name: z.string().nullish(),
+								url: z.string().nullish(),
+								tree_url: z.string().nullish(),
+								commits_url: z.string().nullish(),
 							})
-							.strict()
-							.optional(),
+							.loose()
+							.nullish(),
 					})
-					.strict()
-					.optional(),
-				repository_url: z.string().optional(),
-				zone: z.string().optional(),
-				last_deployed_at: z.string().optional(),
-				folder: z.union([z.null(), z.string()]).optional(),
-				auto_deploy_url: z.string().optional(),
+					.loose()
+					.nullish(),
+				repository_url: z.string().nullish(),
+				zone: z.string().nullish(),
+				last_deployed_at: z.string().nullish(),
+				folder: z.union([z.null(), z.string()]).nullish(),
+				auto_deploy_url: z.string().nullish(),
 			})
-			.strict()
-			.optional(),
-		deployer: z.union([z.null(), z.string()]).optional(),
-		deployer_avatar: z.union([z.null(), z.string()]).optional(),
-		branch: z.string().optional(),
-		start_revision: z
-			.object({ ref: z.string().optional() })
-			.strict()
-			.optional(),
-		end_revision: z.object({ ref: z.string().optional() }).strict().optional(),
-		status: z.string().optional(),
+			.loose()
+			.nullish(),
+		deployer: z.union([z.null(), z.string()]).nullish(),
+		deployer_avatar: z.union([z.null(), z.string()]).nullish(),
+		branch: z.string().nullish(),
+		start_revision: z.object({ ref: z.string().nullish() }).loose().nullish(),
+		end_revision: z.object({ ref: z.string().nullish() }).loose().nullish(),
+		status: z.string().nullish(),
 		timestamps: z
 			.object({
-				queued_at: z.string().optional(),
-				started_at: z.union([z.null(), z.string()]).optional(),
-				completed_at: z.union([z.null(), z.string()]).optional(),
-				duration: z.union([z.null(), z.string()]).optional(),
-				runs_at: z.string().optional(),
+				queued_at: z.string().nullish(),
+				started_at: z.union([z.null(), z.string()]).nullish(),
+				completed_at: z.union([z.null(), z.string()]).nullish(),
+				duration: z.union([z.null(), z.string()]).nullish(),
+				runs_at: z.string().nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 		// The OpenAPI document uses one sample UUID property; runtime entries are keyed by actual server identifiers.
 		files: z
 			.record(
 				z.string(),
 				z
 					.object({
-						changed: z.array(z.json()).optional(),
-						removed: z.array(z.json()).optional(),
+						changed: z.array(z.json()).nullish(),
+						removed: z.array(z.json()).nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		configuration: z
 			.object({
-				copy_config_files: z.boolean().optional(),
-				notification_addresses: z.string().optional(),
-				skip_project_files: z.boolean().optional(),
+				copy_config_files: z.boolean().nullish(),
+				notification_addresses: z.string().nullish(),
+				skip_project_files: z.boolean().nullish(),
 			})
-			.strict()
-			.optional(),
-		legacy: z.boolean().optional(),
-		deferred: z.boolean().optional(),
-		config_files_deployment: z.boolean().optional(),
-		overview: z.union([z.null(), z.string()]).optional(),
-		metadata: z.object({}).strict().optional(),
-		archived: z.boolean().optional(),
-		archived_at: z.union([z.null(), z.string()]).optional(),
-		log_summary: z.union([z.null(), z.string()]).optional(),
+			.loose()
+			.nullish(),
+		legacy: z.boolean().nullish(),
+		deferred: z.boolean().nullish(),
+		config_files_deployment: z.boolean().nullish(),
+		overview: z.union([z.null(), z.string()]).nullish(),
+		metadata: z.object({}).loose().nullish(),
+		archived: z.boolean().nullish(),
+		archived_at: z.union([z.null(), z.string()]).nullish(),
+		log_summary: z.union([z.null(), z.string()]).nullish(),
 		steps: z
 			.array(
 				z
 					.object({
-						step: z.string().optional(),
-						stage: z.string().optional(),
-						identifier: z.string().optional(),
-						server: z.union([z.null(), z.string()]).optional(),
-						total_items: z.union([z.null(), z.string()]).optional(),
-						completed_items: z.union([z.null(), z.string()]).optional(),
-						description: z.string().optional(),
-						status: z.string().optional(),
-						logs: z.boolean().optional(),
-						explainable: z.boolean().optional(),
-						deployment_started_at: z.union([z.null(), z.string()]).optional(),
-						updated_at: z.string().optional(),
+						step: z.string().nullish(),
+						stage: z.string().nullish(),
+						identifier: z.string().nullish(),
+						server: z.union([z.null(), z.string()]).nullish(),
+						total_items: z.union([z.null(), z.string()]).nullish(),
+						completed_items: z.union([z.null(), z.string()]).nullish(),
+						description: z.string().nullish(),
+						status: z.string().nullish(),
+						logs: z.boolean().nullish(),
+						explainable: z.boolean().nullish(),
+						deployment_started_at: z.union([z.null(), z.string()]).nullish(),
+						updated_at: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const PaginationRecordsObjectSchema = z
 	.object({
 		pagination: z
 			.object({
-				current_page: z.number().int().optional(),
-				total_pages: z.number().int().optional(),
-				offset: z.number().int().optional(),
-				total_records: z.number().int().optional(),
+				current_page: z.number().int().nullish(),
+				total_pages: z.number().int().nullish(),
+				offset: z.number().int().nullish(),
+				total_records: z.number().int().nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 		records: z
 			.array(
 				z
 					.object({
-						identifier: z.string().optional(),
+						identifier: z.string().nullish(),
 						servers: z
 							.array(
 								z
 									.object({
-										id: z.number().int().optional(),
-										identifier: z.string().optional(),
-										name: z.string().optional(),
-										protocol_type: z.string().optional(),
-										server_path: z.string().optional(),
-										last_revision: z.string().optional(),
-										preferred_branch: z.string().optional(),
-										branch: z.string().optional(),
-										notify_email: z.string().optional(),
+										id: z.number().int().nullish(),
+										identifier: z.string().nullish(),
+										name: z.string().nullish(),
+										protocol_type: z.string().nullish(),
+										server_path: z.string().nullish(),
+										last_revision: z.string().nullish(),
+										preferred_branch: z.string().nullish(),
+										branch: z.string().nullish(),
+										notify_email: z.string().nullish(),
 										server_group_identifier: z
 											.union([z.null(), z.string()])
-											.optional(),
-										auto_deploy: z.boolean().optional(),
-										environment: z.string().optional(),
-										enabled: z.boolean().optional(),
-										agent: z.union([z.null(), z.string()]).optional(),
-										atomic: z.boolean().optional(),
-										atomic_strategy: z.string().optional(),
-										atomic_retention: z.number().int().optional(),
-										use_compression: z.boolean().optional(),
-										use_accelerated_transfer: z.boolean().optional(),
-										use_parallel_upload: z.boolean().optional(),
-										root_path: z.string().optional(),
-										position: z.number().int().optional(),
-										created_at: z.string().optional(),
-										updated_at: z.string().optional(),
+											.nullish(),
+										auto_deploy: z.boolean().nullish(),
+										environment: z.string().nullish(),
+										enabled: z.boolean().nullish(),
+										agent: z.union([z.null(), z.string()]).nullish(),
+										atomic: z.boolean().nullish(),
+										atomic_strategy: z.string().nullish(),
+										atomic_retention: z.number().int().nullish(),
+										use_compression: z.boolean().nullish(),
+										use_accelerated_transfer: z.boolean().nullish(),
+										use_parallel_upload: z.boolean().nullish(),
+										root_path: z.string().nullish(),
+										position: z.number().int().nullish(),
+										created_at: z.string().nullish(),
+										updated_at: z.string().nullish(),
 										connection_checked_at: z
 											.union([z.null(), z.string()])
-											.optional(),
+											.nullish(),
 										connection_error_message: z
 											.union([z.null(), z.string()])
-											.optional(),
-										hostname: z.string().optional(),
-										username: z.string().optional(),
-										port: z.string().optional(),
-										use_ssh_keys: z.boolean().optional(),
-										host_key: z.string().optional(),
-										unlink_before_upload: z.boolean().optional(),
+											.nullish(),
+										hostname: z.string().nullish(),
+										username: z.string().nullish(),
+										port: z.union([z.string(), z.number()]).nullish(),
+										use_ssh_keys: z.boolean().nullish(),
+										host_key: z.string().nullish(),
+										unlink_before_upload: z.boolean().nullish(),
 									})
-									.strict(),
+									.loose(),
 							)
-							.optional(),
+							.nullish(),
 						project: z
 							.object({
-								name: z.string().optional(),
-								permalink: z.string().optional(),
-								identifier: z.string().optional(),
-								public_key: z.string().optional(),
+								name: z.string().nullish(),
+								permalink: z.string().nullish(),
+								identifier: z.string().nullish(),
+								public_key: z.string().nullish(),
 								repository: z
 									.object({
-										scm_type: z.string().optional(),
-										url: z.string().optional(),
-										port: z.union([z.null(), z.number().int()]).optional(),
-										username: z.union([z.null(), z.string()]).optional(),
-										branch: z.string().optional(),
-										cached: z.boolean().optional(),
+										scm_type: z.string().nullish(),
+										url: z.string().nullish(),
+										port: z.union([z.null(), z.number().int()]).nullish(),
+										username: z.union([z.null(), z.string()]).nullish(),
+										branch: z.string().nullish(),
+										cached: z.boolean().nullish(),
 										hosting_service: z
 											.object({
-												name: z.string().optional(),
-												url: z.string().optional(),
-												tree_url: z.string().optional(),
-												commits_url: z.string().optional(),
+												name: z.string().nullish(),
+												url: z.string().nullish(),
+												tree_url: z.string().nullish(),
+												commits_url: z.string().nullish(),
 											})
-											.strict()
-											.optional(),
+											.loose()
+											.nullish(),
 									})
-									.strict()
-									.optional(),
-								repository_url: z.string().optional(),
-								zone: z.string().optional(),
-								last_deployed_at: z.string().optional(),
-								folder: z.union([z.null(), z.string()]).optional(),
-								auto_deploy_url: z.string().optional(),
+									.loose()
+									.nullish(),
+								repository_url: z.string().nullish(),
+								zone: z.string().nullish(),
+								last_deployed_at: z.string().nullish(),
+								folder: z.union([z.null(), z.string()]).nullish(),
+								auto_deploy_url: z.string().nullish(),
 							})
-							.strict()
-							.optional(),
-						deployer: z.union([z.null(), z.string()]).optional(),
-						deployer_avatar: z.union([z.null(), z.string()]).optional(),
-						branch: z.string().optional(),
+							.loose()
+							.nullish(),
+						deployer: z.union([z.null(), z.string()]).nullish(),
+						deployer_avatar: z.union([z.null(), z.string()]).nullish(),
+						branch: z.string().nullish(),
 						start_revision: z
-							.object({ ref: z.string().optional() })
-							.strict()
-							.optional(),
+							.object({ ref: z.string().nullish() })
+							.loose()
+							.nullish(),
 						end_revision: z
-							.object({ ref: z.string().optional() })
-							.strict()
-							.optional(),
-						status: z.string().optional(),
+							.object({ ref: z.string().nullish() })
+							.loose()
+							.nullish(),
+						status: z.string().nullish(),
 						timestamps: z
 							.object({
-								queued_at: z.string().optional(),
-								started_at: z.union([z.null(), z.string()]).optional(),
-								completed_at: z.union([z.null(), z.string()]).optional(),
-								duration: z.union([z.null(), z.string()]).optional(),
-								runs_at: z.string().optional(),
+								queued_at: z.string().nullish(),
+								started_at: z.union([z.null(), z.string()]).nullish(),
+								completed_at: z.union([z.null(), z.string()]).nullish(),
+								duration: z.union([z.null(), z.string()]).nullish(),
+								runs_at: z.string().nullish(),
 							})
-							.strict()
-							.optional(),
+							.loose()
+							.nullish(),
 						// The OpenAPI document uses one sample UUID property; runtime entries are keyed by actual server identifiers.
 						files: z
 							.record(
 								z.string(),
 								z
 									.object({
-										changed: z.array(z.json()).optional(),
-										removed: z.array(z.json()).optional(),
+										changed: z.array(z.json()).nullish(),
+										removed: z.array(z.json()).nullish(),
 									})
-									.strict(),
+									.loose(),
 							)
-							.optional(),
+							.nullish(),
 						configuration: z
 							.object({
-								copy_config_files: z.boolean().optional(),
-								notification_addresses: z.string().optional(),
-								skip_project_files: z.boolean().optional(),
+								copy_config_files: z.boolean().nullish(),
+								notification_addresses: z.string().nullish(),
+								skip_project_files: z.boolean().nullish(),
 							})
-							.strict()
-							.optional(),
-						legacy: z.boolean().optional(),
-						deferred: z.boolean().optional(),
-						config_files_deployment: z.boolean().optional(),
-						overview: z.union([z.null(), z.string()]).optional(),
-						metadata: z.object({}).strict().optional(),
-						archived: z.boolean().optional(),
-						archived_at: z.union([z.null(), z.string()]).optional(),
-						log_summary: z.union([z.null(), z.string()]).optional(),
+							.loose()
+							.nullish(),
+						legacy: z.boolean().nullish(),
+						deferred: z.boolean().nullish(),
+						config_files_deployment: z.boolean().nullish(),
+						overview: z.union([z.null(), z.string()]).nullish(),
+						metadata: z.object({}).loose().nullish(),
+						archived: z.boolean().nullish(),
+						archived_at: z.union([z.null(), z.string()]).nullish(),
+						log_summary: z.union([z.null(), z.string()]).nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const IdStepMessageListSchema = z.array(
 	z
 		.object({
-			id: z.number().int().optional(),
-			step: z.string().optional(),
-			message: z.string().optional(),
-			detail: z.string().optional(),
-			type: z.string().optional(),
+			id: z.number().int().nullish(),
+			step: z.string().nullish(),
+			message: z.string().nullish(),
+			detail: z.string().nullish(),
+			type: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const ExcludedFileListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
-			path: z.string().optional(),
+			identifier: z.string().nullish(),
+			path: z.string().nullish(),
 			servers: z
 				.array(
 					z
 						.object({
-							id: z.number().int().optional(),
-							identifier: z.string().optional(),
-							name: z.string().optional(),
-							protocol_type: z.string().optional(),
-							server_path: z.string().optional(),
-							last_revision: z.string().optional(),
-							preferred_branch: z.string().optional(),
-							branch: z.string().optional(),
-							notify_email: z.string().optional(),
+							id: z.number().int().nullish(),
+							identifier: z.string().nullish(),
+							name: z.string().nullish(),
+							protocol_type: z.string().nullish(),
+							server_path: z.string().nullish(),
+							last_revision: z.string().nullish(),
+							preferred_branch: z.string().nullish(),
+							branch: z.string().nullish(),
+							notify_email: z.string().nullish(),
 							server_group_identifier: z
 								.union([z.null(), z.string()])
-								.optional(),
-							auto_deploy: z.boolean().optional(),
-							environment: z.string().optional(),
-							enabled: z.boolean().optional(),
-							agent: z.union([z.null(), z.string()]).optional(),
-							atomic: z.union([z.null(), z.string()]).optional(),
-							atomic_strategy: z.string().optional(),
-							atomic_retention: z.number().int().optional(),
-							use_compression: z.boolean().optional(),
-							use_accelerated_transfer: z.boolean().optional(),
-							use_parallel_upload: z.boolean().optional(),
-							root_path: z.string().optional(),
-							position: z.number().int().optional(),
-							created_at: z.string().optional(),
-							updated_at: z.string().optional(),
-							connection_checked_at: z.union([z.null(), z.string()]).optional(),
+								.nullish(),
+							auto_deploy: z.boolean().nullish(),
+							environment: z.string().nullish(),
+							enabled: z.boolean().nullish(),
+							agent: z.union([z.null(), z.string()]).nullish(),
+							atomic: z.union([z.null(), z.string()]).nullish(),
+							atomic_strategy: z.string().nullish(),
+							atomic_retention: z.number().int().nullish(),
+							use_compression: z.boolean().nullish(),
+							use_accelerated_transfer: z.boolean().nullish(),
+							use_parallel_upload: z.boolean().nullish(),
+							root_path: z.string().nullish(),
+							position: z.number().int().nullish(),
+							created_at: z.string().nullish(),
+							updated_at: z.string().nullish(),
+							connection_checked_at: z.union([z.null(), z.string()]).nullish(),
 							connection_error_message: z
 								.union([z.null(), z.string()])
-								.optional(),
+								.nullish(),
 							static_hosting: z
 								.object({
-									hosted_website_identifier: z.string().optional(),
-									subdomain: z.string().optional(),
-									url: z.string().optional(),
-									spa_mode: z.boolean().optional(),
-									status: z.string().optional(),
-									active_deployment_uuid: z.string().optional(),
+									hosted_website_identifier: z.string().nullish(),
+									subdomain: z.string().nullish(),
+									url: z.string().nullish(),
+									spa_mode: z.boolean().nullish(),
+									status: z.string().nullish(),
+									active_deployment_uuid: z.string().nullish(),
 								})
-								.strict()
-								.optional(),
+								.loose()
+								.nullish(),
 						})
-						.strict(),
+						.loose(),
 				)
-				.optional(),
+				.nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const ExcludedFileObjectSchema = z
 	.object({ excluded_file: z.object({ path: z.string() }).strict() })
 	.strict();
 export const ExcludedFileSchema = z
 	.object({
-		identifier: z.string().optional(),
-		path: z.string().optional(),
+		identifier: z.string().nullish(),
+		path: z.string().nullish(),
 		servers: z
 			.array(
 				z
 					.object({
-						id: z.number().int().optional(),
-						identifier: z.string().optional(),
-						name: z.string().optional(),
-						protocol_type: z.string().optional(),
-						server_path: z.string().optional(),
-						last_revision: z.string().optional(),
-						preferred_branch: z.string().optional(),
-						branch: z.string().optional(),
-						notify_email: z.string().optional(),
-						server_group_identifier: z.union([z.null(), z.string()]).optional(),
-						auto_deploy: z.boolean().optional(),
-						environment: z.string().optional(),
-						enabled: z.boolean().optional(),
-						agent: z.union([z.null(), z.string()]).optional(),
-						atomic: z.union([z.null(), z.string()]).optional(),
-						atomic_strategy: z.string().optional(),
-						atomic_retention: z.number().int().optional(),
-						use_compression: z.boolean().optional(),
-						use_accelerated_transfer: z.boolean().optional(),
-						use_parallel_upload: z.boolean().optional(),
-						root_path: z.string().optional(),
-						position: z.number().int().optional(),
-						created_at: z.string().optional(),
-						updated_at: z.string().optional(),
-						connection_checked_at: z.union([z.null(), z.string()]).optional(),
-						connection_error_message: z
-							.union([z.null(), z.string()])
-							.optional(),
+						id: z.number().int().nullish(),
+						identifier: z.string().nullish(),
+						name: z.string().nullish(),
+						protocol_type: z.string().nullish(),
+						server_path: z.string().nullish(),
+						last_revision: z.string().nullish(),
+						preferred_branch: z.string().nullish(),
+						branch: z.string().nullish(),
+						notify_email: z.string().nullish(),
+						server_group_identifier: z.union([z.null(), z.string()]).nullish(),
+						auto_deploy: z.boolean().nullish(),
+						environment: z.string().nullish(),
+						enabled: z.boolean().nullish(),
+						agent: z.union([z.null(), z.string()]).nullish(),
+						atomic: z.union([z.null(), z.string()]).nullish(),
+						atomic_strategy: z.string().nullish(),
+						atomic_retention: z.number().int().nullish(),
+						use_compression: z.boolean().nullish(),
+						use_accelerated_transfer: z.boolean().nullish(),
+						use_parallel_upload: z.boolean().nullish(),
+						root_path: z.string().nullish(),
+						position: z.number().int().nullish(),
+						created_at: z.string().nullish(),
+						updated_at: z.string().nullish(),
+						connection_checked_at: z.union([z.null(), z.string()]).nullish(),
+						connection_error_message: z.union([z.null(), z.string()]).nullish(),
 						static_hosting: z
 							.object({
-								hosted_website_identifier: z.string().optional(),
-								subdomain: z.string().optional(),
-								url: z.string().optional(),
-								spa_mode: z.boolean().optional(),
-								status: z.string().optional(),
-								active_deployment_uuid: z.string().optional(),
+								hosted_website_identifier: z.string().nullish(),
+								subdomain: z.string().nullish(),
+								url: z.string().nullish(),
+								spa_mode: z.boolean().nullish(),
+								status: z.string().nullish(),
+								active_deployment_uuid: z.string().nullish(),
 							})
-							.strict()
-							.optional(),
+							.loose()
+							.nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const ExcludedFileObject2Schema = z
 	.object({
 		excluded_file: z
@@ -2061,17 +2092,17 @@ export const ExcludedFileObject2Schema = z
 export const IntegrationListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
-			hook_type: z.string().optional(),
-			name: z.string().optional(),
-			send_on_start: z.boolean().optional(),
-			send_on_completion: z.boolean().optional(),
-			send_on_failure: z.boolean().optional(),
-			send_on_check_failed: z.boolean().optional(),
-			created_at: z.string().optional(),
-			updated_at: z.string().optional(),
+			identifier: z.string().nullish(),
+			hook_type: z.string().nullish(),
+			name: z.string().nullish(),
+			send_on_start: z.boolean().nullish(),
+			send_on_completion: z.boolean().nullish(),
+			send_on_failure: z.boolean().nullish(),
+			send_on_check_failed: z.boolean().nullish(),
+			created_at: z.string().nullish(),
+			updated_at: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const IntegrationObjectSchema = z
 	.object({
@@ -2090,17 +2121,17 @@ export const IntegrationObjectSchema = z
 	.strict();
 export const IntegrationSchema = z
 	.object({
-		identifier: z.string().optional(),
-		hook_type: z.string().optional(),
-		name: z.string().optional(),
-		send_on_start: z.boolean().optional(),
-		send_on_completion: z.boolean().optional(),
-		send_on_failure: z.boolean().optional(),
-		send_on_check_failed: z.boolean().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
+		identifier: z.string().nullish(),
+		hook_type: z.string().nullish(),
+		name: z.string().nullish(),
+		send_on_start: z.boolean().nullish(),
+		send_on_completion: z.boolean().nullish(),
+		send_on_failure: z.boolean().nullish(),
+		send_on_check_failed: z.boolean().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const IntegrationObject2Schema = z
 	.object({
 		integration: z
@@ -2119,30 +2150,30 @@ export const IntegrationObject2Schema = z
 	.strict();
 export const NodeRubyPhpObject2Schema = z
 	.object({
-		node: z.string().optional(),
-		ruby: z.string().optional(),
-		php: z.string().optional(),
+		node: z.string().nullish(),
+		ruby: z.string().nullish(),
+		php: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const RepositorySchema = z
 	.object({
-		scm_type: z.string().optional(),
-		url: z.string().optional(),
-		port: z.union([z.null(), z.number().int()]).optional(),
-		username: z.union([z.null(), z.string()]).optional(),
-		branch: z.string().optional(),
-		cached: z.boolean().optional(),
+		scm_type: z.string().nullish(),
+		url: z.string().nullish(),
+		port: z.union([z.null(), z.number().int()]).nullish(),
+		username: z.union([z.null(), z.string()]).nullish(),
+		branch: z.string().nullish(),
+		cached: z.boolean().nullish(),
 		hosting_service: z
 			.object({
-				name: z.string().optional(),
-				url: z.string().optional(),
-				tree_url: z.string().optional(),
-				commits_url: z.string().optional(),
+				name: z.string().nullish(),
+				url: z.string().nullish(),
+				tree_url: z.string().nullish(),
+				commits_url: z.string().nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const RepositoryObjectSchema = z
 	.object({
 		repository: z
@@ -2191,19 +2222,17 @@ export const RefAuthorEmailObjectSchema = z
 		ref: z.string(),
 		author: z.string(),
 		email: z.string(),
-		timestamp: z.string().optional(),
-		message: z.string().optional(),
-		short_message: z.string().optional(),
-		tags: z.array(z.string()).optional(),
-		avatar_url: z.string().optional(),
+		timestamp: z.string().nullish(),
+		message: z.string().nullish(),
+		short_message: z.string().nullish(),
+		tags: z.array(z.string()).nullish(),
+		avatar_url: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const MessageObjectSchema = z
 	.object({ message: z.string().optional() })
 	.strict();
-export const RefObjectSchema = z
-	.object({ ref: z.string().optional() })
-	.strict();
+export const RefObjectSchema = z.object({ ref: z.string().nullish() }).loose();
 export const CommitsTagsReleasesObjectSchema = z
 	.object({
 		commits: z
@@ -2213,113 +2242,113 @@ export const CommitsTagsReleasesObjectSchema = z
 						ref: z.string(),
 						author: z.string(),
 						email: z.string(),
-						timestamp: z.string().optional(),
-						message: z.string().optional(),
-						short_message: z.string().optional(),
-						tags: z.array(z.string()).optional(),
-						avatar_url: z.string().optional(),
+						timestamp: z.string().nullish(),
+						message: z.string().nullish(),
+						short_message: z.string().nullish(),
+						tags: z.array(z.string()).nullish(),
+						avatar_url: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		tags: z
 			.array(
 				z
 					.object({ name: z.string(), ref: z.string(), message: z.string() })
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		releases: z
 			.array(
 				z
-					.object({ name: z.string().optional(), ref: z.string().optional() })
-					.strict(),
+					.object({ name: z.string().nullish(), ref: z.string().nullish() })
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const ScheduledDeploymentListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
+			identifier: z.string().nullish(),
 			server: z
 				.object({
-					identifier: z.string().optional(),
-					name: z.string().optional(),
+					identifier: z.string().nullish(),
+					name: z.string().nullish(),
 					servers: z
 						.array(
 							z
 								.object({
-									id: z.number().int().optional(),
-									identifier: z.string().optional(),
-									name: z.string().optional(),
-									protocol_type: z.string().optional(),
-									server_path: z.string().optional(),
-									last_revision: z.string().optional(),
-									preferred_branch: z.string().optional(),
-									branch: z.string().optional(),
-									notify_email: z.string().optional(),
-									server_group_identifier: z.string().optional(),
-									auto_deploy: z.boolean().optional(),
-									environment: z.string().optional(),
-									enabled: z.boolean().optional(),
-									agent: z.union([z.null(), z.string()]).optional(),
-									atomic: z.union([z.null(), z.string()]).optional(),
-									atomic_strategy: z.string().optional(),
-									atomic_retention: z.number().int().optional(),
-									use_compression: z.boolean().optional(),
-									use_accelerated_transfer: z.boolean().optional(),
-									use_parallel_upload: z.boolean().optional(),
-									root_path: z.string().optional(),
-									position: z.number().int().optional(),
-									created_at: z.string().optional(),
-									updated_at: z.string().optional(),
+									id: z.number().int().nullish(),
+									identifier: z.string().nullish(),
+									name: z.string().nullish(),
+									protocol_type: z.string().nullish(),
+									server_path: z.string().nullish(),
+									last_revision: z.string().nullish(),
+									preferred_branch: z.string().nullish(),
+									branch: z.string().nullish(),
+									notify_email: z.string().nullish(),
+									server_group_identifier: z.string().nullish(),
+									auto_deploy: z.boolean().nullish(),
+									environment: z.string().nullish(),
+									enabled: z.boolean().nullish(),
+									agent: z.union([z.null(), z.string()]).nullish(),
+									atomic: z.union([z.null(), z.string()]).nullish(),
+									atomic_strategy: z.string().nullish(),
+									atomic_retention: z.number().int().nullish(),
+									use_compression: z.boolean().nullish(),
+									use_accelerated_transfer: z.boolean().nullish(),
+									use_parallel_upload: z.boolean().nullish(),
+									root_path: z.string().nullish(),
+									position: z.number().int().nullish(),
+									created_at: z.string().nullish(),
+									updated_at: z.string().nullish(),
 									connection_checked_at: z
 										.union([z.null(), z.string()])
-										.optional(),
+										.nullish(),
 									connection_error_message: z
 										.union([z.null(), z.string()])
-										.optional(),
-									hostname: z.string().optional(),
-									username: z.string().optional(),
-									port: z.string().optional(),
-									passive: z.boolean().optional(),
-									force_hidden_files: z.boolean().optional(),
-									implicit: z.boolean().optional(),
-									ignore_certificate_errors: z.boolean().optional(),
-									tls_version: z.string().optional(),
+										.nullish(),
+									hostname: z.string().nullish(),
+									username: z.string().nullish(),
+									port: z.union([z.string(), z.number()]).nullish(),
+									passive: z.boolean().nullish(),
+									force_hidden_files: z.boolean().nullish(),
+									implicit: z.boolean().nullish(),
+									ignore_certificate_errors: z.boolean().nullish(),
+									tls_version: z.string().nullish(),
 								})
-								.strict(),
+								.loose(),
 						)
-						.optional(),
-					preferred_branch: z.string().optional(),
-					last_revision: z.string().optional(),
-					environment: z.string().optional(),
-					transfer_order: z.string().optional(),
+						.nullish(),
+					preferred_branch: z.string().nullish(),
+					last_revision: z.string().nullish(),
+					environment: z.string().nullish(),
+					transfer_order: z.string().nullish(),
 				})
-				.strict()
-				.optional(),
-			start_revision: z.string().optional(),
-			end_revision: z.string().optional(),
-			frequency: z.string().optional(),
+				.loose()
+				.nullish(),
+			start_revision: z.string().nullish(),
+			end_revision: z.string().nullish(),
+			frequency: z.string().nullish(),
 			at: z
 				.object({
-					day: z.number().int().optional(),
-					month: z.number().int().optional(),
-					year: z.number().int().optional(),
-					hour: z.number().int().optional(),
-					minute: z.number().int().optional(),
+					day: z.number().int().nullish(),
+					month: z.number().int().nullish(),
+					year: z.number().int().nullish(),
+					hour: z.number().int().nullish(),
+					minute: z.number().int().nullish(),
 				})
-				.strict()
-				.optional(),
-			next_deployment_at: z.string().optional(),
-			copy_config_files: z.boolean().optional(),
-			run_build_commands: z.boolean().optional(),
-			use_build_cache: z.boolean().optional(),
-			skip_project_files: z.boolean().optional(),
-			config_files_deployment: z.boolean().optional(),
+				.loose()
+				.nullish(),
+			next_deployment_at: z.string().nullish(),
+			copy_config_files: z.boolean().nullish(),
+			run_build_commands: z.boolean().nullish(),
+			use_build_cache: z.boolean().nullish(),
+			skip_project_files: z.boolean().nullish(),
+			config_files_deployment: z.boolean().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const ScheduledDeploymentObject2Schema = z
 	.object({
@@ -2347,85 +2376,85 @@ export const ScheduledDeploymentObject2Schema = z
 	.strict();
 export const ScheduledDeploymentSchema = z
 	.object({
-		identifier: z.string().optional(),
+		identifier: z.string().nullish(),
 		server: z
 			.object({
-				identifier: z.string().optional(),
-				name: z.string().optional(),
+				identifier: z.string().nullish(),
+				name: z.string().nullish(),
 				servers: z
 					.array(
 						z
 							.object({
-								id: z.number().int().optional(),
-								identifier: z.string().optional(),
-								name: z.string().optional(),
-								protocol_type: z.string().optional(),
-								server_path: z.string().optional(),
-								last_revision: z.string().optional(),
-								preferred_branch: z.string().optional(),
-								branch: z.string().optional(),
-								notify_email: z.string().optional(),
-								server_group_identifier: z.string().optional(),
-								auto_deploy: z.boolean().optional(),
-								environment: z.string().optional(),
-								enabled: z.boolean().optional(),
-								agent: z.union([z.null(), z.string()]).optional(),
-								atomic: z.union([z.null(), z.string()]).optional(),
-								atomic_strategy: z.string().optional(),
-								atomic_retention: z.number().int().optional(),
-								use_compression: z.boolean().optional(),
-								use_accelerated_transfer: z.boolean().optional(),
-								use_parallel_upload: z.boolean().optional(),
-								root_path: z.string().optional(),
-								position: z.number().int().optional(),
-								created_at: z.string().optional(),
-								updated_at: z.string().optional(),
+								id: z.number().int().nullish(),
+								identifier: z.string().nullish(),
+								name: z.string().nullish(),
+								protocol_type: z.string().nullish(),
+								server_path: z.string().nullish(),
+								last_revision: z.string().nullish(),
+								preferred_branch: z.string().nullish(),
+								branch: z.string().nullish(),
+								notify_email: z.string().nullish(),
+								server_group_identifier: z.string().nullish(),
+								auto_deploy: z.boolean().nullish(),
+								environment: z.string().nullish(),
+								enabled: z.boolean().nullish(),
+								agent: z.union([z.null(), z.string()]).nullish(),
+								atomic: z.union([z.null(), z.string()]).nullish(),
+								atomic_strategy: z.string().nullish(),
+								atomic_retention: z.number().int().nullish(),
+								use_compression: z.boolean().nullish(),
+								use_accelerated_transfer: z.boolean().nullish(),
+								use_parallel_upload: z.boolean().nullish(),
+								root_path: z.string().nullish(),
+								position: z.number().int().nullish(),
+								created_at: z.string().nullish(),
+								updated_at: z.string().nullish(),
 								connection_checked_at: z
 									.union([z.null(), z.string()])
-									.optional(),
+									.nullish(),
 								connection_error_message: z
 									.union([z.null(), z.string()])
-									.optional(),
-								hostname: z.string().optional(),
-								username: z.string().optional(),
-								port: z.string().optional(),
-								passive: z.boolean().optional(),
-								force_hidden_files: z.boolean().optional(),
-								implicit: z.boolean().optional(),
-								ignore_certificate_errors: z.boolean().optional(),
-								tls_version: z.string().optional(),
+									.nullish(),
+								hostname: z.string().nullish(),
+								username: z.string().nullish(),
+								port: z.union([z.string(), z.number()]).nullish(),
+								passive: z.boolean().nullish(),
+								force_hidden_files: z.boolean().nullish(),
+								implicit: z.boolean().nullish(),
+								ignore_certificate_errors: z.boolean().nullish(),
+								tls_version: z.string().nullish(),
 							})
-							.strict(),
+							.loose(),
 					)
-					.optional(),
-				preferred_branch: z.string().optional(),
-				last_revision: z.string().optional(),
-				environment: z.string().optional(),
-				transfer_order: z.string().optional(),
+					.nullish(),
+				preferred_branch: z.string().nullish(),
+				last_revision: z.string().nullish(),
+				environment: z.string().nullish(),
+				transfer_order: z.string().nullish(),
 			})
-			.strict()
-			.optional(),
-		start_revision: z.string().optional(),
-		end_revision: z.string().optional(),
-		frequency: z.string().optional(),
+			.loose()
+			.nullish(),
+		start_revision: z.string().nullish(),
+		end_revision: z.string().nullish(),
+		frequency: z.string().nullish(),
 		at: z
 			.object({
-				day: z.number().int().optional(),
-				month: z.number().int().optional(),
-				year: z.number().int().optional(),
-				hour: z.number().int().optional(),
-				minute: z.number().int().optional(),
+				day: z.number().int().nullish(),
+				month: z.number().int().nullish(),
+				year: z.number().int().nullish(),
+				hour: z.number().int().nullish(),
+				minute: z.number().int().nullish(),
 			})
-			.strict()
-			.optional(),
-		next_deployment_at: z.string().optional(),
-		copy_config_files: z.boolean().optional(),
-		run_build_commands: z.boolean().optional(),
-		use_build_cache: z.boolean().optional(),
-		skip_project_files: z.boolean().optional(),
-		config_files_deployment: z.boolean().optional(),
+			.loose()
+			.nullish(),
+		next_deployment_at: z.string().nullish(),
+		copy_config_files: z.boolean().nullish(),
+		run_build_commands: z.boolean().nullish(),
+		use_build_cache: z.boolean().nullish(),
+		skip_project_files: z.boolean().nullish(),
+		config_files_deployment: z.boolean().nullish(),
 	})
-	.strict();
+	.loose();
 export const ScheduledDeploymentObject3Schema = z
 	.object({
 		scheduled_deployment: z
@@ -2448,58 +2477,58 @@ export const ScheduledDeploymentObject3Schema = z
 export const ServerGroupListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
-			name: z.string().optional(),
+			identifier: z.string().nullish(),
+			name: z.string().nullish(),
 			servers: z
 				.array(
 					z
 						.object({
-							id: z.number().int().optional(),
-							identifier: z.string().optional(),
-							name: z.string().optional(),
-							protocol_type: z.string().optional(),
-							server_path: z.string().optional(),
-							last_revision: z.union([z.null(), z.string()]).optional(),
-							preferred_branch: z.string().optional(),
-							branch: z.string().optional(),
-							notify_email: z.string().optional(),
-							server_group_identifier: z.string().optional(),
-							auto_deploy: z.boolean().optional(),
-							environment: z.string().optional(),
-							enabled: z.boolean().optional(),
-							agent: z.union([z.null(), z.string()]).optional(),
-							atomic: z.boolean().optional(),
-							atomic_strategy: z.string().optional(),
-							atomic_retention: z.number().int().optional(),
-							use_compression: z.boolean().optional(),
-							use_accelerated_transfer: z.boolean().optional(),
-							use_parallel_upload: z.boolean().optional(),
-							root_path: z.string().optional(),
-							position: z.number().int().optional(),
-							created_at: z.string().optional(),
-							updated_at: z.string().optional(),
-							connection_checked_at: z.union([z.null(), z.string()]).optional(),
+							id: z.number().int().nullish(),
+							identifier: z.string().nullish(),
+							name: z.string().nullish(),
+							protocol_type: z.string().nullish(),
+							server_path: z.string().nullish(),
+							last_revision: z.union([z.null(), z.string()]).nullish(),
+							preferred_branch: z.string().nullish(),
+							branch: z.string().nullish(),
+							notify_email: z.string().nullish(),
+							server_group_identifier: z.string().nullish(),
+							auto_deploy: z.boolean().nullish(),
+							environment: z.string().nullish(),
+							enabled: z.boolean().nullish(),
+							agent: z.union([z.null(), z.string()]).nullish(),
+							atomic: z.boolean().nullish(),
+							atomic_strategy: z.string().nullish(),
+							atomic_retention: z.number().int().nullish(),
+							use_compression: z.boolean().nullish(),
+							use_accelerated_transfer: z.boolean().nullish(),
+							use_parallel_upload: z.boolean().nullish(),
+							root_path: z.string().nullish(),
+							position: z.number().int().nullish(),
+							created_at: z.string().nullish(),
+							updated_at: z.string().nullish(),
+							connection_checked_at: z.union([z.null(), z.string()]).nullish(),
 							connection_error_message: z
 								.union([z.null(), z.string()])
-								.optional(),
-							hostname: z.string().optional(),
-							username: z.string().optional(),
-							port: z.string().optional(),
-							use_ssh_keys: z.boolean().optional(),
-							host_key: z.string().optional(),
-							unlink_before_upload: z.boolean().optional(),
-							use_single_connection: z.boolean().optional(),
-							global_key_pair_id: z.string().optional(),
+								.nullish(),
+							hostname: z.string().nullish(),
+							username: z.string().nullish(),
+							port: z.union([z.string(), z.number()]).nullish(),
+							use_ssh_keys: z.boolean().nullish(),
+							host_key: z.string().nullish(),
+							unlink_before_upload: z.boolean().nullish(),
+							use_single_connection: z.boolean().nullish(),
+							global_key_pair_id: z.string().nullish(),
 						})
-						.strict(),
+						.loose(),
 				)
-				.optional(),
-			preferred_branch: z.string().optional(),
-			last_revision: z.union([z.null(), z.string()]).optional(),
-			environment: z.string().optional(),
-			transfer_order: z.string().optional(),
+				.nullish(),
+			preferred_branch: z.string().nullish(),
+			last_revision: z.union([z.null(), z.string()]).nullish(),
+			environment: z.string().nullish(),
+			transfer_order: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const ServerGroupObjectSchema = z
 	.object({
@@ -2518,62 +2547,61 @@ export const ServerGroupObjectSchema = z
 	.strict();
 export const ServerGroupSchema = z
 	.object({
-		identifier: z.string().optional(),
-		name: z.string().optional(),
+		identifier: z.string().nullish(),
+		name: z.string().nullish(),
 		servers: z
 			.array(
 				z
 					.object({
-						id: z.number().int().optional(),
-						identifier: z.string().optional(),
-						name: z.string().optional(),
-						protocol_type: z.string().optional(),
-						server_path: z.string().optional(),
-						last_revision: z.union([z.null(), z.string()]).optional(),
-						preferred_branch: z.string().optional(),
-						branch: z.string().optional(),
-						notify_email: z.string().optional(),
-						server_group_identifier: z.string().optional(),
-						auto_deploy: z.boolean().optional(),
-						environment: z.string().optional(),
-						enabled: z.boolean().optional(),
-						agent: z.union([z.null(), z.string()]).optional(),
-						atomic: z.boolean().optional(),
-						atomic_strategy: z.string().optional(),
-						atomic_retention: z.number().int().optional(),
-						use_compression: z.boolean().optional(),
-						use_accelerated_transfer: z.boolean().optional(),
-						use_parallel_upload: z.boolean().optional(),
-						root_path: z.string().optional(),
-						position: z.number().int().optional(),
-						created_at: z.string().optional(),
-						updated_at: z.string().optional(),
-						connection_checked_at: z.union([z.null(), z.string()]).optional(),
-						connection_error_message: z
-							.union([z.null(), z.string()])
-							.optional(),
-						hostname: z.string().optional(),
-						username: z.string().optional(),
-						port: z.string().optional(),
-						use_ssh_keys: z.boolean().optional(),
-						host_key: z.string().optional(),
-						unlink_before_upload: z.boolean().optional(),
-						use_single_connection: z.boolean().optional(),
-						global_key_pair_id: z.string().optional(),
+						id: z.number().int().nullish(),
+						identifier: z.string().nullish(),
+						name: z.string().nullish(),
+						protocol_type: z.string().nullish(),
+						server_path: z.string().nullish(),
+						last_revision: z.union([z.null(), z.string()]).nullish(),
+						preferred_branch: z.string().nullish(),
+						branch: z.string().nullish(),
+						notify_email: z.string().nullish(),
+						server_group_identifier: z.string().nullish(),
+						auto_deploy: z.boolean().nullish(),
+						environment: z.string().nullish(),
+						enabled: z.boolean().nullish(),
+						agent: z.union([z.null(), z.string()]).nullish(),
+						atomic: z.boolean().nullish(),
+						atomic_strategy: z.string().nullish(),
+						atomic_retention: z.number().int().nullish(),
+						use_compression: z.boolean().nullish(),
+						use_accelerated_transfer: z.boolean().nullish(),
+						use_parallel_upload: z.boolean().nullish(),
+						root_path: z.string().nullish(),
+						position: z.number().int().nullish(),
+						created_at: z.string().nullish(),
+						updated_at: z.string().nullish(),
+						connection_checked_at: z.union([z.null(), z.string()]).nullish(),
+						connection_error_message: z.union([z.null(), z.string()]).nullish(),
+						hostname: z.string().nullish(),
+						username: z.string().nullish(),
+						port: z.union([z.string(), z.number()]).nullish(),
+						use_ssh_keys: z.boolean().nullish(),
+						host_key: z.string().nullish(),
+						unlink_before_upload: z.boolean().nullish(),
+						use_single_connection: z.boolean().nullish(),
+						global_key_pair_id: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
-		preferred_branch: z.string().optional(),
-		last_revision: z.union([z.null(), z.string()]).optional(),
-		environment: z.string().optional(),
-		transfer_order: z.string().optional(),
+			.nullish(),
+		preferred_branch: z.string().nullish(),
+		last_revision: z.union([z.null(), z.string()]).nullish(),
+		environment: z.string().nullish(),
+		transfer_order: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const ServerRegionSizeObject2Schema = z
 	.object({
 		server: z
 			.object({
+				...ServerConnectionFields,
 				name: z.string().optional(),
 				protocol_type: z.string().optional(),
 				server_path: z.string().optional(),
@@ -2613,46 +2641,47 @@ export const ServerRegionSizeObject2Schema = z
 	.strict();
 export const IdIdentifierNameObject2Schema = z
 	.object({
-		id: z.number().int().optional(),
-		identifier: z.string().optional(),
-		name: z.string().optional(),
-		protocol_type: z.string().optional(),
-		enabled: z.boolean().optional(),
+		id: z.number().int().nullish(),
+		identifier: z.string().nullish(),
+		name: z.string().nullish(),
+		protocol_type: z.string().nullish(),
+		enabled: z.boolean().nullish(),
 		static_hosting: z
 			.object({
-				hosted_website_identifier: z.string().optional(),
-				subdomain: z.string().optional(),
-				url: z.string().optional(),
-				spa_mode: z.boolean().optional(),
-				status: z.string().optional(),
-				active_deployment_uuid: z.string().optional(),
+				hosted_website_identifier: z.string().nullish(),
+				subdomain: z.string().nullish(),
+				url: z.string().nullish(),
+				spa_mode: z.boolean().nullish(),
+				status: z.string().nullish(),
+				active_deployment_uuid: z.string().nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 		managed_vps: z
 			.object({
-				hosted_resource_identifier: z.string().optional(),
-				status: z.string().optional(),
-				ip_address: z.string().optional(),
-				region: z.string().optional(),
-				size: z.string().optional(),
+				hosted_resource_identifier: z.string().nullish(),
+				status: z.string().nullish(),
+				ip_address: z.string().nullish(),
+				region: z.string().nullish(),
+				size: z.string().nullish(),
 				ssh_key: z
 					.object({
-						identifier: z.string().optional(),
-						title: z.string().optional(),
-						fingerprint: z.string().optional(),
+						identifier: z.string().nullish(),
+						title: z.string().nullish(),
+						fingerprint: z.string().nullish(),
 					})
-					.strict()
-					.optional(),
+					.loose()
+					.nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const ServerObject2Schema = z
 	.object({
 		server: z
 			.object({
+				...ServerConnectionFields,
 				name: z.string().optional(),
 				server_path: z.string().optional(),
 				email_notify_on: z.string().optional(),
@@ -2679,32 +2708,32 @@ export const ServerObject2Schema = z
 	.strict();
 export const CpuMemoryDiskObjectSchema = z
 	.object({
-		cpu: z.record(z.string(), z.json()).optional(),
-		memory: z.record(z.string(), z.json()).optional(),
-		disk: z.record(z.string(), z.json()).optional(),
-		uptime: z.string().optional(),
-		profile: z.record(z.string(), z.json()).optional(),
+		cpu: z.record(z.string(), z.json()).nullish(),
+		memory: z.record(z.string(), z.json()).nullish(),
+		disk: z.record(z.string(), z.json()).nullish(),
+		uptime: z.string().nullish(),
+		profile: z.record(z.string(), z.json()).nullish(),
 	})
-	.strict();
+	.loose();
 export const IdentifierStatusCreatedAtObjectSchema = z
 	.object({
 		identifier: z.string(),
 		status: z.string(),
 		created_at: z.string(),
 	})
-	.strict();
+	.loose();
 export const IdentifierStatusCreatedAtObject2Schema = z
 	.object({
 		identifier: z.string(),
 		status: z.string(),
 		created_at: z.string(),
-		completed_at: z.string().optional(),
+		completed_at: z.string().nullish(),
 		results: z
 			.object({
 				repository: z
-					.object({ status: z.string(), message: z.string().optional() })
-					.strict()
-					.optional(),
+					.object({ status: z.string(), message: z.string().nullish() })
+					.loose()
+					.nullish(),
 				servers: z
 					.array(
 						z
@@ -2712,22 +2741,22 @@ export const IdentifierStatusCreatedAtObject2Schema = z
 								name: z.string(),
 								identifier: z.string(),
 								status: z.string(),
-								message: z.string().optional(),
+								message: z.string().nullish(),
 							})
-							.strict(),
+							.loose(),
 					)
-					.optional(),
+					.nullish(),
 			})
-			.strict()
-			.optional(),
+			.loose()
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const EmailAddressObjectSchema = z
 	.object({ email_address: z.string() })
 	.strict();
 export const StatusMessageObjectSchema = z
-	.object({ status: z.string().optional(), message: z.string().optional() })
-	.strict();
+	.object({ status: z.string().nullish(), message: z.string().nullish() })
+	.loose();
 export const ApiKeyObjectSchema = z
 	.object({
 		api_key: z
@@ -2737,26 +2766,26 @@ export const ApiKeyObjectSchema = z
 	.strict();
 export const ApiKeyIdentifierDescriptionObjectSchema = z
 	.object({
-		api_key: z.string().optional(),
-		identifier: z.string().optional(),
-		description: z.string().optional(),
-		user_id: z.number().int().optional(),
-		device: z.string().optional(),
-		read_only: z.boolean().optional(),
-		html: z.string().optional(),
+		api_key: z.string().nullish(),
+		identifier: z.string().nullish(),
+		description: z.string().nullish(),
+		user_id: z.number().int().nullish(),
+		device: z.string().nullish(),
+		read_only: z.boolean().nullish(),
+		html: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const IdentifierTitlePublicKeyListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
-			title: z.string().optional(),
-			public_key: z.string().optional(),
-			key_type: z.string().optional(),
-			fingerprint: z.string().optional(),
-			account: z.string().optional(),
+			identifier: z.string().nullish(),
+			title: z.string().nullish(),
+			public_key: z.string().nullish(),
+			key_type: z.string().nullish(),
+			fingerprint: z.string().nullish(),
+			account: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const KeyPairObjectSchema = z
 	.object({
@@ -2772,53 +2801,53 @@ export const KeyPairObjectSchema = z
 	.strict();
 export const IdentifierTitlePublicKeyObjectSchema = z
 	.object({
-		identifier: z.string().optional(),
-		title: z.string().optional(),
-		public_key: z.string().optional(),
-		key_type: z.string().optional(),
-		fingerprint: z.string().optional(),
-		account: z.string().optional(),
+		identifier: z.string().nullish(),
+		title: z.string().nullish(),
+		public_key: z.string().nullish(),
+		key_type: z.string().nullish(),
+		fingerprint: z.string().nullish(),
+		account: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const IdentifierNameIsAdminListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
-			name: z.string().optional(),
-			is_admin: z.boolean().optional(),
-			can_manage_users: z.boolean().optional(),
-			can_manage_billing: z.boolean().optional(),
-			can_manage_agents: z.boolean().optional(),
-			can_create_projects: z.boolean().optional(),
-			all_projects_allowed: z.boolean().optional(),
+			identifier: z.string().nullish(),
+			name: z.string().nullish(),
+			is_admin: z.boolean().nullish(),
+			can_manage_users: z.boolean().nullish(),
+			can_manage_billing: z.boolean().nullish(),
+			can_manage_agents: z.boolean().nullish(),
+			can_create_projects: z.boolean().nullish(),
+			all_projects_allowed: z.boolean().nullish(),
 			members: z
 				.array(
 					z
 						.object({
-							id: z.number().int().optional(),
-							identifier: z.string().optional(),
-							first_name: z.string().optional(),
-							last_name: z.string().optional(),
-							email_address: z.string().optional(),
+							id: z.number().int().nullish(),
+							identifier: z.string().nullish(),
+							first_name: z.string().nullish(),
+							last_name: z.string().nullish(),
+							email_address: z.string().nullish(),
 						})
-						.strict(),
+						.loose(),
 				)
-				.optional(),
+				.nullish(),
 			project_assignments: z
 				.array(
 					z
 						.object({
-							name: z.string().optional(),
-							identifier: z.string().optional(),
-							can_deploy_all: z.boolean().optional(),
-							can_update_config: z.boolean().optional(),
-							can_manage_config_files: z.boolean().optional(),
+							name: z.string().nullish(),
+							identifier: z.string().nullish(),
+							can_deploy_all: z.boolean().nullish(),
+							can_update_config: z.boolean().nullish(),
+							can_manage_config_files: z.boolean().nullish(),
 						})
-						.strict(),
+						.loose(),
 				)
-				.optional(),
+				.nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const TeamObjectSchema = z
 	.object({
@@ -2838,42 +2867,42 @@ export const TeamObjectSchema = z
 	.strict();
 export const IdentifierNameIsAdminObjectSchema = z
 	.object({
-		identifier: z.string().optional(),
-		name: z.string().optional(),
-		is_admin: z.boolean().optional(),
-		can_manage_users: z.boolean().optional(),
-		can_manage_billing: z.boolean().optional(),
-		can_manage_agents: z.boolean().optional(),
-		can_create_projects: z.boolean().optional(),
-		all_projects_allowed: z.boolean().optional(),
+		identifier: z.string().nullish(),
+		name: z.string().nullish(),
+		is_admin: z.boolean().nullish(),
+		can_manage_users: z.boolean().nullish(),
+		can_manage_billing: z.boolean().nullish(),
+		can_manage_agents: z.boolean().nullish(),
+		can_create_projects: z.boolean().nullish(),
+		all_projects_allowed: z.boolean().nullish(),
 		members: z
 			.array(
 				z
 					.object({
-						id: z.number().int().optional(),
-						identifier: z.string().optional(),
-						first_name: z.string().optional(),
-						last_name: z.string().optional(),
-						email_address: z.string().optional(),
+						id: z.number().int().nullish(),
+						identifier: z.string().nullish(),
+						first_name: z.string().nullish(),
+						last_name: z.string().nullish(),
+						email_address: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		project_assignments: z
 			.array(
 				z
 					.object({
-						name: z.string().optional(),
-						identifier: z.string().optional(),
-						can_deploy_all: z.boolean().optional(),
-						can_update_config: z.boolean().optional(),
-						can_manage_config_files: z.boolean().optional(),
+						name: z.string().nullish(),
+						identifier: z.string().nullish(),
+						can_deploy_all: z.boolean().nullish(),
+						can_update_config: z.boolean().nullish(),
+						can_manage_config_files: z.boolean().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const TeamObject2Schema = z
 	.object({
 		team: z
@@ -2893,11 +2922,11 @@ export const TeamObject2Schema = z
 export const TemplateListSchema = z.array(
 	z
 		.object({
-			name: z.string().optional(),
-			permalink: z.string().optional(),
-			description: z.string().optional(),
+			name: z.string().nullish(),
+			permalink: z.string().nullish(),
+			description: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const TemplateObjectSchema = z
 	.object({
@@ -2914,23 +2943,23 @@ export const TemplateObjectSchema = z
 	.strict();
 export const TemplateSchema = z
 	.object({
-		name: z.string().optional(),
-		permalink: z.string().optional(),
-		description: z.string().optional(),
+		name: z.string().nullish(),
+		permalink: z.string().nullish(),
+		description: z.string().nullish(),
 	})
-	.strict();
+	.loose();
 export const IdPermalinkNameListSchema = z.array(
 	z
 		.object({
-			id: z.number().int().optional(),
-			permalink: z.string().optional(),
-			name: z.string().optional(),
-			description: z.string().optional(),
-			framework_type: z.string().optional(),
-			version: z.string().optional(),
-			public: z.boolean().optional(),
+			id: z.number().int().nullish(),
+			permalink: z.string().nullish(),
+			name: z.string().nullish(),
+			description: z.string().nullish(),
+			framework_type: z.string().nullish(),
+			version: z.string().nullish(),
+			public: z.boolean().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const TemplateObject2Schema = z
 	.object({
@@ -2944,61 +2973,61 @@ export const TemplateObject2Schema = z
 	.strict();
 export const IdPermalinkNameObjectSchema = z
 	.object({
-		id: z.number().int().optional(),
-		permalink: z.string().optional(),
-		name: z.string().optional(),
-		description: z.string().optional(),
-		framework_type: z.string().optional(),
-		version: z.string().optional(),
-		features: z.array(z.string()).optional(),
+		id: z.number().int().nullish(),
+		permalink: z.string().nullish(),
+		name: z.string().nullish(),
+		description: z.string().nullish(),
+		framework_type: z.string().nullish(),
+		version: z.string().nullish(),
+		features: z.array(z.string()).nullish(),
 		build_commands: z
 			.array(
 				z
 					.object({
-						command: z.string().optional(),
-						description: z.string().optional(),
+						command: z.string().nullish(),
+						description: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 		ssh_commands: z
 			.array(
 				z
 					.object({
-						command: z.string().optional(),
-						description: z.string().optional(),
+						command: z.string().nullish(),
+						description: z.string().nullish(),
 					})
-					.strict(),
+					.loose(),
 			)
-			.optional(),
-		excluded_files: z.array(z.string()).optional(),
+			.nullish(),
+		excluded_files: z.array(z.string()).nullish(),
 		config_files: z
 			.array(
 				z
-					.object({ path: z.string().optional(), body: z.string().optional() })
-					.strict(),
+					.object({ path: z.string().nullish(), body: z.string().nullish() })
+					.loose(),
 			)
-			.optional(),
+			.nullish(),
 	})
-	.strict();
+	.loose();
 export const UserListSchema = z.array(
 	z
 		.object({
-			first_name: z.string().optional(),
-			last_name: z.string().optional(),
-			email_address: z.string().optional(),
-			time_zone: z.union([z.null(), z.string()]).optional(),
-			id: z.number().int().optional(),
-			identifier: z.string().optional(),
-			account_administrator: z.boolean().optional(),
-			activated: z.boolean().optional(),
-			can_manage_users: z.boolean().optional(),
-			can_manage_billing: z.boolean().optional(),
-			can_create_projects: z.boolean().optional(),
-			can_manage_agents: z.boolean().optional(),
-			all_projects_allowed: z.boolean().optional(),
+			first_name: z.string().nullish(),
+			last_name: z.string().nullish(),
+			email_address: z.string().nullish(),
+			time_zone: z.union([z.null(), z.string()]).nullish(),
+			id: z.number().int().nullish(),
+			identifier: z.string().nullish(),
+			account_administrator: z.boolean().nullish(),
+			activated: z.boolean().nullish(),
+			can_manage_users: z.boolean().nullish(),
+			can_manage_billing: z.boolean().nullish(),
+			can_create_projects: z.boolean().nullish(),
+			can_manage_agents: z.boolean().nullish(),
+			all_projects_allowed: z.boolean().nullish(),
 		})
-		.strict(),
+		.loose(),
 );
 export const UserObject2Schema = z
 	.object({
@@ -3020,38 +3049,38 @@ export const UserObject2Schema = z
 	.strict();
 export const IdIdentifierFirstNameObjectSchema = z
 	.object({
-		id: z.number().int().optional(),
-		identifier: z.string().optional(),
-		first_name: z.string().optional(),
-		last_name: z.string().optional(),
-		email_address: z.string().optional(),
-		time_zone: z.string().optional(),
-		account_administrator: z.boolean().optional(),
-		activated: z.boolean().optional(),
-		can_manage_users: z.boolean().optional(),
-		can_manage_billing: z.boolean().optional(),
-		can_create_projects: z.boolean().optional(),
-		can_manage_agents: z.boolean().optional(),
-		all_projects_allowed: z.boolean().optional(),
+		id: z.number().int().nullish(),
+		identifier: z.string().nullish(),
+		first_name: z.string().nullish(),
+		last_name: z.string().nullish(),
+		email_address: z.string().nullish(),
+		time_zone: z.string().nullish(),
+		account_administrator: z.boolean().nullish(),
+		activated: z.boolean().nullish(),
+		can_manage_users: z.boolean().nullish(),
+		can_manage_billing: z.boolean().nullish(),
+		can_create_projects: z.boolean().nullish(),
+		can_manage_agents: z.boolean().nullish(),
+		all_projects_allowed: z.boolean().nullish(),
 	})
-	.strict();
+	.loose();
 export const UserSchema = z
 	.object({
-		first_name: z.string().optional(),
-		last_name: z.string().optional(),
-		email_address: z.string().optional(),
-		time_zone: z.union([z.null(), z.string()]).optional(),
-		id: z.number().int().optional(),
-		identifier: z.string().optional(),
-		account_administrator: z.boolean().optional(),
-		activated: z.boolean().optional(),
-		can_manage_users: z.boolean().optional(),
-		can_manage_billing: z.boolean().optional(),
-		can_create_projects: z.boolean().optional(),
-		can_manage_agents: z.boolean().optional(),
-		all_projects_allowed: z.boolean().optional(),
+		first_name: z.string().nullish(),
+		last_name: z.string().nullish(),
+		email_address: z.string().nullish(),
+		time_zone: z.union([z.null(), z.string()]).nullish(),
+		id: z.number().int().nullish(),
+		identifier: z.string().nullish(),
+		account_administrator: z.boolean().nullish(),
+		activated: z.boolean().nullish(),
+		can_manage_users: z.boolean().nullish(),
+		can_manage_billing: z.boolean().nullish(),
+		can_create_projects: z.boolean().nullish(),
+		can_manage_agents: z.boolean().nullish(),
+		all_projects_allowed: z.boolean().nullish(),
 	})
-	.strict();
+	.loose();
 export const UserObject3Schema = z
 	.object({
 		user: z
@@ -3076,8 +3105,8 @@ export const ErrorErrorCodeObjectSchema = z
 export const IdentifierDescriptionListSchema = z.array(
 	z
 		.object({
-			identifier: z.string().optional(),
-			description: z.string().optional(),
+			identifier: z.string().nullish(),
+			description: z.string().nullish(),
 		})
-		.strict(),
+		.loose(),
 );

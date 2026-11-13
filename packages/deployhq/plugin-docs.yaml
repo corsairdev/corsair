@@ -12,6 +12,9 @@
     "templates.showPublicTemplateTemplatePublic": "The OpenAPI URL `/templates/{id}/public/{id}` repeats the `{id}` path token but defines a single id parameter. The same value is used for both URL occurrences; confirm with DeployHQ whether distinct identifiers are intended.",
     "projects.statusBadgeStatusBadge": "The parameter list describes an optional identifier that is not present in this route. Use statusBadgeStatusBadgeByIdentifier for the documented URL that includes an identifier.",
     "invoices.getAccountInvoice": "The route summary says this downloads an invoice PDF, while the OpenAPI response schema declares a JSON string. JSON responses are returned as strings; non-JSON PDF bytes are preserved in a `kind: 'binary'` base64 envelope. The `kind` discriminator is the string literal `'binary'`. Binary responses are capped at 10 MiB by this plugin as a local memory-safety limit, not as a DeployHQ limit.",
+    "globalServers.copyToProjectGlobalServer": "Pass the target project's `identifier` (a UUID) as project_id. The project permalink returns 404 on this route (checked 11-13).",
+    "servers.createProjectServer": "Send the connection fields for the chosen protocol_type inside `server` (for SSH: hostname, username, port, use_ssh_keys or password), as listed in DeployHQ's [create a server guide](https://www.deployhq.com/support/api/servers/create-a-new-server). DeployHQ checks that the host is reachable and answers 422 when it is not.",
+    "environmentVariables.deleteProjectEnvironmentVariable": "DeployHQ answers with 204 No Content, so the operation returns undefined on success.",
     "signup.createSignup": "This public operation posts to `https://api.deployhq.com/api/v1/signup`, not an account subdomain. The [signup guide](https://www.deployhq.com/support/api/signup) shows `https://deployhq.com`, which redirects to a 404. The API key works only after the new account's email address is verified."
   },
   "examples": {

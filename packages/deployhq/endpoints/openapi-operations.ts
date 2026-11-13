@@ -2530,7 +2530,8 @@ export const deployHQOperations = {
 		source:
 			'https://api.deployhq.com/docs.json#/paths/~1projects~1{project_id}~1environment_variables~1{id}/delete',
 		inputSchema: z.object({ project_id: z.string(), id: z.string() }).strict(),
-		outputSchema: OpenAPI.StringValueSchema,
+		// DeployHQ answers this delete with 204 No Content, which the transport returns as undefined.
+		outputSchema: OpenAPI.StringValueSchema.optional(),
 	},
 	'excludedFiles.listProjectExcludedFiles': {
 		group: 'excludedFiles',
