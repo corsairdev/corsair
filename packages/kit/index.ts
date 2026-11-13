@@ -206,7 +206,7 @@ const kitEndpointMeta = {
 	},
 	'tags.tagSubscriber': {
 		riskLevel: 'write',
-		description: 'Add a tag to a subscriber, found by email address',
+		description: 'Add a tag to an existing subscriber, found by email address',
 	},
 	'tags.untagSubscriber': {
 		riskLevel: 'write',
@@ -233,7 +233,7 @@ const kitEndpointMeta = {
 	'forms.subscribe': {
 		riskLevel: 'write',
 		description:
-			'Add a subscriber through a form, which applies the form’s incentive and records when they were added',
+			'Add an existing subscriber to a form, which applies the form’s incentive and records when they were added. Create the subscriber first',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof kitEndpointsNested>;
 

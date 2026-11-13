@@ -12,7 +12,7 @@ overviewNote: |
   - **`canceled_at` needs the cancelled status.** Asking for it beside any other status is refused, and the plugin checks that before the call rather than letting Kit answer 422.
   - **Creating a subscriber with an address already on the list returns the existing one**, so a create is safe to repeat.
   - **Custom field values go by `key`, not label.** A subscriber's `fields` map is keyed by the field's `key`, such as `last_name`. An unknown key is ignored and named in the response `warnings` array rather than failing, so read `warnings` when a value seems missing.
-  - **A form subscribe is not the same as a subscriber create.** Subscribing through a form applies the form's incentive and records `added_at`, which is why `forms.subscribe` exists beside `subscribers.create`.
+  - **Tag and form subscribes need an existing subscriber.** `tags.tagSubscriber` and `forms.subscribe` find the subscriber by address and answer 404 when there is none, so call `subscribers.create` first for a new address. Subscribing through a form then applies the form's incentive and records `added_at`.
   - **No bulk routes.** Kit only accepts its `/v4/bulk/*` routes with an OAuth token, and this plugin authenticates with an API key, so create subscribers one at a time with `subscribers.create`.
   - **`subscribers.unsubscribe` cannot be undone from here.** It stops every future send to that person, and only they can resubscribe.
   - **Rate limits.** Kit enforces two request windows and sends `Retry-After` on a 429, which the plugin honours before backing off.
@@ -64,5 +64,5 @@ apiNotes:
   subscribers.list: 'Pages by cursor: pass `pagination.end_cursor` back as `after`. Only active subscribers are returned unless `status` says otherwise.'
   subscribers.create: 'An address already on the list returns the existing subscriber. An unknown custom field key is ignored and named in `warnings`.'
   subscribers.unsubscribe: 'Stops every future send to that person. Only they can resubscribe.'
-  tags.tagSubscriber: 'Answers 204 with no body, so the result states what was applied.'
-  forms.subscribe: 'Applies the form’s incentive and records `added_at`; use this rather than `subscribers.create` when the signup came through a form.'
+  tags.tagSubscriber: 'The subscriber must already exist; call `subscribers.create` first for a new address. The result carries the subscriber ID.'
+  forms.subscribe: 'The subscriber must already exist; call `subscribers.create` first, then this to record the signup against the form, apply its incentive and set `added_at`.'

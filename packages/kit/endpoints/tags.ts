@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 import type { KitEndpoints } from '..';
 import { definedQuery, segment } from '../client';
 import { call } from './call';
@@ -61,7 +62,8 @@ export const update: KitEndpoints['tagsUpdate'] = (ctx, input) =>
 		{ log: ({ tagId }) => ({ tagId }) },
 	);
 
-// Tagging by email address answers 204, so the result states what was asked.
+// Tagging by email address answers 200 or 201 with the tagged subscriber. The
+// result keeps the shape the untag returns and adds the subscriber's ID.
 export const tagSubscriber: KitEndpoints['tagsTagSubscriber'] = (ctx, input) =>
 	call(
 		ctx,
@@ -77,11 +79,16 @@ export const tagSubscriber: KitEndpoints['tagsTagSubscriber'] = (ctx, input) =>
 			body: { email_address },
 		}),
 		{
-			shape: (_, { tagId, email_address }) => ({
-				success: true as const,
-				tag_id: tagId,
-				email_address,
-			}),
+			// unknown: raw is Kit's `{ subscriber }` body; only its ID is kept.
+			shape: (raw: unknown, { tagId, email_address }) => {
+				const id = asRecord(asRecord(raw)?.subscriber)?.id;
+				return {
+					success: true as const,
+					tag_id: tagId,
+					email_address,
+					subscriber_id: typeof id === 'number' ? id : undefined,
+				};
+			},
 			// The address is not logged, only the tag it went on.
 			log: ({ tagId }) => ({ tagId }),
 		},

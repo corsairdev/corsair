@@ -12,6 +12,7 @@ import {
 	missingKey,
 	notFound,
 	payloadTooLarge,
+	subscriber,
 	subscriberCreated,
 	subscriberDetail,
 	subscribers,
@@ -447,7 +448,10 @@ describe('tags.update', () => {
 
 describe('tags.tagSubscriber', () => {
 	it('POSTs the address to the tag and reports it', async () => {
-		respondEmpty(204);
+		respond(
+			{ subscriber: { ...subscriber, tagged_at: '2026-11-12T10:00:00Z' } },
+			201,
+		);
 
 		await expect(
 			invoke(Tags.tagSubscriber, {
@@ -458,6 +462,7 @@ describe('tags.tagSubscriber', () => {
 			success: true,
 			tag_id: 31,
 			email_address: 'jordan@acme.example',
+			subscriber_id: 1001,
 		});
 		expect(lastRequest()).toMatchObject({
 			method: 'POST',
@@ -467,7 +472,7 @@ describe('tags.tagSubscriber', () => {
 	});
 
 	it('logs the tag and never the address', async () => {
-		respondEmpty(204);
+		respond({ subscriber }, 200);
 
 		await invoke(Tags.tagSubscriber, {
 			tagId: 31,

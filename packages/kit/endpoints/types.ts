@@ -419,8 +419,8 @@ const TagsUpdateInputSchema = z.object({
 
 export type TagsUpdateInput = z.input<typeof TagsUpdateInputSchema>;
 
-// Tagging and untagging a subscriber answers 204, so the result states what
-// happened rather than parsing an absent body.
+// Untagging answers 204 and tagging answers the subscriber, so both results
+// state what happened; a tag also carries the subscriber's ID.
 const TaggedResponseSchema = z.object({
 	success: z.literal(true),
 	tag_id: z.number(),
