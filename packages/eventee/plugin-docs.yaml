@@ -35,6 +35,9 @@ apiNotes:
   partner.patch: >-
     This is a replacement update: omitted text fields are cleared, and omitted
     logo_url/photo_url remove the sponsor/exhibitor listing.
+  partner.post: >-
+    At least one of logo_url or photo_url is required. logo_url lists the
+    partner as a sponsor; photo_url lists it as an exhibitor.
   partnerSections.patch: >-
     Replaces the full ordered section list; omitted sections are deleted.
     Types 0-5 represent heading, HTML, links, images, files and social links.

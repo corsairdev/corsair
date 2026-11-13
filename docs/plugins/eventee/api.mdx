@@ -3,6 +3,7 @@ title: "Eventee API reference"
 sidebarTitle: "API"
 description: "API reference for the Eventee plugin in Corsair: every `eventee.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
+
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -1015,6 +1016,8 @@ await corsair.eventee.api.partner.post({ company: 'Acme Corp', logo_url: 'https:
 | `email` | `string` | No | — |
 | `phone` | `string` | No | — |
 | `address` | `string` | No | — |
+
+At least one of logo_url or photo_url is required. logo_url lists the partner as a sponsor; photo_url lists it as an exhibitor.
 
 
 
@@ -2052,4 +2055,4 @@ await corsair.eventee.api.speaker.post({ name: 'Jane Doe', email: 'jane.doe@exam
 
 
 
----
+---\n

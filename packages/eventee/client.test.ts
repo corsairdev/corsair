@@ -75,6 +75,25 @@ describe('Eventee HTTP client', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
+	it('does not expose malformed bearer tokens in transport errors', async () => {
+		const token = 'private-event-token\r\nInjected: value';
+		const fetchSpy = jest.spyOn(globalThis, 'fetch');
+		mockedRequest.mockImplementation(actualRequest);
+
+		const result = await makeEventeeRequest(
+			'/public/api/v1/groups',
+			token,
+		).catch((caught: unknown) => caught); // Transport failures are untyped; assert only the sanitized error escapes.
+
+		expect(result).toBeInstanceOf(Error);
+		if (result instanceof Error) {
+			expect(result.message).toBe('Eventee request failed');
+			expect(result.message).not.toContain(token);
+		}
+		expect(fetchSpy).not.toHaveBeenCalled();
+		fetchSpy.mockRestore();
+	});
+
 	it('redacts attendee input and provider details from propagated API errors', async () => {
 		const providerError = new ApiError(
 			{

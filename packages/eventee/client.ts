@@ -88,7 +88,6 @@ export async function makeEventeeRequest<T>(
 				},
 			);
 		}
-		if (error instanceof Error) throw error;
 		throw new Error('Eventee request failed');
 	}
 }

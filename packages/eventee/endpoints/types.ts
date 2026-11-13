@@ -229,7 +229,7 @@ const AttendeeTicketSchema = z
 	})
 	.strict();
 const PersonFields = {
-	email: z.string().min(1).max(191),
+	email: z.string().email().max(191),
 	first_name: z.string().max(191).optional(),
 	last_name: z.string().max(191).optional(),
 	company: z.string().max(128).optional(),

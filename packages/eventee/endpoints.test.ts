@@ -448,6 +448,29 @@ describe('Eventee REST operation routing', () => {
 		expect(mockedLog).not.toHaveBeenCalled();
 	});
 
+	it('rejects mixed invite and registration batches with invalid emails before network I/O', async () => {
+		const ctx = makeContext();
+
+		await expect(
+			Attendees.invite(ctx, {
+				users: [
+					{ email: 'valid.person@example.com' },
+					{ email: 'not-an-email' },
+				],
+			}),
+		).rejects.toThrow();
+		await expect(
+			Registrations.create(ctx, {
+				registrations: [
+					{ email: 'valid.person@example.com' },
+					{ email: 'not-an-email' },
+				],
+			}),
+		).rejects.toThrow();
+
+		expect(mockedRequest).not.toHaveBeenCalled();
+	});
+
 	it('does not log invitee PII and registers schemas for all operations', async () => {
 		const ctx = makeContext();
 		mockedRequest.mockResolvedValue(invitation);
