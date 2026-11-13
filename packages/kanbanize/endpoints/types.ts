@@ -1005,6 +1005,12 @@ export const KanbanizeWebhookSchema = z
 		url: z.string().nullish(),
 		is_enabled: FlagSchema.nullish(),
 		board_id: z.number().nullish(),
+		secret: z
+			.string()
+			.nullish()
+			.describe(
+				'Sent once, by `webhooks.create`: the secret Businessmap signs deliveries with. Store it; no later call returns it.',
+			),
 	})
 	.loose();
 

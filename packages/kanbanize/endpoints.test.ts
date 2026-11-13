@@ -1544,3 +1544,22 @@ describe('cards.list with no body', () => {
 		await expect(invoke(Cards.list, {})).rejects.toThrow();
 	});
 });
+
+describe('webhooks.create', () => {
+	it('returns the signing secret as a string and keeps it out of the event log', async () => {
+		respond({ data: { ...webhook, secret: 'whsec-test-value' } });
+
+		const result = await invoke(Webhooks.create, {
+			url: 'https://corsair.example/hooks/kanbanize',
+			board_id: 1075,
+		});
+
+		const typed: string | null | undefined = (
+			result as Awaited<ReturnType<typeof Webhooks.create>>
+		).data.secret;
+		expect(typed).toBe('whsec-test-value');
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain(
+			'whsec-test-value',
+		);
+	});
+});
