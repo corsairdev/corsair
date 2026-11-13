@@ -64,6 +64,40 @@ describe('Encodian operation schemas', () => {
 		},
 	);
 
+	it.each(EncodianOperationIds)(
+		'%s keeps parsing when Encodian adds a response field',
+		(operationId) => {
+			const fixture = EncodianOutputFixtures[operationId];
+			expect(
+				EncodianEndpointOutputSchemas[operationId].safeParse({
+					...fixture,
+					fieldAddedLater: 'x',
+				}).success,
+			).toBe(true);
+		},
+	);
+
+	it('accepts response enum values Encodian adds later and nested result fields', () => {
+		expect(
+			EncodianEndpointOutputSchemas[
+				'barcodes.readSwissQrCodeFromImage'
+			].safeParse({
+				currency: 'USD',
+				creditorCountryCode: 'NewCountry',
+			}).success,
+		).toBe(true);
+		expect(
+			EncodianEndpointOutputSchemas['pdf.extractAttachmentsFromPdf'].safeParse({
+				documents: [{ fileName: 'a.pdf', fileContent: 'AA==', size: 1 }],
+			}).success,
+		).toBe(true);
+		expect(
+			EncodianEndpointOutputSchemas['sign.recipientListAll'].safeParse({
+				recipients: [{ emailAddress: 'x', id: 'added-later' }],
+			}).success,
+		).toBe(true);
+	});
+
 	it('rejects undocumented request properties at both operation and DTO levels', () => {
 		expect(
 			EncodianEndpointInputSchemas['barcodes.readBarcodeFromImage'].safeParse({

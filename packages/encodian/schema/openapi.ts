@@ -471,7 +471,7 @@ export const S_Barcode_DtoResponseCreateBarcode = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Barcode_DtoReadBarcodeFromDocument = z
 	.object({
 		fileType: z.enum(['PDF', 'DOCX']).optional(),
@@ -492,7 +492,7 @@ export const S_Barcode_DtoResponseReadBarcodeFromDocument = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Barcode_DtoAIBarcodeRead = z
 	.object({
 		FileContent: z.string().optional(),
@@ -511,7 +511,7 @@ export const S_Barcode_DtoResponseAIBarcodeRead = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Barcode_DtoReadBarcodeFromImage = z
 	.object({
 		fileContent: z.string(),
@@ -529,7 +529,7 @@ export const S_Barcode_DtoResponseReadBarcodeFromImage = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Barcode_DtoCreateQrCode = z
 	.object({
 		barcodeData: z.string(),
@@ -883,7 +883,7 @@ export const S_Barcode_DtoResponseCreateQrCode = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Barcode_DtoReadQrCodeFromDocument = z
 	.object({
 		fileType: z.enum(['PDF', 'DOCX']).optional(),
@@ -904,7 +904,7 @@ export const S_Barcode_DtoResponseReadQrCodeFromDocument = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Barcode_DtoReadQrCodeFromImage = z
 	.object({
 		fileContent: z.string(),
@@ -922,7 +922,7 @@ export const S_Barcode_DtoResponseReadQrCodeFromImage = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Barcode_Creditor = z
 	.object({
 		name: z.string(),
@@ -1496,7 +1496,7 @@ export const S_Barcode_DtoResponseCreateSwissQrCode = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Barcode_DtoReadSwissQrCodesFromDocument = z
 	.object({
 		fileContent: z.string(),
@@ -1769,9 +1769,10 @@ export const S_Barcode_ReadSwissQrCodesFromDocumentCreditor = z
 				'Zambia',
 				'Zimbabwe',
 			])
+			.or(z.string())
 			.optional(),
 	})
-	.strict();
+	.loose();
 export const S_Barcode_ReadSwissQrCodesFromDocumentDebtor = z
 	.object({
 		name: z.string().optional(),
@@ -2033,21 +2034,22 @@ export const S_Barcode_ReadSwissQrCodesFromDocumentDebtor = z
 				'Zambia',
 				'Zimbabwe',
 			])
+			.or(z.string())
 			.optional(),
 	})
-	.strict();
+	.loose();
 export const S_Barcode_ReadSwissQrCodesFromDocumentData = z
 	.object({
 		value: z.string().optional(),
 		account: z.string().optional(),
 		amount: z.number().optional(),
-		currency: z.enum(['CHF', 'EUR']).optional(),
+		currency: z.enum(['CHF', 'EUR']).or(z.string()).optional(),
 		reference: z.string().optional(),
 		creditor: S_Barcode_ReadSwissQrCodesFromDocumentCreditor.optional(),
 		debtor: S_Barcode_ReadSwissQrCodesFromDocumentDebtor.optional(),
 		pageNumber: z.number().int().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Barcode_DtoResponseReadSwissQrCodesFromDocument = z
 	.object({
 		swissQrCodes: z
@@ -2059,7 +2061,7 @@ export const S_Barcode_DtoResponseReadSwissQrCodesFromDocument = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Barcode_DtoReadSwissQrCodeFromImage = z
 	.object({
 		fileContent: z.string(),
@@ -2070,7 +2072,7 @@ export const S_Barcode_DtoResponseReadSwissQrCodeFromImage = z
 	.object({
 		value: z.string().optional(),
 		account: z.string().optional(),
-		currency: z.enum(['CHF', 'EUR']).optional(),
+		currency: z.enum(['CHF', 'EUR']).or(z.string()).optional(),
 		amount: z.number().optional(),
 		reference: z.string().optional(),
 		creditorName: z.string().optional(),
@@ -2332,6 +2334,7 @@ export const S_Barcode_DtoResponseReadSwissQrCodeFromImage = z
 				'Zambia',
 				'Zimbabwe',
 			])
+			.or(z.string())
 			.optional(),
 		debtorName: z.string().optional(),
 		debtorHouseNo: z.string().optional(),
@@ -2592,6 +2595,7 @@ export const S_Barcode_DtoResponseReadSwissQrCodeFromImage = z
 				'Zambia',
 				'Zimbabwe',
 			])
+			.or(z.string())
 			.optional(),
 		HttpStatusCode: z.number().int().optional(),
 		HttpStatusMessage: z.string().optional(),
@@ -2599,7 +2603,7 @@ export const S_Barcode_DtoResponseReadSwissQrCodeFromImage = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertConvertCad = z
 	.object({
 		outputFilename: z.string(),
@@ -2913,7 +2917,7 @@ export const S_Conversion_DtoResponseConvertCad = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertMailMessage = z
 	.object({
 		outputFilename: z.string(),
@@ -3101,7 +3105,7 @@ export const S_Conversion_DtoResponseConvertMailMessage = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertConvertExcel = z
 	.object({
 		outputFilename: z.string(),
@@ -3164,7 +3168,7 @@ export const S_Conversion_DtoResponseConvertExcel = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoBasicConversion = z
 	.object({
 		FileName: z.string(),
@@ -3206,7 +3210,7 @@ export const S_Conversion_DtoResponseBasicConversion = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertHeicToPdf = z
 	.object({ fileContent: z.string() })
 	.strict();
@@ -3219,7 +3223,7 @@ export const S_Conversion_DtoResponseConvertHeicToPdf = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertHtmlToImage = z
 	.object({
 		fileContent: z.string().optional(),
@@ -3242,7 +3246,7 @@ export const S_Conversion_DtoResponseConvertHtmlToImage = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoHtmlToPdf = z
 	.object({
 		FileName: z.string(),
@@ -3315,7 +3319,7 @@ export const S_Conversion_DtoResponseHtmlToPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertHtmlToPdfV2 = z
 	.object({
 		fileContent: z.string().optional(),
@@ -3376,7 +3380,7 @@ export const S_Conversion_DtoResponseConvertHtmlToPdfV2 = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoHtmlToWord = z
 	.object({
 		FileName: z.string(),
@@ -3432,7 +3436,7 @@ export const S_Conversion_DtoResponseHtmlToWord = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertConvertImageToPdf = z
 	.object({
 		ocrType: z.enum(['None', 'AI', 'Standard']).optional(),
@@ -3527,7 +3531,7 @@ export const S_Conversion_DtoResponseConvertImageToPdf = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertJsonToExcel = z
 	.object({
 		outputFilename: z.string(),
@@ -3701,7 +3705,7 @@ export const S_Conversion_DtoResponseConvertJsonToExcel = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertPdfToExcel = z
 	.object({ fileContent: z.string() })
 	.strict();
@@ -3714,7 +3718,7 @@ export const S_Conversion_DtoResponseConvertPdfToExcel = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertPdfToImages = z
 	.object({
 		fileContent: z.string(),
@@ -3728,7 +3732,7 @@ export const S_Conversion_DocumentArray = z
 		fileName: z.string().optional(),
 		fileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoResponseConvertPdfToImages = z
 	.object({
 		documents: z.array(S_Conversion_DocumentArray),
@@ -3738,7 +3742,7 @@ export const S_Conversion_DtoResponseConvertPdfToImages = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertPdfToJpg = z
 	.object({
 		fileContent: z.string(),
@@ -3763,7 +3767,7 @@ export const S_Conversion_DtoResponseConvertPdfToJpg = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertToPdfA = z
 	.object({
 		FileName: z.string(),
@@ -3801,7 +3805,7 @@ export const S_Conversion_DtoResponseConvertToPdfA = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertPdfToPng = z
 	.object({
 		fileContent: z.string(),
@@ -3825,7 +3829,7 @@ export const S_Conversion_DtoResponseConvertPdfToPng = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertPdfToTiff = z
 	.object({
 		fileContent: z.string(),
@@ -3848,7 +3852,7 @@ export const S_Conversion_DtoResponseConvertPdfToTiff = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertPdfToWord = z
 	.object({
 		fileName: z.string(),
@@ -3869,7 +3873,7 @@ export const S_Conversion_DtoResponseConvertPdfToWord = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertConvertPowerPoint = z
 	.object({
 		outputFilename: z.string(),
@@ -3941,7 +3945,7 @@ export const S_Conversion_DtoResponseConvertPowerPoint = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoTextToPdf = z
 	.object({
 		FileName: z.string(),
@@ -3972,7 +3976,7 @@ export const S_Conversion_DtoResponseTextToPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertConvertVisio = z
 	.object({
 		outputFormat: z.enum([
@@ -4089,7 +4093,7 @@ export const S_Conversion_DtoResponseConvertVisio = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoConvertConvertWord = z
 	.object({
 		outputFilename: z.string(),
@@ -4446,7 +4450,7 @@ export const S_Conversion_DtoResponseConvertWord = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Conversion_DtoWordToPdfForm = z
 	.object({
 		FileName: z.string(),
@@ -4465,7 +4469,7 @@ export const S_Conversion_DtoResponseWordToPdfForm = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoParseCsv = z
 	.object({
 		FileName: z.string(),
@@ -4487,7 +4491,7 @@ export const S_Excel_DtoResponseParseCsv = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoExcelAddImageHeaderOrFooter = z
 	.object({
 		fileContent: z.string(),
@@ -4518,7 +4522,7 @@ export const S_Excel_DtoResponseExcelAddImageHeaderOrFooter = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoAddRowsToExcel = z
 	.object({
 		fileContent: z.string(),
@@ -4544,7 +4548,7 @@ export const S_Excel_DtoResponseAddRowsToExcel = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoExcelAddTextHeadersAndFooters = z
 	.object({
 		fileContent: z.string(),
@@ -4568,7 +4572,7 @@ export const S_Excel_DtoResponseExcelAddTextHeadersAndFooters = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoExcelWatermarkText = z
 	.object({
 		fileContent: z.string(),
@@ -4599,7 +4603,7 @@ export const S_Excel_DtoResponseExcelWatermarkText = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoDeleteRowsFromExcel = z
 	.object({
 		fileContent: z.string(),
@@ -4619,7 +4623,7 @@ export const S_Excel_DtoResponseDeleteRowsFromExcel = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoDeleteExcelWorksheets = z
 	.object({
 		fileContent: z.string(),
@@ -4636,7 +4640,7 @@ export const S_Excel_DtoResponseDeleteExcelWorksheets = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoGetRowsFromExcel = z
 	.object({
 		fileContent: z.string(),
@@ -4665,7 +4669,7 @@ export const S_Excel_DtoResponseGetRowsFromExcel = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoExtractExcelWorksheets = z
 	.object({
 		fileContent: z.string(),
@@ -4682,7 +4686,7 @@ export const S_Excel_DtoResponseExtractExcelWorksheets = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DocumentArrayExcel = z
 	.object({
 		fileName: z.string(),
@@ -4711,7 +4715,7 @@ export const S_Excel_DtoResponseMergeArrayOfExcelDocuments = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DocumentArrayMergeExcelRows = z
 	.object({
 		fileName: z.string(),
@@ -4739,7 +4743,7 @@ export const S_Excel_DtoResponseMergeExcelRows = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoExcelMergeWorksheets = z
 	.object({
 		fileContent: z.string(),
@@ -4762,7 +4766,7 @@ export const S_Excel_DtoResponseExcelMergeWorksheets = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoPopulateExcel = z
 	.object({
 		fileContent: z.string(),
@@ -4787,7 +4791,7 @@ export const S_Excel_DtoResponsePopulateExcel = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoExcelRemoveHeadersAndFooters = z
 	.object({
 		fileContent: z.string(),
@@ -4811,7 +4815,7 @@ export const S_Excel_DtoResponseExcelRemoveHeadersAndFooters = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoExcelWatermarkTextRemove = z
 	.object({
 		fileContent: z.string(),
@@ -4830,7 +4834,7 @@ export const S_Excel_DtoResponseExcelWatermarkTextRemove = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_ExcelRenameWorksheetsSheet = z
 	.object({
 		currentName: z.string().optional(),
@@ -4854,7 +4858,7 @@ export const S_Excel_DtoResponseExcelRenameWorksheets = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_ExcelReplaceTextPhrase = z
 	.object({
 		searchText: z.string(),
@@ -5061,7 +5065,7 @@ export const S_Excel_DtoResponseExcelReplaceText = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoSecureExcel = z
 	.object({
 		fileContent: z.string(),
@@ -5088,7 +5092,7 @@ export const S_Excel_DtoResponseSecureExcel = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoExcelSeparateWorksheets = z
 	.object({ fileContent: z.string(), cultureName: z.string().optional() })
 	.strict();
@@ -5097,7 +5101,7 @@ export const S_Excel_DocumentArray = z
 		fileName: z.string().optional(),
 		fileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoResponseExcelSeparateWorksheets = z
 	.object({
 		files: z.array(S_Excel_DocumentArray),
@@ -5107,7 +5111,7 @@ export const S_Excel_DtoResponseExcelSeparateWorksheets = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoUnlockExcel = z
 	.object({
 		fileContent: z.string(),
@@ -5128,7 +5132,7 @@ export const S_Excel_DtoResponseUnlockExcel = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Excel_DtoUpdateRowsInExcel = z
 	.object({
 		fileContent: z.string(),
@@ -5153,7 +5157,7 @@ export const S_Excel_DtoResponseUpdateRowsInExcel = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoAIProcessFile = z
 	.object({
 		prebuiltModel: z
@@ -5239,7 +5243,7 @@ export const S_General_DtoResponseAIProcessFile = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoAIProcessFileMortgage = z
 	.object({
 		fileContent: z.string().optional(),
@@ -5342,7 +5346,7 @@ export const S_General_DtoResponseAIRunPromptText = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoAISpeechToText = z
 	.object({
 		fileContent: z.string(),
@@ -5364,7 +5368,7 @@ export const S_General_DtoResponseAISpeechToText = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoAITranslateFile = z
 	.object({
 		fileName: z.string(),
@@ -5654,7 +5658,7 @@ export const S_General_DtoResponseAITranslateFile = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoAITranslateTextMultiple = z
 	.object({
 		text: z.string(),
@@ -5947,7 +5951,7 @@ export const S_General_DtoResponseAITranslateTextMultiple = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoAITranslateText = z
 	.object({
 		text: z.string(),
@@ -6238,7 +6242,7 @@ export const S_General_DtoResponseAITranslateText = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DocumentArrayZip = z
 	.object({
 		fileName: z.string().optional(),
@@ -6268,7 +6272,7 @@ export const S_General_DtoResponseZipArrayOfDocuments = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoExtractFromArchive = z
 	.object({
 		fileContent: z.string(),
@@ -6281,7 +6285,7 @@ export const S_General_DocumentArray = z
 		fileName: z.string().optional(),
 		fileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoResponseExtractFromArchive = z
 	.object({
 		documents: z.array(S_General_DocumentArray),
@@ -6291,7 +6295,7 @@ export const S_General_DtoResponseExtractFromArchive = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoExtractFromArchiveV2 = z
 	.object({
 		fileContent: z.string(),
@@ -6306,7 +6310,7 @@ export const S_General_ExtractArchiveDocumentArray = z
 		fileContent: z.string().optional(),
 		directory: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoResponseExtractFromArchiveV2 = z
 	.object({
 		documents: z.array(S_General_ExtractArchiveDocumentArray),
@@ -6316,7 +6320,7 @@ export const S_General_DtoResponseExtractFromArchiveV2 = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoGetEmailAttachments = z
 	.object({
 		fileName: z.string(),
@@ -6333,7 +6337,7 @@ export const S_General_DtoResponseGetEmailAttachments = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoGetEmailInfo = z
 	.object({ fileContent: z.string(), cultureName: z.string().optional() })
 	.strict();
@@ -6362,7 +6366,7 @@ export const S_General_DtoResponseGetEmailInfo = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_Phrase = z
 	.object({
 		SearchText: z.string(),
@@ -6397,7 +6401,7 @@ export const S_General_DtoResponseSearchAndReplaceText = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoSearchAndReplaceTextWithImage = z
 	.object({
 		fileType: z.enum(['PDF', 'DOCX']).optional(),
@@ -6426,7 +6430,7 @@ export const S_General_DtoResponseSearchAndReplaceTextWithImage = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoBuyAdditionalCredits = z
 	.object({
 		productName: z.enum(['Flowr', 'Vertr', 'Trigr']),
@@ -6443,7 +6447,7 @@ export const S_General_DtoResponseBuyAdditionalCredits = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoResponseMgmtGetSubscriptionStatus = z
 	.object({
 		availableActionsMonth: z.number().int().optional(),
@@ -6459,7 +6463,7 @@ export const S_General_DtoResponseMgmtGetSubscriptionStatus = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_General_DtoResponseMgmtGetTrigrSubscriptionStatus = z
 	.object({
 		availableActionsMonth: z.number().int().optional(),
@@ -6475,7 +6479,7 @@ export const S_General_DtoResponseMgmtGetTrigrSubscriptionStatus = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoAddImageWatermarkToImage = z
 	.object({
 		filename: z.string(),
@@ -6510,7 +6514,7 @@ export const S_Image_DtoResponseAddImageWatermarkToImage = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoAddTextWatermarkToImage = z
 	.object({
 		FileName: z.string(),
@@ -6544,7 +6548,7 @@ export const S_Image_DtoResponseAddTextWatermarkToImage = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoImageCleanUpDoc = z
 	.object({
 		FileName: z.string(),
@@ -6576,7 +6580,7 @@ export const S_Image_DtoResponseImageCleanUpDoc = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoImageCleanUpPhoto = z
 	.object({
 		FileName: z.string(),
@@ -6606,7 +6610,7 @@ export const S_Image_DtoResponseImageCleanUpPhoto = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoImageCompress = z
 	.object({
 		fileContent: z.string(),
@@ -6638,7 +6642,7 @@ export const S_Image_DtoResponseImageCompress = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoImageConvertFormat = z
 	.object({
 		fileContent: z.string(),
@@ -6657,7 +6661,7 @@ export const S_Image_DtoResponseImageConvertFormat = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoImageConvertToGrayscale = z
 	.object({ fileContent: z.string() })
 	.strict();
@@ -6670,7 +6674,7 @@ export const S_Image_DtoResponseImageConvertToGrayscale = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoImageCropImage = z
 	.object({
 		cropType: z.enum(['Border', 'Rectangle']),
@@ -6694,7 +6698,7 @@ export const S_Image_DtoResponseCropImage = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoGetImageInfo = z
 	.object({
 		fileContent: z.string(),
@@ -6720,7 +6724,7 @@ export const S_Image_DtoResponseGetImageInfo = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoImageExtractText = z
 	.object({
 		fileName: z.string(),
@@ -6830,7 +6834,7 @@ export const S_Image_DtoResponseImageExtractText = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoFlipImage = z
 	.object({
 		fileContent: z.string(),
@@ -6850,7 +6854,7 @@ export const S_Image_DtoResponseFlipImage = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoImageRemoveExifTags = z
 	.object({
 		fileContent: z.string(),
@@ -6868,7 +6872,7 @@ export const S_Image_DtoResponseImageRemoveExifTags = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoImageResize = z
 	.object({
 		FileName: z.string(),
@@ -6894,7 +6898,7 @@ export const S_Image_DtoResponseImageResize = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoRotateImage = z
 	.object({
 		fileContent: z.string(),
@@ -7059,7 +7063,7 @@ export const S_Image_DtoResponseRotateImage = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Image_DtoRotateImageByExifData = z
 	.object({ fileContent: z.string().optional() })
 	.strict();
@@ -7085,7 +7089,7 @@ export const S_PDF_DtoResponseAddAttachmentsToPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoAddHtmlHeaderFooter = z
 	.object({
 		FileName: z.string(),
@@ -7116,7 +7120,7 @@ export const S_PDF_DtoResponseAddHtmlHeaderFooter = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoAddImageWatermark = z
 	.object({
 		FileName: z.string(),
@@ -7143,7 +7147,7 @@ export const S_PDF_DtoResponseAddImageWatermark = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoAddImageWatermarkAdv = z
 	.object({
 		FileName: z.string(),
@@ -7180,7 +7184,7 @@ export const S_PDF_DtoResponseAddImageWatermarkAdv = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoAddPageNumbers = z
 	.object({
 		FileName: z.string(),
@@ -7215,7 +7219,7 @@ export const S_PDF_DtoResponseAddPageNumbers = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoAddTextWatermark = z
 	.object({
 		FileName: z.string(),
@@ -7248,7 +7252,7 @@ export const S_PDF_DtoResponseAddTextWatermark = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoAddTextWatermarkAdv = z
 	.object({
 		FileName: z.string(),
@@ -7309,7 +7313,7 @@ export const S_PDF_DtoResponseAddTextWatermarkAdv = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoAIOcrPdfDocument = z
 	.object({
 		fileContent: z.string(),
@@ -7338,7 +7342,7 @@ export const S_PDF_DtoResponseAIOcrPdfDocument = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoOcrPdf = z
 	.object({
 		FileName: z.string(),
@@ -7472,7 +7476,7 @@ export const S_PDF_DtoResponseOcrPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfCheckPassword = z
 	.object({ fileContent: z.string(), viewPassword: z.string().optional() })
 	.strict();
@@ -7486,7 +7490,7 @@ export const S_PDF_DtoResponsePdfCheckPassword = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoCompressPdf = z
 	.object({
 		fileContent: z.string(),
@@ -7515,7 +7519,7 @@ export const S_PDF_DtoResponseCompressPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfCreateZUGFeRDInvoice = z
 	.object({ fileContent: z.string(), zUGFeRDFileContent: z.string() })
 	.strict();
@@ -7528,7 +7532,7 @@ export const S_PDF_DtoResponsePdfCreateZUGFeRDInvoice = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfDeleteBlankPages = z
 	.object({
 		fileContent: z.string(),
@@ -7546,7 +7550,7 @@ export const S_PDF_DtoResponsePdfDeleteBlankPages = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoDeletePdfPages = z
 	.object({
 		fileContent: z.string(),
@@ -7564,20 +7568,20 @@ export const S_PDF_DtoResponseDeletePdfPages = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoExtractAttachmentsFromPdf = z
 	.object({ fileContent: z.string() })
 	.strict();
 export const S_PDF_DtoResponseExtractAttachmentsFromPdf = z
 	.object({
-		documents: z.array(S_PDF_DocumentArray),
+		documents: z.array(S_PDF_DocumentArray.loose()),
 		HttpStatusCode: z.number().int().optional(),
 		HttpStatusMessage: z.string().optional(),
 		OperationId: z.string().optional(),
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoGetPdfFormData = z
 	.object({
 		FileName: z.string(),
@@ -7597,7 +7601,7 @@ export const S_PDF_DtoResponseGetPdfFormData = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfExtractHyperlinks = z
 	.object({
 		fileContent: z.string(),
@@ -7616,7 +7620,7 @@ export const S_PDF_DtoResponsePdfExtractHyperlinks = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoExtractImagesAll = z
 	.object({
 		fileContent: z.string(),
@@ -7628,14 +7632,14 @@ export const S_PDF_DtoExtractImagesAll = z
 	.strict();
 export const S_PDF_DtoResponseExtractImagesAll = z
 	.object({
-		Images: z.array(S_PDF_DocumentArray),
+		Images: z.array(S_PDF_DocumentArray.loose()),
 		HttpStatusCode: z.number().int().optional(),
 		HttpStatusMessage: z.string().optional(),
 		OperationId: z.string().optional(),
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_ImageRegion = z
 	.object({
 		Name: z.string().optional(),
@@ -7659,14 +7663,14 @@ export const S_PDF_DtoExtractImage = z
 	.strict();
 export const S_PDF_DtoResponseExtractImage = z
 	.object({
-		Images: z.array(S_PDF_DocumentArray),
+		Images: z.array(S_PDF_DocumentArray.loose()),
 		HttpStatusCode: z.number().int().optional(),
 		HttpStatusMessage: z.string().optional(),
 		OperationId: z.string().optional(),
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoGetPdfDocumentInfo = z
 	.object({
 		FileName: z.string(),
@@ -7703,7 +7707,7 @@ export const S_PDF_DtoResponseGetPdfDocumentInfo = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoExtractPdfPages = z
 	.object({
 		fileContent: z.string(),
@@ -7721,7 +7725,7 @@ export const S_PDF_DtoResponseExtractPdfPages = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoExtractPdfPagesByText = z
 	.object({
 		fileContent: z.string(),
@@ -7739,7 +7743,7 @@ export const S_PDF_DtoResponseExtractPdfPagesByText = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfExtractTableData = z
 	.object({
 		fileContent: z.string().optional(),
@@ -7759,7 +7763,7 @@ export const S_PDF_DtoResponsePdfExtractTableData = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoGetPdfTextLayer = z
 	.object({
 		FileName: z.string(),
@@ -7793,7 +7797,7 @@ export const S_PDF_DtoResponseGetPdfTextLayer = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfExtractTextByPage = z
 	.object({
 		FileContent: z.string(),
@@ -7816,7 +7820,7 @@ export const S_PDF_DtoPdfExtractTextByPage = z
 	.strict();
 export const S_PDF_PdfExtractTextPage = z
 	.object({ Number: z.number().int().optional(), Text: z.string().optional() })
-	.strict();
+	.loose();
 export const S_PDF_DtoResponsePdfExtractTextByPage = z
 	.object({
 		pages: z.array(S_PDF_PdfExtractTextPage).optional(),
@@ -7826,7 +7830,7 @@ export const S_PDF_DtoResponsePdfExtractTextByPage = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_TextRegion = z
 	.object({
 		Name: z.string(),
@@ -7852,7 +7856,7 @@ export const S_PDF_TextRegionResult = z
 		Text: z.string().optional(),
 		PageNumber: z.number().int().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoResponseExtractTextRegion = z
 	.object({
 		TextRegionResultsSimple: z.string(),
@@ -7865,7 +7869,7 @@ export const S_PDF_DtoResponseExtractTextRegion = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoFillPdfForm = z
 	.object({
 		FileName: z.string(),
@@ -7883,7 +7887,7 @@ export const S_PDF_DtoResponseFillPdfForm = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoFlattenPdf = z
 	.object({ fileContent: z.string() })
 	.strict();
@@ -7897,7 +7901,7 @@ export const S_PDF_DtoResponseFlattenPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfFlattenFields = z
 	.object({
 		fileContent: z.string(),
@@ -7914,7 +7918,7 @@ export const S_PDF_DtoResponsePdfFlattenFields = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfGenerateBookmarks = z
 	.object({ fileContent: z.string(), bookmarks: z.string() })
 	.strict();
@@ -7927,7 +7931,7 @@ export const S_PDF_DtoResponsePdfGenerateBookmarks = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoInsertHtmlToPdf = z
 	.object({
 		FileName: z.string(),
@@ -7983,7 +7987,7 @@ export const S_PDF_DtoResponseInsertHtmlToPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_PdfPagesToInsert = z
 	.object({
 		fileName: z.string(),
@@ -8011,7 +8015,7 @@ export const S_PDF_DtoResponsePdfInsertPages = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfInsertToc = z
 	.object({
 		fileContent: z.string(),
@@ -8623,7 +8627,7 @@ export const S_PDF_DtoResponsePdfInsertToc = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfLinearize = z
 	.object({ fileContent: z.string() })
 	.strict();
@@ -8636,7 +8640,7 @@ export const S_PDF_DtoResponsePdfLinearize = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoMergeArrayOfDocumentsToPdf = z
 	.object({
 		outputFilename: z.string(),
@@ -8679,7 +8683,7 @@ export const S_PDF_DtoResponseMergeArrayOfDocumentsToPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoMergeDocumentsToPdf = z
 	.object({
 		outputFilename: z.string(),
@@ -8740,7 +8744,7 @@ export const S_PDF_DtoResponseMergeDocumentsToPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_Redaction = z
 	.object({
 		SearchText: z.string().optional(),
@@ -8773,7 +8777,7 @@ export const S_PDF_DtoResponseRedactPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfRemoveDigitalSignature = z
 	.object({ fileContent: z.string() })
 	.strict();
@@ -8786,7 +8790,7 @@ export const S_PDF_DtoResponsePdfRemoveDigitalSignature = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoRemoveWatermarksFromPdf = z
 	.object({
 		fileName: z.string(),
@@ -8805,7 +8809,7 @@ export const S_PDF_DtoResponseRemoveWatermarksFromPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoRepairPdf = z
 	.object({ fileContent: z.string() })
 	.strict();
@@ -8819,7 +8823,7 @@ export const S_PDF_DtoResponseRepairPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfReplaceTextWithImage = z
 	.object({
 		FileContent: z.string(),
@@ -8841,7 +8845,7 @@ export const S_PDF_DtoResponsePdfReplaceTextWithImage = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoResizePdf = z
 	.object({
 		FileContent: z.string(),
@@ -8881,7 +8885,7 @@ export const S_PDF_DtoResponseResizePdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoRotatePdfPages = z
 	.object({
 		fileContent: z.string(),
@@ -8908,7 +8912,7 @@ export const S_PDF_DtoResponseRotatePdfPages = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_PdfSearchAndReplaceTextPhrase = z
 	.object({
 		searchText: z.string(),
@@ -8940,7 +8944,7 @@ export const S_PDF_DtoResponsePdfSearchAndReplaceText = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoSecurePdf = z
 	.object({
 		FileName: z.string(),
@@ -8972,7 +8976,7 @@ export const S_PDF_DtoResponseSecurePdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoPdfSetMetadata = z
 	.object({
 		fileContent: z.string(),
@@ -8995,7 +8999,7 @@ export const S_PDF_DtoResponsePdfSetMetadata = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoSetPdfPrivileges = z
 	.object({
 		FileName: z.string(),
@@ -9337,7 +9341,7 @@ export const S_PDF_DtoResponseSignPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoSplitDocument = z
 	.object({
 		fileName: z.string(),
@@ -9350,14 +9354,14 @@ export const S_PDF_DtoSplitDocument = z
 	.strict();
 export const S_PDF_DtoResponseSplitDocument = z
 	.object({
-		documents: z.array(S_PDF_DocumentArray),
+		documents: z.array(S_PDF_DocumentArray.loose()),
 		HttpStatusCode: z.number().int().optional(),
 		HttpStatusMessage: z.string().optional(),
 		OperationId: z.string().optional(),
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoSplitPdfByBarcode = z
 	.object({
 		fileName: z.string(),
@@ -9384,7 +9388,7 @@ export const S_PDF_DocumentArrayPdfSplitByBarcode = z
 		fileContent: z.string(),
 		barcodeValue: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoResponseSplitPdfByBarcode = z
 	.object({
 		documents: z.array(S_PDF_DocumentArrayPdfSplitByBarcode).optional(),
@@ -9394,7 +9398,7 @@ export const S_PDF_DtoResponseSplitPdfByBarcode = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoSplitPdfByText = z
 	.object({
 		fileName: z.string(),
@@ -9408,14 +9412,14 @@ export const S_PDF_DtoSplitPdfByText = z
 	.strict();
 export const S_PDF_DtoResponseSplitPdfByText = z
 	.object({
-		documents: z.array(S_PDF_DocumentArray),
+		documents: z.array(S_PDF_DocumentArray.loose()),
 		HttpStatusCode: z.number().int().optional(),
 		HttpStatusMessage: z.string().optional(),
 		OperationId: z.string().optional(),
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoUnlockPdf = z
 	.object({
 		FileName: z.string(),
@@ -9435,7 +9439,7 @@ export const S_PDF_DtoResponseUnlockPdf = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_PdfHyperlink = z
 	.object({
 		searchOn: z.enum(['Text', 'URL']),
@@ -9463,7 +9467,7 @@ export const S_PDF_DtoResponsePdfUpdateHyperlinks = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PDF_DtoValidatePdfTextLayer = z
 	.object({
 		fileContent: z.string(),
@@ -9479,7 +9483,7 @@ export const S_PDF_DtoResponseValidatePdfTextLayer = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PowerPoint_DtoCompressPowerPoint = z
 	.object({
 		fileName: z.string(),
@@ -9502,7 +9506,7 @@ export const S_PowerPoint_DtoResponseCompressPowerPoint = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PowerPoint_DtoPowerPointDeleteSlides = z
 	.object({
 		fileContent: z.string(),
@@ -9521,7 +9525,7 @@ export const S_PowerPoint_DtoResponsePowerPointDeleteSlides = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PowerPoint_DocumentArrayPresentation = z
 	.object({
 		fileName: z.string(),
@@ -9567,7 +9571,7 @@ export const S_PowerPoint_DtoResponseMergePresentations = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PowerPoint_DtoPopulatePowerPoint = z
 	.object({
 		fileContent: z.string(),
@@ -9591,7 +9595,7 @@ export const S_PowerPoint_DtoResponsePopulatePowerPoint = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PowerPoint_PowerPointSearchAndReplaceTextPhrase = z
 	.object({
 		searchText: z.string(),
@@ -9943,7 +9947,7 @@ export const S_PowerPoint_DtoResponsePowerPointSearchAndReplaceText = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PowerPoint_DtoPowerPointSplit = z
 	.object({
 		fileContent: z.string(),
@@ -9957,7 +9961,7 @@ export const S_PowerPoint_DocumentArray = z
 		fileName: z.string().optional(),
 		fileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_PowerPoint_DtoResponsePowerPointSplit = z
 	.object({
 		documents: z.array(S_PowerPoint_DocumentArray),
@@ -9967,7 +9971,7 @@ export const S_PowerPoint_DtoResponsePowerPointSplit = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoAesEncryption = z
 	.object({
 		data: z.string(),
@@ -9989,7 +9993,7 @@ export const S_Utilities_DtoResponseAesEncryption = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoAesDecryption = z
 	.object({
 		data: z.string(),
@@ -10011,7 +10015,7 @@ export const S_Utilities_DtoResponseAesDecryption = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayAddItems = z
 	.object({
 		data: z.string(),
@@ -10030,7 +10034,7 @@ export const S_Utilities_DtoResponseArrayAddItems = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayCombine = z
 	.object({
 		data: z.string(),
@@ -10051,7 +10055,7 @@ export const S_Utilities_DtoResponseArrayCombine = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayContainsValue = z
 	.object({
 		data: z.string(),
@@ -10069,7 +10073,7 @@ export const S_Utilities_DtoResponseArrayContainsValue = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayCountItems = z
 	.object({ data: z.string(), path: z.string().optional() })
 	.strict();
@@ -10082,7 +10086,7 @@ export const S_Utilities_DtoResponseArrayCountItems = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayFilterItems = z
 	.object({
 		data: z.string(),
@@ -10101,7 +10105,7 @@ export const S_Utilities_DtoResponseArrayFilterItems = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayGetItems = z
 	.object({
 		data: z.string(),
@@ -10119,7 +10123,7 @@ export const S_Utilities_DtoResponseArrayGetItems = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayFilterItemsViaRegex = z
 	.object({
 		data: z.string(),
@@ -10138,7 +10142,7 @@ export const S_Utilities_DtoResponseArrayFilterItemsViaRegex = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayMerge = z
 	.object({
 		data: z.string(),
@@ -10156,7 +10160,7 @@ export const S_Utilities_DtoResponseArrayMerge = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayRemoveDuplicates = z
 	.object({
 		data: z.string(),
@@ -10173,7 +10177,7 @@ export const S_Utilities_DtoResponseArrayRemoveDuplicates = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayRemoveItems = z
 	.object({
 		data: z.string(),
@@ -10191,7 +10195,7 @@ export const S_Utilities_DtoResponseArrayRemoveItems = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayRemoveItemsRegex = z
 	.object({ data: z.string(), regex: z.string(), path: z.string().optional() })
 	.strict();
@@ -10204,7 +10208,7 @@ export const S_Utilities_DtoResponseArrayRemoveItemsRegex = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayReplaceValues = z
 	.object({
 		data: z.string(),
@@ -10222,7 +10226,7 @@ export const S_Utilities_DtoResponseArrayReplaceValues = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayReverseItems = z
 	.object({ data: z.string(), path: z.string().optional() })
 	.strict();
@@ -10235,7 +10239,7 @@ export const S_Utilities_DtoResponseArrayReverseItems = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArraySortItems = z
 	.object({
 		data: z.string(),
@@ -10254,7 +10258,7 @@ export const S_Utilities_DtoResponseArraySortItems = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArraySplitItems = z
 	.object({
 		data: z.string(),
@@ -10273,7 +10277,7 @@ export const S_Utilities_DtoResponseArraySplitItems = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayConvertToJson = z
 	.object({ data: z.string(), name: z.string(), path: z.string().optional() })
 	.strict();
@@ -10286,7 +10290,7 @@ export const S_Utilities_DtoResponseArrayConvertToJson = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoArrayConvertToXml = z
 	.object({
 		data: z.string(),
@@ -10304,7 +10308,7 @@ export const S_Utilities_DtoResponseArrayConvertToXml = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoCalculateDate = z
 	.object({
 		date: z.string(),
@@ -10334,7 +10338,7 @@ export const S_Utilities_DtoResponseCalculateDate = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoCleanString = z
 	.object({
 		text: z.string(),
@@ -10353,7 +10357,7 @@ export const S_Utilities_DtoResponseCleanString = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoCompareText = z
 	.object({
 		primaryText: z.string(),
@@ -10370,7 +10374,7 @@ export const S_Utilities_DtoResponseCompareText = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoConcatenateText = z
 	.object({
 		textList: z.array(z.string()).optional(),
@@ -10387,7 +10391,7 @@ export const S_Utilities_DtoResponseConcatenateText = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoConvertJsonToXml = z
 	.object({
 		json: z.string(),
@@ -10404,7 +10408,7 @@ export const S_Utilities_DtoResponseConvertJsonToXml = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoConvertTimeZone = z
 	.object({
 		date: z.string(),
@@ -10710,7 +10714,7 @@ export const S_Utilities_DtoResponseConvertTimeZone = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoConvertXmlToJson = z
 	.object({ xml: z.string(), omitRootObject: z.boolean().optional() })
 	.strict();
@@ -10723,7 +10727,7 @@ export const S_Utilities_DtoResponseConvertXmlToJson = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoCreateGuid = z
 	.object({ case: z.enum(['Lower', 'Upper']) })
 	.strict();
@@ -10736,7 +10740,7 @@ export const S_Utilities_DtoResponseCreateGuid = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoCreateHashCode = z
 	.object({
 		data: z.string(),
@@ -10773,7 +10777,7 @@ export const S_Utilities_DtoResponseCreateHashCode = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoCreateHMAC = z
 	.object({
 		data: z.string().optional(),
@@ -10812,7 +10816,7 @@ export const S_Utilities_DtoResponseCreateHMAC = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoCreateJwt = z
 	.object({
 		claims: z.string().optional(),
@@ -10856,7 +10860,7 @@ export const S_Utilities_DtoResponseCreateJwt = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoEscapeHtml = z
 	.object({ html: z.string() })
 	.strict();
@@ -10869,7 +10873,7 @@ export const S_Utilities_DtoResponseEscapeHtml = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoExtractEmailAddressesFromText = z
 	.object({ text: z.string(), regex: z.string() })
 	.strict();
@@ -10882,7 +10886,7 @@ export const S_Utilities_DtoResponseExtractEmailAddressesFromText = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoExtractTextBetweenValues = z
 	.object({
 		text: z.string(),
@@ -10902,7 +10906,7 @@ export const S_Utilities_DtoResponseExtractTextBetweenValues = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoExtractAllTextInstancesBetweenValues = z
 	.object({
 		text: z.string(),
@@ -10923,7 +10927,7 @@ export const S_Utilities_DtoResponseExtractAllTextInstancesBetweenValues = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoExtractUrlsFromText = z
 	.object({ text: z.string(), regex: z.string() })
 	.strict();
@@ -10936,7 +10940,7 @@ export const S_Utilities_DtoResponseExtractUrlsFromText = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoFormatDate = z
 	.object({
 		date: z.string(),
@@ -10953,7 +10957,7 @@ export const S_Utilities_DtoResponseFormatDate = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoFormatTextCase = z
 	.object({
 		text: z.string(),
@@ -10978,7 +10982,7 @@ export const S_Utilities_DtoResponseFormatTextCase = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoGeneratePassword = z
 	.object({
 		length: z.number().int(),
@@ -10998,7 +11002,7 @@ export const S_Utilities_DtoResponseGeneratePassword = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoGenerateRandomNumber = z
 	.object({
 		minValue: z.number().int().optional(),
@@ -11014,7 +11018,7 @@ export const S_Utilities_DtoResponseGenerateRandomNumber = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoGetDateTimeDifference = z
 	.object({
 		startDateTime: z.string(),
@@ -11043,7 +11047,7 @@ export const S_Utilities_DtoResponseGetDateTimeDifference = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoGetFileExtension = z
 	.object({ fileName: z.string(), case: z.enum(['Lower', 'Upper']).optional() })
 	.strict();
@@ -11056,7 +11060,7 @@ export const S_Utilities_DtoResponseGetFileExtension = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoGetFileFormat = z
 	.object({
 		fileContent: z.string(),
@@ -11072,7 +11076,7 @@ export const S_Utilities_DtoResponseGetFileFormat = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoParseHtmlTable = z
 	.object({
 		fileContent: z.string().optional(),
@@ -11095,7 +11099,7 @@ export const S_Utilities_DtoResponseParseHtmlTable = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoRemoveDiacritics = z
 	.object({
 		text: z.string(),
@@ -11112,7 +11116,7 @@ export const S_Utilities_DtoResponseRemoveDiacritics = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoRemoveTextBetweenValues = z
 	.object({
 		text: z.string(),
@@ -11133,7 +11137,7 @@ export const S_Utilities_DtoResponseRemoveTextBetweenValues = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoRemoveWhitespaceFromText = z
 	.object({
 		text: z.string(),
@@ -11149,7 +11153,7 @@ export const S_Utilities_DtoResponseRemoveWhitespaceFromText = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoReplaceValueWithRegex = z
 	.object({
 		text: z.string(),
@@ -11167,7 +11171,7 @@ export const S_Utilities_DtoResponseReplaceValueWithRegex = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoReplaceValueWithText = z
 	.object({
 		text: z.string(),
@@ -11186,7 +11190,7 @@ export const S_Utilities_DtoResponseReplaceValueWithText = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoRsaEncryption = z
 	.object({
 		data: z.string(),
@@ -11206,7 +11210,7 @@ export const S_Utilities_DtoResponseRsaEncryption = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoRsaDecryption = z
 	.object({
 		data: z.string(),
@@ -11226,7 +11230,7 @@ export const S_Utilities_DtoResponseRsaDecryption = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoCreateRsaKeyPair = z
 	.object({
 		keySize: z.enum([
@@ -11249,7 +11253,7 @@ export const S_Utilities_DtoResponseCreateRsaKeyPair = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoRegexSearchText = z
 	.object({
 		text: z.string(),
@@ -11273,7 +11277,7 @@ export const S_Utilities_DtoResponseRegexSearchText = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoSplitText = z
 	.object({
 		text: z.string(),
@@ -11293,7 +11297,7 @@ export const S_Utilities_DtoResponseSplitText = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoSplitTextViaRegex = z
 	.object({
 		text: z.string(),
@@ -11313,7 +11317,7 @@ export const S_Utilities_DtoResponseSplitTextViaRegex = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoTextContainsValue = z
 	.object({
 		text: z.string(),
@@ -11334,7 +11338,7 @@ export const S_Utilities_DtoResponseTextContainsValue = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoTrimText = z
 	.object({
 		text: z.string(),
@@ -11351,7 +11355,7 @@ export const S_Utilities_DtoResponseTrimText = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoUnescapeHtml = z
 	.object({ html: z.string() })
 	.strict();
@@ -11364,7 +11368,7 @@ export const S_Utilities_DtoResponseUnescapeHtml = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoValidateEmailAddress = z
 	.object({ emailAddress: z.string(), regex: z.string() })
 	.strict();
@@ -11377,7 +11381,7 @@ export const S_Utilities_DtoResponseValidateEmailAddress = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoValidateGuid = z
 	.object({ guid: z.string() })
 	.strict();
@@ -11390,7 +11394,7 @@ export const S_Utilities_DtoResponseValidateGuid = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoValidateJson = z
 	.object({ json: z.string(), schema: z.string().optional() })
 	.strict();
@@ -11403,7 +11407,7 @@ export const S_Utilities_DtoResponseValidateJson = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoValidateUrlAvailability = z
 	.object({ url: z.string(), validateURL: z.boolean().optional() })
 	.strict();
@@ -11416,7 +11420,7 @@ export const S_Utilities_DtoResponseValidateUrlAvailability = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Utilities_DtoValidateUrlSyntax = z
 	.object({ url: z.string() })
 	.strict();
@@ -11429,7 +11433,7 @@ export const S_Utilities_DtoResponseValidateUrlSyntax = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoAddHtmlHeaderFooterWord = z
 	.object({
 		fileContent: z.string(),
@@ -11455,7 +11459,7 @@ export const S_Word_DtoResponseAddHtmlHeaderFooterWord = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoAddImageWatermarkWord = z
 	.object({
 		fileName: z.string(),
@@ -11478,7 +11482,7 @@ export const S_Word_DtoResponseAddImageWatermarkWord = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoWordAddPageNumbers = z
 	.object({
 		fileName: z.string(),
@@ -11571,7 +11575,7 @@ export const S_Word_DtoResponseWordAddPageNumbers = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoAddTextWatermarkWord = z
 	.object({
 		fileName: z.string(),
@@ -11595,7 +11599,7 @@ export const S_Word_DtoResponseAddTextWatermarkWord = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoCompareWordDocuments = z
 	.object({
 		fileContentOne: z.string(),
@@ -11621,7 +11625,7 @@ export const S_Word_DtoResponseCompareWordDocuments = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoDeleteWordPages = z
 	.object({
 		fileName: z.string(),
@@ -11642,7 +11646,7 @@ export const S_Word_DtoResponseDeleteWordPages = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoDisableTrackedChanges = z
 	.object({
 		fileName: z.string(),
@@ -11660,7 +11664,7 @@ export const S_Word_DtoResponseDisableTrackedChanges = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoEnableTrackedChanges = z
 	.object({
 		fileName: z.string(),
@@ -11678,7 +11682,7 @@ export const S_Word_DtoResponseEnableTrackedChanges = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoWordExtractFieldData = z
 	.object({
 		fileContent: z.string(),
@@ -11700,7 +11704,7 @@ export const S_Word_DtoResponseWordExtractFieldData = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoWordExtractFiles = z
 	.object({
 		fileContent: z.string(),
@@ -11715,7 +11719,7 @@ export const S_Word_DocumentArray = z
 		fileName: z.string().optional(),
 		fileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoResponseWordExtractFiles = z
 	.object({
 		documents: z.array(S_Word_DocumentArray),
@@ -11725,7 +11729,7 @@ export const S_Word_DtoResponseWordExtractFiles = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoWordExtractImages = z
 	.object({
 		fileContent: z.string(),
@@ -11748,7 +11752,7 @@ export const S_Word_DtoResponseWordExtractImages = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoWordExtractMetadata = z
 	.object({ fileContent: z.string(), cultureName: z.string().optional() })
 	.strict();
@@ -11785,7 +11789,7 @@ export const S_Word_DtoResponseWordExtractMetadata = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoExtractWordPages = z
 	.object({
 		fileName: z.string(),
@@ -11806,7 +11810,7 @@ export const S_Word_DtoResponseExtractWordPages = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoGetTextFromWord = z
 	.object({
 		fileContent: z.string(),
@@ -11827,7 +11831,7 @@ export const S_Word_DtoResponseGetTextFromWord = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoGetTrackedChanges = z
 	.object({
 		fileContent: z.string(),
@@ -11845,7 +11849,7 @@ export const S_Word_DtoResponseGetTrackedChanges = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_WordInsertTextStyle = z
 	.object({
 		font: z.string().optional(),
@@ -12225,7 +12229,7 @@ export const S_Word_DtoResponseWordInsertText = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoManageTrackedChanges = z
 	.object({
 		FileName: z.string(),
@@ -12248,7 +12252,7 @@ export const S_Word_DtoResponseManageTrackedChanges = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DocumentArrayWord = z
 	.object({
 		fileName: z.string(),
@@ -12429,7 +12433,7 @@ export const S_Word_DtoResponseMergeArrayOfDocumentsToWord = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoOptimiseWordDocument = z
 	.object({
 		fileName: z.string(),
@@ -12457,7 +12461,7 @@ export const S_Word_DtoResponseOptimiseWordDocument = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoPopulateWordDocument = z
 	.object({
 		fileContent: z.string(),
@@ -12632,7 +12636,7 @@ export const S_Word_DtoResponsePopulateWordDocument = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoRemoveHeaderFooterWord = z
 	.object({
 		fileContent: z.string(),
@@ -12655,7 +12659,7 @@ export const S_Word_DtoResponseRemoveHeaderFooterWord = z
 		OperationStatus: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoRemoveWordTableOfContents = z
 	.object({
 		fileName: z.string(),
@@ -12674,7 +12678,7 @@ export const S_Word_DtoResponseRemoveWordTableOfContents = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoRemoveWatermarksFromWord = z
 	.object({
 		fileName: z.string(),
@@ -12692,7 +12696,7 @@ export const S_Word_DtoResponseRemoveWatermarksFromWord = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_WordSearchAndReplaceTextPhrase = z
 	.object({
 		searchText: z.string(),
@@ -13044,7 +13048,7 @@ export const S_Word_DtoResponseWordSearchAndReplaceText = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoWordReplaceTextWithImage = z
 	.object({
 		FileName: z.string(),
@@ -13068,7 +13072,7 @@ export const S_Word_DtoResponseWordReplaceTextWithImage = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoSecureWordDocument = z
 	.object({
 		fileName: z.string(),
@@ -13098,7 +13102,7 @@ export const S_Word_DtoResponseSecureWordDocument = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoWordSetMetadata = z
 	.object({
 		fileName: z.string(),
@@ -13133,7 +13137,7 @@ export const S_Word_DtoResponseWordSetMetadata = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoSplitWordDocument = z
 	.object({
 		fileName: z.string(),
@@ -13158,7 +13162,7 @@ export const S_Word_DtoResponseSplitWordDocument = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoWordSplitByText = z
 	.object({
 		fileName: z.string(),
@@ -13180,7 +13184,7 @@ export const S_Word_DtoResponseWordSplitByText = z
 		Errors: z.array(z.string()).optional(),
 		OperationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoWordUnlock = z
 	.object({
 		fileName: z.string(),
@@ -13200,7 +13204,7 @@ export const S_Word_DtoResponseWordUnlock = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_Hyperlink = z
 	.object({
 		searchOn: z.enum(['Text', 'URL']),
@@ -13230,7 +13234,7 @@ export const S_Word_DtoResponseSearchAndReplaceHyperlink = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Word_DtoUpdateWordTableOfContents = z
 	.object({
 		fileName: z.string(),
@@ -13394,7 +13398,7 @@ export const S_Word_DtoResponseUpdateWordTableOfContents = z
 		Filename: z.string().optional(),
 		FileContent: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Sign_DtoField = z
 	.object({
 		fieldType: z.enum([
@@ -13480,7 +13484,7 @@ export const S_Sign_DtoResponseEnvelopeCreateSingle = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Sign_DtoStageEnvelopeRecipient = z
 	.object({
 		type: z.enum(['Signer', 'Reviewer']),
@@ -13549,7 +13553,7 @@ export const S_Sign_DtoResponseEnvelopeCreateSingleWithStages = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Sign_FileArray = z
 	.object({ inputFileId: z.string(), fileName: z.string(), file: z.string() })
 	.strict();
@@ -13638,7 +13642,7 @@ export const S_Sign_DtoResponseEnvelopeCreateMultiple = z
 		created: z.string().datetime({ offset: true }).optional(),
 		status: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Sign_DtoStageRecipientsWithFileFields = z
 	.object({
 		deliveryMode: z.enum(['Parallel', 'Sequential']).optional(),
@@ -13670,7 +13674,7 @@ export const S_Sign_DtoResponseEnvelopeCreateMultipleWithStages = z
 		created: z.string().datetime({ offset: true }).optional(),
 		status: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Sign_DtoRequestGetEnvelopeStatus = z
 	.object({ envelopeId: z.string().optional() })
 	.strict();
@@ -13683,13 +13687,13 @@ export const S_Sign_DtoResponseGetEnvelopeStatus = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Sign_DtoRequestEnvelopeDownloadSignedDocuments = z
 	.object({ envelopeId: z.string().optional() })
 	.strict();
 export const S_Sign_SignDocumentArray = z
 	.object({ fileName: z.string().optional(), File: z.string().optional() })
-	.strict();
+	.loose();
 export const S_Sign_DtoResponseEnvelopeDownloadSignedDocuments = z
 	.object({
 		documents: z.array(S_Sign_SignDocumentArray).optional(),
@@ -13699,7 +13703,7 @@ export const S_Sign_DtoResponseEnvelopeDownloadSignedDocuments = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Sign_DtoRequestDownloadAuditTrail = z
 	.object({ envelopeId: z.string().optional() })
 	.strict();
@@ -13714,7 +13718,7 @@ export const S_Sign_DtoResponseDownloadAuditTrail = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Sign_DtoRequestRecipientCreateSingle = z
 	.object({
 		emailAddress: z.string(),
@@ -13735,7 +13739,7 @@ export const S_Sign_DtoResponseRecipientCreateSingle = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Sign_DtoRecipient = z
 	.object({
 		emailAddress: z.string(),
@@ -13759,7 +13763,7 @@ export const S_Sign_DtoResponseRecipientCreateMultiple = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Sign_DtoRequestRecipientDeleteSingle = z
 	.object({
 		emailAddress: z.string().optional(),
@@ -13775,7 +13779,7 @@ export const S_Sign_DtoResponseRecipientDeleteSingle = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Sign_DtoRequestRecipientGetSingle = z
 	.object({
 		emailAddress: z.string().optional(),
@@ -13797,17 +13801,17 @@ export const S_Sign_DtoResponseRecipientGetSingle = z
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
 export const S_Sign_DtoRequestRecipientListAll = z
 	.object({ limit: z.number().int().optional() })
 	.strict();
 export const S_Sign_DtoResponseRecipientListAll = z
 	.object({
-		recipients: z.array(S_Sign_DtoRecipient).optional(),
+		recipients: z.array(S_Sign_DtoRecipient.loose()).optional(),
 		httpStatusCode: z.number().int().optional(),
 		httpStatusMessage: z.string().optional(),
 		operationId: z.string().optional(),
 		errors: z.array(z.string()).optional(),
 		operationStatus: z.string().optional(),
 	})
-	.strict();
+	.loose();
