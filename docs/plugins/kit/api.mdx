@@ -147,7 +147,7 @@ await corsair.kit.api.customFields.list({});
 |------|------|----------|-------------|
 | `after` | `string` | No | The `end_cursor` of the page before, for the next page. |
 | `before` | `string` | No | The `start_cursor` of the page after, for the previous page. |
-| `per_page` | `number` | No | Items per page. Kit’s default applies when omitted. |
+| `per_page` | `number` | No | Items per page, up to 1000. Kit’s default is 500. |
 | `include_total_count` | `boolean` | No | — |
 
 
@@ -255,7 +255,7 @@ await corsair.kit.api.forms.list({ include: ['subscriber_count'], status: 'activ
 |------|------|----------|-------------|
 | `after` | `string` | No | The `end_cursor` of the page before, for the next page. |
 | `before` | `string` | No | The `start_cursor` of the page after, for the previous page. |
-| `per_page` | `number` | No | Items per page. Kit’s default applies when omitted. |
+| `per_page` | `number` | No | Items per page, up to 1000. Kit’s default is 500. |
 | `include` | `subscriber_count[]` | No | Also return each form’s active subscriber count. |
 | `status` | `active \| archived \| trashed \| all` | No | Defaults to `active`. |
 
@@ -309,7 +309,7 @@ await corsair.kit.api.forms.list({ include: ['subscriber_count'], status: 'activ
 
 `forms.subscribe`
 
-Add a subscriber through a form, which applies the form’s incentive and records when they were added
+Add an existing subscriber to a form, which applies the form’s incentive and records when they were added. Create the subscriber first
 
 **Risk:** `write`
 
@@ -325,7 +325,7 @@ await corsair.kit.api.forms.subscribe({ form_id: 12, email_address: 'jordan@acme
 | `email_address` | `string` | Yes | An email address. Kit normalizes its case, and returns an existing subscriber rather than creating a duplicate. |
 | `referrer` | `string` | No | Where the signup came from. |
 
-Applies the form’s incentive and records `added_at`; use this rather than `subscribers.create` when the signup came through a form.
+The subscriber must already exist; call `subscribers.create` first, then this to record the signup against the form, apply its incentive and set `added_at`.
 
 
 
@@ -382,93 +382,6 @@ Applies the form’s incentive and records `added_at`; use this rather than `sub
 ---
 
 ## Subscribers
-
-### bulkCreate
-
-`subscribers.bulkCreate`
-
-Create many subscribers in one call. A small batch answers with them; a large one is queued and answers an empty 202
-
-**Risk:** `write`
-
-```ts
-await corsair.kit.api.subscribers.bulkCreate({ subscribers: [{ email_address: 'jordan@acme.example', first_name: 'Jordan' }, { email_address: 'priya@acme.example' }] });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `subscribers` | `object[]` | Yes | — |
-| `callback_url` | `string` | No | Kit posts here when a large batch finishes. |
-
-A small batch answers with the subscribers; a large one answers an empty 202 and is queued.
-
-<AccordionGroup>
-<Accordion title="subscribers full type">
-
-```ts
-{
-  email_address: string,
-  first_name?: string,
-  state?: active | cancelled | bounced | complained | inactive
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `subscribers` | `object[] \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="subscribers full type">
-
-```ts
-{
-  id: number,
-  first_name?: string | null,
-  email_address: string,
-  state?: string | null,
-  created_at?: string | null,
-  canceled_at?: string | null,
-  fields?: Record<string, string | null> | null,
-  attribution?: {
-    referrer?: string | null,
-    utm_source?: string | null,
-    utm_medium?: string | null,
-    utm_campaign?: string | null,
-    utm_term?: string | null,
-    utm_content?: string | null,
-    source_type?: string | null,
-    source_name?: string | null,
-    source_mechanism?: string | null,
-    source_mechanism_id?: number | null
-  } | null,
-  location?: {
-    city?: string | null,
-    state?: string | null,
-    country?: string | null,
-    latitude?: number | null,
-    longitude?: number | null,
-    timezone?: string | null
-  } | null,
-  tags?: {
-    id?: number | null,
-    name?: string | null
-  }[] | null
-}[] | null
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
 
 ### create
 
@@ -636,18 +549,18 @@ await corsair.kit.api.subscribers.list({ per_page: 25, status: 'active', include
 |------|------|----------|-------------|
 | `after` | `string` | No | The `end_cursor` of the page before, for the next page. |
 | `before` | `string` | No | The `start_cursor` of the page after, for the previous page. |
-| `per_page` | `number` | No | Items per page. Kit’s default applies when omitted. |
+| `per_page` | `number` | No | Items per page, up to 1000. Kit’s default is 500. |
 | `status` | `active \| cancelled \| bounced \| complained \| inactive \| all` | No | Defaults to `active`. `all` widens it to every state. |
 | `email_address` | `string` | No | Only the subscriber with this exact address. |
 | `include` | `(attribution \| tags \| location \| canceled_at)[]` | No | Embed these extra fields on each subscriber. `canceled_at` needs `status: "cancelled"`. |
 | `include_total_count` | `boolean` | No | Also return the total number of matching subscribers. |
 | `slim` | `boolean` | No | Omit the `fields` object for a smaller, faster response. |
-| `sort_field` | `id \| created_at \| updated_at \| cancelled_at` | No | Field to order by. An `engagement__<metric>` sort is not accepted here. |
+| `sort_field` | `id \| created_at \| updated_at \| cancelled_at \| canceled_at \| engagement__sent \| engagement__opens \| engagement__clicks \| engagement__open_rate \| engagement__click_rate` | No | Field to order by. `cancelled_at` needs `status: "cancelled"`. An `engagement__<metric>` sort orders by the trailing 90 days and cannot be combined with `email_address`. |
 | `sort_order` | `asc \| desc` | No | — |
-| `created_after` | `string` | No | ISO 8601. |
-| `created_before` | `string` | No | ISO 8601. |
-| `updated_after` | `string` | No | ISO 8601. |
-| `updated_before` | `string` | No | ISO 8601. |
+| `created_after` | `string` | No | A date, `yyyy-mm-dd`. |
+| `created_before` | `string` | No | A date, `yyyy-mm-dd`. |
+| `updated_after` | `string` | No | A date, `yyyy-mm-dd`. |
+| `updated_before` | `string` | No | A date, `yyyy-mm-dd`. |
 
 Pages by cursor: pass `pagination.end_cursor` back as `after`. Only active subscribers are returned unless `status` says otherwise.
 
@@ -890,9 +803,8 @@ await corsair.kit.api.tags.list({ include: ['subscriber_count'] });
 |------|------|----------|-------------|
 | `after` | `string` | No | The `end_cursor` of the page before, for the next page. |
 | `before` | `string` | No | The `start_cursor` of the page after, for the previous page. |
-| `per_page` | `number` | No | Items per page. Kit’s default applies when omitted. |
+| `per_page` | `number` | No | Items per page, up to 1000. Kit’s default is 500. |
 | `include` | `subscriber_count[]` | No | Also return each tag’s active subscriber count. |
-| `name` | `string` | No | Only tags with this exact name. |
 
 
 
@@ -938,7 +850,7 @@ await corsair.kit.api.tags.list({ include: ['subscriber_count'] });
 
 `tags.tagSubscriber`
 
-Add a tag to a subscriber, found by email address
+Add a tag to an existing subscriber, found by email address
 
 **Risk:** `write`
 
@@ -953,7 +865,7 @@ await corsair.kit.api.tags.tagSubscriber({ tagId: 31, email_address: 'jordan@acm
 | `tagId` | `number` | Yes | The tag ID. |
 | `email_address` | `string` | Yes | An email address. Kit normalizes its case, and returns an existing subscriber rather than creating a duplicate. |
 
-Answers 204 with no body, so the result states what was applied.
+The subscriber must already exist; call `subscribers.create` first for a new address. The result carries the subscriber ID.
 
 
 
