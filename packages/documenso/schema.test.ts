@@ -53,3 +53,86 @@ describe('Documenso v2 operation schemas', () => {
 		expect(parsed.files?.[0]?.contentBase64).toBe(largePdfBase64);
 	});
 });
+
+describe('Documenso responses with fields added after the OpenAPI snapshot', () => {
+	const envelope = DocumensoOperationDefinitions.envelopeGet.outputExample;
+	const field = DocumensoOperationDefinitions.envelopeFieldGet.outputExample;
+	const auditEntry = {
+		id: 'log_1',
+		createdAt: '2026-11-13T00:00:00.000Z',
+		envelopeId: 'envelope_1',
+		name: null,
+		email: null,
+		userId: 1,
+		userAgent: null,
+		ipAddress: null,
+	};
+
+	it('parses an envelope that includes the contents array the live API returns', () => {
+		const parsed = DocumensoEndpointOutputSchemas.envelopeGet.safeParse({
+			...envelope,
+			contents: [],
+		});
+		expect(parsed.success).toBe(true);
+	});
+
+	it('parses a field whose fieldMeta carries the newer fontFamily setting', () => {
+		const parsed = DocumensoEndpointOutputSchemas.envelopeFieldGet.safeParse({
+			...field,
+			type: 'INITIALS',
+			fieldMeta: { type: 'initials', fontFamily: 'handwriting' },
+		});
+		expect(parsed.success).toBe(true);
+	});
+
+	it('keeps an output enum value Documenso adds later', () => {
+		const parsed = DocumensoEndpointOutputSchemas.envelopeGet.safeParse({
+			...envelope,
+			status: 'EXPIRED',
+		});
+		expect(parsed.success).toBe(true);
+	});
+
+	it('parses CONTENT_* audit-log entries and unknown future event types', () => {
+		const parsed = DocumensoEndpointOutputSchemas.envelopeAuditLogFind.parse({
+			data: [
+				{
+					...auditEntry,
+					type: 'CONTENT_CREATED',
+					data: {
+						contentId: 'content_1',
+						contentType: 'text',
+						envelopeItemId: 'item_1',
+						contentMeta: { text: 'Hello' },
+						dataContentId: null,
+					},
+				},
+				{
+					...auditEntry,
+					type: 'CONTENT_UPDATED',
+					data: {
+						contentId: 'content_1',
+						contentType: 'text',
+						envelopeItemId: 'item_1',
+						changes: [{ type: 'PROPERTY', key: 'text', from: 'a', to: 'b' }],
+					},
+				},
+				{
+					...auditEntry,
+					type: 'SOME_FUTURE_EVENT',
+					data: { anything: true },
+				},
+			],
+			count: 3,
+			currentPage: 1,
+			perPage: 10,
+			totalPages: 1,
+		});
+		expect(parsed.data.map((entry) => entry.type)).toEqual([
+			'CONTENT_CREATED',
+			'CONTENT_UPDATED',
+			'SOME_FUTURE_EVENT',
+		]);
+		expect(parsed.data[0]?.data).toMatchObject({ contentId: 'content_1' });
+	});
+});

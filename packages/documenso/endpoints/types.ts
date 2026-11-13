@@ -45,10 +45,10 @@ export const EnvelopeAttachmentFindOutputSchema = z
 					label: z.string(),
 					data: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeAttachmentCreateInputSchema = z
 	.object({
@@ -65,7 +65,7 @@ export const EnvelopeAttachmentCreateOutputSchema = z
 	.object({
 		id: z.string(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeAttachmentUpdateInputSchema = z
 	.object({
@@ -82,7 +82,7 @@ export const EnvelopeAttachmentUpdateOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeAttachmentDeleteInputSchema = z
 	.object({
@@ -93,7 +93,7 @@ export const EnvelopeAttachmentDeleteOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeItemCreateManyInputSchema = z
 	.object({
@@ -130,10 +130,10 @@ export const EnvelopeItemCreateManyOutputSchema = z
 					order: z.number(),
 					documentDataId: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeItemUpdateManyInputSchema = z
 	.object({
@@ -161,10 +161,10 @@ export const EnvelopeItemUpdateManyOutputSchema = z
 					title: z.string(),
 					envelopeId: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeItemDeleteInputSchema = z
 	.object({
@@ -176,7 +176,7 @@ export const EnvelopeItemDeleteOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeItemDownloadInputSchema = z
 	.object({
@@ -191,7 +191,7 @@ export const EnvelopeItemDownloadOutputSchema = z
 		base64: z.base64(),
 		size: z.number().int().min(0),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeRecipientGetInputSchema = z
 	.object({
@@ -201,10 +201,12 @@ export const EnvelopeRecipientGetInputSchema = z
 export const EnvelopeRecipientGetOutputSchema = z
 	.object({
 		envelopeId: z.string(),
-		role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-		readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-		sendStatus: z.enum(['NOT_SENT', 'SENT']),
+		role: z
+			.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+			.or(z.string()),
+		readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']).or(z.string()),
+		sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 		id: z.number(),
 		email: z.string(),
 		name: z.string(),
@@ -217,18 +219,22 @@ export const EnvelopeRecipientGetOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					accessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					actionAuth: z.array(
-						z.enum([
-							'ACCOUNT',
-							'PASSKEY',
-							'TWO_FACTOR_AUTH',
-							'PASSWORD',
-							'EXPLICIT_NONE',
-						]),
+						z
+							.enum([
+								'ACCOUNT',
+								'PASSKEY',
+								'TWO_FACTOR_AUTH',
+								'PASSWORD',
+								'EXPLICIT_NONE',
+							])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		signingOrder: z.union([z.number(), z.null()]),
@@ -238,19 +244,21 @@ export const EnvelopeRecipientGetOutputSchema = z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -270,10 +278,12 @@ export const EnvelopeRecipientGetOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -283,11 +293,15 @@ export const EnvelopeRecipientGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -297,35 +311,15 @@ export const EnvelopeRecipientGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -335,11 +329,49 @@ export const EnvelopeRecipientGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -355,7 +387,7 @@ export const EnvelopeRecipientGetOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -365,13 +397,17 @@ export const EnvelopeRecipientGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -387,7 +423,7 @@ export const EnvelopeRecipientGetOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -397,6 +433,7 @@ export const EnvelopeRecipientGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -407,12 +444,12 @@ export const EnvelopeRecipientGetOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -422,6 +459,7 @@ export const EnvelopeRecipientGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -432,14 +470,14 @@ export const EnvelopeRecipientGetOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -449,6 +487,7 @@ export const EnvelopeRecipientGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -457,21 +496,21 @@ export const EnvelopeRecipientGetOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeRecipientCreateManyInputSchema = z
 	.object({
@@ -519,10 +558,14 @@ export const EnvelopeRecipientCreateManyOutputSchema = z
 			z
 				.object({
 					envelopeId: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-					readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-					signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-					sendStatus: z.enum(['NOT_SENT', 'SENT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
+					readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+					signingStatus: z
+						.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+						.or(z.string()),
+					sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 					id: z.number(),
 					email: z.string(),
 					name: z.string(),
@@ -535,27 +578,31 @@ export const EnvelopeRecipientCreateManyOutputSchema = z
 					authOptions: z.union([
 						z
 							.object({
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 								actionAuth: z.array(
-									z.enum([
-										'ACCOUNT',
-										'PASSKEY',
-										'TWO_FACTOR_AUTH',
-										'PASSWORD',
-										'EXPLICIT_NONE',
-									]),
+									z
+										.enum([
+											'ACCOUNT',
+											'PASSKEY',
+											'TWO_FACTOR_AUTH',
+											'PASSWORD',
+											'EXPLICIT_NONE',
+										])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					signingOrder: z.union([z.number(), z.null()]),
 					rejectionReason: z.union([z.string(), z.null()]),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeRecipientUpdateManyInputSchema = z
 	.object({
@@ -608,10 +655,14 @@ export const EnvelopeRecipientUpdateManyOutputSchema = z
 			z
 				.object({
 					envelopeId: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-					readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-					signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-					sendStatus: z.enum(['NOT_SENT', 'SENT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
+					readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+					signingStatus: z
+						.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+						.or(z.string()),
+					sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 					id: z.number(),
 					email: z.string(),
 					name: z.string(),
@@ -624,18 +675,22 @@ export const EnvelopeRecipientUpdateManyOutputSchema = z
 					authOptions: z.union([
 						z
 							.object({
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 								actionAuth: z.array(
-									z.enum([
-										'ACCOUNT',
-										'PASSKEY',
-										'TWO_FACTOR_AUTH',
-										'PASSWORD',
-										'EXPLICIT_NONE',
-									]),
+									z
+										.enum([
+											'ACCOUNT',
+											'PASSKEY',
+											'TWO_FACTOR_AUTH',
+											'PASSWORD',
+											'EXPLICIT_NONE',
+										])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					signingOrder: z.union([z.number(), z.null()]),
@@ -643,10 +698,10 @@ export const EnvelopeRecipientUpdateManyOutputSchema = z
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeRecipientDeleteInputSchema = z
 	.object({
@@ -657,7 +712,7 @@ export const EnvelopeRecipientDeleteOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeRecipientRejectOnBehalfOfInputSchema = z
 	.object({
@@ -678,10 +733,12 @@ export const EnvelopeRecipientRejectOnBehalfOfInputSchema = z
 export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 	.object({
 		envelopeId: z.string(),
-		role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-		readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-		sendStatus: z.enum(['NOT_SENT', 'SENT']),
+		role: z
+			.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+			.or(z.string()),
+		readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']).or(z.string()),
+		sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 		id: z.number(),
 		email: z.string(),
 		name: z.string(),
@@ -694,18 +751,22 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					accessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					actionAuth: z.array(
-						z.enum([
-							'ACCOUNT',
-							'PASSKEY',
-							'TWO_FACTOR_AUTH',
-							'PASSWORD',
-							'EXPLICIT_NONE',
-						]),
+						z
+							.enum([
+								'ACCOUNT',
+								'PASSKEY',
+								'TWO_FACTOR_AUTH',
+								'PASSWORD',
+								'EXPLICIT_NONE',
+							])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		signingOrder: z.union([z.number(), z.null()]),
@@ -715,19 +776,21 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -747,10 +810,12 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -760,11 +825,15 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -774,35 +843,15 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -812,11 +861,49 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -832,7 +919,7 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -842,13 +929,17 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -864,7 +955,7 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -874,6 +965,7 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -884,12 +976,12 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -899,6 +991,7 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -909,14 +1002,14 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -926,6 +1019,7 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -934,21 +1028,21 @@ export const EnvelopeRecipientRejectOnBehalfOfOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeFieldGetInputSchema = z
 	.object({
@@ -959,19 +1053,21 @@ export const EnvelopeFieldGetOutputSchema = z
 	.object({
 		envelopeId: z.string(),
 		envelopeItemId: z.string(),
-		type: z.enum([
-			'SIGNATURE',
-			'FREE_SIGNATURE',
-			'INITIALS',
-			'NAME',
-			'EMAIL',
-			'DATE',
-			'TEXT',
-			'NUMBER',
-			'RADIO',
-			'CHECKBOX',
-			'DROPDOWN',
-		]),
+		type: z
+			.enum([
+				'SIGNATURE',
+				'FREE_SIGNATURE',
+				'INITIALS',
+				'NAME',
+				'EMAIL',
+				'DATE',
+				'TEXT',
+				'NUMBER',
+				'RADIO',
+				'CHECKBOX',
+				'DROPDOWN',
+			])
+			.or(z.string()),
 		id: z.number(),
 		secondaryId: z.string(),
 		recipientId: z.number(),
@@ -991,10 +1087,12 @@ export const EnvelopeFieldGetOutputSchema = z
 						required: z.boolean().optional(),
 						readOnly: z.boolean().optional(),
 						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
 						type: z.enum(['signature']),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -1004,11 +1102,15 @@ export const EnvelopeFieldGetOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['initials']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -1018,35 +1120,15 @@ export const EnvelopeFieldGetOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['name']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['email']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['date']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -1056,11 +1138,49 @@ export const EnvelopeFieldGetOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['email']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['date']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['text']),
 						text: z.string().optional(),
 						characterLimit: z.number().min(0).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -1076,7 +1196,7 @@ export const EnvelopeFieldGetOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -1086,13 +1206,17 @@ export const EnvelopeFieldGetOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['number']),
 						numberFormat: z.union([z.string(), z.null()]).optional(),
 						value: z.string().optional(),
 						minValue: z.union([z.number(), z.null()]).optional(),
 						maxValue: z.union([z.number(), z.null()]).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -1108,7 +1232,7 @@ export const EnvelopeFieldGetOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -1118,6 +1242,7 @@ export const EnvelopeFieldGetOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['radio']),
 						values: z
@@ -1128,12 +1253,12 @@ export const EnvelopeFieldGetOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -1143,6 +1268,7 @@ export const EnvelopeFieldGetOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['checkbox']),
 						values: z
@@ -1153,14 +1279,14 @@ export const EnvelopeFieldGetOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						validationRule: z.string().optional(),
 						validationLength: z.number().optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -1170,6 +1296,7 @@ export const EnvelopeFieldGetOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['dropdown']),
 						values: z
@@ -1178,16 +1305,16 @@ export const EnvelopeFieldGetOutputSchema = z
 									.object({
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						defaultValue: z.string().optional(),
 					})
-					.strict(),
+					.loose(),
 			])
 			.nullable(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeFieldCreateManyInputSchema = z
 	.object({
@@ -1894,19 +2021,21 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -1926,10 +2055,12 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -1939,11 +2070,15 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -1953,35 +2088,15 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -1991,11 +2106,49 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -2011,7 +2164,7 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -2021,13 +2174,17 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -2043,7 +2200,7 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -2053,6 +2210,7 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -2063,12 +2221,12 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -2078,6 +2236,7 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -2088,14 +2247,14 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -2105,6 +2264,7 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -2113,21 +2273,21 @@ export const EnvelopeFieldCreateManyOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeFieldUpdateManyInputSchema = z
 	.object({
@@ -2493,19 +2653,21 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -2525,10 +2687,12 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -2538,11 +2702,15 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -2552,35 +2720,15 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -2590,11 +2738,49 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -2610,7 +2796,7 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -2620,13 +2806,17 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -2642,7 +2832,7 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -2652,6 +2842,7 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -2662,12 +2853,12 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -2677,6 +2868,7 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -2687,14 +2879,14 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -2704,6 +2896,7 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -2712,21 +2905,21 @@ export const EnvelopeFieldUpdateManyOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeFieldDeleteInputSchema = z
 	.object({
@@ -2737,7 +2930,7 @@ export const EnvelopeFieldDeleteOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeFindInputSchema = z
 	.object({
@@ -2762,17 +2955,19 @@ export const EnvelopeFindOutputSchema = z
 			z
 				.object({
 					internalVersion: z.number(),
-					type: z.enum(['DOCUMENT', 'TEMPLATE']),
-					status: z.enum([
-						'DRAFT',
-						'PENDING',
-						'COMPLETED',
-						'REJECTED',
-						'CANCELLED',
-					]),
-					source: z.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK']),
-					visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-					templateType: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']),
+					type: z.enum(['DOCUMENT', 'TEMPLATE']).or(z.string()),
+					status: z
+						.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED'])
+						.or(z.string()),
+					source: z
+						.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK'])
+						.or(z.string()),
+					visibility: z
+						.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+						.or(z.string()),
+					templateType: z
+						.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION'])
+						.or(z.string()),
 					id: z.string(),
 					secondaryId: z.string(),
 					externalId: z.union([z.string(), z.null()]),
@@ -2785,13 +2980,15 @@ export const EnvelopeFindOutputSchema = z
 						z
 							.object({
 								globalAccessAuth: z.array(
-									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']),
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
 								),
 								globalActionAuth: z.array(
-									z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+									z
+										.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					formValues: z.union([
@@ -2812,21 +3009,19 @@ export const EnvelopeFindOutputSchema = z
 							name: z.string(),
 							email: z.string(),
 						})
-						.strict(),
+						.loose(),
 					recipients: z.array(
 						z
 							.object({
 								envelopeId: z.string(),
-								role: z.enum([
-									'CC',
-									'SIGNER',
-									'VIEWER',
-									'APPROVER',
-									'ASSISTANT',
-								]),
-								readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-								signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-								sendStatus: z.enum(['NOT_SENT', 'SENT']),
+								role: z
+									.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+									.or(z.string()),
+								readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+								signingStatus: z
+									.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+									.or(z.string()),
+								sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 								id: z.number(),
 								email: z.string(),
 								name: z.string(),
@@ -2840,25 +3035,27 @@ export const EnvelopeFindOutputSchema = z
 									z
 										.object({
 											accessAuth: z.array(
-												z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']),
+												z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
 											),
 											actionAuth: z.array(
-												z.enum([
-													'ACCOUNT',
-													'PASSKEY',
-													'TWO_FACTOR_AUTH',
-													'PASSWORD',
-													'EXPLICIT_NONE',
-												]),
+												z
+													.enum([
+														'ACCOUNT',
+														'PASSKEY',
+														'TWO_FACTOR_AUTH',
+														'PASSWORD',
+														'EXPLICIT_NONE',
+													])
+													.or(z.string()),
 											),
 										})
-										.strict(),
+										.loose(),
 									z.null(),
 								]),
 								signingOrder: z.union([z.number(), z.null()]),
 								rejectionReason: z.union([z.string(), z.null()]),
 							})
-							.strict(),
+							.loose(),
 					),
 					team: z.union([
 						z
@@ -2866,18 +3063,18 @@ export const EnvelopeFindOutputSchema = z
 								id: z.number(),
 								url: z.string(),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 				})
-				.strict(),
+				.loose(),
 		),
 		count: z.number(),
 		currentPage: z.number(),
 		perPage: z.number(),
 		totalPages: z.number(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeAuditLogFindInputSchema = z
 	.object({
@@ -2908,9 +3105,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								envelopeItemId: z.string(),
 								envelopeItemTitle: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -2927,9 +3124,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								envelopeItemId: z.string(),
 								envelopeItemTitle: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -2951,12 +3148,12 @@ export const EnvelopeAuditLogFindOutputSchema = z
 											from: z.string(),
 											to: z.string(),
 										})
-										.strict(),
+										.loose(),
 								),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -2973,9 +3170,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								envelopeItemId: z.string(),
 								envelopeItemTitle: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -2993,20 +3190,22 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								recipientName: z.string(),
 								recipientId: z.number(),
 								recipientRole: z.string(),
-								emailType: z.enum([
-									'SIGNING_REQUEST',
-									'VIEW_REQUEST',
-									'APPROVE_REQUEST',
-									'ASSISTING_REQUEST',
-									'CC',
-									'DOCUMENT_COMPLETED',
-									'REMINDER',
-								]),
+								emailType: z
+									.enum([
+										'SIGNING_REQUEST',
+										'VIEW_REQUEST',
+										'APPROVE_REQUEST',
+										'ASSISTING_REQUEST',
+										'CC',
+										'DOCUMENT_COMPLETED',
+										'REMINDER',
+									])
+									.or(z.string()),
 								isResending: z.boolean(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3022,9 +3221,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 							.object({
 								transactionId: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3045,13 +3244,13 @@ export const EnvelopeAuditLogFindOutputSchema = z
 											.object({
 												type: z.enum(['DOCUMENT']),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												type: z.enum(['TEMPLATE']),
 												templateId: z.number(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												type: z.enum(['TEMPLATE_DIRECT_LINK']),
@@ -3065,13 +3264,13 @@ export const EnvelopeAuditLogFindOutputSchema = z
 														),
 													),
 											})
-											.strict(),
+											.loose(),
 									])
 									.optional(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3085,11 +3284,11 @@ export const EnvelopeAuditLogFindOutputSchema = z
 						type: z.enum(['DOCUMENT_DELETED']),
 						data: z
 							.object({
-								type: z.enum(['SOFT', 'HARD']),
+								type: z.enum(['SOFT', 'HARD']).or(z.string()),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3105,9 +3304,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 							.object({
 								reason: z.string().optional(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3125,9 +3324,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								fromPersonalAccount: z.boolean(),
 								toTeamId: z.number(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3145,9 +3344,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								delegatedOwnerEmail: z.string(),
 								teamName: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3165,27 +3364,29 @@ export const EnvelopeAuditLogFindOutputSchema = z
 									z
 										.object({
 											fieldId: z.number(),
-											fieldType: z.enum([
-												'SIGNATURE',
-												'FREE_SIGNATURE',
-												'INITIALS',
-												'NAME',
-												'EMAIL',
-												'DATE',
-												'TEXT',
-												'NUMBER',
-												'RADIO',
-												'CHECKBOX',
-												'DROPDOWN',
-											]),
+											fieldType: z
+												.enum([
+													'SIGNATURE',
+													'FREE_SIGNATURE',
+													'INITIALS',
+													'NAME',
+													'EMAIL',
+													'DATE',
+													'TEXT',
+													'NUMBER',
+													'RADIO',
+													'CHECKBOX',
+													'DROPDOWN',
+												])
+												.or(z.string()),
 											recipientId: z.number(),
 										})
-										.strict(),
+										.loose(),
 								),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3210,31 +3411,31 @@ export const EnvelopeAuditLogFindOutputSchema = z
 											type: z.enum(['INITIALS']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['EMAIL']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['DATE']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['NAME']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['TEXT']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.union([
@@ -3243,31 +3444,31 @@ export const EnvelopeAuditLogFindOutputSchema = z
 											]),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['RADIO']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['CHECKBOX']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['DROPDOWN']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['NUMBER']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 								]),
 								fieldSecurity: z
 									.object({
@@ -3279,14 +3480,15 @@ export const EnvelopeAuditLogFindOutputSchema = z
 												'PASSWORD',
 												'EXPLICIT_NONE',
 											])
+											.or(z.string())
 											.optional(),
 									})
-									.strict()
+									.loose()
 									.optional(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3300,24 +3502,26 @@ export const EnvelopeAuditLogFindOutputSchema = z
 						type: z.enum(['DOCUMENT_FIELD_UNINSERTED']),
 						data: z
 							.object({
-								field: z.enum([
-									'SIGNATURE',
-									'FREE_SIGNATURE',
-									'INITIALS',
-									'NAME',
-									'EMAIL',
-									'DATE',
-									'TEXT',
-									'NUMBER',
-									'RADIO',
-									'CHECKBOX',
-									'DROPDOWN',
-								]),
+								field: z
+									.enum([
+										'SIGNATURE',
+										'FREE_SIGNATURE',
+										'INITIALS',
+										'NAME',
+										'EMAIL',
+										'DATE',
+										'TEXT',
+										'NUMBER',
+										'RADIO',
+										'CHECKBOX',
+										'DROPDOWN',
+									])
+									.or(z.string()),
 								fieldId: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3342,31 +3546,31 @@ export const EnvelopeAuditLogFindOutputSchema = z
 											type: z.enum(['INITIALS']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['EMAIL']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['DATE']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['NAME']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['TEXT']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.union([
@@ -3375,31 +3579,31 @@ export const EnvelopeAuditLogFindOutputSchema = z
 											]),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['RADIO']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['CHECKBOX']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['DROPDOWN']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											type: z.enum(['NUMBER']),
 											data: z.string(),
 										})
-										.strict(),
+										.loose(),
 								]),
 								fieldSecurity: z
 									.object({
@@ -3411,14 +3615,15 @@ export const EnvelopeAuditLogFindOutputSchema = z
 												'PASSWORD',
 												'EXPLICIT_NONE',
 											])
+											.or(z.string())
 											.optional(),
 									})
-									.strict()
+									.loose()
 									.optional(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3435,9 +3640,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								from: z.union([z.string(), z.array(z.string())]).nullable(),
 								to: z.union([z.string(), z.array(z.string())]).nullable(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3454,9 +3659,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								from: z.union([z.string(), z.array(z.string())]).nullable(),
 								to: z.union([z.string(), z.array(z.string())]).nullable(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3473,9 +3678,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								from: z.union([z.string(), z.array(z.string())]).nullable(),
 								to: z.union([z.string(), z.array(z.string())]).nullable(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3506,18 +3711,18 @@ export const EnvelopeAuditLogFindOutputSchema = z
 												from: z.union([z.string(), z.null()]),
 												to: z.union([z.string(), z.null()]),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												type: z.enum(['PASSWORD']),
 											})
-											.strict(),
+											.loose(),
 									]),
 								),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3535,11 +3740,13 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								recipientName: z.string(),
 								recipientId: z.number(),
 								recipientRole: z.string(),
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3557,11 +3764,13 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								recipientName: z.string(),
 								recipientId: z.number(),
 								recipientRole: z.string(),
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3580,18 +3789,20 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								recipientId: z.number(),
 								recipientRole: z.string(),
 								actionAuth: z.array(
-									z.enum([
-										'ACCOUNT',
-										'PASSKEY',
-										'TWO_FACTOR_AUTH',
-										'PASSWORD',
-										'EXPLICIT_NONE',
-									]),
+									z
+										.enum([
+											'ACCOUNT',
+											'PASSKEY',
+											'TWO_FACTOR_AUTH',
+											'PASSWORD',
+											'EXPLICIT_NONE',
+										])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3614,9 +3825,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								onBehalfOfUserEmail: z.string().optional(),
 								onBehalfOfUserName: z.union([z.string(), z.null()]).optional(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3634,9 +3845,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								recipientName: z.string(),
 								recipientId: z.number(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3654,9 +3865,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								recipientName: z.string(),
 								recipientId: z.number(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3674,9 +3885,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								recipientName: z.string(),
 								recipientId: z.number(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3688,9 +3899,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 						userAgent: z.union([z.string(), z.null()]).optional(),
 						ipAddress: z.union([z.string(), z.null()]).optional(),
 						type: z.enum(['DOCUMENT_SENT']),
-						data: z.object({}).strict(),
+						data: z.object({}).loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3707,9 +3918,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								from: z.string(),
 								to: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3726,9 +3937,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								from: z.union([z.string(), z.null()]).optional(),
 								to: z.union([z.string(), z.null()]).optional(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3747,9 +3958,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								fieldRecipientId: z.number(),
 								fieldType: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3768,9 +3979,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								fieldRecipientId: z.number(),
 								fieldType: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3798,15 +4009,15 @@ export const EnvelopeAuditLogFindOutputSchema = z
 														width: z.number(),
 														height: z.number(),
 													})
-													.strict(),
+													.loose(),
 												to: z
 													.object({
 														width: z.number(),
 														height: z.number(),
 													})
-													.strict(),
+													.loose(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												type: z.enum(['POSITION']),
@@ -3816,22 +4027,22 @@ export const EnvelopeAuditLogFindOutputSchema = z
 														positionX: z.number(),
 														positionY: z.number(),
 													})
-													.strict(),
+													.loose(),
 												to: z
 													.object({
 														page: z.number(),
 														positionX: z.number(),
 														positionY: z.number(),
 													})
-													.strict(),
+													.loose(),
 											})
-											.strict(),
+											.loose(),
 									]),
 								),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3849,20 +4060,24 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								recipientName: z.string(),
 								recipientId: z.number(),
 								recipientRole: z.string(),
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 								actionAuth: z.array(
-									z.enum([
-										'ACCOUNT',
-										'PASSKEY',
-										'TWO_FACTOR_AUTH',
-										'PASSWORD',
-										'EXPLICIT_NONE',
-									]),
+									z
+										.enum([
+											'ACCOUNT',
+											'PASSKEY',
+											'TWO_FACTOR_AUTH',
+											'PASSWORD',
+											'EXPLICIT_NONE',
+										])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3892,7 +4107,7 @@ export const EnvelopeAuditLogFindOutputSchema = z
 													.nullable(),
 												type: z.enum(['ACTION_AUTH']),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												from: z
@@ -3903,7 +4118,7 @@ export const EnvelopeAuditLogFindOutputSchema = z
 													.nullable(),
 												type: z.enum(['ACCESS_AUTH']),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												from: z
@@ -3914,7 +4129,7 @@ export const EnvelopeAuditLogFindOutputSchema = z
 													.nullable(),
 												type: z.enum(['NAME']),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												from: z
@@ -3925,7 +4140,7 @@ export const EnvelopeAuditLogFindOutputSchema = z
 													.nullable(),
 												type: z.enum(['ROLE']),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												from: z
@@ -3936,13 +4151,13 @@ export const EnvelopeAuditLogFindOutputSchema = z
 													.nullable(),
 												type: z.enum(['EMAIL']),
 											})
-											.strict(),
+											.loose(),
 									]),
 								),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3961,9 +4176,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								recipientId: z.number(),
 								recipientRole: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -3981,9 +4196,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								recipientName: z.string(),
 								recipientId: z.number(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -4006,9 +4221,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								signatureAlgorithm: z.string(),
 								digestAlgorithm: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -4029,9 +4244,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								providerId: z.string(),
 								reason: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -4054,9 +4269,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								sessionId: z.string(),
 								numSignatures: z.number(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -4079,9 +4294,9 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								sessionId: z.string(),
 								sadExpiresAt: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						id: z.string(),
@@ -4106,9 +4321,108 @@ export const EnvelopeAuditLogFindOutputSchema = z
 								signatureAlgorithm: z.string(),
 								digestAlgorithm: z.string(),
 							})
-							.strict(),
+							.loose(),
 					})
-					.strict(),
+					.loose(),
+				z
+					.object({
+						id: z.string(),
+						createdAt: z.string(),
+						envelopeId: z.string(),
+						name: z.union([z.string(), z.null()]).optional(),
+						email: z.union([z.string(), z.null()]).optional(),
+						userId: z.union([z.number(), z.null()]).optional(),
+						userAgent: z.union([z.string(), z.null()]).optional(),
+						ipAddress: z.union([z.string(), z.null()]).optional(),
+						type: z.enum(['CONTENT_CREATED']),
+						data: z
+							.object({
+								contentId: z.string(),
+								contentType: z.string(),
+								envelopeItemId: z.string(),
+								// `unknown` because Documenso documents contentMeta as a free-form object whose shape depends on contentType.
+								contentMeta: z.record(z.string(), z.unknown()),
+								dataContentId: z.union([z.string(), z.null()]),
+							})
+							.loose(),
+					})
+					.loose(),
+				z
+					.object({
+						id: z.string(),
+						createdAt: z.string(),
+						envelopeId: z.string(),
+						name: z.union([z.string(), z.null()]).optional(),
+						email: z.union([z.string(), z.null()]).optional(),
+						userId: z.union([z.number(), z.null()]).optional(),
+						userAgent: z.union([z.string(), z.null()]).optional(),
+						ipAddress: z.union([z.string(), z.null()]).optional(),
+						type: z.enum(['CONTENT_DELETED']),
+						data: z
+							.object({
+								contentId: z.string(),
+								contentType: z.string(),
+								envelopeItemId: z.string(),
+							})
+							.loose(),
+					})
+					.loose(),
+				z
+					.object({
+						id: z.string(),
+						createdAt: z.string(),
+						envelopeId: z.string(),
+						name: z.union([z.string(), z.null()]).optional(),
+						email: z.union([z.string(), z.null()]).optional(),
+						userId: z.union([z.number(), z.null()]).optional(),
+						userAgent: z.union([z.string(), z.null()]).optional(),
+						ipAddress: z.union([z.string(), z.null()]).optional(),
+						type: z.enum(['CONTENT_UPDATED']),
+						data: z
+							.object({
+								contentId: z.string(),
+								contentType: z.string(),
+								envelopeItemId: z.string(),
+								changes: z.array(
+									z
+										.object({
+											type: z.enum(['PROPERTY']).or(z.string()),
+											key: z.string(),
+											from: z.union([
+												z.string(),
+												z.number(),
+												z.boolean(),
+												z.null(),
+											]),
+											to: z.union([
+												z.string(),
+												z.number(),
+												z.boolean(),
+												z.null(),
+											]),
+										})
+										.loose(),
+								),
+							})
+							.loose(),
+					})
+					.loose(),
+				// Fallback for audit-log event types Documenso adds after this schema was written, so one new event does not fail the whole page.
+				z
+					.object({
+						id: z.string(),
+						createdAt: z.string(),
+						envelopeId: z.string(),
+						name: z.union([z.string(), z.null()]).optional(),
+						email: z.union([z.string(), z.null()]).optional(),
+						userId: z.union([z.number(), z.null()]).optional(),
+						userAgent: z.union([z.string(), z.null()]).optional(),
+						ipAddress: z.union([z.string(), z.null()]).optional(),
+						type: z.string(),
+						// `unknown` because the payload of an undocumented event type has no known shape.
+						data: z.record(z.string(), z.unknown()).optional(),
+					})
+					.loose(),
 			]),
 		),
 		count: z.number(),
@@ -4116,7 +4430,7 @@ export const EnvelopeAuditLogFindOutputSchema = z
 		perPage: z.number(),
 		totalPages: z.number(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeAuditLogDownloadPdfInputSchema = z
 	.object({
@@ -4130,7 +4444,7 @@ export const EnvelopeAuditLogDownloadPdfOutputSchema = z
 		base64: z.base64(),
 		size: z.number().int().min(0),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeCertificateDownloadPdfInputSchema = z
 	.object({
@@ -4144,7 +4458,7 @@ export const EnvelopeCertificateDownloadPdfOutputSchema = z
 		base64: z.base64(),
 		size: z.number().int().min(0),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeGetInputSchema = z
 	.object({
@@ -4154,11 +4468,17 @@ export const EnvelopeGetInputSchema = z
 export const EnvelopeGetOutputSchema = z
 	.object({
 		internalVersion: z.number(),
-		type: z.enum(['DOCUMENT', 'TEMPLATE']),
-		status: z.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED']),
-		source: z.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK']),
-		visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-		templateType: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']),
+		type: z.enum(['DOCUMENT', 'TEMPLATE']).or(z.string()),
+		status: z
+			.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED'])
+			.or(z.string()),
+		source: z
+			.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK'])
+			.or(z.string()),
+		visibility: z
+			.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+			.or(z.string()),
+		templateType: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']).or(z.string()),
 		id: z.string(),
 		secondaryId: z.string(),
 		externalId: z.union([z.string(), z.null()]),
@@ -4170,12 +4490,16 @@ export const EnvelopeGetOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					globalAccessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					globalAccessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					globalActionAuth: z.array(
-						z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+						z
+							.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		formValues: z.union([
@@ -4190,8 +4514,8 @@ export const EnvelopeGetOutputSchema = z
 		templateId: z.union([z.number(), z.null()]),
 		documentMeta: z
 			.object({
-				signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']),
-				distributionMethod: z.enum(['EMAIL', 'NONE']),
+				signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']).or(z.string()),
+				distributionMethod: z.enum(['EMAIL', 'NONE']).or(z.string()),
 				id: z.string(),
 				subject: z.union([z.string(), z.null()]),
 				message: z.union([z.string(), z.null()]),
@@ -4216,7 +4540,7 @@ export const EnvelopeGetOutputSchema = z
 							ownerRecipientExpired: z.boolean(),
 							ownerDocumentCreated: z.boolean(),
 						})
-						.strict(),
+						.loose(),
 					z.null(),
 				]),
 				emailId: z.union([z.string(), z.null()]),
@@ -4225,27 +4549,31 @@ export const EnvelopeGetOutputSchema = z
 					.union([
 						z
 							.object({
-								unit: z.enum(['day', 'week', 'month', 'year']),
+								unit: z.enum(['day', 'week', 'month', 'year']).or(z.string()),
 								amount: z.number().int().min(1),
 							})
-							.strict(),
+							.loose(),
 						z
 							.object({
 								disabled: z.union([z.literal(true)]),
 							})
-							.strict(),
+							.loose(),
 					])
 					.nullable(),
 			})
-			.strict(),
+			.loose(),
 		recipients: z.array(
 			z
 				.object({
 					envelopeId: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-					readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-					signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-					sendStatus: z.enum(['NOT_SENT', 'SENT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
+					readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+					signingStatus: z
+						.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+						.or(z.string()),
+					sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 					id: z.number(),
 					email: z.string(),
 					name: z.string(),
@@ -4258,43 +4586,49 @@ export const EnvelopeGetOutputSchema = z
 					authOptions: z.union([
 						z
 							.object({
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 								actionAuth: z.array(
-									z.enum([
-										'ACCOUNT',
-										'PASSKEY',
-										'TWO_FACTOR_AUTH',
-										'PASSWORD',
-										'EXPLICIT_NONE',
-									]),
+									z
+										.enum([
+											'ACCOUNT',
+											'PASSKEY',
+											'TWO_FACTOR_AUTH',
+											'PASSWORD',
+											'EXPLICIT_NONE',
+										])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					signingOrder: z.union([z.number(), z.null()]),
 					rejectionReason: z.union([z.string(), z.null()]),
 				})
-				.strict(),
+				.loose(),
 		),
 		fields: z.array(
 			z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -4314,10 +4648,12 @@ export const EnvelopeGetOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -4327,11 +4663,15 @@ export const EnvelopeGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -4341,35 +4681,15 @@ export const EnvelopeGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -4379,11 +4699,49 @@ export const EnvelopeGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -4399,7 +4757,7 @@ export const EnvelopeGetOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -4409,13 +4767,17 @@ export const EnvelopeGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -4431,7 +4793,7 @@ export const EnvelopeGetOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -4441,6 +4803,7 @@ export const EnvelopeGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -4451,12 +4814,12 @@ export const EnvelopeGetOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -4466,6 +4829,7 @@ export const EnvelopeGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -4476,14 +4840,14 @@ export const EnvelopeGetOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -4493,6 +4857,7 @@ export const EnvelopeGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -4501,16 +4866,16 @@ export const EnvelopeGetOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 				})
-				.strict(),
+				.loose(),
 		),
 		envelopeItems: z.array(
 			z
@@ -4521,7 +4886,7 @@ export const EnvelopeGetOutputSchema = z
 					title: z.string(),
 					order: z.number(),
 				})
-				.strict(),
+				.loose(),
 		),
 		directLink: z.union([
 			z
@@ -4531,7 +4896,7 @@ export const EnvelopeGetOutputSchema = z
 					id: z.string(),
 					token: z.string(),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		team: z
@@ -4539,16 +4904,16 @@ export const EnvelopeGetOutputSchema = z
 				id: z.number(),
 				url: z.string(),
 			})
-			.strict(),
+			.loose(),
 		user: z
 			.object({
 				id: z.number(),
 				name: z.string(),
 				email: z.string(),
 			})
-			.strict(),
+			.loose(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeGetManyInputSchema = z
 	.object({
@@ -4580,17 +4945,19 @@ export const EnvelopeGetManyOutputSchema = z
 			z
 				.object({
 					internalVersion: z.number(),
-					type: z.enum(['DOCUMENT', 'TEMPLATE']),
-					status: z.enum([
-						'DRAFT',
-						'PENDING',
-						'COMPLETED',
-						'REJECTED',
-						'CANCELLED',
-					]),
-					source: z.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK']),
-					visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-					templateType: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']),
+					type: z.enum(['DOCUMENT', 'TEMPLATE']).or(z.string()),
+					status: z
+						.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED'])
+						.or(z.string()),
+					source: z
+						.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK'])
+						.or(z.string()),
+					visibility: z
+						.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+						.or(z.string()),
+					templateType: z
+						.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION'])
+						.or(z.string()),
 					id: z.string(),
 					secondaryId: z.string(),
 					externalId: z.union([z.string(), z.null()]),
@@ -4603,13 +4970,15 @@ export const EnvelopeGetManyOutputSchema = z
 						z
 							.object({
 								globalAccessAuth: z.array(
-									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']),
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
 								),
 								globalActionAuth: z.array(
-									z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+									z
+										.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					formValues: z.union([
@@ -4626,8 +4995,8 @@ export const EnvelopeGetManyOutputSchema = z
 					templateId: z.union([z.number(), z.null()]),
 					documentMeta: z
 						.object({
-							signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']),
-							distributionMethod: z.enum(['EMAIL', 'NONE']),
+							signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']).or(z.string()),
+							distributionMethod: z.enum(['EMAIL', 'NONE']).or(z.string()),
 							id: z.string(),
 							subject: z.union([z.string(), z.null()]),
 							message: z.union([z.string(), z.null()]),
@@ -4652,7 +5021,7 @@ export const EnvelopeGetManyOutputSchema = z
 										ownerRecipientExpired: z.boolean(),
 										ownerDocumentCreated: z.boolean(),
 									})
-									.strict(),
+									.loose(),
 								z.null(),
 							]),
 							emailId: z.union([z.string(), z.null()]),
@@ -4661,33 +5030,33 @@ export const EnvelopeGetManyOutputSchema = z
 								.union([
 									z
 										.object({
-											unit: z.enum(['day', 'week', 'month', 'year']),
+											unit: z
+												.enum(['day', 'week', 'month', 'year'])
+												.or(z.string()),
 											amount: z.number().int().min(1),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											disabled: z.union([z.literal(true)]),
 										})
-										.strict(),
+										.loose(),
 								])
 								.nullable(),
 						})
-						.strict(),
+						.loose(),
 					recipients: z.array(
 						z
 							.object({
 								envelopeId: z.string(),
-								role: z.enum([
-									'CC',
-									'SIGNER',
-									'VIEWER',
-									'APPROVER',
-									'ASSISTANT',
-								]),
-								readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-								signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-								sendStatus: z.enum(['NOT_SENT', 'SENT']),
+								role: z
+									.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+									.or(z.string()),
+								readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+								signingStatus: z
+									.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+									.or(z.string()),
+								sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 								id: z.number(),
 								email: z.string(),
 								name: z.string(),
@@ -4701,44 +5070,48 @@ export const EnvelopeGetManyOutputSchema = z
 									z
 										.object({
 											accessAuth: z.array(
-												z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']),
+												z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
 											),
 											actionAuth: z.array(
-												z.enum([
-													'ACCOUNT',
-													'PASSKEY',
-													'TWO_FACTOR_AUTH',
-													'PASSWORD',
-													'EXPLICIT_NONE',
-												]),
+												z
+													.enum([
+														'ACCOUNT',
+														'PASSKEY',
+														'TWO_FACTOR_AUTH',
+														'PASSWORD',
+														'EXPLICIT_NONE',
+													])
+													.or(z.string()),
 											),
 										})
-										.strict(),
+										.loose(),
 									z.null(),
 								]),
 								signingOrder: z.union([z.number(), z.null()]),
 								rejectionReason: z.union([z.string(), z.null()]),
 							})
-							.strict(),
+							.loose(),
 					),
 					fields: z.array(
 						z
 							.object({
 								envelopeId: z.string(),
 								envelopeItemId: z.string(),
-								type: z.enum([
-									'SIGNATURE',
-									'FREE_SIGNATURE',
-									'INITIALS',
-									'NAME',
-									'EMAIL',
-									'DATE',
-									'TEXT',
-									'NUMBER',
-									'RADIO',
-									'CHECKBOX',
-									'DROPDOWN',
-								]),
+								type: z
+									.enum([
+										'SIGNATURE',
+										'FREE_SIGNATURE',
+										'INITIALS',
+										'NAME',
+										'EMAIL',
+										'DATE',
+										'TEXT',
+										'NUMBER',
+										'RADIO',
+										'CHECKBOX',
+										'DROPDOWN',
+									])
+									.or(z.string()),
 								id: z.number(),
 								secondaryId: z.string(),
 								recipientId: z.number(),
@@ -4758,15 +5131,12 @@ export const EnvelopeGetManyOutputSchema = z
 												required: z.boolean().optional(),
 												readOnly: z.boolean().optional(),
 												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
 												type: z.enum(['signature']),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -4776,13 +5146,15 @@ export const EnvelopeGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['initials']),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -4792,51 +5164,15 @@ export const EnvelopeGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['name']),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 											})
-											.strict(),
-										z
-											.object({
-												label: z.string().optional(),
-												placeholder: z.string().optional(),
-												required: z.boolean().optional(),
-												readOnly: z.boolean().optional(),
-												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
-												type: z.enum(['email']),
-												textAlign: z
-													.enum(['left', 'center', 'right'])
-													.optional(),
-											})
-											.strict(),
-										z
-											.object({
-												label: z.string().optional(),
-												placeholder: z.string().optional(),
-												required: z.boolean().optional(),
-												readOnly: z.boolean().optional(),
-												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
-												type: z.enum(['date']),
-												textAlign: z
-													.enum(['left', 'center', 'right'])
-													.optional(),
-											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -4846,12 +5182,48 @@ export const EnvelopeGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
+												type: z.enum(['email']),
+												textAlign: z
+													.enum(['left', 'center', 'right'])
+													.or(z.string())
+													.optional(),
+											})
+											.loose(),
+										z
+											.object({
+												label: z.string().optional(),
+												placeholder: z.string().optional(),
+												required: z.boolean().optional(),
+												readOnly: z.boolean().optional(),
+												fontSize: z.number().min(8).max(96).optional(),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
+												type: z.enum(['date']),
+												textAlign: z
+													.enum(['left', 'center', 'right'])
+													.or(z.string())
+													.optional(),
+											})
+											.loose(),
+										z
+											.object({
+												label: z.string().optional(),
+												placeholder: z.string().optional(),
+												required: z.boolean().optional(),
+												readOnly: z.boolean().optional(),
+												fontSize: z.number().min(8).max(96).optional(),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['text']),
 												text: z.string().optional(),
 												characterLimit: z.number().min(0).optional(),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 												lineHeight: z
 													.union([z.number().min(1).max(10), z.null()])
@@ -4868,7 +5240,7 @@ export const EnvelopeGetManyOutputSchema = z
 													])
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -4878,6 +5250,7 @@ export const EnvelopeGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['number']),
 												numberFormat: z
@@ -4888,6 +5261,7 @@ export const EnvelopeGetManyOutputSchema = z
 												maxValue: z.union([z.number(), z.null()]).optional(),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 												lineHeight: z
 													.union([z.number().min(1).max(10), z.null()])
@@ -4904,7 +5278,7 @@ export const EnvelopeGetManyOutputSchema = z
 													])
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -4914,6 +5288,7 @@ export const EnvelopeGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['radio']),
 												values: z
@@ -4924,12 +5299,14 @@ export const EnvelopeGetManyOutputSchema = z
 																checked: z.boolean(),
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
-												direction: z.enum(['vertical', 'horizontal']),
+												direction: z
+													.enum(['vertical', 'horizontal'])
+													.or(z.string()),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -4939,6 +5316,7 @@ export const EnvelopeGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['checkbox']),
 												values: z
@@ -4949,14 +5327,16 @@ export const EnvelopeGetManyOutputSchema = z
 																checked: z.boolean(),
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
 												validationRule: z.string().optional(),
 												validationLength: z.number().optional(),
-												direction: z.enum(['vertical', 'horizontal']),
+												direction: z
+													.enum(['vertical', 'horizontal'])
+													.or(z.string()),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -4966,6 +5346,7 @@ export const EnvelopeGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['dropdown']),
 												values: z
@@ -4974,16 +5355,16 @@ export const EnvelopeGetManyOutputSchema = z
 															.object({
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
 												defaultValue: z.string().optional(),
 											})
-											.strict(),
+											.loose(),
 									])
 									.nullable(),
 							})
-							.strict(),
+							.loose(),
 					),
 					envelopeItems: z.array(
 						z
@@ -4994,7 +5375,7 @@ export const EnvelopeGetManyOutputSchema = z
 								title: z.string(),
 								order: z.number(),
 							})
-							.strict(),
+							.loose(),
 					),
 					directLink: z.union([
 						z
@@ -5004,7 +5385,7 @@ export const EnvelopeGetManyOutputSchema = z
 								id: z.string(),
 								token: z.string(),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					team: z
@@ -5012,19 +5393,19 @@ export const EnvelopeGetManyOutputSchema = z
 							id: z.number(),
 							url: z.string(),
 						})
-						.strict(),
+						.loose(),
 					user: z
 						.object({
 							id: z.number(),
 							name: z.string(),
 							email: z.string(),
 						})
-						.strict(),
+						.loose(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeCreateInputSchema = z
 	.object({
@@ -5712,7 +6093,7 @@ export const EnvelopeCreateOutputSchema = z
 	.object({
 		id: z.string(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeUseInputSchema = z
 	.object({
@@ -5943,14 +6324,16 @@ export const EnvelopeUseOutputSchema = z
 					name: z.string(),
 					email: z.string(),
 					token: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
 					signingOrder: z.union([z.number(), z.null()]),
 					signingUrl: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeUpdateInputSchema = z
 	.object({
@@ -6120,11 +6503,17 @@ export const EnvelopeUpdateInputSchema = z
 export const EnvelopeUpdateOutputSchema = z
 	.object({
 		internalVersion: z.number(),
-		type: z.enum(['DOCUMENT', 'TEMPLATE']),
-		status: z.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED']),
-		source: z.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK']),
-		visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-		templateType: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']),
+		type: z.enum(['DOCUMENT', 'TEMPLATE']).or(z.string()),
+		status: z
+			.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED'])
+			.or(z.string()),
+		source: z
+			.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK'])
+			.or(z.string()),
+		visibility: z
+			.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+			.or(z.string()),
+		templateType: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']).or(z.string()),
 		id: z.string(),
 		secondaryId: z.string(),
 		externalId: z.union([z.string(), z.null()]),
@@ -6136,12 +6525,16 @@ export const EnvelopeUpdateOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					globalAccessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					globalAccessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					globalActionAuth: z.array(
-						z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+						z
+							.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		formValues: z.union([
@@ -6154,7 +6547,7 @@ export const EnvelopeUpdateOutputSchema = z
 		teamId: z.number(),
 		folderId: z.union([z.string(), z.null()]),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeDeleteInputSchema = z
 	.object({
@@ -6165,7 +6558,7 @@ export const EnvelopeDeleteOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeCancelInputSchema = z
 	.object({
@@ -6177,7 +6570,7 @@ export const EnvelopeCancelOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeDuplicateInputSchema = z
 	.object({
@@ -6190,7 +6583,7 @@ export const EnvelopeDuplicateOutputSchema = z
 	.object({
 		id: z.string(),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeDistributeInputSchema = z
 	.object({
@@ -6294,14 +6687,16 @@ export const EnvelopeDistributeOutputSchema = z
 					name: z.string(),
 					email: z.string(),
 					token: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
 					signingOrder: z.union([z.number(), z.null()]),
 					signingUrl: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const EnvelopeRedistributeInputSchema = z
 	.object({
@@ -6320,14 +6715,16 @@ export const EnvelopeRedistributeOutputSchema = z
 					name: z.string(),
 					email: z.string(),
 					token: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
 					signingOrder: z.union([z.number(), z.null()]),
 					signingUrl: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const DocumentGetInputSchema = z
 	.object({
@@ -6336,21 +6733,31 @@ export const DocumentGetInputSchema = z
 	.strict();
 export const DocumentGetOutputSchema = z
 	.object({
-		visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-		status: z.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED']),
-		source: z.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK']),
+		visibility: z
+			.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+			.or(z.string()),
+		status: z
+			.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED'])
+			.or(z.string()),
+		source: z
+			.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK'])
+			.or(z.string()),
 		id: z.number(),
 		externalId: z.union([z.string(), z.null()]),
 		userId: z.number(),
 		authOptions: z.union([
 			z
 				.object({
-					globalAccessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					globalAccessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					globalActionAuth: z.array(
-						z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+						z
+							.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		formValues: z.union([
@@ -6370,17 +6777,17 @@ export const DocumentGetOutputSchema = z
 		documentDataId: z.string(),
 		documentData: z
 			.object({
-				type: z.enum(['S3_PATH', 'BYTES', 'BYTES_64']),
+				type: z.enum(['S3_PATH', 'BYTES', 'BYTES_64']).or(z.string()),
 				id: z.string(),
 				data: z.string(),
 				initialData: z.string(),
 				envelopeItemId: z.string(),
 			})
-			.strict(),
+			.loose(),
 		documentMeta: z
 			.object({
-				signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']),
-				distributionMethod: z.enum(['EMAIL', 'NONE']),
+				signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']).or(z.string()),
+				distributionMethod: z.enum(['EMAIL', 'NONE']).or(z.string()),
 				id: z.string(),
 				subject: z.union([z.string(), z.null()]),
 				message: z.union([z.string(), z.null()]),
@@ -6405,7 +6812,7 @@ export const DocumentGetOutputSchema = z
 							ownerRecipientExpired: z.boolean(),
 							ownerDocumentCreated: z.boolean(),
 						})
-						.strict(),
+						.loose(),
 					z.null(),
 				]),
 				emailId: z.union([z.string(), z.null()]),
@@ -6414,15 +6821,15 @@ export const DocumentGetOutputSchema = z
 					.union([
 						z
 							.object({
-								unit: z.enum(['day', 'week', 'month', 'year']),
+								unit: z.enum(['day', 'week', 'month', 'year']).or(z.string()),
 								amount: z.number().int().min(1),
 							})
-							.strict(),
+							.loose(),
 						z
 							.object({
 								disabled: z.union([z.literal(true)]),
 							})
-							.strict(),
+							.loose(),
 					])
 					.nullable(),
 				reminderSettings: z.union([
@@ -6431,52 +6838,54 @@ export const DocumentGetOutputSchema = z
 							sendAfter: z.union([
 								z
 									.object({
-										unit: z.enum(['day', 'week', 'month']),
+										unit: z.enum(['day', 'week', 'month']).or(z.string()),
 										amount: z.number().int().min(1),
 									})
-									.strict(),
+									.loose(),
 								z
 									.object({
 										disabled: z.union([z.literal(true)]),
 									})
-									.strict(),
+									.loose(),
 							]),
 							repeatEvery: z.union([
 								z
 									.object({
-										unit: z.enum(['day', 'week', 'month']),
+										unit: z.enum(['day', 'week', 'month']).or(z.string()),
 										amount: z.number().int().min(1),
 									})
-									.strict(),
+									.loose(),
 								z
 									.object({
 										disabled: z.union([z.literal(true)]),
 									})
-									.strict(),
+									.loose(),
 							]),
 						})
-						.strict(),
+						.loose(),
 					z.null(),
 				]),
 				password: z.union([z.string(), z.null()]),
 				documentId: z.number().optional(),
 			})
-			.strict(),
+			.loose(),
 		envelopeItems: z.array(
 			z
 				.object({
 					id: z.string(),
 					envelopeId: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 		folder: z.union([
 			z
 				.object({
 					id: z.string(),
 					name: z.string(),
-					type: z.enum(['DOCUMENT', 'TEMPLATE']),
-					visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
+					type: z.enum(['DOCUMENT', 'TEMPLATE']).or(z.string()),
+					visibility: z
+						.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+						.or(z.string()),
 					userId: z.number(),
 					teamId: z.number(),
 					pinned: z.boolean(),
@@ -6484,17 +6893,21 @@ export const DocumentGetOutputSchema = z
 					createdAt: z.string(),
 					updatedAt: z.string(),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		recipients: z.array(
 			z
 				.object({
 					envelopeId: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-					readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-					signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-					sendStatus: z.enum(['NOT_SENT', 'SENT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
+					readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+					signingStatus: z
+						.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+						.or(z.string()),
+					sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 					id: z.number(),
 					email: z.string(),
 					name: z.string(),
@@ -6507,18 +6920,22 @@ export const DocumentGetOutputSchema = z
 					authOptions: z.union([
 						z
 							.object({
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 								actionAuth: z.array(
-									z.enum([
-										'ACCOUNT',
-										'PASSKEY',
-										'TWO_FACTOR_AUTH',
-										'PASSWORD',
-										'EXPLICIT_NONE',
-									]),
+									z
+										.enum([
+											'ACCOUNT',
+											'PASSKEY',
+											'TWO_FACTOR_AUTH',
+											'PASSWORD',
+											'EXPLICIT_NONE',
+										])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					signingOrder: z.union([z.number(), z.null()]),
@@ -6526,26 +6943,28 @@ export const DocumentGetOutputSchema = z
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 		fields: z.array(
 			z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -6565,10 +6984,12 @@ export const DocumentGetOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -6578,11 +6999,15 @@ export const DocumentGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -6592,35 +7017,15 @@ export const DocumentGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -6630,11 +7035,49 @@ export const DocumentGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -6650,7 +7093,7 @@ export const DocumentGetOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -6660,13 +7103,17 @@ export const DocumentGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -6682,7 +7129,7 @@ export const DocumentGetOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -6692,6 +7139,7 @@ export const DocumentGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -6702,12 +7150,12 @@ export const DocumentGetOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -6717,6 +7165,7 @@ export const DocumentGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -6727,14 +7176,14 @@ export const DocumentGetOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -6744,6 +7193,7 @@ export const DocumentGetOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -6752,21 +7202,21 @@ export const DocumentGetOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const DocumentGetManyInputSchema = z
 	.object({
@@ -6778,15 +7228,15 @@ export const DocumentGetManyOutputSchema = z
 		data: z.array(
 			z
 				.object({
-					visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-					status: z.enum([
-						'DRAFT',
-						'PENDING',
-						'COMPLETED',
-						'REJECTED',
-						'CANCELLED',
-					]),
-					source: z.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK']),
+					visibility: z
+						.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+						.or(z.string()),
+					status: z
+						.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED'])
+						.or(z.string()),
+					source: z
+						.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK'])
+						.or(z.string()),
 					id: z.number(),
 					externalId: z.union([z.string(), z.null()]),
 					userId: z.number(),
@@ -6794,13 +7244,15 @@ export const DocumentGetManyOutputSchema = z
 						z
 							.object({
 								globalAccessAuth: z.array(
-									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']),
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
 								),
 								globalActionAuth: z.array(
-									z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+									z
+										.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					formValues: z.union([
@@ -6827,21 +7279,19 @@ export const DocumentGetManyOutputSchema = z
 							name: z.union([z.string(), z.null()]),
 							email: z.string(),
 						})
-						.strict(),
+						.loose(),
 					recipients: z.array(
 						z
 							.object({
 								envelopeId: z.string(),
-								role: z.enum([
-									'CC',
-									'SIGNER',
-									'VIEWER',
-									'APPROVER',
-									'ASSISTANT',
-								]),
-								readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-								signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-								sendStatus: z.enum(['NOT_SENT', 'SENT']),
+								role: z
+									.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+									.or(z.string()),
+								readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+								signingStatus: z
+									.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+									.or(z.string()),
+								sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 								id: z.number(),
 								email: z.string(),
 								name: z.string(),
@@ -6855,19 +7305,21 @@ export const DocumentGetManyOutputSchema = z
 									z
 										.object({
 											accessAuth: z.array(
-												z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']),
+												z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
 											),
 											actionAuth: z.array(
-												z.enum([
-													'ACCOUNT',
-													'PASSKEY',
-													'TWO_FACTOR_AUTH',
-													'PASSWORD',
-													'EXPLICIT_NONE',
-												]),
+												z
+													.enum([
+														'ACCOUNT',
+														'PASSKEY',
+														'TWO_FACTOR_AUTH',
+														'PASSWORD',
+														'EXPLICIT_NONE',
+													])
+													.or(z.string()),
 											),
 										})
-										.strict(),
+										.loose(),
 									z.null(),
 								]),
 								signingOrder: z.union([z.number(), z.null()]),
@@ -6875,7 +7327,7 @@ export const DocumentGetManyOutputSchema = z
 								documentId: z.union([z.number(), z.null()]).optional(),
 								templateId: z.union([z.number(), z.null()]).optional(),
 							})
-							.strict(),
+							.loose(),
 					),
 					team: z.union([
 						z
@@ -6883,14 +7335,14 @@ export const DocumentGetManyOutputSchema = z
 								id: z.number(),
 								url: z.string(),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const DocumentFindInputSchema = z
 	.object({
@@ -6913,15 +7365,15 @@ export const DocumentFindOutputSchema = z
 		data: z.array(
 			z
 				.object({
-					visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-					status: z.enum([
-						'DRAFT',
-						'PENDING',
-						'COMPLETED',
-						'REJECTED',
-						'CANCELLED',
-					]),
-					source: z.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK']),
+					visibility: z
+						.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+						.or(z.string()),
+					status: z
+						.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED'])
+						.or(z.string()),
+					source: z
+						.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK'])
+						.or(z.string()),
 					id: z.number(),
 					externalId: z.union([z.string(), z.null()]),
 					userId: z.number(),
@@ -6929,13 +7381,15 @@ export const DocumentFindOutputSchema = z
 						z
 							.object({
 								globalAccessAuth: z.array(
-									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']),
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
 								),
 								globalActionAuth: z.array(
-									z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+									z
+										.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					formValues: z.union([
@@ -6962,21 +7416,19 @@ export const DocumentFindOutputSchema = z
 							name: z.union([z.string(), z.null()]),
 							email: z.string(),
 						})
-						.strict(),
+						.loose(),
 					recipients: z.array(
 						z
 							.object({
 								envelopeId: z.string(),
-								role: z.enum([
-									'CC',
-									'SIGNER',
-									'VIEWER',
-									'APPROVER',
-									'ASSISTANT',
-								]),
-								readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-								signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-								sendStatus: z.enum(['NOT_SENT', 'SENT']),
+								role: z
+									.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+									.or(z.string()),
+								readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+								signingStatus: z
+									.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+									.or(z.string()),
+								sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 								id: z.number(),
 								email: z.string(),
 								name: z.string(),
@@ -6990,19 +7442,21 @@ export const DocumentFindOutputSchema = z
 									z
 										.object({
 											accessAuth: z.array(
-												z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']),
+												z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
 											),
 											actionAuth: z.array(
-												z.enum([
-													'ACCOUNT',
-													'PASSKEY',
-													'TWO_FACTOR_AUTH',
-													'PASSWORD',
-													'EXPLICIT_NONE',
-												]),
+												z
+													.enum([
+														'ACCOUNT',
+														'PASSKEY',
+														'TWO_FACTOR_AUTH',
+														'PASSWORD',
+														'EXPLICIT_NONE',
+													])
+													.or(z.string()),
 											),
 										})
-										.strict(),
+										.loose(),
 									z.null(),
 								]),
 								signingOrder: z.union([z.number(), z.null()]),
@@ -7010,7 +7464,7 @@ export const DocumentFindOutputSchema = z
 								documentId: z.union([z.number(), z.null()]).optional(),
 								templateId: z.union([z.number(), z.null()]).optional(),
 							})
-							.strict(),
+							.loose(),
 					),
 					team: z.union([
 						z
@@ -7018,18 +7472,18 @@ export const DocumentFindOutputSchema = z
 								id: z.number(),
 								url: z.string(),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 				})
-				.strict(),
+				.loose(),
 		),
 		count: z.number(),
 		currentPage: z.number(),
 		perPage: z.number(),
 		totalPages: z.number(),
 	})
-	.strict();
+	.loose();
 
 export const DocumentCreateInputSchema = z
 	.object({
@@ -7669,7 +8123,7 @@ export const DocumentCreateOutputSchema = z
 		envelopeId: z.string(),
 		id: z.number(),
 	})
-	.strict();
+	.loose();
 
 export const DocumentUpdateInputSchema = z
 	.object({
@@ -7838,21 +8292,31 @@ export const DocumentUpdateInputSchema = z
 	.strict();
 export const DocumentUpdateOutputSchema = z
 	.object({
-		visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-		status: z.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED']),
-		source: z.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK']),
+		visibility: z
+			.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+			.or(z.string()),
+		status: z
+			.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED'])
+			.or(z.string()),
+		source: z
+			.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK'])
+			.or(z.string()),
 		id: z.number(),
 		externalId: z.union([z.string(), z.null()]),
 		userId: z.number(),
 		authOptions: z.union([
 			z
 				.object({
-					globalAccessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					globalAccessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					globalActionAuth: z.array(
-						z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+						z
+							.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		formValues: z.union([
@@ -7872,7 +8336,7 @@ export const DocumentUpdateOutputSchema = z
 		documentDataId: z.string(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const DocumentDeleteInputSchema = z
 	.object({
@@ -7883,7 +8347,7 @@ export const DocumentDeleteOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const DocumentDuplicateInputSchema = z
 	.object({
@@ -7895,7 +8359,7 @@ export const DocumentDuplicateOutputSchema = z
 		id: z.string(),
 		documentId: z.number(),
 	})
-	.strict();
+	.loose();
 
 export const DocumentDistributeInputSchema = z
 	.object({
@@ -7986,21 +8450,31 @@ export const DocumentDistributeInputSchema = z
 	.strict();
 export const DocumentDistributeOutputSchema = z
 	.object({
-		visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-		status: z.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED']),
-		source: z.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK']),
+		visibility: z
+			.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+			.or(z.string()),
+		status: z
+			.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED'])
+			.or(z.string()),
+		source: z
+			.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK'])
+			.or(z.string()),
 		id: z.number(),
 		externalId: z.union([z.string(), z.null()]),
 		userId: z.number(),
 		authOptions: z.union([
 			z
 				.object({
-					globalAccessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					globalAccessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					globalActionAuth: z.array(
-						z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+						z
+							.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		formValues: z.union([
@@ -8020,7 +8494,7 @@ export const DocumentDistributeOutputSchema = z
 		documentDataId: z.string(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const DocumentRedistributeInputSchema = z
 	.object({
@@ -8032,7 +8506,7 @@ export const DocumentRedistributeOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const DocumentDownloadInputSchema = z
 	.object({
@@ -8047,7 +8521,7 @@ export const DocumentDownloadOutputSchema = z
 		base64: z.base64(),
 		size: z.number().int().min(0),
 	})
-	.strict();
+	.loose();
 
 export const DocumentDownloadBetaInputSchema = z
 	.object({
@@ -8061,7 +8535,7 @@ export const DocumentDownloadBetaOutputSchema = z
 		filename: z.string(),
 		contentType: z.string(),
 	})
-	.strict();
+	.loose();
 
 export const DocumentCreateDocumentTemporaryInputSchema = z
 	.object({
@@ -8623,27 +9097,31 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 	.object({
 		document: z
 			.object({
-				visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-				status: z.enum([
-					'DRAFT',
-					'PENDING',
-					'COMPLETED',
-					'REJECTED',
-					'CANCELLED',
-				]),
-				source: z.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK']),
+				visibility: z
+					.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+					.or(z.string()),
+				status: z
+					.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED'])
+					.or(z.string()),
+				source: z
+					.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK'])
+					.or(z.string()),
 				id: z.number(),
 				externalId: z.union([z.string(), z.null()]),
 				userId: z.number(),
 				authOptions: z.union([
 					z
 						.object({
-							globalAccessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+							globalAccessAuth: z.array(
+								z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+							),
 							globalActionAuth: z.array(
-								z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+								z
+									.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+									.or(z.string()),
 							),
 						})
-						.strict(),
+						.loose(),
 					z.null(),
 				]),
 				formValues: z.union([
@@ -8663,17 +9141,17 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 				documentDataId: z.string(),
 				documentData: z
 					.object({
-						type: z.enum(['S3_PATH', 'BYTES', 'BYTES_64']),
+						type: z.enum(['S3_PATH', 'BYTES', 'BYTES_64']).or(z.string()),
 						id: z.string(),
 						data: z.string(),
 						initialData: z.string(),
 						envelopeItemId: z.string(),
 					})
-					.strict(),
+					.loose(),
 				documentMeta: z
 					.object({
-						signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']),
-						distributionMethod: z.enum(['EMAIL', 'NONE']),
+						signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']).or(z.string()),
+						distributionMethod: z.enum(['EMAIL', 'NONE']).or(z.string()),
 						id: z.string(),
 						subject: z.union([z.string(), z.null()]),
 						message: z.union([z.string(), z.null()]),
@@ -8698,7 +9176,7 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 									ownerRecipientExpired: z.boolean(),
 									ownerDocumentCreated: z.boolean(),
 								})
-								.strict(),
+								.loose(),
 							z.null(),
 						]),
 						emailId: z.union([z.string(), z.null()]),
@@ -8707,15 +9185,17 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 							.union([
 								z
 									.object({
-										unit: z.enum(['day', 'week', 'month', 'year']),
+										unit: z
+											.enum(['day', 'week', 'month', 'year'])
+											.or(z.string()),
 										amount: z.number().int().min(1),
 									})
-									.strict(),
+									.loose(),
 								z
 									.object({
 										disabled: z.union([z.literal(true)]),
 									})
-									.strict(),
+									.loose(),
 							])
 							.nullable(),
 						reminderSettings: z.union([
@@ -8724,52 +9204,54 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 									sendAfter: z.union([
 										z
 											.object({
-												unit: z.enum(['day', 'week', 'month']),
+												unit: z.enum(['day', 'week', 'month']).or(z.string()),
 												amount: z.number().int().min(1),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												disabled: z.union([z.literal(true)]),
 											})
-											.strict(),
+											.loose(),
 									]),
 									repeatEvery: z.union([
 										z
 											.object({
-												unit: z.enum(['day', 'week', 'month']),
+												unit: z.enum(['day', 'week', 'month']).or(z.string()),
 												amount: z.number().int().min(1),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												disabled: z.union([z.literal(true)]),
 											})
-											.strict(),
+											.loose(),
 									]),
 								})
-								.strict(),
+								.loose(),
 							z.null(),
 						]),
 						password: z.union([z.string(), z.null()]),
 						documentId: z.number().optional(),
 					})
-					.strict(),
+					.loose(),
 				envelopeItems: z.array(
 					z
 						.object({
 							id: z.string(),
 							envelopeId: z.string(),
 						})
-						.strict(),
+						.loose(),
 				),
 				folder: z.union([
 					z
 						.object({
 							id: z.string(),
 							name: z.string(),
-							type: z.enum(['DOCUMENT', 'TEMPLATE']),
-							visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
+							type: z.enum(['DOCUMENT', 'TEMPLATE']).or(z.string()),
+							visibility: z
+								.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+								.or(z.string()),
 							userId: z.number(),
 							teamId: z.number(),
 							pinned: z.boolean(),
@@ -8777,17 +9259,21 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 							createdAt: z.string(),
 							updatedAt: z.string(),
 						})
-						.strict(),
+						.loose(),
 					z.null(),
 				]),
 				recipients: z.array(
 					z
 						.object({
 							envelopeId: z.string(),
-							role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-							readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-							signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-							sendStatus: z.enum(['NOT_SENT', 'SENT']),
+							role: z
+								.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+								.or(z.string()),
+							readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+							signingStatus: z
+								.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+								.or(z.string()),
+							sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 							id: z.number(),
 							email: z.string(),
 							name: z.string(),
@@ -8800,18 +9286,22 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 							authOptions: z.union([
 								z
 									.object({
-										accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+										accessAuth: z.array(
+											z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+										),
 										actionAuth: z.array(
-											z.enum([
-												'ACCOUNT',
-												'PASSKEY',
-												'TWO_FACTOR_AUTH',
-												'PASSWORD',
-												'EXPLICIT_NONE',
-											]),
+											z
+												.enum([
+													'ACCOUNT',
+													'PASSKEY',
+													'TWO_FACTOR_AUTH',
+													'PASSWORD',
+													'EXPLICIT_NONE',
+												])
+												.or(z.string()),
 										),
 									})
-									.strict(),
+									.loose(),
 								z.null(),
 							]),
 							signingOrder: z.union([z.number(), z.null()]),
@@ -8819,26 +9309,28 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 							documentId: z.union([z.number(), z.null()]).optional(),
 							templateId: z.union([z.number(), z.null()]).optional(),
 						})
-						.strict(),
+						.loose(),
 				),
 				fields: z.array(
 					z
 						.object({
 							envelopeId: z.string(),
 							envelopeItemId: z.string(),
-							type: z.enum([
-								'SIGNATURE',
-								'FREE_SIGNATURE',
-								'INITIALS',
-								'NAME',
-								'EMAIL',
-								'DATE',
-								'TEXT',
-								'NUMBER',
-								'RADIO',
-								'CHECKBOX',
-								'DROPDOWN',
-							]),
+							type: z
+								.enum([
+									'SIGNATURE',
+									'FREE_SIGNATURE',
+									'INITIALS',
+									'NAME',
+									'EMAIL',
+									'DATE',
+									'TEXT',
+									'NUMBER',
+									'RADIO',
+									'CHECKBOX',
+									'DROPDOWN',
+								])
+								.or(z.string()),
 							id: z.number(),
 							secondaryId: z.string(),
 							recipientId: z.number(),
@@ -8858,15 +9350,12 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 											required: z.boolean().optional(),
 											readOnly: z.boolean().optional(),
 											fontSize: z.number().min(8).max(96).optional(),
-											overflow: z.enum([
-												'auto',
-												'horizontal',
-												'vertical',
-												'crop',
-											]),
+											overflow: z
+												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string()),
 											type: z.enum(['signature']),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -8876,11 +9365,15 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['initials']),
-											textAlign: z.enum(['left', 'center', 'right']).optional(),
+											textAlign: z
+												.enum(['left', 'center', 'right'])
+												.or(z.string())
+												.optional(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -8890,45 +9383,15 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['name']),
-											textAlign: z.enum(['left', 'center', 'right']).optional(),
+											textAlign: z
+												.enum(['left', 'center', 'right'])
+												.or(z.string())
+												.optional(),
 										})
-										.strict(),
-									z
-										.object({
-											label: z.string().optional(),
-											placeholder: z.string().optional(),
-											required: z.boolean().optional(),
-											readOnly: z.boolean().optional(),
-											fontSize: z.number().min(8).max(96).optional(),
-											overflow: z.enum([
-												'auto',
-												'horizontal',
-												'vertical',
-												'crop',
-											]),
-											type: z.enum(['email']),
-											textAlign: z.enum(['left', 'center', 'right']).optional(),
-										})
-										.strict(),
-									z
-										.object({
-											label: z.string().optional(),
-											placeholder: z.string().optional(),
-											required: z.boolean().optional(),
-											readOnly: z.boolean().optional(),
-											fontSize: z.number().min(8).max(96).optional(),
-											overflow: z.enum([
-												'auto',
-												'horizontal',
-												'vertical',
-												'crop',
-											]),
-											type: z.enum(['date']),
-											textAlign: z.enum(['left', 'center', 'right']).optional(),
-										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -8938,11 +9401,49 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string()),
+											type: z.enum(['email']),
+											textAlign: z
+												.enum(['left', 'center', 'right'])
+												.or(z.string())
+												.optional(),
+										})
+										.loose(),
+									z
+										.object({
+											label: z.string().optional(),
+											placeholder: z.string().optional(),
+											required: z.boolean().optional(),
+											readOnly: z.boolean().optional(),
+											fontSize: z.number().min(8).max(96).optional(),
+											overflow: z
+												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string()),
+											type: z.enum(['date']),
+											textAlign: z
+												.enum(['left', 'center', 'right'])
+												.or(z.string())
+												.optional(),
+										})
+										.loose(),
+									z
+										.object({
+											label: z.string().optional(),
+											placeholder: z.string().optional(),
+											required: z.boolean().optional(),
+											readOnly: z.boolean().optional(),
+											fontSize: z.number().min(8).max(96).optional(),
+											overflow: z
+												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['text']),
 											text: z.string().optional(),
 											characterLimit: z.number().min(0).optional(),
-											textAlign: z.enum(['left', 'center', 'right']).optional(),
+											textAlign: z
+												.enum(['left', 'center', 'right'])
+												.or(z.string())
+												.optional(),
 											lineHeight: z
 												.union([z.number().min(1).max(10), z.null()])
 												.optional(),
@@ -8958,7 +9459,7 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 												])
 												.optional(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -8968,13 +9469,17 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['number']),
 											numberFormat: z.union([z.string(), z.null()]).optional(),
 											value: z.string().optional(),
 											minValue: z.union([z.number(), z.null()]).optional(),
 											maxValue: z.union([z.number(), z.null()]).optional(),
-											textAlign: z.enum(['left', 'center', 'right']).optional(),
+											textAlign: z
+												.enum(['left', 'center', 'right'])
+												.or(z.string())
+												.optional(),
 											lineHeight: z
 												.union([z.number().min(1).max(10), z.null()])
 												.optional(),
@@ -8990,7 +9495,7 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 												])
 												.optional(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -9000,6 +9505,7 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['radio']),
 											values: z
@@ -9010,12 +9516,14 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 															checked: z.boolean(),
 															value: z.string(),
 														})
-														.strict(),
+														.loose(),
 												)
 												.optional(),
-											direction: z.enum(['vertical', 'horizontal']),
+											direction: z
+												.enum(['vertical', 'horizontal'])
+												.or(z.string()),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -9025,6 +9533,7 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['checkbox']),
 											values: z
@@ -9035,14 +9544,16 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 															checked: z.boolean(),
 															value: z.string(),
 														})
-														.strict(),
+														.loose(),
 												)
 												.optional(),
 											validationRule: z.string().optional(),
 											validationLength: z.number().optional(),
-											direction: z.enum(['vertical', 'horizontal']),
+											direction: z
+												.enum(['vertical', 'horizontal'])
+												.or(z.string()),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -9052,6 +9563,7 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['dropdown']),
 											values: z
@@ -9060,24 +9572,24 @@ export const DocumentCreateDocumentTemporaryOutputSchema = z
 														.object({
 															value: z.string(),
 														})
-														.strict(),
+														.loose(),
 												)
 												.optional(),
 											defaultValue: z.string().optional(),
 										})
-										.strict(),
+										.loose(),
 								])
 								.nullable(),
 							documentId: z.union([z.number(), z.null()]).optional(),
 							templateId: z.union([z.number(), z.null()]).optional(),
 						})
-						.strict(),
+						.loose(),
 				),
 			})
-			.strict(),
+			.loose(),
 		uploadUrl: z.string(),
 	})
-	.strict();
+	.loose();
 
 export const DocumentAttachmentCreateInputSchema = z
 	.object({
@@ -9094,7 +9606,7 @@ export const DocumentAttachmentCreateOutputSchema = z
 	.object({
 		id: z.string(),
 	})
-	.strict();
+	.loose();
 
 export const DocumentAttachmentUpdateInputSchema = z
 	.object({
@@ -9111,7 +9623,7 @@ export const DocumentAttachmentUpdateOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const DocumentAttachmentDeleteInputSchema = z
 	.object({
@@ -9122,7 +9634,7 @@ export const DocumentAttachmentDeleteOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const DocumentAttachmentFindInputSchema = z
 	.object({
@@ -9139,10 +9651,10 @@ export const DocumentAttachmentFindOutputSchema = z
 					label: z.string(),
 					data: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const FieldGetDocumentFieldInputSchema = z
 	.object({
@@ -9153,19 +9665,21 @@ export const FieldGetDocumentFieldOutputSchema = z
 	.object({
 		envelopeId: z.string(),
 		envelopeItemId: z.string(),
-		type: z.enum([
-			'SIGNATURE',
-			'FREE_SIGNATURE',
-			'INITIALS',
-			'NAME',
-			'EMAIL',
-			'DATE',
-			'TEXT',
-			'NUMBER',
-			'RADIO',
-			'CHECKBOX',
-			'DROPDOWN',
-		]),
+		type: z
+			.enum([
+				'SIGNATURE',
+				'FREE_SIGNATURE',
+				'INITIALS',
+				'NAME',
+				'EMAIL',
+				'DATE',
+				'TEXT',
+				'NUMBER',
+				'RADIO',
+				'CHECKBOX',
+				'DROPDOWN',
+			])
+			.or(z.string()),
 		id: z.number(),
 		secondaryId: z.string(),
 		recipientId: z.number(),
@@ -9185,10 +9699,12 @@ export const FieldGetDocumentFieldOutputSchema = z
 						required: z.boolean().optional(),
 						readOnly: z.boolean().optional(),
 						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
 						type: z.enum(['signature']),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9198,11 +9714,15 @@ export const FieldGetDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['initials']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9212,35 +9732,15 @@ export const FieldGetDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['name']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['email']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['date']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9250,11 +9750,49 @@ export const FieldGetDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['email']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['date']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['text']),
 						text: z.string().optional(),
 						characterLimit: z.number().min(0).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -9270,7 +9808,7 @@ export const FieldGetDocumentFieldOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9280,13 +9818,17 @@ export const FieldGetDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['number']),
 						numberFormat: z.union([z.string(), z.null()]).optional(),
 						value: z.string().optional(),
 						minValue: z.union([z.number(), z.null()]).optional(),
 						maxValue: z.union([z.number(), z.null()]).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -9302,7 +9844,7 @@ export const FieldGetDocumentFieldOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9312,6 +9854,7 @@ export const FieldGetDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['radio']),
 						values: z
@@ -9322,12 +9865,12 @@ export const FieldGetDocumentFieldOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9337,6 +9880,7 @@ export const FieldGetDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['checkbox']),
 						values: z
@@ -9347,14 +9891,14 @@ export const FieldGetDocumentFieldOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						validationRule: z.string().optional(),
 						validationLength: z.number().optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9364,6 +9908,7 @@ export const FieldGetDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['dropdown']),
 						values: z
@@ -9372,18 +9917,18 @@ export const FieldGetDocumentFieldOutputSchema = z
 									.object({
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						defaultValue: z.string().optional(),
 					})
-					.strict(),
+					.loose(),
 			])
 			.nullable(),
 		documentId: z.union([z.number(), z.null()]).optional(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const FieldCreateDocumentFieldInputSchema = z
 	.object({
@@ -9733,19 +10278,21 @@ export const FieldCreateDocumentFieldOutputSchema = z
 	.object({
 		envelopeId: z.string(),
 		envelopeItemId: z.string(),
-		type: z.enum([
-			'SIGNATURE',
-			'FREE_SIGNATURE',
-			'INITIALS',
-			'NAME',
-			'EMAIL',
-			'DATE',
-			'TEXT',
-			'NUMBER',
-			'RADIO',
-			'CHECKBOX',
-			'DROPDOWN',
-		]),
+		type: z
+			.enum([
+				'SIGNATURE',
+				'FREE_SIGNATURE',
+				'INITIALS',
+				'NAME',
+				'EMAIL',
+				'DATE',
+				'TEXT',
+				'NUMBER',
+				'RADIO',
+				'CHECKBOX',
+				'DROPDOWN',
+			])
+			.or(z.string()),
 		id: z.number(),
 		secondaryId: z.string(),
 		recipientId: z.number(),
@@ -9765,10 +10312,12 @@ export const FieldCreateDocumentFieldOutputSchema = z
 						required: z.boolean().optional(),
 						readOnly: z.boolean().optional(),
 						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
 						type: z.enum(['signature']),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9778,11 +10327,15 @@ export const FieldCreateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['initials']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9792,35 +10345,15 @@ export const FieldCreateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['name']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['email']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['date']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9830,11 +10363,49 @@ export const FieldCreateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['email']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['date']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['text']),
 						text: z.string().optional(),
 						characterLimit: z.number().min(0).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -9850,7 +10421,7 @@ export const FieldCreateDocumentFieldOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9860,13 +10431,17 @@ export const FieldCreateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['number']),
 						numberFormat: z.union([z.string(), z.null()]).optional(),
 						value: z.string().optional(),
 						minValue: z.union([z.number(), z.null()]).optional(),
 						maxValue: z.union([z.number(), z.null()]).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -9882,7 +10457,7 @@ export const FieldCreateDocumentFieldOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9892,6 +10467,7 @@ export const FieldCreateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['radio']),
 						values: z
@@ -9902,12 +10478,12 @@ export const FieldCreateDocumentFieldOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9917,6 +10493,7 @@ export const FieldCreateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['checkbox']),
 						values: z
@@ -9927,14 +10504,14 @@ export const FieldCreateDocumentFieldOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						validationRule: z.string().optional(),
 						validationLength: z.number().optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -9944,6 +10521,7 @@ export const FieldCreateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['dropdown']),
 						values: z
@@ -9952,18 +10530,18 @@ export const FieldCreateDocumentFieldOutputSchema = z
 									.object({
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						defaultValue: z.string().optional(),
 					})
-					.strict(),
+					.loose(),
 			])
 			.nullable(),
 		documentId: z.union([z.number(), z.null()]).optional(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const FieldCreateDocumentFieldsInputSchema = z
 	.object({
@@ -10318,19 +10896,21 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -10350,10 +10930,12 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -10363,11 +10945,15 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -10377,35 +10963,15 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -10415,11 +10981,49 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -10435,7 +11039,7 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -10445,13 +11049,17 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -10467,7 +11075,7 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -10477,6 +11085,7 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -10487,12 +11096,12 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -10502,6 +11111,7 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -10512,14 +11122,14 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -10529,6 +11139,7 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -10537,21 +11148,21 @@ export const FieldCreateDocumentFieldsOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const FieldUpdateDocumentFieldInputSchema = z
 	.object({
@@ -10901,19 +11512,21 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 	.object({
 		envelopeId: z.string(),
 		envelopeItemId: z.string(),
-		type: z.enum([
-			'SIGNATURE',
-			'FREE_SIGNATURE',
-			'INITIALS',
-			'NAME',
-			'EMAIL',
-			'DATE',
-			'TEXT',
-			'NUMBER',
-			'RADIO',
-			'CHECKBOX',
-			'DROPDOWN',
-		]),
+		type: z
+			.enum([
+				'SIGNATURE',
+				'FREE_SIGNATURE',
+				'INITIALS',
+				'NAME',
+				'EMAIL',
+				'DATE',
+				'TEXT',
+				'NUMBER',
+				'RADIO',
+				'CHECKBOX',
+				'DROPDOWN',
+			])
+			.or(z.string()),
 		id: z.number(),
 		secondaryId: z.string(),
 		recipientId: z.number(),
@@ -10933,10 +11546,12 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 						required: z.boolean().optional(),
 						readOnly: z.boolean().optional(),
 						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
 						type: z.enum(['signature']),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -10946,11 +11561,15 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['initials']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -10960,35 +11579,15 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['name']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['email']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['date']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -10998,11 +11597,49 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['email']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['date']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['text']),
 						text: z.string().optional(),
 						characterLimit: z.number().min(0).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -11018,7 +11655,7 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -11028,13 +11665,17 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['number']),
 						numberFormat: z.union([z.string(), z.null()]).optional(),
 						value: z.string().optional(),
 						minValue: z.union([z.number(), z.null()]).optional(),
 						maxValue: z.union([z.number(), z.null()]).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -11050,7 +11691,7 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -11060,6 +11701,7 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['radio']),
 						values: z
@@ -11070,12 +11712,12 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -11085,6 +11727,7 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['checkbox']),
 						values: z
@@ -11095,14 +11738,14 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						validationRule: z.string().optional(),
 						validationLength: z.number().optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -11112,6 +11755,7 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['dropdown']),
 						values: z
@@ -11120,18 +11764,18 @@ export const FieldUpdateDocumentFieldOutputSchema = z
 									.object({
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						defaultValue: z.string().optional(),
 					})
-					.strict(),
+					.loose(),
 			])
 			.nullable(),
 		documentId: z.union([z.number(), z.null()]).optional(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const FieldUpdateDocumentFieldsInputSchema = z
 	.object({
@@ -11486,19 +12130,21 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -11518,10 +12164,12 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -11531,11 +12179,15 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -11545,35 +12197,15 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -11583,11 +12215,49 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -11603,7 +12273,7 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -11613,13 +12283,17 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -11635,7 +12309,7 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -11645,6 +12319,7 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -11655,12 +12330,12 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -11670,6 +12345,7 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -11680,14 +12356,14 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -11697,6 +12373,7 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -11705,21 +12382,21 @@ export const FieldUpdateDocumentFieldsOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const FieldDeleteDocumentFieldInputSchema = z
 	.object({
@@ -11730,7 +12407,7 @@ export const FieldDeleteDocumentFieldOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const FieldCreateTemplateFieldInputSchema = z
 	.object({
@@ -12080,19 +12757,21 @@ export const FieldCreateTemplateFieldOutputSchema = z
 	.object({
 		envelopeId: z.string(),
 		envelopeItemId: z.string(),
-		type: z.enum([
-			'SIGNATURE',
-			'FREE_SIGNATURE',
-			'INITIALS',
-			'NAME',
-			'EMAIL',
-			'DATE',
-			'TEXT',
-			'NUMBER',
-			'RADIO',
-			'CHECKBOX',
-			'DROPDOWN',
-		]),
+		type: z
+			.enum([
+				'SIGNATURE',
+				'FREE_SIGNATURE',
+				'INITIALS',
+				'NAME',
+				'EMAIL',
+				'DATE',
+				'TEXT',
+				'NUMBER',
+				'RADIO',
+				'CHECKBOX',
+				'DROPDOWN',
+			])
+			.or(z.string()),
 		id: z.number(),
 		secondaryId: z.string(),
 		recipientId: z.number(),
@@ -12112,10 +12791,12 @@ export const FieldCreateTemplateFieldOutputSchema = z
 						required: z.boolean().optional(),
 						readOnly: z.boolean().optional(),
 						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
 						type: z.enum(['signature']),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12125,11 +12806,15 @@ export const FieldCreateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['initials']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12139,35 +12824,15 @@ export const FieldCreateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['name']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['email']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['date']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12177,11 +12842,49 @@ export const FieldCreateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['email']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['date']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['text']),
 						text: z.string().optional(),
 						characterLimit: z.number().min(0).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -12197,7 +12900,7 @@ export const FieldCreateTemplateFieldOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12207,13 +12910,17 @@ export const FieldCreateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['number']),
 						numberFormat: z.union([z.string(), z.null()]).optional(),
 						value: z.string().optional(),
 						minValue: z.union([z.number(), z.null()]).optional(),
 						maxValue: z.union([z.number(), z.null()]).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -12229,7 +12936,7 @@ export const FieldCreateTemplateFieldOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12239,6 +12946,7 @@ export const FieldCreateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['radio']),
 						values: z
@@ -12249,12 +12957,12 @@ export const FieldCreateTemplateFieldOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12264,6 +12972,7 @@ export const FieldCreateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['checkbox']),
 						values: z
@@ -12274,14 +12983,14 @@ export const FieldCreateTemplateFieldOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						validationRule: z.string().optional(),
 						validationLength: z.number().optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12291,6 +13000,7 @@ export const FieldCreateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['dropdown']),
 						values: z
@@ -12299,18 +13009,18 @@ export const FieldCreateTemplateFieldOutputSchema = z
 									.object({
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						defaultValue: z.string().optional(),
 					})
-					.strict(),
+					.loose(),
 			])
 			.nullable(),
 		documentId: z.union([z.number(), z.null()]).optional(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const FieldGetTemplateFieldInputSchema = z
 	.object({
@@ -12321,19 +13031,21 @@ export const FieldGetTemplateFieldOutputSchema = z
 	.object({
 		envelopeId: z.string(),
 		envelopeItemId: z.string(),
-		type: z.enum([
-			'SIGNATURE',
-			'FREE_SIGNATURE',
-			'INITIALS',
-			'NAME',
-			'EMAIL',
-			'DATE',
-			'TEXT',
-			'NUMBER',
-			'RADIO',
-			'CHECKBOX',
-			'DROPDOWN',
-		]),
+		type: z
+			.enum([
+				'SIGNATURE',
+				'FREE_SIGNATURE',
+				'INITIALS',
+				'NAME',
+				'EMAIL',
+				'DATE',
+				'TEXT',
+				'NUMBER',
+				'RADIO',
+				'CHECKBOX',
+				'DROPDOWN',
+			])
+			.or(z.string()),
 		id: z.number(),
 		secondaryId: z.string(),
 		recipientId: z.number(),
@@ -12353,10 +13065,12 @@ export const FieldGetTemplateFieldOutputSchema = z
 						required: z.boolean().optional(),
 						readOnly: z.boolean().optional(),
 						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
 						type: z.enum(['signature']),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12366,11 +13080,15 @@ export const FieldGetTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['initials']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12380,35 +13098,15 @@ export const FieldGetTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['name']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['email']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['date']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12418,11 +13116,49 @@ export const FieldGetTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['email']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['date']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['text']),
 						text: z.string().optional(),
 						characterLimit: z.number().min(0).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -12438,7 +13174,7 @@ export const FieldGetTemplateFieldOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12448,13 +13184,17 @@ export const FieldGetTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['number']),
 						numberFormat: z.union([z.string(), z.null()]).optional(),
 						value: z.string().optional(),
 						minValue: z.union([z.number(), z.null()]).optional(),
 						maxValue: z.union([z.number(), z.null()]).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -12470,7 +13210,7 @@ export const FieldGetTemplateFieldOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12480,6 +13220,7 @@ export const FieldGetTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['radio']),
 						values: z
@@ -12490,12 +13231,12 @@ export const FieldGetTemplateFieldOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12505,6 +13246,7 @@ export const FieldGetTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['checkbox']),
 						values: z
@@ -12515,14 +13257,14 @@ export const FieldGetTemplateFieldOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						validationRule: z.string().optional(),
 						validationLength: z.number().optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -12532,6 +13274,7 @@ export const FieldGetTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['dropdown']),
 						values: z
@@ -12540,18 +13283,18 @@ export const FieldGetTemplateFieldOutputSchema = z
 									.object({
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						defaultValue: z.string().optional(),
 					})
-					.strict(),
+					.loose(),
 			])
 			.nullable(),
 		documentId: z.union([z.number(), z.null()]).optional(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const FieldCreateTemplateFieldsInputSchema = z
 	.object({
@@ -12906,19 +13649,21 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -12938,10 +13683,12 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -12951,11 +13698,15 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -12965,35 +13716,15 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -13003,11 +13734,49 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -13023,7 +13792,7 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -13033,13 +13802,17 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -13055,7 +13828,7 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -13065,6 +13838,7 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -13075,12 +13849,12 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -13090,6 +13864,7 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -13100,14 +13875,14 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -13117,6 +13892,7 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -13125,21 +13901,21 @@ export const FieldCreateTemplateFieldsOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const FieldUpdateTemplateFieldInputSchema = z
 	.object({
@@ -13489,19 +14265,21 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 	.object({
 		envelopeId: z.string(),
 		envelopeItemId: z.string(),
-		type: z.enum([
-			'SIGNATURE',
-			'FREE_SIGNATURE',
-			'INITIALS',
-			'NAME',
-			'EMAIL',
-			'DATE',
-			'TEXT',
-			'NUMBER',
-			'RADIO',
-			'CHECKBOX',
-			'DROPDOWN',
-		]),
+		type: z
+			.enum([
+				'SIGNATURE',
+				'FREE_SIGNATURE',
+				'INITIALS',
+				'NAME',
+				'EMAIL',
+				'DATE',
+				'TEXT',
+				'NUMBER',
+				'RADIO',
+				'CHECKBOX',
+				'DROPDOWN',
+			])
+			.or(z.string()),
 		id: z.number(),
 		secondaryId: z.string(),
 		recipientId: z.number(),
@@ -13521,10 +14299,12 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 						required: z.boolean().optional(),
 						readOnly: z.boolean().optional(),
 						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
 						type: z.enum(['signature']),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -13534,11 +14314,15 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['initials']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -13548,35 +14332,15 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['name']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['email']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
-				z
-					.object({
-						label: z.string().optional(),
-						placeholder: z.string().optional(),
-						required: z.boolean().optional(),
-						readOnly: z.boolean().optional(),
-						fontSize: z.number().min(8).max(96).optional(),
-						overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-						type: z.enum(['date']),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
-					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -13586,11 +14350,49 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['email']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string()),
+						type: z.enum(['date']),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
+					})
+					.loose(),
+				z
+					.object({
+						label: z.string().optional(),
+						placeholder: z.string().optional(),
+						required: z.boolean().optional(),
+						readOnly: z.boolean().optional(),
+						fontSize: z.number().min(8).max(96).optional(),
+						overflow: z
+							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['text']),
 						text: z.string().optional(),
 						characterLimit: z.number().min(0).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -13606,7 +14408,7 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -13616,13 +14418,17 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['number']),
 						numberFormat: z.union([z.string(), z.null()]).optional(),
 						value: z.string().optional(),
 						minValue: z.union([z.number(), z.null()]).optional(),
 						maxValue: z.union([z.number(), z.null()]).optional(),
-						textAlign: z.enum(['left', 'center', 'right']).optional(),
+						textAlign: z
+							.enum(['left', 'center', 'right'])
+							.or(z.string())
+							.optional(),
 						lineHeight: z
 							.union([z.number().min(1).max(10), z.null()])
 							.optional(),
@@ -13638,7 +14444,7 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 							])
 							.optional(),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -13648,6 +14454,7 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['radio']),
 						values: z
@@ -13658,12 +14465,12 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -13673,6 +14480,7 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['checkbox']),
 						values: z
@@ -13683,14 +14491,14 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 										checked: z.boolean(),
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						validationRule: z.string().optional(),
 						validationLength: z.number().optional(),
-						direction: z.enum(['vertical', 'horizontal']),
+						direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 					})
-					.strict(),
+					.loose(),
 				z
 					.object({
 						label: z.string().optional(),
@@ -13700,6 +14508,7 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 						fontSize: z.number().min(8).max(96).optional(),
 						overflow: z
 							.enum(['auto', 'horizontal', 'vertical', 'crop'])
+							.or(z.string())
 							.optional(),
 						type: z.enum(['dropdown']),
 						values: z
@@ -13708,18 +14517,18 @@ export const FieldUpdateTemplateFieldOutputSchema = z
 									.object({
 										value: z.string(),
 									})
-									.strict(),
+									.loose(),
 							)
 							.optional(),
 						defaultValue: z.string().optional(),
 					})
-					.strict(),
+					.loose(),
 			])
 			.nullable(),
 		documentId: z.union([z.number(), z.null()]).optional(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const FieldUpdateTemplateFieldsInputSchema = z
 	.object({
@@ -14074,19 +14883,21 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -14106,10 +14917,12 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14119,11 +14932,15 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14133,35 +14950,15 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14171,11 +14968,49 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -14191,7 +15026,7 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14201,13 +15036,17 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -14223,7 +15062,7 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14233,6 +15072,7 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -14243,12 +15083,12 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14258,6 +15098,7 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -14268,14 +15109,14 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14285,6 +15126,7 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -14293,21 +15135,21 @@ export const FieldUpdateTemplateFieldsOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const FieldDeleteTemplateFieldInputSchema = z
 	.object({
@@ -14318,7 +15160,7 @@ export const FieldDeleteTemplateFieldOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const FolderFindFoldersInputSchema = z
 	.object({
@@ -14342,17 +15184,19 @@ export const FolderFindFoldersOutputSchema = z
 					pinned: z.boolean(),
 					createdAt: z.string(),
 					updatedAt: z.string(),
-					visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-					type: z.enum(['DOCUMENT', 'TEMPLATE']),
+					visibility: z
+						.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+						.or(z.string()),
+					type: z.enum(['DOCUMENT', 'TEMPLATE']).or(z.string()),
 				})
-				.strict(),
+				.loose(),
 		),
 		count: z.number(),
 		currentPage: z.number(),
 		perPage: z.number(),
 		totalPages: z.number(),
 	})
-	.strict();
+	.loose();
 
 export const FolderCreateFolderInputSchema = z
 	.object({
@@ -14371,10 +15215,12 @@ export const FolderCreateFolderOutputSchema = z
 		pinned: z.boolean(),
 		createdAt: z.string(),
 		updatedAt: z.string(),
-		visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-		type: z.enum(['DOCUMENT', 'TEMPLATE']),
+		visibility: z
+			.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+			.or(z.string()),
+		type: z.enum(['DOCUMENT', 'TEMPLATE']).or(z.string()),
 	})
-	.strict();
+	.loose();
 
 export const FolderUpdateFolderInputSchema = z
 	.object({
@@ -14401,10 +15247,12 @@ export const FolderUpdateFolderOutputSchema = z
 		pinned: z.boolean(),
 		createdAt: z.string(),
 		updatedAt: z.string(),
-		visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-		type: z.enum(['DOCUMENT', 'TEMPLATE']),
+		visibility: z
+			.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+			.or(z.string()),
+		type: z.enum(['DOCUMENT', 'TEMPLATE']).or(z.string()),
 	})
-	.strict();
+	.loose();
 
 export const FolderDeleteFolderInputSchema = z
 	.object({
@@ -14415,7 +15263,7 @@ export const FolderDeleteFolderOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const RecipientGetDocumentRecipientInputSchema = z
 	.object({
@@ -14425,10 +15273,12 @@ export const RecipientGetDocumentRecipientInputSchema = z
 export const RecipientGetDocumentRecipientOutputSchema = z
 	.object({
 		envelopeId: z.string(),
-		role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-		readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-		sendStatus: z.enum(['NOT_SENT', 'SENT']),
+		role: z
+			.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+			.or(z.string()),
+		readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']).or(z.string()),
+		sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 		id: z.number(),
 		email: z.string(),
 		name: z.string(),
@@ -14441,18 +15291,22 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					accessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					actionAuth: z.array(
-						z.enum([
-							'ACCOUNT',
-							'PASSKEY',
-							'TWO_FACTOR_AUTH',
-							'PASSWORD',
-							'EXPLICIT_NONE',
-						]),
+						z
+							.enum([
+								'ACCOUNT',
+								'PASSKEY',
+								'TWO_FACTOR_AUTH',
+								'PASSWORD',
+								'EXPLICIT_NONE',
+							])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		signingOrder: z.union([z.number(), z.null()]),
@@ -14462,19 +15316,21 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -14494,10 +15350,12 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14507,11 +15365,15 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14521,35 +15383,15 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14559,11 +15401,49 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -14579,7 +15459,7 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14589,13 +15469,17 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -14611,7 +15495,7 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14621,6 +15505,7 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -14631,12 +15516,12 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14646,6 +15531,7 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -14656,14 +15542,14 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14673,6 +15559,7 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -14681,23 +15568,23 @@ export const RecipientGetDocumentRecipientOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 		documentId: z.union([z.number(), z.null()]).optional(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const RecipientCreateDocumentRecipientInputSchema = z
 	.object({
@@ -14736,10 +15623,12 @@ export const RecipientCreateDocumentRecipientInputSchema = z
 export const RecipientCreateDocumentRecipientOutputSchema = z
 	.object({
 		envelopeId: z.string(),
-		role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-		readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-		sendStatus: z.enum(['NOT_SENT', 'SENT']),
+		role: z
+			.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+			.or(z.string()),
+		readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']).or(z.string()),
+		sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 		id: z.number(),
 		email: z.string(),
 		name: z.string(),
@@ -14752,18 +15641,22 @@ export const RecipientCreateDocumentRecipientOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					accessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					actionAuth: z.array(
-						z.enum([
-							'ACCOUNT',
-							'PASSKEY',
-							'TWO_FACTOR_AUTH',
-							'PASSWORD',
-							'EXPLICIT_NONE',
-						]),
+						z
+							.enum([
+								'ACCOUNT',
+								'PASSKEY',
+								'TWO_FACTOR_AUTH',
+								'PASSWORD',
+								'EXPLICIT_NONE',
+							])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		signingOrder: z.union([z.number(), z.null()]),
@@ -14771,7 +15664,7 @@ export const RecipientCreateDocumentRecipientOutputSchema = z
 		documentId: z.union([z.number(), z.null()]).optional(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const RecipientCreateDocumentRecipientsInputSchema = z
 	.object({
@@ -14817,10 +15710,14 @@ export const RecipientCreateDocumentRecipientsOutputSchema = z
 			z
 				.object({
 					envelopeId: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-					readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-					signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-					sendStatus: z.enum(['NOT_SENT', 'SENT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
+					readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+					signingStatus: z
+						.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+						.or(z.string()),
+					sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 					id: z.number(),
 					email: z.string(),
 					name: z.string(),
@@ -14833,18 +15730,22 @@ export const RecipientCreateDocumentRecipientsOutputSchema = z
 					authOptions: z.union([
 						z
 							.object({
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 								actionAuth: z.array(
-									z.enum([
-										'ACCOUNT',
-										'PASSKEY',
-										'TWO_FACTOR_AUTH',
-										'PASSWORD',
-										'EXPLICIT_NONE',
-									]),
+									z
+										.enum([
+											'ACCOUNT',
+											'PASSKEY',
+											'TWO_FACTOR_AUTH',
+											'PASSWORD',
+											'EXPLICIT_NONE',
+										])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					signingOrder: z.union([z.number(), z.null()]),
@@ -14852,10 +15753,10 @@ export const RecipientCreateDocumentRecipientsOutputSchema = z
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const RecipientUpdateDocumentRecipientInputSchema = z
 	.object({
@@ -14898,10 +15799,12 @@ export const RecipientUpdateDocumentRecipientInputSchema = z
 export const RecipientUpdateDocumentRecipientOutputSchema = z
 	.object({
 		envelopeId: z.string(),
-		role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-		readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-		sendStatus: z.enum(['NOT_SENT', 'SENT']),
+		role: z
+			.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+			.or(z.string()),
+		readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']).or(z.string()),
+		sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 		id: z.number(),
 		email: z.string(),
 		name: z.string(),
@@ -14914,18 +15817,22 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					accessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					actionAuth: z.array(
-						z.enum([
-							'ACCOUNT',
-							'PASSKEY',
-							'TWO_FACTOR_AUTH',
-							'PASSWORD',
-							'EXPLICIT_NONE',
-						]),
+						z
+							.enum([
+								'ACCOUNT',
+								'PASSKEY',
+								'TWO_FACTOR_AUTH',
+								'PASSWORD',
+								'EXPLICIT_NONE',
+							])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		signingOrder: z.union([z.number(), z.null()]),
@@ -14935,19 +15842,21 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -14967,10 +15876,12 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14980,11 +15891,15 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -14994,35 +15909,15 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -15032,11 +15927,49 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -15052,7 +15985,7 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -15062,13 +15995,17 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -15084,7 +16021,7 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -15094,6 +16031,7 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -15104,12 +16042,12 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -15119,6 +16057,7 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -15129,14 +16068,14 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -15146,6 +16085,7 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -15154,23 +16094,23 @@ export const RecipientUpdateDocumentRecipientOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 		documentId: z.union([z.number(), z.null()]).optional(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const RecipientUpdateDocumentRecipientsInputSchema = z
 	.object({
@@ -15220,10 +16160,14 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 			z
 				.object({
 					envelopeId: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-					readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-					signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-					sendStatus: z.enum(['NOT_SENT', 'SENT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
+					readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+					signingStatus: z
+						.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+						.or(z.string()),
+					sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 					id: z.number(),
 					email: z.string(),
 					name: z.string(),
@@ -15236,18 +16180,22 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 					authOptions: z.union([
 						z
 							.object({
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 								actionAuth: z.array(
-									z.enum([
-										'ACCOUNT',
-										'PASSKEY',
-										'TWO_FACTOR_AUTH',
-										'PASSWORD',
-										'EXPLICIT_NONE',
-									]),
+									z
+										.enum([
+											'ACCOUNT',
+											'PASSKEY',
+											'TWO_FACTOR_AUTH',
+											'PASSWORD',
+											'EXPLICIT_NONE',
+										])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					signingOrder: z.union([z.number(), z.null()]),
@@ -15257,19 +16205,21 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 							.object({
 								envelopeId: z.string(),
 								envelopeItemId: z.string(),
-								type: z.enum([
-									'SIGNATURE',
-									'FREE_SIGNATURE',
-									'INITIALS',
-									'NAME',
-									'EMAIL',
-									'DATE',
-									'TEXT',
-									'NUMBER',
-									'RADIO',
-									'CHECKBOX',
-									'DROPDOWN',
-								]),
+								type: z
+									.enum([
+										'SIGNATURE',
+										'FREE_SIGNATURE',
+										'INITIALS',
+										'NAME',
+										'EMAIL',
+										'DATE',
+										'TEXT',
+										'NUMBER',
+										'RADIO',
+										'CHECKBOX',
+										'DROPDOWN',
+									])
+									.or(z.string()),
 								id: z.number(),
 								secondaryId: z.string(),
 								recipientId: z.number(),
@@ -15289,15 +16239,12 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 												required: z.boolean().optional(),
 												readOnly: z.boolean().optional(),
 												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
 												type: z.enum(['signature']),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -15307,13 +16254,15 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['initials']),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -15323,51 +16272,15 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['name']),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 											})
-											.strict(),
-										z
-											.object({
-												label: z.string().optional(),
-												placeholder: z.string().optional(),
-												required: z.boolean().optional(),
-												readOnly: z.boolean().optional(),
-												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
-												type: z.enum(['email']),
-												textAlign: z
-													.enum(['left', 'center', 'right'])
-													.optional(),
-											})
-											.strict(),
-										z
-											.object({
-												label: z.string().optional(),
-												placeholder: z.string().optional(),
-												required: z.boolean().optional(),
-												readOnly: z.boolean().optional(),
-												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
-												type: z.enum(['date']),
-												textAlign: z
-													.enum(['left', 'center', 'right'])
-													.optional(),
-											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -15377,12 +16290,48 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
+												type: z.enum(['email']),
+												textAlign: z
+													.enum(['left', 'center', 'right'])
+													.or(z.string())
+													.optional(),
+											})
+											.loose(),
+										z
+											.object({
+												label: z.string().optional(),
+												placeholder: z.string().optional(),
+												required: z.boolean().optional(),
+												readOnly: z.boolean().optional(),
+												fontSize: z.number().min(8).max(96).optional(),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
+												type: z.enum(['date']),
+												textAlign: z
+													.enum(['left', 'center', 'right'])
+													.or(z.string())
+													.optional(),
+											})
+											.loose(),
+										z
+											.object({
+												label: z.string().optional(),
+												placeholder: z.string().optional(),
+												required: z.boolean().optional(),
+												readOnly: z.boolean().optional(),
+												fontSize: z.number().min(8).max(96).optional(),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['text']),
 												text: z.string().optional(),
 												characterLimit: z.number().min(0).optional(),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 												lineHeight: z
 													.union([z.number().min(1).max(10), z.null()])
@@ -15399,7 +16348,7 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 													])
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -15409,6 +16358,7 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['number']),
 												numberFormat: z
@@ -15419,6 +16369,7 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 												maxValue: z.union([z.number(), z.null()]).optional(),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 												lineHeight: z
 													.union([z.number().min(1).max(10), z.null()])
@@ -15435,7 +16386,7 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 													])
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -15445,6 +16396,7 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['radio']),
 												values: z
@@ -15455,12 +16407,14 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 																checked: z.boolean(),
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
-												direction: z.enum(['vertical', 'horizontal']),
+												direction: z
+													.enum(['vertical', 'horizontal'])
+													.or(z.string()),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -15470,6 +16424,7 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['checkbox']),
 												values: z
@@ -15480,14 +16435,16 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 																checked: z.boolean(),
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
 												validationRule: z.string().optional(),
 												validationLength: z.number().optional(),
-												direction: z.enum(['vertical', 'horizontal']),
+												direction: z
+													.enum(['vertical', 'horizontal'])
+													.or(z.string()),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -15497,6 +16454,7 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['dropdown']),
 												values: z
@@ -15505,26 +16463,26 @@ export const RecipientUpdateDocumentRecipientsOutputSchema = z
 															.object({
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
 												defaultValue: z.string().optional(),
 											})
-											.strict(),
+											.loose(),
 									])
 									.nullable(),
 								documentId: z.union([z.number(), z.null()]).optional(),
 								templateId: z.union([z.number(), z.null()]).optional(),
 							})
-							.strict(),
+							.loose(),
 					),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const RecipientDeleteDocumentRecipientInputSchema = z
 	.object({
@@ -15535,7 +16493,7 @@ export const RecipientDeleteDocumentRecipientOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const RecipientGetTemplateRecipientInputSchema = z
 	.object({
@@ -15545,10 +16503,12 @@ export const RecipientGetTemplateRecipientInputSchema = z
 export const RecipientGetTemplateRecipientOutputSchema = z
 	.object({
 		envelopeId: z.string(),
-		role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-		readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-		sendStatus: z.enum(['NOT_SENT', 'SENT']),
+		role: z
+			.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+			.or(z.string()),
+		readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']).or(z.string()),
+		sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 		id: z.number(),
 		email: z.string(),
 		name: z.string(),
@@ -15561,18 +16521,22 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					accessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					actionAuth: z.array(
-						z.enum([
-							'ACCOUNT',
-							'PASSKEY',
-							'TWO_FACTOR_AUTH',
-							'PASSWORD',
-							'EXPLICIT_NONE',
-						]),
+						z
+							.enum([
+								'ACCOUNT',
+								'PASSKEY',
+								'TWO_FACTOR_AUTH',
+								'PASSWORD',
+								'EXPLICIT_NONE',
+							])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		signingOrder: z.union([z.number(), z.null()]),
@@ -15582,19 +16546,21 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -15614,10 +16580,12 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -15627,11 +16595,15 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -15641,35 +16613,15 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -15679,11 +16631,49 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -15699,7 +16689,7 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -15709,13 +16699,17 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -15731,7 +16725,7 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -15741,6 +16735,7 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -15751,12 +16746,12 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -15766,6 +16761,7 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -15776,14 +16772,14 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -15793,6 +16789,7 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -15801,23 +16798,23 @@ export const RecipientGetTemplateRecipientOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 		documentId: z.union([z.number(), z.null()]).optional(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const RecipientCreateTemplateRecipientInputSchema = z
 	.object({
@@ -15856,10 +16853,12 @@ export const RecipientCreateTemplateRecipientInputSchema = z
 export const RecipientCreateTemplateRecipientOutputSchema = z
 	.object({
 		envelopeId: z.string(),
-		role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-		readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-		sendStatus: z.enum(['NOT_SENT', 'SENT']),
+		role: z
+			.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+			.or(z.string()),
+		readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']).or(z.string()),
+		sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 		id: z.number(),
 		email: z.string(),
 		name: z.string(),
@@ -15872,18 +16871,22 @@ export const RecipientCreateTemplateRecipientOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					accessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					actionAuth: z.array(
-						z.enum([
-							'ACCOUNT',
-							'PASSKEY',
-							'TWO_FACTOR_AUTH',
-							'PASSWORD',
-							'EXPLICIT_NONE',
-						]),
+						z
+							.enum([
+								'ACCOUNT',
+								'PASSKEY',
+								'TWO_FACTOR_AUTH',
+								'PASSWORD',
+								'EXPLICIT_NONE',
+							])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		signingOrder: z.union([z.number(), z.null()]),
@@ -15891,7 +16894,7 @@ export const RecipientCreateTemplateRecipientOutputSchema = z
 		documentId: z.union([z.number(), z.null()]).optional(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const RecipientCreateTemplateRecipientsInputSchema = z
 	.object({
@@ -15937,10 +16940,14 @@ export const RecipientCreateTemplateRecipientsOutputSchema = z
 			z
 				.object({
 					envelopeId: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-					readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-					signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-					sendStatus: z.enum(['NOT_SENT', 'SENT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
+					readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+					signingStatus: z
+						.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+						.or(z.string()),
+					sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 					id: z.number(),
 					email: z.string(),
 					name: z.string(),
@@ -15953,18 +16960,22 @@ export const RecipientCreateTemplateRecipientsOutputSchema = z
 					authOptions: z.union([
 						z
 							.object({
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 								actionAuth: z.array(
-									z.enum([
-										'ACCOUNT',
-										'PASSKEY',
-										'TWO_FACTOR_AUTH',
-										'PASSWORD',
-										'EXPLICIT_NONE',
-									]),
+									z
+										.enum([
+											'ACCOUNT',
+											'PASSKEY',
+											'TWO_FACTOR_AUTH',
+											'PASSWORD',
+											'EXPLICIT_NONE',
+										])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					signingOrder: z.union([z.number(), z.null()]),
@@ -15972,10 +16983,10 @@ export const RecipientCreateTemplateRecipientsOutputSchema = z
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const RecipientUpdateTemplateRecipientInputSchema = z
 	.object({
@@ -16018,10 +17029,12 @@ export const RecipientUpdateTemplateRecipientInputSchema = z
 export const RecipientUpdateTemplateRecipientOutputSchema = z
 	.object({
 		envelopeId: z.string(),
-		role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-		readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-		sendStatus: z.enum(['NOT_SENT', 'SENT']),
+		role: z
+			.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+			.or(z.string()),
+		readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+		signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']).or(z.string()),
+		sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 		id: z.number(),
 		email: z.string(),
 		name: z.string(),
@@ -16034,18 +17047,22 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					accessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					actionAuth: z.array(
-						z.enum([
-							'ACCOUNT',
-							'PASSKEY',
-							'TWO_FACTOR_AUTH',
-							'PASSWORD',
-							'EXPLICIT_NONE',
-						]),
+						z
+							.enum([
+								'ACCOUNT',
+								'PASSKEY',
+								'TWO_FACTOR_AUTH',
+								'PASSWORD',
+								'EXPLICIT_NONE',
+							])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		signingOrder: z.union([z.number(), z.null()]),
@@ -16055,19 +17072,21 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -16087,10 +17106,12 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -16100,11 +17121,15 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -16114,35 +17139,15 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -16152,11 +17157,49 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -16172,7 +17215,7 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -16182,13 +17225,17 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -16204,7 +17251,7 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -16214,6 +17261,7 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -16224,12 +17272,12 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -16239,6 +17287,7 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -16249,14 +17298,14 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -16266,6 +17315,7 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -16274,23 +17324,23 @@ export const RecipientUpdateTemplateRecipientOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 		documentId: z.union([z.number(), z.null()]).optional(),
 		templateId: z.union([z.number(), z.null()]).optional(),
 	})
-	.strict();
+	.loose();
 
 export const RecipientUpdateTemplateRecipientsInputSchema = z
 	.object({
@@ -16340,10 +17390,14 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 			z
 				.object({
 					envelopeId: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-					readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-					signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-					sendStatus: z.enum(['NOT_SENT', 'SENT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
+					readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+					signingStatus: z
+						.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+						.or(z.string()),
+					sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 					id: z.number(),
 					email: z.string(),
 					name: z.string(),
@@ -16356,18 +17410,22 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 					authOptions: z.union([
 						z
 							.object({
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 								actionAuth: z.array(
-									z.enum([
-										'ACCOUNT',
-										'PASSKEY',
-										'TWO_FACTOR_AUTH',
-										'PASSWORD',
-										'EXPLICIT_NONE',
-									]),
+									z
+										.enum([
+											'ACCOUNT',
+											'PASSKEY',
+											'TWO_FACTOR_AUTH',
+											'PASSWORD',
+											'EXPLICIT_NONE',
+										])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					signingOrder: z.union([z.number(), z.null()]),
@@ -16377,19 +17435,21 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 							.object({
 								envelopeId: z.string(),
 								envelopeItemId: z.string(),
-								type: z.enum([
-									'SIGNATURE',
-									'FREE_SIGNATURE',
-									'INITIALS',
-									'NAME',
-									'EMAIL',
-									'DATE',
-									'TEXT',
-									'NUMBER',
-									'RADIO',
-									'CHECKBOX',
-									'DROPDOWN',
-								]),
+								type: z
+									.enum([
+										'SIGNATURE',
+										'FREE_SIGNATURE',
+										'INITIALS',
+										'NAME',
+										'EMAIL',
+										'DATE',
+										'TEXT',
+										'NUMBER',
+										'RADIO',
+										'CHECKBOX',
+										'DROPDOWN',
+									])
+									.or(z.string()),
 								id: z.number(),
 								secondaryId: z.string(),
 								recipientId: z.number(),
@@ -16409,15 +17469,12 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 												required: z.boolean().optional(),
 												readOnly: z.boolean().optional(),
 												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
 												type: z.enum(['signature']),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16427,13 +17484,15 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['initials']),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16443,51 +17502,15 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['name']),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 											})
-											.strict(),
-										z
-											.object({
-												label: z.string().optional(),
-												placeholder: z.string().optional(),
-												required: z.boolean().optional(),
-												readOnly: z.boolean().optional(),
-												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
-												type: z.enum(['email']),
-												textAlign: z
-													.enum(['left', 'center', 'right'])
-													.optional(),
-											})
-											.strict(),
-										z
-											.object({
-												label: z.string().optional(),
-												placeholder: z.string().optional(),
-												required: z.boolean().optional(),
-												readOnly: z.boolean().optional(),
-												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
-												type: z.enum(['date']),
-												textAlign: z
-													.enum(['left', 'center', 'right'])
-													.optional(),
-											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16497,12 +17520,48 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
+												type: z.enum(['email']),
+												textAlign: z
+													.enum(['left', 'center', 'right'])
+													.or(z.string())
+													.optional(),
+											})
+											.loose(),
+										z
+											.object({
+												label: z.string().optional(),
+												placeholder: z.string().optional(),
+												required: z.boolean().optional(),
+												readOnly: z.boolean().optional(),
+												fontSize: z.number().min(8).max(96).optional(),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
+												type: z.enum(['date']),
+												textAlign: z
+													.enum(['left', 'center', 'right'])
+													.or(z.string())
+													.optional(),
+											})
+											.loose(),
+										z
+											.object({
+												label: z.string().optional(),
+												placeholder: z.string().optional(),
+												required: z.boolean().optional(),
+												readOnly: z.boolean().optional(),
+												fontSize: z.number().min(8).max(96).optional(),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['text']),
 												text: z.string().optional(),
 												characterLimit: z.number().min(0).optional(),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 												lineHeight: z
 													.union([z.number().min(1).max(10), z.null()])
@@ -16519,7 +17578,7 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 													])
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16529,6 +17588,7 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['number']),
 												numberFormat: z
@@ -16539,6 +17599,7 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 												maxValue: z.union([z.number(), z.null()]).optional(),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 												lineHeight: z
 													.union([z.number().min(1).max(10), z.null()])
@@ -16555,7 +17616,7 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 													])
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16565,6 +17626,7 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['radio']),
 												values: z
@@ -16575,12 +17637,14 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 																checked: z.boolean(),
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
-												direction: z.enum(['vertical', 'horizontal']),
+												direction: z
+													.enum(['vertical', 'horizontal'])
+													.or(z.string()),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16590,6 +17654,7 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['checkbox']),
 												values: z
@@ -16600,14 +17665,16 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 																checked: z.boolean(),
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
 												validationRule: z.string().optional(),
 												validationLength: z.number().optional(),
-												direction: z.enum(['vertical', 'horizontal']),
+												direction: z
+													.enum(['vertical', 'horizontal'])
+													.or(z.string()),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16617,6 +17684,7 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['dropdown']),
 												values: z
@@ -16625,26 +17693,26 @@ export const RecipientUpdateTemplateRecipientsOutputSchema = z
 															.object({
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
 												defaultValue: z.string().optional(),
 											})
-											.strict(),
+											.loose(),
 									])
 									.nullable(),
 								documentId: z.union([z.number(), z.null()]).optional(),
 								templateId: z.union([z.number(), z.null()]).optional(),
 							})
-							.strict(),
+							.loose(),
 					),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const RecipientDeleteTemplateRecipientInputSchema = z
 	.object({
@@ -16655,7 +17723,7 @@ export const RecipientDeleteTemplateRecipientOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const TemplateFindTemplatesInputSchema = z
 	.object({
@@ -16671,8 +17739,10 @@ export const TemplateFindTemplatesOutputSchema = z
 		data: z.array(
 			z
 				.object({
-					type: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']),
-					visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
+					type: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']).or(z.string()),
+					visibility: z
+						.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+						.or(z.string()),
 					id: z.number(),
 					externalId: z.union([z.string(), z.null()]),
 					title: z.string(),
@@ -16682,13 +17752,15 @@ export const TemplateFindTemplatesOutputSchema = z
 						z
 							.object({
 								globalAccessAuth: z.array(
-									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']),
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
 								),
 								globalActionAuth: z.array(
-									z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+									z
+										.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					createdAt: z.string(),
@@ -16705,7 +17777,7 @@ export const TemplateFindTemplatesOutputSchema = z
 								url: z.string(),
 								name: z.string(),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					fields: z.array(
@@ -16713,19 +17785,21 @@ export const TemplateFindTemplatesOutputSchema = z
 							.object({
 								envelopeId: z.string(),
 								envelopeItemId: z.string(),
-								type: z.enum([
-									'SIGNATURE',
-									'FREE_SIGNATURE',
-									'INITIALS',
-									'NAME',
-									'EMAIL',
-									'DATE',
-									'TEXT',
-									'NUMBER',
-									'RADIO',
-									'CHECKBOX',
-									'DROPDOWN',
-								]),
+								type: z
+									.enum([
+										'SIGNATURE',
+										'FREE_SIGNATURE',
+										'INITIALS',
+										'NAME',
+										'EMAIL',
+										'DATE',
+										'TEXT',
+										'NUMBER',
+										'RADIO',
+										'CHECKBOX',
+										'DROPDOWN',
+									])
+									.or(z.string()),
 								id: z.number(),
 								secondaryId: z.string(),
 								recipientId: z.number(),
@@ -16745,15 +17819,12 @@ export const TemplateFindTemplatesOutputSchema = z
 												required: z.boolean().optional(),
 												readOnly: z.boolean().optional(),
 												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
 												type: z.enum(['signature']),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16763,13 +17834,15 @@ export const TemplateFindTemplatesOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['initials']),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16779,51 +17852,15 @@ export const TemplateFindTemplatesOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['name']),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 											})
-											.strict(),
-										z
-											.object({
-												label: z.string().optional(),
-												placeholder: z.string().optional(),
-												required: z.boolean().optional(),
-												readOnly: z.boolean().optional(),
-												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
-												type: z.enum(['email']),
-												textAlign: z
-													.enum(['left', 'center', 'right'])
-													.optional(),
-											})
-											.strict(),
-										z
-											.object({
-												label: z.string().optional(),
-												placeholder: z.string().optional(),
-												required: z.boolean().optional(),
-												readOnly: z.boolean().optional(),
-												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
-												type: z.enum(['date']),
-												textAlign: z
-													.enum(['left', 'center', 'right'])
-													.optional(),
-											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16833,12 +17870,48 @@ export const TemplateFindTemplatesOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
+												type: z.enum(['email']),
+												textAlign: z
+													.enum(['left', 'center', 'right'])
+													.or(z.string())
+													.optional(),
+											})
+											.loose(),
+										z
+											.object({
+												label: z.string().optional(),
+												placeholder: z.string().optional(),
+												required: z.boolean().optional(),
+												readOnly: z.boolean().optional(),
+												fontSize: z.number().min(8).max(96).optional(),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
+												type: z.enum(['date']),
+												textAlign: z
+													.enum(['left', 'center', 'right'])
+													.or(z.string())
+													.optional(),
+											})
+											.loose(),
+										z
+											.object({
+												label: z.string().optional(),
+												placeholder: z.string().optional(),
+												required: z.boolean().optional(),
+												readOnly: z.boolean().optional(),
+												fontSize: z.number().min(8).max(96).optional(),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['text']),
 												text: z.string().optional(),
 												characterLimit: z.number().min(0).optional(),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 												lineHeight: z
 													.union([z.number().min(1).max(10), z.null()])
@@ -16855,7 +17928,7 @@ export const TemplateFindTemplatesOutputSchema = z
 													])
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16865,6 +17938,7 @@ export const TemplateFindTemplatesOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['number']),
 												numberFormat: z
@@ -16875,6 +17949,7 @@ export const TemplateFindTemplatesOutputSchema = z
 												maxValue: z.union([z.number(), z.null()]).optional(),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 												lineHeight: z
 													.union([z.number().min(1).max(10), z.null()])
@@ -16891,7 +17966,7 @@ export const TemplateFindTemplatesOutputSchema = z
 													])
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16901,6 +17976,7 @@ export const TemplateFindTemplatesOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['radio']),
 												values: z
@@ -16911,12 +17987,14 @@ export const TemplateFindTemplatesOutputSchema = z
 																checked: z.boolean(),
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
-												direction: z.enum(['vertical', 'horizontal']),
+												direction: z
+													.enum(['vertical', 'horizontal'])
+													.or(z.string()),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16926,6 +18004,7 @@ export const TemplateFindTemplatesOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['checkbox']),
 												values: z
@@ -16936,14 +18015,16 @@ export const TemplateFindTemplatesOutputSchema = z
 																checked: z.boolean(),
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
 												validationRule: z.string().optional(),
 												validationLength: z.number().optional(),
-												direction: z.enum(['vertical', 'horizontal']),
+												direction: z
+													.enum(['vertical', 'horizontal'])
+													.or(z.string()),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -16953,6 +18034,7 @@ export const TemplateFindTemplatesOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['dropdown']),
 												values: z
@@ -16961,33 +18043,31 @@ export const TemplateFindTemplatesOutputSchema = z
 															.object({
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
 												defaultValue: z.string().optional(),
 											})
-											.strict(),
+											.loose(),
 									])
 									.nullable(),
 								documentId: z.union([z.number(), z.null()]).optional(),
 								templateId: z.union([z.number(), z.null()]).optional(),
 							})
-							.strict(),
+							.loose(),
 					),
 					recipients: z.array(
 						z
 							.object({
 								envelopeId: z.string(),
-								role: z.enum([
-									'CC',
-									'SIGNER',
-									'VIEWER',
-									'APPROVER',
-									'ASSISTANT',
-								]),
-								readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-								signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-								sendStatus: z.enum(['NOT_SENT', 'SENT']),
+								role: z
+									.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+									.or(z.string()),
+								readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+								signingStatus: z
+									.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+									.or(z.string()),
+								sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 								id: z.number(),
 								email: z.string(),
 								name: z.string(),
@@ -17001,19 +18081,21 @@ export const TemplateFindTemplatesOutputSchema = z
 									z
 										.object({
 											accessAuth: z.array(
-												z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']),
+												z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
 											),
 											actionAuth: z.array(
-												z.enum([
-													'ACCOUNT',
-													'PASSKEY',
-													'TWO_FACTOR_AUTH',
-													'PASSWORD',
-													'EXPLICIT_NONE',
-												]),
+												z
+													.enum([
+														'ACCOUNT',
+														'PASSKEY',
+														'TWO_FACTOR_AUTH',
+														'PASSWORD',
+														'EXPLICIT_NONE',
+													])
+													.or(z.string()),
 											),
 										})
-										.strict(),
+										.loose(),
 									z.null(),
 								]),
 								signingOrder: z.union([z.number(), z.null()]),
@@ -17021,15 +18103,15 @@ export const TemplateFindTemplatesOutputSchema = z
 								documentId: z.union([z.number(), z.null()]).optional(),
 								templateId: z.union([z.number(), z.null()]).optional(),
 							})
-							.strict(),
+							.loose(),
 					),
 					templateMeta: z.union([
 						z
 							.object({
-								signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']),
-								distributionMethod: z.enum(['EMAIL', 'NONE']),
+								signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']).or(z.string()),
+								distributionMethod: z.enum(['EMAIL', 'NONE']).or(z.string()),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					directLink: z.union([
@@ -17038,19 +18120,19 @@ export const TemplateFindTemplatesOutputSchema = z
 								token: z.string(),
 								enabled: z.boolean(),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					templateDocumentDataId: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 		count: z.number(),
 		currentPage: z.number(),
 		perPage: z.number(),
 		totalPages: z.number(),
 	})
-	.strict();
+	.loose();
 
 export const TemplateGetTemplateByIdInputSchema = z
 	.object({
@@ -17059,8 +18141,10 @@ export const TemplateGetTemplateByIdInputSchema = z
 	.strict();
 export const TemplateGetTemplateByIdOutputSchema = z
 	.object({
-		type: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']),
-		visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
+		type: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']).or(z.string()),
+		visibility: z
+			.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+			.or(z.string()),
 		id: z.number(),
 		externalId: z.union([z.string(), z.null()]),
 		title: z.string(),
@@ -17069,12 +18153,16 @@ export const TemplateGetTemplateByIdOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					globalAccessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					globalAccessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					globalActionAuth: z.array(
-						z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+						z
+							.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		createdAt: z.string(),
@@ -17086,13 +18174,13 @@ export const TemplateGetTemplateByIdOutputSchema = z
 		templateDocumentDataId: z.string(),
 		templateDocumentData: z
 			.object({
-				type: z.enum(['S3_PATH', 'BYTES', 'BYTES_64']),
+				type: z.enum(['S3_PATH', 'BYTES', 'BYTES_64']).or(z.string()),
 				id: z.string(),
 				data: z.string(),
 				initialData: z.string(),
 				envelopeItemId: z.string(),
 			})
-			.strict(),
+			.loose(),
 		templateMeta: z
 			.object({
 				id: z.string(),
@@ -17100,12 +18188,12 @@ export const TemplateGetTemplateByIdOutputSchema = z
 				message: z.union([z.string(), z.null()]),
 				timezone: z.union([z.string(), z.null()]),
 				dateFormat: z.union([z.string(), z.null()]),
-				signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']),
+				signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']).or(z.string()),
 				typedSignatureEnabled: z.boolean(),
 				uploadSignatureEnabled: z.boolean(),
 				drawSignatureEnabled: z.boolean(),
 				allowDictateNextSigner: z.boolean(),
-				distributionMethod: z.enum(['EMAIL', 'NONE']),
+				distributionMethod: z.enum(['EMAIL', 'NONE']).or(z.string()),
 				redirectUrl: z.union([z.string(), z.null()]),
 				language: z.string(),
 				emailSettings: z.union([
@@ -17121,14 +18209,14 @@ export const TemplateGetTemplateByIdOutputSchema = z
 							ownerRecipientExpired: z.boolean(),
 							ownerDocumentCreated: z.boolean(),
 						})
-						.strict(),
+						.loose(),
 					z.null(),
 				]),
 				emailId: z.union([z.string(), z.null()]),
 				emailReplyTo: z.union([z.string(), z.null()]),
 				templateId: z.union([z.number(), z.null()]),
 			})
-			.strict(),
+			.loose(),
 		directLink: z.union([
 			z
 				.object({
@@ -17140,7 +18228,7 @@ export const TemplateGetTemplateByIdOutputSchema = z
 					directTemplateRecipientId: z.number(),
 					templateId: z.number(),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		user: z
@@ -17149,15 +18237,19 @@ export const TemplateGetTemplateByIdOutputSchema = z
 				name: z.union([z.string(), z.null()]),
 				email: z.string(),
 			})
-			.strict(),
+			.loose(),
 		recipients: z.array(
 			z
 				.object({
 					envelopeId: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-					readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-					signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-					sendStatus: z.enum(['NOT_SENT', 'SENT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
+					readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+					signingStatus: z
+						.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+						.or(z.string()),
+					sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 					id: z.number(),
 					email: z.string(),
 					name: z.string(),
@@ -17170,18 +18262,22 @@ export const TemplateGetTemplateByIdOutputSchema = z
 					authOptions: z.union([
 						z
 							.object({
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 								actionAuth: z.array(
-									z.enum([
-										'ACCOUNT',
-										'PASSKEY',
-										'TWO_FACTOR_AUTH',
-										'PASSWORD',
-										'EXPLICIT_NONE',
-									]),
+									z
+										.enum([
+											'ACCOUNT',
+											'PASSKEY',
+											'TWO_FACTOR_AUTH',
+											'PASSWORD',
+											'EXPLICIT_NONE',
+										])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					signingOrder: z.union([z.number(), z.null()]),
@@ -17189,26 +18285,28 @@ export const TemplateGetTemplateByIdOutputSchema = z
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 		fields: z.array(
 			z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -17228,10 +18326,12 @@ export const TemplateGetTemplateByIdOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -17241,11 +18341,15 @@ export const TemplateGetTemplateByIdOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -17255,35 +18359,15 @@ export const TemplateGetTemplateByIdOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -17293,11 +18377,49 @@ export const TemplateGetTemplateByIdOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -17313,7 +18435,7 @@ export const TemplateGetTemplateByIdOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -17323,13 +18445,17 @@ export const TemplateGetTemplateByIdOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -17345,7 +18471,7 @@ export const TemplateGetTemplateByIdOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -17355,6 +18481,7 @@ export const TemplateGetTemplateByIdOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -17365,12 +18492,12 @@ export const TemplateGetTemplateByIdOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -17380,6 +18507,7 @@ export const TemplateGetTemplateByIdOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -17390,14 +18518,14 @@ export const TemplateGetTemplateByIdOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -17407,6 +18535,7 @@ export const TemplateGetTemplateByIdOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -17415,26 +18544,28 @@ export const TemplateGetTemplateByIdOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 		folder: z.union([
 			z
 				.object({
 					id: z.string(),
 					name: z.string(),
-					type: z.enum(['DOCUMENT', 'TEMPLATE']),
-					visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
+					type: z.enum(['DOCUMENT', 'TEMPLATE']).or(z.string()),
+					visibility: z
+						.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+						.or(z.string()),
 					userId: z.number(),
 					teamId: z.number(),
 					pinned: z.boolean(),
@@ -17442,7 +18573,7 @@ export const TemplateGetTemplateByIdOutputSchema = z
 					createdAt: z.string(),
 					updatedAt: z.string(),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		envelopeItems: z.array(
@@ -17451,10 +18582,10 @@ export const TemplateGetTemplateByIdOutputSchema = z
 					id: z.string(),
 					envelopeId: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const TemplateGetManyInputSchema = z
 	.object({
@@ -17466,8 +18597,10 @@ export const TemplateGetManyOutputSchema = z
 		data: z.array(
 			z
 				.object({
-					type: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']),
-					visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
+					type: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']).or(z.string()),
+					visibility: z
+						.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+						.or(z.string()),
 					id: z.number(),
 					externalId: z.union([z.string(), z.null()]),
 					title: z.string(),
@@ -17477,13 +18610,15 @@ export const TemplateGetManyOutputSchema = z
 						z
 							.object({
 								globalAccessAuth: z.array(
-									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']),
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
 								),
 								globalActionAuth: z.array(
-									z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+									z
+										.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					createdAt: z.string(),
@@ -17500,7 +18635,7 @@ export const TemplateGetManyOutputSchema = z
 								url: z.string(),
 								name: z.string(),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					fields: z.array(
@@ -17508,19 +18643,21 @@ export const TemplateGetManyOutputSchema = z
 							.object({
 								envelopeId: z.string(),
 								envelopeItemId: z.string(),
-								type: z.enum([
-									'SIGNATURE',
-									'FREE_SIGNATURE',
-									'INITIALS',
-									'NAME',
-									'EMAIL',
-									'DATE',
-									'TEXT',
-									'NUMBER',
-									'RADIO',
-									'CHECKBOX',
-									'DROPDOWN',
-								]),
+								type: z
+									.enum([
+										'SIGNATURE',
+										'FREE_SIGNATURE',
+										'INITIALS',
+										'NAME',
+										'EMAIL',
+										'DATE',
+										'TEXT',
+										'NUMBER',
+										'RADIO',
+										'CHECKBOX',
+										'DROPDOWN',
+									])
+									.or(z.string()),
 								id: z.number(),
 								secondaryId: z.string(),
 								recipientId: z.number(),
@@ -17540,15 +18677,12 @@ export const TemplateGetManyOutputSchema = z
 												required: z.boolean().optional(),
 												readOnly: z.boolean().optional(),
 												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
 												type: z.enum(['signature']),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -17558,13 +18692,15 @@ export const TemplateGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['initials']),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -17574,51 +18710,15 @@ export const TemplateGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['name']),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 											})
-											.strict(),
-										z
-											.object({
-												label: z.string().optional(),
-												placeholder: z.string().optional(),
-												required: z.boolean().optional(),
-												readOnly: z.boolean().optional(),
-												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
-												type: z.enum(['email']),
-												textAlign: z
-													.enum(['left', 'center', 'right'])
-													.optional(),
-											})
-											.strict(),
-										z
-											.object({
-												label: z.string().optional(),
-												placeholder: z.string().optional(),
-												required: z.boolean().optional(),
-												readOnly: z.boolean().optional(),
-												fontSize: z.number().min(8).max(96).optional(),
-												overflow: z.enum([
-													'auto',
-													'horizontal',
-													'vertical',
-													'crop',
-												]),
-												type: z.enum(['date']),
-												textAlign: z
-													.enum(['left', 'center', 'right'])
-													.optional(),
-											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -17628,12 +18728,48 @@ export const TemplateGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
+												type: z.enum(['email']),
+												textAlign: z
+													.enum(['left', 'center', 'right'])
+													.or(z.string())
+													.optional(),
+											})
+											.loose(),
+										z
+											.object({
+												label: z.string().optional(),
+												placeholder: z.string().optional(),
+												required: z.boolean().optional(),
+												readOnly: z.boolean().optional(),
+												fontSize: z.number().min(8).max(96).optional(),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string()),
+												type: z.enum(['date']),
+												textAlign: z
+													.enum(['left', 'center', 'right'])
+													.or(z.string())
+													.optional(),
+											})
+											.loose(),
+										z
+											.object({
+												label: z.string().optional(),
+												placeholder: z.string().optional(),
+												required: z.boolean().optional(),
+												readOnly: z.boolean().optional(),
+												fontSize: z.number().min(8).max(96).optional(),
+												overflow: z
+													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['text']),
 												text: z.string().optional(),
 												characterLimit: z.number().min(0).optional(),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 												lineHeight: z
 													.union([z.number().min(1).max(10), z.null()])
@@ -17650,7 +18786,7 @@ export const TemplateGetManyOutputSchema = z
 													])
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -17660,6 +18796,7 @@ export const TemplateGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['number']),
 												numberFormat: z
@@ -17670,6 +18807,7 @@ export const TemplateGetManyOutputSchema = z
 												maxValue: z.union([z.number(), z.null()]).optional(),
 												textAlign: z
 													.enum(['left', 'center', 'right'])
+													.or(z.string())
 													.optional(),
 												lineHeight: z
 													.union([z.number().min(1).max(10), z.null()])
@@ -17686,7 +18824,7 @@ export const TemplateGetManyOutputSchema = z
 													])
 													.optional(),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -17696,6 +18834,7 @@ export const TemplateGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['radio']),
 												values: z
@@ -17706,12 +18845,14 @@ export const TemplateGetManyOutputSchema = z
 																checked: z.boolean(),
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
-												direction: z.enum(['vertical', 'horizontal']),
+												direction: z
+													.enum(['vertical', 'horizontal'])
+													.or(z.string()),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -17721,6 +18862,7 @@ export const TemplateGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['checkbox']),
 												values: z
@@ -17731,14 +18873,16 @@ export const TemplateGetManyOutputSchema = z
 																checked: z.boolean(),
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
 												validationRule: z.string().optional(),
 												validationLength: z.number().optional(),
-												direction: z.enum(['vertical', 'horizontal']),
+												direction: z
+													.enum(['vertical', 'horizontal'])
+													.or(z.string()),
 											})
-											.strict(),
+											.loose(),
 										z
 											.object({
 												label: z.string().optional(),
@@ -17748,6 +18892,7 @@ export const TemplateGetManyOutputSchema = z
 												fontSize: z.number().min(8).max(96).optional(),
 												overflow: z
 													.enum(['auto', 'horizontal', 'vertical', 'crop'])
+													.or(z.string())
 													.optional(),
 												type: z.enum(['dropdown']),
 												values: z
@@ -17756,33 +18901,31 @@ export const TemplateGetManyOutputSchema = z
 															.object({
 																value: z.string(),
 															})
-															.strict(),
+															.loose(),
 													)
 													.optional(),
 												defaultValue: z.string().optional(),
 											})
-											.strict(),
+											.loose(),
 									])
 									.nullable(),
 								documentId: z.union([z.number(), z.null()]).optional(),
 								templateId: z.union([z.number(), z.null()]).optional(),
 							})
-							.strict(),
+							.loose(),
 					),
 					recipients: z.array(
 						z
 							.object({
 								envelopeId: z.string(),
-								role: z.enum([
-									'CC',
-									'SIGNER',
-									'VIEWER',
-									'APPROVER',
-									'ASSISTANT',
-								]),
-								readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-								signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-								sendStatus: z.enum(['NOT_SENT', 'SENT']),
+								role: z
+									.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+									.or(z.string()),
+								readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+								signingStatus: z
+									.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+									.or(z.string()),
+								sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 								id: z.number(),
 								email: z.string(),
 								name: z.string(),
@@ -17796,19 +18939,21 @@ export const TemplateGetManyOutputSchema = z
 									z
 										.object({
 											accessAuth: z.array(
-												z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']),
+												z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
 											),
 											actionAuth: z.array(
-												z.enum([
-													'ACCOUNT',
-													'PASSKEY',
-													'TWO_FACTOR_AUTH',
-													'PASSWORD',
-													'EXPLICIT_NONE',
-												]),
+												z
+													.enum([
+														'ACCOUNT',
+														'PASSKEY',
+														'TWO_FACTOR_AUTH',
+														'PASSWORD',
+														'EXPLICIT_NONE',
+													])
+													.or(z.string()),
 											),
 										})
-										.strict(),
+										.loose(),
 									z.null(),
 								]),
 								signingOrder: z.union([z.number(), z.null()]),
@@ -17816,15 +18961,15 @@ export const TemplateGetManyOutputSchema = z
 								documentId: z.union([z.number(), z.null()]).optional(),
 								templateId: z.union([z.number(), z.null()]).optional(),
 							})
-							.strict(),
+							.loose(),
 					),
 					templateMeta: z.union([
 						z
 							.object({
-								signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']),
-								distributionMethod: z.enum(['EMAIL', 'NONE']),
+								signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']).or(z.string()),
+								distributionMethod: z.enum(['EMAIL', 'NONE']).or(z.string()),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					directLink: z.union([
@@ -17833,15 +18978,15 @@ export const TemplateGetManyOutputSchema = z
 								token: z.string(),
 								enabled: z.boolean(),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					templateDocumentDataId: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const TemplateCreateTemplateInputSchema = z
 	.object({
@@ -17980,7 +19125,7 @@ export const TemplateCreateTemplateOutputSchema = z
 		envelopeId: z.string(),
 		id: z.number(),
 	})
-	.strict();
+	.loose();
 
 export const TemplateCreateTemplateTemporaryInputSchema = z
 	.object({
@@ -18101,8 +19246,10 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 	.object({
 		template: z
 			.object({
-				type: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']),
-				visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
+				type: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']).or(z.string()),
+				visibility: z
+					.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+					.or(z.string()),
 				id: z.number(),
 				externalId: z.union([z.string(), z.null()]),
 				title: z.string(),
@@ -18111,12 +19258,16 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 				authOptions: z.union([
 					z
 						.object({
-							globalAccessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+							globalAccessAuth: z.array(
+								z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+							),
 							globalActionAuth: z.array(
-								z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+								z
+									.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+									.or(z.string()),
 							),
 						})
-						.strict(),
+						.loose(),
 					z.null(),
 				]),
 				createdAt: z.string(),
@@ -18128,13 +19279,13 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 				templateDocumentDataId: z.string(),
 				templateDocumentData: z
 					.object({
-						type: z.enum(['S3_PATH', 'BYTES', 'BYTES_64']),
+						type: z.enum(['S3_PATH', 'BYTES', 'BYTES_64']).or(z.string()),
 						id: z.string(),
 						data: z.string(),
 						initialData: z.string(),
 						envelopeItemId: z.string(),
 					})
-					.strict(),
+					.loose(),
 				templateMeta: z
 					.object({
 						id: z.string(),
@@ -18142,12 +19293,12 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 						message: z.union([z.string(), z.null()]),
 						timezone: z.union([z.string(), z.null()]),
 						dateFormat: z.union([z.string(), z.null()]),
-						signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']),
+						signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']).or(z.string()),
 						typedSignatureEnabled: z.boolean(),
 						uploadSignatureEnabled: z.boolean(),
 						drawSignatureEnabled: z.boolean(),
 						allowDictateNextSigner: z.boolean(),
-						distributionMethod: z.enum(['EMAIL', 'NONE']),
+						distributionMethod: z.enum(['EMAIL', 'NONE']).or(z.string()),
 						redirectUrl: z.union([z.string(), z.null()]),
 						language: z.string(),
 						emailSettings: z.union([
@@ -18163,14 +19314,14 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 									ownerRecipientExpired: z.boolean(),
 									ownerDocumentCreated: z.boolean(),
 								})
-								.strict(),
+								.loose(),
 							z.null(),
 						]),
 						emailId: z.union([z.string(), z.null()]),
 						emailReplyTo: z.union([z.string(), z.null()]),
 						templateId: z.union([z.number(), z.null()]),
 					})
-					.strict(),
+					.loose(),
 				directLink: z.union([
 					z
 						.object({
@@ -18182,7 +19333,7 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 							directTemplateRecipientId: z.number(),
 							templateId: z.number(),
 						})
-						.strict(),
+						.loose(),
 					z.null(),
 				]),
 				user: z
@@ -18191,15 +19342,19 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 						name: z.union([z.string(), z.null()]),
 						email: z.string(),
 					})
-					.strict(),
+					.loose(),
 				recipients: z.array(
 					z
 						.object({
 							envelopeId: z.string(),
-							role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-							readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-							signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-							sendStatus: z.enum(['NOT_SENT', 'SENT']),
+							role: z
+								.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+								.or(z.string()),
+							readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+							signingStatus: z
+								.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+								.or(z.string()),
+							sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 							id: z.number(),
 							email: z.string(),
 							name: z.string(),
@@ -18212,18 +19367,22 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 							authOptions: z.union([
 								z
 									.object({
-										accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+										accessAuth: z.array(
+											z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+										),
 										actionAuth: z.array(
-											z.enum([
-												'ACCOUNT',
-												'PASSKEY',
-												'TWO_FACTOR_AUTH',
-												'PASSWORD',
-												'EXPLICIT_NONE',
-											]),
+											z
+												.enum([
+													'ACCOUNT',
+													'PASSKEY',
+													'TWO_FACTOR_AUTH',
+													'PASSWORD',
+													'EXPLICIT_NONE',
+												])
+												.or(z.string()),
 										),
 									})
-									.strict(),
+									.loose(),
 								z.null(),
 							]),
 							signingOrder: z.union([z.number(), z.null()]),
@@ -18231,26 +19390,28 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 							documentId: z.union([z.number(), z.null()]).optional(),
 							templateId: z.union([z.number(), z.null()]).optional(),
 						})
-						.strict(),
+						.loose(),
 				),
 				fields: z.array(
 					z
 						.object({
 							envelopeId: z.string(),
 							envelopeItemId: z.string(),
-							type: z.enum([
-								'SIGNATURE',
-								'FREE_SIGNATURE',
-								'INITIALS',
-								'NAME',
-								'EMAIL',
-								'DATE',
-								'TEXT',
-								'NUMBER',
-								'RADIO',
-								'CHECKBOX',
-								'DROPDOWN',
-							]),
+							type: z
+								.enum([
+									'SIGNATURE',
+									'FREE_SIGNATURE',
+									'INITIALS',
+									'NAME',
+									'EMAIL',
+									'DATE',
+									'TEXT',
+									'NUMBER',
+									'RADIO',
+									'CHECKBOX',
+									'DROPDOWN',
+								])
+								.or(z.string()),
 							id: z.number(),
 							secondaryId: z.string(),
 							recipientId: z.number(),
@@ -18270,15 +19431,12 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 											required: z.boolean().optional(),
 											readOnly: z.boolean().optional(),
 											fontSize: z.number().min(8).max(96).optional(),
-											overflow: z.enum([
-												'auto',
-												'horizontal',
-												'vertical',
-												'crop',
-											]),
+											overflow: z
+												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string()),
 											type: z.enum(['signature']),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -18288,11 +19446,15 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['initials']),
-											textAlign: z.enum(['left', 'center', 'right']).optional(),
+											textAlign: z
+												.enum(['left', 'center', 'right'])
+												.or(z.string())
+												.optional(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -18302,45 +19464,15 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['name']),
-											textAlign: z.enum(['left', 'center', 'right']).optional(),
+											textAlign: z
+												.enum(['left', 'center', 'right'])
+												.or(z.string())
+												.optional(),
 										})
-										.strict(),
-									z
-										.object({
-											label: z.string().optional(),
-											placeholder: z.string().optional(),
-											required: z.boolean().optional(),
-											readOnly: z.boolean().optional(),
-											fontSize: z.number().min(8).max(96).optional(),
-											overflow: z.enum([
-												'auto',
-												'horizontal',
-												'vertical',
-												'crop',
-											]),
-											type: z.enum(['email']),
-											textAlign: z.enum(['left', 'center', 'right']).optional(),
-										})
-										.strict(),
-									z
-										.object({
-											label: z.string().optional(),
-											placeholder: z.string().optional(),
-											required: z.boolean().optional(),
-											readOnly: z.boolean().optional(),
-											fontSize: z.number().min(8).max(96).optional(),
-											overflow: z.enum([
-												'auto',
-												'horizontal',
-												'vertical',
-												'crop',
-											]),
-											type: z.enum(['date']),
-											textAlign: z.enum(['left', 'center', 'right']).optional(),
-										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -18350,11 +19482,49 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string()),
+											type: z.enum(['email']),
+											textAlign: z
+												.enum(['left', 'center', 'right'])
+												.or(z.string())
+												.optional(),
+										})
+										.loose(),
+									z
+										.object({
+											label: z.string().optional(),
+											placeholder: z.string().optional(),
+											required: z.boolean().optional(),
+											readOnly: z.boolean().optional(),
+											fontSize: z.number().min(8).max(96).optional(),
+											overflow: z
+												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string()),
+											type: z.enum(['date']),
+											textAlign: z
+												.enum(['left', 'center', 'right'])
+												.or(z.string())
+												.optional(),
+										})
+										.loose(),
+									z
+										.object({
+											label: z.string().optional(),
+											placeholder: z.string().optional(),
+											required: z.boolean().optional(),
+											readOnly: z.boolean().optional(),
+											fontSize: z.number().min(8).max(96).optional(),
+											overflow: z
+												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['text']),
 											text: z.string().optional(),
 											characterLimit: z.number().min(0).optional(),
-											textAlign: z.enum(['left', 'center', 'right']).optional(),
+											textAlign: z
+												.enum(['left', 'center', 'right'])
+												.or(z.string())
+												.optional(),
 											lineHeight: z
 												.union([z.number().min(1).max(10), z.null()])
 												.optional(),
@@ -18370,7 +19540,7 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 												])
 												.optional(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -18380,13 +19550,17 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['number']),
 											numberFormat: z.union([z.string(), z.null()]).optional(),
 											value: z.string().optional(),
 											minValue: z.union([z.number(), z.null()]).optional(),
 											maxValue: z.union([z.number(), z.null()]).optional(),
-											textAlign: z.enum(['left', 'center', 'right']).optional(),
+											textAlign: z
+												.enum(['left', 'center', 'right'])
+												.or(z.string())
+												.optional(),
 											lineHeight: z
 												.union([z.number().min(1).max(10), z.null()])
 												.optional(),
@@ -18402,7 +19576,7 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 												])
 												.optional(),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -18412,6 +19586,7 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['radio']),
 											values: z
@@ -18422,12 +19597,14 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 															checked: z.boolean(),
 															value: z.string(),
 														})
-														.strict(),
+														.loose(),
 												)
 												.optional(),
-											direction: z.enum(['vertical', 'horizontal']),
+											direction: z
+												.enum(['vertical', 'horizontal'])
+												.or(z.string()),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -18437,6 +19614,7 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['checkbox']),
 											values: z
@@ -18447,14 +19625,16 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 															checked: z.boolean(),
 															value: z.string(),
 														})
-														.strict(),
+														.loose(),
 												)
 												.optional(),
 											validationRule: z.string().optional(),
 											validationLength: z.number().optional(),
-											direction: z.enum(['vertical', 'horizontal']),
+											direction: z
+												.enum(['vertical', 'horizontal'])
+												.or(z.string()),
 										})
-										.strict(),
+										.loose(),
 									z
 										.object({
 											label: z.string().optional(),
@@ -18464,6 +19644,7 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 											fontSize: z.number().min(8).max(96).optional(),
 											overflow: z
 												.enum(['auto', 'horizontal', 'vertical', 'crop'])
+												.or(z.string())
 												.optional(),
 											type: z.enum(['dropdown']),
 											values: z
@@ -18472,26 +19653,28 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 														.object({
 															value: z.string(),
 														})
-														.strict(),
+														.loose(),
 												)
 												.optional(),
 											defaultValue: z.string().optional(),
 										})
-										.strict(),
+										.loose(),
 								])
 								.nullable(),
 							documentId: z.union([z.number(), z.null()]).optional(),
 							templateId: z.union([z.number(), z.null()]).optional(),
 						})
-						.strict(),
+						.loose(),
 				),
 				folder: z.union([
 					z
 						.object({
 							id: z.string(),
 							name: z.string(),
-							type: z.enum(['DOCUMENT', 'TEMPLATE']),
-							visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
+							type: z.enum(['DOCUMENT', 'TEMPLATE']).or(z.string()),
+							visibility: z
+								.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+								.or(z.string()),
 							userId: z.number(),
 							teamId: z.number(),
 							pinned: z.boolean(),
@@ -18499,7 +19682,7 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 							createdAt: z.string(),
 							updatedAt: z.string(),
 						})
-						.strict(),
+						.loose(),
 					z.null(),
 				]),
 				envelopeItems: z.array(
@@ -18508,13 +19691,13 @@ export const TemplateCreateTemplateTemporaryOutputSchema = z
 							id: z.string(),
 							envelopeId: z.string(),
 						})
-						.strict(),
+						.loose(),
 				),
 			})
-			.strict(),
+			.loose(),
 		uploadUrl: z.string().min(1),
 	})
-	.strict();
+	.loose();
 
 export const TemplateUpdateTemplateInputSchema = z
 	.object({
@@ -18631,8 +19814,10 @@ export const TemplateUpdateTemplateInputSchema = z
 	.strict();
 export const TemplateUpdateTemplateOutputSchema = z
 	.object({
-		type: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']),
-		visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
+		type: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']).or(z.string()),
+		visibility: z
+			.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+			.or(z.string()),
 		id: z.number(),
 		externalId: z.union([z.string(), z.null()]),
 		title: z.string(),
@@ -18641,12 +19826,16 @@ export const TemplateUpdateTemplateOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					globalAccessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					globalAccessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					globalActionAuth: z.array(
-						z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+						z
+							.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		createdAt: z.string(),
@@ -18658,7 +19847,7 @@ export const TemplateUpdateTemplateOutputSchema = z
 		envelopeId: z.string(),
 		templateDocumentDataId: z.string(),
 	})
-	.strict();
+	.loose();
 
 export const TemplateDuplicateTemplateInputSchema = z
 	.object({
@@ -18667,8 +19856,10 @@ export const TemplateDuplicateTemplateInputSchema = z
 	.strict();
 export const TemplateDuplicateTemplateOutputSchema = z
 	.object({
-		type: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']),
-		visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
+		type: z.enum(['PUBLIC', 'PRIVATE', 'ORGANISATION']).or(z.string()),
+		visibility: z
+			.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+			.or(z.string()),
 		id: z.number(),
 		externalId: z.union([z.string(), z.null()]),
 		title: z.string(),
@@ -18677,12 +19868,16 @@ export const TemplateDuplicateTemplateOutputSchema = z
 		authOptions: z.union([
 			z
 				.object({
-					globalAccessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					globalAccessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					globalActionAuth: z.array(
-						z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+						z
+							.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		createdAt: z.string(),
@@ -18694,7 +19889,7 @@ export const TemplateDuplicateTemplateOutputSchema = z
 		envelopeId: z.string(),
 		templateDocumentDataId: z.string(),
 	})
-	.strict();
+	.loose();
 
 export const TemplateDeleteTemplateInputSchema = z
 	.object({
@@ -18705,7 +19900,7 @@ export const TemplateDeleteTemplateOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const TemplateCreateDocumentFromTemplateInputSchema = z
 	.object({
@@ -18907,21 +20102,31 @@ export const TemplateCreateDocumentFromTemplateInputSchema = z
 	.strict();
 export const TemplateCreateDocumentFromTemplateOutputSchema = z
 	.object({
-		visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
-		status: z.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED']),
-		source: z.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK']),
+		visibility: z
+			.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+			.or(z.string()),
+		status: z
+			.enum(['DRAFT', 'PENDING', 'COMPLETED', 'REJECTED', 'CANCELLED'])
+			.or(z.string()),
+		source: z
+			.enum(['DOCUMENT', 'TEMPLATE', 'TEMPLATE_DIRECT_LINK'])
+			.or(z.string()),
 		id: z.number(),
 		externalId: z.union([z.string(), z.null()]),
 		userId: z.number(),
 		authOptions: z.union([
 			z
 				.object({
-					globalAccessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+					globalAccessAuth: z.array(
+						z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+					),
 					globalActionAuth: z.array(
-						z.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD']),
+						z
+							.enum(['ACCOUNT', 'PASSKEY', 'TWO_FACTOR_AUTH', 'PASSWORD'])
+							.or(z.string()),
 					),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		formValues: z.union([
@@ -18941,17 +20146,17 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 		documentDataId: z.string(),
 		documentData: z
 			.object({
-				type: z.enum(['S3_PATH', 'BYTES', 'BYTES_64']),
+				type: z.enum(['S3_PATH', 'BYTES', 'BYTES_64']).or(z.string()),
 				id: z.string(),
 				data: z.string(),
 				initialData: z.string(),
 				envelopeItemId: z.string(),
 			})
-			.strict(),
+			.loose(),
 		documentMeta: z
 			.object({
-				signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']),
-				distributionMethod: z.enum(['EMAIL', 'NONE']),
+				signingOrder: z.enum(['PARALLEL', 'SEQUENTIAL']).or(z.string()),
+				distributionMethod: z.enum(['EMAIL', 'NONE']).or(z.string()),
 				id: z.string(),
 				subject: z.union([z.string(), z.null()]),
 				message: z.union([z.string(), z.null()]),
@@ -18976,7 +20181,7 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 							ownerRecipientExpired: z.boolean(),
 							ownerDocumentCreated: z.boolean(),
 						})
-						.strict(),
+						.loose(),
 					z.null(),
 				]),
 				emailId: z.union([z.string(), z.null()]),
@@ -18985,15 +20190,15 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 					.union([
 						z
 							.object({
-								unit: z.enum(['day', 'week', 'month', 'year']),
+								unit: z.enum(['day', 'week', 'month', 'year']).or(z.string()),
 								amount: z.number().int().min(1),
 							})
-							.strict(),
+							.loose(),
 						z
 							.object({
 								disabled: z.union([z.literal(true)]),
 							})
-							.strict(),
+							.loose(),
 					])
 					.nullable(),
 				reminderSettings: z.union([
@@ -19002,52 +20207,54 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 							sendAfter: z.union([
 								z
 									.object({
-										unit: z.enum(['day', 'week', 'month']),
+										unit: z.enum(['day', 'week', 'month']).or(z.string()),
 										amount: z.number().int().min(1),
 									})
-									.strict(),
+									.loose(),
 								z
 									.object({
 										disabled: z.union([z.literal(true)]),
 									})
-									.strict(),
+									.loose(),
 							]),
 							repeatEvery: z.union([
 								z
 									.object({
-										unit: z.enum(['day', 'week', 'month']),
+										unit: z.enum(['day', 'week', 'month']).or(z.string()),
 										amount: z.number().int().min(1),
 									})
-									.strict(),
+									.loose(),
 								z
 									.object({
 										disabled: z.union([z.literal(true)]),
 									})
-									.strict(),
+									.loose(),
 							]),
 						})
-						.strict(),
+						.loose(),
 					z.null(),
 				]),
 				password: z.union([z.string(), z.null()]),
 				documentId: z.number().optional(),
 			})
-			.strict(),
+			.loose(),
 		envelopeItems: z.array(
 			z
 				.object({
 					id: z.string(),
 					envelopeId: z.string(),
 				})
-				.strict(),
+				.loose(),
 		),
 		folder: z.union([
 			z
 				.object({
 					id: z.string(),
 					name: z.string(),
-					type: z.enum(['DOCUMENT', 'TEMPLATE']),
-					visibility: z.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN']),
+					type: z.enum(['DOCUMENT', 'TEMPLATE']).or(z.string()),
+					visibility: z
+						.enum(['EVERYONE', 'MANAGER_AND_ABOVE', 'ADMIN'])
+						.or(z.string()),
 					userId: z.number(),
 					teamId: z.number(),
 					pinned: z.boolean(),
@@ -19055,17 +20262,21 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 					createdAt: z.string(),
 					updatedAt: z.string(),
 				})
-				.strict(),
+				.loose(),
 			z.null(),
 		]),
 		recipients: z.array(
 			z
 				.object({
 					envelopeId: z.string(),
-					role: z.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT']),
-					readStatus: z.enum(['NOT_OPENED', 'OPENED']),
-					signingStatus: z.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED']),
-					sendStatus: z.enum(['NOT_SENT', 'SENT']),
+					role: z
+						.enum(['CC', 'SIGNER', 'VIEWER', 'APPROVER', 'ASSISTANT'])
+						.or(z.string()),
+					readStatus: z.enum(['NOT_OPENED', 'OPENED']).or(z.string()),
+					signingStatus: z
+						.enum(['NOT_SIGNED', 'SIGNED', 'REJECTED'])
+						.or(z.string()),
+					sendStatus: z.enum(['NOT_SENT', 'SENT']).or(z.string()),
 					id: z.number(),
 					email: z.string(),
 					name: z.string(),
@@ -19078,18 +20289,22 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 					authOptions: z.union([
 						z
 							.object({
-								accessAuth: z.array(z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH'])),
+								accessAuth: z.array(
+									z.enum(['ACCOUNT', 'TWO_FACTOR_AUTH']).or(z.string()),
+								),
 								actionAuth: z.array(
-									z.enum([
-										'ACCOUNT',
-										'PASSKEY',
-										'TWO_FACTOR_AUTH',
-										'PASSWORD',
-										'EXPLICIT_NONE',
-									]),
+									z
+										.enum([
+											'ACCOUNT',
+											'PASSKEY',
+											'TWO_FACTOR_AUTH',
+											'PASSWORD',
+											'EXPLICIT_NONE',
+										])
+										.or(z.string()),
 								),
 							})
-							.strict(),
+							.loose(),
 						z.null(),
 					]),
 					signingOrder: z.union([z.number(), z.null()]),
@@ -19097,26 +20312,28 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 		fields: z.array(
 			z
 				.object({
 					envelopeId: z.string(),
 					envelopeItemId: z.string(),
-					type: z.enum([
-						'SIGNATURE',
-						'FREE_SIGNATURE',
-						'INITIALS',
-						'NAME',
-						'EMAIL',
-						'DATE',
-						'TEXT',
-						'NUMBER',
-						'RADIO',
-						'CHECKBOX',
-						'DROPDOWN',
-					]),
+					type: z
+						.enum([
+							'SIGNATURE',
+							'FREE_SIGNATURE',
+							'INITIALS',
+							'NAME',
+							'EMAIL',
+							'DATE',
+							'TEXT',
+							'NUMBER',
+							'RADIO',
+							'CHECKBOX',
+							'DROPDOWN',
+						])
+						.or(z.string()),
 					id: z.number(),
 					secondaryId: z.string(),
 					recipientId: z.number(),
@@ -19136,10 +20353,12 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 									required: z.boolean().optional(),
 									readOnly: z.boolean().optional(),
 									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
 									type: z.enum(['signature']),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -19149,11 +20368,15 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['initials']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -19163,35 +20386,15 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['name']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['email']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
-							z
-								.object({
-									label: z.string().optional(),
-									placeholder: z.string().optional(),
-									required: z.boolean().optional(),
-									readOnly: z.boolean().optional(),
-									fontSize: z.number().min(8).max(96).optional(),
-									overflow: z.enum(['auto', 'horizontal', 'vertical', 'crop']),
-									type: z.enum(['date']),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
-								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -19201,11 +20404,49 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['email']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string()),
+									type: z.enum(['date']),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
+								})
+								.loose(),
+							z
+								.object({
+									label: z.string().optional(),
+									placeholder: z.string().optional(),
+									required: z.boolean().optional(),
+									readOnly: z.boolean().optional(),
+									fontSize: z.number().min(8).max(96).optional(),
+									overflow: z
+										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['text']),
 									text: z.string().optional(),
 									characterLimit: z.number().min(0).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -19221,7 +20462,7 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -19231,13 +20472,17 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['number']),
 									numberFormat: z.union([z.string(), z.null()]).optional(),
 									value: z.string().optional(),
 									minValue: z.union([z.number(), z.null()]).optional(),
 									maxValue: z.union([z.number(), z.null()]).optional(),
-									textAlign: z.enum(['left', 'center', 'right']).optional(),
+									textAlign: z
+										.enum(['left', 'center', 'right'])
+										.or(z.string())
+										.optional(),
 									lineHeight: z
 										.union([z.number().min(1).max(10), z.null()])
 										.optional(),
@@ -19253,7 +20498,7 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 										])
 										.optional(),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -19263,6 +20508,7 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['radio']),
 									values: z
@@ -19273,12 +20519,12 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -19288,6 +20534,7 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['checkbox']),
 									values: z
@@ -19298,14 +20545,14 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 													checked: z.boolean(),
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									validationRule: z.string().optional(),
 									validationLength: z.number().optional(),
-									direction: z.enum(['vertical', 'horizontal']),
+									direction: z.enum(['vertical', 'horizontal']).or(z.string()),
 								})
-								.strict(),
+								.loose(),
 							z
 								.object({
 									label: z.string().optional(),
@@ -19315,6 +20562,7 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 									fontSize: z.number().min(8).max(96).optional(),
 									overflow: z
 										.enum(['auto', 'horizontal', 'vertical', 'crop'])
+										.or(z.string())
 										.optional(),
 									type: z.enum(['dropdown']),
 									values: z
@@ -19323,21 +20571,21 @@ export const TemplateCreateDocumentFromTemplateOutputSchema = z
 												.object({
 													value: z.string(),
 												})
-												.strict(),
+												.loose(),
 										)
 										.optional(),
 									defaultValue: z.string().optional(),
 								})
-								.strict(),
+								.loose(),
 						])
 						.nullable(),
 					documentId: z.union([z.number(), z.null()]).optional(),
 					templateId: z.union([z.number(), z.null()]).optional(),
 				})
-				.strict(),
+				.loose(),
 		),
 	})
-	.strict();
+	.loose();
 
 export const TemplateCreateTemplateDirectLinkInputSchema = z
 	.object({
@@ -19355,7 +20603,7 @@ export const TemplateCreateTemplateDirectLinkOutputSchema = z
 		envelopeId: z.string(),
 		templateId: z.number(),
 	})
-	.strict();
+	.loose();
 
 export const TemplateDeleteTemplateDirectLinkInputSchema = z
 	.object({
@@ -19366,7 +20614,7 @@ export const TemplateDeleteTemplateDirectLinkOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const TemplateToggleTemplateDirectLinkInputSchema = z
 	.object({
@@ -19384,7 +20632,7 @@ export const TemplateToggleTemplateDirectLinkOutputSchema = z
 		envelopeId: z.string(),
 		templateId: z.number(),
 	})
-	.strict();
+	.loose();
 
 export const EmbeddingPresignCreateEmbeddingPresignTokenInputSchema = z
 	.object({
@@ -19398,7 +20646,7 @@ export const EmbeddingPresignCreateEmbeddingPresignTokenOutputSchema = z
 		expiresAt: z.string(),
 		expiresIn: z.number(),
 	})
-	.strict();
+	.loose();
 
 export const EmbeddingPresignVerifyEmbeddingPresignTokenInputSchema = z
 	.object({
@@ -19410,7 +20658,7 @@ export const EmbeddingPresignVerifyEmbeddingPresignTokenOutputSchema = z
 	.object({
 		success: z.boolean(),
 	})
-	.strict();
+	.loose();
 
 export const DocumensoEndpointInputSchemas = {
 	envelopeAttachmentFind: EnvelopeAttachmentFindInputSchema,
