@@ -33,7 +33,9 @@ export type LocalOAuthRefreshResult = {
  *   access, or the grant expired). Only reconnecting fixes it.
  * - 'client': the provider refused our OAuth app's own credentials (wrong or
  *   deleted client id/secret). The app's owner must fix it; reconnecting won't.
- * - 'transient': a 5xx, 408 or 429. Retrying later can work.
+ * - 'transient': a 5xx, 408 or 429, or a refusal that says nothing about the
+ *   grant (a 403, a 404 from a wrong token URL, a malformed request).
+ *   Reconnecting won't fix it, so it is rethrown as is.
  */
 export type OAuthRefreshFailureKind = 'revoked' | 'client' | 'transient';
 
@@ -43,16 +45,22 @@ const CLIENT_ERRORS = new Set([
 	'incorrect_client_credentials',
 ]);
 
+const REQUEST_ERRORS = new Set([
+	'invalid_request',
+	'unsupported_grant_type',
+	'invalid_scope',
+]);
+
 /** Classifies a token-endpoint failure by its HTTP status and RFC 6749
- * `error` code. A 4xx without a recognised code counts as revoked. */
+ * `error` code. A 400 or 401 without a recognised code counts as revoked:
+ * providers answer a dead grant in their own dialects. */
 export function classifyOAuthRefreshFailure(
 	status: number,
 	errorCode: string | undefined,
 ): OAuthRefreshFailureKind {
 	if (errorCode && CLIENT_ERRORS.has(errorCode)) return 'client';
-	if (status >= 500 || status === 408 || status === 429) return 'transient';
-	if (status >= 400) return 'revoked';
-	return 'transient';
+	if (errorCode && REQUEST_ERRORS.has(errorCode)) return 'transient';
+	return status === 400 || status === 401 ? 'revoked' : 'transient';
 }
 
 /** A refresh the token endpoint refused. The provider's body is kept off the
