@@ -14,11 +14,16 @@ import {
  * `email` and `phone` are not fields on Customer in 2026-10, only on
  * `CustomerInput`, so a read that asks for them fails the whole query. The
  * address comes back through `defaultEmailAddress` instead.
+ *
+ * `displayName` is deliberately absent. A store whose plan cannot read customer
+ * PII gets the field nulled and an ACCESS_DENIED beside usable data, but
+ * `displayName` is the exception: asking for it returns `data: null` and the
+ * whole page is lost. A caller builds it from `firstName` and `lastName`, which
+ * are nulled field-by-field without taking the page with them.
  */
 const CUSTOMER_FRAGMENT = `
 fragment CustomerFields on Customer {
   id
-  displayName
   firstName
   lastName
   state

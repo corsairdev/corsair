@@ -138,6 +138,12 @@ export async function makeShopifyGraphqlRequest<T>(input: {
 	variables?: Record<string, unknown>;
 	/** Read verbs are replay-safe on a transport failure or 5xx. */
 	replaySafe?: boolean;
+	/**
+	 * Called when Shopify returns data beside a field-level `ACCESS_DENIED`, as
+	 * it does for customer PII on a plan that cannot read it. The call still
+	 * succeeds; this is where a warning about the nulled fields goes.
+	 */
+	onPartial?: (message: string) => void;
 }): Promise<ShopifyGraphqlResult<T>> {
 	const host = normaliseShopDomain(input.shopDomain);
 
@@ -188,10 +194,31 @@ export async function makeShopifyGraphqlRequest<T>(input: {
 	// A 200 does not mean the operation ran. Every failure Shopify documents
 	// arrives here, so the body decides.
 	const entries = errorEntries(raw.errors);
+	const hasData = raw.data !== undefined && raw.data !== null;
 	if (entries.length > 0) {
 		const code = errorCode(entries);
 		const message =
 			entries[0]?.message ?? 'Shopify returned an error with no message';
+
+		// GraphQL can return usable data beside errors, and Shopify does exactly
+		// that for a field-level denial: a store plan that cannot read customer
+		// PII answers `data.customers` with the rows and every denied field set
+		// to null, plus an ACCESS_DENIED entry. Throwing there would discard
+		// rows the caller is allowed to see, so a field-level denial with data
+		// present is surfaced as a warning and the call succeeds.
+		//
+		// Throttling, cost limits and a rejected mutation are different: they
+		// mean the operation did not run, so they always throw.
+		const isFieldLevel = code === 'ACCESS_DENIED';
+		if (hasData && isFieldLevel) {
+			input.onPartial?.(message);
+			return {
+				data: raw.data as T,
+				currentlyAvailable:
+					raw.extensions?.cost?.throttleStatus?.currentlyAvailable,
+			};
+		}
+
 		throw new ShopifyAPIError(message, {
 			status: code === 'THROTTLED' ? 429 : 200,
 			code,
@@ -202,7 +229,7 @@ export async function makeShopifyGraphqlRequest<T>(input: {
 		});
 	}
 
-	if (raw.data === undefined || raw.data === null) {
+	if (!hasData) {
 		throw new ShopifyAPIError(
 			'Shopify returned no data and no errors for this operation',
 			{ status: 200, replaySafe: input.replaySafe ?? false },
@@ -210,7 +237,7 @@ export async function makeShopifyGraphqlRequest<T>(input: {
 	}
 
 	return {
-		data: raw.data,
+		data: raw.data as T,
 		currentlyAvailable:
 			raw.extensions?.cost?.throttleStatus?.currentlyAvailable,
 	};

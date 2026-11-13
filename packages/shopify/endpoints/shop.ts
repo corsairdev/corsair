@@ -25,6 +25,10 @@ query ShopGet {
   }
 }`;
 
+// Location has no flat address fields: `address1`, `city`, `province` and the
+// rest live under `address`, which is a `LocationAddress`. The nested object is
+// non-null but its members are not, which is how a location with no street
+// address still reads.
 const LOCATIONS_QUERY = `
 query LocationsList($first: Int) {
   locations(first: $first) {
@@ -33,10 +37,13 @@ query LocationsList($first: Int) {
         id
         name
         isActive
-        address1
-        city
-        province
-        countryCode
+        address {
+          address1
+          city
+          province
+          countryCode
+          zip
+        }
       }
     }
     pageInfo { hasNextPage endCursor }

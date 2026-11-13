@@ -79,6 +79,13 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 		query: request.query,
 		variables: request.variables,
 		replaySafe: request.replaySafe ?? false,
+		// A field-level denial (customer PII on a plan that cannot read it)
+		// arrives as nulled fields beside usable data. The call still succeeds,
+		// but the caller should be able to tell a genuinely empty field from
+		// one Shopify refused to return.
+		onPartial: (message) => {
+			console.warn(`[corsair:shopify] ${operation.event}: ${message}`);
+		},
 	});
 
 	const data = response.data;

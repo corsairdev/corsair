@@ -108,7 +108,6 @@ export const order = {
 
 export const customer = {
 	id: 'gid://shopify/Customer/7',
-	displayName: 'Jenny Test',
 	firstName: 'Jenny',
 	lastName: 'Test',
 	state: 'ENABLED',
@@ -131,10 +130,15 @@ export const location = {
 	id: 'gid://shopify/Location/9',
 	name: 'Warehouse',
 	isActive: true,
-	address1: '1 Main St',
-	city: 'Ottawa',
-	province: 'Ontario',
-	countryCode: 'CA',
+	// Nested, as the live 2026-10 schema returns it. A second location in the
+	// same store has every member null.
+	address: {
+		address1: '1 Main St',
+		city: 'Ottawa',
+		province: 'Ontario',
+		countryCode: 'CA',
+		zip: 'K2H7A8',
+	},
 };
 
 export const inventoryItem = {

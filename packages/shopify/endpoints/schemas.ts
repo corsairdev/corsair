@@ -158,7 +158,9 @@ export const OrderSchema = z
 export const CustomerSchema = z
 	.object({
 		id: z.string(),
-		displayName: z.string(),
+		// No `displayName`: asking for it on the Customer object returns
+		// `data: null` when the plan cannot read customer PII, losing the page.
+		// First and last name are nulled field-by-field instead.
 		firstName: z.string().nullish(),
 		lastName: z.string().nullish(),
 		state: z.string(),
@@ -182,15 +184,24 @@ export const CustomerSchema = z
 	})
 	.loose();
 
+export const LocationAddressSchema = z
+	.object({
+		address1: z.string().nullish(),
+		city: z.string().nullish(),
+		province: z.string().nullish(),
+		countryCode: z.string().nullish(),
+		zip: z.string().nullish(),
+	})
+	.loose();
+
 export const LocationSchema = z
 	.object({
 		id: z.string(),
 		name: z.string(),
 		isActive: z.boolean(),
-		address1: z.string().nullish(),
-		city: z.string().nullish(),
-		province: z.string().nullish(),
-		countryCode: z.string().nullish(),
+		// Non-null on every location, but its members are null for a location
+		// with no street address.
+		address: LocationAddressSchema,
 	})
 	.loose();
 
