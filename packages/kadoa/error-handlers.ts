@@ -31,10 +31,10 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 409, the state is wrong for the request: a run blocked by a compliance
-	// review or a preview that awaits confirmation, a delete of a schema a
-	// workflow still uses, a duplicate variable key, or data that was never
-	// published. Sending the same request again cannot change that.
+	// 409, the state is wrong for the request: a run of a workflow that is not
+	// finalised or whose preview awaits confirmation, a duplicate variable key,
+	// a secret still bound to a connection, or data that was never published.
+	// Sending the same request again cannot change that.
 	CONFLICT_ERROR: {
 		match: (error: Error) => statusOf(error) === 409,
 		handler: async () => ({ maxRetries: 0 }),

@@ -16,7 +16,7 @@ pnpm add @corsair-dev/kadoa
 | `changes.list` | `kadoa.api.changes.list` | `read` | Data changes detected across workflows in a date window, with the changed fields and counts; `exclude` drops the large arrays |
 | `locations.list` | `kadoa.api.locations.list` | `read` | Countries a workflow can scrape from, with their ISO codes |
 | `schemas.create` | `kadoa.api.schemas.create` | `write` | Create an extraction schema from typed data fields or classification fields, for workflows to reuse |
-| `schemas.delete` | `kadoa.api.schemas.delete` | `destructive` | Delete a schema and every revision of it, leaving workflows that used it without one |
+| `schemas.delete` | `kadoa.api.schemas.delete` | `destructive` | Delete a schema and every revision of it; it cannot be restored |
 | `schemas.get` | `kadoa.api.schemas.get` | `read` | One extraction schema with its fields and entity |
 | `schemas.list` | `kadoa.api.schemas.list` | `read` | Every extraction schema the caller can see |
 | `schemas.update` | `kadoa.api.schemas.update` | `write` | Rename a schema, change its entity, or publish a new revision from replacement fields; workflows on the old revision keep it |

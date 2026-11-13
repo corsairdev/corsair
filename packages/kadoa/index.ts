@@ -341,7 +341,7 @@ const kadoaEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a schema and every revision of it, leaving workflows that used it without one',
+			'Delete a schema and every revision of it; it cannot be restored',
 	},
 	'changes.list': {
 		riskLevel: 'read',
