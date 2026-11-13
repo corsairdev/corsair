@@ -1773,8 +1773,8 @@ apiExamples:
         organization_id_assignments: [example]
   certcentralApi.updateRenewalNotificationRecipients:
     args:
-      query:
-        container_id: 1
+      path:
+        container_id: example
       body:
         name: example
         value: example
@@ -1993,7 +1993,6 @@ apiExamples:
     args:
       path:
         order_id: example
-        note_id: example
   certcentralApi.deleteRenewalMessage:
     args:
       path:
@@ -2046,6 +2045,8 @@ apiExamples:
         certificate: example
   certcentralApi.editGuestAccessOrder:
     args:
+      path:
+        order_id: example
       body:
         enable_guest_access: 1
   certcentralApi.editNote:
@@ -3418,6 +3419,8 @@ apiExamples:
         order_id: example
   certcentralApi.updateAutoReissueSettings:
     args:
+      path:
+        order_id: example
       body:
         auto_reissue: 1
   certcentralApi.updateCsr:
@@ -3576,13 +3579,15 @@ apiExamples:
         subaccount_id: example
   certcentralApi.listSubaccountDomains:
     args:
-      query: {}
+      path:
+        subaccount_id: example
   certcentralApi.listSubaccountOrders:
     args:
       query: {}
   certcentralApi.listSubaccountOrganizations:
     args:
-      query: {}
+      path:
+        subaccount_id: example
   certcentralApi.listSubaccountProductLimits:
     args:
       path:

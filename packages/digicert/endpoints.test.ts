@@ -599,4 +599,55 @@ describe('DigiCert endpoint requests', () => {
 			'sensitive-domain.test',
 		);
 	});
+
+	it('sends CertCentral ids as path parameters instead of the reference example ids', async () => {
+		const literalRoutes = generatedDocTestCases
+			.map((testCase) => testCase.expected.path)
+			.filter((path) => /\/\d{3,}(\/|$)|[<>]/.test(path));
+		expect(literalRoutes).toEqual([]);
+
+		call.mockResolvedValueOnce(undefined);
+		await generatedDocEndpoints.certcentralApi.cancelUnitOrder(ctx, {
+			path: { order_id: '987' },
+		});
+		expect(call).toHaveBeenLastCalledWith(
+			'certcentral',
+			'/units/order/{order_id}/cancel',
+			'test-key',
+			expect.objectContaining({ method: 'PUT', path: { order_id: '987' } }),
+		);
+
+		call.mockResolvedValueOnce(undefined);
+		await generatedDocEndpoints.certcentralApi.deleteVerifiedContactDelegation(
+			ctx,
+			{ path: { delegation_id: '55' } },
+		);
+		expect(call).toHaveBeenLastCalledWith(
+			'certcentral',
+			'/user/delegation/{delegation_id}',
+			'test-key',
+			expect.objectContaining({
+				method: 'DELETE',
+				path: { delegation_id: '55' },
+			}),
+		);
+	});
+
+	it('deletes an order on the order route, not the note route', async () => {
+		call.mockResolvedValueOnce(undefined);
+		await generatedDocEndpoints.certcentralApi.deleteOrderDeleteOrder(ctx, {
+			path: { order_id: '42' },
+			query: { revoke: true },
+		});
+		expect(call).toHaveBeenLastCalledWith(
+			'certcentral',
+			'/order/certificate/{order_id}',
+			'test-key',
+			expect.objectContaining({
+				method: 'DELETE',
+				path: { order_id: '42' },
+				query: { revoke: true },
+			}),
+		);
+	});
 });

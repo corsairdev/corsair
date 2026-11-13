@@ -1045,8 +1045,8 @@ const doc_af5d117edb7aInput = z
 const doc_af5d117edb7aOutput = z.json().optional();
 const doc_0bdd00e8d1ceInput = z
 	.object({
-		path: z.object({}).strict().default({}),
-		query: z.object({ container_id: z.number().int() }).strict(),
+		path: z.object({ container_id: z.string().min(1) }).strict(),
+		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 		body: z
@@ -2016,10 +2016,9 @@ const doc_a5e2b942c7caInput = z
 const doc_a5e2b942c7caOutput = z.json().optional();
 const doc_55ad712f0558Input = z
 	.object({
-		path: z
-			.object({ order_id: z.string().min(1), note_id: z.string().min(1) })
-			.strict(),
-		query: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
+		// Optional: also revoke the order's certificate in the same request.
+		query: z.object({ revoke: z.boolean().optional() }).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
 	})
@@ -2180,7 +2179,7 @@ const doc_b245584eda79Output = z
 	.optional();
 const doc_f4797f262e2eInput = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -2215,7 +2214,7 @@ const doc_cdce3b9fe81aInput = z
 const doc_cdce3b9fe81aOutput = z.json().optional();
 const doc_29565de72e14Input = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -2251,7 +2250,7 @@ const doc_c19139eee34bOutput = z
 	.optional();
 const doc_53d08315b668Input = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6115,7 +6114,7 @@ const doc_024f62ae3007Output = z
 	.optional();
 const doc_d747245e5a92Input = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6193,7 +6192,7 @@ const doc_0bc073434146Input = z
 const doc_0bc073434146Output = z.json().optional();
 const doc_c407e746e39fInput = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6241,7 +6240,7 @@ const doc_c407e746e39fOutput = z
 	.optional();
 const doc_856d9dd6a089Input = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6251,7 +6250,7 @@ const doc_856d9dd6a089Input = z
 const doc_856d9dd6a089Output = z.json().optional();
 const doc_4c494339b8bcInput = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6261,7 +6260,7 @@ const doc_4c494339b8bcInput = z
 const doc_4c494339b8bcOutput = z.json().optional();
 const doc_c458695a77c1Input = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6279,7 +6278,7 @@ const doc_c458695a77c1Output = z
 	.optional();
 const doc_1cd57426d84fInput = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6335,7 +6334,7 @@ const doc_00c9ade1d573Output = z
 	.optional();
 const doc_51a82794cb6bInput = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6847,7 +6846,7 @@ const doc_512fbcb31521Output = z
 	.optional();
 const doc_6aea189047bbInput = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -6973,7 +6972,7 @@ const doc_503cf4e16d2bInput = z
 const doc_503cf4e16d2bOutput = z.json().optional();
 const doc_74f49ae8a8a6Input = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ subaccount_id: z.string().min(1) }).strict(),
 		query: z.record(z.string(), z.json()),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -7025,7 +7024,7 @@ const doc_ab644043c397Output = z
 	.optional();
 const doc_d5803b6e7447Input = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ subaccount_id: z.string().min(1) }).strict(),
 		query: z.record(z.string(), z.json()),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -7267,7 +7266,7 @@ const doc_08798f327d62Output = z
 	.optional();
 const doc_eb9bb3268567Input = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ order_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -7397,7 +7396,7 @@ const doc_4f3aa3dcbddfInput = z
 const doc_4f3aa3dcbddfOutput = z.json().optional();
 const doc_acb283c67d28Input = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ delegation_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -7545,7 +7544,7 @@ const doc_13f84ef14d51Input = z
 const doc_13f84ef14d51Output = z.json().optional();
 const doc_7c7b9e214afcInput = z
 	.object({
-		path: z.object({}).strict().default({}),
+		path: z.object({ delegation_id: z.string().min(1) }).strict(),
 		query: z.object({}).strict().default({}),
 		headers: z.object({}).strict().default({}),
 		cookies: z.object({}).strict().default({}),
@@ -9199,7 +9198,7 @@ export const generatedDocEndpoints = {
 		}),
 		updateRenewalNotificationRecipients: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/container/<container_id>/settings/additional_renewal_emails',
+			path: '/container/{container_id}/settings/additional_renewal_emails',
 			method: 'PUT',
 			operationId: 'certcentralApi.updateRenewalNotificationRecipients',
 			inputSchema: generatedSchemas.doc_0bdd00e8d1ceInput,
@@ -9575,7 +9574,7 @@ export const generatedDocEndpoints = {
 		}),
 		deleteOrderDeleteOrder: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/order/certificate/{order_id}/note/{note_id}',
+			path: '/order/certificate/{order_id}',
 			method: 'DELETE',
 			operationId: 'certcentralApi.deleteOrderDeleteOrder',
 			inputSchema: generatedSchemas.doc_55ad712f0558Input,
@@ -9647,7 +9646,7 @@ export const generatedDocEndpoints = {
 		}),
 		editGuestAccessOrder: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/order/certificate/12345678/guest-access',
+			path: '/order/certificate/{order_id}/guest-access',
 			method: 'PUT',
 			operationId: 'certcentralApi.editGuestAccessOrder',
 			inputSchema: generatedSchemas.doc_f4797f262e2eInput,
@@ -9671,7 +9670,7 @@ export const generatedDocEndpoints = {
 		}),
 		emailValidationStatus: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/order/certificate/38584158/email-validation',
+			path: '/order/certificate/{order_id}/email-validation',
 			method: 'GET',
 			operationId: 'certcentralApi.emailValidationStatus',
 			inputSchema: generatedSchemas.doc_29565de72e14Input,
@@ -9687,7 +9686,7 @@ export const generatedDocEndpoints = {
 		}),
 		getVmcOrCmcLogo: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/order/certificate/12345/vmc/logo',
+			path: '/order/certificate/{order_id}/vmc/logo',
 			method: 'GET',
 			operationId: 'certcentralApi.getVmcOrCmcLogo',
 			inputSchema: generatedSchemas.doc_53d08315b668Input,
@@ -10205,7 +10204,7 @@ export const generatedDocEndpoints = {
 		}),
 		updateAutoReissueSettings: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/order/certificate/123456789/auto-reissue',
+			path: '/order/certificate/{order_id}/auto-reissue',
 			method: 'PUT',
 			operationId: 'certcentralApi.updateAutoReissueSettings',
 			inputSchema: generatedSchemas.doc_d747245e5a92Input,
@@ -10253,7 +10252,7 @@ export const generatedDocEndpoints = {
 		}),
 		updateSiteSealSettings: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/order/certificate/123456789/site-seal',
+			path: '/order/certificate/{order_id}/site-seal',
 			method: 'PUT',
 			operationId: 'certcentralApi.updateSiteSealSettings',
 			inputSchema: generatedSchemas.doc_c407e746e39fInput,
@@ -10261,7 +10260,7 @@ export const generatedDocEndpoints = {
 		}),
 		updateVmcOrCmcOrders: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/order/certificate/144457106/vmc',
+			path: '/order/certificate/{order_id}/vmc',
 			method: 'PUT',
 			operationId: 'certcentralApi.updateVmcOrCmcOrders',
 			inputSchema: generatedSchemas.doc_856d9dd6a089Input,
@@ -10269,7 +10268,7 @@ export const generatedDocEndpoints = {
 		}),
 		uploadSiteSealLogo: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/order/certificate/123456789/site-seal/logo',
+			path: '/order/certificate/{order_id}/site-seal/logo',
 			method: 'POST',
 			operationId: 'certcentralApi.uploadSiteSealLogo',
 			inputSchema: generatedSchemas.doc_4c494339b8bcInput,
@@ -10277,7 +10276,7 @@ export const generatedDocEndpoints = {
 		}),
 		uploadVmcOrCmcLogoEncoded: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/order/certificate/12345/vmc/encoded-logo',
+			path: '/order/certificate/{order_id}/vmc/encoded-logo',
 			method: 'POST',
 			operationId: 'certcentralApi.uploadVmcOrCmcLogoEncoded',
 			inputSchema: generatedSchemas.doc_c458695a77c1Input,
@@ -10285,7 +10284,7 @@ export const generatedDocEndpoints = {
 		}),
 		uploadVmcOrCmcLogoSvg: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/order/certificate/144457106/vmc/logo',
+			path: '/order/certificate/{order_id}/vmc/logo',
 			method: 'POST',
 			operationId: 'certcentralApi.uploadVmcOrCmcLogoSvg',
 			inputSchema: generatedSchemas.doc_1cd57426d84fInput,
@@ -10301,7 +10300,7 @@ export const generatedDocEndpoints = {
 		}),
 		viewKeyLockerSignatures: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/order/certificate/12345/signature-unit',
+			path: '/order/certificate/{order_id}/signature-unit',
 			method: 'GET',
 			operationId: 'certcentralApi.viewKeyLockerSignatures',
 			inputSchema: generatedSchemas.doc_51a82794cb6bInput,
@@ -10517,7 +10516,7 @@ export const generatedDocEndpoints = {
 		}),
 		cancelUnitOrder: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/units/order/1234/cancel',
+			path: '/units/order/{order_id}/cancel',
 			method: 'PUT',
 			operationId: 'certcentralApi.cancelUnitOrder',
 			inputSchema: generatedSchemas.doc_6aea189047bbInput,
@@ -10549,7 +10548,7 @@ export const generatedDocEndpoints = {
 		}),
 		listSubaccountDomains: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/account/subaccount/1234567/domain',
+			path: '/account/subaccount/{subaccount_id}/domain',
 			method: 'GET',
 			operationId: 'certcentralApi.listSubaccountDomains',
 			inputSchema: generatedSchemas.doc_74f49ae8a8a6Input,
@@ -10565,7 +10564,7 @@ export const generatedDocEndpoints = {
 		}),
 		listSubaccountOrganizations: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/account/subaccount/1389108/organization',
+			path: '/account/subaccount/{subaccount_id}/organization',
 			method: 'GET',
 			operationId: 'certcentralApi.listSubaccountOrganizations',
 			inputSchema: generatedSchemas.doc_d5803b6e7447Input,
@@ -10637,7 +10636,7 @@ export const generatedDocEndpoints = {
 		}),
 		unitOrderDetails: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/units/order/1234',
+			path: '/units/order/{order_id}',
 			method: 'GET',
 			operationId: 'certcentralApi.unitOrderDetails',
 			inputSchema: generatedSchemas.doc_eb9bb3268567Input,
@@ -10693,7 +10692,7 @@ export const generatedDocEndpoints = {
 		}),
 		deleteVerifiedContactDelegation: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/user/delegation/<delegation_id>',
+			path: '/user/delegation/{delegation_id}',
 			method: 'DELETE',
 			operationId: 'certcentralApi.deleteVerifiedContactDelegation',
 			inputSchema: generatedSchemas.doc_acb283c67d28Input,
@@ -10757,7 +10756,7 @@ export const generatedDocEndpoints = {
 		}),
 		resendVerifiedContactDelegationEmail: createOpenApiEndpoint({
 			family: 'certcentral',
-			path: '/user/delegation/<delegation_id>/resend',
+			path: '/user/delegation/{delegation_id}/resend',
 			method: 'PUT',
 			operationId: 'certcentralApi.resendVerifiedContactDelegationEmail',
 			inputSchema: generatedSchemas.doc_7c7b9e214afcInput,
@@ -12831,7 +12830,8 @@ export const generatedDocEndpointMeta: Record<
 	},
 	'certcentralApi.deleteOrderDeleteOrder': {
 		riskLevel: 'destructive',
-		description: 'Delete order — Delete order',
+		description:
+			'Delete order — Permanently delete an eligible inactive order; set query.revoke to also revoke its certificate',
 	},
 	'certcentralApi.deleteRenewalMessage': {
 		riskLevel: 'destructive',
@@ -14436,8 +14436,8 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		endpoint:
 			generatedDocEndpoints.certcentralApi.updateRenewalNotificationRecipients,
 		input: {
-			path: {},
-			query: { container_id: 1 },
+			path: { container_id: 'fixture' },
+			query: {},
 			headers: {},
 			cookies: {},
 			body: {
@@ -14450,7 +14450,7 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/container/<container_id>/settings/additional_renewal_emails',
+			path: '/container/{container_id}/settings/additional_renewal_emails',
 			method: 'PUT',
 		},
 	},
@@ -15188,7 +15188,7 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		id: 'certcentralApi.deleteOrderDeleteOrder',
 		endpoint: generatedDocEndpoints.certcentralApi.deleteOrderDeleteOrder,
 		input: {
-			path: { order_id: 'fixture', note_id: 'fixture' },
+			path: { order_id: 'fixture' },
 			query: {},
 			headers: {},
 			cookies: {},
@@ -15196,7 +15196,7 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/order/certificate/{order_id}/note/{note_id}',
+			path: '/order/certificate/{order_id}',
 			method: 'DELETE',
 		},
 	},
@@ -15344,7 +15344,7 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		id: 'certcentralApi.editGuestAccessOrder',
 		endpoint: generatedDocEndpoints.certcentralApi.editGuestAccessOrder,
 		input: {
-			path: {},
+			path: { order_id: 'fixture' },
 			query: {},
 			headers: {},
 			cookies: {},
@@ -15353,7 +15353,7 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/order/certificate/12345678/guest-access',
+			path: '/order/certificate/{order_id}/guest-access',
 			method: 'PUT',
 		},
 	},
@@ -15393,11 +15393,16 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 	{
 		id: 'certcentralApi.emailValidationStatus',
 		endpoint: generatedDocEndpoints.certcentralApi.emailValidationStatus,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { order_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/order/certificate/38584158/email-validation',
+			path: '/order/certificate/{order_id}/email-validation',
 			method: 'GET',
 		},
 	},
@@ -15421,11 +15426,16 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 	{
 		id: 'certcentralApi.getVmcOrCmcLogo',
 		endpoint: generatedDocEndpoints.certcentralApi.getVmcOrCmcLogo,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { order_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/order/certificate/12345/vmc/logo',
+			path: '/order/certificate/{order_id}/vmc/logo',
 			method: 'GET',
 		},
 	},
@@ -17694,7 +17704,7 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		id: 'certcentralApi.updateAutoReissueSettings',
 		endpoint: generatedDocEndpoints.certcentralApi.updateAutoReissueSettings,
 		input: {
-			path: {},
+			path: { order_id: 'fixture' },
 			query: {},
 			headers: {},
 			cookies: {},
@@ -17703,7 +17713,7 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/order/certificate/123456789/auto-reissue',
+			path: '/order/certificate/{order_id}/auto-reissue',
 			method: 'PUT',
 		},
 	},
@@ -17800,55 +17810,80 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 	{
 		id: 'certcentralApi.updateSiteSealSettings',
 		endpoint: generatedDocEndpoints.certcentralApi.updateSiteSealSettings,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { order_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/order/certificate/123456789/site-seal',
+			path: '/order/certificate/{order_id}/site-seal',
 			method: 'PUT',
 		},
 	},
 	{
 		id: 'certcentralApi.updateVmcOrCmcOrders',
 		endpoint: generatedDocEndpoints.certcentralApi.updateVmcOrCmcOrders,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { order_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/order/certificate/144457106/vmc',
+			path: '/order/certificate/{order_id}/vmc',
 			method: 'PUT',
 		},
 	},
 	{
 		id: 'certcentralApi.uploadSiteSealLogo',
 		endpoint: generatedDocEndpoints.certcentralApi.uploadSiteSealLogo,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { order_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/order/certificate/123456789/site-seal/logo',
+			path: '/order/certificate/{order_id}/site-seal/logo',
 			method: 'POST',
 		},
 	},
 	{
 		id: 'certcentralApi.uploadVmcOrCmcLogoEncoded',
 		endpoint: generatedDocEndpoints.certcentralApi.uploadVmcOrCmcLogoEncoded,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { order_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/order/certificate/12345/vmc/encoded-logo',
+			path: '/order/certificate/{order_id}/vmc/encoded-logo',
 			method: 'POST',
 		},
 	},
 	{
 		id: 'certcentralApi.uploadVmcOrCmcLogoSvg',
 		endpoint: generatedDocEndpoints.certcentralApi.uploadVmcOrCmcLogoSvg,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { order_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/order/certificate/144457106/vmc/logo',
+			path: '/order/certificate/{order_id}/vmc/logo',
 			method: 'POST',
 		},
 	},
@@ -17871,11 +17906,16 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 	{
 		id: 'certcentralApi.viewKeyLockerSignatures',
 		endpoint: generatedDocEndpoints.certcentralApi.viewKeyLockerSignatures,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { order_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/order/certificate/12345/signature-unit',
+			path: '/order/certificate/{order_id}/signature-unit',
 			method: 'GET',
 		},
 	},
@@ -18251,11 +18291,16 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 	{
 		id: 'certcentralApi.cancelUnitOrder',
 		endpoint: generatedDocEndpoints.certcentralApi.cancelUnitOrder,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { order_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/units/order/1234/cancel',
+			path: '/units/order/{order_id}/cancel',
 			method: 'PUT',
 		},
 	},
@@ -18323,11 +18368,16 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 	{
 		id: 'certcentralApi.listSubaccountDomains',
 		endpoint: generatedDocEndpoints.certcentralApi.listSubaccountDomains,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { subaccount_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/account/subaccount/1234567/domain',
+			path: '/account/subaccount/{subaccount_id}/domain',
 			method: 'GET',
 		},
 	},
@@ -18345,11 +18395,16 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 	{
 		id: 'certcentralApi.listSubaccountOrganizations',
 		endpoint: generatedDocEndpoints.certcentralApi.listSubaccountOrganizations,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { subaccount_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/account/subaccount/1389108/organization',
+			path: '/account/subaccount/{subaccount_id}/organization',
 			method: 'GET',
 		},
 	},
@@ -18471,11 +18526,16 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 	{
 		id: 'certcentralApi.unitOrderDetails',
 		endpoint: generatedDocEndpoints.certcentralApi.unitOrderDetails,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { order_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/units/order/1234',
+			path: '/units/order/{order_id}',
 			method: 'GET',
 		},
 	},
@@ -18589,11 +18649,16 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		id: 'certcentralApi.deleteVerifiedContactDelegation',
 		endpoint:
 			generatedDocEndpoints.certcentralApi.deleteVerifiedContactDelegation,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { delegation_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/user/delegation/<delegation_id>',
+			path: '/user/delegation/{delegation_id}',
 			method: 'DELETE',
 		},
 	},
@@ -18682,11 +18747,16 @@ export const generatedDocTestCases: GeneratedDocTestCase[] = [
 		id: 'certcentralApi.resendVerifiedContactDelegationEmail',
 		endpoint:
 			generatedDocEndpoints.certcentralApi.resendVerifiedContactDelegationEmail,
-		input: { path: {}, query: {}, headers: {}, cookies: {} },
+		input: {
+			path: { delegation_id: 'fixture' },
+			query: {},
+			headers: {},
+			cookies: {},
+		},
 		outputExample: {},
 		expected: {
 			family: 'certcentral',
-			path: '/user/delegation/<delegation_id>/resend',
+			path: '/user/delegation/{delegation_id}/resend',
 			method: 'PUT',
 		},
 	},
