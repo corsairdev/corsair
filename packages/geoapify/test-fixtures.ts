@@ -122,39 +122,74 @@ export const places = {
 };
 
 /** A route in `format: json`, with no geometry tree. */
+/**
+ * A live json route (Brandenburg Gate to Alexanderplatz, drive,
+ * `details=instruction_details`), trimmed to two steps and four points.
+ * `instruction` is an object and `geometry` is one list of points per leg.
+ */
 export const route = {
 	results: [
 		{
 			mode: 'drive',
 			waypoints: [
-				{ location: [13.4, 52.5], original_index: 0 },
-				{ location: [13.5, 52.6], original_index: 1 },
+				{ location: [13.3777, 52.5163], original_index: 0 },
+				{ location: [13.405, 52.52], original_index: 1 },
 			],
 			units: 'metric',
-			distance: 1420.5,
-			distance_units: 'm',
-			time: 312,
-			traffic: 'free_flow',
-			toll: false,
-			ferry: false,
+			details: ['instruction_details'],
+			distance: 1921,
+			distance_units: 'meters',
+			time: 165.261,
 			legs: [
 				{
-					distance: 1420.5,
-					time: 312,
+					distance: 1921,
+					time: 165.261,
 					steps: [
 						{
-							distance: 120,
-							time: 30,
-							instruction: 'Head north',
-							name: 'Unter den Linden',
-							type: 'turn',
+							from_index: 0,
+							to_index: 2,
+							distance: 17,
+							time: 3.167,
+							instruction: {
+								text: 'Drive south on Pariser Platz.',
+								type: 'StartAtRight',
+								transition_instruction:
+									'Drive south. Then Turn left to stay on Pariser Platz.',
+								streets: ['Pariser Platz'],
+								contains_next_instruction: true,
+							},
+						},
+						{
+							from_index: 99,
+							to_index: 99,
+							distance: 0,
+							time: 0,
+							instruction: {
+								text: 'You have arrived at your destination.',
+								type: 'DestinationReached',
+							},
 						},
 					],
 				},
 			],
+			geometry: [
+				[
+					{ lon: 13.378236, lat: 52.51634 },
+					{ lon: 13.378241, lat: 52.516317 },
+					{ lon: 13.404987, lat: 52.520013 },
+					{ lon: 13.405, lat: 52.52 },
+				],
+			],
 		},
 	],
-	properties: { mode: 'drive', units: 'metric', waypoints: [] },
+	properties: {
+		mode: 'drive',
+		waypoints: [
+			{ lat: 52.5163, lon: 13.3777 },
+			{ lat: 52.52, lon: 13.405 },
+		],
+		units: 'metric',
+	},
 };
 
 export const isoline = {
@@ -177,14 +212,35 @@ export const isoline = {
 	properties: { id: 'route-1' },
 };
 
+/** What the docs say a slow isoline answers with HTTP 202: no areas, an ID. */
+export const isolinePending = {
+	type: 'FeatureCollection',
+	features: [],
+	properties: { id: '5c56584478c1aeb8c14a0b0211a71c91' },
+};
+
 /** A matrix where one pair has no route, which is a normal answer. */
+/**
+ * A live matrix: Brandenburg Gate to Alexanderplatz, and to New York, which has
+ * no road route, so that cell is `null`.
+ */
 export const matrix = {
-	mode: 'drive',
+	sources: [
+		{ original_location: [13.3777, 52.5163], location: [13.378236, 52.51634] },
+	],
+	targets: [
+		{ original_location: [13.405, 52.52], location: [13.404987, 52.520013] },
+		{ original_location: [-74, 40.7], location: [-73.997023, 40.698878] },
+	],
+	sources_to_targets: [
+		[
+			{ distance: 1921, time: 165, source_index: 0, target_index: 0 },
+			{ distance: null, time: null, source_index: 0, target_index: 1 },
+		],
+	],
 	units: 'metric',
-	distance_units: 'm',
-	sources: [{ location: [13.4, 52.5] }],
-	targets: [{ location: [13.5, 52.6] }, { location: [-71.18, 44.46] }],
-	sources_to_targets: [[{ distance: 1420.5, time: 312 }, { error: 'NoRoute' }]],
+	distance_units: 'meters',
+	mode: 'drive',
 };
 
 export const ipInfo = {
@@ -198,20 +254,37 @@ export const ipInfo = {
 	subdivisions: [{ name: 'Multnomah County' }],
 };
 
+/** A live answer for the Brandenburg Gate at 2026-07-01T12:00:00Z. */
 export const timezone = {
-	at: '2026-11-12T09:16:00Z',
-	lat: 52.5,
-	lon: 13.4,
-	tzdb_version: '2026a',
+	lat: 52.5163,
+	lon: 13.3777,
+	at: '2026-07-01T12:00:00.000Z',
+	tzdb_version: '2026e',
 	timezones: [
 		{
 			name: 'Europe/Berlin',
-			offset_STD_seconds: 3600,
-			abbreviation_STD: 'CET',
-			offset_DST_seconds: 7200,
-			abbreviation_DST: 'CEST',
-			offset_at_request_seconds: 3600,
-			abbreviation_at_request: 'CET',
+			type: 'daylightSaving',
+			utc_offset: '+02:00',
+			offset_seconds: 7200,
+			abbreviation: 'CEST',
+			local_time: '2026-07-01T14:00:00.000+02:00',
+			next_transition: {
+				at: '2026-10-25T01:00:00.000Z',
+				before: {
+					type: 'daylightSaving',
+					utc_offset: '+02:00',
+					offset_seconds: 7200,
+					abbreviation: 'CEST',
+				},
+				after: {
+					type: 'standard',
+					utc_offset: '+01:00',
+					offset_seconds: 3600,
+					abbreviation: 'CET',
+				},
+				offset_change_seconds: -3600,
+				kind: 'daylight-end',
+			},
 		},
 	],
 };
@@ -249,18 +322,14 @@ export const boundaries = {
 	],
 };
 
+/**
+ * Live samples (Brandenburg Gate, Everest), plus a third point with no value,
+ * which the spec documents as `null`.
+ */
 export const elevation = {
 	results: [
-		{
-			location: { lon: 13.4, lat: 52.5 },
-			elevation: 34,
-			units: 'm',
-		},
-		{
-			location: { lon: 13.5, lat: 52.6 },
-			elevation: 61,
-			units: 'm',
-			distance: 1420.5,
-		},
+		{ location: { lon: 13.3777, lat: 52.5163 }, elevation: 38, units: 'm' },
+		{ location: { lon: 86.925, lat: 27.9881 }, elevation: 8731, units: 'm' },
+		{ location: { lon: 0, lat: 0 }, elevation: null, units: 'm' },
 	],
 };

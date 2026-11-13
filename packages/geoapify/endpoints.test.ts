@@ -23,6 +23,7 @@ import {
 	elevation as elevationFixture,
 	ipInfo,
 	isoline as isolineFixture,
+	isolinePending,
 	matrix,
 	places,
 	postcodes,
@@ -49,12 +50,13 @@ type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
 // unknown: negative cases pass values no schema accepts.
 function invoke(endpoint: AnyEndpoint, input: unknown) {
-	// The fake context carries what the endpoints read: the option key, and the
-	// stored key behind it.
+	// The fake context carries what the endpoints read: the key the key builder
+	// resolved. The option and stored keys differ, so a test can tell which one
+	// was sent.
 	const ctx = {
 		key: API_KEY,
-		options: {},
-		keys: { get_api_key: jest.fn().mockResolvedValue(API_KEY) },
+		options: { key: 'option-key-not-sent' },
+		keys: { get_api_key: jest.fn().mockResolvedValue('stored-key-not-sent') },
 	};
 	return endpoint(ctx as never, input as never);
 }
@@ -79,6 +81,8 @@ function lastRequest() {
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
 	const parsed = new URL(url);
 	return {
+		url,
+		headers: new Headers(init.headers),
 		origin: parsed.origin,
 		path: parsed.pathname,
 		// Repeated keys such as `waypoints` are kept as a list.
@@ -115,13 +119,24 @@ afterEach(() => {
 });
 
 describe('Geoapify client', () => {
-	it('sends the key as the apiKey query parameter', async () => {
+	it('sends the resolved key in the X-Api-Key header, never in the URL', async () => {
 		respond(berlin);
 		await invoke(forwardGeocode, { text: 'Berlin' });
 
 		const sent = lastRequest();
 		expect(sent.origin).toBe('https://api.geoapify.com');
-		expect(sent.query.apiKey).toBe(API_KEY);
+		expect(sent.headers.get('X-Api-Key')).toBe(API_KEY);
+		expect(sent.query.apiKey).toBeUndefined();
+		expect(sent.url).not.toContain(API_KEY);
+	});
+
+	it('sends the key on a POST too, with no query string', async () => {
+		respond(elevationFixture);
+		await invoke(elevation, { locations: [{ lat: 52.5163, lon: 13.3777 }] });
+
+		const sent = lastRequest();
+		expect(sent.headers.get('X-Api-Key')).toBe(API_KEY);
+		expect(sent.url).not.toContain('?');
 	});
 
 	it('puts v1 operations on /v1 and v2 operations on /v2', async () => {
@@ -208,11 +223,11 @@ describe('geoapify.geocode.forward', () => {
 		expect(lastRequest().params('countrycodes')).toEqual(['de', 'at']);
 	});
 
-	it('lets a caller ask for geojson instead', async () => {
+	it('always asks for json: geojson has no results array to parse', async () => {
 		respond(berlin);
 		await invoke(forwardGeocode, { text: 'Berlin', format: 'geojson' });
 
-		expect(lastRequest().query.format).toBe('geojson');
+		expect(lastRequest().query.format).toBe('json');
 	});
 
 	it('sends the spatial filter and bias as repeated parameters', async () => {
@@ -287,15 +302,25 @@ describe('geoapify.geocode.reverse', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('logs the coordinates, which were the caller input', async () => {
+	it('logs the result type but not the point, which is as precise as an address', async () => {
 		respond(reverseResult);
 		await invoke(reverseGeocode, { lat: 52.517, lon: 13.3893 });
 
-		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
+		const payload = mockLog.mock.calls.at(-1)?.[2];
+		expect(payload).toMatchObject({ top_result_type: 'building' });
+		expect(payload).not.toHaveProperty('lat');
+		expect(payload).not.toHaveProperty('lon');
+	});
+
+	it('accepts building as a result type, as the reverse API documents', async () => {
+		respond(reverseResult);
+		await invoke(reverseGeocode, {
 			lat: 52.517,
 			lon: 13.3893,
-			top_result_type: 'building',
+			type: 'building',
 		});
+
+		expect(lastRequest().query.type).toBe('building');
 	});
 });
 
@@ -366,7 +391,8 @@ describe('geoapify.places.search', () => {
 		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
 			count: 1,
 			categories: 1,
-			top_category: 'catering.cafe',
+			// The most specific of the place's categories; there is no `category`.
+			top_category: 'catering',
 		});
 	});
 });
@@ -402,16 +428,49 @@ describe('geoapify.routing.route', () => {
 	it('repeats the waypoints and returns the distance and time', async () => {
 		respond(route);
 		const result = (await invoke(routing, {
-			waypoints: ['52.5,13.4', '52.6,13.5'],
+			waypoints: ['52.5163,13.3777', '52.52,13.405'],
 			mode: 'drive',
 		})) as typeof route;
 
 		expect(lastRequest().params('waypoints')).toEqual([
-			'52.5,13.4',
-			'52.6,13.5',
+			'52.5163,13.3777',
+			'52.52,13.405',
 		]);
-		expect(result.results?.[0]?.distance).toBe(1420.5);
-		expect(result.results?.[0]?.time).toBe(312);
+		expect(result.results?.[0]?.distance).toBe(1921);
+		expect(result.results?.[0]?.time).toBe(165.261);
+	});
+
+	it('parses the live json shape: point geometry and object instructions', async () => {
+		respond(route);
+		const result = await invoke(routing, {
+			waypoints: ['52.5163,13.3777', '52.52,13.405'],
+			mode: 'drive',
+			details: ['instruction_details'],
+		});
+
+		const first = (result as typeof route).results[0];
+		expect(first?.geometry[0]?.[0]).toEqual({ lon: 13.378236, lat: 52.51634 });
+		expect(first?.legs[0]?.steps[0]?.instruction.text).toBe(
+			'Drive south on Pariser Platz.',
+		);
+		expect(lastRequest().params('details')).toEqual(['instruction_details']);
+	});
+
+	it('accepts approximated_transit and the truck classes Geoapify documents', async () => {
+		for (const mode of ['approximated_transit', 'heavy_truck'] as const) {
+			respond(route);
+			await invoke(routing, { waypoints: ['a', 'b'], mode });
+			expect(lastRequest().query.mode).toBe(mode);
+		}
+	});
+
+	it('rejects approx_transit, which Geoapify does not accept', async () => {
+		const error = await failure(
+			invoke(routing, { waypoints: ['a', 'b'], mode: 'approx_transit' }),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('requires at least a start and an end', async () => {
@@ -442,17 +501,17 @@ describe('geoapify.routing.route', () => {
 	it('logs the distance and time without the waypoints', async () => {
 		respond(route);
 		await invoke(routing, {
-			waypoints: ['52.5,13.4', '52.6,13.5'],
+			waypoints: ['52.5163,13.3777', '52.52,13.405'],
 			mode: 'drive',
 		});
 
 		const payload = mockLog.mock.calls.at(-1)?.[2];
 		expect(payload).toMatchObject({
 			mode: 'drive',
-			distance: 1420.5,
-			time: 312,
+			distance: 1921,
+			time: 165.261,
 		});
-		expect(JSON.stringify(payload)).not.toContain('52.5');
+		expect(JSON.stringify(payload)).not.toContain('52.5163');
 	});
 });
 
@@ -479,6 +538,39 @@ describe('geoapify.routing.isoline', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('requires a center, type and range unless an id is given', async () => {
+		const error = await failure(invoke(isoline, { lat: 52.5, lon: 13.4 }));
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('logs a 202 answer with no areas as pending, with the id to read it', async () => {
+		respond(isolinePending, 202);
+		const result = (await invoke(isoline, {
+			lat: 52.5,
+			lon: 13.4,
+			type: 'time',
+			range: [3600],
+		})) as typeof isolinePending;
+
+		expect(result.properties.id).toBe(isolinePending.properties.id);
+		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
+			areas: 0,
+			pending: true,
+			id: isolinePending.properties.id,
+		});
+		expect(mockLog.mock.calls.at(-1)?.[3]).toBe('pending');
+	});
+
+	it('reads an earlier isoline by id alone', async () => {
+		respond(isolineFixture);
+		await invoke(isoline, { id: 'abc123' });
+
+		expect(lastRequest().query).toEqual({ id: 'abc123' });
+		expect(mockLog.mock.calls.at(-1)?.[3]).toBe('completed');
+	});
+
 	it('logs the area and range counts', async () => {
 		respond(isolineFixture);
 		await invoke(isoline, {
@@ -493,17 +585,19 @@ describe('geoapify.routing.isoline', () => {
 			type: 'time',
 			ranges: 2,
 			mode: 'drive',
+			pending: false,
 		});
 	});
 });
 
 describe('geoapify.routing.matrix', () => {
-	it('posts the sources and targets', async () => {
+	it('posts each point as { location: [lon, lat] }, the shape Geoapify takes', async () => {
 		respond(matrix);
 		await invoke(routeMatrix, {
 			mode: 'drive',
-			sources: ['52.5,13.4'],
-			targets: ['52.6,13.5'],
+			sources: [{ lat: 52.5163, lon: 13.3777 }],
+			targets: [{ lat: 52.52, lon: 13.405 }],
+			avoid: ['tolls'],
 		});
 
 		const sent = lastRequest();
@@ -511,26 +605,59 @@ describe('geoapify.routing.matrix', () => {
 		expect(sent.method).toBe('POST');
 		expect(sent.body).toMatchObject({
 			mode: 'drive',
-			sources: ['52.5,13.4'],
-			targets: ['52.6,13.5'],
+			sources: [{ location: [13.3777, 52.5163] }],
+			targets: [{ location: [13.405, 52.52] }],
+			avoid: [{ type: 'tolls' }],
 		});
 	});
 
-	it('keeps a pair with no route as an error cell rather than throwing', async () => {
+	it('rejects a lat,lon string, which Geoapify answers with 400', async () => {
+		const error = await failure(
+			invoke(routeMatrix, {
+				mode: 'drive',
+				sources: ['52.5163,13.3777'],
+				targets: ['52.52,13.405'],
+			}),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('keeps a pair with no route as a null cell rather than throwing', async () => {
 		respond(matrix);
 		const result = (await invoke(routeMatrix, {
 			mode: 'drive',
-			sources: ['52.5,13.4'],
-			targets: ['52.6,13.5', '-71.18,44.46'],
+			sources: [{ lat: 52.5163, lon: 13.3777 }],
+			targets: [
+				{ lat: 52.52, lon: 13.405 },
+				{ lat: 40.7, lon: -74 },
+			],
 		})) as typeof matrix;
 
-		expect(result.sources_to_targets[0]?.[1]?.error).toBe('NoRoute');
-		expect(result.sources_to_targets[0]?.[0]?.distance).toBe(1420.5);
+		expect(result.sources_to_targets[0]?.[1]?.distance).toBeNull();
+		expect(result.sources_to_targets[0]?.[0]?.distance).toBe(1921);
+	});
+
+	it('sends an EU matrix to the EU host', async () => {
+		respond(matrix);
+		await invoke(routeMatrix, {
+			mode: 'drive',
+			sources: [{ lat: 52.5163, lon: 13.3777 }],
+			targets: [{ lat: 52.52, lon: 13.405 }],
+			region: 'eu',
+		});
+
+		expect(lastRequest().origin).toBe('https://api-eu.geoapify.com');
 	});
 
 	it('requires at least one source and one target', async () => {
 		const error = await failure(
-			invoke(routeMatrix, { mode: 'drive', sources: [], targets: ['a'] }),
+			invoke(routeMatrix, {
+				mode: 'drive',
+				sources: [],
+				targets: [{ lat: 1, lon: 2 }],
+			}),
 		);
 
 		expect(error.name).toBe('ZodError');
@@ -541,8 +668,11 @@ describe('geoapify.routing.matrix', () => {
 		respond(matrix);
 		await invoke(routeMatrix, {
 			mode: 'drive',
-			sources: ['52.5,13.4'],
-			targets: ['52.6,13.5', '-71.18,44.46'],
+			sources: [{ lat: 52.5163, lon: 13.3777 }],
+			targets: [
+				{ lat: 52.52, lon: 13.405 },
+				{ lat: 40.7, lon: -74 },
+			],
 		});
 
 		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
@@ -588,7 +718,13 @@ describe('geoapify.geo.timezone', () => {
 		})) as typeof timezoneFixture;
 
 		expect(result.timezones[0]?.name).toBe('Europe/Berlin');
-		expect(result.timezones[0]?.abbreviation_at_request).toBe('CET');
+		// The live fields: these were dropped by the old schema.
+		expect(result.timezones[0]?.utc_offset).toBe('+02:00');
+		expect(result.timezones[0]?.offset_seconds).toBe(7200);
+		expect(result.timezones[0]?.local_time).toBe(
+			'2026-07-01T14:00:00.000+02:00',
+		);
+		expect(result.timezones[0]?.next_transition?.kind).toBe('daylight-end');
 	});
 
 	it('passes the moment through, which decides daylight saving', async () => {
@@ -609,6 +745,7 @@ describe('geoapify.geo.timezone', () => {
 		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
 			zones: 1,
 			primary: 'Europe/Berlin',
+			utc_offset: '+02:00',
 		});
 	});
 });
@@ -620,6 +757,26 @@ describe('geoapify.geo.postcodeSearch', () => {
 
 		expect(lastRequest().path).toBe('/v1/postcode/search');
 		expect(lastRequest().query.format).toBe('json');
+	});
+
+	it('finds the postcode at a point when no postcode is given', async () => {
+		respond(postcodes);
+		await invoke(postcodeSearch, { lat: 52.5163, lon: 13.3777 });
+
+		expect(lastRequest().query).toMatchObject({
+			lat: '52.5163',
+			lon: '13.3777',
+		});
+		expect(lastRequest().query.postcode).toBeUndefined();
+	});
+
+	it('rejects a postcode together with a point, which the API keeps apart', async () => {
+		const error = await failure(
+			invoke(postcodeSearch, { postcode: '10117', lat: 52.5, lon: 13.4 }),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('returns the places the postcode covers', async () => {
@@ -641,9 +798,19 @@ describe('geoapify.geo.postcodeList', () => {
 		expect(lastRequest().query.format).toBe('json');
 	});
 
-	it('rejects a limit above 100', async () => {
+	it('lists postcodes by a spatial filter alone', async () => {
+		respond(postcodes);
+		await invoke(postcodeList, { filter: ['circle:13.3777,52.5163,1000'] });
+
+		expect(lastRequest().params('filter')).toEqual([
+			'circle:13.3777,52.5163,1000',
+		]);
+		expect(lastRequest().query.text).toBeUndefined();
+	});
+
+	it('rejects a limit above 500, the documented maximum', async () => {
 		const error = await failure(
-			invoke(postcodeList, { text: '1011', limit: 101 }),
+			invoke(postcodeList, { text: '1011', limit: 501 }),
 		);
 
 		expect(error.name).toBe('ZodError');
@@ -673,10 +840,28 @@ describe('geoapify.geo.boundaries', () => {
 		expect(lastRequest().params('boundaries')).toEqual(['city', 'country']);
 	});
 
-	it('rejects an osm_type outside the documented N, W, R', async () => {
-		const error = await failure(
-			invoke(boundaries, { osm_id: 1, osm_type: 'X' }),
-		);
+	it('sends the lowercase osm_type Geoapify documents', async () => {
+		respond(boundariesFixture);
+		await invoke(boundaries, { osm_id: 62422, osm_type: 'r' });
+
+		expect(lastRequest().query).toMatchObject({
+			osm_id: '62422',
+			osm_type: 'r',
+		});
+	});
+
+	it('rejects an uppercase or unknown osm_type', async () => {
+		for (const osmType of ['R', 'X']) {
+			const error = await failure(
+				invoke(boundaries, { osm_id: 1, osm_type: osmType }),
+			);
+			expect(error.name).toBe('ZodError');
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a call that names no place', async () => {
+		const error = await failure(invoke(boundaries, { lat: 52.5 }));
 
 		expect(error.name).toBe('ZodError');
 		expect(fetchMock).not.toHaveBeenCalled();
@@ -702,8 +887,10 @@ describe('geoapify.geo.elevation', () => {
 
 		expect(lastRequest().path).toBe('/v1/geodata/elevation');
 		expect(lastRequest().method).toBe('POST');
-		expect(result.results).toHaveLength(2);
-		expect(result.results[0]?.elevation).toBe(34);
+		expect(result.results).toHaveLength(3);
+		expect(result.results[0]?.elevation).toBe(38);
+		// A point with no terrain value is null, not a failed response.
+		expect(result.results[2]?.elevation).toBeNull();
 	});
 
 	it('requires at least one location', async () => {
@@ -723,10 +910,11 @@ describe('geoapify.geo.elevation', () => {
 		});
 
 		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
-			points: 2,
+			points: 3,
 			units: 'm',
-			highest: 61,
-			lowest: 34,
+			highest: 8731,
+			lowest: 38,
+			missing: 1,
 		});
 	});
 });
@@ -786,7 +974,11 @@ describe('geoapify event names', () => {
 		[
 			'geoapify.routing.matrix',
 			routeMatrix,
-			{ mode: 'drive', sources: ['a'], targets: ['b'] },
+			{
+				mode: 'drive',
+				sources: [{ lat: 1, lon: 2 }],
+				targets: [{ lat: 3, lon: 4 }],
+			},
 			matrix,
 		] as const,
 		['geoapify.geo.ip', ipGeolocation, {}, ipInfo] as const,

@@ -8,15 +8,14 @@ import {
 } from './types';
 
 /**
- * The key is a query parameter here, and Geoapify has no keyless mode, so the
- * key builder refuses a call with neither an option nor a stored key.
+ * The key builder has already resolved the key (the `key` option, else the
+ * stored key) and refuses a call with neither, so the endpoints send `ctx.key`
+ * rather than reading the key a second time, which would skip a key a hook set.
  */
 async function resolveCredentials(
 	ctx: GeoapifyContext,
 ): Promise<GeoapifyCredentials> {
-	if (ctx.options.key) return { apiKey: ctx.options.key };
-	const stored = await ctx.keys.get_api_key();
-	return { apiKey: stored ?? undefined };
+	return { apiKey: ctx.key };
 }
 
 /** The region the caller asked for, which picks the host. */
@@ -49,7 +48,7 @@ export const forwardGeocode: GeoapifyEndpoints['geocode']['forward'] = async (
 				countrycodes: parsed.countrycodes,
 				filter: parsed.filter,
 				bias: parsed.bias,
-				format: parsed.format ?? 'json',
+				format: 'json',
 			}),
 		},
 	);
@@ -92,7 +91,7 @@ export const reverseGeocode: GeoapifyEndpoints['geocode']['reverse'] = async (
 				lang: parsed.lang,
 				limit: parsed.limit,
 				countrycodes: parsed.countrycodes,
-				format: parsed.format ?? 'json',
+				format: 'json',
 			}),
 		},
 	);
@@ -106,9 +105,8 @@ export const reverseGeocode: GeoapifyEndpoints['geocode']['reverse'] = async (
 			count: result.results.length,
 			top_country: result.results[0]?.country_code,
 			top_result_type: result.results[0]?.result_type,
-			// The coordinates were the caller's own input, so they are safe to record.
-			lat: parsed.lat,
-			lon: parsed.lon,
+			// The point is as precise as the address it resolves to, so like the
+			// forward text it stays out of the log.
 		},
 		'completed',
 	);
@@ -134,7 +132,7 @@ export const autocomplete: GeoapifyEndpoints['geocode']['autocomplete'] =
 					countrycodes: parsed.countrycodes,
 					filter: parsed.filter,
 					bias: parsed.bias,
-					format: parsed.format ?? 'json',
+					format: 'json',
 				}),
 			},
 		);
@@ -193,7 +191,9 @@ export const placesSearch: GeoapifyEndpoints['places']['search'] = async (
 			count: result.features.length,
 			categories: parsed.categories.length,
 			// A count alone would not tell a caller whether the filter matched at all.
-			top_category: result.features[0]?.properties.category,
+			// Places carry a `categories` list, most general first; there is no
+			// single `category` field.
+			top_category: result.features[0]?.properties.categories?.at(-1),
 		},
 		'completed',
 	);
@@ -295,21 +295,30 @@ export const isoline: GeoapifyEndpoints['routing']['isoline'] = async (
 			method: 'GET',
 			version: 'v1',
 			path: '/isoline',
-			query: definedQuery({
-				lat: parsed.lat,
-				lon: parsed.lon,
-				type: parsed.type,
-				range: parsed.range,
-				mode: parsed.mode,
-				units: parsed.units,
-				avoid: parsed.avoid,
-				traffic: parsed.traffic,
-				max_speed: parsed.max_speed,
-			}),
+			// An ID alone reads an earlier result; the other parameters must be left out.
+			query: definedQuery(
+				parsed.id !== undefined
+					? { id: parsed.id }
+					: {
+							lat: parsed.lat,
+							lon: parsed.lon,
+							type: parsed.type,
+							range: parsed.range,
+							mode: parsed.mode,
+							units: parsed.units,
+							avoid: parsed.avoid,
+							traffic: parsed.traffic,
+							max_speed: parsed.max_speed,
+						},
+			),
 		},
 	);
 
 	const result = GeoapifyEndpointOutputSchemas.isoline.parse(raw);
+	// A slow calculation answers 202 with no features and only an ID. That is
+	// not a finished result, so the event says so and carries the ID to read it.
+	const pendingId =
+		result.features.length === 0 ? result.properties?.id : undefined;
 
 	await logEventFromContext(
 		ctx,
@@ -318,19 +327,26 @@ export const isoline: GeoapifyEndpoints['routing']['isoline'] = async (
 			// One feature per range, so the count is the number of reachable areas.
 			areas: result.features.length,
 			type: parsed.type,
-			ranges: parsed.range.length,
+			ranges: parsed.range?.length,
 			mode: parsed.mode ?? 'drive',
+			pending: pendingId !== undefined,
+			id: pendingId ?? parsed.id,
 		},
-		'completed',
+		pendingId !== undefined ? 'pending' : 'completed',
 	);
 	return result;
 };
 
 /**
  * The matrix is one POST with a JSON body, and the answer is a row per source
- * and a column per target. A pair with no route carries an `error` instead of
- * a distance, which is a normal answer rather than a failure.
+ * and a column per target. Geoapify takes each point as `{ location: [lon, lat] }`
+ * (a `lat,lon` string answers 400). A pair with no route has `null` distance and
+ * time, which is a normal answer rather than a failure.
  */
+function toMatrixPoint(point: { lat: number; lon: number }) {
+	return { location: [point.lon, point.lat] };
+}
+
 export const routeMatrix: GeoapifyEndpoints['routing']['matrix'] = async (
 	ctx,
 	input,
@@ -339,18 +355,19 @@ export const routeMatrix: GeoapifyEndpoints['routing']['matrix'] = async (
 
 	const raw = await makeGeoapifyRequest(
 		await resolveCredentials(ctx),
-		'global',
+		regionOf(parsed),
 		{
 			method: 'POST',
 			version: 'v1',
 			path: '/routematrix',
 			body: {
 				mode: parsed.mode,
-				sources: parsed.sources,
-				targets: parsed.targets,
+				sources: parsed.sources.map(toMatrixPoint),
+				targets: parsed.targets.map(toMatrixPoint),
 				type: parsed.type,
 				units: parsed.units,
-				avoid: parsed.avoid,
+				// The body takes each road type as an object, not a bare string.
+				avoid: parsed.avoid?.map((type) => ({ type })),
 				traffic: parsed.traffic,
 				max_speed: parsed.max_speed,
 			},
@@ -367,8 +384,9 @@ export const routeMatrix: GeoapifyEndpoints['routing']['matrix'] = async (
 			sources: parsed.sources.length,
 			targets: parsed.targets.length,
 			// A pair with no route is worth knowing about, so the count is recorded.
-			unreachable: result.sources_to_targets.flat().filter((cell) => cell.error)
-				.length,
+			unreachable: result.sources_to_targets
+				.flat()
+				.filter((cell) => cell.distance === null || cell.time === null).length,
 		},
 		'completed',
 	);
@@ -433,6 +451,7 @@ export const timezone: GeoapifyEndpoints['geo']['timezone'] = async (
 			// A point can sit in more than one zone near a border, so both are named.
 			zones: result.timezones.length,
 			primary: result.timezones[0]?.name,
+			utc_offset: result.timezones[0]?.utc_offset,
 			at: result.at,
 		},
 		'completed',
@@ -576,6 +595,9 @@ export const elevation: GeoapifyEndpoints['geo']['elevation'] = async (
 	);
 
 	const result = GeoapifyEndpointOutputSchemas.elevation.parse(raw);
+	const known = result.results
+		.map((row) => row.elevation)
+		.filter((value): value is number => value !== null);
 
 	await logEventFromContext(
 		ctx,
@@ -584,8 +606,10 @@ export const elevation: GeoapifyEndpoints['geo']['elevation'] = async (
 			points: result.results.length,
 			units: result.results[0]?.units,
 			// The highest and lowest sample, which is the useful summary of a line.
-			highest: Math.max(...result.results.map((row) => row.elevation)),
-			lowest: Math.min(...result.results.map((row) => row.elevation)),
+			// A point the terrain service has no value for is `null` and skipped.
+			highest: known.length > 0 ? Math.max(...known) : undefined,
+			lowest: known.length > 0 ? Math.min(...known) : undefined,
+			missing: result.results.length - known.length,
 		},
 		'completed',
 	);

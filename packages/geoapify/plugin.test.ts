@@ -176,12 +176,14 @@ describe('geoapify schemas', () => {
 	});
 
 	it('requires a source and a target in a matrix', () => {
+		const point = { lat: 52.5163, lon: 13.3777 };
 		expect(
-			matrix.safeParse({ mode: 'drive', sources: ['a'], targets: ['b'] })
+			matrix.safeParse({ mode: 'drive', sources: [point], targets: [point] })
 				.success,
 		).toBe(true);
 		expect(
-			matrix.safeParse({ mode: 'drive', sources: [], targets: ['b'] }).success,
+			matrix.safeParse({ mode: 'drive', sources: [], targets: [point] })
+				.success,
 		).toBe(false);
 	});
 

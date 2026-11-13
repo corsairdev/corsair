@@ -5,9 +5,9 @@ import { z } from 'zod';
  * endpoint here asks for **JSON**, which keeps the response a typed object
  * instead of a geometry tree, and the schemas below describe that form.
  *
- * A GeoJSON `format` is still available on the endpoints that accept it, for a
- * caller that wants the geometry; the output schema then only promises the
- * fields both forms share.
+ * Only routing still offers `format: 'geojson'`, for a caller that wants the
+ * route as GeoJSON features; its output schema covers both forms. Geocoding
+ * always asks for JSON, since its GeoJSON form has no `results` array.
  */
 
 /** The gateway's error envelope, which every API shares. */
@@ -70,6 +70,8 @@ const GeocodeResponseSchema = z.object({
 	query: z
 		.object({
 			text: z.string().optional(),
+			// unknown: the parsed parts of the query differ per query (street,
+			// city, expected_type and so on), so they stay an open record.
 			parsed: z.record(z.string(), z.unknown()).optional(),
 		})
 		.optional(),
@@ -89,6 +91,7 @@ const PlaceSchema = AddressSchema.extend({
 	brand: z.string().optional(),
 	operator: z.string().optional(),
 	facility_type: z.string().optional(),
+	// unknown: the OpenStreetMap source record, whose raw tags differ per place.
 	datasource: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -98,11 +101,26 @@ const PlacesResponseSchema = z.object({
 		z.object({
 			type: z.string().optional(),
 			properties: PlaceSchema,
+			// unknown: a GeoJSON geometry (Point, Polygon and so on), whose
+			// coordinates nest differently per type.
 			geometry: z.record(z.string(), z.unknown()).optional(),
 			bbox: z.array(z.number()).optional(),
 		}),
 	),
 });
+
+/** One maneuver. A live route answers it as an object, not a string. */
+const RouteInstructionSchema = z.object({
+	text: z.string().optional(),
+	type: z.string().optional(),
+	transition_instruction: z.string().optional(),
+	pre_transition_instruction: z.string().optional(),
+	post_transition_instruction: z.string().optional(),
+	streets: z.array(z.string()).optional(),
+});
+
+/** A point of the route line in the json format. */
+const RoutePointSchema = z.object({ lat: z.number(), lon: z.number() });
 
 const RouteResultSchema = z.object({
 	mode: z.string().optional(),
@@ -115,6 +133,15 @@ const RouteResultSchema = z.object({
 	/** The geometry as an encoded polyline, when one was requested. */
 	polyline5: z.string().optional(),
 	polyline6: z.string().optional(),
+	waypoints: z
+		.array(
+			z.object({
+				/** `[lon, lat]`, snapped to the road network. */
+				location: z.array(z.number()).optional(),
+				original_index: z.number().optional(),
+			}),
+		)
+		.optional(),
 	legs: z
 		.array(
 			z.object({
@@ -125,10 +152,13 @@ const RouteResultSchema = z.object({
 						z.object({
 							distance: z.number().optional(),
 							time: z.number().optional(),
-							instruction: z.string().optional(),
+							/** Indexes into the leg's geometry. */
+							from_index: z.number().optional(),
+							to_index: z.number().optional(),
+							instruction: RouteInstructionSchema.optional(),
 							name: z.string().optional(),
-							type: z.string().optional(),
-							exit: z.number().optional(),
+							toll: z.boolean().optional(),
+							ferry: z.boolean().optional(),
 						}),
 					)
 					.optional(),
@@ -138,14 +168,20 @@ const RouteResultSchema = z.object({
 	toll: z.boolean().optional(),
 	ferry: z.boolean().optional(),
 	country_code: z.array(z.string()).optional(),
-	geometry: z.record(z.string(), z.unknown()).optional(),
+	/** One line per leg, each a list of points, in the json format. */
+	geometry: z.array(z.array(RoutePointSchema)).optional(),
 });
 
 const RoutingResponseSchema = z.object({
+	/** Set in the json format, one per route. */
 	results: z.array(RouteResultSchema).optional(),
+	// unknown: the request echoed back (mode, waypoints, units), whose fields
+	// follow the request rather than a fixed shape.
 	properties: z.record(z.string(), z.unknown()).optional(),
 	bbox: z.array(z.number()).optional(),
 	type: z.string().optional(),
+	// unknown: set in the geojson format instead of `results`; each feature is a
+	// GeoJSON route whose geometry nests by type.
 	features: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 
@@ -155,13 +191,27 @@ const IsolineResponseSchema = z.object({
 	features: z.array(
 		z.object({
 			type: z.string().optional(),
+			// unknown: the isoline's own request echo (range, mode, id and so on).
 			properties: z.record(z.string(), z.unknown()).optional(),
+			// unknown: a GeoJSON Polygon or MultiPolygon.
 			geometry: z.record(z.string(), z.unknown()).optional(),
 			bbox: z.array(z.number()).optional(),
 		}),
 	),
 	bbox: z.array(z.number()).optional(),
-	properties: z.record(z.string(), z.unknown()).optional(),
+	/**
+	 * A slow calculation answers 202 with no features and only `id` here; call
+	 * `routing.isoline` again with that `id` to read the result.
+	 */
+	properties: z.object({ id: z.string().optional() }).passthrough().optional(),
+});
+
+/** A matrix point: where it was asked for and where it snapped to a road. */
+const MatrixPointSchema = z.object({
+	/** `[lon, lat]` as sent. */
+	original_location: z.array(z.number()).optional(),
+	/** `[lon, lat]` on the road network. */
+	location: z.array(z.number()).optional(),
 });
 
 const MatrixResponseSchema = z.object({
@@ -172,17 +222,21 @@ const MatrixResponseSchema = z.object({
 	sources_to_targets: z.array(
 		z.array(
 			z.object({
-				distance: z.number().optional(),
-				time: z.number().optional(),
-				/** Set when this pair has no route, such as across an ocean. */
-				error: z.string().optional(),
+				/** `null` when this pair has no route, such as across an ocean. */
+				distance: z.number().nullable().optional(),
+				/** `null` when this pair has no route. */
+				time: z.number().nullable().optional(),
+				source_index: z.number().optional(),
+				target_index: z.number().optional(),
 			}),
 		),
 	),
-	sources: z.array(z.record(z.string(), z.unknown())).optional(),
-	targets: z.array(z.record(z.string(), z.unknown())).optional(),
+	sources: z.array(MatrixPointSchema).optional(),
+	targets: z.array(MatrixPointSchema).optional(),
 });
 
+// unknown: each block (city, country and so on) carries names in a varying set
+// of languages and extra fields per country, so they stay open records.
 const IpGeolocationResponseSchema = z.object({
 	ip: z.string().optional(),
 	city: z.record(z.string(), z.unknown()).optional(),
@@ -206,16 +260,29 @@ const TimezoneResponseSchema = z.object({
 	tzdb_version: z.string().optional(),
 	timezones: z.array(
 		z.object({
+			/** The IANA name, such as `Europe/Berlin`. */
 			name: z.string(),
-			/** Seconds from UTC, without daylight saving. */
-			offset_STD_seconds: z.number().optional(),
-			abbreviation_STD: z.string().optional(),
-			offset_DST_seconds: z.number().optional(),
-			abbreviation_DST: z.string().optional(),
-			/** Whether daylight saving applies at the requested moment. */
-			offset_at_request_seconds: z.number().optional(),
-			abbreviation_at_request: z.string().optional(),
-			offset_DST_at_request_seconds: z.number().optional(),
+			/** `standard` or `daylightSaving` at the requested moment. */
+			type: z.string().optional(),
+			/** Such as `+02:00`. */
+			utc_offset: z.string().optional(),
+			offset_seconds: z.number().optional(),
+			/** Such as `CEST`. */
+			abbreviation: z.string().optional(),
+			/** The wall-clock time at the point, with its offset. */
+			local_time: z.string().optional(),
+			/** The next daylight saving change, when the zone has one. */
+			next_transition: z
+				.object({
+					at: z.string().optional(),
+					// unknown: the offset before and after the change, the same
+					// fields as above.
+					before: z.record(z.string(), z.unknown()).optional(),
+					after: z.record(z.string(), z.unknown()).optional(),
+					offset_change_seconds: z.number().optional(),
+					kind: z.string().optional(),
+				})
+				.optional(),
 		}),
 	),
 });
@@ -236,6 +303,7 @@ const PostcodeItemSchema = z.object({
 
 const PostcodeResponseSchema = z.object({
 	results: z.array(PostcodeItemSchema),
+	// unknown: the query echoed back, whose fields follow the request.
 	query: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -244,7 +312,9 @@ const BoundariesResponseSchema = z.object({
 	features: z.array(
 		z.object({
 			type: z.string().optional(),
+			// unknown: a place record whose fields differ per boundary level.
 			properties: z.record(z.string(), z.unknown()).optional(),
+			// unknown: a GeoJSON Point or Polygon, by the requested geometry.
 			geometry: z.record(z.string(), z.unknown()).optional(),
 			bbox: z.array(z.number()).optional(),
 		}),
@@ -257,11 +327,15 @@ const ElevationResponseSchema = z.object({
 			location: z
 				.object({ lon: z.number().optional(), lat: z.number().optional() })
 				.optional(),
-			/** Metres, or feet when the request asked for imperial. */
-			elevation: z.number(),
+			/**
+			 * Metres, or feet when the request asked for imperial. `null` where the
+			 * terrain service has no value.
+			 */
+			elevation: z.number().nullable(),
+			/** `m` or `ft`. */
 			units: z.string().optional(),
 			/** Distance along the line, when one was requested. */
-			distance: z.number().optional(),
+			distance: z.number().nullable().optional(),
 		}),
 	),
 });
@@ -271,13 +345,6 @@ const RegionSchema = z
 	.optional()
 	.describe(
 		'`eu` sends the request to api-eu.geoapify.com, where processing stays in the European Union',
-	);
-
-const FormatSchema = z
-	.enum(['json', 'geojson'])
-	.optional()
-	.describe(
-		'Defaults to `json`. `geojson` returns the geometry too, which the schemas describe only loosely',
 	);
 
 const LangSchema = z
@@ -330,7 +397,6 @@ const ForwardGeocodeInputSchema = z.object({
 		.describe(
 			'Bias results toward a point or area without excluding anything, such as `proximity:13.4,52.5`',
 		),
-	format: FormatSchema,
 	region: RegionSchema,
 });
 
@@ -346,6 +412,7 @@ const ReverseGeocodeInputSchema = z.object({
 			'street',
 			'amenity',
 			'locality',
+			'building',
 		])
 		.optional()
 		.describe('Restricts the result to one kind of place'),
@@ -362,7 +429,6 @@ const ReverseGeocodeInputSchema = z.object({
 		.max(10)
 		.optional()
 		.describe('Restricts the result to these two-letter country codes'),
-	format: FormatSchema,
 	region: RegionSchema,
 });
 
@@ -401,7 +467,6 @@ const AutocompleteInputSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('Biases toward a point or area'),
-	format: FormatSchema,
 	region: RegionSchema,
 });
 
@@ -455,23 +520,27 @@ const RoutingInputSchema = z.object({
 		.array(z.string().min(1))
 		.min(2, 'A route needs at least a start and an end')
 		.describe(
-			'The points to route through, as `lat,lon` pairs, such as `52.5,13.4|52.6,13.5`',
+			'The points to route through, one `lat,lon` pair per entry, such as `["52.5163,13.3777", "52.52,13.405"]`',
 		),
 	mode: z
 		.enum([
 			'drive',
-			'truck',
 			'light_truck',
+			'medium_truck',
+			'truck',
+			'heavy_truck',
+			'truck_dangerous_goods',
+			'long_truck',
+			'bus',
+			'scooter',
+			'motorcycle',
 			'bicycle',
 			'mountain_bike',
 			'road_bike',
-			'scooter',
 			'walk',
 			'hike',
-			'motorcycle',
-			'bus',
-			'approx_transit',
 			'transit',
+			'approximated_transit',
 		])
 		.describe('How to travel, which decides the roads and paths used'),
 	type: z
@@ -488,9 +557,20 @@ const RoutingInputSchema = z.object({
 		.optional()
 		.describe('Features to avoid, such as `tollways`, `ferries` or `highways`'),
 	details: z
-		.array(z.string())
+		.array(
+			z.enum([
+				'instruction_details',
+				'route_details',
+				'elevation',
+				'admin_areas',
+				'polyline5',
+				'polyline6',
+			]),
+		)
 		.optional()
-		.describe('Extras to include, such as `instruction` or `elevation`'),
+		.describe(
+			'Extras to include, such as `instruction_details` (maneuver details) or `elevation`',
+		),
 	traffic: z
 		.enum(['free_flow', 'approximated'])
 		.optional()
@@ -503,31 +583,72 @@ const RoutingInputSchema = z.object({
 	region: RegionSchema,
 });
 
-const IsolineInputSchema = z.object({
-	lat: z.number().min(-90).max(90).describe('Latitude of the center'),
-	lon: z.number().min(-180).max(180).describe('Longitude of the center'),
-	type: z
-		.enum(['time', 'distance'])
-		.describe('Whether each range is a number of seconds or a distance'),
-	range: z
-		.array(z.number())
-		.min(1, 'At least one range is required')
-		.describe('The ranges to draw, such as `[300, 600, 900]`'),
-	mode: z
-		.enum(['drive', 'truck', 'bicycle', 'scooter', 'walk', 'hike'])
-		.optional()
-		.describe('How to travel; drive is the default'),
-	units: z
-		.enum(['metric', 'imperial'])
-		.optional()
-		.describe('Units of the answer'),
-	avoid: z.array(z.string()).optional().describe('Features to avoid'),
-	traffic: z
-		.enum(['free_flow', 'approximated'])
-		.optional()
-		.describe('How to account for traffic'),
-	max_speed: z.number().optional().describe('A speed cap'),
-	region: RegionSchema,
+const IsolineInputSchema = z
+	.object({
+		id: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'The `properties.id` of an earlier isoline. A slow calculation answers with no areas and only this ID; call again with it alone to read the result',
+			),
+		lat: z
+			.number()
+			.min(-90)
+			.max(90)
+			.optional()
+			.describe('Latitude of the center'),
+		lon: z
+			.number()
+			.min(-180)
+			.max(180)
+			.optional()
+			.describe('Longitude of the center'),
+		type: z
+			.enum(['time', 'distance'])
+			.optional()
+			.describe(
+				'Whether each range is a number of seconds (at most 3600) or metres (at most 100000)',
+			),
+		range: z
+			.array(z.number().positive())
+			.min(1, 'At least one range is required')
+			.max(10)
+			.optional()
+			.describe('The ranges to draw, such as `[300, 600, 900]`'),
+		mode: z
+			.enum(['drive', 'truck', 'bicycle', 'scooter', 'walk', 'hike'])
+			.optional()
+			.describe('How to travel; drive is the default'),
+		units: z
+			.enum(['metric', 'imperial'])
+			.optional()
+			.describe('Units of the answer'),
+		avoid: z.array(z.string()).optional().describe('Features to avoid'),
+		traffic: z
+			.enum(['free_flow', 'approximated'])
+			.optional()
+			.describe('How to account for traffic'),
+		max_speed: z.number().optional().describe('A speed cap'),
+		region: RegionSchema,
+	})
+	.refine(
+		(input) =>
+			input.id !== undefined ||
+			(input.lat !== undefined &&
+				input.lon !== undefined &&
+				input.type !== undefined &&
+				input.range !== undefined),
+		{
+			message:
+				'Give `lat`, `lon`, `type` and `range` for a new isoline, or the `id` of an earlier one',
+		},
+	);
+
+/** Geoapify takes `{ location: [lon, lat] }`; the plugin builds that from these. */
+const MatrixLocationSchema = z.object({
+	lat: z.number().min(-90).max(90),
+	lon: z.number().min(-180).max(180),
 });
 
 const RouteMatrixInputSchema = z.object({
@@ -547,13 +668,13 @@ const RouteMatrixInputSchema = z.object({
 		])
 		.describe('How to travel, which decides every cell of the matrix'),
 	sources: z
-		.array(z.string().min(1))
+		.array(MatrixLocationSchema)
 		.min(1, 'At least one source is required')
-		.describe('Starting points as `lat,lon` pairs, one row each'),
+		.describe('Starting points, one row each'),
 	targets: z
-		.array(z.string().min(1))
+		.array(MatrixLocationSchema)
 		.min(1, 'At least one target is required')
-		.describe('Destination points as `lat,lon` pairs, one column each'),
+		.describe('Destination points, one column each'),
 	type: z
 		.enum(['balanced', 'short', 'less_maneuvers'])
 		.optional()
@@ -562,12 +683,16 @@ const RouteMatrixInputSchema = z.object({
 		.enum(['metric', 'imperial'])
 		.optional()
 		.describe('Units of the answer'),
-	avoid: z.array(z.string()).optional().describe('Features to avoid'),
+	avoid: z
+		.array(z.enum(['tolls', 'ferries', 'highways']))
+		.optional()
+		.describe('Road types to avoid'),
 	traffic: z
 		.enum(['free_flow', 'approximated'])
 		.optional()
 		.describe('How to account for traffic'),
 	max_speed: z.number().optional().describe('A speed cap'),
+	region: RegionSchema,
 });
 
 const IpGeolocationInputSchema = z.object({
@@ -593,34 +718,54 @@ const TimezoneInputSchema = z.object({
 	region: RegionSchema,
 });
 
-const PostcodeSearchInputSchema = z.object({
-	postcode: z.string().min(1).describe('The postcode to look up'),
-	countrycode: z
-		.string()
-		.length(2)
-		.optional()
-		.describe('The country the postcode belongs to, which sharpens the result'),
-	lat: z
-		.number()
-		.min(-90)
-		.max(90)
-		.optional()
-		.describe('Biases toward this point'),
-	lon: z
-		.number()
-		.min(-180)
-		.max(180)
-		.optional()
-		.describe('Biases toward this point'),
-	lang: LangSchema,
-	region: RegionSchema,
-});
+const PostcodeSearchInputSchema = z
+	.object({
+		postcode: z
+			.string()
+			.min(1)
+			.optional()
+			.describe(
+				'The postcode to look up. Leave it out to search by `lat`/`lon`',
+			),
+		countrycode: z
+			.string()
+			.length(2)
+			.optional()
+			.describe(
+				'The country the postcode belongs to, which sharpens the result',
+			),
+		lat: z
+			.number()
+			.min(-90)
+			.max(90)
+			.optional()
+			.describe('Finds the postcode at this point, instead of by `postcode`'),
+		lon: z
+			.number()
+			.min(-180)
+			.max(180)
+			.optional()
+			.describe('Finds the postcode at this point, instead of by `postcode`'),
+		lang: LangSchema,
+		region: RegionSchema,
+	})
+	.refine(
+		(input) =>
+			(input.postcode !== undefined) !==
+			(input.lat !== undefined && input.lon !== undefined),
+		{
+			message: 'Give either `postcode` or both `lat` and `lon`, not both',
+		},
+	);
 
 const PostcodeListInputSchema = z.object({
 	text: z
 		.string()
-		.min(1, 'A postcode prefix is required')
-		.describe('A postcode or a prefix, such as `1011`'),
+		.min(1)
+		.optional()
+		.describe(
+			'A postcode or a prefix, such as `1011`. Optional when a `filter` or `countrycode` narrows the list',
+		),
 	countrycode: z
 		.string()
 		.length(2)
@@ -635,9 +780,9 @@ const PostcodeListInputSchema = z.object({
 		.number()
 		.int()
 		.min(1)
-		.max(100)
+		.max(500)
 		.optional()
-		.describe('At most 100 results'),
+		.describe('At most 500 results'),
 	offset: z
 		.number()
 		.int()
@@ -663,18 +808,30 @@ const BoundariesInputSchema = z
 			.describe('Longitude of a point'),
 		osm_id: z.number().optional().describe('An OpenStreetMap ID'),
 		osm_type: z
-			.enum(['N', 'W', 'R'])
+			.enum(['n', 'w', 'r'])
 			.optional()
-			.describe('The OSM type that goes with `osm_id`: node, way or relation'),
+			.describe(
+				'The OSM type that goes with `osm_id`: `n` node, `w` way or `r` relation',
+			),
 		boundaries: z
 			.array(z.string())
 			.optional()
 			.describe(
-				'Which levels to return, such as `postal_code`, `city` or `country`',
+				'Which boundary kinds to return, such as `administrative` (the default) or `postal_code`',
 			),
 		lang: LangSchema,
 		region: RegionSchema,
 	})
+	.refine(
+		(input) =>
+			input.id !== undefined ||
+			(input.lat !== undefined && input.lon !== undefined) ||
+			(input.osm_id !== undefined && input.osm_type !== undefined),
+		{
+			message:
+				'Identify the place by `id`, by a `lat`/`lon` pair, or by `osm_id` with `osm_type`',
+		},
+	)
 	.describe(
 		'Identify the place by `id`, by a `lat`/`lon` pair, or by `osm_id` with `osm_type`',
 	);

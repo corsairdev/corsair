@@ -23,8 +23,8 @@ pnpm add @corsair-dev/geoapify
 | `geocode.reverse` | `geoapify.api.geocode.reverse` | `read` | Turn a latitude and longitude into the address at that point, with its full set of components |
 | `places.details` | `geoapify.api.places.details` | `read` | Read one place by its ID, with its address, categories, contact details and opening hours |
 | `places.search` | `geoapify.api.places.search` | `read` | Find places by category within an area, such as restaurants inside a circle, with the details each place carries |
-| `routing.isoline` | `geoapify.api.routing.isoline` | `read` | Calculate the area reachable from a point within a time or distance, one polygon per range |
-| `routing.matrix` | `geoapify.api.routing.matrix` | `read` | Calculate the time and distance between every source and target, one row per source. A pair with no route carries an error instead |
+| `routing.isoline` | `geoapify.api.routing.isoline` | `read` | Calculate the area reachable from a point within a time or distance, one polygon per range. A slow calculation returns only an id to read it with later |
+| `routing.matrix` | `geoapify.api.routing.matrix` | `read` | Calculate the time and distance between every source and target, one row per source. A pair with no route has null distance and time |
 | `routing.route` | `geoapify.api.routing.route` | `read` | Calculate a route between waypoints, with distance, time and optional turn-by-turn steps and geometry |
 
 ## Auth

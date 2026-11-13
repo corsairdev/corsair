@@ -214,12 +214,12 @@ const geoapifyEndpointMeta = {
 	'routing.isoline': {
 		riskLevel: 'read',
 		description:
-			'Calculate the area reachable from a point within a time or distance, one polygon per range',
+			'Calculate the area reachable from a point within a time or distance, one polygon per range. A slow calculation returns only an id to read it with later',
 	},
 	'routing.matrix': {
 		riskLevel: 'read',
 		description:
-			'Calculate the time and distance between every source and target, one row per source. A pair with no route carries an error instead',
+			'Calculate the time and distance between every source and target, one row per source. A pair with no route has null distance and time',
 	},
 	'geo.ip': {
 		riskLevel: 'read',
