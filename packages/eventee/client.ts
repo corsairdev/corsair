@@ -1,41 +1,42 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type { ApiRequestOptions, ApiResult, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
-export class EventeeAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'EventeeAPIError';
-	}
-}
+export const EVENTEE_API_BASE = 'https://eventee.com';
 
-// TODO: Update with your API base URL
-const EVENTEE_API_BASE = 'https://api.example.com';
+const NO_TRANSPORT_RETRIES = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: { retryAfter: 'retry-after' },
+} as const;
 
 export async function makeEventeeRequest<T>(
 	endpoint: string,
-	apiKey: string,
+	apiKey: string | undefined,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// Endpoint inputs are Zod-validated before reaching this transport.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		path?: Record<string, string | number>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
+	if (!apiKey) {
+		throw new AuthMissingError('eventee', 'api_key');
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: EVENTEE_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: 'v1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Accept: 'application/json',
 		},
 	};
 
@@ -47,15 +48,43 @@ export async function makeEventeeRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
+		path: options.path,
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new EventeeAPIError(error.message);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: NO_TRANSPORT_RETRIES,
+		});
+	} catch (error: unknown) {
+		// Shared transport rejections are not statically typed; ApiError is narrowed below.
+		if (error instanceof ApiError) {
+			const safeResponse: ApiResult = {
+				url: error.url,
+				ok: false,
+				status: error.status,
+				statusText: error.statusText,
+				body: { error: 'Eventee response details redacted' },
+			};
+			const safeRequest: ApiRequestOptions = {
+				...error.request,
+				// Eventee inputs may include attendee PII and are not safe to retain on errors.
+				body: undefined,
+				query: undefined,
+			};
+			throw new ApiError(
+				safeRequest,
+				safeResponse,
+				`Eventee API request failed with HTTP ${error.status}`,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
 		}
-		throw new EventeeAPIError('Unknown error');
+		if (error instanceof Error) throw error;
+		throw new Error('Eventee request failed');
 	}
 }

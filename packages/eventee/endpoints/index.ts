@@ -1,7 +1,14 @@
-import { get as exampleGet } from './example';
-
-export const Example = {
-	get: exampleGet,
-};
-
+export {
+	Attendees,
+	Breaks,
+	Content,
+	Groups,
+	Halls,
+	Labels,
+	Partners,
+	Registrations,
+	Reviews,
+	Sessions,
+	Speakers,
+} from './operations';
 export * from './types';

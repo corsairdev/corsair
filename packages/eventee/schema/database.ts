@@ -1,9 +1,2 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const EventeeExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type EventeeExample = z.infer<typeof EventeeExample>;
+// Eventee data is accessed through its REST API; the plugin stores no local entities.
+export const eventeeEntities = {} as const;
