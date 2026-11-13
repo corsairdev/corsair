@@ -1,4 +1,227 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "GoogleClassroom"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Google Classroom
+description: Manage Google Classroom courses, rosters, classwork, submissions, add-ons, guardian links, and notification registrations.
+recommendedAuth: oauth_2
+overviewNote: |
+  This plugin uses Google OAuth 2.0 access tokens. The default consent request uses the narrowest 10-scope set that covers all stable operations; set the plugin's oauthScopes option to an even smaller supported set when a deployment enables only selected operations. Enable the Google Classroom API in the Google Cloud project and complete Google's OAuth app verification where required.
+
+  The plugin includes Google Pub/Sub notification registration create/delete operations, but does not receive Pub/Sub messages. Configure the topic and message consumer separately. No database migration or inbound webhook handler is needed.
+apiNotes:
+  courses.courseWork.rubrics.list: The pageSize maximum is 1; Google coerces larger values to 1. Continue with nextPageToken when returned.
+  registrations.create: A valid Google Cloud Pub/Sub topic must exist and grant Classroom permission to publish. The plugin manages the registration but does not receive messages.
+  userProfiles.get: Profile email and photo fields require their corresponding Google OAuth scopes and may be absent when those scopes are not granted.
+references:
+  - title: Google Classroom REST API
+    url: https://developers.google.com/workspace/classroom/reference/rest
+  - title: OAuth scopes
+    url: https://developers.google.com/classroom/guides/auth
+  - title: Google Classroom Discovery document
+    url: https://classroom.googleapis.com/$discovery/rest?version=v1
+apiExamples:
+  "courses.aliases.create":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {}, body: {\"alias\":\"p:biology\"} }"
+  "courses.aliases.delete":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"alias\":\"alias-123\"}, query: {} }"
+  "courses.aliases.list":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1} }"
+  "courses.announcements.addOnAttachments.create":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"itemId\":\"itemId-123\"}, query: {}, body: {\"title\":\"Learning activity\",\"teacherViewUri\":{\"uri\":\"https://corsair.dev/classroom\"},\"studentViewUri\":{\"uri\":\"https://corsair.dev/classroom\"}} }"
+  "courses.announcements.addOnAttachments.delete":
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"attachmentId\":\"attachmentId-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.announcements.addOnAttachments.get":
+    call: "{ pathParams: {\"attachmentId\":\"attachmentId-123\",\"courseId\":\"courseId-123\",\"itemId\":\"itemId-123\"}, query: {} }"
+  "courses.announcements.addOnAttachments.list":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"itemId\":\"itemId-123\"}, query: {\"pageSize\":1} }"
+  "courses.announcements.addOnAttachments.patch":
+    call: "{ pathParams: {\"attachmentId\":\"attachmentId-123\",\"courseId\":\"courseId-123\",\"itemId\":\"itemId-123\"}, query: {\"updateMask\":\"title\",\"postId\":\"post-123\"}, body: {\"title\":\"Learning activity\"} }"
+  "courses.announcements.create":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {}, body: {\"text\":\"Class update\"} }"
+  "courses.announcements.delete":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"id\":\"id-123\"}, query: {} }"
+  "courses.announcements.get":
+    call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.announcements.getAddOnContext":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"itemId\":\"itemId-123\"}, query: {\"attachmentId\":\"attachment-123\"} }"
+  "courses.announcements.list":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1,\"announcementStates\":[\"PUBLISHED\"],\"orderBy\":\"updateTime desc\"} }"
+  "courses.announcements.modifyAssignees":
+    call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {}, body: {\"assigneeMode\":\"ALL_STUDENTS\",\"modifyIndividualStudentsOptions\":{}} }"
+  "courses.announcements.patch":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"id\":\"id-123\"}, query: {\"updateMask\":\"text\"}, body: {\"text\":\"Class update\"} }"
+  "courses.courseWork.addOnAttachments.create":
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"courseId\":\"courseId-123\"}, query: {}, body: {\"title\":\"Learning activity\",\"teacherViewUri\":{\"uri\":\"https://corsair.dev/classroom\"},\"studentViewUri\":{\"uri\":\"https://corsair.dev/classroom\"}} }"
+  "courses.courseWork.addOnAttachments.delete":
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"attachmentId\":\"attachmentId-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.courseWork.addOnAttachments.get":
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"attachmentId\":\"attachmentId-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.courseWork.addOnAttachments.list":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"itemId\":\"itemId-123\"}, query: {\"pageSize\":1} }"
+  "courses.courseWork.addOnAttachments.patch":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"itemId\":\"itemId-123\",\"attachmentId\":\"attachmentId-123\"}, query: {\"postId\":\"post-123\",\"updateMask\":\"title\"}, body: {\"title\":\"Learning activity\"} }"
+  "courses.courseWork.addOnAttachments.studentSubmissions.get":
+    call: "{ pathParams: {\"submissionId\":\"submissionId-123\",\"itemId\":\"itemId-123\",\"attachmentId\":\"attachmentId-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.courseWork.addOnAttachments.studentSubmissions.list":
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"attachmentId\":\"attachmentId-123\",\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1} }"
+  "courses.courseWork.addOnAttachments.studentSubmissions.patch":
+    call: "{ pathParams: {\"submissionId\":\"submissionId-123\",\"attachmentId\":\"attachmentId-123\",\"courseId\":\"courseId-123\",\"itemId\":\"itemId-123\"}, query: {\"postId\":\"post-123\",\"updateMask\":\"pointsEarned\"}, body: {\"pointsEarned\":1} }"
+  "courses.courseWork.create":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {}, body: {\"title\":\"Assignment\",\"workType\":\"ASSIGNMENT\"} }"
+  "courses.courseWork.delete":
+    call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.courseWork.get":
+    call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.courseWork.getAddOnContext":
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"courseId\":\"courseId-123\"}, query: {\"attachmentId\":\"attachment-123\"} }"
+  "courses.courseWork.list":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1,\"courseWorkStates\":[\"PUBLISHED\"],\"orderBy\":\"updateTime desc\"} }"
+  "courses.courseWork.modifyAssignees":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"id\":\"id-123\"}, query: {}, body: {\"assigneeMode\":\"ALL_STUDENTS\",\"modifyIndividualStudentsOptions\":{}} }"
+  "courses.courseWork.patch":
+    call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {\"updateMask\":\"title\"}, body: {\"title\":\"Assignment\"} }"
+  "courses.courseWork.rubrics.create":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"courseWorkId\":\"courseWorkId-123\"}, query: {}, body: {\"criteria\":[{\"description\":\"Criterion\",\"levels\":[{\"title\":\"Proficient\"}]}]} }"
+  "courses.courseWork.rubrics.delete":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"id\":\"id-123\",\"courseWorkId\":\"courseWorkId-123\"}, query: {} }"
+  "courses.courseWork.rubrics.get":
+    call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\",\"courseWorkId\":\"courseWorkId-123\"}, query: {} }"
+  "courses.courseWork.rubrics.list":
+    call: "{ pathParams: {\"courseWorkId\":\"courseWorkId-123\",\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1} }"
+  "courses.courseWork.rubrics.patch":
+    call: "{ pathParams: {\"courseWorkId\":\"courseWorkId-123\",\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {\"updateMask\":\"criteria\"}, body: {\"criteria\":[{\"description\":\"Criterion\",\"levels\":[{\"title\":\"Proficient\"}]}]} }"
+  "courses.courseWork.studentSubmissions.get":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"courseWorkId\":\"courseWorkId-123\",\"id\":\"id-123\"}, query: {} }"
+  "courses.courseWork.studentSubmissions.list":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"courseWorkId\":\"courseWorkId-123\"}, query: {\"userId\":\"student-123\",\"pageSize\":1,\"states\":[\"TURNED_IN\"]} }"
+  "courses.courseWork.studentSubmissions.modifyAttachments":
+    call: "{ pathParams: {\"id\":\"id-123\",\"courseWorkId\":\"courseWorkId-123\",\"courseId\":\"courseId-123\"}, query: {}, body: {\"addAttachments\":[]} }"
+  "courses.courseWork.studentSubmissions.patch":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"id\":\"id-123\",\"courseWorkId\":\"courseWorkId-123\"}, query: {\"updateMask\":\"draftGrade\"}, body: {\"draftGrade\":1} }"
+  "courses.courseWork.studentSubmissions.reclaim":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"id\":\"id-123\",\"courseWorkId\":\"courseWorkId-123\"}, query: {}, body: {} }"
+  "courses.courseWork.studentSubmissions.return":
+    call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\",\"courseWorkId\":\"courseWorkId-123\"}, query: {}, body: {} }"
+  "courses.courseWork.studentSubmissions.turnIn":
+    call: "{ pathParams: {\"courseWorkId\":\"courseWorkId-123\",\"courseId\":\"courseId-123\",\"id\":\"id-123\"}, query: {}, body: {} }"
+  "courses.courseWorkMaterials.addOnAttachments.create":
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"courseId\":\"courseId-123\"}, query: {}, body: {\"title\":\"Learning activity\",\"teacherViewUri\":{\"uri\":\"https://corsair.dev/classroom\"},\"studentViewUri\":{\"uri\":\"https://corsair.dev/classroom\"}} }"
+  "courses.courseWorkMaterials.addOnAttachments.delete":
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"attachmentId\":\"attachmentId-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.courseWorkMaterials.addOnAttachments.get":
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"attachmentId\":\"attachmentId-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.courseWorkMaterials.addOnAttachments.list":
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1} }"
+  "courses.courseWorkMaterials.addOnAttachments.patch":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"attachmentId\":\"attachmentId-123\",\"itemId\":\"itemId-123\"}, query: {\"updateMask\":\"title\",\"postId\":\"post-123\"}, body: {\"title\":\"Learning activity\"} }"
+  "courses.courseWorkMaterials.create":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {}, body: {\"title\":\"Reading material\"} }"
+  "courses.courseWorkMaterials.delete":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"id\":\"id-123\"}, query: {} }"
+  "courses.courseWorkMaterials.get":
+    call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.courseWorkMaterials.getAddOnContext":
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"courseId\":\"courseId-123\"}, query: {\"attachmentId\":\"attachment-123\"} }"
+  "courses.courseWorkMaterials.list":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"materialDriveId\":\"drive-file-123\",\"pageSize\":1,\"orderBy\":\"updateTime desc\",\"materialLink\":\"https://drive.google.com\",\"courseWorkMaterialStates\":[\"PUBLISHED\"]} }"
+  "courses.courseWorkMaterials.patch":
+    call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {\"updateMask\":\"title\"}, body: {\"title\":\"Reading material\"} }"
+  "courses.create":
+    call: "{ pathParams: {}, query: {}, body: {\"name\":\"Biology\",\"ownerId\":\"me\"} }"
+  "courses.delete":
+    call: "{ pathParams: {\"id\":\"id-123\"}, query: {} }"
+  "courses.get":
+    call: "{ pathParams: {\"id\":\"id-123\"}, query: {} }"
+  "courses.getGradingPeriodSettings":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.list":
+    call: "{ pathParams: {}, query: {\"courseStates\":[\"ACTIVE\"],\"pageSize\":1,\"teacherId\":\"teacher-123\",\"studentId\":\"student-123\"} }"
+  "courses.patch":
+    call: "{ pathParams: {\"id\":\"id-123\"}, query: {\"updateMask\":\"name\"}, body: {\"name\":\"Biology\"} }"
+  "courses.posts.addOnAttachments.create":
+    call: "{ pathParams: {\"postId\":\"postId-123\",\"courseId\":\"courseId-123\"}, query: {\"itemId\":\"item-123\"}, body: {\"title\":\"Learning activity\",\"teacherViewUri\":{\"uri\":\"https://corsair.dev/classroom\"},\"studentViewUri\":{\"uri\":\"https://corsair.dev/classroom\"}} }"
+  "courses.posts.addOnAttachments.delete":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"postId\":\"postId-123\",\"attachmentId\":\"attachmentId-123\"}, query: {\"itemId\":\"item-123\"} }"
+  "courses.posts.addOnAttachments.get":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"postId\":\"postId-123\",\"attachmentId\":\"attachmentId-123\"}, query: {\"itemId\":\"item-123\"} }"
+  "courses.posts.addOnAttachments.list":
+    call: "{ pathParams: {\"postId\":\"postId-123\",\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1,\"itemId\":\"item-123\"} }"
+  "courses.posts.addOnAttachments.patch":
+    call: "{ pathParams: {\"postId\":\"postId-123\",\"courseId\":\"courseId-123\",\"attachmentId\":\"attachmentId-123\"}, query: {\"updateMask\":\"title\"}, body: {\"title\":\"Learning activity\"} }"
+  "courses.posts.addOnAttachments.studentSubmissions.get":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"submissionId\":\"submissionId-123\",\"postId\":\"postId-123\",\"attachmentId\":\"attachmentId-123\"}, query: {\"itemId\":\"item-123\"} }"
+  "courses.posts.addOnAttachments.studentSubmissions.patch":
+    call: "{ pathParams: {\"submissionId\":\"submissionId-123\",\"courseId\":\"courseId-123\",\"attachmentId\":\"attachmentId-123\",\"postId\":\"postId-123\"}, query: {\"updateMask\":\"pointsEarned\",\"itemId\":\"itemId-123\"}, body: {\"pointsEarned\":1} }"
+  "courses.posts.getAddOnContext":
+    call: "{ pathParams: {\"postId\":\"postId-123\",\"courseId\":\"courseId-123\"}, query: {\"itemId\":\"item-123\",\"attachmentId\":\"attachment-123\"} }"
+  "courses.studentGroups.create":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {}, body: {\"title\":\"Study group\"} }"
+  "courses.studentGroups.delete":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"id\":\"id-123\"}, query: {} }"
+  "courses.studentGroups.list":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1} }"
+  "courses.studentGroups.patch":
+    call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {\"updateMask\":\"title\"}, body: {\"title\":\"Study group\"} }"
+  "courses.studentGroups.studentGroupMembers.create":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"studentGroupId\":\"studentGroupId-123\"}, query: {}, body: {\"userId\":\"student-123\"} }"
+  "courses.studentGroups.studentGroupMembers.delete":
+    call: "{ pathParams: {\"studentGroupId\":\"studentGroupId-123\",\"courseId\":\"courseId-123\",\"userId\":\"userId-123\"}, query: {} }"
+  "courses.studentGroups.studentGroupMembers.list":
+    call: "{ pathParams: {\"studentGroupId\":\"studentGroupId-123\",\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1} }"
+  "courses.students.create":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"enrollmentCode\":\"code-123\"}, body: {\"userId\":\"student-123\"} }"
+  "courses.students.delete":
+    call: "{ pathParams: {\"userId\":\"userId-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.students.get":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"userId\":\"userId-123\"}, query: {} }"
+  "courses.students.list":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1} }"
+  "courses.teachers.create":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {}, body: {\"userId\":\"teacher-123\"} }"
+  "courses.teachers.delete":
+    call: "{ pathParams: {\"userId\":\"userId-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.teachers.get":
+    call: "{ pathParams: {\"userId\":\"userId-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.teachers.list":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1} }"
+  "courses.topics.create":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {}, body: {\"name\":\"Unit 1\"} }"
+  "courses.topics.delete":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"id\":\"id-123\"}, query: {} }"
+  "courses.topics.get":
+    call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {} }"
+  "courses.topics.list":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1} }"
+  "courses.topics.patch":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"id\":\"id-123\"}, query: {\"updateMask\":\"name\"}, body: {\"name\":\"Unit 1\"} }"
+  "courses.update":
+    call: "{ pathParams: {\"id\":\"id-123\"}, query: {}, body: {\"name\":\"Biology\",\"ownerId\":\"me\"} }"
+  "courses.updateGradingPeriodSettings":
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"updateMask\":\"gradingPeriods\"}, body: {\"gradingPeriods\":[]} }"
+  "invitations.accept":
+    call: "{ pathParams: {\"id\":\"id-123\"}, query: {} }"
+  "invitations.create":
+    call: "{ pathParams: {}, query: {}, body: {\"userId\":\"student-123\",\"courseId\":\"course-123\",\"role\":\"STUDENT\"} }"
+  "invitations.delete":
+    call: "{ pathParams: {\"id\":\"id-123\"}, query: {} }"
+  "invitations.get":
+    call: "{ pathParams: {\"id\":\"id-123\"}, query: {} }"
+  "invitations.list":
+    call: "{ pathParams: {}, query: {\"userId\":\"student-123\",\"courseId\":\"course-123\",\"pageSize\":1} }"
+  "registrations.create":
+    call: "{ pathParams: {}, query: {}, body: {\"cloudPubsubTopic\":{\"topicName\":\"projects/classroom-demo/topics/updates\"},\"feed\":{\"feedType\":\"COURSE_ROSTER_CHANGES\",\"courseRosterChangesInfo\":{\"courseId\":\"course-123\"}}} }"
+  "registrations.delete":
+    call: "{ pathParams: {\"registrationId\":\"registrationId-123\"}, query: {} }"
+  "userProfiles.get":
+    call: "{ pathParams: {\"userId\":\"userId-123\"}, query: {} }"
+  "userProfiles.guardianInvitations.create":
+    call: "{ pathParams: {\"studentId\":\"studentId-123\"}, query: {}, body: {\"studentId\":\"student-123\",\"invitedEmailAddress\":\"guardian@school.test\"} }"
+  "userProfiles.guardianInvitations.get":
+    call: "{ pathParams: {\"invitationId\":\"invitationId-123\",\"studentId\":\"studentId-123\"}, query: {} }"
+  "userProfiles.guardianInvitations.list":
+    call: "{ pathParams: {\"studentId\":\"studentId-123\"}, query: {\"invitedEmailAddress\":\"guardian@school.test\",\"pageSize\":1,\"states\":[\"PENDING\"]} }"
+  "userProfiles.guardianInvitations.patch":
+    call: "{ pathParams: {\"invitationId\":\"invitationId-123\",\"studentId\":\"studentId-123\"}, query: {\"updateMask\":\"state\"}, body: {\"state\":\"PENDING\"} }"
+  "userProfiles.guardians.delete":
+    call: "{ pathParams: {\"guardianId\":\"guardianId-123\",\"studentId\":\"studentId-123\"}, query: {} }"
+  "userProfiles.guardians.get":
+    call: "{ pathParams: {\"guardianId\":\"guardianId-123\",\"studentId\":\"studentId-123\"}, query: {} }"
+  "userProfiles.guardians.list":
+    call: "{ pathParams: {\"studentId\":\"studentId-123\"}, query: {\"pageSize\":1,\"invitedEmailAddress\":\"guardian@school.test\"} }"

@@ -1,41 +1,38 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { request } from 'corsair/http';
 
-export class GoogleClassroomAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'GoogleClassroomAPIError';
-	}
-}
+export const GOOGLE_CLASSROOM_API_BASE = 'https://classroom.googleapis.com';
 
-// TODO: Update with your API base URL
-const GOOGLECLASSROOM_API_BASE = 'https://api.example.com';
+export type GoogleClassroomQueryValue =
+	| string
+	| number
+	| boolean
+	| readonly (string | number | boolean)[]
+	| undefined;
 
-export async function makeGoogleClassroomRequest<T>(
+export async function makeGoogleClassroomRequest(
 	endpoint: string,
-	apiKey: string,
+	accessToken: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		body?: object;
+		query?: Record<string, GoogleClassroomQueryValue>;
 	} = {},
-): Promise<T> {
+) {
 	const { method = 'GET', body, query } = options;
+	if (accessToken.length === 0) {
+		throw new AuthMissingError('googleclassroom', 'oauth_2');
+	}
 
 	const config: OpenAPIConfig = {
-		BASE: GOOGLECLASSROOM_API_BASE,
-		VERSION: '1.0.0',
+		BASE: GOOGLE_CLASSROOM_API_BASE,
+		VERSION: 'v1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Authorization: `Bearer ${accessToken}`,
 		},
 	};
 
@@ -47,19 +44,10 @@ export async function makeGoogleClassroomRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		// Rethrow core's ApiError as is: its status and retryAfter are what the
-		// error handlers match (429 retries) and what core reads to refresh an
-		// OAuth token after a 401. Wrapping it in a new error loses both.
-		if (error instanceof ApiError) throw error;
-		if (error instanceof Error) {
-			throw new GoogleClassroomAPIError(error.message);
-		}
-		throw new GoogleClassroomAPIError('Unknown error');
-	}
+	// `unknown` because the provider response is untrusted until the operation output schema validates it.
+	const response: unknown = await request<unknown>(config, requestOptions);
+	return response;
 }

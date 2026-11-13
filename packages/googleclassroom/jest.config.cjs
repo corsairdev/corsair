@@ -8,6 +8,7 @@ module.exports = {
 		'**/plugins/**/*.test.ts',
 		'**/setup/**/*.test.ts',
 	],
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',
@@ -48,7 +49,7 @@ module.exports = {
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
-	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
+	transformIgnorePatterns: ['node_modules/(?!(?:[^]*uuid))'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,

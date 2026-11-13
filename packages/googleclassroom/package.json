@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/googleclassroom",
   "version": "0.1.0",
-  "description": "GoogleClassroom plugin for Corsair",
+  "description": "Google Classroom plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -14,9 +14,10 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && tsc --build --force && tsup",
+    "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
@@ -36,7 +37,13 @@
     "googleclassroom",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/corsairdev/corsair.git",
+    "directory": "packages/googleclassroom"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/googleclassroom",
   "license": "Apache-2.0",
   "files": [
     "dist"

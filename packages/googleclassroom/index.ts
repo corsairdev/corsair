@@ -1,40 +1,38 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { GoogleClassroomEndpointInputs, GoogleClassroomEndpointOutputs } from './endpoints/types';
-import { GoogleClassroomEndpointInputSchemas, GoogleClassroomEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { GoogleClassroomEndpoints } from './endpoints';
+import type { GoogleClassroomOAuthScope } from './endpoints/registry';
+import {
+	GOOGLE_CLASSROOM_OAUTH_SCOPES,
+	GoogleClassroomEndpointMetadata,
+	GoogleClassroomEndpointSchemas,
+} from './endpoints/registry';
 import type {
-	GoogleClassroomWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { GoogleClassroomSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	GoogleClassroomEndpointInputs,
+	GoogleClassroomEndpointOutputs,
+	GoogleClassroomOperationId,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchGoogleClassroomTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveGoogleClassroomOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { GoogleClassroomSchema } from './schema';
 
 export type GoogleClassroomPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
+	oauthScopes?: readonly GoogleClassroomOAuthScope[];
 	hooks?: InternalGoogleClassroomPlugin['hooks'];
-	webhookHooks?: InternalGoogleClassroomPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof googleClassroomEndpointsNested>;
 };
@@ -44,159 +42,118 @@ export type GoogleClassroomContext = CorsairPluginContext<
 	GoogleClassroomPluginOptions
 >;
 
-export type GoogleClassroomKeyBuilderContext = KeyBuilderContext<GoogleClassroomPluginOptions>;
+export type GoogleClassroomKeyBuilderContext =
+	KeyBuilderContext<GoogleClassroomPluginOptions>;
 
-export type GoogleClassroomBoundEndpoints = BindEndpoints<typeof googleClassroomEndpointsNested>;
-
-type GoogleClassroomEndpoint<
-	K extends keyof GoogleClassroomEndpointOutputs,
-> = CorsairEndpoint<
-	GoogleClassroomContext,
-	GoogleClassroomEndpointInputs[K],
-	GoogleClassroomEndpointOutputs[K]
+export type GoogleClassroomBoundEndpoints = BindEndpoints<
+	typeof googleClassroomEndpointsNested
 >;
 
-export type GoogleClassroomEndpoints = {
-	exampleGet: GoogleClassroomEndpoint<'exampleGet'>;
-};
+export type GoogleClassroomEndpoint<K extends GoogleClassroomOperationId> =
+	CorsairEndpoint<
+		GoogleClassroomContext,
+		GoogleClassroomEndpointInputs[K],
+		GoogleClassroomEndpointOutputs[K]
+	>;
 
-type GoogleClassroomWebhook<
-	K extends keyof GoogleClassroomWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<GoogleClassroomContext, TEvent, GoogleClassroomWebhookOutputs[K]>;
+const googleClassroomEndpointsNested = GoogleClassroomEndpoints;
 
-export type GoogleClassroomWebhooks = {
-	example: GoogleClassroomWebhook<'example', ExampleEvent>;
-};
+export const googleclassroomEndpointSchemas =
+	GoogleClassroomEndpointSchemas satisfies RequiredPluginEndpointSchemas<
+		typeof googleClassroomEndpointsNested
+	>;
 
-export type GoogleClassroomBoundWebhooks = BindWebhooks<GoogleClassroomWebhooks>;
+const googleclassroomEndpointMeta =
+	GoogleClassroomEndpointMetadata satisfies RequiredPluginEndpointMeta<
+		typeof googleClassroomEndpointsNested
+	>;
 
-const googleClassroomEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
-} as const;
+const defaultAuthType: AuthTypes = 'oauth_2' as const;
 
-const googleClassroomWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
-
-export const googleClassroomEndpointSchemas = {
-	'example.get': {
-		input: GoogleClassroomEndpointInputSchemas.exampleGet,
-		output: GoogleClassroomEndpointOutputSchemas.exampleGet,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof googleClassroomEndpointsNested>;
-
-const googleClassroomWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof googleClassroomWebhooksNested>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
-const googleClassroomEndpointMeta = {
-	'example.get': {
-		riskLevel: 'read',
-		description: 'Get an example resource by ID',
-	},
-} as const satisfies RequiredPluginEndpointMeta<typeof googleClassroomEndpointsNested>;
-
-export const googleClassroomAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
+export const googleclassroomAuthConfig = {
 	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseGoogleClassroomPlugin<T extends GoogleClassroomPluginOptions> = CorsairPlugin<
-	'googleclassroom',
-	typeof GoogleClassroomSchema,
-	typeof googleClassroomEndpointsNested,
-	typeof googleClassroomWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseGoogleClassroomPlugin<T extends GoogleClassroomPluginOptions> =
+	CorsairPlugin<
+		'googleclassroom',
+		typeof GoogleClassroomSchema,
+		typeof googleClassroomEndpointsNested,
+		Record<string, never>,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalGoogleClassroomPlugin = BaseGoogleClassroomPlugin<GoogleClassroomPluginOptions>;
+export type InternalGoogleClassroomPlugin =
+	BaseGoogleClassroomPlugin<GoogleClassroomPluginOptions>;
 
-export type ExternalGoogleClassroomPlugin<T extends GoogleClassroomPluginOptions> =
-	BaseGoogleClassroomPlugin<T>;
+export type ExternalGoogleClassroomPlugin<
+	T extends GoogleClassroomPluginOptions,
+> = BaseGoogleClassroomPlugin<T>;
 
 export function googleclassroom<const T extends GoogleClassroomPluginOptions>(
-	incomingOptions: GoogleClassroomPluginOptions & T = {} as GoogleClassroomPluginOptions & T,
+	incomingOptions: GoogleClassroomPluginOptions &
+		T = {} as GoogleClassroomPluginOptions & T,
 ): ExternalGoogleClassroomPlugin<T> {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	const { DEFAULT: builtInDefault, ...builtIns } = errorHandlers;
+	const { DEFAULT: callerDefault, ...callerHandlers } =
+		options.errorHandlers ?? {};
+
 	return {
 		id: 'googleclassroom',
-		authConfig: googleClassroomAuthConfig,
+		authConfig: googleclassroomAuthConfig,
 		schema: GoogleClassroomSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: googleClassroomEndpointsNested,
-		webhooks: googleClassroomWebhooksNested,
-		endpointMeta: googleClassroomEndpointMeta,
-		endpointSchemas: googleClassroomEndpointSchemas,
-		webhookSchemas: googleClassroomWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-googleclassroom-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchGoogleClassroomTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveGoogleClassroomOAuthWebhookTenantLink,
+		webhooks: {},
+		endpointMeta: googleclassroomEndpointMeta,
+		endpointSchemas: googleclassroomEndpointSchemas,
 		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
+			...callerHandlers,
+			...builtIns,
+			...callerHandlers,
+			DEFAULT: callerDefault ?? builtInDefault,
+		},
+		oauthConfig: {
+			providerName: 'Google',
+			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+			tokenUrl: 'https://oauth2.googleapis.com/token',
+			scopes: [...(options.oauthScopes ?? GOOGLE_CLASSROOM_OAUTH_SCOPES)],
+			authParams: { access_type: 'offline', prompt: 'consent' },
 		},
 		keyBuilder: async (ctx: GoogleClassroomKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
+			if (source !== 'endpoint') return '';
+			if (options.key) return options.key;
+			if (ctx.authType === 'oauth_2') {
+				return getOAuthAccessToken(ctx, {
+					plugin: 'googleclassroom',
+					tokenUrl: 'https://oauth2.googleapis.com/token',
+				});
 			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('googleclassroom', 'oauth_2');
 		},
 	} satisfies InternalGoogleClassroomPlugin;
 }
 
-export type {
-	ExampleEvent,
-	GoogleClassroomWebhookOutputs,
-} from './webhooks/types';
-
+export type { GoogleClassroomOAuthScope } from './endpoints/registry';
+export {
+	GOOGLE_CLASSROOM_OAUTH_SCOPES,
+	GOOGLE_CLASSROOM_SUPPORTED_SCOPES,
+} from './endpoints/registry';
 export type {
 	GoogleClassroomEndpointInputs,
 	GoogleClassroomEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	GoogleClassroomOperationId,
+} from './endpoints/types';
+export {
+	GOOGLE_CLASSROOM_ROUTES,
+	GoogleClassroomEndpointInputSchemas,
+	GoogleClassroomEndpointOutputSchemas,
 } from './endpoints/types';
