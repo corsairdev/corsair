@@ -1,35 +1,24 @@
 import type { CorsairEndpoint } from 'corsair/core';
-import { z } from 'zod';
+import type { z } from 'zod';
 import type { ServiceM8Context } from '..';
 import { ServiceM8Error, serviceM8Request } from '../client';
 import {
-	AssetSchema,
-	ClientSchema,
 	CreateResultSchema,
-	DocumentTemplateSchema,
-	FormSchema,
-	JobActivitySchema,
+	EndpointInputSchemas,
+	EndpointOutputSchemas,
 	JobCreateInput,
 	JobPaymentCreateInput,
-	JobPaymentSchema,
-	JobSchema,
 	ListInput,
-	LocationSchema,
-	MaterialSchema,
 	NoteCreateInput,
-	NoteSchema,
-	page,
-	QueueSchema,
 	ResultSchema,
 	RetrieveInput,
-	StaffSchema,
-	safeUuid,
-	TaskSchema,
 } from './types';
 
 function operation<I extends z.ZodType, O extends z.ZodType>(
 	input: I,
 	output: O,
+	// HTTP responses are untrusted and differ per operation; the output schema
+	// validates them before a narrower public result type is returned.
 	request: (ctx: ServiceM8Context, args: z.output<I>) => Promise<unknown>,
 ): CorsairEndpoint<ServiceM8Context, z.input<I>, z.output<O>> {
 	return async (ctx, raw) => {
@@ -43,8 +32,7 @@ function operation<I extends z.ZodType, O extends z.ZodType>(
 }
 
 const auth = (ctx: ServiceM8Context) => ctx.options.authType ?? 'api_key';
-function list<T extends z.ZodType>(path: string, resource: T) {
-	const output = page(resource);
+function list<T extends z.ZodType>(path: string, output: T) {
 	return {
 		input: ListInput,
 		output,
@@ -96,8 +84,7 @@ function create<T extends z.ZodType>(path: string, input: T) {
 		}),
 	};
 }
-function update<T extends z.ZodObject>(path: string, body: T) {
-	const input = z.object({ uuid: safeUuid, body });
+function update<T extends z.ZodObject>(path: string, input: T) {
 	return {
 		input,
 		output: ResultSchema,
@@ -112,6 +99,8 @@ function update<T extends z.ZodObject>(path: string, body: T) {
 						'POST',
 						`/api_1.0/${path}/${encodeURIComponent((args as { uuid: string }).uuid)}.json`,
 						{},
+						// Generic Zod object inference cannot retain the body's concrete
+						// resource type here; it was validated by the input schema.
 						(args as { body: unknown }).body,
 					)
 				).body,
@@ -138,7 +127,7 @@ function remove(path: string) {
 	};
 }
 
-const deleteCustomInput = z.object({ UUID: safeUuid });
+const deleteCustomInput = EndpointInputSchemas['customFields.delete'];
 const deleteCustom = {
 	input: deleteCustomInput,
 	output: ResultSchema,
@@ -161,48 +150,63 @@ const deleteCustom = {
 
 export const operations = {
 	jobs: {
-		list: list('job', JobSchema),
-		retrieve: retrieve('job', JobSchema),
+		list: list('job', EndpointOutputSchemas['jobs.list']),
+		retrieve: retrieve('job', EndpointOutputSchemas['jobs.retrieve']),
 		create: create('job', JobCreateInput),
 	},
 	clients: {
-		list: list('company', ClientSchema),
-		retrieve: retrieve('company', ClientSchema),
+		list: list('company', EndpointOutputSchemas['clients.list']),
+		retrieve: retrieve('company', EndpointOutputSchemas['clients.retrieve']),
 	},
-	assets: { list: list('asset', AssetSchema) },
-	documentTemplates: { list: list('documenttemplate', DocumentTemplateSchema) },
+	assets: { list: list('asset', EndpointOutputSchemas['assets.list']) },
+	documentTemplates: {
+		list: list(
+			'documenttemplate',
+			EndpointOutputSchemas['documentTemplates.list'],
+		),
+	},
 	forms: {
-		list: list('form', FormSchema),
-		retrieve: retrieve('form', FormSchema),
+		list: list('form', EndpointOutputSchemas['forms.list']),
+		retrieve: retrieve('form', EndpointOutputSchemas['forms.retrieve']),
 	},
 	notes: {
-		list: list('note', NoteSchema),
-		retrieve: retrieve('dbonote', NoteSchema),
+		list: list('note', EndpointOutputSchemas['notes.list']),
+		retrieve: retrieve('dbonote', EndpointOutputSchemas['notes.retrieve']),
 		create: create('note', NoteCreateInput),
-		update: update('dbonote', NoteCreateInput),
+		update: update('dbonote', EndpointInputSchemas['notes.update']),
 		delete: remove('dbonote'),
 	},
 	queues: {
-		list: list('queue', QueueSchema),
-		retrieve: retrieve('queue', QueueSchema),
+		list: list('queue', EndpointOutputSchemas['queues.list']),
+		retrieve: retrieve('queue', EndpointOutputSchemas['queues.retrieve']),
 	},
 	locations: {
-		list: list('location', LocationSchema),
-		retrieve: retrieve('location', LocationSchema),
+		list: list('location', EndpointOutputSchemas['locations.list']),
+		retrieve: retrieve('location', EndpointOutputSchemas['locations.retrieve']),
 	},
 	materials: {
-		list: list('material', MaterialSchema),
-		retrieve: retrieve('material', MaterialSchema),
+		list: list('material', EndpointOutputSchemas['materials.list']),
+		retrieve: retrieve('material', EndpointOutputSchemas['materials.retrieve']),
 	},
-	tasks: { list: list('task', TaskSchema) },
-	jobActivities: { retrieve: retrieve('jobactivity', JobActivitySchema) },
+	tasks: { list: list('task', EndpointOutputSchemas['tasks.list']) },
+	jobActivities: {
+		retrieve: retrieve(
+			'jobactivity',
+			EndpointOutputSchemas['jobActivities.retrieve'],
+		),
+	},
 	jobPayments: {
-		retrieve: retrieve('jobpayment', JobPaymentSchema),
+		retrieve: retrieve(
+			'jobpayment',
+			EndpointOutputSchemas['jobPayments.retrieve'],
+		),
 		create: create('jobpayment', JobPaymentCreateInput),
-		update: update('jobpayment', JobPaymentCreateInput),
+		update: update('jobpayment', EndpointInputSchemas['jobPayments.update']),
 		delete: remove('jobpayment'),
 	},
-	staff: { retrieve: retrieve('staff', StaffSchema) },
+	staff: {
+		retrieve: retrieve('staff', EndpointOutputSchemas['staff.retrieve']),
+	},
 	customFields: { delete: deleteCustom },
 } as const;
 

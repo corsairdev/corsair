@@ -14,7 +14,7 @@ Webhook subscriptions, inbound callbacks, and additional resources outside these
 
 ServiceM8's authentication guide lists `manage_templates` but the document-template endpoint reference specifies `read_templates`; its OAuth security scheme lists both. Confirm the permissions granted to your application if template reads fail.
 
-The forms and job-payment endpoint references specify `read_forms`, `read_job_payments`, and `manage_job_payments`, respectively, but the OAuth scope inventory does not list these names. The default OAuth configuration does not request them; confirm their availability with ServiceM8 and obtain an appropriately scoped access token separately when needed.
+The forms and job-payment operations require `read_forms`, `read_job_payments`, or `manage_job_payments`. The default OAuth configuration does not request these scopes; obtain an appropriately scoped access token separately when needed.
 
 **What you get:**
 

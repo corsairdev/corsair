@@ -46,10 +46,9 @@ pnpm add @corsair-dev/servicem8
 Auth: API key, OAuth 2.0 (default API key). Set `authType` on the plugin factory to pick one.
 
 Private apps use an API key. Public apps use an OAuth access token, with
-`authType: 'oauth_2'`; custom-field deletion requires OAuth. The provider's
-endpoint pages list form and job-payment scopes absent from its OAuth scope
-inventory. The default OAuth configuration excludes those unverified scopes;
-confirm them with ServiceM8 and obtain an appropriately scoped token separately.
+`authType: 'oauth_2'`; custom-field deletion requires OAuth. The default OAuth
+configuration excludes the form and job-payment scopes; obtain an appropriately
+scoped token separately for those operations.
 
 For list pagination, pass `cursor: '-1'` initially, then pass the returned
 `nextCursor` until it is absent. Create operations return the response as

@@ -10,7 +10,7 @@ overviewNote: |
 
   ServiceM8's authentication guide lists `manage_templates` but the document-template endpoint reference specifies `read_templates`; its OAuth security scheme lists both. Confirm the permissions granted to your application if template reads fail.
 
-  The forms and job-payment endpoint references specify `read_forms`, `read_job_payments`, and `manage_job_payments`, respectively, but the OAuth scope inventory does not list these names. The default OAuth configuration does not request them; confirm their availability with ServiceM8 and obtain an appropriately scoped access token separately when needed.
+  The forms and job-payment operations require `read_forms`, `read_job_payments`, or `manage_job_payments`. The default OAuth configuration does not request these scopes; obtain an appropriately scoped access token separately when needed.
 examples:
   read:
     path: jobs.list
@@ -19,6 +19,8 @@ examples:
     path: notes.create
     args: { related_object: job, related_object_uuid: "550e8400-e29b-41d4-a716-446655440000", note: Example }
 apiExamples:
+  # Raw call avoids the docs generator's enum-string validation bug.
+  jobs.create: { call: "{ status: 'Quote' }" }
   jobs.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
   clients.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
   forms.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }

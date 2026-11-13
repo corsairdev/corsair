@@ -10,9 +10,10 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import type { z } from 'zod';
-import { endpoints, operations } from './endpoints';
+import { endpoints } from './endpoints';
+import { EndpointInputSchemas, EndpointOutputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ServiceM8Schema } from './schema';
 
@@ -31,42 +32,39 @@ export type ServiceM8KeyBuilderContext =
 	KeyBuilderContext<ServiceM8PluginOptions>;
 export type ServiceM8BoundEndpoints = BindEndpoints<typeof endpoints>;
 
-const schema = <I extends z.ZodType, O extends z.ZodType>(op: {
-	input: I;
-	output: O;
-}) => ({
-	input: op.input,
-	output: op.output,
+const schema = <K extends keyof typeof EndpointInputSchemas>(key: K) => ({
+	input: EndpointInputSchemas[key],
+	output: EndpointOutputSchemas[key],
 });
 export const serviceM8EndpointSchemas = {
-	'jobs.list': schema(operations.jobs.list),
-	'jobs.retrieve': schema(operations.jobs.retrieve),
-	'jobs.create': schema(operations.jobs.create),
-	'clients.list': schema(operations.clients.list),
-	'clients.retrieve': schema(operations.clients.retrieve),
-	'assets.list': schema(operations.assets.list),
-	'documentTemplates.list': schema(operations.documentTemplates.list),
-	'forms.list': schema(operations.forms.list),
-	'forms.retrieve': schema(operations.forms.retrieve),
-	'notes.list': schema(operations.notes.list),
-	'notes.retrieve': schema(operations.notes.retrieve),
-	'notes.create': schema(operations.notes.create),
-	'notes.update': schema(operations.notes.update),
-	'notes.delete': schema(operations.notes.delete),
-	'queues.list': schema(operations.queues.list),
-	'queues.retrieve': schema(operations.queues.retrieve),
-	'locations.list': schema(operations.locations.list),
-	'locations.retrieve': schema(operations.locations.retrieve),
-	'materials.list': schema(operations.materials.list),
-	'materials.retrieve': schema(operations.materials.retrieve),
-	'tasks.list': schema(operations.tasks.list),
-	'jobActivities.retrieve': schema(operations.jobActivities.retrieve),
-	'jobPayments.retrieve': schema(operations.jobPayments.retrieve),
-	'jobPayments.create': schema(operations.jobPayments.create),
-	'jobPayments.update': schema(operations.jobPayments.update),
-	'jobPayments.delete': schema(operations.jobPayments.delete),
-	'staff.retrieve': schema(operations.staff.retrieve),
-	'customFields.delete': schema(operations.customFields.delete),
+	'jobs.list': schema('jobs.list'),
+	'jobs.retrieve': schema('jobs.retrieve'),
+	'jobs.create': schema('jobs.create'),
+	'clients.list': schema('clients.list'),
+	'clients.retrieve': schema('clients.retrieve'),
+	'assets.list': schema('assets.list'),
+	'documentTemplates.list': schema('documentTemplates.list'),
+	'forms.list': schema('forms.list'),
+	'forms.retrieve': schema('forms.retrieve'),
+	'notes.list': schema('notes.list'),
+	'notes.retrieve': schema('notes.retrieve'),
+	'notes.create': schema('notes.create'),
+	'notes.update': schema('notes.update'),
+	'notes.delete': schema('notes.delete'),
+	'queues.list': schema('queues.list'),
+	'queues.retrieve': schema('queues.retrieve'),
+	'locations.list': schema('locations.list'),
+	'locations.retrieve': schema('locations.retrieve'),
+	'materials.list': schema('materials.list'),
+	'materials.retrieve': schema('materials.retrieve'),
+	'tasks.list': schema('tasks.list'),
+	'jobActivities.retrieve': schema('jobActivities.retrieve'),
+	'jobPayments.retrieve': schema('jobPayments.retrieve'),
+	'jobPayments.create': schema('jobPayments.create'),
+	'jobPayments.update': schema('jobPayments.update'),
+	'jobPayments.delete': schema('jobPayments.delete'),
+	'staff.retrieve': schema('staff.retrieve'),
+	'customFields.delete': schema('customFields.delete'),
 } satisfies RequiredPluginEndpointSchemas<typeof endpoints>;
 
 export type ServiceM8EndpointInputs = {
@@ -184,8 +182,8 @@ export function servicem8(
 			authUrl: 'https://go.servicem8.com/oauth/authorize',
 			tokenUrl: 'https://go.servicem8.com/oauth/access_token',
 			requiresRegisteredRedirect: true,
-			// The forms/payment endpoint pages name scopes absent from the OAuth
-			// inventory. Do not request unverified scopes in every authorization.
+			// Forms and payments require additional scopes; do not request them
+			// for every authorization by default.
 			scopes: [
 				'read_jobs',
 				'create_jobs',
@@ -216,10 +214,13 @@ export function servicem8(
 			if (source !== 'endpoint') return '';
 			if (options.key?.trim()) return options.key;
 			if (!ctx.keys) throw new AuthMissingError('servicem8', options.authType);
-			const key =
-				ctx.authType === 'oauth_2'
-					? await ctx.keys.get_access_token()
-					: await ctx.keys.get_api_key();
+			if (ctx.authType === 'oauth_2') {
+				return getOAuthAccessToken(ctx, {
+					plugin: 'servicem8',
+					tokenUrl: 'https://go.servicem8.com/oauth/access_token',
+				});
+			}
+			const key = await ctx.keys.get_api_key();
 			if (key?.trim()) return key;
 			throw new AuthMissingError('servicem8', ctx.authType);
 		},

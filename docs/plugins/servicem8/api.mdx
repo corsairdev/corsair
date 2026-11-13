@@ -69,6 +69,7 @@ await corsair.servicem8.api.assets.list({});
 
 
 ---
+
 ## Clients
 
 ### list
@@ -615,7 +616,7 @@ Create a job
 **Risk:** `write`
 
 ```ts
-await corsair.servicem8.api.jobs.create({});
+await corsair.servicem8.api.jobs.create({ status: 'Quote' });
 ```
 
 **Input**

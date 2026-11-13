@@ -13,6 +13,7 @@ export class ServiceM8Error extends Error {
 }
 
 export type ServiceM8Response = {
+	// Responses vary by endpoint and cannot be typed until their schema parses them.
 	body: unknown;
 	nextCursor?: string;
 	recordUuid?: string;
@@ -25,6 +26,7 @@ export async function serviceM8Request(
 	method: 'GET' | 'POST' | 'DELETE',
 	path: string,
 	query: Record<string, string | undefined> = {},
+	// Inputs vary by endpoint and are already validated by its own schema.
 	body?: unknown,
 	form = false,
 ): Promise<ServiceM8Response> {
@@ -77,6 +79,7 @@ export async function serviceM8Request(
 					: undefined;
 		let providerCode: number | undefined;
 		try {
+			// An HTTP error may be arbitrary JSON or plain text, so inspect it first.
 			const error: unknown = await response.json();
 			if (
 				error &&
@@ -95,6 +98,7 @@ export async function serviceM8Request(
 			providerCode,
 		);
 	}
+	// JSON is untrusted until the calling operation validates its resource schema.
 	let data: unknown;
 	try {
 		data = await response.json();

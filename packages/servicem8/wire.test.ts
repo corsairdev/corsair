@@ -1,4 +1,6 @@
 import { createCorsair } from 'corsair/core';
+import { operations } from './endpoints';
+import { EndpointInputSchemas, EndpointOutputSchemas } from './endpoints/types';
 import { ServiceM8Error, serviceM8EndpointSchemas, servicem8 } from './index';
 
 const api = createCorsair({ plugins: [servicem8({ key: 'private-key' })] })
@@ -13,6 +15,8 @@ type Case = {
 	name: string;
 	method: string;
 	path: string;
+	// The table combines all resource-specific JSON shapes and endpoint return
+	// types; a single narrower shape cannot represent every operation fixture.
 	response: unknown;
 	expected: unknown;
 	call: () => Promise<unknown>;
@@ -265,6 +269,18 @@ describe('ServiceM8 public request seam', () => {
 		expect(cases.map((test) => test.name).sort()).toEqual(
 			Object.keys(serviceM8EndpointSchemas).sort(),
 		);
+	});
+	it('uses the exported schema maps for every operation', () => {
+		const keys = Object.keys(serviceM8EndpointSchemas).sort();
+		expect(Object.keys(EndpointInputSchemas).sort()).toEqual(keys);
+		expect(Object.keys(EndpointOutputSchemas).sort()).toEqual(keys);
+		for (const [group, methods] of Object.entries(operations)) {
+			for (const [method, op] of Object.entries(methods)) {
+				const key = `${group}.${method}` as keyof typeof EndpointInputSchemas;
+				expect(op.input).toBe(EndpointInputSchemas[key]);
+				expect(op.output).toBe(EndpointOutputSchemas[key]);
+			}
+		}
 	});
 	it.each(cases)('$name', async (test) => {
 		const request = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
