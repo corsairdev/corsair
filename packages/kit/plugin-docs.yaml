@@ -13,9 +13,9 @@ overviewNote: |
   - **Creating a subscriber with an address already on the list returns the existing one**, so a create is safe to repeat.
   - **Custom field values go by `key`, not label.** A subscriber's `fields` map is keyed by the field's `key`, such as `last_name`. An unknown key is ignored and named in the response `warnings` array rather than failing, so read `warnings` when a value seems missing.
   - **A form subscribe is not the same as a subscriber create.** Subscribing through a form applies the form's incentive and records `added_at`, which is why `forms.subscribe` exists beside `subscribers.create`.
-  - **Bulk creates can be asynchronous.** A small batch answers with the subscribers it made; a large one answers an empty `202` and does the work behind the scenes, so a result with zero `subscribers` means queued rather than nothing was sent.
+  - **No bulk routes.** Kit only accepts its `/v4/bulk/*` routes with an OAuth token, and this plugin authenticates with an API key, so create subscribers one at a time with `subscribers.create`.
   - **`subscribers.unsubscribe` cannot be undone from here.** It stops every future send to that person, and only they can resubscribe.
-  - **Rate limits.** Kit enforces two request windows and sends `Retry-After` on a 429, which the plugin honours before backing off. A 413 means the batch is larger than Kit takes, and that is not retried because splitting it is the caller's decision.
+  - **Rate limits.** Kit enforces two request windows and sends `Retry-After` on a 429, which the plugin honours before backing off.
   - **Webhooks.** The plugin does not receive Kit webhooks; Kit has a separate endpoint-management API that is not wrapped here.
 examples:
   read:
@@ -41,8 +41,6 @@ apiExamples:
     call: "{ subscriberId: 1001, email_address: 'jordan@acme.example', first_name: 'Jordy' }"
   subscribers.unsubscribe:
     call: "{ subscriberId: 1001 }"
-  subscribers.bulkCreate:
-    call: "{ subscribers: [{ email_address: 'jordan@acme.example', first_name: 'Jordan' }, { email_address: 'priya@acme.example' }] }"
   tags.list:
     call: "{ include: ['subscriber_count'] }"
   tags.create:
@@ -65,7 +63,6 @@ apiExamples:
 apiNotes:
   subscribers.list: 'Pages by cursor: pass `pagination.end_cursor` back as `after`. Only active subscribers are returned unless `status` says otherwise.'
   subscribers.create: 'An address already on the list returns the existing subscriber. An unknown custom field key is ignored and named in `warnings`.'
-  subscribers.bulkCreate: 'A small batch answers with the subscribers; a large one answers an empty 202 and is queued.'
   subscribers.unsubscribe: 'Stops every future send to that person. Only they can resubscribe.'
   tags.tagSubscriber: 'Answers 204 with no body, so the result states what was applied.'
   forms.subscribe: 'Applies the form’s incentive and records `added_at`; use this rather than `subscribers.create` when the signup came through a form.'

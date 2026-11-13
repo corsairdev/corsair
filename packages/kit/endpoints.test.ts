@@ -3,7 +3,6 @@ import { KitAPIError } from './client';
 import { Account, CustomFields, Forms, Subscribers, Tags } from './endpoints';
 import {
 	account,
-	bulkCreated,
 	customFieldResponse,
 	customFields,
 	forbidden,
@@ -369,60 +368,6 @@ describe('subscribers.unsubscribe', () => {
 			invoke(Subscribers.unsubscribe, { subscriberId: 999 }),
 		).rejects.toMatchObject({ status: 404 });
 		expect(mockLog).not.toHaveBeenCalled();
-	});
-});
-
-describe('subscribers.bulkCreate', () => {
-	it('POSTs the batch and keeps what Kit created', async () => {
-		respond(bulkCreated);
-
-		const result = (await invoke(Subscribers.bulkCreate, {
-			subscribers: [
-				{ email_address: 'jordan@acme.example', first_name: 'Jordan' },
-				{ email_address: 'priya@acme.example' },
-			],
-		})) as typeof bulkCreated;
-
-		expect(lastRequest()).toMatchObject({
-			method: 'POST',
-			path: '/v4/bulk/subscribers',
-		});
-		expect(result.subscribers).toHaveLength(1);
-		expect(mockLog).toHaveBeenCalledWith(
-			expect.anything(),
-			'kit.subscribers.bulkCreate',
-			{ submitted: 2, created: 1 },
-			'completed',
-		);
-	});
-
-	it('treats an empty 202 as a queued batch rather than a failure', async () => {
-		fetchMock.mockResolvedValueOnce(new Response(null, { status: 202 }));
-
-		await expect(
-			invoke(Subscribers.bulkCreate, {
-				subscribers: [{ email_address: 'a@b.example' }],
-			}),
-		).resolves.toEqual({ subscribers: [] });
-	});
-
-	it('surfaces a batch Kit refuses for its size', async () => {
-		respond(payloadTooLarge, 413);
-
-		await expect(
-			invoke(Subscribers.bulkCreate, {
-				subscribers: [{ email_address: 'a@b.example' }],
-			}),
-		).rejects.toMatchObject({ status: 413, isTooLarge: true });
-	});
-
-	it.each([
-		[{}],
-		[{ subscribers: [] }],
-		[{ subscribers: [{ first_name: 'No address' }] }],
-	])('rejects %j before calling Kit', async (input) => {
-		await expect(invoke(Subscribers.bulkCreate, input)).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 

@@ -50,7 +50,6 @@ export type KitEndpoints = {
 	subscribersCreate: KitEndpoint<'subscribersCreate'>;
 	subscribersUpdate: KitEndpoint<'subscribersUpdate'>;
 	subscribersUnsubscribe: KitEndpoint<'subscribersUnsubscribe'>;
-	subscribersBulkCreate: KitEndpoint<'subscribersBulkCreate'>;
 	tagsList: KitEndpoint<'tagsList'>;
 	tagsCreate: KitEndpoint<'tagsCreate'>;
 	tagsUpdate: KitEndpoint<'tagsUpdate'>;
@@ -73,7 +72,6 @@ const kitEndpointsNested = {
 		create: Subscribers.create,
 		update: Subscribers.update,
 		unsubscribe: Subscribers.unsubscribe,
-		bulkCreate: Subscribers.bulkCreate,
 	},
 	tags: {
 		list: Tags.list,
@@ -117,10 +115,6 @@ export const kitEndpointSchemas = {
 	'subscribers.unsubscribe': {
 		input: KitEndpointInputSchemas.subscribersUnsubscribe,
 		output: KitEndpointOutputSchemas.subscribersUnsubscribe,
-	},
-	'subscribers.bulkCreate': {
-		input: KitEndpointInputSchemas.subscribersBulkCreate,
-		output: KitEndpointOutputSchemas.subscribersBulkCreate,
 	},
 	'tags.list': {
 		input: KitEndpointInputSchemas.tagsList,
@@ -196,11 +190,6 @@ const kitEndpointMeta = {
 		irreversible: true,
 		description:
 			'Unsubscribe a subscriber, which stops every future send to them; re-subscribing takes their own action, not a call',
-	},
-	'subscribers.bulkCreate': {
-		riskLevel: 'write',
-		description:
-			'Create many subscribers in one call. A small batch answers with them; a large one is queued and answers an empty 202',
 	},
 	'tags.list': {
 		riskLevel: 'read',
@@ -318,8 +307,6 @@ export type {
 	KitTag,
 	SubscriberGetInput,
 	SubscriberResponse,
-	SubscribersBulkCreateInput,
-	SubscribersBulkCreateResponse,
 	SubscribersCreateInput,
 	SubscribersListInput,
 	SubscribersListResponse,

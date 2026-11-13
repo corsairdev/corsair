@@ -138,14 +138,14 @@ describe('retry behaviour', () => {
 		}
 	});
 
-	it('does not retry a bulk batch Kit refuses for its size', async () => {
+	it('does not retry a payload Kit refuses for its size', async () => {
 		const { corsair, testDb } = await createClient({ key: API_KEY });
 		try {
 			respond(payloadTooLarge, 413);
 
 			await expect(
-				corsair.kit.api.subscribers.bulkCreate({
-					subscribers: [{ email_address: 'a@b.example' }],
+				corsair.kit.api.subscribers.create({
+					email_address: 'a@b.example',
 				}),
 			).rejects.toMatchObject({ status: 413, isTooLarge: true });
 			expect(fetchMock).toHaveBeenCalledTimes(1);

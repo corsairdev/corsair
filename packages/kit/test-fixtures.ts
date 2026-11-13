@@ -141,18 +141,6 @@ export const formSubscriber = {
 	subscriber: { ...subscriber, added_at: '2026-11-12T10:00:00Z' },
 };
 
-export const bulkCreated = {
-	subscribers: [
-		{
-			id: 1001,
-			first_name: 'Jordan',
-			email_address: 'jordan@acme.example',
-			state: 'active',
-			created_at: '2026-10-01T08:00:00Z',
-		},
-	],
-};
-
 /** The 401 body Kit sends for a bad key. */
 export const invalidKey = { errors: ['The API key is invalid'] };
 
@@ -167,7 +155,7 @@ export const unprocessable = {
 /** A tag or subscriber that is not there. */
 export const notFound = { errors: ['Not Found'] };
 
-/** A bulk batch Kit will not accept for its size. */
+/** A payload Kit will not accept for its size. */
 export const payloadTooLarge = { errors: ['Payload too large'] };
 
 /** A key whose account cannot make this call. */

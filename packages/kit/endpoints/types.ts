@@ -337,42 +337,6 @@ export type SubscribersUnsubscribeInput = z.input<
 	typeof SubscribersUnsubscribeInputSchema
 >;
 
-// The bulk route is asynchronous: a small batch answers 200 with the created
-// subscribers, a large one answers 202 with an empty body and does the work
-// behind the scenes.
-const BULK_SUBSCRIBER_MAX = 1000;
-
-const SubscribersBulkCreateInputSchema = z.object({
-	subscribers: z
-		.array(
-			z.object({
-				email_address: EmailSchema,
-				first_name: z.string().optional(),
-				state: z.enum(KIT_SUBSCRIBER_STATES).optional(),
-			}),
-		)
-		.min(1)
-		.max(BULK_SUBSCRIBER_MAX),
-	callback_url: z
-		.string()
-		.optional()
-		.describe('Kit posts here when a large batch finishes.'),
-});
-
-export type SubscribersBulkCreateInput = z.input<
-	typeof SubscribersBulkCreateInputSchema
->;
-
-const SubscribersBulkCreateResponseSchema = z
-	.object({
-		subscribers: z.array(KitSubscriberSchema).nullish(),
-	})
-	.loose();
-
-export type SubscribersBulkCreateResponse = z.infer<
-	typeof SubscribersBulkCreateResponseSchema
->;
-
 // ── tags ──────────────────────────────────────────────────────────────────
 
 export const KitTagSchema = z
@@ -594,7 +558,6 @@ export type KitEndpointInputs = {
 	subscribersCreate: SubscribersCreateInput;
 	subscribersUpdate: SubscribersUpdateInput;
 	subscribersUnsubscribe: SubscribersUnsubscribeInput;
-	subscribersBulkCreate: SubscribersBulkCreateInput;
 	tagsList: TagsListInput;
 	tagsCreate: TagsCreateInput;
 	tagsUpdate: TagsUpdateInput;
@@ -614,7 +577,6 @@ export type KitEndpointOutputs = {
 	subscribersCreate: SubscriberWriteResponse;
 	subscribersUpdate: SubscriberWriteResponse;
 	subscribersUnsubscribe: UnsubscribedResponse;
-	subscribersBulkCreate: SubscribersBulkCreateResponse;
 	tagsList: TagsListResponse;
 	tagsCreate: TagResponse;
 	tagsUpdate: TagResponse;
@@ -634,7 +596,6 @@ export const KitEndpointInputSchemas = {
 	subscribersCreate: SubscribersCreateInputSchema,
 	subscribersUpdate: SubscribersUpdateInputSchema,
 	subscribersUnsubscribe: SubscribersUnsubscribeInputSchema,
-	subscribersBulkCreate: SubscribersBulkCreateInputSchema,
 	tagsList: TagsListInputSchema,
 	tagsCreate: TagsCreateInputSchema,
 	tagsUpdate: TagsUpdateInputSchema,
@@ -654,7 +615,6 @@ export const KitEndpointOutputSchemas = {
 	subscribersCreate: SubscriberWriteResponseSchema,
 	subscribersUpdate: SubscriberWriteResponseSchema,
 	subscribersUnsubscribe: UnsubscribedResponseSchema,
-	subscribersBulkCreate: SubscribersBulkCreateResponseSchema,
 	tagsList: TagsListResponseSchema,
 	tagsCreate: TagResponseSchema,
 	tagsUpdate: TagResponseSchema,

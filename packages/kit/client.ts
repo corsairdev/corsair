@@ -8,8 +8,8 @@ import { ApiError, request } from 'corsair/http';
 
 export const KIT_API_BASE = 'https://api.kit.com';
 
-// A bulk subscriber import is asynchronous and can answer 202 with a job to
-// follow, so the 20 second default in corsair/http is too tight for it.
+// Kit's writes can be slow on a large account, so the 20 second default in
+// corsair/http is too tight.
 const KIT_TIMEOUT_MS = 60_000;
 
 /**
@@ -97,7 +97,7 @@ export class KitAPIError extends Error {
 		return this.status === 403;
 	}
 
-	/** The payload is larger than Kit takes in one bulk request. */
+	/** The payload is larger than Kit takes in one request. */
 	get isTooLarge(): boolean {
 		return this.status === 413;
 	}

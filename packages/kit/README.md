@@ -18,7 +18,6 @@ pnpm add @corsair-dev/kit
 | `customFields.update` | `kit.api.customFields.update` | `write` | Change a custom field’s label |
 | `forms.list` | `kit.api.forms.list` | `read` | Forms by status, cursor-paged, optionally with each one’s subscriber count |
 | `forms.subscribe` | `kit.api.forms.subscribe` | `write` | Add a subscriber through a form, which applies the form’s incentive and records when they were added |
-| `subscribers.bulkCreate` | `kit.api.subscribers.bulkCreate` | `write` | Create many subscribers in one call. A small batch answers with them; a large one is queued and answers an empty 202 |
 | `subscribers.create` | `kit.api.subscribers.create` | `write` | Create a subscriber, or return the existing one for an address already on the list. Unknown custom field keys are ignored and named in `warnings` |
 | `subscribers.get` | `kit.api.subscribers.get` | `read` | One subscriber with their custom field values and location |
 | `subscribers.list` | `kit.api.subscribers.list` | `read` | Subscribers by state, address or date, cursor-paged, with optional attribution, tags and location |

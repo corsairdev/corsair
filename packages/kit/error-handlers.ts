@@ -30,8 +30,8 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A bulk payload Kit refuses for its size. Splitting the batch is the
-	// caller's decision, so this is not retried.
+	// A payload Kit refuses for its size. A retry sends the same payload, so
+	// this is not retried.
 	PAYLOAD_TOO_LARGE_ERROR: {
 		match: (error: Error) => error instanceof KitAPIError && error.isTooLarge,
 		handler: async () => ({ maxRetries: 0 }),

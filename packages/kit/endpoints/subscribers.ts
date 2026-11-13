@@ -133,35 +133,3 @@ export const unsubscribe: KitEndpoints['subscribersUnsubscribe'] = (
 			log: ({ subscriberId }) => ({ subscriberId }),
 		},
 	);
-
-// An empty body on a 202 means Kit queued the batch and did the work behind the
-// scenes, so the result reports zero created here rather than failing the parse.
-export const bulkCreate: KitEndpoints['subscribersBulkCreate'] = (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'subscribers.bulkCreate',
-			input: Inputs.subscribersBulkCreate,
-			output: Outputs.subscribersBulkCreate,
-		},
-		input,
-		({ subscribers, callback_url }) => ({
-			method: 'POST',
-			path: '/v4/bulk/subscribers',
-			body: Object.fromEntries(
-				Object.entries({ subscribers, callback_url }).filter(
-					([, value]) => value !== undefined,
-				),
-			),
-		}),
-		{
-			// unknown: an empty 202 body arrives as undefined, which is Kit
-			// saying it queued the batch rather than that nothing was sent.
-			shape: (raw: unknown) =>
-				raw === undefined || raw === null ? { subscribers: [] } : raw,
-			log: (parsed, result) => ({
-				submitted: parsed.subscribers.length,
-				created: result.subscribers?.length ?? 0,
-			}),
-		},
-	);

@@ -68,7 +68,7 @@ describe('error handler selection', () => {
 		});
 	});
 
-	it('does not retry a batch Kit refuses for its size', async () => {
+	it('does not retry a payload Kit refuses for its size', async () => {
 		await expect(
 			resolve(apiError({ status: 413, method: 'POST' })),
 		).resolves.toEqual({
