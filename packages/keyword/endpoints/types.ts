@@ -8,6 +8,11 @@ import { z } from 'zod';
 const ProjectNameSchema = z
 	.string()
 	.min(1)
+	// URL parsing drops a `.` or `..` path segment, which would send the call
+	// to a different route.
+	.refine((name) => name !== '.' && name !== '..', {
+		message: 'A project name cannot be `.` or `..`.',
+	})
 	.describe(
 		'The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`.',
 	);
@@ -18,12 +23,18 @@ const ProjectIdSchema = z
 	.positive()
 	.describe('The numeric project ID, from `projects.list`.');
 
+// Keyword IDs are numbers. Only digits are accepted as text, so an ID such as
+// `..` cannot turn `/keywords/{id}` into the project route.
+const NumericIdTextSchema = z
+	.string()
+	.regex(/^\d+$/, 'A keyword ID is a number.');
+
 const KeywordIdSchema = z
-	.union([z.string().min(1), z.number().int().positive()])
+	.union([NumericIdTextSchema, z.number().int().positive()])
 	.describe('The keyword ID, as a string or a number.');
 
 const KeywordIdsSchema = z
-	.array(z.union([z.string().min(1), z.number().int().positive()]))
+	.array(z.union([NumericIdTextSchema, z.number().int().positive()]))
 	.min(1);
 
 const PaginationSchema = z.object({

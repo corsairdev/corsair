@@ -92,7 +92,7 @@ describe('keyword plugin definition', () => {
 			'keywords.delete': 'destructive',
 			'keywords.bulkDelete': 'destructive',
 			'keywords.bulkUpdate': 'write',
-			'keywords.refresh': 'write',
+			'keywords.refresh': 'destructive',
 			'metrics.get': 'read',
 			'metrics.competitors': 'read',
 			'rankChart.get': 'read',

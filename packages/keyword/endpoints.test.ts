@@ -698,6 +698,26 @@ describe('keywords.update', () => {
 });
 
 describe('keywords.delete', () => {
+	it.each([['..'], ['.'], ['%2e%2e'], ['12/..']])(
+		'refuses keyword ID %s, which would resolve to the project route',
+		async (keywordId) => {
+			await expect(
+				invoke(Keywords.remove, { projectName: 'Disney', keywordId }),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+
+	it.each([['..'], ['.']])(
+		'refuses project name %s, which URL parsing drops from the path',
+		async (projectName) => {
+			await expect(
+				invoke(Keywords.remove, { projectName, keywordId: '1' }),
+			).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+
 	it('DELETEs one keyword', async () => {
 		respond({ meta: { title: 'Keyword deleted' } });
 
