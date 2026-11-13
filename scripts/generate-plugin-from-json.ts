@@ -716,7 +716,7 @@ export type { ${pascal}EndpointInputs, ${pascal}EndpointOutputs } from './endpoi
 
 function buildClientTs(pascal: string, lower: string): string {
 	return `import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class ${pascal}APIError extends Error {
 \tconstructor(
@@ -771,6 +771,8 @@ export async function make${pascal}Request<T>(
 \ttry {
 \t\treturn await request<T>(config, requestOptions);
 \t} catch (error) {
+\t\t// Keep core's ApiError: its status drives 429 retries and the OAuth refresh after a 401.
+\t\tif (error instanceof ApiError) throw error;
 \t\tif (error instanceof Error) throw new ${pascal}APIError(error.message);
 \t\tthrow new ${pascal}APIError('Unknown error');
 \t}

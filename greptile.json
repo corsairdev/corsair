@@ -34,6 +34,10 @@
       {
         "scope": ["packages/**"],
         "rule": "Flag `any` types on exported or public surfaces as P2, and every implemented endpoint lacking a corresponding test as P1. Skip this rule on documentation-only PRs (only packages/<plugin>/plugin-docs.yaml, docs/plugins/<that plugin>/**, and optional docs/docs.json)."
+      },
+      {
+        "scope": ["packages/**", "docs/plugins/**"],
+        "rule": "Do not raise the settled decisions listed in R9 of .github/PLUGIN_PR_RULES.md as findings on a plugin PR: retrying a write after a 429, optional or nullish response fields, a live suite that skips with a warning when its key is missing, anything in the generated docs/plugins/<plugin>/** pages (type strings, setup text, example snippets), the corsair peer range in package.json, risk levels per input, and core-wide checks (kek with encryptDataAtRest, root DEFAULT handler order, approval argument redaction). Do check the R8 conventions in the same file."
       }
     ],
     "files": [

@@ -381,7 +381,7 @@ export type {
 		join(pluginDir, 'client.ts'),
 		`import type { ApiRequestOptions } from 'corsair/http';
 import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class ${pascalName}APIError extends Error {
 \tconstructor(
@@ -434,6 +434,10 @@ export async function make${pascalName}Request<T>(
 \ttry {
 \t\treturn await request<T>(config, requestOptions);
 \t} catch (error) {
+\t\t// Rethrow core's ApiError as is: its status and retryAfter are what the
+\t\t// error handlers match (429 retries) and what core reads to refresh an
+\t\t// OAuth token after a 401. Wrapping it in a new error loses both.
+\t\tif (error instanceof ApiError) throw error;
 \t\tif (error instanceof Error) {
 \t\t\tthrow new ${pascalName}APIError(error.message);
 \t\t}
