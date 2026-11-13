@@ -194,6 +194,32 @@ describe('GenderAPI.io client', () => {
 		expect(error.needsBillingCheck).toBe(true);
 	});
 
+	it('exposes billing_status from the problem document', async () => {
+		respond(
+			{
+				...billingProblem,
+				code: 'prediction_timeout',
+				status: 504,
+				meta: {
+					request_id: 'req-1',
+					duration_ms: 30000,
+					usage: {
+						charged_credits: null,
+						remaining_credits: null,
+						billing_status: 'unconfirmed',
+					},
+				},
+			},
+			504,
+		);
+		const error = await failure(
+			invoke(gender, { type: 'name', value: 'Sophia' }),
+		);
+
+		expect(error.billingStatus).toBe('unconfirmed');
+		expect(error.needsBillingCheck).toBe(true);
+	});
+
 	it('marks a dropped connection as a transport failure', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 		const error = await failure(

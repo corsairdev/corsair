@@ -56,9 +56,11 @@ export const errorHandlers = {
 			error instanceof GenderApiIoAPIError && error.isNotFound,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A prediction that failed after a charge may already be recorded, and the
-	// catalog says to inspect billing before retrying rather than to retry
-	// automatically. Retrying would start a new billed operation.
+	// A billed POST that failed with a 5xx, a timeout or a dropped connection may
+	// already be charged, and the catalog says to inspect billing before
+	// retrying rather than to retry automatically. Retrying would start a new
+	// billed operation. This sits above SERVER, TIMEOUT and NETWORK so those only
+	// retry the free GET routes.
 	BILLING_CHECK_ERROR: {
 		match: (error: Error) =>
 			error instanceof GenderApiIoAPIError && error.needsBillingCheck,

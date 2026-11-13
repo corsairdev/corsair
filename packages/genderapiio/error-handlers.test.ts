@@ -104,11 +104,34 @@ describe('error handler selection', () => {
 			),
 		).resolves.toEqual({ maxRetries: 0 });
 		await expect(
-			resolve(apiError({ status: 502, code: 'prediction_timeout' })),
+			resolve(
+				apiError({ status: 502, code: 'ai_upstream_error', method: 'POST' }),
+			),
 		).resolves.toEqual({ maxRetries: 0 });
 		await expect(
-			resolve(apiError({ status: 504, code: 'prediction_timeout' })),
-		).resolves.toBeDefined();
+			resolve(
+				apiError({ status: 504, code: 'prediction_timeout', method: 'POST' }),
+			),
+		).resolves.toEqual({ maxRetries: 0 });
+	});
+
+	it('does not retry a billed POST that failed with any 5xx', async () => {
+		// 500 internal_error says contact support; a repeat is a new charge.
+		await expect(
+			resolve(apiError({ status: 500, code: 'internal_error', method: 'POST' })),
+		).resolves.toEqual({ maxRetries: 0 });
+		await expect(
+			resolve(apiError({ status: 504, method: 'POST' })),
+		).resolves.toEqual({ maxRetries: 0 });
+	});
+
+	it('does not repeat a billed POST after a timeout or a dropped connection', async () => {
+		await expect(
+			resolve(apiError({ method: 'POST', transport: true, timedOut: true })),
+		).resolves.toEqual({ maxRetries: 0 });
+		await expect(
+			resolve(apiError({ method: 'POST', transport: true })),
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry an unavailable AI, since the same request would ask again', async () => {
@@ -117,8 +140,8 @@ describe('error handler selection', () => {
 		).resolves.toEqual({ maxRetries: 0 });
 	});
 
-	it('retries a plain 5xx that the catalog does not name', async () => {
-		await expect(resolve(apiError({ status: 500 }))).resolves.toMatchObject({
+	it('retries a 5xx on a free GET route', async () => {
+		await expect(resolve(apiError({ status: 500, method: 'GET' }))).resolves.toMatchObject({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
 		});
@@ -126,12 +149,14 @@ describe('error handler selection', () => {
 
 	it('retries a timeout once, and a timeout outranks the transport match', async () => {
 		await expect(
-			resolve(apiError({ transport: true, timedOut: true })),
+			resolve(apiError({ method: 'GET', transport: true, timedOut: true })),
 		).resolves.toEqual({ maxRetries: 1, retryStrategy: 'linear_2s' });
 	});
 
 	it('retries a dropped connection twice', async () => {
-		await expect(resolve(apiError({ transport: true }))).resolves.toMatchObject(
+		await expect(
+			resolve(apiError({ method: 'GET', transport: true })),
+		).resolves.toMatchObject(
 			{
 				maxRetries: 2,
 			},

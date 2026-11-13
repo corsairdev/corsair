@@ -73,8 +73,10 @@ export function readProblem(body: unknown): {
 	detail?: string;
 	action?: string;
 	fieldErrors?: Array<{ pointer?: string; message?: string }>;
+	billingStatus?: string;
 } {
 	const record = asRecord(body);
+	const billingStatus = asRecord(asRecord(record?.meta)?.usage)?.billing_status;
 	const code = record?.code;
 	const title = record?.title;
 	const detail = record?.detail;
@@ -98,6 +100,8 @@ export function readProblem(body: unknown): {
 			typeof detail === 'string' && detail.length > 0 ? detail : undefined,
 		action: typeof action === 'string' ? action : undefined,
 		fieldErrors,
+		billingStatus:
+			typeof billingStatus === 'string' ? billingStatus : undefined,
 	};
 }
 
@@ -109,6 +113,12 @@ export class GenderApiIoAPIError extends Error {
 	readonly action?: string;
 	/** Per-field validation failures, when the request did not match the schema. */
 	readonly fieldErrors?: Array<{ pointer?: string; message?: string }>;
+	/**
+	 * `meta.usage.billing_status` from the problem document: `not_charged`,
+	 * `confirmed` or `unconfirmed`. The catalog says to check it before sending
+	 * a failed prediction again.
+	 */
+	readonly billingStatus?: string;
 	/** Milliseconds from `Retry-After`, when the API sent one. */
 	readonly retryAfter?: number;
 	/** The request ID, which support asks for on a billing problem. */
@@ -125,6 +135,7 @@ export class GenderApiIoAPIError extends Error {
 			code?: string;
 			action?: string;
 			fieldErrors?: Array<{ pointer?: string; message?: string }>;
+			billingStatus?: string;
 			retryAfter?: number;
 			requestId?: string;
 			method?: string;
@@ -138,6 +149,7 @@ export class GenderApiIoAPIError extends Error {
 		this.code = options.code;
 		this.action = options.action;
 		this.fieldErrors = options.fieldErrors;
+		this.billingStatus = options.billingStatus;
 		this.retryAfter = options.retryAfter;
 		this.requestId = options.requestId;
 		this.method = options.method;
@@ -182,20 +194,17 @@ export class GenderApiIoAPIError extends Error {
 	}
 
 	/**
-	 * A prediction that failed after a charge may have been recorded. The
-	 * catalog says to inspect billing before retrying, because a retry is a new
-	 * billed operation.
+	 * A billed request whose outcome is unknown. Every POST route is billed, and
+	 * the catalog says a failed prediction (any 5xx: 500 `internal_error`, 502,
+	 * 503, 504 `prediction_timeout`) must have its billing checked before it is
+	 * sent again, because a repeat is a new billed operation. A timeout or a
+	 * dropped connection on a POST is the same case: the first attempt may have
+	 * been charged. The free GET routes can still be retried.
 	 */
 	get needsBillingCheck(): boolean {
+		if (this.code === 'billing_reconciliation_required') return true;
 		return (
-			this.status === 502 ||
-			(this.status === 503 &&
-				(this.code === 'billing_reconciliation_required' ||
-					this.code === 'prediction_unavailable' ||
-					this.code === 'billing_unavailable' ||
-					this.code === 'dependency_timeout' ||
-					this.code === 'dataset_timeout' ||
-					this.code === 'billing_timeout'))
+			this.method === 'POST' && (this.transport || (this.status ?? 0) >= 500)
 		);
 	}
 }
@@ -282,6 +291,7 @@ export async function makeGenderApiIoRequest(
 					code: problem.code,
 					action: problem.action,
 					fieldErrors: problem.fieldErrors,
+					billingStatus: problem.billingStatus,
 					retryAfter: error.retryAfter,
 					requestId,
 					method,
