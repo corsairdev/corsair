@@ -8,7 +8,7 @@ Use **Endorsal** through Corsair: one client, typed API calls.
 
 Generate a property-specific key at https://app.endorsal.io/account/api. Endorsal accepts `Authorization: Bearer <key>` for protected write operations; GET operations are documented as key-optional. The plugin uses the API host `https://api.endorsal.io` and never puts credentials in query parameters.
 
-The published OpenAPI document currently defines 25 REST operations. List routes return the complete collection and expose no page or cursor parameters. Search conditions are AND-combined; `in` requires an array. Testimonial status fields (`approved`, `featured`) are numeric. `widgets.get` and `wallOfLove.get` support `render: true`, which returns rendered HTML rather than the normal JSON resource.
+The published OpenAPI document currently defines 25 REST operations. List routes return the complete collection and expose no page or cursor parameters. Search conditions are AND-combined; `in` requires an array. Testimonial status fields (`approved`, `featured`) are numeric. `widgets.byId.get` and `wallOfLove.get` support `render: true`, which returns rendered HTML rather than the normal JSON resource.
 
 The `POST /superlinks` route is not present in the current published OpenAPI document, so it is intentionally excluded. Webhooks are outside this integration's scope.
 

@@ -34,8 +34,8 @@ await corsair.endorsal.api.autorequests.campaigns.byId.get({ id: 'campaign_123' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean \| string` | No | — |
-| `data` | `JsonValue` | No | — |
+| `success` | `boolean` | Yes | — |
+| `data` | `Record<string, JsonValue>` | Yes | — |
 
 
 
@@ -60,8 +60,8 @@ await corsair.endorsal.api.autorequests.campaigns.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean \| string` | No | — |
-| `data` | `JsonValue` | No | — |
+| `success` | `boolean` | Yes | — |
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
 
 
 
@@ -1235,8 +1235,54 @@ With `render: true`, Endorsal returns rendered HTML; otherwise it returns the Wa
 
 ```ts
 {
-  success?: boolean | string,
-  data?: JsonValue
+  success: boolean,
+  data: {
+    _id?: string,
+    widgetName?: string | null,
+    widgetTheme?: string | null,
+    formID?: string | null,
+    propertyID?: string | JsonValue | null,
+    widgetLayout?: string | null,
+    carouselSettings?: Record<string, JsonValue> | null,
+    gridSettings?: Record<string, JsonValue> | null,
+    source?: string | null,
+    hideTestimonials?: boolean | null,
+    hiddenTestimonials?: string[] | Record<string, JsonValue> | null,
+    onlyShowFeatured?: boolean | null,
+    showSource?: boolean | null,
+    showBranding?: boolean | null,
+    randomize?: boolean | null,
+    showRecency?: boolean | null,
+    widgetTag?: string | null,
+    edited?: number | string | null,
+    testimonials?: {
+      _id?: string,
+      name?: string | null,
+      propertyID?: string | null,
+      comments?: string | null,
+      rating?: number | null,
+      avatar?: {
+        url?: string | null,
+        sizes?: {
+          small?: string | null,
+          medium?: string | null,
+          large?: string | null,
+          original?: string | null
+        } | null
+      } | null,
+      email?: string | null,
+      location?: string | null,
+      position?: string | null,
+      company?: string | null,
+      formID?: string | null,
+      added?: number | string | null,
+      approved?: number | null,
+      featured?: number | null,
+      tags?: string[] | null
+    }[],
+    settings?: Record<string, JsonValue> | null,
+    truncate?: Record<string, JsonValue> | null
+  }
 } | string
 ```
 </Accordion>

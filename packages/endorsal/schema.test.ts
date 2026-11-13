@@ -82,6 +82,70 @@ describe('Endorsal request schemas', () => {
 		expect(TestimonialSchema.safeParse({ rating: 0 }).success).toBe(false);
 	});
 
+	it('accepts existing tag objects with provider fields in addition to _id', () => {
+		expect(
+			EndorsalEndpointInputSchemas.testimonialsAddTags.safeParse({
+				id: 'testimonial_123',
+				tags: [{ _id: 'tag_123', name: 'Product', type: 'product' }],
+			}).success,
+		).toBe(true);
+		expect(
+			EndorsalEndpointInputSchemas.testimonialsAddTags.safeParse({
+				id: 'testimonial_123',
+				tags: [{ _id: '', name: 'Product', type: 'product' }],
+			}).success,
+		).toBe(false);
+	});
+
+	it('validates campaign and Wall of Love response object shapes with extensions', () => {
+		expect(
+			EndorsalEndpointOutputSchemas.campaignsList.safeParse({
+				success: true,
+				data: [{ _id: 'campaign_123', name: 'Welcome', providerField: true }],
+				providerMetadata: 'retained',
+			}).success,
+		).toBe(true);
+		expect(
+			EndorsalEndpointOutputSchemas.campaignsList.safeParse({
+				success: true,
+				data: 42,
+			}).success,
+		).toBe(false);
+		expect(
+			EndorsalEndpointOutputSchemas.campaignsGet.safeParse({
+				success: true,
+				data: { _id: 'campaign_123', name: 'Welcome', providerField: true },
+			}).success,
+		).toBe(true);
+		expect(
+			EndorsalEndpointOutputSchemas.campaignsGet.safeParse({
+				success: true,
+				data: [{ _id: 'campaign_123' }],
+			}).success,
+		).toBe(false);
+		expect(
+			EndorsalEndpointOutputSchemas.wallOfLoveGet.safeParse({
+				success: true,
+				data: {
+					widgetType: 'wallOfLove',
+					settings: { columns: 3 },
+					providerField: 'retained',
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			EndorsalEndpointOutputSchemas.wallOfLoveGet.safeParse({
+				success: true,
+				data: 42,
+			}).success,
+		).toBe(false);
+		expect(
+			EndorsalEndpointOutputSchemas.wallOfLoveGet.safeParse(
+				'<section>Reviews</section>',
+			).success,
+		).toBe(true);
+	});
+
 	it('enforces comparison operators and the array-only in operator', () => {
 		expect(
 			MatchSchema.safeParse({ field: 'rating', operator: '=', value: 5 })

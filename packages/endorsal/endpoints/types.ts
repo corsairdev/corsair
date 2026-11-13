@@ -93,7 +93,7 @@ export const NewTagSchema = z
 
 const TagAssociationSchema = z.union([
 	NewTagSchema,
-	z.object({ _id: z.string().min(1) }).strict(),
+	z.object({ _id: z.string().min(1) }).passthrough(),
 ]);
 
 export const ContactSchema = z
@@ -244,10 +244,24 @@ const WidgetListResponseSchema = z
 const WidgetResponseSchema = z
 	.object({ success: z.boolean(), data: WidgetSchema })
 	.passthrough();
-const FlexibleResponseSchema = z
-	.object({ success: SuccessValue.optional(), data: z.json().optional() })
+
+// Campaign entries are documented as extensible JSON objects without a fixed
+// property list, so validate the object shape while preserving provider fields.
+const CampaignSchema = z.record(z.string(), z.json());
+const CampaignListResponseSchema = z
+	.object({ success: z.boolean(), data: z.array(CampaignSchema) })
 	.passthrough();
-const WallOfLoveResponseSchema = z.union([FlexibleResponseSchema, z.string()]);
+const CampaignResponseSchema = z
+	.object({ success: z.boolean(), data: CampaignSchema })
+	.passthrough();
+const WallOfLoveSchema = WidgetSchema.extend({
+	settings: z.record(z.string(), z.json()).nullable().optional(),
+	truncate: z.record(z.string(), z.json()).nullable().optional(),
+}).passthrough();
+const WallOfLoveResponseSchema = z.union([
+	z.object({ success: z.boolean(), data: WallOfLoveSchema }).passthrough(),
+	z.string(),
+]);
 
 export const EndorsalEndpointInputSchemas = {
 	testimonialsList: EmptyInput,
@@ -301,8 +315,8 @@ export const EndorsalEndpointOutputSchemas = {
 	widgetsList: WidgetListResponseSchema,
 	widgetsGet: z.union([WidgetResponseSchema, z.string()]),
 	wallOfLoveGet: WallOfLoveResponseSchema,
-	campaignsList: FlexibleResponseSchema,
-	campaignsGet: FlexibleResponseSchema,
+	campaignsList: CampaignListResponseSchema,
+	campaignsGet: CampaignResponseSchema,
 } as const;
 
 export type EndorsalEndpointInputs = {
