@@ -776,14 +776,11 @@ describe('metrics.competitors', () => {
 		});
 	});
 
-	it('rejects a malformed date range', async () => {
-		await expect(
-			invoke(Ranking.competitors, {
-				projectName: 'Disney',
-				keywordId: '1',
-				dateRange: '2026-11-01',
-			}),
-		).rejects.toThrow();
+	it.each([
+		[{ projectName: 'Disney', keywordId: '1', dateRange: '2026-11-01' }],
+		[{ projectName: 'Disney', keywordId: '1' }],
+	])('rejects %j before calling Keyword', async (input) => {
+		await expect(invoke(Ranking.competitors, input)).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
@@ -812,6 +809,14 @@ describe('rankChart.get', () => {
 
 		const points = result.data[0]?.data?.[0]?.[0]?.data ?? [];
 		expect(points.at(-1)).toEqual(['2026-04-12', null]);
+	});
+
+	it('asks for more than 180 days, which Keyword allows', async () => {
+		respond(rankChart);
+
+		await invoke(Ranking.rankChart, { keywordIds: ['1'], limit: 365 });
+
+		expect(lastRequest().query).toEqual({ action: 'bulkChart', limit: '365' });
 	});
 
 	it.each([[{}], [{ keywordIds: [] }], [{ keywordIds: ['1'], limit: 0 }]])(
@@ -857,6 +862,18 @@ describe('rankingUrls.list', () => {
 					average_current_rank: 81,
 				},
 			],
+		});
+		expect(lastRequest().query).toEqual({});
+	});
+
+	it('asks for a later page', async () => {
+		respond(rankingUrls);
+
+		await invoke(Ranking.rankingUrls, { projectName: 'Disney', page: 2 });
+
+		expect(lastRequest()).toMatchObject({
+			path: '/api/v2/groups/Disney/keywords/ranking-urls',
+			query: { page: '2' },
 		});
 	});
 });

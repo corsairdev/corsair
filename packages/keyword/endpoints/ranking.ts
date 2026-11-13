@@ -96,9 +96,10 @@ export const rankingUrls: KeywordEndpoints['rankingUrls'] = (ctx, input) =>
 			output: Outputs.rankingUrls,
 		},
 		input,
-		({ projectName }) => ({
+		({ projectName, page }) => ({
 			method: 'GET',
 			path: `/groups/${projectSegment(projectName)}/keywords/ranking-urls`,
+			query: definedQuery({ page }),
 		}),
 		{
 			log: ({ projectName }, result) => ({

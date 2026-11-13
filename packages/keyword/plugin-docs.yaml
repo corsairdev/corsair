@@ -74,7 +74,7 @@ apiExamples:
   regions.list:
     call: "{ projectName: 'Disney' }"
   rankingUrls.list:
-    call: "{ projectName: 'Disney' }"
+    call: "{ projectName: 'Disney', page: 1 }"
   mindshare.latest:
     call: "{ projectName: 'Disney' }"
   mindshare.history:

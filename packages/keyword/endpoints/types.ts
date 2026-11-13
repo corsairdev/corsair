@@ -547,15 +547,16 @@ export type MetricsResponse = z.infer<typeof MetricsResponseSchema>;
 // The chart route names the range `limit` and takes the keyword IDs as `kwid`.
 const RankChartInputSchema = z.object({
 	keywordIds: KeywordIdsSchema.describe(
-		'Keen refuses a call covering more than 400,000 keyword-days.',
+		'Keyword refuses a call covering more than 400,000 keyword-days.',
 	),
 	limit: z
 		.number()
 		.int()
 		.min(1)
-		.max(180)
 		.optional()
-		.describe('Days of history. Defaults to 180.'),
+		.describe(
+			'Days of history before today. Each keyword counts `limit + 1` days toward the 400,000 keyword-day cap.',
+		),
 });
 
 export type RankChartInput = z.input<typeof RankChartInputSchema>;
@@ -594,8 +595,9 @@ const CompetitorsInputSchema = z.object({
 			/^\d{4}-\d{2}-\d{2}\.\d{4}-\d{2}-\d{2}$/,
 			'Use `YYYY-MM-DD.YYYY-MM-DD`.',
 		)
-		.optional()
-		.describe('The window, such as `2026-11-01.2026-11-12`.'),
+		.describe(
+			'The window, such as `2026-11-01.2026-11-12`. Keyword requires it.',
+		),
 });
 
 export type CompetitorsInput = z.input<typeof CompetitorsInputSchema>;
@@ -647,7 +649,11 @@ const RegionsResponseSchema = z
 
 export type RegionsResponse = z.infer<typeof RegionsResponseSchema>;
 
-const RankingUrlsInputSchema = z.object({ projectName: ProjectNameSchema });
+// Top pages come 10 to a page, with `meta.last_page` saying how many there are.
+const RankingUrlsInputSchema = z.object({
+	projectName: ProjectNameSchema,
+	page: PaginationSchema.shape.page.describe('1-based page. Defaults to 1.'),
+});
 
 export type RankingUrlsInput = z.input<typeof RankingUrlsInputSchema>;
 

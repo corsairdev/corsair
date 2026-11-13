@@ -332,7 +332,7 @@ const keywordEndpointMeta = {
 	'rankChart.get': {
 		riskLevel: 'read',
 		description:
-			'Daily rank history for a set of keywords over up to 180 days; Keyword refuses a call covering more than 400,000 keyword-days',
+			'Daily rank history for a set of keywords over a number of days; Keyword refuses a call covering more than 400,000 keyword-days',
 	},
 	'regions.list': {
 		riskLevel: 'read',
@@ -342,7 +342,7 @@ const keywordEndpointMeta = {
 	'rankingUrls.list': {
 		riskLevel: 'read',
 		description:
-			'The pages that rank best for a project, with their average position and total search volume',
+			'The pages that rank best for a project, with their average position and total search volume, 10 to a page',
 	},
 	'mindshare.latest': {
 		riskLevel: 'read',

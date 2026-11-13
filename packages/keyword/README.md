@@ -32,8 +32,8 @@ pnpm add @corsair-dev/keyword
 | `projects.get` | `keyword.api.projects.get` | `read` | One project or subproject with its tags and counts |
 | `projects.list` | `keyword.api.projects.list` | `read` | Every project and subproject with its tags and keyword counts; a subproject is named `Parent[sub]Child` |
 | `projects.restore` | `keyword.api.projects.restore` | `write` | Undo an archive, bringing the project and its keywords back |
-| `rankChart.get` | `keyword.api.rankChart.get` | `read` | Daily rank history for a set of keywords over up to 180 days; Keyword refuses a call covering more than 400,000 keyword-days |
-| `rankingUrls.list` | `keyword.api.rankingUrls.list` | `read` | The pages that rank best for a project, with their average position and total search volume |
+| `rankChart.get` | `keyword.api.rankChart.get` | `read` | Daily rank history for a set of keywords over a number of days; Keyword refuses a call covering more than 400,000 keyword-days |
+| `rankingUrls.list` | `keyword.api.rankingUrls.list` | `read` | The pages that rank best for a project, with their average position and total search volume, 10 to a page |
 | `regions.list` | `keyword.api.regions.list` | `read` | The Google regions a project tracks, with each one’s language and keyword count |
 | `sharing.get` | `keyword.api.sharing.get` | `read` | A project’s shared-report settings: whether the share link is on, its hash, whether it needs a password, and what the report shows |
 | `sharing.update` | `keyword.api.sharing.update` | `write` | Turn a project’s share link on or off, set or clear its password, or toggle what the shared report shows. Everything except the on/off switch needs Keyword’s white-label permission |
