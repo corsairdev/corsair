@@ -1,0 +1,2023 @@
+---
+title: "Shopify API reference"
+sidebarTitle: "API"
+description: "API reference for the Shopify plugin in Corsair: every `shopify.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Collections
+
+### addProducts
+
+`collections.addProducts`
+
+Add products to a collection; the whole call fails if any is already present
+
+**Risk:** `write`
+
+```ts
+await corsair.shopify.api.collections.addProducts({ id: 'gid://shopify/Collection/1', productIds: ['gid://shopify/Product/108828309'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Collection GID. |
+| `productIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  handle: string,
+  descriptionHtml?: string | null,
+  updatedAt: string,
+  sortOrder?: string | null,
+  productsCount?: {
+    count: number
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`collections.create`
+
+Create a manual or smart collection with a title and handle
+
+**Risk:** `write`
+
+```ts
+await corsair.shopify.api.collections.create({ title: 'Outdoor gear' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `descriptionHtml` | `string` | No | — |
+| `handle` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  handle: string,
+  descriptionHtml?: string | null,
+  updatedAt: string,
+  sortOrder?: string | null,
+  productsCount?: {
+    count: number
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`collections.get`
+
+Read one collection by GID
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.collections.get({ id: 'gid://shopify/Collection/1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="collection full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  handle: string,
+  descriptionHtml?: string | null,
+  updatedAt: string,
+  sortOrder?: string | null,
+  productsCount?: {
+    count: number
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`collections.list`
+
+List collections with their product counts, cursor-paged
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.collections.list({ first: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | Page size. Defaults to 50; the maximum is 250. |
+| `after` | `string` | No | Cursor from a previous page. |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collections` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="collections full type">
+
+```ts
+{
+  edges: {
+    node: {
+      id: string,
+      title: string,
+      handle: string,
+      descriptionHtml?: string | null,
+      updatedAt: string,
+      sortOrder?: string | null,
+      productsCount?: {
+        count: number
+      } | null
+    },
+    cursor?: string | null
+  }[],
+  pageInfo: {
+    hasNextPage: boolean,
+    hasPreviousPage?: boolean | null,
+    endCursor?: string | null,
+    startCursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Customers
+
+### create
+
+`customers.create`
+
+Create a customer with an email, name and tags
+
+**Risk:** `write`
+
+```ts
+await corsair.shopify.api.customers.create({ email: 'buyer@example.com', firstName: 'Jenny' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `note` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `taxExempt` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id: string,
+  displayName: string,
+  firstName?: string | null,
+  lastName?: string | null,
+  state: string,
+  note?: string | null,
+  tags: string[],
+  createdAt: string,
+  updatedAt: string,
+  numberOfOrders: string,
+  taxExempt?: boolean | null,
+  verifiedEmail?: boolean | null,
+  defaultEmailAddress?: {
+    emailAddress: string,
+    marketingState?: string | null
+  } | null,
+  defaultPhoneNumber?: {
+    phoneNumber: string
+  } | null,
+  amountSpent?: {
+    amount: string,
+    currencyCode: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Read one customer by GID, including addresses and spend
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.customers.get({ id: 'gid://shopify/Customer/1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id: string,
+  displayName: string,
+  firstName?: string | null,
+  lastName?: string | null,
+  state: string,
+  note?: string | null,
+  tags: string[],
+  createdAt: string,
+  updatedAt: string,
+  numberOfOrders: string,
+  taxExempt?: boolean | null,
+  verifiedEmail?: boolean | null,
+  defaultEmailAddress?: {
+    emailAddress: string,
+    marketingState?: string | null
+  } | null,
+  defaultPhoneNumber?: {
+    phoneNumber: string
+  } | null,
+  amountSpent?: {
+    amount: string,
+    currencyCode: string
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers with order counts and spend, cursor-paged and filtered
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.customers.list({ first: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | Page size. Defaults to 50; the maximum is 250. |
+| `after` | `string` | No | Cursor from a previous page. |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customers` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customers full type">
+
+```ts
+{
+  edges: {
+    node: {
+      id: string,
+      displayName: string,
+      firstName?: string | null,
+      lastName?: string | null,
+      state: string,
+      note?: string | null,
+      tags: string[],
+      createdAt: string,
+      updatedAt: string,
+      numberOfOrders: string,
+      taxExempt?: boolean | null,
+      verifiedEmail?: boolean | null,
+      defaultEmailAddress?: {
+        emailAddress: string,
+        marketingState?: string | null
+      } | null,
+      defaultPhoneNumber?: {
+        phoneNumber: string
+      } | null,
+      amountSpent?: {
+        amount: string,
+        currencyCode: string
+      } | null
+    },
+    cursor?: string | null
+  }[],
+  pageInfo: {
+    hasNextPage: boolean,
+    hasPreviousPage?: boolean | null,
+    endCursor?: string | null,
+    startCursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Update a customer, overwriting tags when tags are passed
+
+**Risk:** `write`
+
+```ts
+await corsair.shopify.api.customers.update({ id: 'gid://shopify/Customer/1', note: 'VIP' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `note` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `taxExempt` | `boolean` | No | — |
+| `id` | `string` | Yes | — |
+
+Passing tags replaces the full tag set. Use the Shopify admin or a tagsAdd mutation to append one without dropping the rest.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id: string,
+  displayName: string,
+  firstName?: string | null,
+  lastName?: string | null,
+  state: string,
+  note?: string | null,
+  tags: string[],
+  createdAt: string,
+  updatedAt: string,
+  numberOfOrders: string,
+  taxExempt?: boolean | null,
+  verifiedEmail?: boolean | null,
+  defaultEmailAddress?: {
+    emailAddress: string,
+    marketingState?: string | null
+  } | null,
+  defaultPhoneNumber?: {
+    phoneNumber: string
+  } | null,
+  amountSpent?: {
+    amount: string,
+    currencyCode: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Inventory
+
+### adjust
+
+`inventory.adjust`
+
+Adjust available stock by a signed delta at one location, with a reason
+
+**Risk:** `write`
+
+```ts
+await corsair.shopify.api.inventory.adjust({ inventoryItemId: 'gid://shopify/InventoryItem/1', locationId: 'gid://shopify/Location/1', delta: 5, reason: 'correction' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventoryItemId` | `string` | Yes | — |
+| `locationId` | `string` | Yes | — |
+| `delta` | `number` | Yes | Signed change: positive adds stock, negative removes it. |
+| `reason` | `string` | Yes | Inventory change reason, e.g. "correction" or "received". |
+
+Adjusts the available quantity by a signed delta at one location. A positive delta adds stock and a negative one removes it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventoryAdjustmentGroup` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="inventoryAdjustmentGroup full type">
+
+```ts
+{
+  createdAt?: string | null,
+  reason?: string | null,
+  changes?: {
+    name: string,
+    delta: number
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`inventory.list`
+
+Read the available stock of one inventory item at every active location
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.inventory.list({ inventoryItemId: 'gid://shopify/InventoryItem/1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventoryItemId` | `string` | Yes | InventoryItem GID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inventoryItem` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="inventoryItem full type">
+
+```ts
+{
+  id: string,
+  sku?: string | null,
+  tracked: boolean,
+  inventoryLevels: {
+    edges: {
+      node: {
+        id: string,
+        isActive: boolean,
+        updatedAt?: string | null,
+        item: {
+          id: string,
+          sku?: string | null
+        },
+        location: {
+          id: string,
+          name: string
+        },
+        quantities: {
+          name: string,
+          quantity: number
+        }[]
+      },
+      cursor?: string | null
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      hasPreviousPage?: boolean | null,
+      endCursor?: string | null,
+      startCursor?: string | null
+    }
+  }
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### cancel
+
+`orders.cancel`
+
+Cancel an order, optionally restocking and notifying the customer; does not refund
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.shopify.api.orders.cancel({ id: 'gid://shopify/Order/1', reason: 'CUSTOMER', restock: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `reason` | `CUSTOMER \| DECLINED \| FRAUD \| INVENTORY \| OTHER \| STAFF` | No | — |
+| `restock` | `boolean` | No | Restock the order items. |
+| `notifyCustomer` | `boolean` | No | Email the customer about the cancellation. |
+
+Cancels the order without refunding. Cancelling and refunding are separate decisions, so the deprecated refund flag is not used and no money moves on a cancel.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="order full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  createdAt: string,
+  updatedAt?: string | null,
+  processedAt?: string | null,
+  cancelledAt?: string | null,
+  closedAt?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  note?: string | null,
+  tags: string[],
+  currencyCode: string,
+  displayFinancialStatus?: string | null,
+  displayFulfillmentStatus: string,
+  cancelReason?: string | null,
+  totalPriceSet: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  },
+  totalTaxSet?: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  } | null,
+  subtotalPriceSet?: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  } | null,
+  totalDiscountsSet?: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  } | null,
+  customer?: {
+    id: string,
+    displayName: string,
+    defaultEmailAddress?: {
+      emailAddress: string
+    } | null
+  } | null,
+  lineItems?: {
+    edges: {
+      node: {
+        id?: string | null,
+        title?: string | null,
+        quantity?: number | null,
+        sku?: string | null,
+        variant?: {
+          id: string
+        } | null,
+        originalUnitPriceSet?: {
+          shopMoney: {
+            amount: string,
+            currencyCode: string
+          },
+          presentmentMoney?: {
+            amount: string,
+            currencyCode: string
+          } | null
+        } | null
+      },
+      cursor?: string | null
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      hasPreviousPage?: boolean | null,
+      endCursor?: string | null,
+      startCursor?: string | null
+    }
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### close
+
+`orders.close`
+
+Close a completed or cancelled order so it no longer counts as open
+
+**Risk:** `write`
+
+```ts
+await corsair.shopify.api.orders.close({ id: 'gid://shopify/Order/1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="order full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  createdAt: string,
+  updatedAt?: string | null,
+  processedAt?: string | null,
+  cancelledAt?: string | null,
+  closedAt?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  note?: string | null,
+  tags: string[],
+  currencyCode: string,
+  displayFinancialStatus?: string | null,
+  displayFulfillmentStatus: string,
+  cancelReason?: string | null,
+  totalPriceSet: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  },
+  totalTaxSet?: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  } | null,
+  subtotalPriceSet?: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  } | null,
+  totalDiscountsSet?: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  } | null,
+  customer?: {
+    id: string,
+    displayName: string,
+    defaultEmailAddress?: {
+      emailAddress: string
+    } | null
+  } | null,
+  lineItems?: {
+    edges: {
+      node: {
+        id?: string | null,
+        title?: string | null,
+        quantity?: number | null,
+        sku?: string | null,
+        variant?: {
+          id: string
+        } | null,
+        originalUnitPriceSet?: {
+          shopMoney: {
+            amount: string,
+            currencyCode: string
+          },
+          presentmentMoney?: {
+            amount: string,
+            currencyCode: string
+          } | null
+        } | null
+      },
+      cursor?: string | null
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      hasPreviousPage?: boolean | null,
+      endCursor?: string | null,
+      startCursor?: string | null
+    }
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`orders.get`
+
+Read one order by GID with its customer and line items
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.orders.get({ id: 'gid://shopify/Order/1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="order full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  createdAt: string,
+  updatedAt?: string | null,
+  processedAt?: string | null,
+  cancelledAt?: string | null,
+  closedAt?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  note?: string | null,
+  tags: string[],
+  currencyCode: string,
+  displayFinancialStatus?: string | null,
+  displayFulfillmentStatus: string,
+  cancelReason?: string | null,
+  totalPriceSet: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  },
+  totalTaxSet?: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  } | null,
+  subtotalPriceSet?: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  } | null,
+  totalDiscountsSet?: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  } | null,
+  customer?: {
+    id: string,
+    displayName: string,
+    defaultEmailAddress?: {
+      emailAddress: string
+    } | null
+  } | null,
+  lineItems?: {
+    edges: {
+      node: {
+        id?: string | null,
+        title?: string | null,
+        quantity?: number | null,
+        sku?: string | null,
+        variant?: {
+          id: string
+        } | null,
+        originalUnitPriceSet?: {
+          shopMoney: {
+            amount: string,
+            currencyCode: string
+          },
+          presentmentMoney?: {
+            amount: string,
+            currencyCode: string
+          } | null
+        } | null
+      },
+      cursor?: string | null
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      hasPreviousPage?: boolean | null,
+      endCursor?: string | null,
+      startCursor?: string | null
+    }
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`orders.list`
+
+List orders with totals and line items, filtered and sorted, cursor-paged
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.orders.list({ first: 10, query: 'financial_status:paid' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | Page size. Defaults to 50; the maximum is 250. |
+| `after` | `string` | No | Cursor from a previous page. |
+| `query` | `string` | No | Shopify search syntax, e.g. "financial_status:paid". |
+| `sortKey` | `CREATED_AT \| CURRENT_TOTAL_PRICE \| CUSTOMER_NAME \| DESTINATION \| FINANCIAL_STATUS \| FULFILLMENT_STATUS \| ID \| ORDER_NUMBER \| PO_NUMBER \| PROCESSED_AT \| RELEVANCE \| TOTAL_ITEMS_QUANTITY \| TOTAL_PRICE \| UPDATED_AT` | No | — |
+| `reverse` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orders` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="orders full type">
+
+```ts
+{
+  edges: {
+    node: {
+      id: string,
+      name: string,
+      createdAt: string,
+      updatedAt?: string | null,
+      processedAt?: string | null,
+      cancelledAt?: string | null,
+      closedAt?: string | null,
+      email?: string | null,
+      phone?: string | null,
+      note?: string | null,
+      tags: string[],
+      currencyCode: string,
+      displayFinancialStatus?: string | null,
+      displayFulfillmentStatus: string,
+      cancelReason?: string | null,
+      totalPriceSet: {
+        shopMoney: {
+          amount: string,
+          currencyCode: string
+        },
+        presentmentMoney?: {
+          amount: string,
+          currencyCode: string
+        } | null
+      },
+      totalTaxSet?: {
+        shopMoney: {
+          amount: string,
+          currencyCode: string
+        },
+        presentmentMoney?: {
+          amount: string,
+          currencyCode: string
+        } | null
+      } | null,
+      subtotalPriceSet?: {
+        shopMoney: {
+          amount: string,
+          currencyCode: string
+        },
+        presentmentMoney?: {
+          amount: string,
+          currencyCode: string
+        } | null
+      } | null,
+      totalDiscountsSet?: {
+        shopMoney: {
+          amount: string,
+          currencyCode: string
+        },
+        presentmentMoney?: {
+          amount: string,
+          currencyCode: string
+        } | null
+      } | null,
+      customer?: {
+        id: string,
+        displayName: string,
+        defaultEmailAddress?: {
+          emailAddress: string
+        } | null
+      } | null,
+      lineItems?: {
+        edges: {
+          node: {
+            id?: string | null,
+            title?: string | null,
+            quantity?: number | null,
+            sku?: string | null,
+            variant?: {
+              id: string
+            } | null,
+            originalUnitPriceSet?: {
+              shopMoney: {
+                amount: string,
+                currencyCode: string
+              },
+              presentmentMoney?: {
+                amount: string,
+                currencyCode: string
+              } | null
+            } | null
+          },
+          cursor?: string | null
+        }[],
+        pageInfo: {
+          hasNextPage: boolean,
+          hasPreviousPage?: boolean | null,
+          endCursor?: string | null,
+          startCursor?: string | null
+        }
+      } | null
+    },
+    cursor?: string | null
+  }[],
+  pageInfo: {
+    hasNextPage: boolean,
+    hasPreviousPage?: boolean | null,
+    endCursor?: string | null,
+    startCursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markAsPaid
+
+`orders.markAsPaid`
+
+Mark an order as paid without taking a payment; recorded against a manual gateway
+
+**Risk:** `write`
+
+```ts
+await corsair.shopify.api.orders.markAsPaid({ id: 'gid://shopify/Order/1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="order full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  createdAt: string,
+  updatedAt?: string | null,
+  processedAt?: string | null,
+  cancelledAt?: string | null,
+  closedAt?: string | null,
+  email?: string | null,
+  phone?: string | null,
+  note?: string | null,
+  tags: string[],
+  currencyCode: string,
+  displayFinancialStatus?: string | null,
+  displayFulfillmentStatus: string,
+  cancelReason?: string | null,
+  totalPriceSet: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  },
+  totalTaxSet?: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  } | null,
+  subtotalPriceSet?: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  } | null,
+  totalDiscountsSet?: {
+    shopMoney: {
+      amount: string,
+      currencyCode: string
+    },
+    presentmentMoney?: {
+      amount: string,
+      currencyCode: string
+    } | null
+  } | null,
+  customer?: {
+    id: string,
+    displayName: string,
+    defaultEmailAddress?: {
+      emailAddress: string
+    } | null
+  } | null,
+  lineItems?: {
+    edges: {
+      node: {
+        id?: string | null,
+        title?: string | null,
+        quantity?: number | null,
+        sku?: string | null,
+        variant?: {
+          id: string
+        } | null,
+        originalUnitPriceSet?: {
+          shopMoney: {
+            amount: string,
+            currencyCode: string
+          },
+          presentmentMoney?: {
+            amount: string,
+            currencyCode: string
+          } | null
+        } | null
+      },
+      cursor?: string | null
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      hasPreviousPage?: boolean | null,
+      endCursor?: string | null,
+      startCursor?: string | null
+    }
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Create a product with its title and catalog fields; variants are added separately
+
+**Risk:** `write`
+
+```ts
+await corsair.shopify.api.products.create({ title: 'Hiking backpack', vendor: 'Acme', status: 'DRAFT' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `descriptionHtml` | `string` | No | — |
+| `vendor` | `string` | No | — |
+| `productType` | `string` | No | — |
+| `handle` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `status` | `ACTIVE \| ARCHIVED \| DRAFT \| UNLISTED` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  handle: string,
+  status: string,
+  vendor: string,
+  productType: string,
+  tags: string[],
+  createdAt: string,
+  updatedAt: string,
+  publishedAt?: string | null,
+  descriptionHtml?: string | null,
+  totalInventory?: number | null,
+  onlineStoreUrl?: string | null,
+  variants?: {
+    edges: {
+      node: {
+        id: string,
+        title: string,
+        sku?: string | null,
+        price?: string | null,
+        compareAtPrice?: string | null,
+        inventoryQuantity?: number | null
+      },
+      cursor?: string | null
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      hasPreviousPage?: boolean | null,
+      endCursor?: string | null,
+      startCursor?: string | null
+    }
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+Permanently delete a product with its variants, media and inventory items
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.shopify.api.products.delete({ id: 'gid://shopify/Product/108828309' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `synchronous` | `boolean` | No | Delete synchronously. Defaults to true. |
+
+Deletes synchronously by default. Set synchronous to false for a product with many variants, which returns an operation to poll instead of a deleted id.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deletedProductId` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`products.get`
+
+Read one product by GID, including its first variants and inventory totals
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.products.get({ id: 'gid://shopify/Product/108828309' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Product GID, e.g. gid://shopify/Product/1. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  handle: string,
+  status: string,
+  vendor: string,
+  productType: string,
+  tags: string[],
+  createdAt: string,
+  updatedAt: string,
+  publishedAt?: string | null,
+  descriptionHtml?: string | null,
+  totalInventory?: number | null,
+  onlineStoreUrl?: string | null,
+  variants?: {
+    edges: {
+      node: {
+        id: string,
+        title: string,
+        sku?: string | null,
+        price?: string | null,
+        compareAtPrice?: string | null,
+        inventoryQuantity?: number | null
+      },
+      cursor?: string | null
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      hasPreviousPage?: boolean | null,
+      endCursor?: string | null,
+      startCursor?: string | null
+    }
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+List products with their first variants, cursor-paged and filtered with Shopify search syntax
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.products.list({ first: 10, query: 'status:active' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | Page size. Defaults to 50; the maximum is 250. |
+| `after` | `string` | No | Cursor from a previous page. |
+| `query` | `string` | No | Shopify search syntax, e.g. "status:active" or "title:boots". |
+| `sortKey` | `CREATED_AT \| ID \| INVENTORY_TOTAL \| PRODUCT_TYPE \| PUBLISHED_AT \| RELEVANCE \| TITLE \| UPDATED_AT \| VENDOR` | No | — |
+| `reverse` | `boolean` | No | Reverse the sort order. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  edges: {
+    node: {
+      id: string,
+      title: string,
+      handle: string,
+      status: string,
+      vendor: string,
+      productType: string,
+      tags: string[],
+      createdAt: string,
+      updatedAt: string,
+      publishedAt?: string | null,
+      descriptionHtml?: string | null,
+      totalInventory?: number | null,
+      onlineStoreUrl?: string | null,
+      variants?: {
+        edges: {
+          node: {
+            id: string,
+            title: string,
+            sku?: string | null,
+            price?: string | null,
+            compareAtPrice?: string | null,
+            inventoryQuantity?: number | null
+          },
+          cursor?: string | null
+        }[],
+        pageInfo: {
+          hasNextPage: boolean,
+          hasPreviousPage?: boolean | null,
+          endCursor?: string | null,
+          startCursor?: string | null
+        }
+      } | null
+    },
+    cursor?: string | null
+  }[],
+  pageInfo: {
+    hasNextPage: boolean,
+    hasPreviousPage?: boolean | null,
+    endCursor?: string | null,
+    startCursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Update a product, changing only the fields that are passed
+
+**Risk:** `write`
+
+```ts
+await corsair.shopify.api.products.update({ id: 'gid://shopify/Product/108828309', title: 'Trail backpack' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | — |
+| `descriptionHtml` | `string` | No | — |
+| `vendor` | `string` | No | — |
+| `productType` | `string` | No | — |
+| `handle` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `status` | `ACTIVE \| ARCHIVED \| DRAFT \| UNLISTED` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="product full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  handle: string,
+  status: string,
+  vendor: string,
+  productType: string,
+  tags: string[],
+  createdAt: string,
+  updatedAt: string,
+  publishedAt?: string | null,
+  descriptionHtml?: string | null,
+  totalInventory?: number | null,
+  onlineStoreUrl?: string | null,
+  variants?: {
+    edges: {
+      node: {
+        id: string,
+        title: string,
+        sku?: string | null,
+        price?: string | null,
+        compareAtPrice?: string | null,
+        inventoryQuantity?: number | null
+      },
+      cursor?: string | null
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      hasPreviousPage?: boolean | null,
+      endCursor?: string | null,
+      startCursor?: string | null
+    }
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Shop
+
+### get
+
+`shop.get`
+
+Read the shop name, domain, currency and plan for the configured token
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.shop.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shop` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="shop full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  myshopifyDomain: string,
+  currencyCode: string,
+  ianaTimezone?: string | null,
+  email?: string | null,
+  description?: string | null,
+  plan?: {
+    displayName?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLocations
+
+`shop.listLocations`
+
+List the inventory locations of the shop, for use with inventory.adjust
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.shop.listLocations({ first: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | — |
+
+Returns the inventory locations. Pass a location id to inventory.adjust to change stock at that location.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  edges: {
+    node: {
+      id: string,
+      name: string,
+      isActive: boolean,
+      address1?: string | null,
+      city?: string | null,
+      province?: string | null,
+      countryCode?: string | null
+    },
+    cursor?: string | null
+  }[],
+  pageInfo: {
+    hasNextPage: boolean,
+    hasPreviousPage?: boolean | null,
+    endCursor?: string | null,
+    startCursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Variants
+
+### list
+
+`variants.list`
+
+List the variants of one product, cursor-paged, with price and stock
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.variants.list({ productId: 'gid://shopify/Product/108828309' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | Page size. Defaults to 50; the maximum is 250. |
+| `after` | `string` | No | Cursor from a previous page. |
+| `query` | `string` | No | Shopify search syntax. |
+| `productId` | `string` | Yes | Product GID to list variants for. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productVariants` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="productVariants full type">
+
+```ts
+{
+  edges: {
+    node: {
+      id: string,
+      title: string,
+      sku?: string | null,
+      price?: string | null,
+      compareAtPrice?: string | null,
+      inventoryQuantity?: number | null,
+      inventoryItem?: {
+        id: string
+      } | null
+    },
+    cursor?: string | null
+  }[],
+  pageInfo: {
+    hasNextPage: boolean,
+    hasPreviousPage?: boolean | null,
+    endCursor?: string | null,
+    startCursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`variants.update`
+
+Update price, SKU, barcode or inventory policy on one variant
+
+**Risk:** `write`
+
+```ts
+await corsair.shopify.api.variants.update({ productId: 'gid://shopify/Product/108828309', id: 'gid://shopify/ProductVariant/1', price: '19.99' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productId` | `string` | Yes | — |
+| `id` | `string` | Yes | Product variant GID. |
+| `price` | `string` | No | Decimal string, e.g. "19.99". |
+| `compareAtPrice` | `string` | No | — |
+| `sku` | `string` | No | — |
+| `barcode` | `string` | No | — |
+| `inventoryPolicy` | `DENY \| CONTINUE` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `productVariants` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="productVariants full type">
+
+```ts
+{
+  id: string,
+  price?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook Subscriptions
+
+### create
+
+`webhookSubscriptions.create`
+
+Register a JSON webhook subscription for one topic and URI
+
+**Risk:** `write`
+
+```ts
+await corsair.shopify.api.webhookSubscriptions.create({ topic: 'ORDERS_CREATE', uri: 'https://example.com/webhooks/shopify' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | Yes | Topic, e.g. ORDERS_CREATE. |
+| `uri` | `string` | Yes | HTTPS endpoint Shopify delivers to. |
+
+Registers a JSON subscription. Shopify also delivers XML, which this plugin cannot verify or parse, so the format is not configurable.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookSubscription` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhookSubscription full type">
+
+```ts
+{
+  id: string,
+  topic: string,
+  uri: string,
+  format: string,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhookSubscriptions.delete`
+
+Delete a webhook subscription, stopping further deliveries for that topic
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.shopify.api.webhookSubscriptions.delete({ id: 'gid://shopify/WebhookSubscription/1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | WebhookSubscription GID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deletedWebhookSubscriptionId` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`webhookSubscriptions.list`
+
+List shop-scoped webhook subscriptions, optionally filtered by topic
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.webhookSubscriptions.list({ first: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | Page size. Defaults to 50; the maximum is 250. |
+| `after` | `string` | No | Cursor from a previous page. |
+| `topic` | `string` | No | Filter by topic, e.g. ORDERS_CREATE. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookSubscriptions` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhookSubscriptions full type">
+
+```ts
+{
+  edges: {
+    node: {
+      id: string,
+      topic: string,
+      uri: string,
+      format: string,
+      createdAt?: string | null,
+      updatedAt?: string | null
+    },
+    cursor?: string | null
+  }[],
+  pageInfo: {
+    hasNextPage: boolean,
+    hasPreviousPage?: boolean | null,
+    endCursor?: string | null,
+    startCursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
