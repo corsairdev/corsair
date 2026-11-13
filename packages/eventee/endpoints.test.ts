@@ -491,9 +491,9 @@ describe('Eventee REST operation routing', () => {
 	it('marks operations that delete provider data as destructive', () => {
 		const meta = eventee({}).endpointMeta;
 		// Sections left out of the list are deleted, along with their images and files.
-		expect(meta['partnerSections.patch'].riskLevel).toBe('destructive');
-		expect(meta['contentReset.delete'].riskLevel).toBe('destructive');
-		expect(meta['partner.patch'].riskLevel).toBe('write');
-		expect(meta['attendeeInvite.put'].riskLevel).toBe('write');
+		expect(meta?.['partnerSections.patch']?.riskLevel).toBe('destructive');
+		expect(meta?.['contentReset.delete']?.riskLevel).toBe('destructive');
+		expect(meta?.['partner.patch']?.riskLevel).toBe('write');
+		expect(meta?.['attendeeInvite.put']?.riskLevel).toBe('write');
 	});
 });
