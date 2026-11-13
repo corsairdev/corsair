@@ -13,7 +13,14 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Batch, Metadata, Records } from './endpoints';
+import {
+	Batch,
+	CustomFields,
+	CustomObjects,
+	Files,
+	Metadata,
+	Records,
+} from './endpoints';
 import type {
 	FireberryEndpointInputs,
 	FireberryEndpointOutputs,
@@ -57,11 +64,21 @@ export type FireberryEndpoints = {
 	update: FireberryEndpoint<'update'>;
 	delete: FireberryEndpoint<'delete'>;
 	query: FireberryEndpoint<'query'>;
+	legacyQuery: FireberryEndpoint<'legacyQuery'>;
+	related: FireberryEndpoint<'related'>;
+	items: FireberryEndpoint<'items'>;
 	objects: FireberryEndpoint<'objects'>;
 	object: FireberryEndpoint<'object'>;
 	fields: FireberryEndpoint<'fields'>;
 	field: FireberryEndpoint<'field'>;
 	picklist: FireberryEndpoint<'picklist'>;
+	customFieldCreate: FireberryEndpoint<'customFieldCreate'>;
+	customFieldUpdate: FireberryEndpoint<'customFieldUpdate'>;
+	customFieldDelete: FireberryEndpoint<'customFieldDelete'>;
+	customObjectCreate: FireberryEndpoint<'customObjectCreate'>;
+	customObjectUpdate: FireberryEndpoint<'customObjectUpdate'>;
+	customObjectDelete: FireberryEndpoint<'customObjectDelete'>;
+	fileUpload: FireberryEndpoint<'fileUpload'>;
 	batchCreate: FireberryEndpoint<'batchCreate'>;
 	batchUpdate: FireberryEndpoint<'batchUpdate'>;
 	batchDelete: FireberryEndpoint<'batchDelete'>;
@@ -75,6 +92,9 @@ const fireberryEndpointsNested = {
 		update: Records.update,
 		delete: Records.delete,
 		query: Records.query,
+		legacyQuery: Records.legacyQuery,
+		related: Records.related,
+		items: Records.items,
 	},
 	metadata: {
 		objects: Metadata.objects,
@@ -83,6 +103,17 @@ const fireberryEndpointsNested = {
 		field: Metadata.field,
 		picklist: Metadata.picklist,
 	},
+	customFields: {
+		create: CustomFields.create,
+		update: CustomFields.update,
+		delete: CustomFields.delete,
+	},
+	customObjects: {
+		create: CustomObjects.create,
+		update: CustomObjects.update,
+		delete: CustomObjects.delete,
+	},
+	files: { create: Files.create },
 	batch: {
 		create: Batch.create,
 		update: Batch.update,
@@ -115,6 +146,18 @@ export const fireberryEndpointSchemas = {
 		input: FireberryEndpointInputSchemas.query,
 		output: FireberryEndpointOutputSchemas.query,
 	},
+	'records.legacyQuery': {
+		input: FireberryEndpointInputSchemas.legacyQuery,
+		output: FireberryEndpointOutputSchemas.legacyQuery,
+	},
+	'records.related': {
+		input: FireberryEndpointInputSchemas.related,
+		output: FireberryEndpointOutputSchemas.related,
+	},
+	'records.items': {
+		input: FireberryEndpointInputSchemas.items,
+		output: FireberryEndpointOutputSchemas.items,
+	},
 	'metadata.objects': {
 		input: FireberryEndpointInputSchemas.objects,
 		output: FireberryEndpointOutputSchemas.objects,
@@ -134,6 +177,34 @@ export const fireberryEndpointSchemas = {
 	'metadata.picklist': {
 		input: FireberryEndpointInputSchemas.picklist,
 		output: FireberryEndpointOutputSchemas.picklist,
+	},
+	'customFields.create': {
+		input: FireberryEndpointInputSchemas.customFieldCreate,
+		output: FireberryEndpointOutputSchemas.customFieldCreate,
+	},
+	'customFields.update': {
+		input: FireberryEndpointInputSchemas.customFieldUpdate,
+		output: FireberryEndpointOutputSchemas.customFieldUpdate,
+	},
+	'customFields.delete': {
+		input: FireberryEndpointInputSchemas.customFieldDelete,
+		output: FireberryEndpointOutputSchemas.customFieldDelete,
+	},
+	'customObjects.create': {
+		input: FireberryEndpointInputSchemas.customObjectCreate,
+		output: FireberryEndpointOutputSchemas.customObjectCreate,
+	},
+	'customObjects.update': {
+		input: FireberryEndpointInputSchemas.customObjectUpdate,
+		output: FireberryEndpointOutputSchemas.customObjectUpdate,
+	},
+	'customObjects.delete': {
+		input: FireberryEndpointInputSchemas.customObjectDelete,
+		output: FireberryEndpointOutputSchemas.customObjectDelete,
+	},
+	'files.create': {
+		input: FireberryEndpointInputSchemas.fileUpload,
+		output: FireberryEndpointOutputSchemas.fileUpload,
 	},
 	'batch.create': {
 		input: FireberryEndpointInputSchemas.batchCreate,
@@ -178,6 +249,20 @@ const fireberryEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Filter, sort, group, and paginate Fireberry records',
 	},
+	'records.legacyQuery': {
+		riskLevel: 'read',
+		description:
+			'Search and paginate Fireberry records using the legacy query API',
+	},
+	'records.related': {
+		riskLevel: 'read',
+		description: 'List records related to a Fireberry record',
+	},
+	'records.items': {
+		riskLevel: 'read',
+		description:
+			'Retrieve line items associated with a Fireberry order, invoice, or receipt',
+	},
 	'metadata.objects': {
 		riskLevel: 'read',
 		description: 'List Fireberry object metadata',
@@ -197,6 +282,34 @@ const fireberryEndpointMeta = {
 	'metadata.picklist': {
 		riskLevel: 'read',
 		description: 'List values for a Fireberry picklist field',
+	},
+	'customFields.create': {
+		riskLevel: 'write',
+		description: 'Create a tenant-defined Fireberry field',
+	},
+	'customFields.update': {
+		riskLevel: 'write',
+		description: 'Update a tenant-defined Fireberry field',
+	},
+	'customFields.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a tenant-defined Fireberry field',
+	},
+	'customObjects.create': {
+		riskLevel: 'write',
+		description: 'Create a custom Fireberry object',
+	},
+	'customObjects.update': {
+		riskLevel: 'write',
+		description: 'Update a custom Fireberry object',
+	},
+	'customObjects.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a custom Fireberry object and its record definition',
+	},
+	'files.create': {
+		riskLevel: 'write',
+		description: 'Upload a file attachment to a Fireberry record',
 	},
 	'batch.create': {
 		riskLevel: 'write',

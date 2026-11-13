@@ -1,59 +1,62 @@
 # @corsair-dev/fireberry
 
-Fireberry CRM integration for Corsair. The provider API key is sent as the
-`tokenid` header for REST and Batch calls. Metadata API calls use the
-documented `tokenid` query parameter.
+Fireberry CRM integration for Corsair. Standard REST and Batch calls send the
+API key in the `tokenid` header; Metadata API calls use the documented
+`tokenid` query parameter.
 
-## Current API coverage
+## API coverage
 
-This Draft implementation currently exposes 14 generic operations:
+The official index contains 244 distinct method/path operations: 168 REST, 5
+Metadata, and 71 Batch. This package exposes 24 typed Corsair operations that
+dispatch those routes by resource and action. The one route not exposed is the
+Date & Time custom-field update: its OpenAPI path ends in the literal
+`fieldName` while separately declaring a required `fieldName` path parameter,
+so the published route is internally contradictory.
 
-| Corsair operation | Provider route | Official reference |
-| --- | --- | --- |
-| `records.list` | `GET /api/record/{object}` | [Get all Accounts](https://developers.fireberry.com/reference/get-all-accounts.md) |
-| `records.get` | `GET /api/record/{object}/{id}` | [Get an Account](https://developers.fireberry.com/reference/get-an-account.md) |
-| `records.create` | `POST /api/record/{object}` | [Create an Account](https://developers.fireberry.com/reference/create-an-account.md) |
-| `records.update` | `PUT /api/record/{object}/{id}` | [Update an Account](https://developers.fireberry.com/reference/update-an-account.md) |
-| `records.delete` | `DELETE /api/record/{object}/{id}` | [Delete an Account](https://developers.fireberry.com/reference/delete-an-account.md) |
-| `records.query` | `POST /api/v3/query` | [Query v3](https://developers.fireberry.com/reference/query-request-v3.md) |
-| `metadata.objects` | `GET /metadata/records` | [Get all Objects](https://developers.fireberry.com/reference/get-all-objects.md) |
-| `metadata.object` | `GET /metadata/records/{id}` | [Get an Object](https://developers.fireberry.com/reference/get-an-object.md) |
-| `metadata.fields` | `GET /metadata/records/{id}/fields` | [Get Object Fields](https://developers.fireberry.com/reference/get-an-object-fields.md) |
-| `metadata.field` | `GET /metadata/records/{id}/fields/{fieldname}` | [Get Field Details](https://developers.fireberry.com/reference/get-a-field-details.md) |
-| `metadata.picklist` | `GET /metadata/records/{id}/fields/{fieldname}/values` | [Get Picklist Values](https://developers.fireberry.com/reference/get-a-picklist-field-values.md) |
-| `batch.create` | `POST /api/v3/record/{objectcode}/batch/create` | [Batch Create](https://developers.fireberry.com/reference/batch-create-records.md) |
-| `batch.update` | `POST /api/v3/record/{objectcode}/batch/update` | [Batch Update](https://developers.fireberry.com/reference/batch-update-records.md) |
-| `batch.delete` | `POST /api/v3/record/{objectcode}/batch/delete` | [Batch Delete](https://developers.fireberry.com/reference/batch-delete-account-records.md) |
+| Corsair operation | Documented coverage |
+| --- | --- |
+| `records.list/get/create/update/delete` | Documented system-object CRUD and custom-object record CRUD; route and verb availability are resource-specific. Create/update schemas use each resource's official request fields, with tenant-defined fields supported as JSON extensions. |
+| `records.query` | Query v3 search, filtering, grouping, sorting, and pagination. |
+| `records.legacyQuery` | Legacy query endpoint. |
+| `records.related` | Related records for a record/object pair. |
+| `records.items` | Invoice, credit-invoice, order, receipt, and invoice-receipt item routes. `itemType` chooses the exact documented route. |
+| `metadata.objects/object/fields/field/picklist` | All five Metadata API reads. |
+| `customFields.create/update/delete` | 13 field-create routes, 11 unambiguous field-update routes, and the delete route. Create/update schemas follow field type. |
+| `customObjects.create/update/delete` | Custom object definition operations. |
+| `files.create` | Multipart file attachment upload. Input base64 is sent as the `file` multipart part. |
+| `batch.create/update/delete` | All 71 documented system-object and generic custom-object Batch routes. Resource-specific item schemas are applied for create/update. |
 
-List pagination uses `pageSize` (1–50) and `pageNumber` (1–10); Fireberry's
-query v3 uses `pageSize` up to 500. Batch deletion accepts at most 20 record
-IDs. For batch operations, pass the Fireberry object name/code required by the
-corresponding provider route. Tenant-defined fields are represented as
-extensible field maps.
+REST record list pagination is `pagesize` 1–50 and `pagenumber` 1–10. Query
+v3 permits `pageSize` up to 500; legacy query uses its documented
+`page_size`/`page_number` fields with the same maxima. Batch deletion accepts
+up to 20 IDs. Batch availability depends on the Fireberry license.
+The official reference does not specify general rate limits or retry
+idempotency guidance. The client preserves `Retry-After` on 429 responses but
+does not automatically retry writes.
 
-## Coverage status and exclusions
+Resource names accepted by `records.*` use the Corsair names in the input
+schemas (for example `creditInvoice`, `phoneCall`, `transactionItem`). Custom
+object operations accept a numeric object code as a string. Tenant-specific
+fields are validated against the official system-field schema where known;
+custom fields use Fireberry's JSON field-value model.
 
-This is **partial coverage**, not a claim that the full Fireberry API has been
-implemented. Remaining documented routes include the per-object route
-variants and specialized record-item routes, custom object and custom field
-management operations, related records, file upload, legacy query, and the
-object-specific Batch create/update/delete route catalog. Their parameter and
-response schemas still need per-reference verification and implementation.
-Inbound webhooks are intentionally absent; no verifiable inbound webhook
-contract is described in the API reference index.
+## Scope decisions
 
-REST record list calls use Fireberry's documented `pagesize`/`pagenumber`
-parameters. Metadata is tenant-specific, so discover object and field names
-before using record operations. Runtime errors retain status and `Retry-After`
-but omit CRM request/response payloads from propagated exceptions.
+- The Date & Time custom-field **update** route is unverified and omitted due
+  to the contradictory official OpenAPI path/parameter described above.
+- Inbound webhooks are not exposed: the official developer index documents no
+  inbound webhook contract or signature-verification route.
+- OAuth is not configured; documented API routes use the `tokenid` API key.
 
 ## References
 
-- [Fireberry API documentation](https://developers.fireberry.com/llms.txt)
+- [Official Fireberry API index](https://developers.fireberry.com/llms.txt)
 - [REST API overview](https://developers.fireberry.com/reference/getting-started-with-rest-api.md)
+- [Metadata API](https://developers.fireberry.com/reference/get-all-objects.md)
+- [Batch API](https://developers.fireberry.com/reference/batch-create-records-overview.md)
 - [Query v3 guide](https://developers.fireberry.com/docs/queries-v3.md)
 
 ## Development
 
 `FIREBERRY_API_KEY=<key> pnpm test:live` runs read-only live smoke tests. The
-default package test command excludes this environment-gated file.
+default package test command excludes the environment-gated suite.

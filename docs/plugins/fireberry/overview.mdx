@@ -1,16 +1,16 @@
 ---
 title: "Fireberry plugin"
 sidebarTitle: "Overview"
-description: "Read, create, update, query, and batch-manage Fireberry CRM records with runtime-validated inputs and outputs."
+description: "Operate Fireberry CRM records, metadata, custom fields and objects, attachments, queries, and batch actions through typed Corsair endpoints."
 ---
 
 Use **Fireberry** through Corsair: one client, typed API calls.
 
-Configure an API key in Corsair. Fireberry REST and Batch endpoints send it as the tokenid header; Metadata API calls follow the documented tokenid query parameter. This package currently covers a selected 14-operation slice, not the complete documented Fireberry API. No webhook or OAuth flow is configured.
+Configure an API key in Corsair. Fireberry REST and Batch endpoints send it as the tokenid header; Metadata API calls follow the documented tokenid query parameter. API route inventory: 244 documented method/path operations across REST, Metadata, and Batch; 243 are dispatched by the generic typed Corsair operations. The Date & Time custom field update route is excluded because its published path and parameter contradict one another. No inbound webhook contract is published in the API index, so webhooks are not exposed.
 
 **What you get:**
 
-- 14 typed API operations
+- 24 typed API operations
 
 ## Setup
 

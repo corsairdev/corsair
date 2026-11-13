@@ -31,6 +31,18 @@ describe('Fireberry endpoint schemas', () => {
 				fireberryEndpointSchemas['records.query'].input,
 				{ objectType: 1, fields: [{ name: 'accountname' }] },
 			],
+			[
+				fireberryEndpointSchemas['records.legacyQuery'].input,
+				{ objecttype: 1, fields: 'accountname', page_size: 50, page_number: 1 },
+			],
+			[
+				fireberryEndpointSchemas['records.related'].input,
+				{ objectType: 1, id: 'record-id', relatedObjectType: 2, pageSize: 10 },
+			],
+			[
+				fireberryEndpointSchemas['records.items'].input,
+				{ itemType: 'order', id: 'record-id' },
+			],
 			[fireberryEndpointSchemas['metadata.objects'].input, {}],
 			[fireberryEndpointSchemas['metadata.object'].input, { id: 1 }],
 			[fireberryEndpointSchemas['metadata.fields'].input, { id: 1 }],
@@ -41,6 +53,48 @@ describe('Fireberry endpoint schemas', () => {
 			[
 				fireberryEndpointSchemas['metadata.picklist'].input,
 				{ id: 1, fieldName: 'industrycode' },
+			],
+			[
+				fireberryEndpointSchemas['customFields.create'].input,
+				{
+					objectType: 1,
+					fieldType: 'text',
+					data: { fieldName: 'pcfdisplay', label: 'Display' },
+				},
+			],
+			[
+				fireberryEndpointSchemas['customFields.update'].input,
+				{
+					objectType: 1,
+					fieldType: 'text',
+					fieldName: 'pcfdisplay',
+					data: { label: 'Display name' },
+				},
+			],
+			[
+				fireberryEndpointSchemas['customFields.delete'].input,
+				{ objectType: 1, fieldType: 'text', fieldName: 'pcfdisplay' },
+			],
+			[
+				fireberryEndpointSchemas['customObjects.create'].input,
+				{ name: 'Asset', collectionname: 'Assets' },
+			],
+			[
+				fireberryEndpointSchemas['customObjects.update'].input,
+				{ id: 'object-id', name: 'Asset' },
+			],
+			[
+				fireberryEndpointSchemas['customObjects.delete'].input,
+				{ id: 'object-id' },
+			],
+			[
+				fireberryEndpointSchemas['files.create'].input,
+				{
+					objectId: '1',
+					recordId: 'record-id',
+					fileName: 'readme.txt',
+					fileBase64: 'SGVsbG8=',
+				},
 			],
 			[
 				fireberryEndpointSchemas['batch.create'].input,
@@ -93,6 +147,111 @@ describe('Fireberry endpoint schemas', () => {
 			fireberryEndpointSchemas['batch.delete'].input.safeParse({
 				objectCode: 'account',
 				ids: Array.from({ length: 21 }, (_, index) => `record-${index}`),
+			}).success,
+		).toBe(false);
+	});
+
+	it('enforces Query v3 aggregation and filter operator dependencies', () => {
+		const querySchema = fireberryEndpointSchemas['records.query'].input;
+		expect(
+			querySchema.safeParse({
+				objectType: 1,
+				fields: [{ name: 'revenue', alias: 'sum' }],
+			}).success,
+		).toBe(false);
+		expect(
+			querySchema.safeParse({
+				objectType: 1,
+				fields: [{ name: 'revenue', aggrFunc: 'SUM' }],
+			}).success,
+		).toBe(false);
+		expect(
+			querySchema.safeParse({
+				objectType: 1,
+				fields: [{ name: 'industrycode' }],
+				filter: [
+					{
+						type: 'AND',
+						conditions: [
+							{ fieldName: 'statuscode', operator: 'is-null', value: 1 },
+						],
+					},
+				],
+			}).success,
+		).toBe(false);
+		expect(
+			querySchema.safeParse({
+				objectType: 1,
+				fields: [{ name: 'accountname' }],
+				filter: [
+					{
+						type: 'AND',
+						conditions: [{ fieldName: 'accountname', operator: 'eq' }],
+					},
+				],
+			}).success,
+		).toBe(false);
+		expect(
+			querySchema.safeParse({
+				objectType: 1,
+				fields: [{ name: 'accountname' }, { name: 'total', aggrFunc: 'COUNT' }],
+				groupBy: [{ name: 'accountname' }],
+			}).success,
+		).toBe(true);
+	});
+
+	it('validates system record and batch fields against their resource-specific OpenAPI schemas', () => {
+		expect(
+			fireberryEndpointSchemas['records.create'].input.safeParse({
+				object: 'account',
+				data: { accountname: 42 },
+			}).success,
+		).toBe(false);
+		expect(
+			fireberryEndpointSchemas['records.create'].input.safeParse({
+				object: 'account',
+				data: { accountname: 'Example', pcfcustomfield: { nested: ['ok', 1] } },
+			}).success,
+		).toBe(true);
+		expect(
+			fireberryEndpointSchemas['records.create'].input.safeParse({
+				object: 'account',
+				data: { accountname: 'Example', undocumentedField: 'rejected' },
+			}).success,
+		).toBe(false);
+		expect(
+			fireberryEndpointSchemas['records.update'].input.safeParse({
+				object: 'note',
+				id: 'record-id',
+				data: { notetext: 'Updated' },
+			}).success,
+		).toBe(false);
+		expect(
+			fireberryEndpointSchemas['customFields.update'].input.safeParse({
+				objectType: 1,
+				fieldType: 'datetime',
+				fieldName: 'pcfdatefield',
+				data: { label: 'Date field' },
+			}).success,
+		).toBe(false);
+		expect(
+			fireberryEndpointSchemas['files.create'].input.safeParse({
+				objectId: '1',
+				recordId: 'record-id',
+				fileName: 'bad.txt',
+				fileBase64: 'not-base64',
+			}).success,
+		).toBe(false);
+		expect(
+			fireberryEndpointSchemas['batch.create'].input.safeParse({
+				objectCode: 'account',
+				data: [{ accountname: 'Example' }],
+			}).success,
+		).toBe(true);
+		expect(
+			fireberryEndpointSchemas['batch.create'].input.safeParse({
+				objectCode: 'account',
+				data: [{ accountname: 8 }],
 			}).success,
 		).toBe(false);
 	});

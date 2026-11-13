@@ -1,6 +1,10 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
-import { FIREBERRY_API_BASE, makeFireberryRequest } from './client';
+import {
+	FIREBERRY_API_BASE,
+	makeFireberryRequest,
+	makeFireberryUploadRequest,
+} from './client';
 
 jest.mock('corsair/http', () => {
 	const actual =
@@ -114,6 +118,31 @@ describe('Fireberry HTTP client', () => {
 			.catch((error: unknown) => error);
 		expect(caught).toMatchObject({ status: 429, retryAfter: 4000 });
 		expect(fetchSpy).toHaveBeenCalledTimes(1);
+		fetchSpy.mockRestore();
+	});
+
+	it('uploads the documented multipart file field with tokenid authentication', async () => {
+		const fetchSpy = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(new Response('{}', { status: 200 }));
+		await makeFireberryUploadRequest(
+			'1',
+			'record-id',
+			'readme.txt',
+			'SGVsbG8=',
+			'secret-key',
+		);
+		expect(fetchSpy.mock.calls[0]?.[0]).toBe(
+			`${FIREBERRY_API_BASE}/api/v2/record/1/record-id/files`,
+		);
+		expect(fetchSpy.mock.calls[0]?.[1]?.method).toBe('POST');
+		expect(fetchSpy.mock.calls[0]?.[1]?.headers).toEqual({
+			tokenid: 'secret-key',
+		});
+		const body = fetchSpy.mock.calls[0]?.[1]?.body;
+		if (!(body instanceof FormData))
+			throw new Error('Upload did not use multipart FormData');
+		expect(body.get('file')).toMatchObject({ name: 'readme.txt' });
 		fetchSpy.mockRestore();
 	});
 });
