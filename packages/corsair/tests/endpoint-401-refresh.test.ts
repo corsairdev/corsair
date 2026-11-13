@@ -5,6 +5,7 @@ import {
 	generateDEK,
 } from '../core/auth/encryption';
 import { getOAuthAccessToken } from '../core/auth/oauth-access';
+import { isUnauthorizedError } from '../core/endpoints/bind';
 import type { CorsairPlugin } from '../core/plugins';
 import { createTestDatabase } from './setup-db';
 
@@ -63,21 +64,42 @@ class UnauthorizedError extends Error {
 	status = 401;
 }
 
+class ServerError extends Error {
+	status = 500;
+}
+
 type ProbeCtx = { key: string; _refreshAuth?: () => Promise<string> };
 type ProbeArgs = Record<string, never>;
 type ProbeResult = { ok: true; key: string };
 type OAuthCtx = Parameters<typeof getOAuthAccessToken>[0];
 
-function probePlugin(seen: string[], withHooks: boolean): CorsairPlugin {
+type ProbeOptions = {
+	withHooks?: boolean;
+	// The endpoint catches its own 401 and calls ctx._refreshAuth, as Gmail,
+	// GitHub and the other older OAuth plugins do. Without it, core retries.
+	ownRetry?: boolean;
+	// Keys the provider rejects: 'revoked' always; 'fresh' too when the refresh
+	// does not help (the grant itself is gone).
+	rejected?: string[];
+	// What a rejected key fails with.
+	failure?: 'unauthorized' | 'server';
+};
+
+function probePlugin(seen: string[], opts: ProbeOptions = {}): CorsairPlugin {
+	const rejected = opts.rejected ?? ['revoked'];
 	const callProvider = (key: string): ProbeResult => {
 		seen.push(key);
-		if (key === 'revoked') throw new UnauthorizedError('401');
+		if (rejected.includes(key)) {
+			throw opts.failure === 'server'
+				? new ServerError('500')
+				: new UnauthorizedError('401');
+		}
 		return { ok: true, key };
 	};
 	return {
 		id: 'probe',
 		options: { authType: 'oauth_2' },
-		...(withHooks
+		...(opts.withHooks
 			? {
 					hooks: {
 						items: {
@@ -94,6 +116,7 @@ function probePlugin(seen: string[], withHooks: boolean): CorsairPlugin {
 		endpoints: {
 			items: {
 				list: async (ctx: ProbeCtx, _args: ProbeArgs) => {
+					if (!opts.ownRetry) return callProvider(ctx.key);
 					try {
 						return callProvider(ctx.key);
 					} catch (error) {
@@ -112,50 +135,91 @@ function probePlugin(seen: string[], withHooks: boolean): CorsairPlugin {
 	} as unknown as CorsairPlugin;
 }
 
+async function run(opts: ProbeOptions) {
+	const { database, cleanup } = createTestDatabase();
+	try {
+		await seed(database);
+		const tokenCalls: string[] = [];
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+			tokenCalls.push(String(input));
+			return new Response(
+				JSON.stringify({ access_token: 'fresh', expires_in: 3600 }),
+				{ status: 200, headers: { 'content-type': 'application/json' } },
+			);
+		});
+		const seen: string[] = [];
+		const corsair = createCorsair({
+			kek: KEK,
+			plugins: [probePlugin(seen, opts)],
+			database: database.db,
+			// The client type is built from registered plugin ids; 'probe' is
+			// not one, so the test names the one route it calls.
+		}) as unknown as {
+			probe: {
+				api: { items: { list: (a: ProbeArgs) => Promise<ProbeResult> } };
+			};
+		};
+		const outcome = await corsair.probe.api.items.list({}).then(
+			(result) => ({ result }),
+			(error: Error) => ({ error }),
+		);
+		return { ...outcome, seen, tokenCalls };
+	} finally {
+		cleanup();
+	}
+}
+
 describe('endpoint 401 refresh', () => {
 	afterEach(() => {
 		jest.restoreAllMocks();
 	});
 
+	describe.each([
+		['the endpoint retries itself', true],
+		['core retries', false],
+	])('%s', (_label, ownRetry) => {
+		it.each([
+			['without endpoint hooks', false],
+			['with a before hook', true],
+		])(
+			'%s: a revoked cached token is refreshed once and the call retried',
+			async (_hooks, withHooks) => {
+				const out = await run({ ownRetry, withHooks });
+
+				expect(out.result).toEqual({ ok: true, key: 'fresh' });
+				expect(out.seen).toEqual(['revoked', 'fresh']);
+				expect(out.tokenCalls).toEqual([TOKEN_URL]);
+			},
+		);
+
+		it('a second 401 after the refresh goes back to the caller', async () => {
+			const out = await run({ ownRetry, rejected: ['revoked', 'fresh'] });
+
+			expect(out.error).toBeInstanceOf(UnauthorizedError);
+			expect(out.seen).toEqual(['revoked', 'fresh']);
+			expect(out.tokenCalls).toEqual([TOKEN_URL]);
+		});
+	});
+
+	it('core does not refresh on an error that is not a 401', async () => {
+		const out = await run({ failure: 'server' });
+
+		expect(out.error).toBeInstanceOf(ServerError);
+		expect(out.seen).toEqual(['revoked']);
+		expect(out.tokenCalls).toEqual([]);
+	});
+});
+
+describe('isUnauthorizedError', () => {
 	it.each([
-		['without endpoint hooks', false],
-		['with a before hook', true],
-	])(
-		'%s: a revoked cached token is refreshed once and the call retried',
-		async (_label, withHooks) => {
-			const { database, cleanup } = createTestDatabase();
-			try {
-				await seed(database);
-				const tokenCalls: string[] = [];
-				jest.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
-					tokenCalls.push(String(input));
-					return new Response(
-						JSON.stringify({ access_token: 'fresh', expires_in: 3600 }),
-						{ status: 200, headers: { 'content-type': 'application/json' } },
-					);
-				});
-
-				const seen: string[] = [];
-				const corsair = createCorsair({
-					kek: KEK,
-					plugins: [probePlugin(seen, withHooks)],
-					database: database.db,
-					// The client type is built from registered plugin ids; 'probe' is
-					// not one, so the test names the one route it calls.
-				}) as unknown as {
-					probe: {
-						api: { items: { list: (a: ProbeArgs) => Promise<ProbeResult> } };
-					};
-				};
-
-				const result = await corsair.probe.api.items.list({});
-
-				expect(result).toEqual({ ok: true, key: 'fresh' });
-				expect(seen).toEqual(['revoked', 'fresh']);
-				expect(tokenCalls).toEqual([TOKEN_URL]);
-			} finally {
-				cleanup();
-			}
-		},
-	);
+		[{ status: 401 }, true],
+		[{ statusCode: 401 }, true],
+		[new Error('wrapped', { cause: { status: 401 } }), true],
+		[{ status: 403 }, false],
+		[{ status: '401' }, false],
+		[new Error('401 in the message only'), false],
+		[undefined, false],
+	])('%p -> %p', (error, expected) => {
+		expect(isUnauthorizedError(error)).toBe(expected);
+	});
 });

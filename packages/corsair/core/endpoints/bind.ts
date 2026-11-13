@@ -84,6 +84,23 @@ export function isEndpoint(value: unknown): value is Function {
  * @param currentPath - The current path for tracking nested endpoint operations
  * @param keyBuilder - Optional async callback to generate a key from the plugin context
  */
+/**
+ * True when a provider call failed with HTTP 401. Plugins throw core's ApiError
+ * or their own error class; both carry the status as `status` (some as
+ * `statusCode`), sometimes on a wrapped `cause`. Provider-specific codes (a
+ * Facebook 190, a Zoho 57) stay with the plugins that know them.
+ */
+export function isUnauthorizedError(error: unknown, depth = 0): boolean {
+	if (!error || typeof error !== 'object' || depth > 2) return false;
+	const { status, statusCode, cause } = error as {
+		status?: unknown;
+		statusCode?: unknown;
+		cause?: unknown;
+	};
+	if (status === 401 || statusCode === 401) return true;
+	return isUnauthorizedError(cause, depth + 1);
+}
+
 export function bindEndpointsRecursively({
 	endpoints,
 	hooks,
@@ -403,51 +420,17 @@ export function bindEndpointsRecursively({
 				// The keyBuilder adds `_refreshAuth` to this ctx, and an OAuth
 				// plugin calls it to refresh the token after a 401. The endpoint
 				// must get this ctx, not a new copy of the original one.
-				const endpointCtx = { ...ctx, meteredOperationId: operationPath };
+				const endpointCtx: Record<string, unknown> = {
+					...ctx,
+					meteredOperationId: operationPath,
+				};
 				const ctxTenantId =
 					typeof ctx.tenantId === 'string' ? ctx.tenantId : undefined;
 				const pluginAuthType = plugin ? getPluginAuthType(plugin) : undefined;
-				try {
-					if (pluginAuthType === 'managed_pricing' && hubConfig) {
-						const cache = managedPricingCacheFor(pluginId);
-						managedJob = managedJobKindFor(
-							await getManagedJobKinds(hubConfig, cache),
-							pluginId,
-							operationPath,
-						);
-						sentJobFields = managedJobRequestFields(managedJob, args);
-						const resolved = await resolveManagedPricingCall(
-							{
-								hub: hubConfig,
-								tenantId: ctxTenantId ?? tenantId,
-								meteredOperationId: operationPath,
-							},
-							{
-								plugin: pluginId,
-								cache,
-								operation: operationPath,
-								...sentJobFields,
-							},
-						);
-						// Hub names a job start in its own answer too, so the job is
-						// recorded even when its table could not be read.
-						if (!managedJob && resolved.startedJobIdPath) {
-							managedJob = {
-								plugin: pluginId,
-								operation: operationPath,
-								role: 'start',
-								id_path: resolved.startedJobIdPath,
-								status_operation: '',
-							};
-						}
-						key = resolved.apiKey;
-						meteredCall = resolved.call;
-						usagePath = resolved.usagePath;
-						failedWhen = resolved.failedWhen;
-					} else if (keyBuilder) {
-						key = await keyBuilder(endpointCtx, 'endpoint');
-					}
-				} catch (err) {
+				// An auth failure (no credentials, or a refresh the provider refused)
+				// is reported as an unverified connection, and its connect link is
+				// recorded for the connect dialog. Anything else is rethrown as is.
+				const raiseAuthError = async (err: unknown): Promise<never> => {
 					// Hub already minted a scoped connect link and put it on the typed
 					// error — report the connection unverified and rethrow it intact.
 					if (err instanceof ReconnectRequiredError) {
@@ -511,14 +494,96 @@ export function bindEndpointsRecursively({
 						}
 					}
 					throw err;
+				};
+				try {
+					if (pluginAuthType === 'managed_pricing' && hubConfig) {
+						const cache = managedPricingCacheFor(pluginId);
+						managedJob = managedJobKindFor(
+							await getManagedJobKinds(hubConfig, cache),
+							pluginId,
+							operationPath,
+						);
+						sentJobFields = managedJobRequestFields(managedJob, args);
+						const resolved = await resolveManagedPricingCall(
+							{
+								hub: hubConfig,
+								tenantId: ctxTenantId ?? tenantId,
+								meteredOperationId: operationPath,
+							},
+							{
+								plugin: pluginId,
+								cache,
+								operation: operationPath,
+								...sentJobFields,
+							},
+						);
+						// Hub names a job start in its own answer too, so the job is
+						// recorded even when its table could not be read.
+						if (!managedJob && resolved.startedJobIdPath) {
+							managedJob = {
+								plugin: pluginId,
+								operation: operationPath,
+								role: 'start',
+								id_path: resolved.startedJobIdPath,
+								status_operation: '',
+							};
+						}
+						key = resolved.apiKey;
+						meteredCall = resolved.call;
+						usagePath = resolved.usagePath;
+						failedWhen = resolved.failedWhen;
+					} else if (keyBuilder) {
+						key = await keyBuilder(endpointCtx, 'endpoint');
+					}
+				} catch (err) {
+					await raiseAuthError(err);
 				}
+
+				// The endpoint gets at most one refresh-and-retry after a 401, from
+				// its own code or from core below, never both.
+				const refreshAuth =
+					typeof endpointCtx._refreshAuth === 'function'
+						? (endpointCtx._refreshAuth as () => Promise<string>)
+						: undefined;
+				let refreshedThisCall = false;
+				if (refreshAuth) {
+					endpointCtx._refreshAuth = async () => {
+						refreshedThisCall = true;
+						try {
+							return await refreshAuth();
+						} catch (refreshError) {
+							return await raiseAuthError(refreshError);
+						}
+					};
+				}
+				// A 401 the endpoint did not handle itself: refresh the token once
+				// (a revoked or rotated token can still look fresh) and call again.
+				const callWithAuthRetry = async (
+					callCtx: Record<string, unknown>,
+					callArgs: unknown,
+				) => {
+					try {
+						return await call(0, callCtx, callArgs);
+					} catch (error) {
+						const refresh = callCtx._refreshAuth;
+						if (
+							refreshedThisCall ||
+							typeof refresh !== 'function' ||
+							!isUnauthorizedError(error)
+						) {
+							throw error;
+						}
+						const freshKey = await (refresh as () => Promise<string>)();
+						return await call(0, { ...callCtx, key: freshKey }, callArgs);
+					}
+				};
 
 				if (!endpointHooks?.before && !endpointHooks?.after) {
 					let res: Awaited<ReturnType<typeof call>>;
 					// Recording a completed approval is inside: if it throws, the
 					// caller gets an error, so the call is refunded like any other.
 					try {
-						res = await call(0, { ...endpointCtx, key }, args);
+						res = await callWithAuthRetry({ ...endpointCtx, key }, args);
 						readAnswer(res);
 						await reportJob(args, res);
 						await onPermissionComplete?.();
@@ -573,7 +638,7 @@ export function bindEndpointsRecursively({
 							);
 						}
 					}
-					res = await call(0, beforeResult.ctx, beforeResult.args);
+					res = await callWithAuthRetry(beforeResult.ctx, beforeResult.args);
 					readAnswer(res);
 					await reportJob(beforeResult.args, res);
 					await endpointHooks.after?.(
