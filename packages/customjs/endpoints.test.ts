@@ -951,6 +951,19 @@ describe('error envelopes', () => {
 		});
 	});
 
+	it('names the pages host budget when a page call times out', async () => {
+		const timeout = new Error('The operation timed out.');
+		timeout.name = 'TimeoutError';
+		fetchMock.mockRejectedValueOnce(timeout);
+
+		const error = await captureError(invoke(Pages.list, {}));
+
+		expect(error).toMatchObject({
+			isTransportError: true,
+			message: 'CustomJS request timed out after 30s',
+		});
+	});
+
 	// Publishing a page a second time is a second page, so its failures must never
 	// look replayable.
 	it('marks a page creation as not replayable', async () => {

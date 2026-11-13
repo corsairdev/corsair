@@ -220,7 +220,10 @@ async function sendToPages(
 	try {
 		res = await fetch(`${CUSTOMJS_PAGES_HOST}${request.path}`, init);
 	} catch (error) {
-		throw transportError(error, request);
+		throw transportError(error, {
+			...request,
+			timeoutMs: request.timeoutMs ?? PAGES_TIMEOUT_MS,
+		});
 	}
 
 	if (!res.ok) throw await errorFromResponse(res, request);
