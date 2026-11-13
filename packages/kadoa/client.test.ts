@@ -1,4 +1,9 @@
-import { makeKadoaRequest, messageResult } from './client';
+import { inspect } from 'node:util';
+import {
+	KADOA_STREAM_TIMEOUT_MS,
+	makeKadoaRequest,
+	messageResult,
+} from './client';
 
 const API_KEY = 'tk-test-key';
 
@@ -197,6 +202,49 @@ describe('makeKadoaRequest', () => {
 		expect(error).not.toHaveProperty('body');
 		expect(JSON.stringify(error)).not.toContain('hunter2');
 		expect(String(error)).not.toContain('hunter2');
+	});
+
+	it('does not keep the sent body on the error through its cause', async () => {
+		respond({ error: false, message: 'Duplicate key' }, 409);
+
+		// unknown: the rejection is an error whose fields the assertions read.
+		const error = (await makeKadoaRequest(API_KEY, {
+			method: 'POST',
+			path: '/v4/variables/',
+			body: { key: 'login', value: 'hunter2', dataType: 'SECRET' },
+		}).catch((caught: unknown) => caught)) as Error;
+
+		expect(error).toMatchObject({ name: 'KadoaAPIError', status: 409 });
+		expect(error.cause).toBeUndefined();
+		expect(inspect(error, { depth: 10 })).not.toContain('hunter2');
+	});
+
+	it('reads the `code` Kadoa sends on a workflow data conflict', async () => {
+		respond(
+			{ code: 'DATA_NOT_PUBLISHED', error: 'No published run', runId: 'r1' },
+			409,
+		);
+
+		await expect(
+			makeKadoaRequest(API_KEY, {
+				method: 'GET',
+				path: '/v4/workflows/wf/data',
+			}),
+		).rejects.toMatchObject({ status: 409, code: 'DATA_NOT_PUBLISHED' });
+	});
+
+	it('waits five minutes for a request that asks for it', async () => {
+		const timeout = jest.spyOn(AbortSignal, 'timeout');
+		respond({ ok: true });
+
+		await makeKadoaRequest(API_KEY, {
+			method: 'GET',
+			path: '/v4/workflows/wf/data',
+			timeoutMs: KADOA_STREAM_TIMEOUT_MS,
+		});
+
+		expect(timeout).toHaveBeenCalledWith(300_000);
+		timeout.mockRestore();
 	});
 
 	it('marks a transport failure and keeps the method', async () => {
