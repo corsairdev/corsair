@@ -4257,5 +4257,23 @@
         "title": "Keep the error body on failed calls and redact more key names"
       }
     ]
+  },
+  {
+    "date": "2026-11-13",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.25",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-13",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.53",
+    "isNew": false,
+    "changes": []
   }
 ]
