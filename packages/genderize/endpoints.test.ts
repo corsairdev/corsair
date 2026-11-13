@@ -117,6 +117,23 @@ describe('Genderize client', () => {
 		expect(lastRequest().query.apikey).toBeUndefined();
 	});
 
+	it('sends the key the key builder resolved, which a before hook may replace', async () => {
+		respond(prediction);
+		respond(batchFixture);
+		const getStored = jest.fn().mockResolvedValue('stored-key');
+		const ctx = {
+			key: 'hook-key',
+			options: { key: 'option-key' },
+			keys: { get_api_key: getStored },
+		};
+		await predict(ctx as never, { name: 'Alice' } as never);
+		expect(lastRequest().query.apikey).toBe('hook-key');
+
+		await batch(ctx as never, { names: ['Alice', 'Bob'] } as never);
+		expect(lastRequest().query.apikey).toBe('hook-key');
+		expect(getStored).not.toHaveBeenCalled();
+	});
+
 	it('lets a per-call key override the configured one', async () => {
 		respond(prediction);
 		await invoke(predict, { name: 'Alice', apikey: 'call-key' });

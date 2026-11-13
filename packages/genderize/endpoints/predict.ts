@@ -9,18 +9,16 @@ import {
 
 /**
  * Genderize authenticates with a query parameter, so the key is resolved here
- * rather than in a header. An empty key is dropped instead of sent, which lets
- * the API fall back to its IP-scoped allowance.
+ * rather than in a header. The per-call override wins, then the key the key
+ * builder resolved (`ctx.key`, which a `before` hook may have replaced). An
+ * empty key is dropped instead of sent, which lets the API fall back to its
+ * IP-scoped allowance.
  */
-async function resolveCredentials(
+function resolveCredentials(
 	ctx: GenderizeContext,
 	override: string | undefined,
-): Promise<GenderizeCredentials> {
-	if (override) return { apiKey: override };
-	if (ctx.options.key) return { apiKey: ctx.options.key };
-
-	const stored = await ctx.keys.get_api_key();
-	return { apiKey: stored ?? undefined };
+): GenderizeCredentials {
+	return { apiKey: override || ctx.key || undefined };
 }
 
 /** A name is personal data, so the log records the prediction, not the name. */
@@ -31,7 +29,7 @@ export const predict: GenderizeEndpoints['name']['predict'] = async (
 	const parsed = GenderizeEndpointInputSchemas.predict.parse(input ?? {});
 
 	const raw = await makeGenderizeRequest(
-		await resolveCredentials(ctx, parsed.apikey),
+		resolveCredentials(ctx, parsed.apikey),
 		{
 			path: '/',
 			query: definedQuery({
@@ -70,7 +68,7 @@ export const batch: GenderizeEndpoints['batch']['names'] = async (
 	const parsed = GenderizeEndpointInputSchemas.batch.parse(input ?? {});
 
 	const raw = await makeGenderizeRequest(
-		await resolveCredentials(ctx, parsed.apikey),
+		resolveCredentials(ctx, parsed.apikey),
 		{
 			path: '/',
 			// `name[]` is the documented spelling for a batch, and the query builder
