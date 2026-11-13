@@ -32,17 +32,15 @@ type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
 // unknown: negative cases pass values no schema accepts.
 function invoke(endpoint: AnyEndpoint, input: unknown) {
-	// The fake context carries what the endpoints read: the option pair, and the
-	// stored pair behind it.
-	const ctx = {
-		key: CLIENT_ID,
-		options: { clientId: CLIENT_ID, clientSecret: CLIENT_SECRET },
-		keys: {
-			get_api_key: jest.fn().mockResolvedValue(CLIENT_ID),
-			get_api_secret: jest.fn().mockResolvedValue(CLIENT_SECRET),
-		},
+	return endpoint(contextFor(CLIENT_ID, CLIENT_SECRET) as never, input as never);
+}
+
+// The endpoints read the client pair the key builder put in `ctx.key`.
+function contextFor(clientId: string, clientSecret?: string) {
+	return {
+		key: JSON.stringify({ clientId, clientSecret }),
+		options: {},
 	};
-	return endpoint(ctx as never, input as never);
 }
 
 let fetchMock: jest.SpyInstance;
@@ -177,16 +175,11 @@ describe('the token', () => {
 		// Same client id, wrong secret: GageList must see a new token request,
 		// and its refusal must reach the caller.
 		respond(invalidClient, 400);
-		const ctx = {
-			key: CLIENT_ID,
-			options: { clientId: CLIENT_ID, clientSecret: 'someone-elses-guess' },
-			keys: {
-				get_api_key: jest.fn().mockResolvedValue(null),
-				get_api_secret: jest.fn().mockResolvedValue(null),
-			},
-		};
 		await expect(
-			Account.accountStatus(ctx as never, {} as never),
+			Account.accountStatus(
+				contextFor(CLIENT_ID, 'someone-elses-guess') as never,
+				{} as never,
+			),
 		).rejects.toBeInstanceOf(GagelistAPIError);
 		expect(lastRequest().path).toBe('/api/token');
 	});
@@ -203,49 +196,9 @@ describe('the token', () => {
 });
 
 describe('credentials', () => {
-	// unknown: each case sets only the context fields it is about.
-	function ctxWith(fields: {
-		key?: string;
-		options?: Record<string, string>;
-		storedId?: string | null;
-		storedSecret?: string | null;
-	}) {
-		return {
-			key: fields.key,
-			options: fields.options ?? {},
-			keys: {
-				get_api_key: jest.fn().mockResolvedValue(fields.storedId ?? null),
-				get_api_secret: jest
-					.fn()
-					.mockResolvedValue(fields.storedSecret ?? null),
-			},
-		};
-	}
-
-	it('pairs the key option with the clientSecret option', async () => {
-		respondToken();
-		respond(accountStatus);
-
-		await Account.accountStatus(
-			ctxWith({
-				key: CLIENT_ID,
-				options: { key: CLIENT_ID, clientSecret: CLIENT_SECRET },
-			}) as never,
-			{} as never,
-		);
-
-		const tokenCall = fetchMock.mock.calls[0] as [string, RequestInit];
-		const form = new URLSearchParams(String(tokenCall[1].body));
-		expect(form.get('client_id')).toBe(CLIENT_ID);
-		expect(form.get('client_secret')).toBe(CLIENT_SECRET);
-	});
-
-	it('raises AuthMissingError, and sends nothing, when no secret is set', async () => {
+	it('raises AuthMissingError, and sends nothing, when the pair has no secret', async () => {
 		await expect(
-			Account.accountStatus(
-				ctxWith({ key: CLIENT_ID, storedId: CLIENT_ID }) as never,
-				{} as never,
-			),
+			Account.accountStatus(contextFor(CLIENT_ID) as never, {} as never),
 		).rejects.toBeInstanceOf(AuthMissingError);
 		expect(fetchMock).not.toHaveBeenCalled();
 	});

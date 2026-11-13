@@ -12,20 +12,23 @@ type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
  * GageList needs a client id and a secret, and the pair mints a bearer token.
- * Each half resolves on its own: the id from the `clientId` option, then the
- * key the key builder chose (the `key` option or the stored `api_key`); the
- * secret from the `clientSecret` option, then the stored `api_secret`. A missing
- * half raises AuthMissingError here, before a token request goes out with an
- * empty value.
+ * The key builder resolves both and passes them as `ctx.key`, a JSON pair.
  */
-export async function resolveCredentials(
-	ctx: GagelistContext,
-): Promise<GagelistCredentials> {
-	const clientId =
-		ctx.options.clientId || ctx.key || (await ctx.keys.get_api_key());
-	const clientSecret =
-		ctx.options.clientSecret || (await ctx.keys.get_api_secret());
-	if (!clientId || !clientSecret) {
+export function resolveCredentials(ctx: GagelistContext): GagelistCredentials {
+	let pair: Record<string, unknown> | undefined;
+	try {
+		pair = asRecord(JSON.parse(ctx.key)) ?? undefined;
+	} catch {
+		pair = undefined;
+	}
+	const clientId = pair?.clientId;
+	const clientSecret = pair?.clientSecret;
+	if (
+		typeof clientId !== 'string' ||
+		typeof clientSecret !== 'string' ||
+		!clientId ||
+		!clientSecret
+	) {
 		throw new AuthMissingError('gagelist', 'api_key');
 	}
 	return { clientId, clientSecret };
@@ -52,7 +55,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const credentials = await resolveCredentials(ctx);
+	const credentials = resolveCredentials(ctx);
 	const raw = await makeGagelistRequest(credentials, toRequest(parsed));
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,

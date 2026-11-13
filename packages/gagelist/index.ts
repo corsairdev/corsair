@@ -27,8 +27,8 @@ import { GagelistSchema } from './schema';
 export type GagelistPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	/**
-	 * The client id. It is the `client_id` the token endpoint takes, and the
-	 * value the plugin's key builder returns.
+	 * The client id, the `client_id` the token endpoint takes. The key builder
+	 * pairs it with the secret and passes both to the endpoints as `ctx.key`.
 	 */
 	key?: string;
 	/** The client secret, which the token endpoint needs beside the id. */
@@ -330,22 +330,24 @@ export function gagelist<const T extends GagelistPluginOptions>(
 		endpointSchemas: gagelistEndpointSchemas,
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
+		// GageList needs both halves of the client pair, so the key builder
+		// resolves each one (option first, then the stored field) and hands the
+		// pair to the endpoints as `ctx.key`. A missing half raises
+		// AuthMissingError here, so Corsair can offer a connect link instead of
+		// a token request going out with an empty value.
 		keyBuilder: async (ctx: GagelistKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint' || ctx.authType !== 'api_key') {
+				throw new AuthMissingError('gagelist', ctx.authType ?? 'api_key');
 			}
 
-			// A client pair set as options is complete without a stored key.
-			if (source === 'endpoint' && options.clientId && options.clientSecret) {
-				return options.clientId;
+			const clientId =
+				options.clientId || options.key || (await ctx.keys.get_api_key());
+			const clientSecret =
+				options.clientSecret || (await ctx.keys.get_api_secret());
+			if (!clientId || !clientSecret) {
+				throw new AuthMissingError('gagelist', 'api_key');
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (res) return res;
-			}
-
-			throw new AuthMissingError('gagelist', ctx.authType ?? 'api_key');
+			return JSON.stringify({ clientId, clientSecret });
 		},
 	} satisfies InternalGagelistPlugin;
 }

@@ -2,14 +2,20 @@ import { AuthMissingError } from 'corsair/core';
 import { gagelist, gagelistEndpointSchemas } from './index';
 
 // The key builder only reads authType and keys.
-function keyContext(apiKey: string | null) {
+function keyContext(apiKey: string | null, apiSecret: string | null = null) {
 	return {
 		authType: 'api_key' as const,
 		options: {},
 		tenantId: 'default',
-		keys: { get_api_key: jest.fn().mockResolvedValue(apiKey) },
+		keys: {
+			get_api_key: jest.fn().mockResolvedValue(apiKey),
+			get_api_secret: jest.fn().mockResolvedValue(apiSecret),
+		},
 	};
 }
+
+const pair = (clientId: string, clientSecret: string) =>
+	JSON.stringify({ clientId, clientSecret });
 
 function buildKey(
 	plugin: ReturnType<typeof gagelist>,
@@ -135,11 +141,11 @@ describe('gagelist plugin definition', () => {
 });
 
 describe('gagelist key builder', () => {
-	it('prefers an explicit key option', async () => {
-		const ctx = keyContext('stored-key');
+	it('prefers an explicit key option, with the stored secret', async () => {
+		const ctx = keyContext('stored-key', 'stored-secret');
 
 		await expect(buildKey(gagelist({ key: 'option-key' }), ctx)).resolves.toBe(
-			'option-key',
+			pair('option-key', 'stored-secret'),
 		);
 		expect(ctx.keys.get_api_key).not.toHaveBeenCalled();
 	});
@@ -150,19 +156,34 @@ describe('gagelist key builder', () => {
 				gagelist({ clientId: 'option-id', clientSecret: 'option-secret' }),
 				keyContext(null),
 			),
-		).resolves.toBe('option-id');
+		).resolves.toBe(pair('option-id', 'option-secret'));
 	});
 
-	it('reads the stored client id', async () => {
-		await expect(buildKey(gagelist(), keyContext('stored-key'))).resolves.toBe(
-			'stored-key',
-		);
+	it('pairs the key option with the clientSecret option', async () => {
+		await expect(
+			buildKey(
+				gagelist({ key: 'option-id', clientSecret: 'option-secret' }),
+				keyContext(null),
+			),
+		).resolves.toBe(pair('option-id', 'option-secret'));
+	});
+
+	it('reads the stored client id and secret', async () => {
+		await expect(
+			buildKey(gagelist(), keyContext('stored-key', 'stored-secret')),
+		).resolves.toBe(pair('stored-key', 'stored-secret'));
 	});
 
 	it('throws AuthMissingError when no client id is stored', async () => {
-		await expect(buildKey(gagelist(), keyContext(null))).rejects.toBeInstanceOf(
-			AuthMissingError,
-		);
+		await expect(
+			buildKey(gagelist(), keyContext(null, 'stored-secret')),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('throws AuthMissingError when no secret is stored', async () => {
+		await expect(
+			buildKey(gagelist(), keyContext('stored-key')),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('refuses webhook keys', async () => {
