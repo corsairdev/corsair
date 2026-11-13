@@ -427,6 +427,34 @@ describe('registered Fireberry operations and route semantics', () => {
 		}
 	});
 
+	it('validates direct handler inputs and resolves Batch wire names to payload schemas', async () => {
+		await expect(
+			Records.create(endpointContext, {
+				object: 'account',
+				data: { accountname: 42 },
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+
+		await expect(
+			Batch.create(endpointContext, {
+				objectCode: 'accountproduct',
+				data: [{ accountid: 42 }],
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+
+		mockRequest.mockResolvedValueOnce({});
+		await Batch.create(endpointContext, {
+			objectCode: 'accountproduct',
+			data: [{ accountid: 'account-id', productid: 'product-id' }],
+		});
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/api/v3/record/accountproduct/batch/create',
+		});
+	});
+
 	it('sends records CRUD operations on the documented REST paths and verbs', async () => {
 		const cases = [
 			{ path: '/api/record/account', method: 'GET' as const },

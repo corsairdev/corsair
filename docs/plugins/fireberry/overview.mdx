@@ -96,19 +96,22 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`metadata.field`**
+**Inspect an account field**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.fireberry.api.metadata.field({});
+await tenant.fireberry.api.metadata.field({ id: 1, fieldName: 'accountname' });
 ```
 
 
-**`batch.create`**
+**Create an account with the Batch API**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.fireberry.api.batch.create({});
+await tenant.fireberry.api.batch.create({
+	objectCode: 'account',
+	data: [{ accountname: 'Example Company' }],
+});
 ```
 
 

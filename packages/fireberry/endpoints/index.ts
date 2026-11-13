@@ -3,7 +3,10 @@ import type { z } from 'zod';
 import { makeFireberryRequest, makeFireberryUploadRequest } from '../client';
 import type { FireberryEndpoints } from '../index';
 import { getFireberryRecordPath } from './record-routes';
-import { FireberryEndpointOutputSchemas } from './types';
+import {
+	FireberryEndpointInputSchemas,
+	FireberryEndpointOutputSchemas,
+} from './types';
 
 async function validatedRequest<S extends z.ZodType>(
 	schema: S,
@@ -21,6 +24,7 @@ async function validatedRequest<S extends z.ZodType>(
 }
 
 export const list: FireberryEndpoints['list'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.list.parse(input);
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.list,
 		getFireberryRecordPath(input.object, 'list'),
@@ -39,6 +43,7 @@ export const list: FireberryEndpoints['list'] = async (ctx, input) => {
 };
 
 export const get: FireberryEndpoints['get'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.get.parse(input);
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.get,
 		getFireberryRecordPath(input.object, 'get', input.id),
@@ -54,6 +59,7 @@ export const get: FireberryEndpoints['get'] = async (ctx, input) => {
 };
 
 export const create: FireberryEndpoints['create'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.create.parse(input);
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.create,
 		getFireberryRecordPath(input.object, 'create'),
@@ -73,6 +79,7 @@ export const create: FireberryEndpoints['create'] = async (ctx, input) => {
 };
 
 export const update: FireberryEndpoints['update'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.update.parse(input);
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.update,
 		getFireberryRecordPath(input.object, 'update', input.id),
@@ -92,6 +99,7 @@ export const update: FireberryEndpoints['update'] = async (ctx, input) => {
 };
 
 export const remove: FireberryEndpoints['delete'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.delete.parse(input);
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.delete,
 		getFireberryRecordPath(input.object, 'delete', input.id),
@@ -110,6 +118,7 @@ export const remove: FireberryEndpoints['delete'] = async (ctx, input) => {
 };
 
 export const query: FireberryEndpoints['query'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.query.parse(input);
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.query,
 		'/api/v3/query',
@@ -132,6 +141,7 @@ export const legacyQuery: FireberryEndpoints['legacyQuery'] = async (
 	ctx,
 	input,
 ) => {
+	FireberryEndpointInputSchemas.legacyQuery.parse(input);
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.legacyQuery,
 		'/api/query',
@@ -148,6 +158,7 @@ export const legacyQuery: FireberryEndpoints['legacyQuery'] = async (
 };
 
 export const related: FireberryEndpoints['related'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.related.parse(input);
 	const path = `/api/record/${input.objectType}/${encodeURIComponent(input.id)}/${input.relatedObjectType}`;
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.related,
@@ -167,6 +178,7 @@ export const related: FireberryEndpoints['related'] = async (ctx, input) => {
 };
 
 export const items: FireberryEndpoints['items'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.items.parse(input);
 	const objectType =
 		input.itemType === 'creditInvoice'
 			? '85'
@@ -196,7 +208,8 @@ export const items: FireberryEndpoints['items'] = async (ctx, input) => {
 	return result;
 };
 
-export const objects: FireberryEndpoints['objects'] = async (ctx) => {
+export const objects: FireberryEndpoints['objects'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.objects.parse(input);
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.objects,
 		'/metadata/records',
@@ -215,6 +228,7 @@ export const objects: FireberryEndpoints['objects'] = async (ctx) => {
 };
 
 export const object: FireberryEndpoints['object'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.object.parse(input);
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.object,
 		`/metadata/records/${input.id}`,
@@ -233,6 +247,7 @@ export const object: FireberryEndpoints['object'] = async (ctx, input) => {
 };
 
 export const fields: FireberryEndpoints['fields'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.fields.parse(input);
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.fields,
 		`/metadata/records/${input.id}/fields`,
@@ -251,6 +266,7 @@ export const fields: FireberryEndpoints['fields'] = async (ctx, input) => {
 };
 
 export const field: FireberryEndpoints['field'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.field.parse(input);
 	const path = `/metadata/records/${input.id}/fields/${encodeURIComponent(input.fieldName)}`;
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.field,
@@ -268,6 +284,7 @@ export const field: FireberryEndpoints['field'] = async (ctx, input) => {
 };
 
 export const picklist: FireberryEndpoints['picklist'] = async (ctx, input) => {
+	FireberryEndpointInputSchemas.picklist.parse(input);
 	const path = `/metadata/records/${input.id}/fields/${encodeURIComponent(input.fieldName)}/values`;
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.picklist,
@@ -286,6 +303,7 @@ export const picklist: FireberryEndpoints['picklist'] = async (ctx, input) => {
 
 export const customFieldCreate: FireberryEndpoints['customFieldCreate'] =
 	async (ctx, input) => {
+		FireberryEndpointInputSchemas.customFieldCreate.parse(input);
 		const path = `/api/v2/system-field/${input.objectType}/${input.fieldType}`;
 		const result = await validatedRequest(
 			FireberryEndpointOutputSchemas.customFieldCreate,
@@ -307,6 +325,7 @@ export const customFieldCreate: FireberryEndpoints['customFieldCreate'] =
 
 export const customFieldUpdate: FireberryEndpoints['customFieldUpdate'] =
 	async (ctx, input) => {
+		FireberryEndpointInputSchemas.customFieldUpdate.parse(input);
 		const fieldPath = encodeURIComponent(input.fieldName);
 		const path = `/api/v2/system-field/${input.objectType}/${input.fieldType}/${fieldPath}`;
 		const result = await validatedRequest(
@@ -329,6 +348,7 @@ export const customFieldUpdate: FireberryEndpoints['customFieldUpdate'] =
 
 export const customFieldDelete: FireberryEndpoints['customFieldDelete'] =
 	async (ctx, input) => {
+		FireberryEndpointInputSchemas.customFieldDelete.parse(input);
 		const path = `/api/v2/system-field/${input.objectType}/${input.fieldType}/${encodeURIComponent(input.fieldName)}`;
 		const result = await validatedRequest(
 			FireberryEndpointOutputSchemas.customFieldDelete,
@@ -349,6 +369,7 @@ export const customFieldDelete: FireberryEndpoints['customFieldDelete'] =
 
 export const customObjectCreate: FireberryEndpoints['customObjectCreate'] =
 	async (ctx, input) => {
+		FireberryEndpointInputSchemas.customObjectCreate.parse(input);
 		const result = await validatedRequest(
 			FireberryEndpointOutputSchemas.customObjectCreate,
 			'/api/v2/record/58',
@@ -369,6 +390,7 @@ export const customObjectCreate: FireberryEndpoints['customObjectCreate'] =
 
 export const customObjectUpdate: FireberryEndpoints['customObjectUpdate'] =
 	async (ctx, input) => {
+		FireberryEndpointInputSchemas.customObjectUpdate.parse(input);
 		const { id, ...data } = input;
 		const result = await validatedRequest(
 			FireberryEndpointOutputSchemas.customObjectUpdate,
@@ -390,6 +412,7 @@ export const customObjectUpdate: FireberryEndpoints['customObjectUpdate'] =
 
 export const customObjectDelete: FireberryEndpoints['customObjectDelete'] =
 	async (ctx, input) => {
+		FireberryEndpointInputSchemas.customObjectDelete.parse(input);
 		const result = await validatedRequest(
 			FireberryEndpointOutputSchemas.customObjectDelete,
 			`/api/record/58/${encodeURIComponent(input.id)}`,
@@ -411,6 +434,7 @@ export const fileUpload: FireberryEndpoints['fileUpload'] = async (
 	ctx,
 	input,
 ) => {
+	FireberryEndpointInputSchemas.fileUpload.parse(input);
 	const result = FireberryEndpointOutputSchemas.fileUpload.parse(
 		await makeFireberryUploadRequest(
 			input.objectId,
@@ -433,6 +457,7 @@ export const batchCreate: FireberryEndpoints['batchCreate'] = async (
 	ctx,
 	input,
 ) => {
+	FireberryEndpointInputSchemas.batchCreate.parse(input);
 	const path = `/api/v3/record/${encodeURIComponent(input.objectCode)}/batch/create`;
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.batchCreate,
@@ -456,6 +481,7 @@ export const batchUpdate: FireberryEndpoints['batchUpdate'] = async (
 	ctx,
 	input,
 ) => {
+	FireberryEndpointInputSchemas.batchUpdate.parse(input);
 	const path = `/api/v3/record/${encodeURIComponent(input.objectCode)}/batch/update`;
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.batchUpdate,
@@ -479,6 +505,7 @@ export const batchDelete: FireberryEndpoints['batchDelete'] = async (
 	ctx,
 	input,
 ) => {
+	FireberryEndpointInputSchemas.batchDelete.parse(input);
 	const path = `/api/v3/record/${encodeURIComponent(input.objectCode)}/batch/delete`;
 	const result = await validatedRequest(
 		FireberryEndpointOutputSchemas.batchDelete,

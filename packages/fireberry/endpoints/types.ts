@@ -78,7 +78,10 @@ const BatchInputSchema = z
 	})
 	.strict()
 	.superRefine((input, ctx) => {
-		const itemSchema = FIREBERRY_BATCH_CREATE_ITEM_SCHEMAS[input.objectCode];
+		const itemSchema =
+			FIREBERRY_BATCH_CREATE_ITEM_SCHEMAS[
+				batchSchemaResource(input.objectCode)
+			];
 		if (!itemSchema) return;
 		input.data.forEach((item, index) => {
 			const parsed = itemSchema.safeParse(item);
@@ -133,7 +136,9 @@ const BatchUpdateInputSchema = z
 	.strict()
 	.superRefine((input, ctx) => {
 		const recordSchema =
-			FIREBERRY_BATCH_UPDATE_RECORD_SCHEMAS[input.objectCode];
+			FIREBERRY_BATCH_UPDATE_RECORD_SCHEMAS[
+				batchSchemaResource(input.objectCode)
+			];
 		if (!recordSchema) return;
 		input.data.forEach((entry, index) => {
 			const parsed = recordSchema.safeParse(entry.record);
@@ -178,6 +183,24 @@ const BatchDeleteInputSchema = z
 // Batch API response bodies are undocumented on create/update and empty for delete.
 const BatchResponseSchema = z.object({}).passthrough();
 const EmptyResponseSchema = z.object({}).passthrough();
+const BATCH_SCHEMA_RESOURCE_ALIASES: Record<string, string> = {
+	accountproduct: 'asset',
+	invoicecredit: 'creditInvoice',
+	invoicedelivery: 'deliveryInvoice',
+	invoicedraft: 'draftInvoice',
+	invoiceno: 'invoice',
+	invoicereno: 'invoiceReceipt',
+	activity: 'meeting',
+	crmorder: 'order',
+	crmorderitem: 'orderItem',
+	calllog: 'phoneCall',
+	invoicereceipt: 'receipt',
+	cases: 'ticket',
+	crmuser: 'user',
+};
+function batchSchemaResource(resourceCode: string): string {
+	return BATCH_SCHEMA_RESOURCE_ALIASES[resourceCode] ?? resourceCode;
+}
 const QueryFieldSchema = z
 	.object({
 		name: z.string().min(1),

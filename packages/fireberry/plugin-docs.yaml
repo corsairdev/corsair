@@ -1,5 +1,19 @@
 displayName: Fireberry
 description: Operate Fireberry CRM records, metadata, custom fields and objects, attachments, queries, and batch actions through typed Corsair endpoints.
+examples:
+  read:
+    path: metadata.field
+    title: Inspect an account field
+    args:
+      id: 1
+      fieldName: accountname
+  write:
+    path: batch.create
+    title: Create an account with the Batch API
+    args:
+      objectCode: account
+      data:
+        - accountname: Example Company
 apiExamples:
   records.list:
     call: "{ object: 'account', pageSize: 50, pageNumber: 1 }"

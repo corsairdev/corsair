@@ -61,14 +61,15 @@ export async function makeFireberryRequest<T>(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			// Provider errors include CRM request/response data; expose status and retry timing only.
+			// Provider error messages can echo CRM data; expose status and retry timing only.
 			throw new FireberryAPIError(
-				error.message,
+				'Fireberry request failed',
 				error.status,
 				error.retryAfter,
 			);
 		}
-		if (error instanceof Error) throw new FireberryAPIError(error.message);
+		if (error instanceof Error)
+			throw new FireberryAPIError('Fireberry request failed');
 		// `unknown` because JavaScript permits throwing non-Error values.
 		throw new FireberryAPIError('Fireberry request failed');
 	}
@@ -117,7 +118,8 @@ export async function makeFireberryUploadRequest(
 		return result;
 	} catch (error) {
 		if (error instanceof FireberryAPIError) throw error;
-		if (error instanceof Error) throw new FireberryAPIError(error.message);
+		if (error instanceof Error)
+			throw new FireberryAPIError('Fireberry file upload failed');
 		// `unknown` because JavaScript permits throwing non-Error values.
 		throw new FireberryAPIError('Fireberry file upload failed');
 	}

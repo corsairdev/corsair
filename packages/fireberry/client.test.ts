@@ -69,7 +69,7 @@ describe('Fireberry HTTP client', () => {
 				statusText: 'Too Many Requests',
 				body: { email: 'private@example.test' },
 			},
-			'Too Many Requests',
+			'Customer record exposed: private CRM value',
 			{ retryAfter: 4000 },
 		);
 		mockRequest.mockRejectedValue(apiError);
@@ -82,6 +82,7 @@ describe('Fireberry HTTP client', () => {
 			name: 'FireberryAPIError',
 			status: 429,
 			retryAfter: 4000,
+			message: 'Fireberry request failed',
 		});
 		expect(result).not.toHaveProperty('body');
 	});
