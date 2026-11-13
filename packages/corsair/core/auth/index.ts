@@ -35,6 +35,11 @@ export {
 	type OAuthAccessOptions,
 } from './oauth-access';
 export {
+	classifyOAuthRefreshFailure,
+	OAuthRefreshError,
+	type OAuthRefreshFailureKind,
+} from './oauth-refresh-local';
+export {
 	type AuthFieldLevel,
 	type AuthFieldStatus,
 	getPluginAuthStatus,
