@@ -89,6 +89,7 @@ function sleep(milliseconds: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
+// `unknown` because provider JSON remains untrusted until the operation output schema checks it.
 async function readJson(response: Response): Promise<unknown> {
 	return response.json();
 }
