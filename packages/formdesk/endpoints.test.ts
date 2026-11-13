@@ -855,6 +855,42 @@ describe('REST v1 operation matrix', () => {
 		);
 	});
 
+	it('parses the live users.add response, which has a null lastlogin', async () => {
+		mockedRequest.mockResolvedValue({
+			payload: {
+				meta: {
+					resourceType: 'User',
+					created: null,
+					createdUtc: 'NULL',
+					lastModified: null,
+					lastModifiedUtc: 'NULL',
+					location: 'https://fd7.formdesk.com/api/rest/v1/apitest/users/',
+				},
+				id: 0,
+				uuid: '',
+				active: true,
+				type: 'api',
+				firstname: '',
+				name: 'corsair-plugin-test',
+				email: '',
+				username: '',
+				allow_createform: false,
+				template: 0,
+				apikey: '',
+				external_userid: '',
+				external_force: false,
+				external_provider: '',
+				lastlogin: null,
+			},
+			creditsRemaining: 60,
+		});
+		const user = await Users.add(context, {
+			...TENANT,
+			user: { type: 'API', name: 'corsair-plugin-test' },
+		});
+		expect(user.lastlogin).toBeNull();
+	});
+
 	it('rejects invalid provider output before logging completion', async () => {
 		mockedRequest.mockResolvedValue({
 			payload: [{ id: 1 }],

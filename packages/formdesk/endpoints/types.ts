@@ -108,7 +108,7 @@ const UserSchema = extensibleObject({
 	external_userid: z.string().optional(),
 	external_force: z.boolean().optional(),
 	external_provider: z.string().optional(),
-	lastlogin: z.string().optional(),
+	lastlogin: z.string().nullable().optional(),
 });
 const VisitorSchema = extensibleObject({
 	meta: ApiMetaSchema.optional(),
