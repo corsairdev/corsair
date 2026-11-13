@@ -221,6 +221,20 @@ describe('makeKeenRequest', () => {
 		});
 	});
 
+	it('waits past the five minutes Keen gives a query before timing out', async () => {
+		const timeout = jest.spyOn(AbortSignal, 'timeout');
+		respond({ result: 1 });
+
+		await makeKeenRequest(
+			{ apiKey: API_KEY, projectId: PROJECT_ID },
+			{ method: 'POST', path: '/queries/count', body: {} },
+		);
+
+		expect(timeout).toHaveBeenCalledWith(expect.any(Number));
+		expect(timeout.mock.calls[0]?.[0]).toBeGreaterThan(300_000);
+		timeout.mockRestore();
+	});
+
 	it('keeps a Retry-After header as milliseconds', async () => {
 		fetchMock.mockResolvedValueOnce(
 			new Response(

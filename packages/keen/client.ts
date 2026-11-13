@@ -8,10 +8,10 @@ import { ApiError, request } from 'corsair/http';
 
 export const KEEN_API_BASE = 'https://api.keen.io';
 
-// A saved query can take up to five minutes before Keen answers 504, and that
-// is the API's own ceiling, so the 20 second default in corsair/http would time
-// out queries Keen is still going to answer.
-const KEEN_TIMEOUT_MS = 60_000;
+// Keen runs a query for up to five minutes before it stops it and answers 504
+// `QueryIncompleteError`, so the client waits a little past that: a shorter
+// timeout would abandon queries Keen is still going to answer.
+const KEEN_TIMEOUT_MS = 310_000;
 
 // Keen answers every JSON error with `{ message, error_code }`. The codes carry
 // the meaning: `InvalidApiKeyError` is a bad key, and `QueryIncompleteError` is
