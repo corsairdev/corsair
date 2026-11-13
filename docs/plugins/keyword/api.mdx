@@ -91,7 +91,7 @@ await corsair.keyword.api.alerts.list({ view_type: 'All alerts', page: 1, per_pa
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `meta` | `Record<string, unknown> \| null` | No | — |
+| `meta` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -215,7 +215,7 @@ Adding a keyword the project already tracks returns the existing one rather than
     impressions?: number | null,
     ctr?: number | null,
     ms?: number | null,
-    competition?: number | null,
+    competition?: number | string | null,
     cpc?: number | null,
     gpage?: number | null,
     grank?: number | null,
@@ -464,7 +464,7 @@ await corsair.keyword.api.keywords.get({ projectName: 'Disney', keywordId: '2726
     impressions?: number | null,
     ctr?: number | null,
     ms?: number | null,
-    competition?: number | null,
+    competition?: number | string | null,
     cpc?: number | null,
     gpage?: number | null,
     grank?: number | null,
@@ -520,7 +520,7 @@ await corsair.keyword.api.keywords.list({ projectName: 'Disney', page: 1, per_pa
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `meta` | `Record<string, unknown> \| null` | No | — |
+| `meta` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -564,7 +564,7 @@ await corsair.keyword.api.keywords.list({ projectName: 'Disney', page: 1, per_pa
     impressions?: number | null,
     ctr?: number | null,
     ms?: number | null,
-    competition?: number | null,
+    competition?: number | string | null,
     cpc?: number | null,
     gpage?: number | null,
     grank?: number | null,
@@ -705,7 +705,7 @@ await corsair.keyword.api.keywords.update({ projectName: 'Disney', keywordId: '2
     impressions?: number | null,
     ctr?: number | null,
     ms?: number | null,
-    competition?: number | null,
+    competition?: number | string | null,
     cpc?: number | null,
     gpage?: number | null,
     grank?: number | null,
@@ -753,7 +753,7 @@ await corsair.keyword.api.metrics.competitors({ projectName: 'Disney', keywordId
 |------|------|----------|-------------|
 | `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
 | `keywordId` | `string \| number` | Yes | The keyword ID, as a string or a number. |
-| `dateRange` | `string` | No | The window, such as `2026-11-01.2026-11-12`. |
+| `dateRange` | `string` | Yes | The window, such as `2026-11-01.2026-11-12`. Keyword requires it. |
 
 
 
@@ -896,19 +896,18 @@ Scoped by numeric `projectId`, and read from Keyword’s cache.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
+| `data` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
-{
-  date?: string | null,
-  title?: string | null,
+Record<string, {
   url?: string | null,
+  clicks?: number | null,
   percentage?: number | null,
-  clicks?: number | null
-}[]
+  domain_exist_in_project?: boolean | null
+}[]>
 ```
 </Accordion>
 </AccordionGroup>
@@ -968,6 +967,48 @@ await corsair.keyword.api.mindshare.latest({ projectName: 'Disney' });
 
 ## Projects
 
+### archive
+
+`projects.archive`
+
+Archive a project or subproject: it stops updating until `projects.restore` brings it back. Keyword refuses to archive the account’s only active top-level project
+
+**Risk:** `write`
+
+```ts
+await corsair.keyword.api.projects.archive({ projectName: 'Disney' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  title: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### create
 
 `projects.create`
@@ -1007,7 +1048,7 @@ await corsair.keyword.api.projects.create({ category: 'Disney', currency_code: '
     project_id?: number | null,
     name?: string | null,
     shortkey?: string | null,
-    keywords_count?: number | Record<string, number> | null,
+    keywords_count?: number | Record<string, number> | [] | null,
     tags_count?: number | null,
     tags?: {
       id?: number | null,
@@ -1020,7 +1061,7 @@ await corsair.keyword.api.projects.create({ category: 'Disney', currency_code: '
     keywords_last_updated_at?: string | null,
     notes_count?: number | null,
     updated_at?: string | null,
-    crawled_at?: string | null,
+    crawled_at?: number | string | null,
     url?: string | null,
     currency_code?: string | null,
     company_name?: string | null,
@@ -1117,7 +1158,7 @@ await corsair.keyword.api.projects.get({ projectName: 'Disney' });
     project_id?: number | null,
     name?: string | null,
     shortkey?: string | null,
-    keywords_count?: number | Record<string, number> | null,
+    keywords_count?: number | Record<string, number> | [] | null,
     tags_count?: number | null,
     tags?: {
       id?: number | null,
@@ -1130,7 +1171,7 @@ await corsair.keyword.api.projects.get({ projectName: 'Disney' });
     keywords_last_updated_at?: string | null,
     notes_count?: number | null,
     updated_at?: string | null,
-    crawled_at?: string | null,
+    crawled_at?: number | string | null,
     url?: string | null,
     currency_code?: string | null,
     company_name?: string | null,
@@ -1182,7 +1223,7 @@ Returns projects and subprojects together; a subproject is written `Parent[sub]C
     project_id?: number | null,
     name?: string | null,
     shortkey?: string | null,
-    keywords_count?: number | Record<string, number> | null,
+    keywords_count?: number | Record<string, number> | [] | null,
     tags_count?: number | null,
     tags?: {
       id?: number | null,
@@ -1195,7 +1236,7 @@ Returns projects and subprojects together; a subproject is written `Parent[sub]C
     keywords_last_updated_at?: string | null,
     notes_count?: number | null,
     updated_at?: string | null,
-    crawled_at?: string | null,
+    crawled_at?: number | string | null,
     url?: string | null,
     currency_code?: string | null,
     company_name?: string | null,
@@ -1237,114 +1278,15 @@ await corsair.keyword.api.projects.restore({ projectName: 'Disney' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+| `message` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="meta full type">
 
 ```ts
 {
-  type?: string | null,
-  id: string,
-  attributes: {
-    project_id?: number | null,
-    name?: string | null,
-    shortkey?: string | null,
-    keywords_count?: number | Record<string, number> | null,
-    tags_count?: number | null,
-    tags?: {
-      id?: number | null,
-      project_id?: number | null,
-      name?: string | null,
-      created_at?: string | null,
-      updated_at?: string | null,
-      keywords_count?: number | null
-    }[] | null,
-    keywords_last_updated_at?: string | null,
-    notes_count?: number | null,
-    updated_at?: string | null,
-    crawled_at?: string | null,
-    url?: string | null,
-    currency_code?: string | null,
-    company_name?: string | null,
-    company_desc?: string | null,
-    company_link?: string | null,
-    company_logo?: string | null,
-    sov_view_key?: boolean | null
-  }
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### update
-
-`projects.update`
-
-Change a project’s domain, currency or company details
-
-**Risk:** `write`
-
-```ts
-await corsair.keyword.api.projects.update({ projectName: 'Disney', url: 'shopdisney.com' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
-| `url` | `string` | No | — |
-| `currency_code` | `string` | No | — |
-| `company_name` | `string` | No | — |
-| `company_desc` | `string` | No | — |
-| `company_link` | `string` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  type?: string | null,
-  id: string,
-  attributes: {
-    project_id?: number | null,
-    name?: string | null,
-    shortkey?: string | null,
-    keywords_count?: number | Record<string, number> | null,
-    tags_count?: number | null,
-    tags?: {
-      id?: number | null,
-      project_id?: number | null,
-      name?: string | null,
-      created_at?: string | null,
-      updated_at?: string | null,
-      keywords_count?: number | null
-    }[] | null,
-    keywords_last_updated_at?: string | null,
-    notes_count?: number | null,
-    updated_at?: string | null,
-    crawled_at?: string | null,
-    url?: string | null,
-    currency_code?: string | null,
-    company_name?: string | null,
-    company_desc?: string | null,
-    company_link?: string | null,
-    company_logo?: string | null,
-    sov_view_key?: boolean | null
-  }
+  title: string
 }
 ```
 </Accordion>
@@ -1360,7 +1302,7 @@ await corsair.keyword.api.projects.update({ projectName: 'Disney', url: 'shopdis
 
 `rankChart.get`
 
-Daily rank history for a set of keywords over up to 180 days; Keyword refuses a call covering more than 400,000 keyword-days
+Daily rank history for a set of keywords over a number of days; Keyword refuses a call covering more than 400,000 keyword-days
 
 **Risk:** `read`
 
@@ -1372,8 +1314,8 @@ await corsair.keyword.api.rankChart.get({ keywordIds: ['272678916'], limit: 30 }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `keywordIds` | `(string \| number)[]` | Yes | Keen refuses a call covering more than 400,000 keyword-days. |
-| `limit` | `number` | No | Days of history. Defaults to 180. |
+| `keywordIds` | `(string \| number)[]` | Yes | Keyword refuses a call covering more than 400,000 keyword-days. |
+| `limit` | `number` | No | Days of history before today. Each keyword counts `limit + 1` days toward the 400,000 keyword-day cap. |
 
 Keyword refuses a call covering more than 400,000 keyword-days, so shorten `limit` or send fewer keywords.
 
@@ -1410,12 +1352,12 @@ Keyword refuses a call covering more than 400,000 keyword-days, so shorten `limi
 
 `rankingUrls.list`
 
-The pages that rank best for a project, with their average position and total search volume
+The pages that rank best for a project, with their average position and total search volume, 10 to a page
 
 **Risk:** `read`
 
 ```ts
-await corsair.keyword.api.rankingUrls.list({ projectName: 'Disney' });
+await corsair.keyword.api.rankingUrls.list({ projectName: 'Disney', page: 1 });
 ```
 
 **Input**
@@ -1423,6 +1365,7 @@ await corsair.keyword.api.rankingUrls.list({ projectName: 'Disney' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
+| `page` | `number` | No | 1-based page. Defaults to 1. |
 
 
 
@@ -1506,7 +1449,7 @@ await corsair.keyword.api.regions.list({ projectName: 'Disney' });
 
 `sharing.get`
 
-A project’s sharing settings: whether the public link is on and whether it needs a password
+A project’s shared-report settings: whether the share link is on, its hash, whether it needs a password, and what the report shows
 
 **Risk:** `read`
 
@@ -1526,22 +1469,59 @@ await corsair.keyword.api.sharing.get({ projectId: 3057417 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `project_id` | `number \| null` | No | — |
+| `share_hash` | `string \| null` | No | The share link’s hash; null while sharing is off. |
+| `is_active` | `boolean \| null` | No | — |
+| `is_password_protected` | `boolean \| null` | No | — |
+| `visibility` | `object \| null` | No | — |
+| `keyword_columns` | `object \| null` | No | — |
+| `keyword_charts` | `object \| null` | No | — |
+| `overview_charts` | `object \| null` | No | — |
+| `branding` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="visibility full type">
 
 ```ts
 {
-  type?: string | null,
-  id?: string | null,
-  attributes: {
-    project_id?: number | null,
-    is_public?: boolean | null,
-    password?: string | null,
-    sov_view_key?: boolean | null
-  }
-}
+  hide_overview?: boolean | null,
+  hide_top_pages?: boolean | null,
+  hide_share_options?: boolean | null,
+  hide_keyword_actions?: boolean | null,
+  show_rank_verification?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="keyword_columns full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="keyword_charts full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="overview_charts full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="branding full type">
+
+```ts
+{
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1554,12 +1534,12 @@ await corsair.keyword.api.sharing.get({ projectId: 3057417 });
 
 `sharing.update`
 
-Turn a project’s public share link on or off, and set or clear its password
+Turn a project’s share link on or off, set or clear its password, or toggle what the shared report shows. Everything except the on/off switch needs Keyword’s white-label permission
 
 **Risk:** `write`
 
 ```ts
-await corsair.keyword.api.sharing.update({ projectId: 3057417, is_public: true });
+await corsair.keyword.api.sharing.update({ projectId: 3057417, is_active: true });
 ```
 
 **Input**
@@ -1567,9 +1547,24 @@ await corsair.keyword.api.sharing.update({ projectId: 3057417, is_public: true }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `projectId` | `number` | Yes | The numeric project ID, from `projects.list`. |
-| `is_public` | `boolean` | No | Turn the public share link on or off. |
-| `password` | `string` | No | Protect the share link with this password. Send an empty string to remove it. |
-| `sov_view_key` | `boolean` | No | — |
+| `is_active` | `boolean` | No | Turn the share link on or off. |
+| `password` | `string \| null` | No | Protect the share link with this password; null or an empty string removes it. Setting one needs the white-label plan. |
+| `visibility` | `object` | No | Toggles merged key by key; omitted ones keep their value. |
+
+<AccordionGroup>
+<Accordion title="visibility full type">
+
+```ts
+{
+  hide_overview?: boolean,
+  hide_top_pages?: boolean,
+  hide_share_options?: boolean,
+  hide_keyword_actions?: boolean,
+  show_rank_verification?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1577,22 +1572,59 @@ await corsair.keyword.api.sharing.update({ projectId: 3057417, is_public: true }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `object` | Yes | — |
+| `project_id` | `number \| null` | No | — |
+| `share_hash` | `string \| null` | No | The share link’s hash; null while sharing is off. |
+| `is_active` | `boolean \| null` | No | — |
+| `is_password_protected` | `boolean \| null` | No | — |
+| `visibility` | `object \| null` | No | — |
+| `keyword_columns` | `object \| null` | No | — |
+| `keyword_charts` | `object \| null` | No | — |
+| `overview_charts` | `object \| null` | No | — |
+| `branding` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="visibility full type">
 
 ```ts
 {
-  type?: string | null,
-  id?: string | null,
-  attributes: {
-    project_id?: number | null,
-    is_public?: boolean | null,
-    password?: string | null,
-    sov_view_key?: boolean | null
-  }
-}
+  hide_overview?: boolean | null,
+  hide_top_pages?: boolean | null,
+  hide_share_options?: boolean | null,
+  hide_keyword_actions?: boolean | null,
+  show_rank_verification?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="keyword_columns full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="keyword_charts full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="overview_charts full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="branding full type">
+
+```ts
+{
+} | null
 ```
 </Accordion>
 </AccordionGroup>
