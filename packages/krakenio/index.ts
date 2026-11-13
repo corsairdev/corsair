@@ -117,7 +117,7 @@ const krakenEndpointMeta = {
 	'upload.optimize': {
 		riskLevel: 'write',
 		description:
-			'Optimize a file sent as base64 in the request body, with the same resize and conversion options. Spends quota',
+			'Optimize a file passed as base64, which the plugin uploads to Kraken as multipart, with the same resize and conversion options. Spends quota',
 	},
 	'account.status': {
 		riskLevel: 'read',
@@ -161,13 +161,21 @@ export function krakenio<const T extends KrakenPluginOptions>(
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: KrakenKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			// An inline key (either option name) wins over storage, the same rule
+			// resolveCredentials applies to the secret.
+			const inlineKey = options.apiKey ?? options.key;
+			if (source === 'endpoint' && inlineKey) {
+				return inlineKey;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+				const [apiKey, apiSecret] = await Promise.all([
+					ctx.keys.get_api_key(),
+					ctx.keys.get_api_secret(),
+				]);
+				// Kraken refuses a key without its secret, so a half-stored pair is
+				// treated as no credentials, which lets Corsair offer a connect link.
+				if (apiKey && apiSecret) return apiKey;
 			}
 
 			throw new AuthMissingError('krakenio', ctx.authType ?? 'api_key');

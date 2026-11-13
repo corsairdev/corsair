@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { KrakenContext } from '..';
 import type { KrakenCredentials, KrakenRequest } from '../client';
@@ -7,25 +7,26 @@ import { makeKrakenRequest } from '../client';
 type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
- * Kraken needs a key and a secret, and both travel in the JSON body. They are
- * account-level fields, so the key builder reads `get_api_key` and
- * `get_api_secret`, which the key manager generates for the account.
+ * Kraken needs a key and a secret, and both travel in the JSON body. The key is
+ * `ctx.key`, which the key builder already resolved (inline option first, then
+ * storage). The secret follows the same order: the `apiSecret` option, then the
+ * stored account field.
  */
 export async function resolveCredentials(
 	ctx: KrakenContext,
 ): Promise<KrakenCredentials> {
-	if (ctx.options.apiKey && ctx.options.apiSecret) {
-		return {
-			apiKey: ctx.options.apiKey,
-			apiSecret: ctx.options.apiSecret,
-		};
+	const apiKey = ctx.key;
+	// ctx.keys is absent when Corsair runs without a database, so an inline
+	// pair must not need it.
+	const apiSecret =
+		ctx.options.apiSecret ??
+		(typeof ctx.keys?.get_api_secret === 'function'
+			? await ctx.keys.get_api_secret()
+			: undefined);
+	if (!apiKey || !apiSecret) {
+		throw new AuthMissingError('krakenio', 'api_key');
 	}
-
-	const [apiKey, apiSecret] = await Promise.all([
-		ctx.keys.get_api_key(),
-		ctx.keys.get_api_secret(),
-	]);
-	return { apiKey: apiKey ?? ctx.key, apiSecret: apiSecret ?? '' };
+	return { apiKey, apiSecret };
 }
 
 /**

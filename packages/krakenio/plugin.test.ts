@@ -2,12 +2,18 @@ import { AuthMissingError } from 'corsair/core';
 import { krakenio, krakenioEndpointSchemas } from './index';
 
 // The key builder only reads authType and keys.
-function keyContext(apiKey: string | null) {
+function keyContext(
+	apiKey: string | null,
+	apiSecret: string | null = 'stored-secret',
+) {
 	return {
 		authType: 'api_key' as const,
 		options: {},
 		tenantId: 'default',
-		keys: { get_api_key: jest.fn().mockResolvedValue(apiKey) },
+		keys: {
+			get_api_key: jest.fn().mockResolvedValue(apiKey),
+			get_api_secret: jest.fn().mockResolvedValue(apiSecret),
+		},
 	};
 }
 
@@ -115,6 +121,21 @@ describe('krakenio key builder', () => {
 		await expect(buildKey(krakenio(), keyContext(null))).rejects.toBeInstanceOf(
 			AuthMissingError,
 		);
+	});
+
+	it('takes the apiKey option without reading storage', async () => {
+		const ctx = keyContext(null, null);
+
+		await expect(
+			buildKey(krakenio({ apiKey: 'inline-key', apiSecret: 's' }), ctx),
+		).resolves.toBe('inline-key');
+		expect(ctx.keys.get_api_key).not.toHaveBeenCalled();
+	});
+
+	it('throws AuthMissingError when the key is stored without its secret', async () => {
+		await expect(
+			buildKey(krakenio(), keyContext('stored-key', null)),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('refuses webhook keys', async () => {
