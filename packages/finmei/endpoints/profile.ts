@@ -2,9 +2,14 @@ import { makeFinmeiRequest } from '../client';
 import type { FinmeiEndpoints } from '../index';
 import { safeLog } from './shared';
 import type { FinmeiProfile } from './types';
-import { FinmeiProfileOutputSchema } from './types';
+import {
+	FinmeiGetProfileInputSchema,
+	FinmeiProfileOutputSchema,
+} from './types';
 
-export const get: FinmeiEndpoints['profileGet'] = async (ctx, _input) => {
+export const get: FinmeiEndpoints['profileGet'] = async (ctx, input) => {
+	FinmeiGetProfileInputSchema.parse(input ?? {});
+
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{
 		data: FinmeiProfile;

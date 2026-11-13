@@ -6,7 +6,9 @@ import {
 	FinmeiAPIError,
 	makeFinmeiBinaryRequest,
 	makeFinmeiRequest,
+	parseRetryAfterMs,
 	redactSensitiveData,
+	sanitizeErrorMessage,
 } from './client';
 import { errorHandlers } from './error-handlers';
 
@@ -25,6 +27,7 @@ function makeApiError(
 	status: number,
 	message: string,
 	retryAfter?: number,
+	// `unknown` because mock error body reflects untrusted remote response payloads of varying types.
 	body?: unknown,
 ) {
 	return new ApiError(
@@ -236,6 +239,8 @@ describe('makeFinmeiBinaryRequest', () => {
 		const caught: unknown = await makeFinmeiBinaryRequest(
 			'/invoices/123/download',
 			'test-token',
+			undefined,
+			{ maxRetries: 0 },
 		).catch((err: unknown) => err);
 
 		expect(caught).toBeInstanceOf(FinmeiAPIError);
@@ -245,6 +250,117 @@ describe('makeFinmeiBinaryRequest', () => {
 		// `unknown` because error details are typed unknown.
 		const details = err.details as Record<string, unknown>;
 		expect(details.api_key).toBe('[REDACTED]');
+	});
+
+	it('retries binary request on 429 and gives up when budget is exhausted', async () => {
+		const rateLimited = () =>
+			new Response(JSON.stringify({ message: 'Rate limit' }), {
+				status: 429,
+				headers: { 'retry-after': '0' },
+			});
+		const fetchSpy = jest
+			.spyOn(global, 'fetch')
+			.mockImplementation(async () => rateLimited());
+
+		// `unknown` because rejection has no static type.
+		const caught: unknown = await makeFinmeiBinaryRequest(
+			'/invoices/123/download',
+			'test-token',
+		).catch((err: unknown) => err);
+
+		expect(caught).toBeInstanceOf(FinmeiAPIError);
+		const err = caught as FinmeiAPIError;
+		expect(err.status).toBe(429);
+		// Initial attempt + 2 retries = 3 calls
+		expect(fetchSpy).toHaveBeenCalledTimes(3);
+	});
+
+	it('binary request recovers after 429 retry', async () => {
+		const rateLimited = new Response(
+			JSON.stringify({ message: 'Rate limit' }),
+			{
+				status: 429,
+				headers: { 'retry-after': '0' },
+			},
+		);
+		const rawBytes = Buffer.from('PDF_CONTENT');
+		const ab = rawBytes.buffer.slice(
+			rawBytes.byteOffset,
+			rawBytes.byteOffset + rawBytes.byteLength,
+		);
+		const successResponse = new Response(ab, {
+			status: 200,
+			headers: { 'content-type': 'application/pdf' },
+		});
+
+		jest
+			.spyOn(global, 'fetch')
+			.mockResolvedValueOnce(rateLimited)
+			.mockResolvedValueOnce(successResponse);
+
+		const result = await makeFinmeiBinaryRequest(
+			'/invoices/123/download',
+			'test-token',
+		);
+		expect(result.contentType).toBe('application/pdf');
+		expect(result.size).toBe(rawBytes.byteLength);
+	});
+
+	it('reads plain-text error details from non-OK binary responses', async () => {
+		const plainTextResponse = new Response('Plain text error explanation', {
+			status: 500,
+			headers: { 'content-type': 'text/plain' },
+		});
+		jest.spyOn(global, 'fetch').mockResolvedValue(plainTextResponse);
+
+		// `unknown` because rejection has no static type.
+		const caught: unknown = await makeFinmeiBinaryRequest(
+			'/invoices/123/download',
+			'test-token',
+		).catch((err: unknown) => err);
+
+		expect(caught).toBeInstanceOf(FinmeiAPIError);
+		const err = caught as FinmeiAPIError;
+		expect(err.details).toBe('Plain text error explanation');
+	});
+
+	it('sanitizes error.message to redact credentials and tokens', async () => {
+		const apiErr = makeApiError(
+			422,
+			'Validation failed for api_key=secret-123 and Bearer my-secret-token and token: super-secret',
+		);
+		mockRequest.mockRejectedValue(apiErr);
+
+		// `unknown` because rejection has no static type.
+		const caught: unknown = await makeFinmeiRequest(
+			'/invoices',
+			'custom-api-key',
+		).catch((err: unknown) => err);
+
+		expect(caught).toBeInstanceOf(FinmeiAPIError);
+		const err = caught as FinmeiAPIError;
+		expect(err.message).not.toContain('secret-123');
+		expect(err.message).not.toContain('my-secret-token');
+		expect(err.message).not.toContain('super-secret');
+		expect(err.message).toContain('[REDACTED]');
+	});
+
+	it('parseRetryAfterMs converts retry-after header to milliseconds', () => {
+		const res = new Response(null, { headers: { 'retry-after': '5' } });
+		expect(parseRetryAfterMs(res)).toBe(5000);
+		const noHeader = new Response(null);
+		expect(parseRetryAfterMs(noHeader)).toBeUndefined();
+	});
+
+	it('sanitizeErrorMessage redacts known credentials, bearer tokens, and explicit apiKey', () => {
+		const raw =
+			'Invalid Bearer foo.bar.baz with apiKey=abc12345 and token="secret"';
+		expect(sanitizeErrorMessage(raw, 'custom-key')).toBe(
+			'Invalid Bearer [REDACTED] with apiKey=[REDACTED] and token="[REDACTED]"',
+		);
+		expect(sanitizeErrorMessage('Error with custom-key', 'custom-key')).toBe(
+			'Error with [REDACTED]',
+		);
 	});
 });
 

@@ -529,11 +529,11 @@ export function finmei<const T extends FinmeiPluginOptions>(
 export type {
 	FinmeiBinaryResponse,
 	FinmeiBuyer,
-	FinmeiCreateCustomerInputSchema,
-	FinmeiCreateExpenseInputSchema,
-	FinmeiCreateInvoiceInputSchema,
-	FinmeiCreatePaymentInputSchema,
-	FinmeiCreateProductInputSchema,
+	FinmeiCreateCustomerInput,
+	FinmeiCreateExpenseInput,
+	FinmeiCreateInvoiceInput,
+	FinmeiCreatePaymentInput,
+	FinmeiCreateProductInput,
 	FinmeiCurrency,
 	FinmeiCustomer,
 	FinmeiDeleteResponse,
@@ -548,4 +548,11 @@ export type {
 	FinmeiProduct,
 	FinmeiProfile,
 	FinmeiSeller,
+} from './endpoints/types';
+export {
+	FinmeiCreateCustomerInputSchema,
+	FinmeiCreateExpenseInputSchema,
+	FinmeiCreateInvoiceInputSchema,
+	FinmeiCreatePaymentInputSchema,
+	FinmeiCreateProductInputSchema,
 } from './endpoints/types';

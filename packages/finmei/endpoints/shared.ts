@@ -30,6 +30,7 @@ export function compactQuery(
 export async function safeLog(
 	ctx: FinmeiContext,
 	event: string,
+	// `unknown` because log metadata values vary across operations (counts, ids, currencies) and cannot be statically constrained.
 	metadata: Record<string, unknown>,
 ): Promise<void> {
 	await logEventFromContext(ctx, `finmei.${event}`, metadata, 'completed');

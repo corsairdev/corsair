@@ -8,15 +8,22 @@ import type {
 } from './types';
 import {
 	FinmeiBinaryResponseSchema,
+	FinmeiCreateInvoiceInputSchema,
+	FinmeiDeleteInvoiceInputSchema,
 	FinmeiDeleteResponseSchema,
+	FinmeiDownloadInvoiceInputSchema,
+	FinmeiGetInvoiceInputSchema,
 	FinmeiInvoiceOutputSchema,
+	FinmeiListInvoicesInputSchema,
 	FinmeiListInvoicesOutputSchema,
+	FinmeiUpdateInvoiceInputSchema,
 } from './types';
 
 export const list: FinmeiEndpoints['invoicesList'] = async (ctx, input) => {
+	const parsedInput = FinmeiListInvoicesInputSchema.parse(input);
 	const query = compactQuery({
-		page: input.page,
-		per_page: input.per_page,
+		page: parsedInput.page,
+		per_page: parsedInput.per_page,
 	});
 
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
@@ -31,18 +38,20 @@ export const list: FinmeiEndpoints['invoicesList'] = async (ctx, input) => {
 	const parsed = FinmeiListInvoicesOutputSchema.parse(rawResponse);
 	await safeLog(ctx, 'invoices.list', {
 		count: parsed.data.length,
-		page: input.page ?? 1,
+		page: parsedInput.page ?? 1,
 	});
 	return parsed;
 };
 
 export const create: FinmeiEndpoints['invoicesCreate'] = async (ctx, input) => {
+	const parsedInput = FinmeiCreateInvoiceInputSchema.parse(input);
+
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{
 		data: FinmeiInvoice;
 	}>('/invoices', ctx.key, {
 		method: 'POST',
-		body: input,
+		body: parsedInput,
 	});
 
 	const parsed = FinmeiInvoiceOutputSchema.parse(rawResponse);
@@ -54,22 +63,25 @@ export const create: FinmeiEndpoints['invoicesCreate'] = async (ctx, input) => {
 };
 
 export const get: FinmeiEndpoints['invoicesGet'] = async (ctx, input) => {
+	const parsedInput = FinmeiGetInvoiceInputSchema.parse(input);
+
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{
 		data: FinmeiInvoice;
-	}>(`/invoices/${seg(input.id)}`, ctx.key, {
+	}>(`/invoices/${seg(parsedInput.id)}`, ctx.key, {
 		method: 'GET',
 	});
 
 	const parsed = FinmeiInvoiceOutputSchema.parse(rawResponse);
 	await safeLog(ctx, 'invoices.get', {
-		id: input.id,
+		id: parsedInput.id,
 	});
 	return parsed;
 };
 
 export const update: FinmeiEndpoints['invoicesUpdate'] = async (ctx, input) => {
-	const { id, ...bodyFields } = input;
+	const parsedInput = FinmeiUpdateInvoiceInputSchema.parse(input);
+	const { id, ...bodyFields } = parsedInput;
 
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{
@@ -87,9 +99,11 @@ export const update: FinmeiEndpoints['invoicesUpdate'] = async (ctx, input) => {
 };
 
 export const del: FinmeiEndpoints['invoicesDelete'] = async (ctx, input) => {
+	const parsedInput = FinmeiDeleteInvoiceInputSchema.parse(input);
+
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<FinmeiDeleteResponse>(
-		`/invoices/${seg(input.id)}`,
+		`/invoices/${seg(parsedInput.id)}`,
 		ctx.key,
 		{
 			method: 'DELETE',
@@ -98,7 +112,7 @@ export const del: FinmeiEndpoints['invoicesDelete'] = async (ctx, input) => {
 
 	const parsed = FinmeiDeleteResponseSchema.parse(rawResponse);
 	await safeLog(ctx, 'invoices.delete', {
-		id: input.id,
+		id: parsedInput.id,
 	});
 	return parsed;
 };
@@ -107,15 +121,17 @@ export const download: FinmeiEndpoints['invoicesDownload'] = async (
 	ctx,
 	input,
 ) => {
+	const parsedInput = FinmeiDownloadInvoiceInputSchema.parse(input);
+
 	// `unknown` because response from provider binary download is checked with Zod schema.
 	const rawResponse: unknown = await makeFinmeiBinaryRequest(
-		`/invoices/${seg(input.id)}/download`,
+		`/invoices/${seg(parsedInput.id)}/download`,
 		ctx.key,
 	);
 
 	const parsed = FinmeiBinaryResponseSchema.parse(rawResponse);
 	await safeLog(ctx, 'invoices.download', {
-		id: input.id,
+		id: parsedInput.id,
 		contentType: parsed.contentType,
 	});
 	return parsed;

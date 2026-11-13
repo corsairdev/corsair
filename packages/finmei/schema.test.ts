@@ -333,3 +333,24 @@ describe('Finmei binary and delete response schemas', () => {
 		expect(FinmeiDeleteResponseSchema.safeParse(undefined).success).toBe(true);
 	});
 });
+
+describe('Finmei schema runtime exports from index', () => {
+	it('exports input schemas as runtime Zod objects from root index', async () => {
+		const indexModule = await import('./index');
+		expect(typeof indexModule.FinmeiCreateInvoiceInputSchema?.parse).toBe(
+			'function',
+		);
+		expect(typeof indexModule.FinmeiCreateExpenseInputSchema?.parse).toBe(
+			'function',
+		);
+		expect(typeof indexModule.FinmeiCreateCustomerInputSchema?.parse).toBe(
+			'function',
+		);
+		expect(typeof indexModule.FinmeiCreateProductInputSchema?.parse).toBe(
+			'function',
+		);
+		expect(typeof indexModule.FinmeiCreatePaymentInputSchema?.parse).toBe(
+			'function',
+		);
+	});
+});

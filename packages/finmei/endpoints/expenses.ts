@@ -8,15 +8,23 @@ import type {
 } from './types';
 import {
 	FinmeiBinaryResponseSchema,
+	FinmeiCreateExpenseInputSchema,
+	FinmeiDeleteExpenseInputSchema,
 	FinmeiDeleteResponseSchema,
+	FinmeiDownloadExpenseInputSchema,
 	FinmeiExpenseOutputSchema,
+	FinmeiGetExpenseInputSchema,
+	FinmeiListExpensesInputSchema,
 	FinmeiListExpensesOutputSchema,
+	FinmeiUpdateExpenseFileInputSchema,
+	FinmeiUpdateExpenseInputSchema,
 } from './types';
 
 export const list: FinmeiEndpoints['expensesList'] = async (ctx, input) => {
+	const parsedInput = FinmeiListExpensesInputSchema.parse(input);
 	const query = compactQuery({
-		page: input.page,
-		per_page: input.per_page,
+		page: parsedInput.page,
+		per_page: parsedInput.per_page,
 	});
 
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
@@ -31,35 +39,37 @@ export const list: FinmeiEndpoints['expensesList'] = async (ctx, input) => {
 	const parsed = FinmeiListExpensesOutputSchema.parse(rawResponse);
 	await safeLog(ctx, 'expenses.list', {
 		count: parsed.data.length,
-		page: input.page ?? 1,
+		page: parsedInput.page ?? 1,
 	});
 	return parsed;
 };
 
 export const create: FinmeiEndpoints['expensesCreate'] = async (ctx, input) => {
+	const parsedInput = FinmeiCreateExpenseInputSchema.parse(input);
+
 	// If a base64 file is provided, submit as multipart/form-data.
-	const fileBase64 = input.file;
+	const fileBase64 = parsedInput.file;
 	const requestOptions =
 		typeof fileBase64 === 'string' && fileBase64.length > 0
 			? {
 					method: 'POST' as const,
 					formData: {
 						file: new Blob([Buffer.from(fileBase64, 'base64')], {
-							type: input.fileType ?? 'application/pdf',
+							type: parsedInput.fileType ?? 'application/pdf',
 						}),
-						seller: input.seller,
-						total: String(input.total),
-						currency: input.currency,
-						date: input.date,
+						seller: parsedInput.seller,
+						total: String(parsedInput.total),
+						currency: parsedInput.currency,
+						date: parsedInput.date,
 					},
 				}
 			: {
 					method: 'POST' as const,
 					body: {
-						seller: input.seller,
-						total: input.total,
-						currency: input.currency,
-						date: input.date,
+						seller: parsedInput.seller,
+						total: parsedInput.total,
+						currency: parsedInput.currency,
+						date: parsedInput.date,
 					},
 				};
 
@@ -77,22 +87,25 @@ export const create: FinmeiEndpoints['expensesCreate'] = async (ctx, input) => {
 };
 
 export const get: FinmeiEndpoints['expensesGet'] = async (ctx, input) => {
+	const parsedInput = FinmeiGetExpenseInputSchema.parse(input);
+
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{
 		data: FinmeiExpense;
-	}>(`/expenses/${seg(input.id)}`, ctx.key, {
+	}>(`/expenses/${seg(parsedInput.id)}`, ctx.key, {
 		method: 'GET',
 	});
 
 	const parsed = FinmeiExpenseOutputSchema.parse(rawResponse);
 	await safeLog(ctx, 'expenses.get', {
-		id: input.id,
+		id: parsedInput.id,
 	});
 	return parsed;
 };
 
 export const update: FinmeiEndpoints['expensesUpdate'] = async (ctx, input) => {
-	const { id, ...bodyFields } = input;
+	const parsedInput = FinmeiUpdateExpenseInputSchema.parse(input);
+	const { id, ...bodyFields } = parsedInput;
 
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{
@@ -110,9 +123,11 @@ export const update: FinmeiEndpoints['expensesUpdate'] = async (ctx, input) => {
 };
 
 export const del: FinmeiEndpoints['expensesDelete'] = async (ctx, input) => {
+	const parsedInput = FinmeiDeleteExpenseInputSchema.parse(input);
+
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<FinmeiDeleteResponse>(
-		`/expenses/${seg(input.id)}`,
+		`/expenses/${seg(parsedInput.id)}`,
 		ctx.key,
 		{
 			method: 'DELETE',
@@ -121,7 +136,7 @@ export const del: FinmeiEndpoints['expensesDelete'] = async (ctx, input) => {
 
 	const parsed = FinmeiDeleteResponseSchema.parse(rawResponse);
 	await safeLog(ctx, 'expenses.delete', {
-		id: input.id,
+		id: parsedInput.id,
 	});
 	return parsed;
 };
@@ -130,21 +145,23 @@ export const updateFile: FinmeiEndpoints['expensesUpdateFile'] = async (
 	ctx,
 	input,
 ) => {
+	const parsedInput = FinmeiUpdateExpenseFileInputSchema.parse(input);
+
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{
 		data: FinmeiExpense;
-	}>(`/expenses/${seg(input.id)}/file`, ctx.key, {
+	}>(`/expenses/${seg(parsedInput.id)}/file`, ctx.key, {
 		method: 'POST',
 		formData: {
-			file: new Blob([Buffer.from(input.file, 'base64')], {
-				type: input.fileType ?? 'application/pdf',
+			file: new Blob([Buffer.from(parsedInput.file, 'base64')], {
+				type: parsedInput.fileType ?? 'application/pdf',
 			}),
 		},
 	});
 
 	const parsed = FinmeiExpenseOutputSchema.parse(rawResponse);
 	await safeLog(ctx, 'expenses.updateFile', {
-		id: input.id,
+		id: parsedInput.id,
 	});
 	return parsed;
 };
@@ -153,15 +170,17 @@ export const download: FinmeiEndpoints['expensesDownload'] = async (
 	ctx,
 	input,
 ) => {
+	const parsedInput = FinmeiDownloadExpenseInputSchema.parse(input);
+
 	// `unknown` because response from provider binary download is checked with Zod schema.
 	const rawResponse: unknown = await makeFinmeiBinaryRequest(
-		`/expenses/${seg(input.id)}/download`,
+		`/expenses/${seg(parsedInput.id)}/download`,
 		ctx.key,
 	);
 
 	const parsed = FinmeiBinaryResponseSchema.parse(rawResponse);
 	await safeLog(ctx, 'expenses.download', {
-		id: input.id,
+		id: parsedInput.id,
 		contentType: parsed.contentType,
 	});
 	return parsed;

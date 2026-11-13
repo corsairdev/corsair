@@ -563,6 +563,22 @@ export const FinmeiDeletePaymentInputSchema = z
 export const FinmeiListCurrenciesInputSchema = z.object({}).strict();
 export const FinmeiGetProfileInputSchema = z.object({}).strict();
 
+export type FinmeiCreateCustomerInput = z.infer<
+	typeof FinmeiCreateCustomerInputSchema
+>;
+export type FinmeiCreateExpenseInput = z.infer<
+	typeof FinmeiCreateExpenseInputSchema
+>;
+export type FinmeiCreateInvoiceInput = z.infer<
+	typeof FinmeiCreateInvoiceInputSchema
+>;
+export type FinmeiCreatePaymentInput = z.infer<
+	typeof FinmeiCreatePaymentInputSchema
+>;
+export type FinmeiCreateProductInput = z.infer<
+	typeof FinmeiCreateProductInputSchema
+>;
+
 // ==========================================
 // Endpoint Output Schemas
 // ==========================================

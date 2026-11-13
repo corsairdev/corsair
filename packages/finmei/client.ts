@@ -110,15 +110,69 @@ function buildConfig(apiKey?: string): OpenAPIConfig {
 	};
 }
 
+export const BINARY_MAX_RETRIES = 2;
+export const BINARY_INITIAL_RETRY_DELAY_MS = 1000;
+
+export function parseRetryAfterMs(
+	headersOrResponse: Response | Headers | { get(name: string): string | null },
+): number | undefined {
+	const raw =
+		'headers' in headersOrResponse
+			? headersOrResponse.headers.get('retry-after')
+			: 'get' in headersOrResponse
+				? headersOrResponse.get('retry-after')
+				: undefined;
+	if (!raw) return undefined;
+	const seconds = Number.parseInt(raw, 10);
+	if (!Number.isFinite(seconds) || seconds < 0) return undefined;
+	return seconds * 1000;
+}
+
+/**
+ * Redacts tokens, passwords, and sensitive strings from error messages.
+ */
+export function sanitizeErrorMessage(message: string, apiKey?: string): string {
+	let sanitized = message
+		.replace(/Bearer\s+[^\s"',]+/gi, 'Bearer [REDACTED]')
+		.replace(
+			/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g,
+			'[REDACTED_JWT]',
+		)
+		.replace(
+			/(["']?(?:api[_-]?key|token|secret|password|authorization|access_token|client_secret)["']?\s*[:=]\s*["']?)[^"',\s}]+/gi,
+			'$1[REDACTED]',
+		);
+
+	if (apiKey && apiKey.length > 0) {
+		sanitized = sanitized.split(apiKey).join('[REDACTED]');
+	}
+
+	return sanitized;
+}
+
 // `unknown` because caught exceptions in JavaScript have no static type.
-function wrapError(error: unknown): FinmeiAPIError {
-	if (error instanceof FinmeiAPIError) return error;
+function wrapError(error: unknown, apiKey?: string): FinmeiAPIError {
+	if (error instanceof FinmeiAPIError) {
+		const safeMessage = sanitizeErrorMessage(error.message, apiKey);
+		const safeDetails = redactSensitiveData(error.details);
+		if (safeMessage === error.message && safeDetails === error.details) {
+			return error;
+		}
+		return new FinmeiAPIError(
+			safeMessage,
+			error.status,
+			error.code,
+			error.retryAfter,
+			safeDetails,
+		);
+	}
 	if (error instanceof ApiError) {
 		// `unknown` because response body on ApiError is untrusted and can be any JSON or text.
 		const rawBody: unknown = error.body;
 		const safeDetails = redactSensitiveData(rawBody);
+		const safeMessage = sanitizeErrorMessage(error.message, apiKey);
 		return new FinmeiAPIError(
-			error.message,
+			safeMessage,
 			error.status,
 			typeof error.status === 'number' ? `HTTP_${error.status}` : undefined,
 			error.retryAfter,
@@ -126,7 +180,7 @@ function wrapError(error: unknown): FinmeiAPIError {
 		);
 	}
 	if (error instanceof Error) {
-		return new FinmeiAPIError(error.message);
+		return new FinmeiAPIError(sanitizeErrorMessage(error.message, apiKey));
 	}
 	return new FinmeiAPIError('Unknown Finmei error');
 }
@@ -160,9 +214,14 @@ export async function makeFinmeiRequest<T>(
 			rateLimitConfig: FINMEI_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		throw wrapError(error);
+		throw wrapError(error, apiKey);
 	}
 }
+
+export type FinmeiBinaryRetryConfig = {
+	maxRetries?: number;
+	initialDelayMs?: number;
+};
 
 /**
  * Downloads a binary document (e.g. invoice PDF or expense attachment) from Finmei.
@@ -171,6 +230,7 @@ export async function makeFinmeiBinaryRequest(
 	endpoint: string,
 	apiKey?: string,
 	query?: Record<string, string | number | boolean | undefined>,
+	retryConfig?: FinmeiBinaryRetryConfig,
 ): Promise<FinmeiBinaryResponse> {
 	if (apiKey !== undefined && apiKey.length === 0) {
 		throw new AuthMissingError('finmei', 'api_key');
@@ -197,58 +257,76 @@ export async function makeFinmeiBinaryRequest(
 		headers.Authorization = `Bearer ${apiKey}`;
 	}
 
-	const controller = new AbortController();
-	const timeoutId = setTimeout(() => controller.abort(), 30000);
+	const maxRetries = retryConfig?.maxRetries ?? BINARY_MAX_RETRIES;
+	const initialDelayMs =
+		retryConfig?.initialDelayMs ?? BINARY_INITIAL_RETRY_DELAY_MS;
 
-	try {
-		const response = await fetch(urlStr, {
-			method: 'GET',
-			headers,
-			signal: controller.signal,
-		});
+	let attempt = 0;
+	while (true) {
+		const controller = new AbortController();
+		const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-		if (!response.ok) {
-			let retryAfter: number | undefined;
-			const retryHeader = response.headers.get('retry-after');
-			if (retryHeader) {
-				const parsed = Number.parseInt(retryHeader, 10);
-				if (!Number.isNaN(parsed)) {
-					retryAfter = parsed * 1000;
+		try {
+			const response = await fetch(urlStr, {
+				method: 'GET',
+				headers,
+				signal: controller.signal,
+			});
+
+			if (response.status === 429 && attempt < maxRetries) {
+				const retryAfterMs = parseRetryAfterMs(response);
+				const delayMs = retryAfterMs ?? initialDelayMs * 2 ** attempt;
+				await response.body?.cancel().catch(() => undefined);
+				clearTimeout(timeoutId);
+				await new Promise((resolve) => setTimeout(resolve, delayMs));
+				attempt += 1;
+				continue;
+			}
+
+			if (!response.ok) {
+				const retryAfter = parseRetryAfterMs(response);
+
+				// `unknown` because error payload from non-OK response is untrusted raw text or JSON.
+				let rawError: unknown;
+				try {
+					const text = await response.text();
+					try {
+						rawError = JSON.parse(text);
+					} catch {
+						rawError = text;
+					}
+				} catch {
+					rawError = '';
 				}
+				await response.body?.cancel().catch(() => undefined);
+				const safeError = redactSensitiveData(rawError);
+				throw new FinmeiAPIError(
+					sanitizeErrorMessage(
+						`Failed to download binary file: HTTP ${response.status}`,
+						apiKey,
+					),
+					response.status,
+					`HTTP_${response.status}`,
+					retryAfter,
+					safeError,
+				);
 			}
 
-			// `unknown` because error payload from non-OK response is untrusted raw text or JSON.
-			let rawError: unknown;
-			try {
-				rawError = await response.json();
-			} catch {
-				rawError = await response.text().catch(() => '');
-			}
-			await response.body?.cancel().catch(() => undefined);
-			const safeError = redactSensitiveData(rawError);
-			throw new FinmeiAPIError(
-				`Failed to download binary file: HTTP ${response.status}`,
-				response.status,
-				`HTTP_${response.status}`,
-				retryAfter,
-				safeError,
-			);
+			const contentType =
+				response.headers.get('content-type') || 'application/octet-stream';
+			const arrayBuffer = await response.arrayBuffer();
+			const base64 = Buffer.from(arrayBuffer).toString('base64');
+
+			return {
+				kind: 'binary',
+				contentType,
+				base64,
+				size: arrayBuffer.byteLength,
+			};
+		} catch (error) {
+			throw wrapError(error, apiKey);
+		} finally {
+			clearTimeout(timeoutId);
 		}
-
-		const contentType =
-			response.headers.get('content-type') || 'application/octet-stream';
-		const arrayBuffer = await response.arrayBuffer();
-		const base64 = Buffer.from(arrayBuffer).toString('base64');
-
-		return {
-			kind: 'binary',
-			contentType,
-			base64,
-			size: arrayBuffer.byteLength,
-		};
-	} catch (error) {
-		throw wrapError(error);
-	} finally {
-		clearTimeout(timeoutId);
 	}
 }

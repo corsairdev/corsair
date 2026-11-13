@@ -188,6 +188,14 @@ describe('Invoices endpoints', () => {
 			'test-api-key',
 		);
 	});
+
+	it('rejects invalid inputs with ZodError before making request', async () => {
+		await expect(Invoices.get(ctx, { id: '' })).rejects.toThrow();
+		await expect(
+			Invoices.create(ctx, { currency: 'USD', extra_field: 123 } as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 });
 
 describe('Expenses endpoints', () => {

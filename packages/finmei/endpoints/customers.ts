@@ -7,17 +7,23 @@ import type {
 	FinmeiPaginationMeta,
 } from './types';
 import {
+	FinmeiCreateCustomerInputSchema,
 	FinmeiCustomerOutputSchema,
+	FinmeiDeleteCustomerInputSchema,
 	FinmeiDeleteResponseSchema,
+	FinmeiGetCustomerInputSchema,
+	FinmeiListCustomersInputSchema,
 	FinmeiListCustomersOutputSchema,
+	FinmeiUpdateCustomerInputSchema,
 } from './types';
 
 export const list: FinmeiEndpoints['customersList'] = async (ctx, input) => {
+	const parsedInput = FinmeiListCustomersInputSchema.parse(input);
 	const query = compactQuery({
-		page: input.page,
-		per_page: input.per_page,
-		search: input.search,
-		sort: input.sort,
+		page: parsedInput.page,
+		per_page: parsedInput.per_page,
+		search: parsedInput.search,
+		sort: parsedInput.sort,
 	});
 
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
@@ -32,7 +38,7 @@ export const list: FinmeiEndpoints['customersList'] = async (ctx, input) => {
 	const parsed = FinmeiListCustomersOutputSchema.parse(rawResponse);
 	await safeLog(ctx, 'customers.list', {
 		count: parsed.data.length,
-		page: input.page ?? 1,
+		page: parsedInput.page ?? 1,
 	});
 	return parsed;
 };
@@ -41,12 +47,14 @@ export const create: FinmeiEndpoints['customersCreate'] = async (
 	ctx,
 	input,
 ) => {
+	const parsedInput = FinmeiCreateCustomerInputSchema.parse(input);
+
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{
 		data: FinmeiCustomer;
 	}>('/customers', ctx.key, {
 		method: 'POST',
-		body: input,
+		body: parsedInput,
 	});
 
 	const parsed = FinmeiCustomerOutputSchema.parse(rawResponse);
@@ -57,16 +65,18 @@ export const create: FinmeiEndpoints['customersCreate'] = async (
 };
 
 export const get: FinmeiEndpoints['customersGet'] = async (ctx, input) => {
+	const parsedInput = FinmeiGetCustomerInputSchema.parse(input);
+
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{
 		data: FinmeiCustomer;
-	}>(`/customers/${seg(input.id)}`, ctx.key, {
+	}>(`/customers/${seg(parsedInput.id)}`, ctx.key, {
 		method: 'GET',
 	});
 
 	const parsed = FinmeiCustomerOutputSchema.parse(rawResponse);
 	await safeLog(ctx, 'customers.get', {
-		id: input.id,
+		id: parsedInput.id,
 	});
 	return parsed;
 };
@@ -75,7 +85,8 @@ export const update: FinmeiEndpoints['customersUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const { id, ...bodyFields } = input;
+	const parsedInput = FinmeiUpdateCustomerInputSchema.parse(input);
+	const { id, ...bodyFields } = parsedInput;
 
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{
@@ -93,9 +104,11 @@ export const update: FinmeiEndpoints['customersUpdate'] = async (
 };
 
 export const del: FinmeiEndpoints['customersDelete'] = async (ctx, input) => {
+	const parsedInput = FinmeiDeleteCustomerInputSchema.parse(input);
+
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<FinmeiDeleteResponse>(
-		`/customers/${seg(input.id)}`,
+		`/customers/${seg(parsedInput.id)}`,
 		ctx.key,
 		{
 			method: 'DELETE',
@@ -104,7 +117,7 @@ export const del: FinmeiEndpoints['customersDelete'] = async (ctx, input) => {
 
 	const parsed = FinmeiDeleteResponseSchema.parse(rawResponse);
 	await safeLog(ctx, 'customers.delete', {
-		id: input.id,
+		id: parsedInput.id,
 	});
 	return parsed;
 };
