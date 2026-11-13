@@ -447,7 +447,11 @@ const TaskSchema = z
 		engine_version: z.string().nullish(),
 		retry_of_task_id: z.string().nullish(),
 		retries: z.array(RetryTaskSchema).nullish(),
-		depends_on_tasks: z.record(z.string(), z.string()).nullish(),
+		// include=depends_on_tasks returns an array of task objects ([] when none);
+		// the name-to-id map is kept for the shape the reference shows.
+		depends_on_tasks: z
+			.union([z.array(RetryTaskSchema), z.record(z.string(), z.string())])
+			.nullish(),
 		payload: JsonObjectSchema.nullish(),
 		job: JobReferenceSchema.nullish(),
 		result: TaskResultSchema.optional(),

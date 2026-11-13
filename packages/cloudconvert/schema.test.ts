@@ -436,6 +436,52 @@ describe('CloudConvert endpoint input and output schemas', () => {
 		);
 	});
 
+	it('accepts depends_on_tasks as the live array of task objects', () => {
+		// Live GET /v2/tasks/{id}?include=payload,job,depends_on_tasks (11-13), ids replaced.
+		const liveTask = {
+			data: {
+				id: 'task-export',
+				job_id: 'job-123',
+				name: 'export_file',
+				operation: 'export/url',
+				status: 'finished',
+				created_at: '2026-11-13T15:11:36+00:00',
+				retries: [],
+				payload: { operation: 'export/url', input: 'import_file' },
+				depends_on_tasks: [
+					{
+						id: 'task-import',
+						name: 'import_file',
+						job_id: 'job-123',
+						status: 'finished',
+						credits: 0,
+						code: null,
+						message: null,
+						percent: 100,
+						operation: 'import/raw',
+						result: { files: [{ filename: 'input.txt', size: 1 }] },
+						created_at: '2026-11-13T15:11:36+00:00',
+						started_at: '2026-11-13T15:11:36+00:00',
+						ended_at: '2026-11-13T15:11:36+00:00',
+						retry_of_task_id: null,
+					},
+				],
+				job: {
+					id: 'job-123',
+					tag: 'corsair-plugin-test',
+					status: 'finished',
+					created_at: '2026-11-13T15:11:36+00:00',
+				},
+			},
+		};
+		expect(Outputs.tasksGet.safeParse(liveTask).success).toBe(true);
+		expect(
+			Outputs.tasksGet.safeParse({
+				data: { ...liveTask.data, depends_on_tasks: [] },
+			}).success,
+		).toBe(true);
+	});
+
 	it('keeps parsing jobs and tasks when CloudConvert adds a status value', () => {
 		const job = {
 			data: {
