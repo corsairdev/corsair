@@ -46,6 +46,24 @@ describe('E2B error handlers', () => {
 		});
 	});
 
+	it('does not treat a 429 inside an error message as a rate limit', () => {
+		const error = new ApiError(
+			{ method: 'GET', url: '/sandboxes/{sandboxID}' },
+			{
+				url: 'https://api.e2b.app/sandboxes/i429abc',
+				ok: false,
+				status: 404,
+				statusText: 'Not Found',
+				body: { code: 404, message: 'sandbox i429abc not found' },
+			},
+			'sandbox i429abc not found',
+		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(new Error('timeout after 429 ms')),
+		).toBe(false);
+	});
+
 	it('keeps the catch-all handler last', () => {
 		const handlers = Object.keys(errorHandlers);
 		expect(handlers.at(-1)).toBe('DEFAULT');

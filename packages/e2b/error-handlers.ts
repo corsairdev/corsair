@@ -3,9 +3,8 @@ import { ApiError } from 'corsair/http';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			(error instanceof ApiError && error.status === 429) ||
-			error.message.toLowerCase().includes('429'),
+		// Only the HTTP status decides: a message can contain '429' inside an ID.
+		match: (error: Error) => error instanceof ApiError && error.status === 429,
 		handler: async (error: Error) => ({
 			// A 429 means E2B rejected the operation; preserve its Retry-After delay.
 			maxRetries: 2,
