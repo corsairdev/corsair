@@ -7,11 +7,13 @@ const RouteId = z.union([z.string(), z.number()]).refine((value) => {
 	);
 }, 'Route identifiers must be safe path segments');
 
-// Motion list responses carry this meta envelope; nextCursor exists only when
-// another page is available, so later pages are requested by forwarding it.
+// Motion list responses wrap this cursor envelope in a top-level `meta` field:
+// { meta: { nextCursor, pageSize }, ...items }. nextCursor is a string when
+// another page is available and null otherwise, so callers forward
+// result.meta.nextCursor to the next request until it is null.
 const CursorMetaSchema = z
 	.object({
-		nextCursor: z.string().optional(),
+		nextCursor: z.string().nullable().optional(),
 		pageSize: z.number().optional(),
 	})
 	.loose();
@@ -45,6 +47,8 @@ const CustomFieldTypeSchema = z.enum([
 const CustomFieldValueSchema = z
 	.object({
 		type: z.string(),
+		// multiPerson values are arrays of provider-defined shape; Motion does not
+		// document their element schema.
 		value: z
 			.union([z.string(), z.number(), z.boolean(), z.array(z.unknown())])
 			.nullable()
@@ -98,9 +102,10 @@ const TaskResourceSchema = z
 	.extend({ id: z.string() })
 	.loose();
 
-const TaskPageSchema = CursorMetaSchema.extend({
-	tasks: z.array(TaskResourceSchema),
-});
+const TaskPageSchema = z
+	.object({ meta: CursorMetaSchema })
+	.extend({ tasks: z.array(TaskResourceSchema) })
+	.loose();
 
 const CommentResourceSchema = z
 	.object({
@@ -114,13 +119,15 @@ const CommentResourceSchema = z
 	.extend({ id: z.string() })
 	.loose();
 
-const CommentPageSchema = CursorMetaSchema.extend({
-	comments: z.array(CommentResourceSchema),
-});
+const CommentPageSchema = z
+	.object({ meta: CursorMetaSchema })
+	.extend({ comments: z.array(CommentResourceSchema) })
+	.loose();
 
-const ProjectPageSchema = CursorMetaSchema.extend({
-	projects: z.array(ProjectResourceSchema).optional(),
-});
+const ProjectPageSchema = z
+	.object({ meta: CursorMetaSchema })
+	.extend({ projects: z.array(ProjectResourceSchema).optional() })
+	.loose();
 
 const WorkspaceResourceSchema = z
 	.object({
@@ -135,9 +142,10 @@ const WorkspaceResourceSchema = z
 	.extend({ id: z.string() })
 	.loose();
 
-const WorkspacePageSchema = CursorMetaSchema.extend({
-	workspaces: z.array(WorkspaceResourceSchema),
-});
+const WorkspacePageSchema = z
+	.object({ meta: CursorMetaSchema })
+	.extend({ workspaces: z.array(WorkspaceResourceSchema) })
+	.loose();
 
 const RecurringTaskResourceSchema = z
 	.object({
@@ -156,9 +164,10 @@ const RecurringTaskResourceSchema = z
 	.extend({ id: z.string() })
 	.loose();
 
-const RecurringTaskPageSchema = CursorMetaSchema.extend({
-	tasks: z.array(RecurringTaskResourceSchema),
-});
+const RecurringTaskPageSchema = z
+	.object({ meta: CursorMetaSchema })
+	.extend({ tasks: z.array(RecurringTaskResourceSchema) })
+	.loose();
 
 const UserResourceSchema = z
 	.object({
@@ -170,9 +179,10 @@ const UserResourceSchema = z
 	.extend({ id: z.string() })
 	.loose();
 
-const UserPageSchema = CursorMetaSchema.extend({
-	users: z.array(UserResourceSchema),
-});
+const UserPageSchema = z
+	.object({ meta: CursorMetaSchema })
+	.extend({ users: z.array(UserResourceSchema) })
+	.loose();
 
 const ScheduleSchema = z
 	.object({
@@ -570,16 +580,16 @@ export const MotionEndpointInputSchemas = {
 	deleteRecurringTask: z.object({ id: RouteId }).strict(),
 	listCustomFields: z
 		.object({
-			workspaceId: z
-				.string()
-				.describe('The workspace for which custom fields should be returned.'),
+			workspaceId: RouteId.describe(
+				'The workspace for which custom fields should be returned.',
+			),
 		})
 		.strict(),
 	createCustomField: z
 		.object({
-			workspaceId: z
-				.string()
-				.describe('The workspace in which the custom field is created.'),
+			workspaceId: RouteId.describe(
+				'The workspace in which the custom field is created.',
+			),
 			type: CustomFieldTypeSchema.describe(
 				'The type of custom field to create.',
 			),
@@ -597,17 +607,17 @@ export const MotionEndpointInputSchemas = {
 		.strict(),
 	deleteCustomField: z
 		.object({
-			workspaceId: z
-				.string()
-				.describe('The workspace for which a custom field should be deleted.'),
+			workspaceId: RouteId.describe(
+				'The workspace for which a custom field should be deleted.',
+			),
 			id: RouteId.describe('The id of the custom field to be deleted.'),
 		})
 		.strict(),
 	addProjectCustomFieldValue: z
 		.object({
-			projectId: z
-				.string()
-				.describe('The project on which the custom field value is set.'),
+			projectId: RouteId.describe(
+				'The project on which the custom field value is set.',
+			),
 			customFieldInstanceId: z
 				.string()
 				.describe('The custom field that is being set on the project.'),
@@ -626,9 +636,9 @@ export const MotionEndpointInputSchemas = {
 		.strict(),
 	addTaskCustomFieldValue: z
 		.object({
-			taskId: z
-				.string()
-				.describe('The task on which the custom field value is set.'),
+			taskId: RouteId.describe(
+				'The task on which the custom field value is set.',
+			),
 			customFieldInstanceId: z
 				.string()
 				.describe(
@@ -649,24 +659,22 @@ export const MotionEndpointInputSchemas = {
 		.strict(),
 	deleteProjectCustomFieldValue: z
 		.object({
-			projectId: z
-				.string()
-				.describe(
-					'The project from which a custom field value will be deleted.',
-				),
-			valueId: z
-				.string()
-				.describe('The ID of the custom field value that will be deleted.'),
+			projectId: RouteId.describe(
+				'The project from which a custom field value will be deleted.',
+			),
+			valueId: RouteId.describe(
+				'The ID of the custom field value that will be deleted.',
+			),
 		})
 		.strict(),
 	deleteTaskCustomFieldValue: z
 		.object({
-			taskId: z
-				.string()
-				.describe('The task from which a custom field value will be deleted.'),
-			valueId: z
-				.string()
-				.describe('The ID of the custom field value that will be deleted.'),
+			taskId: RouteId.describe(
+				'The task from which a custom field value will be deleted.',
+			),
+			valueId: RouteId.describe(
+				'The ID of the custom field value that will be deleted.',
+			),
 		})
 		.strict(),
 	listSchedules: z.object({}).strict(),

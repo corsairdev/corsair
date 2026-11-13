@@ -46,6 +46,8 @@ const recurringTaskResource = {
 	creator: { id: 'usr_1' },
 	assignee: { id: 'usr_1' },
 };
+// Fixture items span every list family, so each stays a provider-defined
+// record that the endpoint's own output schema validates.
 const page = (items: Record<string, unknown>, key: string) => ({
 	meta: { nextCursor: null, pageSize: 1 },
 	[key]: [items],
@@ -56,7 +58,8 @@ let consoleErrorSpy: jest.SpyInstance;
 
 const originalConsoleError = console.error.bind(console);
 
-// Test responses remain arbitrary JSON so public endpoint schemas validate the boundary.
+// Test responses stay arbitrary JSON so the public output schemas, not the
+// test author, define what the seam accepts.
 function respond(body: unknown, status = 200) {
 	fetchMock.mockResolvedValueOnce(
 		new Response(body === undefined ? null : JSON.stringify(body), {
@@ -73,6 +76,8 @@ beforeEach(() => {
 	// test output stays readable while every other error still surfaces.
 	consoleErrorSpy = jest
 		.spyOn(console, 'error')
+		// Console arguments are forwarded opaquely; only the transport's own
+		// empty-body SyntaxError is filtered.
 		.mockImplementation((...args: unknown[]) => {
 			const first = args[0];
 			if (

@@ -70,6 +70,7 @@ export async function makeMotionRequest<T>(
 			rateLimitConfig: RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
+		if (error instanceof ApiError) throw error;
 		if (error instanceof MotionAPIError) throw error;
 		if (error instanceof Error) throw new MotionAPIError(error.message, error);
 		throw new MotionAPIError('Unknown Motion API error');

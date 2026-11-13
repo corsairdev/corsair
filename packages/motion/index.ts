@@ -258,7 +258,7 @@ const motionEndpointMeta = {
 		description: 'List comments on a task.',
 	},
 	'comments.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a comment on a task.',
 	},
 	'recurringTasks.list': {

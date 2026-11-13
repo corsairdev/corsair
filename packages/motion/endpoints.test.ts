@@ -21,6 +21,8 @@ let consoleErrorSpy: jest.SpyInstance;
 
 const originalConsoleError = console.error.bind(console);
 
+// Test responses stay arbitrary JSON so the public output schemas, not the
+// test author, define what the seam accepts.
 function respond(
 	body: unknown,
 	status = 200,
@@ -40,6 +42,8 @@ beforeEach(() => {
 	// test output stays readable while every other error still surfaces.
 	consoleErrorSpy = jest
 		.spyOn(console, 'error')
+		// Console arguments are forwarded opaquely; only the transport's own
+		// empty-body SyntaxError is filtered.
 		.mockImplementation((...args: unknown[]) => {
 			const first = args[0];
 			if (
@@ -65,6 +69,22 @@ describe('Motion public seam behavior', () => {
 		respond({ meta: { nextCursor: null, pageSize: 1 }, tasks: [taskResource] });
 		await Tasks.list(ctx as never, { cursor: 'cursor_2' });
 		const [url] = fetchMock.mock.calls[0] as [string];
+		expect(url).toBe('https://api.usemotion.com/v1/tasks?cursor=cursor_2');
+	});
+
+	it('feeds the returned cursor into the next tasks list request', async () => {
+		respond({
+			meta: { nextCursor: 'cursor_2', pageSize: 1 },
+			tasks: [taskResource],
+		});
+		const page = await Tasks.list(ctx as never, {});
+		expect(page.meta.nextCursor).toBe('cursor_2');
+		// Motion returns null on the final page, so narrow before reusing the cursor.
+		const cursor = page.meta.nextCursor;
+		if (cursor == null) throw new Error('expected a next cursor');
+		respond({ meta: { nextCursor: null, pageSize: 1 }, tasks: [] });
+		await Tasks.list(ctx as never, { cursor });
+		const [url] = fetchMock.mock.calls[1] as [string];
 		expect(url).toBe('https://api.usemotion.com/v1/tasks?cursor=cursor_2');
 	});
 
@@ -105,6 +125,22 @@ describe('Motion public seam behavior', () => {
 		await expect(Tasks.get(ctx as never, { id: 'task/1' })).rejects.toThrow(
 			/Route identifiers must be safe path segments/,
 		);
+	});
+
+	it('rejects unsafe route identifiers in the custom-field-value families', async () => {
+		await expect(
+			CustomFieldValues.deleteFromTask(ctx as never, {
+				taskId: 'task_1',
+				valueId: '..',
+			}),
+		).rejects.toThrow(/Route identifiers must be safe path segments/);
+		await expect(
+			CustomFieldValues.addToProject(ctx as never, {
+				projectId: '../x',
+				customFieldInstanceId: 'cfi_1',
+				value: { type: 'text', value: 'x' },
+			}),
+		).rejects.toThrow(/Route identifiers must be safe path segments/);
 	});
 
 	it('keeps an explicitly cleared autoScheduled null in the create body', async () => {
@@ -148,13 +184,13 @@ describe('Motion public seam behavior', () => {
 		expect(init.method).toBe('DELETE');
 	});
 
-	it('routes provider rate limits through MotionAPIError with retry metadata', async () => {
+	it('propagates provider rate limits as the core ApiError unchanged', async () => {
 		respond({ message: 'rate limited' }, 429, {
 			'Content-Type': 'application/json',
 			'retry-after': '5',
 		});
 		await expect(Tasks.list(ctx as never, {})).rejects.toMatchObject({
-			name: 'MotionAPIError',
+			name: 'ApiError',
 			status: 429,
 		});
 	});
