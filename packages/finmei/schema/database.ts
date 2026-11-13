@@ -1,9 +1,3 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const FinmeiExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type FinmeiExample = z.infer<typeof FinmeiExample>;
+// Finmei has no persisted database entities — invoice, expense,
+// customer, product, payment, currency, and profile operations are stateless
+// REST API calls, so this plugin's schema declares an empty entity set.
