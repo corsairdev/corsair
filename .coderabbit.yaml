@@ -11,7 +11,8 @@ reviews:
         (credentials from ctx.key, ApiError kept intact, retry policy, response
         schemas from the provider's docs, risk levels, timeouts, no secrets or
         personal data in errors and logs). Do not raise the settled decisions in
-        R9 of that file: retrying a write after a 429, optional or nullish
+        R9 of that file: retrying a write after a 429 (except one that reports
+        an exhausted daily or monthly quota, which is still a finding), optional or nullish
         response fields, a live suite that skips with a warning when its key is
         missing, the corsair peer range in package.json, risk levels per input,
         and core-wide checks (kek with encryptDataAtRest, root DEFAULT handler

@@ -1891,8 +1891,10 @@ export async function POST(request: Request) {
     if (!result.plugin) {
         return Response.json({ success: false }, { status: 404 });
     }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
     const status =
-        result.response?.success === false ? (result.response.statusCode ?? 500) : 200;
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
     return Response.json(result.response ?? { success: true }, {
         status,
         headers: result.responseHeaders,

@@ -93,7 +93,7 @@ Each of these came up as a review finding on five or more plugin PRs. R7 still a
 
 Review bots have raised these on many plugin PRs. They are settled, so a plugin PR doesn't change them:
 
-- Retrying a write after a 429 (see R8, Retries). Only 5xx and network retries need `replayable`.
+- Retrying a write after a 429 (see R8, Retries), except a 429 that reports an exhausted daily or monthly quota. Only 5xx and network retries need `replayable`.
 - Optional or nullish response fields. They keep reads working when a provider adds or drops a field.
 - A live suite that skips with a warning when its key is missing.
 - Generator-wide output in the generated `docs/plugins/<plugin>/**` pages: type strings that show string literals without quotes or `z.unknown()` as `any`, the shared setup text, and the shared example snippets. They come from the generator, and a fix there changes every page at once. Wrong content that comes from the plugin itself (its `plugin-docs.yaml`, descriptions, schemas) is still a finding.

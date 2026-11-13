@@ -28,7 +28,7 @@ export async function handleWebhook(req: Request) {
     console.log(`Handled by ${result.plugin}.${result.action}`);
 
     const status =
-        result.response?.success === false ? (result.response.statusCode ?? 500) : 200;
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
     return Response.json(result.response ?? { success: true }, {
         status,
         headers: result.responseHeaders,
