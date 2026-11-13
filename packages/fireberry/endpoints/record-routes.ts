@@ -56,7 +56,7 @@ export const FIREBERRY_RECORD_ROUTES = {
 		delete: '/api/record/competitor/{id}',
 	},
 	contract: {
-		list: '/api/record/contracts',
+		list: '/api/record/contract',
 		get: '/api/record/contract/{id}',
 		create: '/api/record/Contract',
 		update: '/api/record/Contract/{id}',

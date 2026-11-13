@@ -503,8 +503,9 @@ describe('registered Fireberry operations and route semantics', () => {
 	});
 
 	it('maps irregular REST paths and rejects undocumented resource verbs', () => {
+		// The reference lists /api/record/contracts, but the live API answers 400 "Invalid Object Name" there.
 		expect(getFireberryRecordPath('contract', 'list')).toBe(
-			'/api/record/contracts',
+			'/api/record/contract',
 		);
 		expect(getFireberryRecordPath('contract', 'create')).toBe(
 			'/api/record/Contract',
