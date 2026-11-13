@@ -39,16 +39,16 @@ function respond(
 beforeEach(() => {
 	// The shared transport logs its own empty-body parse warning when a documented
 	// 200-without-body delete response is exercised; silence exactly that log so
-	// test output stays readable while every other error still surfaces.
+	// test output stays readable while every other error still surfaces. The error
+	// is matched by message, not instanceof: jest runs tests in a vm context, so
+	// undici's SyntaxError comes from Node's primary realm and fails instanceof.
 	consoleErrorSpy = jest
 		.spyOn(console, 'error')
-		// Console arguments are forwarded opaquely; only the transport's own
-		// empty-body SyntaxError is filtered.
 		.mockImplementation((...args: unknown[]) => {
 			const first = args[0];
 			if (
-				first instanceof SyntaxError &&
-				first.message === 'Unexpected end of JSON input'
+				String((first as { message?: unknown } | undefined)?.message) ===
+				'Unexpected end of JSON input'
 			) {
 				return;
 			}
