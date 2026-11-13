@@ -52,7 +52,7 @@ const REQUEST_ERRORS = new Set([
 ]);
 
 /** Classifies a token-endpoint failure by its HTTP status and RFC 6749
- * `error` code. A 400 or 401 without a recognised code counts as revoked:
+ * `error` code. A 400 or 401 with any other code, or none, counts as revoked:
  * providers answer a dead grant in their own dialects. */
 export function classifyOAuthRefreshFailure(
 	status: number,
