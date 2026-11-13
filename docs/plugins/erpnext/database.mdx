@@ -1,0 +1,42 @@
+---
+title: "ERPNext database"
+sidebarTitle: "Database"
+description: "ERPNext local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
+---
+
+The ERPNext plugin syncs data locally. Use `corsair.erpnext.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Documents
+
+Path: `erpnext.db.documents.search`
+
+```ts
+const rows = await corsair.erpnext.db.documents.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `doctype` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `owner` | `string` | equals, contains, startsWith, endsWith, in |
+| `creation` | `string` | equals, contains, startsWith, endsWith, in |
+| `modified` | `string` | equals, contains, startsWith, endsWith, in |
+| `modified_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `docstatus` | `number` | equals, gt, gte, lt, lte, in |
+| `idx` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

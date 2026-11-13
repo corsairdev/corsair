@@ -1905,6 +1905,14 @@
                 ]
               },
               {
+                "group": "ERPNext",
+                "pages": [
+                  "plugins/erpnext/overview",
+                  "plugins/erpnext/api",
+                  "plugins/erpnext/database"
+                ]
+              },
+              {
                 "group": "eSignatures",
                 "pages": [
                   "plugins/esignatures/overview",
