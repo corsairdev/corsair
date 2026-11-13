@@ -77,9 +77,7 @@ export type KeywordEndpoints = {
 	competitors: KeywordEndpoint<'competitors'>;
 	regionsList: KeywordEndpoint<'regionsList'>;
 	rankingUrls: KeywordEndpoint<'rankingUrls'>;
-	mindshareLatest: KeywordEndpoint<'mindshareLatest'>;
 	mindshareHistory: KeywordEndpoint<'mindshareHistory'>;
-	alertsList: KeywordEndpoint<'alertsList'>;
 	accountGet: KeywordEndpoint<'accountGet'>;
 };
 
@@ -120,11 +118,7 @@ const keywordEndpointsNested = {
 		list: Ranking.rankingUrls,
 	},
 	mindshare: {
-		latest: Mindshare.latest,
 		history: Mindshare.history,
-	},
-	alerts: {
-		list: Account.list,
 	},
 	account: {
 		get: Account.account,
@@ -216,17 +210,9 @@ export const keywordEndpointSchemas = {
 		input: KeywordEndpointInputSchemas.rankingUrls,
 		output: KeywordEndpointOutputSchemas.rankingUrls,
 	},
-	'mindshare.latest': {
-		input: KeywordEndpointInputSchemas.mindshareLatest,
-		output: KeywordEndpointOutputSchemas.mindshareLatest,
-	},
 	'mindshare.history': {
 		input: KeywordEndpointInputSchemas.mindshareHistory,
 		output: KeywordEndpointOutputSchemas.mindshareHistory,
-	},
-	'alerts.list': {
-		input: KeywordEndpointInputSchemas.alertsList,
-		output: KeywordEndpointOutputSchemas.alertsList,
 	},
 	'account.get': {
 		input: KeywordEndpointInputSchemas.accountGet,
@@ -315,7 +301,7 @@ const keywordEndpointMeta = {
 			'Apply the same domain, region, tags or status to many keywords in one project',
 	},
 	'keywords.refresh': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description:
 			'Queue keywords for an on-demand rank check; spends the plan’s daily refresh quota. The whole request is refused if the quota would be exceeded',
 	},
@@ -344,19 +330,9 @@ const keywordEndpointMeta = {
 		description:
 			'The pages that rank best for a project, with their average position and total search volume, 10 to a page',
 	},
-	'mindshare.latest': {
-		riskLevel: 'read',
-		description:
-			'The latest Share of Voice top 10: each competitor’s estimated clicks and share, with the month’s change',
-	},
 	'mindshare.history': {
 		riskLevel: 'read',
 		description: 'Share of Voice over a date window, read from Keyword’s cache',
-	},
-	'alerts.list': {
-		riskLevel: 'read',
-		description:
-			'Rank change alerts, optionally only the ones that dropped or improved, paged and sortable',
 	},
 	'account.get': {
 		riskLevel: 'read',
@@ -416,16 +392,12 @@ export { KeywordAPIError } from './client';
 export type {
 	AccountGetInput,
 	AccountResponse,
-	AlertsListInput,
-	AlertsListResponse,
 	CompetitorsInput,
 	CompetitorsResponse,
 	Keyword,
-	KeywordAlert,
 	KeywordAttributes,
 	KeywordEndpointInputs,
 	KeywordEndpointOutputs,
-	KeywordMindshareEntry,
 	KeywordProject,
 	KeywordResponse,
 	KeywordsAddInput,
@@ -443,8 +415,6 @@ export type {
 	MetricsResponse,
 	MindshareHistoryInput,
 	MindshareHistoryResponse,
-	MindshareLatestInput,
-	MindshareLatestResponse,
 	ProjectArchiveInput,
 	ProjectCreateInput,
 	ProjectGetInput,

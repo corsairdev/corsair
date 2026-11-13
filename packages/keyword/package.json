@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/keyword",
   "version": "0.1.0",
-  "description": "Keyword plugin for Corsair: manage rank-tracking projects and their keywords, add and refresh keywords, and read rankings, movement metrics, rank history, competitors, tracked regions, top pages, Share of Voice and alerts.",
+  "description": "Keyword plugin for Corsair: manage rank-tracking projects and their keywords, add and refresh keywords, and read rankings, movement metrics, rank history, competitors, tracked regions, top pages and Share of Voice history.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

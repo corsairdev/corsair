@@ -214,18 +214,6 @@ export const rankingUrls = {
 	],
 };
 
-export const mindshareLatest = {
-	data: [
-		{
-			title: 'Tinker Bell',
-			url: 'en.wikipedia.org',
-			clicks: 2750049.638000001,
-			percentage: 28.85809668022449,
-			changes: { month: 4.182040388013718 },
-		},
-	],
-};
-
 export const mindshareHistory = {
 	data: {
 		latest: [
@@ -243,27 +231,6 @@ export const mindshareHistory = {
 			{ url: 'en.wikipedia.org', clicks: 1248335.619, percentage: 23.2 },
 		],
 	},
-};
-
-export const alerts = {
-	data: [
-		{
-			type: 'alert',
-			id: '552700104',
-			attributes: {
-				category: 'Disney',
-				keyword_id: 187765907,
-				url: 'disney.com/',
-				kw: 'Donald Duck',
-				ms: 30,
-				region: 'google.com',
-				language: 'en',
-				prevrank: 5,
-				result: 1,
-				time: '2026-11-01T00:00:00Z',
-			},
-		},
-	],
 };
 
 export const account = {

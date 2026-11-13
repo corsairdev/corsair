@@ -40,7 +40,7 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 404 is an unknown project, group, keyword or alert, and 422 a field Keyword
+	// 404 is an unknown project, group or keyword, and 422 a field Keyword
 	// refused. A retry sends the same request.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {

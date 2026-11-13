@@ -21,7 +21,6 @@ function buildKey(
 
 const operations = [
 	'account.get',
-	'alerts.list',
 	'keywords.add',
 	'keywords.bulkDelete',
 	'keywords.bulkUpdate',
@@ -33,7 +32,6 @@ const operations = [
 	'metrics.competitors',
 	'metrics.get',
 	'mindshare.history',
-	'mindshare.latest',
 	'projects.archive',
 	'projects.create',
 	'projects.delete',
@@ -92,15 +90,13 @@ describe('keyword plugin definition', () => {
 			'keywords.delete': 'destructive',
 			'keywords.bulkDelete': 'destructive',
 			'keywords.bulkUpdate': 'write',
-			'keywords.refresh': 'destructive',
+			'keywords.refresh': 'write',
 			'metrics.get': 'read',
 			'metrics.competitors': 'read',
 			'rankChart.get': 'read',
 			'regions.list': 'read',
 			'rankingUrls.list': 'read',
-			'mindshare.latest': 'read',
 			'mindshare.history': 'read',
-			'alerts.list': 'read',
 			'account.get': 'read',
 		});
 	});

@@ -1,6 +1,6 @@
 # @corsair-dev/keyword
 
-Keyword plugin for Corsair: manage rank-tracking projects and their keywords, add and refresh keywords, and read rankings, movement metrics, rank history, competitors, tracked regions, top pages, Share of Voice and alerts.
+Keyword plugin for Corsair: manage rank-tracking projects and their keywords, add and refresh keywords, and read rankings, movement metrics, rank history, competitors, tracked regions, top pages and Share of Voice history.
 
 ## Install
 
@@ -13,19 +13,17 @@ pnpm add @corsair-dev/keyword
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `account.get` | `keyword.api.account.get` | `read` | The token’s own user, optionally with the subscription block |
-| `alerts.list` | `keyword.api.alerts.list` | `read` | Rank change alerts, optionally only the ones that dropped or improved, paged and sortable |
 | `keywords.add` | `keyword.api.keywords.add` | `write` | Add keywords to a project, each with its domain, region and language. Adding a keyword already tracked returns the existing one |
 | `keywords.bulkDelete` | `keyword.api.keywords.bulkDelete` | `destructive` | Delete many keywords from one project in a single call; their history is lost |
 | `keywords.bulkUpdate` | `keyword.api.keywords.bulkUpdate` | `write` | Apply the same domain, region, tags or status to many keywords in one project |
 | `keywords.delete` | `keyword.api.keywords.delete` | `destructive` | Delete one keyword and its ranking history; it cannot be restored |
 | `keywords.get` | `keyword.api.keywords.get` | `read` | One keyword with its rank, metrics and rank history |
 | `keywords.list` | `keyword.api.keywords.list` | `read` | Every keyword in a project or group with its rank, best rank, search volume and trend, read as of a given day |
-| `keywords.refresh` | `keyword.api.keywords.refresh` | `destructive` | Queue keywords for an on-demand rank check; spends the plan’s daily refresh quota. The whole request is refused if the quota would be exceeded |
+| `keywords.refresh` | `keyword.api.keywords.refresh` | `write` | Queue keywords for an on-demand rank check; spends the plan’s daily refresh quota. The whole request is refused if the quota would be exceeded |
 | `keywords.update` | `keyword.api.keywords.update` | `write` | Change a keyword’s domain, region, tags, status, baseline or favourite flag |
 | `metrics.competitors` | `keyword.api.metrics.competitors` | `read` | The top competing URLs for one keyword in a date window, with each result’s type and position |
 | `metrics.get` | `keyword.api.metrics.get` | `read` | Keyword movement for a project, group or tag: how many sit in each top-N bucket and how that changed day over day |
 | `mindshare.history` | `keyword.api.mindshare.history` | `read` | Share of Voice over a date window, read from Keyword’s cache |
-| `mindshare.latest` | `keyword.api.mindshare.latest` | `read` | The latest Share of Voice top 10: each competitor’s estimated clicks and share, with the month’s change |
 | `projects.archive` | `keyword.api.projects.archive` | `write` | Archive a project or subproject: it stops updating until `projects.restore` brings it back. Keyword refuses to archive the account’s only active top-level project |
 | `projects.create` | `keyword.api.projects.create` | `write` | Create a project, or a subproject from a `Parent[sub]Child` name; the parent must exist first |
 | `projects.delete` | `keyword.api.projects.delete` | `destructive` | Delete a project with every keyword and its ranking history; it cannot be restored |

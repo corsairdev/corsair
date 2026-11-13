@@ -287,7 +287,7 @@ describe('makeKeywordRequest', () => {
 		);
 
 		await expect(
-			makeKeywordRequest(API_KEY, { method: 'GET', path: '/alerts' }),
+			makeKeywordRequest(API_KEY, { method: 'GET', path: '/users/self' }),
 		).rejects.toMatchObject({ retryAfter: 4000, isRateLimit: true });
 	});
 
@@ -318,7 +318,7 @@ describe('makeKeywordRequest', () => {
 		// unknown: the rejection is an error whose fields the assertions read.
 		const error = (await makeKeywordRequest(API_KEY, {
 			method: 'GET',
-			path: '/alerts',
+			path: '/users/self',
 		}).catch((caught: unknown) => caught)) as Error;
 
 		expect(error).toMatchObject({

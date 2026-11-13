@@ -10,7 +10,6 @@ import {
 } from './endpoints';
 import {
 	account,
-	alerts,
 	competitors,
 	deleted,
 	emptyMindshareHistory,
@@ -23,7 +22,6 @@ import {
 	liveRankChart,
 	metrics,
 	mindshareHistory,
-	mindshareLatest,
 	notFound,
 	project,
 	projects,
@@ -1036,20 +1034,6 @@ describe('rankingUrls.list', () => {
 });
 
 describe('mindshare', () => {
-	it('GETs the latest Share of Voice', async () => {
-		respond(mindshareLatest);
-
-		await expect(
-			invoke(Mindshare.latest, { projectName: 'Disney' }),
-		).resolves.toMatchObject({
-			data: [{ title: 'Tinker Bell', percentage: 28.85809668022449 }],
-		});
-		expect(lastRequest()).toMatchObject({
-			method: 'GET',
-			path: '/api/v2/metrics/Disney/mindshare/latest',
-		});
-	});
-
 	it('reads an empty history, which Keyword sends as an array', async () => {
 		respond(emptyMindshareHistory);
 
@@ -1091,50 +1075,6 @@ describe('mindshare', () => {
 			path: '/api/v2/projects/3057417/mindshare/from-cache',
 			query: { start_date: '2026-11-01', end_date: '2026-11-12' },
 		});
-	});
-});
-
-describe('alerts.list', () => {
-	it('GETs the alerts with the view type', async () => {
-		respond(alerts);
-
-		await expect(
-			invoke(Account.list, {
-				view_type: 'All alerts',
-				page: 1,
-				per_page: 100,
-				sort_field: 'created_at',
-				sort_direction: 'desc',
-			}),
-		).resolves.toMatchObject({ data: [{ attributes: { kw: 'Donald Duck' } }] });
-		expect(lastRequest()).toMatchObject({
-			method: 'GET',
-			path: '/api/v2/alerts',
-		});
-		expect(lastRequest().query).toEqual({
-			view_type: 'All alerts',
-			page: '1',
-			per_page: '100',
-			sort_field: 'created_at',
-			sort_direction: 'desc',
-		});
-	});
-
-	it('sends last as a boolean', async () => {
-		respond(alerts);
-
-		await invoke(Account.list, { last: false });
-
-		expect(lastRequest().query).toEqual({ last: 'false' });
-	});
-
-	it.each([
-		[{ view_type: 'Everything' }],
-		[{ per_page: 101 }],
-		[{ sort_direction: 'newest' }],
-	])('rejects %j before calling Keyword', async (input) => {
-		await expect(invoke(Account.list, input)).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 

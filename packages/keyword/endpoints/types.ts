@@ -713,37 +713,6 @@ export type RankingUrlsResponse = z.infer<typeof RankingUrlsResponseSchema>;
 
 // ── share of voice ────────────────────────────────────────────────────────
 
-const MindshareLatestInputSchema = z.object({ projectName: ProjectNameSchema });
-
-export type MindshareLatestInput = z.input<typeof MindshareLatestInputSchema>;
-
-const MindshareEntrySchema = z
-	.object({
-		title: z.string().nullish(),
-		url: z.string().nullish(),
-		clicks: z.number().nullish(),
-		percentage: z.number().nullish(),
-		changes: z
-			.object({
-				month: z.number().nullish(),
-				week: z.number().nullish(),
-				day: z.number().nullish(),
-			})
-			.loose()
-			.nullish(),
-	})
-	.loose();
-
-export type KeywordMindshareEntry = z.infer<typeof MindshareEntrySchema>;
-
-const MindshareLatestResponseSchema = z
-	.object({ data: z.array(MindshareEntrySchema) })
-	.loose();
-
-export type MindshareLatestResponse = z.infer<
-	typeof MindshareLatestResponseSchema
->;
-
 const MindshareHistoryInputSchema = z.object({
 	projectId: ProjectIdSchema,
 	start_date: z
@@ -782,69 +751,6 @@ const MindshareHistoryResponseSchema = z
 export type MindshareHistoryResponse = z.infer<
 	typeof MindshareHistoryResponseSchema
 >;
-
-// ── alerts ────────────────────────────────────────────────────────────────
-
-export const ALERT_VIEW_TYPES = ['All alerts', 'Dropped', 'Improved'] as const;
-
-const AlertsListInputSchema = z.object({
-	page: z.number().int().min(1).optional().describe('1-based page.'),
-	per_page: z
-		.number()
-		.int()
-		.min(1)
-		.max(100)
-		.optional()
-		.describe('Alerts per page. Defaults to 100.'),
-	sort_field: z
-		.enum(['created_at', 'time'])
-		.optional()
-		.describe('Field to sort on. Defaults to `created_at`.'),
-	sort_direction: z.enum(['asc', 'desc']).optional(),
-	view_type: z
-		.enum(ALERT_VIEW_TYPES)
-		.optional()
-		.describe(
-			'All alerts, only the ones that dropped, or only the ones that improved.',
-		),
-	last: z
-		.boolean()
-		.optional()
-		.describe('`true` for only the newest alert per keyword.'),
-});
-
-export type AlertsListInput = z.input<typeof AlertsListInputSchema>;
-
-const AlertSchema = z
-	.object({
-		type: z.string().nullish(),
-		id: z.string(),
-		attributes: z
-			.object({
-				category: z.string().nullish(),
-				keyword_id: z.number().nullish(),
-				url: z.string().nullish(),
-				kw: z.string().nullish(),
-				region: z.string().nullish(),
-				language: z.string().nullish(),
-				prevrank: z.number().nullish(),
-				result: z.number().nullish(),
-				time: z.string().nullish(),
-			})
-			.loose(),
-	})
-	.loose();
-
-export type KeywordAlert = z.infer<typeof AlertSchema>;
-
-const AlertsListResponseSchema = z
-	.object({
-		data: z.array(AlertSchema),
-		meta: z.record(z.string(), z.unknown()).nullish(),
-	})
-	.loose();
-
-export type AlertsListResponse = z.infer<typeof AlertsListResponseSchema>;
 
 // ── account ───────────────────────────────────────────────────────────────
 
@@ -904,9 +810,7 @@ export type KeywordEndpointInputs = {
 	competitors: CompetitorsInput;
 	regionsList: RegionsInput;
 	rankingUrls: RankingUrlsInput;
-	mindshareLatest: MindshareLatestInput;
 	mindshareHistory: MindshareHistoryInput;
-	alertsList: AlertsListInput;
 	accountGet: AccountGetInput;
 };
 
@@ -932,9 +836,7 @@ export type KeywordEndpointOutputs = {
 	competitors: CompetitorsResponse;
 	regionsList: RegionsResponse;
 	rankingUrls: RankingUrlsResponse;
-	mindshareLatest: MindshareLatestResponse;
 	mindshareHistory: MindshareHistoryResponse;
-	alertsList: AlertsListResponse;
 	accountGet: AccountResponse;
 };
 
@@ -960,9 +862,7 @@ export const KeywordEndpointInputSchemas = {
 	competitors: CompetitorsInputSchema,
 	regionsList: RegionsInputSchema,
 	rankingUrls: RankingUrlsInputSchema,
-	mindshareLatest: MindshareLatestInputSchema,
 	mindshareHistory: MindshareHistoryInputSchema,
-	alertsList: AlertsListInputSchema,
 	accountGet: AccountGetInputSchema,
 } as const;
 
@@ -988,8 +888,6 @@ export const KeywordEndpointOutputSchemas = {
 	competitors: CompetitorsResponseSchema,
 	regionsList: RegionsResponseSchema,
 	rankingUrls: RankingUrlsResponseSchema,
-	mindshareLatest: MindshareLatestResponseSchema,
 	mindshareHistory: MindshareHistoryResponseSchema,
-	alertsList: AlertsListResponseSchema,
 	accountGet: AccountResponseSchema,
 } as const;
