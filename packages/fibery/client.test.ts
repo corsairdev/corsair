@@ -55,9 +55,9 @@ describe('Fibery HTTP client', () => {
 	});
 
 	it('refreshes an expired Fibery OAuth token using HTTP Basic client auth', async () => {
-		let accessToken = 'expired-access-token';
-		let refreshToken = 'stored-refresh-token';
-		let expiresAt = '946684800';
+		let accessToken: string | null = 'expired-access-token';
+		let refreshToken: string | null = 'stored-refresh-token';
+		let expiresAt: string | null = '946684800';
 		const keys: OAuthAccessContext['keys'] = {
 			get_dek: async () => 'dek',
 			issue_new_dek: async () => 'dek',

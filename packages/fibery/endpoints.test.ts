@@ -8,7 +8,11 @@ import {
 } from './client';
 import * as operations from './endpoints/operations';
 import type { FiberyJson } from './endpoints/types';
-import type { FiberyContext, FiberyKeyBuilderContext } from './index';
+import type {
+	FiberyContext,
+	FiberyKeyBuilderContext,
+	FiberyPluginOptions,
+} from './index';
 import { fibery } from './index';
 
 jest.mock('corsair/core', () => {
@@ -590,7 +594,10 @@ beforeEach(() => {
 
 describe('OAuth key builder', () => {
 	it('uses Corsair refresh handling with Fibery Basic client authentication', async () => {
-		const plugin = fibery({ workspaceUrl: url, authType: 'oauth_2' });
+		const plugin = fibery<FiberyPluginOptions>({
+			workspaceUrl: url,
+			authType: 'oauth_2',
+		});
 		if (!plugin.keyBuilder) throw new Error('Expected Fibery keyBuilder.');
 
 		await expect(
