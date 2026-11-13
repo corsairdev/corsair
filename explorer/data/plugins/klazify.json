@@ -1,0 +1,592 @@
+{
+  "id": "klazify",
+  "displayName": "Klazify",
+  "description": "Website classification from any URL or email - IAB and Klazify categories, company data, tech stack, logos, traffic, domain age and similar domains.",
+  "npmPackageName": "@corsair-dev/klazify",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "klazify.api.categories.iab",
+      "shortPath": "categories.iab",
+      "description": "Classify a URL into IAB v1 and v3 taxonomy categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "An email address to classify by its domain. Give this or `url`, not both."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "False when the classification failed."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "{ categories?: { name: string, confidence?: number | null }[] | null, domain_url?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klazify.api.categories.listV1",
+      "shortPath": "categories.listV1",
+      "description": "List the 620 categories in the Klazify v1 taxonomy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "False when the classification failed."
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string",
+            "description": "`v1` or `v2`, matching the taxonomy."
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number",
+            "description": "620 for v1, 1091 for v2."
+          },
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "string[]",
+            "description": "Full category paths, each starting with `/`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "klazify.api.categories.listV2",
+      "shortPath": "categories.listV2",
+      "description": "List the 1,091 categories in the Klazify v2 taxonomy",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "False when the classification failed."
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string",
+            "description": "`v1` or `v2`, matching the taxonomy."
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number",
+            "description": "620 for v1, 1091 for v2."
+          },
+          {
+            "key": "categories",
+            "optional": false,
+            "type": "string[]",
+            "description": "Full category paths, each starting with `/`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "klazify.api.categorize.all",
+      "shortPath": "categorize.all",
+      "description": "Classify a URL or email and return categories, logo, social profiles, company data and tech stack in one answer",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "An email address to classify by its domain. Give this or `url`, not both."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "False when the classification failed."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "{ categories?: { name: string, confidence?: number | null }[] | null, domain_url?: string | null, logo_url?: string | null, social_media?: { facebook_url?: string | null, twitter_url?: string | null, instagram_url?: string | null, youtube_url?: string | null, linkedin_url?: string | null, github_url?: string | null, pinterest_url?: string | null, medium_url?: string | null } | null }"
+          },
+          {
+            "key": "objects",
+            "optional": true,
+            "type": "{ company?: { name?: string | null, city?: string | null, stateCode?: string | null, countryCode?: string | null, employeesRange?: string | null, revenue?: string | null, raised?: string | null, tags?: string[] | null, tech?: string[] | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klazify.api.categorize.realtime",
+      "shortPath": "categorize.realtime",
+      "description": "Classify a URL or email into Klazify categories, re-crawled",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "An email address to classify by its domain. Give this or `url`, not both."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "False when the classification failed."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "{ categories?: { name: string, confidence?: number | null }[] | null, domain_url?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klazify.api.company.get",
+      "shortPath": "company.get",
+      "description": "Read company name, location, headcount, revenue, funding and tags for a URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "An email address to classify by its domain. Give this or `url`, not both."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "False when the classification failed."
+          },
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ company: { name?: string | null, city?: string | null, stateCode?: string | null, countryCode?: string | null, employeesRange?: string | null, revenue?: string | null, raised?: string | null, tags?: string[] | null, tech?: string[] | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klazify.api.discovery.search",
+      "shortPath": "discovery.search",
+      "description": "Search Klazify's domain database by rank, category, country, technology and company size",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top_n",
+            "optional": true,
+            "type": "number",
+            "description": "Only domains with a global rank at or below this are searched, 1 to 1,000,000. Unranked domains are excluded when it is set."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ category?: string, country?: string, tech?: string, employees?: 1-10 | 11-50 | 51-250 | 251-1K | 1K-5K | 5K-10K | 10K-50K | 50K-100K | 100K+, has_company?: boolean, tld?: string }"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search across domain, company and category."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "global_rank | domain | company_name | monthly_visits_latest | popularity_score"
+          },
+          {
+            "key": "sort_dir",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number. Each page holds 100 results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null",
+            "description": "The page this answer holds."
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_is_lower_bound",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ domain?: string | null, company_name?: string | null, company_country?: string | null, company_employees?: string | null, company_revenue?: string | null, primary_category?: string | null, primary_iab_name?: string | null, tech_stack?: string[] | null, global_rank?: number | null, monthly_visits?: number | null, logo_url?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klazify.api.domain.get",
+      "shortPath": "domain.get",
+      "description": "Read domain registration and expiration dates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "An email address to classify by its domain. Give this or `url`, not both."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "False when the classification failed."
+          },
+          {
+            "key": "domain_registration_data",
+            "optional": true,
+            "type": "{ domain_age_date?: string | null, domain_age_days_ago?: number | null, domain_expiration_date?: string | null, domain_expiration_days_left?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klazify.api.logo.get",
+      "shortPath": "logo.get",
+      "description": "Fetch a website's logo URL from Klazify's CDN",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "An email address to classify by its domain. Give this or `url`, not both."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "False when the classification failed."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "{ domain_url?: string | null, logo_url?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klazify.api.similarDomains.get",
+      "shortPath": "similarDomains.get",
+      "description": "List up to 10 domains in the same category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "An email address to classify by its domain. Give this or `url`, not both."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "False when the classification failed."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "{ domain_url?: string | null, similar_domains?: string[] | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klazify.api.tech.get",
+      "shortPath": "tech.get",
+      "description": "Detect the technologies a website uses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "An email address to classify by its domain. Give this or `url`, not both."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "False when the classification failed."
+          },
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "{ domain_url?: string | null, updated_at?: string | null }"
+          },
+          {
+            "key": "objects",
+            "optional": false,
+            "type": "{ company: { tech?: string[] | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "klazify.api.traffic.get",
+      "shortPath": "traffic.get",
+      "description": "Read traffic rank, monthly visits, engagement and traffic sources for a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The URL to classify, e.g. `https://apple.com`. Give this or `email`, not both."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "An email address to classify by its domain. Give this or `url`, not both."
+          },
+          {
+            "key": "refresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Force a live crawl instead of returning the cached result. Slower, and the docs offer it on every paid plan including Starter. Omit it to reuse the cached classification."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "False when the classification failed."
+          },
+          {
+            "key": "traffic_intelligence",
+            "optional": true,
+            "type": "{ global_rank?: number | null, country_rank?: { country_code?: string | null, rank?: number | null } | null, category_rank?: { category?: string | null, rank?: string | null } | null, monthly_visits?: Record<string, number> | null, engagement?: { bounce_rate?: string | null, pages_per_visit?: string | null, time_on_site_seconds?: string | null } | null, traffic_sources?: Record<string, number | string> | null, top_countries?: { country_code?: string | null, share?: number | null }[] | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
