@@ -71,6 +71,7 @@ const CompanyCategorySchema = z.enum([
 	'service-provider',
 	'mobile',
 	'saas',
+	'local-business',
 ]);
 
 const CompanyFundingRoundSchema = z.enum([
@@ -356,6 +357,15 @@ const WorkforceGrowthDepartmentSchema = z.enum([
 	'sales',
 	'consulting',
 ]);
+
+// Response-only enums. CompanyEnrich adds values to these vocabularies over
+// time (`local-business` joined the category list after this plugin was
+// written), and a strict z.enum would fail the whole read on the first new
+// value. The documented values stay listed for docs and typing; any other
+// string passes through. Request enums stay strict z.enum.
+function openEnum<T extends z.ZodEnum>(schema: T) {
+	return z.union([schema, z.string()]);
+}
 
 // ── Documented value-filter shapes ──────────────────────────────────────────
 
@@ -676,7 +686,7 @@ const CompanyWorkforceHistorySchema = z
 	.object({
 		date: z.string(),
 		observedEmployeeCount: z.number().int(),
-		employeeCountRange: CompanyEmployeesSchema.nullish(),
+		employeeCountRange: openEnum(CompanyEmployeesSchema).nullish(),
 		departmentHeadcount: CompanyWorkforceDepartmentSchema,
 		unclassifiedHeadcount: z.number().int(),
 	})
@@ -686,7 +696,7 @@ const workforceFields = {
 	companyId: CompanyIdSchema,
 	domain: z.string(),
 	observedEmployeeCount: z.number().int(),
-	employeeCountRange: CompanyEmployeesSchema.nullish(),
+	employeeCountRange: openEnum(CompanyEmployeesSchema).nullish(),
 	departmentHeadcount: CompanyWorkforceDepartmentSchema,
 	unclassifiedHeadcount: z.number().int(),
 	historyFrom: z.string(),
@@ -706,13 +716,13 @@ const companyFields = {
 	website: z.string(),
 	logoUrl: z.string(),
 	description: z.string().nullish(),
-	type: CompanyTypeSchema.nullish(),
+	type: openEnum(CompanyTypeSchema).nullish(),
 	foundedYear: z.number().int().nullish(),
-	employees: CompanyEmployeesSchema.nullish(),
-	revenue: CompanyRevenueSchema.nullish(),
+	employees: openEnum(CompanyEmployeesSchema).nullish(),
+	revenue: openEnum(CompanyRevenueSchema).nullish(),
 	industry: z.string().nullish(),
 	industries: z.array(z.string()).nullish(),
-	categories: z.array(CompanyCategorySchema).nullish(),
+	categories: z.array(openEnum(CompanyCategorySchema)).nullish(),
 	location: CompanyLocationSchema,
 	socials: CompanySocialsSchema,
 	updatedAt: z.string(),
@@ -800,8 +810,8 @@ const PersonExperienceSchema = z
 		isCurrent: z.boolean(),
 		isMatched: z.boolean(),
 		position: z.string().nullish(),
-		seniority: PersonSenioritySchema.nullish(),
-		department: PersonDepartmentSchema.nullish(),
+		seniority: openEnum(PersonSenioritySchema).nullish(),
+		department: openEnum(PersonDepartmentSchema).nullish(),
 		company: PersonCompanySchema,
 		companyName: z.string().nullish(),
 	})
@@ -830,8 +840,8 @@ export const PersonResponseSchema = z
 		lastName: z.string().nullish(),
 		imageUrl: z.string().nullish(),
 		position: z.string().nullish(),
-		seniority: PersonSenioritySchema.nullish(),
-		department: PersonDepartmentSchema.nullish(),
+		seniority: openEnum(PersonSenioritySchema).nullish(),
+		department: openEnum(PersonDepartmentSchema).nullish(),
 		location: PersonLocationSchema,
 		socials: PersonSocialsSchema,
 		experiences: z.array(PersonExperienceSchema),
@@ -947,7 +957,9 @@ export const CompaniesEnrichBatchResponseSchema = z.object({
 		z
 			.object({
 				domain: z.string(),
-				status: z.enum(['found', 'not-found', 'invalid-domain', 'pending']),
+				status: openEnum(
+					z.enum(['found', 'not-found', 'invalid-domain', 'pending']),
+				),
 				company: CompanyResponseSchema.nullish(),
 			})
 			.loose(),
@@ -1002,8 +1014,8 @@ const CompanySemanticInterpretationSchema = z
 		boost: z
 			.object({
 				names: z.array(z.string()).nullish(),
-				categories: z.array(CompanyCategorySchema).nullish(),
-				revenue: z.array(CompanyRevenueSchema).nullish(),
+				categories: z.array(openEnum(CompanyCategorySchema)).nullish(),
+				revenue: z.array(openEnum(CompanyRevenueSchema)).nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -1082,9 +1094,11 @@ export const PeopleFindEmailResponseSchema = z
 	.object({
 		personId: z.number().int(),
 		domain: z.string(),
-		status: z.enum(['found', 'not-found', 'unavailable', 'pending']),
+		status: openEnum(z.enum(['found', 'not-found', 'unavailable', 'pending'])),
 		email: z.string().nullish(),
-		certainty: z.enum(['unknown', 'medium', 'high', 'very-high']).nullish(),
+		certainty: openEnum(
+			z.enum(['unknown', 'medium', 'high', 'very-high']),
+		).nullish(),
 	})
 	.loose();
 

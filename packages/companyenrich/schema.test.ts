@@ -503,4 +503,48 @@ describe('Companyenrich schema', () => {
 			}).success,
 		).toBe(true);
 	});
+
+	it('accepts local-business and enum values CompanyEnrich adds later in responses', () => {
+		const company = {
+			...companyResponse,
+			type: 'cooperative',
+			employees: '10K-50K',
+			revenue: 'over-10b',
+			categories: ['local-business', 'marketplace'],
+		};
+		expect(
+			CompanyenrichEndpointOutputSchemas.companiesGet.safeParse(company)
+				.success,
+		).toBe(true);
+		expect(
+			CompanyenrichEndpointOutputSchemas.peopleGet.safeParse({
+				...personResponse,
+				seniority: 'staff',
+				department: 'engineering-technical/quantum',
+			}).success,
+		).toBe(true);
+		expect(
+			CompanyenrichEndpointOutputSchemas.companiesEnrichBatch.safeParse({
+				items: [{ domain: 'example.com', status: 'queued' }],
+			}).success,
+		).toBe(true);
+		expect(
+			CompanyenrichEndpointOutputSchemas.peopleFindEmail.safeParse({
+				personId: 101,
+				domain: 'example.com',
+				status: 'found',
+				email: 'person@example.com',
+				certainty: 'low',
+			}).success,
+		).toBe(true);
+		// Request filters stay strict, but take the documented local-business value.
+		expect(
+			CompanySearchFilterSchema.safeParse({ categories: 'local-business' })
+				.success,
+		).toBe(true);
+		expect(
+			CompanySearchFilterSchema.safeParse({ categories: 'marketplace' })
+				.success,
+		).toBe(false);
+	});
 });
