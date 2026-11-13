@@ -349,7 +349,11 @@ describe('Motion operation seams', () => {
 			call: () => Statuses.list(ctx as never, { workspaceId: 'ws_1' }),
 			result: [
 				{
-					status: { name: 'TODO', isDefaultStatus: true, isResolvedStatus: false },
+					status: {
+						name: 'TODO',
+						isDefaultStatus: true,
+						isResolvedStatus: false,
+					},
 				},
 			],
 			method: 'GET',
