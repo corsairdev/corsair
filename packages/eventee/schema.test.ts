@@ -134,6 +134,87 @@ const outputs: Array<
 	['reviewList', []],
 ];
 
+// Trimmed responses from a live run against a trial event (2026-11-13). Codes and links are placeholders.
+const liveSpeaker = {
+	id: 223945,
+	name: 'corsair-plugin-test',
+	email: '',
+	phone: '',
+	bio_html: '',
+	web: '',
+	position: 'Tester',
+	company: 'Corsair Plugin Test',
+	country: '',
+	language: '',
+	event_id: 32122,
+	order: 0,
+	photo: null,
+	thumbnail: null,
+	bio: '',
+};
+const liveSession = {
+	id: 306021,
+	name: 'corsair-plugin-test 2',
+	description: '',
+	start: '2026-12-13 10:30:00',
+	end: '2026-12-13 11:30:00',
+	event_day_id: 54971,
+	discussion: false,
+	panel_discussion: 0,
+	moderating: false,
+	polling: false,
+	checkin: false,
+	type: 0,
+	mentoring: false,
+	hall_id: 68028,
+	speakers: [],
+	files: [],
+	available: 0,
+	booked: false,
+	capacity: 0,
+	booking_info: [],
+	stream: null,
+	virtual_meeting: null,
+	tracks: [],
+	event_id: 32122,
+	overlapping: false,
+	visible_in_groups: [],
+	mandatory_for_groups: [],
+	mandatory: false,
+};
+const livePartner = {
+	id: 57930,
+	company: 'corsair-plugin-test 2',
+	description: '',
+	web: '',
+	email: '',
+	phone: '',
+	address: '',
+	code: 'partner-code',
+	sections: [],
+	exhibitor: false,
+	sponsor: false,
+	exhibitor_info: null,
+	sponsor_info: null,
+	logo: null,
+	photo: null,
+	qr_code_url: 'https://eventee.com/event/example/partner/partner-code',
+};
+const liveRegistration = {
+	id: 33211,
+	email: 'person@example.com',
+	email_valid: null,
+	status: null,
+	first_name: 'corsair-plugin-test',
+	last_name: '',
+	photo: null,
+	answer_histories: [],
+	group_id: null,
+	form_id: null,
+	form_answers: [],
+	account_deleted: false,
+};
+
 describe('Eventee schema and OpenAPI endpoint schemas', () => {
 	it('uses a semver schema version and no local entities', () => {
 		expect(EventeeSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
@@ -191,6 +272,25 @@ describe('Eventee schema and OpenAPI endpoint schemas', () => {
 				sections: [{ type: 6 }],
 			}).success,
 		).toBe(false);
+	});
+
+	it('parses the null and numeric fields Eventee returns live', () => {
+		const outputs = EventeeEndpointOutputSchemas;
+		expect(outputs.speakerCreate.safeParse(liveSpeaker).success).toBe(true);
+		expect(outputs.speakerUpdate.safeParse(liveSpeaker).success).toBe(true);
+		expect(outputs.sessionUpdate.safeParse(liveSession).success).toBe(true);
+		expect(
+			outputs.contentGet.safeParse({
+				...emptyProgram,
+				lectures: [liveSession],
+				speakers: [liveSpeaker],
+			}).success,
+		).toBe(true);
+		expect(outputs.partnerUpdate.safeParse(livePartner).success).toBe(true);
+		expect(outputs.partnerList.safeParse([livePartner]).success).toBe(true);
+		expect(outputs.registrationList.safeParse([liveRegistration]).success).toBe(
+			true,
+		);
 	});
 
 	it('rejects malformed outputs for every operation', () => {

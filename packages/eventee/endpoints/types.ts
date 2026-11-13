@@ -338,7 +338,8 @@ const SessionResponseSchema = z
 		created_at: z.string().optional(),
 		updated_at: z.string().optional(),
 		discussion: z.boolean().optional(),
-		panel_discussion: z.boolean().optional(),
+		// Eventee returns false from create and 0 from update and content reads.
+		panel_discussion: z.union([z.boolean(), z.number()]).optional(),
 		code: z.string().optional(),
 		moderating: z.boolean().optional(),
 		polling: z.boolean().optional(),
@@ -394,8 +395,8 @@ const SpeakerResponseSchema = z
 		language: z.string().optional(),
 		event_id: z.number().optional(),
 		order: z.number().optional(),
-		photo: z.string().optional(),
-		thumbnail: z.string().optional(),
+		photo: z.string().nullable().optional(),
+		thumbnail: z.string().nullable().optional(),
 		bio: z.string().optional(),
 	})
 	.passthrough();
@@ -470,6 +471,7 @@ const PartnerResponseSchema = z
 				photo: PartnerImageResponseSchema.optional(),
 			})
 			.passthrough()
+			.nullable()
 			.optional(),
 		sponsor_info: z
 			.object({
@@ -478,9 +480,10 @@ const PartnerResponseSchema = z
 				photo: PartnerImageResponseSchema.optional(),
 			})
 			.passthrough()
+			.nullable()
 			.optional(),
-		logo: PartnerImageResponseSchema.optional(),
-		photo: PartnerImageResponseSchema.optional(),
+		logo: PartnerImageResponseSchema.nullable().optional(),
+		photo: PartnerImageResponseSchema.nullable().optional(),
 		qr_code_url: z.string().optional(),
 	})
 	.passthrough();
@@ -543,8 +546,11 @@ const RegistrationResponseSchema = z
 	.object({
 		id: IdSchema,
 		email: z.string().optional(),
-		email_valid: z.boolean().optional(),
-		status: z.union([z.literal(0), z.literal(1), z.literal(2)]).optional(),
+		email_valid: z.boolean().nullable().optional(),
+		status: z
+			.union([z.literal(0), z.literal(1), z.literal(2)])
+			.nullable()
+			.optional(),
 		first_name: z.string().optional(),
 		last_name: z.string().optional(),
 		photo: z.string().nullable().optional(),
