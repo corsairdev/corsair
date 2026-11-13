@@ -21,6 +21,7 @@ import {
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
 import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
+import { CorsairKekMissingError } from '../auth/errors/kek-missing';
 import { ReconnectRequiredError } from '../auth/errors/reconnect-required';
 import type { EndpointManualConfig } from '../config/manual-connect';
 import { recordConnectRequestBestEffort } from '../connect-request/store';
@@ -157,6 +158,14 @@ export function bindEndpointsRecursively({
 					operationPath,
 					endpointMetaEntry?.riskLevel ?? 'write',
 				);
+
+				// With encryptDataAtRest on, every call stores or logs encrypted data
+				// once the provider answers. Without a kek that store throws, after a
+				// paid or irreversible request (or an approval) has already gone out.
+				// Refuse before the permission guard and the request.
+				if (encryptDataAtRest && !kek) {
+					throw new CorsairKekMissingError();
+				}
 
 				// ── Permission guard ────────────────────────────────────────────────────────────────
 				let onPermissionComplete: (() => Promise<void>) | undefined;

@@ -1,4 +1,5 @@
 import { BaseProviders } from '../core/constants';
+import { tryGetCorsairInternal } from '../core/utils/corsair-instance';
 import type {
 	BoundWebhook,
 	BoundWebhookTree,
@@ -6,6 +7,7 @@ import type {
 	RawWebhookRequest,
 	WebhookResponse,
 } from '../core/webhooks';
+import { resolveTenantFromWebhookLink } from './tenant-links';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -148,6 +150,36 @@ function buildGoogleChannelBody(
 }
 
 /**
+ * The tenant a delivery belongs to, for the plugin that matched it, when its
+ * URL names none on a multi-tenant instance: the plugin's tenant matcher reads
+ * the provider's account id from the delivery, and the stored webhook link maps
+ * it to a tenant (the lookup the tunnel does with Hub's routing). `failed`
+ * means the lookup itself errored, which must not be read as "no link".
+ */
+async function resolveTenantForPlugin(
+	corsair: CorsairInstance,
+	pluginId: string,
+	request: RawWebhookRequest,
+): Promise<{ tenantId?: string; failed?: true }> {
+	const internal = tryGetCorsairInternal(corsair);
+	if (!internal?.multiTenancy || !internal.database) return {};
+	const plugin = internal.plugins.find((p) => p.id === pluginId);
+	const tenantMatch = plugin?.pluginTenantWebhookMatcher?.(request);
+	if (!tenantMatch) return {};
+	try {
+		const tenantId = await resolveTenantFromWebhookLink({
+			database: internal.database,
+			kek: internal.kek,
+			pluginId,
+			match: tenantMatch,
+		});
+		return tenantId ? { tenantId } : {};
+	} catch {
+		return { failed: true };
+	}
+}
+
+/**
  * Filters an incoming webhook request through all plugins in a corsair instance.
  *
  * Goes through each enabled plugin to find a matching webhook handler.
@@ -212,10 +244,11 @@ export async function processWebhook(
 		...(query ? { query } : {}),
 	} satisfies RawWebhookRequest;
 
-	const tenantId = query?.tenantId || 'default';
-
+	// Matching runs under the tenant the URL names, or `default`. When the URL
+	// names none, the tenant is looked up below for the plugin that matched.
+	const explicitTenantId = query?.tenantId;
 	const tenantScopedCorsair = corsair.withTenant
-		? corsair.withTenant(tenantId)
+		? corsair.withTenant(explicitTenantId || 'default')
 		: corsair;
 
 	// Known plugin IDs to check — or exactly the hub-identified one
@@ -246,9 +279,38 @@ export async function processWebhook(
 		}
 
 		// If no pluginWebhookMatcher defined, or if it matched, search individual webhooks
-		const matched = findMatchingWebhook(plugin.webhooks, rawRequest);
+		let matched = findMatchingWebhook(plugin.webhooks, rawRequest);
 
 		if (!matched) continue;
+
+		if (!explicitTenantId && corsair.withTenant) {
+			const resolved = await resolveTenantForPlugin(
+				corsair,
+				pluginId,
+				rawRequest,
+			);
+			if (resolved.failed) {
+				// A failed lookup is not "no link": running the default tenant's
+				// handler could act on, or acknowledge, another tenant's delivery.
+				return {
+					plugin: pluginId,
+					action: matched.path.join('.'),
+					body: parsedBody,
+					response: {
+						success: false,
+						error: 'Could not look up the tenant for this delivery',
+						statusCode: 500,
+					},
+				};
+			}
+			if (resolved.tenantId) {
+				const scoped = corsair.withTenant(resolved.tenantId)[pluginId];
+				matched =
+					(scoped?.webhooks &&
+						findMatchingWebhook(scoped.webhooks, rawRequest)) ||
+					matched;
+			}
+		}
 
 		const action = matched.path.join('.');
 
@@ -266,6 +328,25 @@ export async function processWebhook(
 			const returnToSenderObjectExists = !!Object.keys(
 				response.returnToSender || {},
 			)?.length;
+
+			// A handler that refused the delivery (a wrong secret, a failed
+			// signature check) says so with success: false. Report that, with
+			// its error and status, instead of a success the sender never earned.
+			if (response.success === false) {
+				return {
+					plugin: pluginId,
+					action,
+					body: parsedBody,
+					response: {
+						success: false,
+						...(response.error ? { error: response.error } : {}),
+						...(response.statusCode ? { statusCode: response.statusCode } : {}),
+					},
+					...(response.responseHeaders && {
+						responseHeaders: response.responseHeaders,
+					}),
+				};
+			}
 
 			return {
 				plugin: pluginId,
@@ -290,6 +371,9 @@ export async function processWebhook(
 				response: {
 					success: false,
 					error: error instanceof Error ? error.message : 'Unknown error',
+					// A handler that threw failed on our side, not on the sender's:
+					// a 5xx keeps the delivery retryable.
+					statusCode: 500,
 				},
 			};
 		}
