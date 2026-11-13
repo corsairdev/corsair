@@ -1,0 +1,1717 @@
+---
+title: "Sendbird API reference"
+sidebarTitle: "API"
+description: "API reference for the Sendbird plugin in Corsair: every `sendbird.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Channels
+
+### create
+
+`channels.create`
+
+Create a group channel from user IDs.
+
+**Risk:** `write`
+
+```ts
+await corsair.sendbird.api.channels.create({
+	user_ids: ['user-1'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `cover_url` | `string` | No | — |
+| `custom_type` | `string` | No | — |
+| `data` | `string` | No | — |
+| `is_distinct` | `boolean` | No | — |
+| `is_public` | `boolean` | No | — |
+| `is_super` | `boolean` | No | — |
+| `access_code` | `string` | No | — |
+| `user_ids` | `string[]` | Yes | — |
+| `operator_ids` | `string[]` | No | — |
+| `channel_url` | `string` | No | — |
+| `is_ephemeral` | `boolean` | No | — |
+| `inviter_id` | `string` | No | — |
+| `strict` | `boolean` | No | — |
+| `invitation_status` | `Record<string, string>` | No | — |
+| `hidden_status` | `Record<string, string>` | No | — |
+| `block_sdk_user_channel_join` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_url` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `cover_url` | `string \| null` | No | — |
+| `custom_type` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+| `is_distinct` | `boolean \| null` | No | — |
+| `is_public` | `boolean \| null` | No | — |
+| `is_super` | `boolean \| null` | No | — |
+| `is_ephemeral` | `boolean \| null` | No | — |
+| `is_access_code_required` | `boolean \| null` | No | — |
+| `member_count` | `number \| null` | No | — |
+| `joined_member_count` | `number \| null` | No | — |
+| `max_length_message` | `number \| null` | No | — |
+| `unread_message_count` | `number \| null` | No | — |
+| `unread_mention_count` | `number \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `freeze` | `boolean \| null` | No | — |
+| `members` | `object[] \| null` | No | — |
+| `operators` | `object[] \| null` | No | — |
+| `last_message` | `object \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `delivery_receipt` | `Record<string, number> \| null` | No | — |
+| `read_receipt` | `Record<string, number> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="operators full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="last_message full type">
+
+```ts
+{
+  message_id: number,
+  type: string,
+  channel_url?: string | null,
+  custom_type?: string | null,
+  message?: string | null,
+  data?: string | null,
+  user?: {
+    user_id: string,
+    nickname?: string | null,
+    profile_url?: string | null,
+    access_token?: string | null,
+    is_online?: boolean | null,
+    is_active?: boolean | null,
+    has_ever_logged_in?: boolean | null,
+    role?: string | null,
+    state?: string | null,
+    joined_ts?: number | null,
+    created_at?: number | null,
+    last_seen_at?: number | null,
+    discovery_keys?: string[] | null,
+    preferred_languages?: string[] | null,
+    metadata?: Record<string, any> | null,
+    unread_channel_count?: number | null,
+    unread_message_count?: number | null,
+    is_blocking_me?: boolean | null,
+    is_blocked_by_me?: boolean | null
+  } | null,
+  mention_type?: string | null,
+  mentioned_users?: {
+    user_id: string,
+    nickname?: string | null,
+    profile_url?: string | null,
+    access_token?: string | null,
+    is_online?: boolean | null,
+    is_active?: boolean | null,
+    has_ever_logged_in?: boolean | null,
+    role?: string | null,
+    state?: string | null,
+    joined_ts?: number | null,
+    created_at?: number | null,
+    last_seen_at?: number | null,
+    discovery_keys?: string[] | null,
+    preferred_languages?: string[] | null,
+    metadata?: Record<string, any> | null,
+    unread_channel_count?: number | null,
+    unread_message_count?: number | null,
+    is_blocking_me?: boolean | null,
+    is_blocked_by_me?: boolean | null
+  }[] | null,
+  is_removed?: boolean | null,
+  created_at?: number | null,
+  updated_at?: number | null,
+  parent_message_id?: number | null,
+  is_reply_to_channel?: boolean | null,
+  translations?: Record<string, any> | null,
+  file?: Record<string, any> | null,
+  files?: any,
+  sorted_metaarray?: any[] | null,
+  message_events?: Record<string, any> | null,
+  og_tag?: Record<string, any> | null,
+  thread_info?: Record<string, any> | null,
+  parent_message_info?: Record<string, any> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`channels.delete`
+
+Delete a group channel.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sendbird.api.channels.delete({ channel_url: 'example-channel' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_url` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`channels.get`
+
+Get a group channel.
+
+**Risk:** `read`
+
+```ts
+await corsair.sendbird.api.channels.get({ channel_url: 'example-channel' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_url` | `string` | Yes | — |
+| `show_delivery_receipt` | `boolean` | No | — |
+| `show_read_receipt` | `boolean` | No | — |
+| `show_member` | `boolean` | No | — |
+| `member_active_mode` | `all \| activated \| deactivated` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_url` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `cover_url` | `string \| null` | No | — |
+| `custom_type` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+| `is_distinct` | `boolean \| null` | No | — |
+| `is_public` | `boolean \| null` | No | — |
+| `is_super` | `boolean \| null` | No | — |
+| `is_ephemeral` | `boolean \| null` | No | — |
+| `is_access_code_required` | `boolean \| null` | No | — |
+| `member_count` | `number \| null` | No | — |
+| `joined_member_count` | `number \| null` | No | — |
+| `max_length_message` | `number \| null` | No | — |
+| `unread_message_count` | `number \| null` | No | — |
+| `unread_mention_count` | `number \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `freeze` | `boolean \| null` | No | — |
+| `members` | `object[] \| null` | No | — |
+| `operators` | `object[] \| null` | No | — |
+| `last_message` | `object \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `delivery_receipt` | `Record<string, number> \| null` | No | — |
+| `read_receipt` | `Record<string, number> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="operators full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="last_message full type">
+
+```ts
+{
+  message_id: number,
+  type: string,
+  channel_url?: string | null,
+  custom_type?: string | null,
+  message?: string | null,
+  data?: string | null,
+  user?: {
+    user_id: string,
+    nickname?: string | null,
+    profile_url?: string | null,
+    access_token?: string | null,
+    is_online?: boolean | null,
+    is_active?: boolean | null,
+    has_ever_logged_in?: boolean | null,
+    role?: string | null,
+    state?: string | null,
+    joined_ts?: number | null,
+    created_at?: number | null,
+    last_seen_at?: number | null,
+    discovery_keys?: string[] | null,
+    preferred_languages?: string[] | null,
+    metadata?: Record<string, any> | null,
+    unread_channel_count?: number | null,
+    unread_message_count?: number | null,
+    is_blocking_me?: boolean | null,
+    is_blocked_by_me?: boolean | null
+  } | null,
+  mention_type?: string | null,
+  mentioned_users?: {
+    user_id: string,
+    nickname?: string | null,
+    profile_url?: string | null,
+    access_token?: string | null,
+    is_online?: boolean | null,
+    is_active?: boolean | null,
+    has_ever_logged_in?: boolean | null,
+    role?: string | null,
+    state?: string | null,
+    joined_ts?: number | null,
+    created_at?: number | null,
+    last_seen_at?: number | null,
+    discovery_keys?: string[] | null,
+    preferred_languages?: string[] | null,
+    metadata?: Record<string, any> | null,
+    unread_channel_count?: number | null,
+    unread_message_count?: number | null,
+    is_blocking_me?: boolean | null,
+    is_blocked_by_me?: boolean | null
+  }[] | null,
+  is_removed?: boolean | null,
+  created_at?: number | null,
+  updated_at?: number | null,
+  parent_message_id?: number | null,
+  is_reply_to_channel?: boolean | null,
+  translations?: Record<string, any> | null,
+  file?: Record<string, any> | null,
+  files?: any,
+  sorted_metaarray?: any[] | null,
+  message_events?: Record<string, any> | null,
+  og_tag?: Record<string, any> | null,
+  thread_info?: Record<string, any> | null,
+  parent_message_info?: Record<string, any> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`channels.list`
+
+List group channels with a page token.
+
+**Risk:** `read`
+
+```ts
+await corsair.sendbird.api.channels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `distinct_mode` | `all \| distinct \| nondistinct` | No | — |
+| `public_mode` | `all \| private \| public` | No | — |
+| `super_mode` | `all \| super \| nonsuper` | No | — |
+| `created_after` | `number` | No | — |
+| `created_before` | `number` | No | — |
+| `show_empty` | `boolean` | No | — |
+| `show_member` | `boolean` | No | — |
+| `show_delivery_receipt` | `boolean` | No | — |
+| `show_read_receipt` | `boolean` | No | — |
+| `show_metadata` | `boolean` | No | — |
+| `show_frozen` | `boolean` | No | — |
+| `order` | `string` | No | — |
+| `metadata_order_key` | `string` | No | — |
+| `custom_types` | `string` | No | — |
+| `custom_type_startswith` | `string` | No | — |
+| `channel_urls` | `string` | No | — |
+| `name` | `string` | No | — |
+| `name_contains` | `string` | No | — |
+| `name_startswith` | `string` | No | — |
+| `members_exactly_in` | `string` | No | — |
+| `members_include_in` | `string` | No | — |
+| `query_type` | `AND \| OR` | No | — |
+| `members_nickname` | `string` | No | — |
+| `members_nickname_contains` | `string` | No | — |
+| `metadata_key` | `string` | No | — |
+| `metadata_values` | `string` | No | — |
+| `metadata_value_startswith` | `string` | No | — |
+| `metacounter_key` | `string` | No | — |
+| `metacounter_values` | `string` | No | — |
+| `metacounter_value_gt` | `string` | No | — |
+| `metacounter_value_gte` | `string` | No | — |
+| `metacounter_value_lt` | `string` | No | — |
+| `metacounter_value_lte` | `string` | No | — |
+| `include_sorted_metaarray_in_last_message` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channels` | `object[]` | Yes | — |
+| `next` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="channels full type">
+
+```ts
+{
+  channel_url: string,
+  name?: string | null,
+  cover_url?: string | null,
+  custom_type?: string | null,
+  data?: string | null,
+  is_distinct?: boolean | null,
+  is_public?: boolean | null,
+  is_super?: boolean | null,
+  is_ephemeral?: boolean | null,
+  is_access_code_required?: boolean | null,
+  member_count?: number | null,
+  joined_member_count?: number | null,
+  max_length_message?: number | null,
+  unread_message_count?: number | null,
+  unread_mention_count?: number | null,
+  created_at?: number | null,
+  freeze?: boolean | null,
+  members?: {
+    user_id: string,
+    nickname?: string | null,
+    profile_url?: string | null,
+    access_token?: string | null,
+    is_online?: boolean | null,
+    is_active?: boolean | null,
+    has_ever_logged_in?: boolean | null,
+    role?: string | null,
+    state?: string | null,
+    joined_ts?: number | null,
+    created_at?: number | null,
+    last_seen_at?: number | null,
+    discovery_keys?: string[] | null,
+    preferred_languages?: string[] | null,
+    metadata?: Record<string, any> | null,
+    unread_channel_count?: number | null,
+    unread_message_count?: number | null,
+    is_blocking_me?: boolean | null,
+    is_blocked_by_me?: boolean | null
+  }[] | null,
+  operators?: {
+    user_id: string,
+    nickname?: string | null,
+    profile_url?: string | null,
+    access_token?: string | null,
+    is_online?: boolean | null,
+    is_active?: boolean | null,
+    has_ever_logged_in?: boolean | null,
+    role?: string | null,
+    state?: string | null,
+    joined_ts?: number | null,
+    created_at?: number | null,
+    last_seen_at?: number | null,
+    discovery_keys?: string[] | null,
+    preferred_languages?: string[] | null,
+    metadata?: Record<string, any> | null,
+    unread_channel_count?: number | null,
+    unread_message_count?: number | null,
+    is_blocking_me?: boolean | null,
+    is_blocked_by_me?: boolean | null
+  }[] | null,
+  last_message?: {
+    message_id: number,
+    type: string,
+    channel_url?: string | null,
+    custom_type?: string | null,
+    message?: string | null,
+    data?: string | null,
+    user?: {
+      user_id: string,
+      nickname?: string | null,
+      profile_url?: string | null,
+      access_token?: string | null,
+      is_online?: boolean | null,
+      is_active?: boolean | null,
+      has_ever_logged_in?: boolean | null,
+      role?: string | null,
+      state?: string | null,
+      joined_ts?: number | null,
+      created_at?: number | null,
+      last_seen_at?: number | null,
+      discovery_keys?: string[] | null,
+      preferred_languages?: string[] | null,
+      metadata?: Record<string, any> | null,
+      unread_channel_count?: number | null,
+      unread_message_count?: number | null,
+      is_blocking_me?: boolean | null,
+      is_blocked_by_me?: boolean | null
+    } | null,
+    mention_type?: string | null,
+    mentioned_users?: {
+      user_id: string,
+      nickname?: string | null,
+      profile_url?: string | null,
+      access_token?: string | null,
+      is_online?: boolean | null,
+      is_active?: boolean | null,
+      has_ever_logged_in?: boolean | null,
+      role?: string | null,
+      state?: string | null,
+      joined_ts?: number | null,
+      created_at?: number | null,
+      last_seen_at?: number | null,
+      discovery_keys?: string[] | null,
+      preferred_languages?: string[] | null,
+      metadata?: Record<string, any> | null,
+      unread_channel_count?: number | null,
+      unread_message_count?: number | null,
+      is_blocking_me?: boolean | null,
+      is_blocked_by_me?: boolean | null
+    }[] | null,
+    is_removed?: boolean | null,
+    created_at?: number | null,
+    updated_at?: number | null,
+    parent_message_id?: number | null,
+    is_reply_to_channel?: boolean | null,
+    translations?: Record<string, any> | null,
+    file?: Record<string, any> | null,
+    files?: any,
+    sorted_metaarray?: any[] | null,
+    message_events?: Record<string, any> | null,
+    og_tag?: Record<string, any> | null,
+    thread_info?: Record<string, any> | null,
+    parent_message_info?: Record<string, any> | null
+  } | null,
+  created_by?: {
+    user_id: string,
+    nickname?: string | null,
+    profile_url?: string | null,
+    access_token?: string | null,
+    is_online?: boolean | null,
+    is_active?: boolean | null,
+    has_ever_logged_in?: boolean | null,
+    role?: string | null,
+    state?: string | null,
+    joined_ts?: number | null,
+    created_at?: number | null,
+    last_seen_at?: number | null,
+    discovery_keys?: string[] | null,
+    preferred_languages?: string[] | null,
+    metadata?: Record<string, any> | null,
+    unread_channel_count?: number | null,
+    unread_message_count?: number | null,
+    is_blocking_me?: boolean | null,
+    is_blocked_by_me?: boolean | null
+  } | null,
+  delivery_receipt?: Record<string, number> | null,
+  read_receipt?: Record<string, number> | null,
+  metadata?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`channels.update`
+
+Update a group channel.
+
+**Risk:** `write`
+
+```ts
+await corsair.sendbird.api.channels.update({
+	channel_url: 'example-channel',
+	body: { name: 'Updated' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_url` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name?: string,
+  cover_url?: string,
+  custom_type?: string,
+  data?: string,
+  is_distinct?: boolean,
+  is_public?: boolean,
+  is_super?: boolean,
+  access_code?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_url` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `cover_url` | `string \| null` | No | — |
+| `custom_type` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+| `is_distinct` | `boolean \| null` | No | — |
+| `is_public` | `boolean \| null` | No | — |
+| `is_super` | `boolean \| null` | No | — |
+| `is_ephemeral` | `boolean \| null` | No | — |
+| `is_access_code_required` | `boolean \| null` | No | — |
+| `member_count` | `number \| null` | No | — |
+| `joined_member_count` | `number \| null` | No | — |
+| `max_length_message` | `number \| null` | No | — |
+| `unread_message_count` | `number \| null` | No | — |
+| `unread_mention_count` | `number \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `freeze` | `boolean \| null` | No | — |
+| `members` | `object[] \| null` | No | — |
+| `operators` | `object[] \| null` | No | — |
+| `last_message` | `object \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `delivery_receipt` | `Record<string, number> \| null` | No | — |
+| `read_receipt` | `Record<string, number> \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="operators full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="last_message full type">
+
+```ts
+{
+  message_id: number,
+  type: string,
+  channel_url?: string | null,
+  custom_type?: string | null,
+  message?: string | null,
+  data?: string | null,
+  user?: {
+    user_id: string,
+    nickname?: string | null,
+    profile_url?: string | null,
+    access_token?: string | null,
+    is_online?: boolean | null,
+    is_active?: boolean | null,
+    has_ever_logged_in?: boolean | null,
+    role?: string | null,
+    state?: string | null,
+    joined_ts?: number | null,
+    created_at?: number | null,
+    last_seen_at?: number | null,
+    discovery_keys?: string[] | null,
+    preferred_languages?: string[] | null,
+    metadata?: Record<string, any> | null,
+    unread_channel_count?: number | null,
+    unread_message_count?: number | null,
+    is_blocking_me?: boolean | null,
+    is_blocked_by_me?: boolean | null
+  } | null,
+  mention_type?: string | null,
+  mentioned_users?: {
+    user_id: string,
+    nickname?: string | null,
+    profile_url?: string | null,
+    access_token?: string | null,
+    is_online?: boolean | null,
+    is_active?: boolean | null,
+    has_ever_logged_in?: boolean | null,
+    role?: string | null,
+    state?: string | null,
+    joined_ts?: number | null,
+    created_at?: number | null,
+    last_seen_at?: number | null,
+    discovery_keys?: string[] | null,
+    preferred_languages?: string[] | null,
+    metadata?: Record<string, any> | null,
+    unread_channel_count?: number | null,
+    unread_message_count?: number | null,
+    is_blocking_me?: boolean | null,
+    is_blocked_by_me?: boolean | null
+  }[] | null,
+  is_removed?: boolean | null,
+  created_at?: number | null,
+  updated_at?: number | null,
+  parent_message_id?: number | null,
+  is_reply_to_channel?: boolean | null,
+  translations?: Record<string, any> | null,
+  file?: Record<string, any> | null,
+  files?: any,
+  sorted_metaarray?: any[] | null,
+  message_events?: Record<string, any> | null,
+  og_tag?: Record<string, any> | null,
+  thread_info?: Record<string, any> | null,
+  parent_message_info?: Record<string, any> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### delete
+
+`messages.delete`
+
+Delete a message.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sendbird.api.messages.delete({ channel_type: 'group_channels', channel_url: 'example-channel', message_id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_type` | `open_channels \| group_channels` | Yes | — |
+| `channel_url` | `string` | Yes | — |
+| `message_id` | `number` | Yes | — |
+| `delete_files` | `boolean` | No | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`messages.get`
+
+Get a message.
+
+**Risk:** `read`
+
+```ts
+await corsair.sendbird.api.messages.get({ channel_type: 'group_channels', channel_url: 'example-channel', message_id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_type` | `open_channels \| group_channels` | Yes | — |
+| `channel_url` | `string` | Yes | — |
+| `message_id` | `number` | Yes | — |
+| `include_parent_message_info` | `boolean` | No | — |
+| `include_thread_info` | `boolean` | No | — |
+| `include_reactions` | `boolean` | No | — |
+| `include_poll_details` | `boolean` | No | — |
+| `with_sorted_meta_array` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `number` | Yes | — |
+| `type` | `string` | Yes | — |
+| `channel_url` | `string \| null` | No | — |
+| `custom_type` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `mention_type` | `string \| null` | No | — |
+| `mentioned_users` | `object[] \| null` | No | — |
+| `is_removed` | `boolean \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `updated_at` | `number \| null` | No | — |
+| `parent_message_id` | `number \| null` | No | — |
+| `is_reply_to_channel` | `boolean \| null` | No | — |
+| `translations` | `Record<string, any> \| null` | No | — |
+| `file` | `Record<string, any> \| null` | No | — |
+| `files` | `any` | No | — |
+| `sorted_metaarray` | `any[] \| null` | No | — |
+| `message_events` | `Record<string, any> \| null` | No | — |
+| `og_tag` | `Record<string, any> \| null` | No | — |
+| `thread_info` | `Record<string, any> \| null` | No | — |
+| `parent_message_info` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="mentioned_users full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+List messages around a timestamp or message ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.sendbird.api.messages.list({ channel_type: 'group_channels', channel_url: 'example-channel', message_ts: 1700000000000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_type` | `open_channels \| group_channels` | Yes | — |
+| `channel_url` | `string` | Yes | — |
+| `message_ts` | `number` | No | — |
+| `message_id` | `number` | No | — |
+| `prev_limit` | `number` | No | — |
+| `next_limit` | `number` | No | — |
+| `include` | `boolean` | No | — |
+| `reverse` | `boolean` | No | — |
+| `sender_id` | `string` | No | — |
+| `sender_ids` | `string` | No | — |
+| `operator_filter` | `all \| operator \| nonoperator` | No | — |
+| `message_type` | `MESG \| FILE \| ADMM` | No | — |
+| `custom_types` | `string` | No | — |
+| `including_removed` | `boolean` | No | — |
+| `include_parent_message_info` | `boolean` | No | — |
+| `include_thread_info` | `boolean` | No | — |
+| `include_reactions` | `boolean` | No | — |
+| `include_poll_details` | `boolean` | No | — |
+| `with_sorted_meta_array` | `boolean` | No | — |
+| `include_reply_type` | `NONE \| ALL \| ONLY_REPLY_TO_CHANNEL` | No | — |
+| `show_subchannel_messages_only` | `boolean` | No | — |
+| `user_id` | `string` | No | — |
+
+Supply at least one of `message_ts` or `message_id`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  message_id: number,
+  type: string,
+  channel_url?: string | null,
+  custom_type?: string | null,
+  message?: string | null,
+  data?: string | null,
+  user?: {
+    user_id: string,
+    nickname?: string | null,
+    profile_url?: string | null,
+    access_token?: string | null,
+    is_online?: boolean | null,
+    is_active?: boolean | null,
+    has_ever_logged_in?: boolean | null,
+    role?: string | null,
+    state?: string | null,
+    joined_ts?: number | null,
+    created_at?: number | null,
+    last_seen_at?: number | null,
+    discovery_keys?: string[] | null,
+    preferred_languages?: string[] | null,
+    metadata?: Record<string, any> | null,
+    unread_channel_count?: number | null,
+    unread_message_count?: number | null,
+    is_blocking_me?: boolean | null,
+    is_blocked_by_me?: boolean | null
+  } | null,
+  mention_type?: string | null,
+  mentioned_users?: {
+    user_id: string,
+    nickname?: string | null,
+    profile_url?: string | null,
+    access_token?: string | null,
+    is_online?: boolean | null,
+    is_active?: boolean | null,
+    has_ever_logged_in?: boolean | null,
+    role?: string | null,
+    state?: string | null,
+    joined_ts?: number | null,
+    created_at?: number | null,
+    last_seen_at?: number | null,
+    discovery_keys?: string[] | null,
+    preferred_languages?: string[] | null,
+    metadata?: Record<string, any> | null,
+    unread_channel_count?: number | null,
+    unread_message_count?: number | null,
+    is_blocking_me?: boolean | null,
+    is_blocked_by_me?: boolean | null
+  }[] | null,
+  is_removed?: boolean | null,
+  created_at?: number | null,
+  updated_at?: number | null,
+  parent_message_id?: number | null,
+  is_reply_to_channel?: boolean | null,
+  translations?: Record<string, any> | null,
+  file?: Record<string, any> | null,
+  files?: any,
+  sorted_metaarray?: any[] | null,
+  message_events?: Record<string, any> | null,
+  og_tag?: Record<string, any> | null,
+  thread_info?: Record<string, any> | null,
+  parent_message_info?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a text message.
+
+**Risk:** `write`
+
+```ts
+await corsair.sendbird.api.messages.send({ channel_type: 'group_channels', channel_url: 'example-channel', body: { message_type: 'MESG', user_id: 'user-1', message: 'Hello' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_type` | `open_channels \| group_channels` | Yes | — |
+| `channel_url` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  message_type: MESG,
+  custom_type?: string,
+  data?: string,
+  mention_type?: users | channel,
+  mentioned_user_ids?: string[],
+  user_id: string,
+  message: string,
+  send_push?: boolean,
+  is_silent?: boolean,
+  mark_as_read?: boolean,
+  created_at?: number,
+  poll_id?: number,
+  include_poll_details?: boolean,
+  dedup_id?: string,
+  apns_bundle_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `number` | Yes | — |
+| `type` | `string` | Yes | — |
+| `channel_url` | `string \| null` | No | — |
+| `custom_type` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `mention_type` | `string \| null` | No | — |
+| `mentioned_users` | `object[] \| null` | No | — |
+| `is_removed` | `boolean \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `updated_at` | `number \| null` | No | — |
+| `parent_message_id` | `number \| null` | No | — |
+| `is_reply_to_channel` | `boolean \| null` | No | — |
+| `translations` | `Record<string, any> \| null` | No | — |
+| `file` | `Record<string, any> \| null` | No | — |
+| `files` | `any` | No | — |
+| `sorted_metaarray` | `any[] \| null` | No | — |
+| `message_events` | `Record<string, any> \| null` | No | — |
+| `og_tag` | `Record<string, any> \| null` | No | — |
+| `thread_info` | `Record<string, any> \| null` | No | — |
+| `parent_message_info` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="mentioned_users full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`messages.update`
+
+Update a text message.
+
+**Risk:** `write`
+
+```ts
+await corsair.sendbird.api.messages.update({ channel_type: 'group_channels', channel_url: 'example-channel', message_id: 42, body: { message_type: 'MESG', message: 'Updated' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_type` | `open_channels \| group_channels` | Yes | — |
+| `channel_url` | `string` | Yes | — |
+| `message_id` | `number` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  message_type: MESG,
+  custom_type?: string,
+  data?: string,
+  mention_type?: users | channel,
+  mentioned_user_ids?: string[],
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message_id` | `number` | Yes | — |
+| `type` | `string` | Yes | — |
+| `channel_url` | `string \| null` | No | — |
+| `custom_type` | `string \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `mention_type` | `string \| null` | No | — |
+| `mentioned_users` | `object[] \| null` | No | — |
+| `is_removed` | `boolean \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `updated_at` | `number \| null` | No | — |
+| `parent_message_id` | `number \| null` | No | — |
+| `is_reply_to_channel` | `boolean \| null` | No | — |
+| `translations` | `Record<string, any> \| null` | No | — |
+| `file` | `Record<string, any> \| null` | No | — |
+| `files` | `any` | No | — |
+| `sorted_metaarray` | `any[] \| null` | No | — |
+| `message_events` | `Record<string, any> \| null` | No | — |
+| `og_tag` | `Record<string, any> \| null` | No | — |
+| `thread_info` | `Record<string, any> \| null` | No | — |
+| `parent_message_info` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="mentioned_users full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Create a user with a profile URL.
+
+**Risk:** `write`
+
+```ts
+await corsair.sendbird.api.users.create({ user_id: 'user-1', nickname: 'User', profile_url: '' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `nickname` | `string` | Yes | — |
+| `profile_url` | `string` | Yes | — |
+| `issue_access_token` | `boolean` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `nickname` | `string \| null` | No | — |
+| `profile_url` | `string \| null` | No | — |
+| `access_token` | `string \| null` | No | — |
+| `is_online` | `boolean \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `has_ever_logged_in` | `boolean \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `joined_ts` | `number \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `last_seen_at` | `number \| null` | No | — |
+| `discovery_keys` | `string[] \| null` | No | — |
+| `preferred_languages` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `unread_channel_count` | `number \| null` | No | — |
+| `unread_message_count` | `number \| null` | No | — |
+| `is_blocking_me` | `boolean \| null` | No | — |
+| `is_blocked_by_me` | `boolean \| null` | No | — |
+
+
+
+---
+### delete
+
+`users.delete`
+
+Delete a user.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.sendbird.api.users.delete({ user_id: 'user-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`users.get`
+
+Get a user by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.sendbird.api.users.get({ user_id: 'user-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `include_unread_count` | `boolean` | No | — |
+| `custom_types` | `string` | No | — |
+| `super_mode` | `all \| super \| nonsuper` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `nickname` | `string \| null` | No | — |
+| `profile_url` | `string \| null` | No | — |
+| `access_token` | `string \| null` | No | — |
+| `is_online` | `boolean \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `has_ever_logged_in` | `boolean \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `joined_ts` | `number \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `last_seen_at` | `number \| null` | No | — |
+| `discovery_keys` | `string[] \| null` | No | — |
+| `preferred_languages` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `unread_channel_count` | `number \| null` | No | — |
+| `unread_message_count` | `number \| null` | No | — |
+| `is_blocking_me` | `boolean \| null` | No | — |
+| `is_blocked_by_me` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List application users with a page token.
+
+**Risk:** `read`
+
+```ts
+await corsair.sendbird.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `active_mode` | `activated \| deactivated \| all` | No | — |
+| `show_bot` | `boolean` | No | — |
+| `user_ids` | `string` | No | — |
+| `nickname` | `string` | No | — |
+| `nickname_startswith` | `string` | No | — |
+| `metadatakey` | `string` | No | — |
+| `metadatavalues_in` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+| `next` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  user_id: string,
+  nickname?: string | null,
+  profile_url?: string | null,
+  access_token?: string | null,
+  is_online?: boolean | null,
+  is_active?: boolean | null,
+  has_ever_logged_in?: boolean | null,
+  role?: string | null,
+  state?: string | null,
+  joined_ts?: number | null,
+  created_at?: number | null,
+  last_seen_at?: number | null,
+  discovery_keys?: string[] | null,
+  preferred_languages?: string[] | null,
+  metadata?: Record<string, any> | null,
+  unread_channel_count?: number | null,
+  unread_message_count?: number | null,
+  is_blocking_me?: boolean | null,
+  is_blocked_by_me?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`users.update`
+
+Update a user.
+
+**Risk:** `write`
+
+```ts
+await corsair.sendbird.api.users.update({
+	user_id: 'user-1',
+	body: { nickname: 'Updated' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  nickname?: string,
+  profile_url?: string,
+  issue_access_token?: boolean,
+  is_active?: boolean,
+  last_seen_at?: number,
+  discovery_keys?: string[],
+  preferred_languages?: string[],
+  leave_all_when_deactivated?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `nickname` | `string \| null` | No | — |
+| `profile_url` | `string \| null` | No | — |
+| `access_token` | `string \| null` | No | — |
+| `is_online` | `boolean \| null` | No | — |
+| `is_active` | `boolean \| null` | No | — |
+| `has_ever_logged_in` | `boolean \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `joined_ts` | `number \| null` | No | — |
+| `created_at` | `number \| null` | No | — |
+| `last_seen_at` | `number \| null` | No | — |
+| `discovery_keys` | `string[] \| null` | No | — |
+| `preferred_languages` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `unread_channel_count` | `number \| null` | No | — |
+| `unread_message_count` | `number \| null` | No | — |
+| `is_blocking_me` | `boolean \| null` | No | — |
+| `is_blocked_by_me` | `boolean \| null` | No | — |
+
+
+
+---

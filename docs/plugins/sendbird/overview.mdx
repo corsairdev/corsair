@@ -1,0 +1,141 @@
+---
+title: "Sendbird plugin"
+sidebarTitle: "Overview"
+description: "Manage Sendbird Chat users, group channels, and text messages."
+---
+
+Use **Sendbird** through Corsair with typed API calls.
+
+API calls do not automatically sync entities to the local database. Configure a matching API token and application ID together; mismatched credentials may target the token's application.
+
+**What you get:**
+
+- 15 typed API operations
+- 3 database entity schemas (`channels`, `messages`, `users`), populated separately
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/sendbird better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/sendbird better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/sendbird better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/sendbird better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { sendbird } from '@corsair-dev/sendbird';
+
+export const corsair = createCorsair({
+	plugins: [
+		sendbird(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Provide a matching API token and application ID. To use tenant credentials, store both on the same tenant using `set_api_key` and `set_applicationId` before making a request.
+
+```ts
+sendbird({ key: process.env.SENDBIRD_API_TOKEN, applicationId: process.env.SENDBIRD_APP_ID })
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Store the matching credentials for the tenant. This requires the database and KEK configured above and a provisioned Sendbird integration and tenant account.
+
+```ts
+const tenant = corsair.withTenant('acme');
+// Initialize the tenant's DEK if it has not been initialized yet.
+await tenant.sendbird.keys.issue_new_dek();
+await tenant.sendbird.keys.set_api_key(process.env.SENDBIRD_API_TOKEN!);
+await tenant.sendbird.keys.set_applicationId(process.env.SENDBIRD_APP_ID!);
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`channels.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.sendbird.api.channels.get({ channel_url: 'example-channel' });
+```
+
+
+**`channels.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.sendbird.api.channels.create({
+	user_ids: ['user-1'],
+});
+```
+
+
+See the full list on the [API](/plugins/sendbird/api) page.
+
+## Query local data
+
+The `channels`, `messages`, and `users` entities support `tenant.sendbird.db.<entity>.search()` and `.list()` when populated separately; API calls do not sync them.
+
+See [Database](/plugins/sendbird/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/sendbird/api">
+    Every `sendbird.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/sendbird/database">
+    Entity schemas, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

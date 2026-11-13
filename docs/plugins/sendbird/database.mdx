@@ -1,0 +1,122 @@
+---
+title: "Sendbird database"
+sidebarTitle: "Database"
+description: "Sendbird database entities and search filters in Corsair."
+---
+
+The Sendbird plugin defines database entities, but its API operations do not automatically populate or sync them. If you populate them separately, use `corsair.sendbird.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Channels
+
+Path: `sendbird.db.channels.search`
+
+```ts
+const rows = await corsair.sendbird.db.channels.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `cover_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `custom_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `data` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_distinct` | `boolean` | equals |
+| `is_public` | `boolean` | equals |
+| `is_super` | `boolean` | equals |
+| `is_ephemeral` | `boolean` | equals |
+| `is_access_code_required` | `boolean` | equals |
+| `member_count` | `number` | equals, gt, gte, lt, lte, in |
+| `joined_member_count` | `number` | equals, gt, gte, lt, lte, in |
+| `max_length_message` | `number` | equals, gt, gte, lt, lte, in |
+| `unread_message_count` | `number` | equals, gt, gte, lt, lte, in |
+| `unread_mention_count` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `freeze` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Messages
+
+Path: `sendbird.db.messages.search`
+
+```ts
+const rows = await corsair.sendbird.db.messages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `message_id` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `string` | equals, contains, startsWith, endsWith, in |
+| `channel_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `custom_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+| `data` | `string` | equals, contains, startsWith, endsWith, in |
+| `mention_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_removed` | `boolean` | equals |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `updated_at` | `number` | equals, gt, gte, lt, lte, in |
+| `parent_message_id` | `number` | equals, gt, gte, lt, lte, in |
+| `is_reply_to_channel` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `sendbird.db.users.search`
+
+```ts
+const rows = await corsair.sendbird.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `user_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `nickname` | `string` | equals, contains, startsWith, endsWith, in |
+| `profile_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `access_token` | `string` | equals, contains, startsWith, endsWith, in |
+| `is_online` | `boolean` | equals |
+| `is_active` | `boolean` | equals |
+| `has_ever_logged_in` | `boolean` | equals |
+| `role` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `joined_ts` | `number` | equals, gt, gte, lt, lte, in |
+| `created_at` | `number` | equals, gt, gte, lt, lte, in |
+| `last_seen_at` | `number` | equals, gt, gte, lt, lte, in |
+| `unread_channel_count` | `number` | equals, gt, gte, lt, lte, in |
+| `unread_message_count` | `number` | equals, gt, gte, lt, lte, in |
+| `is_blocking_me` | `boolean` | equals |
+| `is_blocked_by_me` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
