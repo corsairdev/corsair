@@ -15,11 +15,8 @@ import type {
 import { AuthMissingError } from 'corsair/core';
 import {
 	Currencies,
-	Customers,
 	Expenses,
 	Invoices,
-	Payments,
-	Products,
 	Profile,
 } from './endpoints';
 import type {
@@ -109,62 +106,6 @@ export type FinmeiEndpoints = {
 		FinmeiEndpointInputs['expenses.download'],
 		FinmeiEndpointOutputs['expenses.download']
 	>;
-	customersList: FinmeiEndpoint<
-		FinmeiEndpointInputs['customers.list'],
-		FinmeiEndpointOutputs['customers.list']
-	>;
-	customersCreate: FinmeiEndpoint<
-		FinmeiEndpointInputs['customers.create'],
-		FinmeiEndpointOutputs['customers.create']
-	>;
-	customersGet: FinmeiEndpoint<
-		FinmeiEndpointInputs['customers.get'],
-		FinmeiEndpointOutputs['customers.get']
-	>;
-	customersUpdate: FinmeiEndpoint<
-		FinmeiEndpointInputs['customers.update'],
-		FinmeiEndpointOutputs['customers.update']
-	>;
-	customersDelete: FinmeiEndpoint<
-		FinmeiEndpointInputs['customers.delete'],
-		FinmeiEndpointOutputs['customers.delete']
-	>;
-	productsList: FinmeiEndpoint<
-		FinmeiEndpointInputs['products.list'],
-		FinmeiEndpointOutputs['products.list']
-	>;
-	productsCreate: FinmeiEndpoint<
-		FinmeiEndpointInputs['products.create'],
-		FinmeiEndpointOutputs['products.create']
-	>;
-	productsGet: FinmeiEndpoint<
-		FinmeiEndpointInputs['products.get'],
-		FinmeiEndpointOutputs['products.get']
-	>;
-	productsUpdate: FinmeiEndpoint<
-		FinmeiEndpointInputs['products.update'],
-		FinmeiEndpointOutputs['products.update']
-	>;
-	productsDelete: FinmeiEndpoint<
-		FinmeiEndpointInputs['products.delete'],
-		FinmeiEndpointOutputs['products.delete']
-	>;
-	paymentsList: FinmeiEndpoint<
-		FinmeiEndpointInputs['payments.list'],
-		FinmeiEndpointOutputs['payments.list']
-	>;
-	paymentsCreate: FinmeiEndpoint<
-		FinmeiEndpointInputs['payments.create'],
-		FinmeiEndpointOutputs['payments.create']
-	>;
-	paymentsGet: FinmeiEndpoint<
-		FinmeiEndpointInputs['payments.get'],
-		FinmeiEndpointOutputs['payments.get']
-	>;
-	paymentsDelete: FinmeiEndpoint<
-		FinmeiEndpointInputs['payments.delete'],
-		FinmeiEndpointOutputs['payments.delete']
-	>;
 	currenciesList: FinmeiEndpoint<
 		FinmeiEndpointInputs['currencies.list'],
 		FinmeiEndpointOutputs['currencies.list']
@@ -192,26 +133,6 @@ const finmeiEndpointsNested = {
 		delete: Expenses.delete,
 		updateFile: Expenses.updateFile,
 		download: Expenses.download,
-	},
-	customers: {
-		list: Customers.list,
-		create: Customers.create,
-		get: Customers.get,
-		update: Customers.update,
-		delete: Customers.delete,
-	},
-	products: {
-		list: Products.list,
-		create: Products.create,
-		get: Products.get,
-		update: Products.update,
-		delete: Products.delete,
-	},
-	payments: {
-		list: Payments.list,
-		create: Payments.create,
-		get: Payments.get,
-		delete: Payments.delete,
 	},
 	currencies: {
 		list: Currencies.list,
@@ -273,62 +194,6 @@ export const finmeiEndpointSchemas = {
 	'expenses.download': {
 		input: FinmeiEndpointInputSchemas['expenses.download'],
 		output: FinmeiEndpointOutputSchemas['expenses.download'],
-	},
-	'customers.list': {
-		input: FinmeiEndpointInputSchemas['customers.list'],
-		output: FinmeiEndpointOutputSchemas['customers.list'],
-	},
-	'customers.create': {
-		input: FinmeiEndpointInputSchemas['customers.create'],
-		output: FinmeiEndpointOutputSchemas['customers.create'],
-	},
-	'customers.get': {
-		input: FinmeiEndpointInputSchemas['customers.get'],
-		output: FinmeiEndpointOutputSchemas['customers.get'],
-	},
-	'customers.update': {
-		input: FinmeiEndpointInputSchemas['customers.update'],
-		output: FinmeiEndpointOutputSchemas['customers.update'],
-	},
-	'customers.delete': {
-		input: FinmeiEndpointInputSchemas['customers.delete'],
-		output: FinmeiEndpointOutputSchemas['customers.delete'],
-	},
-	'products.list': {
-		input: FinmeiEndpointInputSchemas['products.list'],
-		output: FinmeiEndpointOutputSchemas['products.list'],
-	},
-	'products.create': {
-		input: FinmeiEndpointInputSchemas['products.create'],
-		output: FinmeiEndpointOutputSchemas['products.create'],
-	},
-	'products.get': {
-		input: FinmeiEndpointInputSchemas['products.get'],
-		output: FinmeiEndpointOutputSchemas['products.get'],
-	},
-	'products.update': {
-		input: FinmeiEndpointInputSchemas['products.update'],
-		output: FinmeiEndpointOutputSchemas['products.update'],
-	},
-	'products.delete': {
-		input: FinmeiEndpointInputSchemas['products.delete'],
-		output: FinmeiEndpointOutputSchemas['products.delete'],
-	},
-	'payments.list': {
-		input: FinmeiEndpointInputSchemas['payments.list'],
-		output: FinmeiEndpointOutputSchemas['payments.list'],
-	},
-	'payments.create': {
-		input: FinmeiEndpointInputSchemas['payments.create'],
-		output: FinmeiEndpointOutputSchemas['payments.create'],
-	},
-	'payments.get': {
-		input: FinmeiEndpointInputSchemas['payments.get'],
-		output: FinmeiEndpointOutputSchemas['payments.get'],
-	},
-	'payments.delete': {
-		input: FinmeiEndpointInputSchemas['payments.delete'],
-		output: FinmeiEndpointOutputSchemas['payments.delete'],
 	},
 	'currencies.list': {
 		input: FinmeiEndpointInputSchemas['currencies.list'],
@@ -399,63 +264,6 @@ const finmeiEndpointMeta = {
 	'expenses.download': {
 		riskLevel: 'read',
 		description: 'Download expense receipt file as binary data',
-	},
-	'customers.list': {
-		riskLevel: 'read',
-		description: 'List customers with optional search and pagination',
-	},
-	'customers.create': {
-		riskLevel: 'write',
-		description: 'Create a new customer profile',
-	},
-	'customers.get': {
-		riskLevel: 'read',
-		description: 'Retrieve a customer profile by ID',
-	},
-	'customers.update': {
-		riskLevel: 'write',
-		description: 'Update an existing customer profile',
-	},
-	'customers.delete': {
-		riskLevel: 'destructive',
-		description: 'Delete a customer profile by ID',
-	},
-	'products.list': {
-		riskLevel: 'read',
-		description:
-			'List products in catalog with optional filters and pagination',
-	},
-	'products.create': {
-		riskLevel: 'write',
-		description: 'Create a new product in the catalog',
-	},
-	'products.get': {
-		riskLevel: 'read',
-		description: 'Retrieve a product by ID',
-	},
-	'products.update': {
-		riskLevel: 'write',
-		description: 'Update product details in the catalog',
-	},
-	'products.delete': {
-		riskLevel: 'destructive',
-		description: 'Delete a product from the catalog',
-	},
-	'payments.list': {
-		riskLevel: 'read',
-		description: 'List recorded payments with optional filters',
-	},
-	'payments.create': {
-		riskLevel: 'write',
-		description: 'Record a new payment for an invoice',
-	},
-	'payments.get': {
-		riskLevel: 'read',
-		description: 'Retrieve a payment record by ID',
-	},
-	'payments.delete': {
-		riskLevel: 'destructive',
-		description: 'Delete a payment record by ID',
 	},
 	'currencies.list': {
 		riskLevel: 'read',
@@ -529,13 +337,9 @@ export function finmei<const T extends FinmeiPluginOptions>(
 export type {
 	FinmeiBinaryResponse,
 	FinmeiBuyer,
-	FinmeiCreateCustomerInput,
 	FinmeiCreateExpenseInput,
 	FinmeiCreateInvoiceInput,
-	FinmeiCreatePaymentInput,
-	FinmeiCreateProductInput,
 	FinmeiCurrency,
-	FinmeiCustomer,
 	FinmeiDeleteResponse,
 	FinmeiEndpointInputs,
 	FinmeiEndpointOutputs,
@@ -543,16 +347,11 @@ export type {
 	FinmeiInvoice,
 	FinmeiInvoiceItem,
 	FinmeiPaginationMeta,
-	FinmeiPayment,
 	FinmeiPaymentOption,
-	FinmeiProduct,
 	FinmeiProfile,
 	FinmeiSeller,
 } from './endpoints/types';
 export {
-	FinmeiCreateCustomerInputSchema,
 	FinmeiCreateExpenseInputSchema,
 	FinmeiCreateInvoiceInputSchema,
-	FinmeiCreatePaymentInputSchema,
-	FinmeiCreateProductInputSchema,
 } from './endpoints/types';

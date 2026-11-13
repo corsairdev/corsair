@@ -1,31 +1,18 @@
 import {
 	FinmeiBinaryResponseSchema,
-	FinmeiCreateCustomerInputSchema,
 	FinmeiCreateExpenseInputSchema,
 	FinmeiCreateInvoiceInputSchema,
-	FinmeiCreatePaymentInputSchema,
-	FinmeiCreateProductInputSchema,
-	FinmeiCustomerOutputSchema,
 	FinmeiDeleteResponseSchema,
 	FinmeiExpenseOutputSchema,
 	FinmeiGetInvoiceInputSchema,
 	FinmeiInvoiceOutputSchema,
 	FinmeiListCurrenciesOutputSchema,
-	FinmeiListCustomersInputSchema,
-	FinmeiListCustomersOutputSchema,
 	FinmeiListExpensesInputSchema,
 	FinmeiListExpensesOutputSchema,
 	FinmeiListInvoicesInputSchema,
 	FinmeiListInvoicesOutputSchema,
-	FinmeiListPaymentsInputSchema,
-	FinmeiListPaymentsOutputSchema,
-	FinmeiListProductsInputSchema,
-	FinmeiListProductsOutputSchema,
-	FinmeiPaymentOutputSchema,
-	FinmeiProductOutputSchema,
 	FinmeiProfileOutputSchema,
 	FinmeiUpdateExpenseFileInputSchema,
-	FinmeiUpdateProductInputSchema,
 } from './endpoints/types';
 import { FinmeiSchema } from './schema';
 
@@ -178,108 +165,6 @@ describe('Finmei expense schemas', () => {
 	});
 });
 
-describe('Finmei customer schemas', () => {
-	it('validates customer list, create, and output', () => {
-		expect(
-			FinmeiListCustomersInputSchema.safeParse({ page: 1, search: 'Alice' })
-				.success,
-		).toBe(true);
-		expect(FinmeiListCustomersInputSchema.safeParse({ extra: 1 }).success).toBe(
-			false,
-		);
-
-		const customer = {
-			id: 'cust-1',
-			name: 'Alice Smith',
-			email: 'alice@example.com',
-			phone: '+1234567890',
-		};
-		expect(
-			FinmeiCreateCustomerInputSchema.safeParse({
-				name: 'Alice Smith',
-				email: 'alice@example.com',
-			}).success,
-		).toBe(true);
-		expect(
-			FinmeiCustomerOutputSchema.safeParse({ data: customer }).success,
-		).toBe(true);
-		expect(
-			FinmeiListCustomersOutputSchema.safeParse({ data: [customer] }).success,
-		).toBe(true);
-	});
-});
-
-describe('Finmei product schemas', () => {
-	it('validates product create, update, and output', () => {
-		expect(
-			FinmeiListProductsInputSchema.safeParse({ status: 'active' }).success,
-		).toBe(true);
-		expect(
-			FinmeiListProductsInputSchema.safeParse({ status: 'unknown_status' })
-				.success,
-		).toBe(false);
-
-		const validCreate = {
-			name: 'Widget',
-			price: 19.99,
-			currency: 'USD',
-			status: 'active' as const,
-		};
-		expect(FinmeiCreateProductInputSchema.safeParse(validCreate).success).toBe(
-			true,
-		);
-		expect(
-			FinmeiUpdateProductInputSchema.safeParse({ id: 'prod-1', price: 24.99 })
-				.success,
-		).toBe(true);
-
-		const product = {
-			id: 'prod-1',
-			name: 'Widget',
-			price: 19.99,
-			currency: 'USD',
-			status: 'active',
-		};
-		expect(FinmeiProductOutputSchema.safeParse({ data: product }).success).toBe(
-			true,
-		);
-		expect(
-			FinmeiListProductsOutputSchema.safeParse({ data: [product] }).success,
-		).toBe(true);
-	});
-});
-
-describe('Finmei payment schemas', () => {
-	it('validates payment creation and output', () => {
-		expect(
-			FinmeiListPaymentsInputSchema.safeParse({
-				status: 'completed',
-				limit: 10,
-			}).success,
-		).toBe(true);
-		expect(
-			FinmeiCreatePaymentInputSchema.safeParse({
-				amount: 50,
-				currency: 'USD',
-				status: 'completed',
-			}).success,
-		).toBe(true);
-
-		const payment = {
-			id: 'pay-1',
-			amount: 50,
-			currency: 'USD',
-			status: 'completed',
-		};
-		expect(FinmeiPaymentOutputSchema.safeParse({ data: payment }).success).toBe(
-			true,
-		);
-		expect(
-			FinmeiListPaymentsOutputSchema.safeParse({ data: [payment] }).success,
-		).toBe(true);
-	});
-});
-
 describe('Finmei currency and profile schemas', () => {
 	it('validates currency list output', () => {
 		const currencies = [
@@ -341,15 +226,6 @@ describe('Finmei schema runtime exports from index', () => {
 			'function',
 		);
 		expect(typeof indexModule.FinmeiCreateExpenseInputSchema?.parse).toBe(
-			'function',
-		);
-		expect(typeof indexModule.FinmeiCreateCustomerInputSchema?.parse).toBe(
-			'function',
-		);
-		expect(typeof indexModule.FinmeiCreateProductInputSchema?.parse).toBe(
-			'function',
-		);
-		expect(typeof indexModule.FinmeiCreatePaymentInputSchema?.parse).toBe(
 			'function',
 		);
 	});

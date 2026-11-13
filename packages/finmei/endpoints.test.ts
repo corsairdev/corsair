@@ -2,11 +2,8 @@ import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import {
 	Currencies,
-	Customers,
 	Expenses,
 	Invoices,
-	Payments,
-	Products,
 	Profile,
 } from './endpoints';
 import type { FinmeiContext } from './index';
@@ -67,6 +64,18 @@ describe('Finmei plugin structure and registration', () => {
 		const schemaKeys = Object.keys(finmeiEndpointSchemas);
 		const metaKeys = Object.keys(plugin.endpointMeta ?? {});
 		expect(schemaKeys.sort()).toEqual(metaKeys.sort());
+	});
+
+	it('exposes only the resources the Finmei API serves', () => {
+		// app.finmei.com/api answers 404 "route could not be found" for
+		// /customers, /products and /payments; these resources exist.
+		const plugin = finmei({ key: 'test-key' });
+		expect(Object.keys(plugin.endpoints).sort()).toEqual([
+			'currencies',
+			'expenses',
+			'invoices',
+			'profile',
+		]);
 	});
 
 	it('keyBuilder retrieves API key or throws AuthMissingError', async () => {
@@ -341,212 +350,6 @@ describe('Expenses endpoints', () => {
 		expect(mockBinaryRequest).toHaveBeenCalledWith(
 			'/expenses/exp-1/download',
 			'test-api-key',
-		);
-	});
-});
-
-describe('Customers endpoints', () => {
-	it('customers.list sends GET /customers with query', async () => {
-		mockRequest.mockResolvedValue({ data: [{ id: 'cust-1', name: 'Alice' }] });
-
-		const res = await Customers.list(ctx, { search: 'Alice' });
-		expect(res.data.length).toBe(1);
-		expect(mockRequest).toHaveBeenCalledWith('/customers', 'test-api-key', {
-			method: 'GET',
-			query: { search: 'Alice' },
-		});
-	});
-
-	it('customers.create sends POST /customers', async () => {
-		mockRequest.mockResolvedValue({ data: { id: 'cust-1', name: 'Bob' } });
-
-		const res = await Customers.create(ctx, { name: 'Bob' });
-		expect(res.data.id).toBe('cust-1');
-		expect(mockRequest).toHaveBeenCalledWith('/customers', 'test-api-key', {
-			method: 'POST',
-			body: { name: 'Bob' },
-		});
-	});
-
-	it('customers.get sends GET /customers/:id', async () => {
-		mockRequest.mockResolvedValue({ data: { id: 'cust-1', name: 'Bob' } });
-
-		const res = await Customers.get(ctx, { id: 'cust-1' });
-		expect(res.data.id).toBe('cust-1');
-		expect(mockRequest).toHaveBeenCalledWith(
-			'/customers/cust-1',
-			'test-api-key',
-			{
-				method: 'GET',
-			},
-		);
-	});
-
-	it('customers.update sends PUT /customers/:id', async () => {
-		mockRequest.mockResolvedValue({ data: { id: 'cust-1', name: 'Bobby' } });
-
-		const res = await Customers.update(ctx, { id: 'cust-1', name: 'Bobby' });
-		expect(res.data.name).toBe('Bobby');
-		expect(mockRequest).toHaveBeenCalledWith(
-			'/customers/cust-1',
-			'test-api-key',
-			{
-				method: 'PUT',
-				body: { name: 'Bobby' },
-			},
-		);
-	});
-
-	it('customers.delete sends DELETE /customers/:id', async () => {
-		mockRequest.mockResolvedValue({ success: true });
-
-		const res = await Customers.delete(ctx, { id: 'cust-1' });
-		expect(res).toEqual({ success: true });
-		expect(mockRequest).toHaveBeenCalledWith(
-			'/customers/cust-1',
-			'test-api-key',
-			{
-				method: 'DELETE',
-			},
-		);
-	});
-});
-
-describe('Products endpoints', () => {
-	it('products.list sends GET /products with filters', async () => {
-		mockRequest.mockResolvedValue({
-			data: [{ id: 'prod-1', name: 'Widget', price: 10, currency: 'USD' }],
-		});
-
-		const res = await Products.list(ctx, { status: 'active' });
-		expect(res.data.length).toBe(1);
-		expect(mockRequest).toHaveBeenCalledWith('/products', 'test-api-key', {
-			method: 'GET',
-			query: { status: 'active' },
-		});
-	});
-
-	it('products.create sends POST /products', async () => {
-		const productData = { name: 'Widget', price: 10, currency: 'USD' };
-		mockRequest.mockResolvedValue({ data: { id: 'prod-1', ...productData } });
-
-		const res = await Products.create(ctx, productData);
-		expect(res.data.id).toBe('prod-1');
-		expect(mockRequest).toHaveBeenCalledWith('/products', 'test-api-key', {
-			method: 'POST',
-			body: productData,
-		});
-	});
-
-	it('products.get sends GET /products/:id', async () => {
-		mockRequest.mockResolvedValue({
-			data: { id: 'prod-1', name: 'Widget', price: 10, currency: 'USD' },
-		});
-
-		const res = await Products.get(ctx, { id: 'prod-1' });
-		expect(res.data.id).toBe('prod-1');
-		expect(mockRequest).toHaveBeenCalledWith(
-			'/products/prod-1',
-			'test-api-key',
-			{
-				method: 'GET',
-			},
-		);
-	});
-
-	it('products.update sends PUT /products/:id', async () => {
-		mockRequest.mockResolvedValue({
-			data: { id: 'prod-1', name: 'Super Widget', price: 15, currency: 'USD' },
-		});
-
-		const res = await Products.update(ctx, {
-			id: 'prod-1',
-			name: 'Super Widget',
-			price: 15,
-		});
-		expect(res.data.price).toBe(15);
-		expect(mockRequest).toHaveBeenCalledWith(
-			'/products/prod-1',
-			'test-api-key',
-			{
-				method: 'PUT',
-				body: { name: 'Super Widget', price: 15 },
-			},
-		);
-	});
-
-	it('products.delete sends DELETE /products/:id', async () => {
-		mockRequest.mockResolvedValue({ success: true });
-
-		const res = await Products.delete(ctx, { id: 'prod-1' });
-		expect(res).toEqual({ success: true });
-		expect(mockRequest).toHaveBeenCalledWith(
-			'/products/prod-1',
-			'test-api-key',
-			{
-				method: 'DELETE',
-			},
-		);
-	});
-});
-
-describe('Payments endpoints', () => {
-	it('payments.list sends GET /payments', async () => {
-		mockRequest.mockResolvedValue({
-			data: [{ id: 'pay-1', amount: 100, currency: 'USD' }],
-		});
-
-		const res = await Payments.list(ctx, { status: 'completed' });
-		expect(res.data.length).toBe(1);
-		expect(mockRequest).toHaveBeenCalledWith('/payments', 'test-api-key', {
-			method: 'GET',
-			query: { status: 'completed' },
-		});
-	});
-
-	it('payments.create sends POST /payments', async () => {
-		const paymentData = {
-			amount: 100,
-			currency: 'USD',
-			status: 'completed' as const,
-		};
-		mockRequest.mockResolvedValue({ data: { id: 'pay-1', ...paymentData } });
-
-		const res = await Payments.create(ctx, paymentData);
-		expect(res.data.id).toBe('pay-1');
-		expect(mockRequest).toHaveBeenCalledWith('/payments', 'test-api-key', {
-			method: 'POST',
-			body: paymentData,
-		});
-	});
-
-	it('payments.get sends GET /payments/:id', async () => {
-		mockRequest.mockResolvedValue({
-			data: { id: 'pay-1', amount: 100, currency: 'USD' },
-		});
-
-		const res = await Payments.get(ctx, { id: 'pay-1' });
-		expect(res.data.id).toBe('pay-1');
-		expect(mockRequest).toHaveBeenCalledWith(
-			'/payments/pay-1',
-			'test-api-key',
-			{
-				method: 'GET',
-			},
-		);
-	});
-
-	it('payments.delete sends DELETE /payments/:id', async () => {
-		mockRequest.mockResolvedValue({ success: true });
-
-		const res = await Payments.delete(ctx, { id: 'pay-1' });
-		expect(res).toEqual({ success: true });
-		expect(mockRequest).toHaveBeenCalledWith(
-			'/payments/pay-1',
-			'test-api-key',
-			{
-				method: 'DELETE',
-			},
 		);
 	});
 });
