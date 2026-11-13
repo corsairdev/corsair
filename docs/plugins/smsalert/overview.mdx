@@ -1,0 +1,135 @@
+---
+title: "SMS Alert plugin"
+sidebarTitle: "Overview"
+description: "Send SMS messages and manage SMS Alert contacts, templates, delivery reports, and account resources."
+---
+
+Use **SMS Alert** through Corsair: one client, typed API calls.
+
+SMS Alert's [API reference](https://kb.smsalert.co.in/developers-api/) documents API key authentication via the `apikey` query parameter for most operations. Account registration and password reset do not require an API key. Password changes use a form body. Avoid logging request URLs.
+
+With Hub connection reporting enabled, Corsair core currently reports any successful endpoint as credential-verified, including registration and password reset. Those two operations do not check the API key; do not treat their success as API-key verification.
+
+`otp.validate` throws an error with the message `SMS Alert OTP code does not match` for the documented `Code does not match.` response, even though SMS Alert labels it successful. Catch that error to handle a rejected code. For other responses, inspect `description.desc` rather than assuming `status: "success"` means the code matched; the provider has not documented all possible validation outcomes.
+
+Use `messages.send` with `schedule` for scheduled messages, or `dlrurl` and `reference` to request delivery callbacks. Corsair does not provide an inbound webhook handler for those callbacks; secure them in your own application. XML contact import and XML push are excluded because their credential or payload contracts are incomplete. Requests are not automatically retried.
+
+**What you get:**
+
+- 29 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/smsalert better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/smsalert better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/smsalert better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/smsalert better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { smsalert } from '@corsair-dev/smsalert';
+
+export const corsair = createCorsair({
+	plugins: [
+		smsalert(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+smsalert()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'smsalert',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`account.balance`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.smsalert.api.account.balance({});
+```
+
+
+**`account.changePassword`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.smsalert.api.account.changePassword({ pwd: 'old-password', newpwd: 'new-password', cnfpwd: 'new-password' });
+```
+
+
+See the full list on the [API](/plugins/smsalert/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/smsalert/api">
+    Every `smsalert.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -439,6 +439,7 @@ export const BaseProviders = [
 	'shippo',
 	'slack',
 	'slackbot',
+	'smsalert',
 	'snapchat',
 	'snowflake',
 	'sourcegraph',
@@ -974,6 +975,7 @@ export const ProviderDisplayNames = {
 	shippo: 'Shippo',
 	slack: 'Slack',
 	slackbot: 'Slackbot',
+	smsalert: 'SMS Alert',
 	snapchat: 'Snapchat',
 	snowflake: 'Snowflake',
 	sourcegraph: 'Sourcegraph',
@@ -1516,6 +1518,7 @@ export type AllProviders =
 	| 'shippo'
 	| 'slack'
 	| 'slackbot'
+	| 'smsalert'
 	| 'snapchat'
 	| 'snowflake'
 	| 'sourcegraph'

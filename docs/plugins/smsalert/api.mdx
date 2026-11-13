@@ -1,0 +1,1202 @@
+---
+title: "SMS Alert API reference"
+sidebarTitle: "API"
+description: "API reference for the SMS Alert plugin in Corsair: every `smsalert.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### balance
+
+`account.balance`
+
+Get available SMS credits
+
+**Risk:** `read`
+
+```ts
+await corsair.smsalert.api.account.balance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  desc: string,
+  routes: {
+    route: string,
+    display_name: string,
+    credits: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+### changePassword
+
+`account.changePassword`
+
+Change the account password
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.account.changePassword({ pwd: 'old-password', newpwd: 'new-password', cnfpwd: 'new-password' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pwd` | `string` | Yes | — |
+| `newpwd` | `string` | Yes | — |
+| `cnfpwd` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+### forgotPassword
+
+`account.forgotPassword`
+
+Request a password reset
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.account.forgotPassword({ username_email: 'user@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username_email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `msg` | `string` | Yes | — |
+
+
+
+---
+
+### profile
+
+`account.profile`
+
+Get the account profile
+
+**Risk:** `read`
+
+```ts
+await corsair.smsalert.api.account.profile({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  id: string,
+  username: string,
+  firstname?: string,
+  lastname?: string,
+  mobilenumber?: string,
+  emailid?: string,
+  allowedprefix?: string,
+  parent_id?: string,
+  expirydate?: string,
+  mobile_verified?: number,
+  kyc_status?: number,
+  android_push?: number,
+  two_factor_auth?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### register
+
+`account.register`
+
+Register an SMS Alert account
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.account.register({
+	username: 'user',
+	mobilenumber: '919876543210',
+	emailid: 'user@example.com',
+	firstname: 'First',
+	lastname: 'Last',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `mobilenumber` | `string` | Yes | — |
+| `emailid` | `string` | Yes | — |
+| `firstname` | `string` | Yes | — |
+| `lastname` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+### senders
+
+`account.senders`
+
+List sender IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.smsalert.api.account.senders({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  Senderid: {
+    sender: string,
+    approved: boolean,
+    open: boolean,
+    datetime: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateProfile
+
+`account.updateProfile`
+
+Update the account profile
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.account.updateProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `mobilenumber` | `string` | No | — |
+| `emailid` | `string` | No | — |
+| `fcm_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.contacts.create({ grpname: 'Customers', name: 'Example', number: '919876543210' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `grpname` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `number` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.smsalert.api.contacts.delete({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts in a group
+
+**Risk:** `read`
+
+```ts
+await corsair.smsalert.api.contacts.list({ group_id: '123', page: 2, limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  Groupmember: {
+    id?: string,
+    name?: string,
+    creationdate?: string,
+    number?: string,
+    datas?: string | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.contacts.update({ id: '123', name: 'Example', number: '919876543210' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `number` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+## Groups
+
+### create
+
+`groups.create`
+
+Create a contact group
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.groups.create({ name: 'Customers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Delete a contact group
+
+**Risk:** `destructive`
+
+```ts
+await corsair.smsalert.api.groups.delete({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List contact groups
+
+**Risk:** `read`
+
+```ts
+await corsair.smsalert.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+| `q` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  Group: {
+    id?: string,
+    name?: string,
+    creationdate?: string,
+    group_data?: string | null,
+    groupfields?: string | null,
+    members?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`groups.send`
+
+Send SMS to contact groups
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.groups.send({ id: '123', sender: 'TESTIN', text: 'Hello' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sender` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `route` | `string` | No | — |
+| `schedule` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  desc: string,
+  batchid: string,
+  batch_dtl: {
+    mobileno: string,
+    msgid: string,
+    status: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`groups.update`
+
+Update a contact group
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.groups.update({ id: '123', name: 'Customers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+## Messages
+
+### send
+
+`messages.send`
+
+Send or schedule an SMS, optionally requesting delivery callbacks
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.messages.send({ sender: 'TESTIN', mobileno: '919876543210', text: 'Hello' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sender` | `string` | Yes | — |
+| `mobileno` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `schedule` | `string` | No | — |
+| `reference` | `string` | No | — |
+| `dlrurl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  desc: string,
+  batchid: string,
+  batch_dtl: {
+    mobileno: string,
+    msgid: string,
+    status: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Otp
+
+### generate
+
+`otp.generate`
+
+Generate and send an OTP
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.otp.generate({ mobileno: '919876543210', template: 'Your OTP is [otp]' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sender` | `string` | No | — |
+| `mobileno` | `string` | Yes | — |
+| `template` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  desc: string,
+  batchid: string,
+  batch_dtl: {
+    mobileno: string,
+    msgid: string,
+    status: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validate
+
+`otp.validate`
+
+Validate an OTP
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.otp.validate({ mobileno: '919876543210', code: '1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mobileno` | `string` | Yes | — |
+| `code` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  desc: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### delivery
+
+`reports.delivery`
+
+Get delivery reports for a batch
+
+**Risk:** `read`
+
+```ts
+await corsair.smsalert.api.reports.delivery({ batchid: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchid` | `string` | Yes | — |
+| `schedule` | `string` | No | — |
+| `sender` | `string` | No | — |
+| `text` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  desc: string,
+  report: {
+    mobileno: string,
+    sender: string,
+    text: string,
+    msgid: string,
+    status: string,
+    schedule: string,
+    lastupdated: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sent
+
+`reports.sent`
+
+List sent SMS campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.smsalert.api.reports.sent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `q` | `string` | No | — |
+| `schedule` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  Smscampaignlog: {
+    id: string,
+    userid?: string,
+    senderid?: string,
+    text?: string,
+    campaignname?: string,
+    source?: string,
+    ipaddress?: string,
+    route?: string,
+    smscount?: string,
+    creditsrefunded?: string,
+    creditscharged?: string,
+    schedule?: boolean,
+    scheduletime?: string,
+    datetime?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Schedules
+
+### cancel
+
+`schedules.cancel`
+
+Cancel a scheduled campaign
+
+**Risk:** `destructive`
+
+```ts
+await corsair.smsalert.api.schedules.cancel({ batchid: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`schedules.update`
+
+Change a scheduled campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.schedules.update({ batchid: '123', schedule: '2026-12-01 12:00:00' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchid` | `string` | Yes | — |
+| `schedule` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+## Short Urls
+
+### create
+
+`shortUrls.create`
+
+Create a short URL
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.shortUrls.create({ url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  message: string,
+  data: {
+    Link: {
+      long_url: string,
+      short_url: string,
+      alias: string,
+      title?: string,
+      description?: string,
+      clicks?: string,
+      updated?: string | null,
+      created?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`shortUrls.delete`
+
+Delete a short URL
+
+**Risk:** `destructive`
+
+```ts
+await corsair.smsalert.api.shortUrls.delete({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create an SMS template
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.templates.create({ name: 'Welcome', text: 'Hello' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete an SMS template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.smsalert.api.templates.delete({ id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List SMS templates
+
+**Risk:** `read`
+
+```ts
+await corsair.smsalert.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `order` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="description full type">
+
+```ts
+{
+  Smstemplate: {
+    id?: string,
+    name?: string,
+    creationdate?: string,
+    title?: string,
+    template?: string
+  },
+  User?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Update an SMS template
+
+**Risk:** `write`
+
+```ts
+await corsair.smsalert.api.templates.update({ id: '123', name: 'Welcome', text: 'Hello' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `success` | Yes | — |
+| `description` | `string` | Yes | — |
+
+
+
+---
