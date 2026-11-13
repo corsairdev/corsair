@@ -8,13 +8,15 @@ overviewNote: |
   Things to know before you call:
 
   - **The pair travels in the JSON body, not a header.** Every request carries `{"auth": {"api_key": ..., "api_secret": ...}}`. The plugin adds that block itself and never logs it, and it keeps no request body on an error, because the body holds the secret.
-  - **A call needs `wait` or a `callback_url`.** With `wait: true` the connection stays open and the answer carries the result. With a `callback_url` Kraken answers at once and posts the result later. A request with neither is refused, and the plugin rejects it before the call.
+  - **A call needs `wait` or a `callback_url`.** With `wait: true` the connection stays open and the answer carries the result. With a `callback_url` Kraken answers at once with only the job `id` (no `success` field) and posts the result, carrying the same `id`, later. A request with neither is refused, and the plugin rejects it before the call.
   - **Quota is measured in bytes.** `account.status` returns `quota_total`, `quota_used` and `quota_remaining` in bytes, not in images, so divide by 1048576 for mebibytes.
-  - **An optimization that fails per file still answers 200.** The top-level `success` can be true while one entry in `results` says `success: false` with a `message`, for instance when the image could not be downloaded. Read the per-file entry, not only the top-level flag.
+  - **A one-file answer is flat.** With `wait: true`, `file_name`, `kraked_url` and the sizes sit at the top level of the answer. Only a multi-size resize fills `results`, one entry per size, and there one entry can say `success: false` with a `message` while the top-level `success` is true.
+  - **`resize` needs a `strategy`.** Kraken refuses a resize without one, and the plugin rejects it before the call. `square` takes a `size`; the others take `width` and/or `height`. `fit` crops to fill the box; `fill` keeps the aspect ratio and pads with `background`.
+  - **Lossless is the default.** Leave out `lossy`, or set it to `false`, for lossless; `lossy: true` and an optional `quality` trade some fidelity for size.
   - **A 200 with `success: false` is a failure.** Kraken also refuses a whole request that way, such as an unsupported format, and the plugin throws rather than returning a result with every field missing.
   - **`kraked_url` is temporary.** Kraken serves an optimized file from `dl.kraken.io` for a limited time, so a caller that needs to keep it should download it.
   - **Nothing is replayed.** Every call is a POST that spends quota, so a 5xx, a dropped connection or a timeout is never retried: the image may already have been fetched and billed.
-  - **The upload route takes base64.** Kraken's other form is a multipart upload beside the JSON options, which is not wrapped here, so `upload.optimize` sends the file as a base64 string in the JSON body.
+  - **The upload route takes base64.** A tool call carries text, so `upload.optimize` takes the file as a base64 string (a `data:` URL works too), decodes it, and sends it to Kraken as the multipart file part beside the JSON options, which is the form `/v1/upload` accepts.
   - **No webhooks are handled.** A `callback_url` is where Kraken posts a result, and it is your endpoint to run, not this plugin's.
 examples:
   read:
@@ -37,5 +39,5 @@ apiExamples:
   account.status: {}
 apiNotes:
   url.optimize: 'Needs `wait: true` or a `callback_url`. Spends quota. A per-file failure appears in `results`, and a whole-request refusal arrives as a 200 with `success: false`, which the plugin throws on.'
-  upload.optimize: 'Sends the file as base64 in the JSON body, because Kraken’s multipart form is not wrapped here.'
+  upload.optimize: 'Takes the file as base64 and sends it to Kraken as a multipart upload. Needs `wait: true` or a `callback_url`. Spends quota.'
   account.status: 'Quota figures are in bytes.'

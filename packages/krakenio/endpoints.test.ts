@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { KrakenAPIError } from './client';
 import { Kraken } from './endpoints';
 import {
@@ -10,6 +10,7 @@ import {
 	quotaExceeded,
 	refusedOn200,
 	unknownKey,
+	userStatusNoAuth,
 	waitRequired,
 } from './test-fixtures';
 
@@ -102,7 +103,8 @@ describe('url.optimize', () => {
 			wait: true,
 			auth: { api_key: API_KEY, api_secret: API_SECRET },
 		});
-		expect(result.results['header.jpg']?.kraked_url).toContain('dl.kraken.io');
+		expect(result.kraked_url).toContain('dl.kraken.io');
+		expect(result.file_name).toBe('header.jpg');
 	});
 
 	it('sends the resize, conversion and metadata options', async () => {
@@ -144,13 +146,16 @@ describe('url.optimize', () => {
 		});
 	});
 
-	it('accepts a callback URL instead of waiting', async () => {
+	it('accepts a callback URL instead of waiting and returns the job id', async () => {
 		respond(queued);
 
-		await invoke(Kraken.url, {
-			url: 'https://acme.example/header.jpg',
-			callback_url: 'https://acme.example/hooks/kraken',
-		});
+		// Kraken answers a callback request with only `{ id }`, no `success`.
+		await expect(
+			invoke(Kraken.url, {
+				url: 'https://acme.example/header.jpg',
+				callback_url: 'https://acme.example/hooks/kraken',
+			}),
+		).resolves.toEqual({ id: queued.id });
 
 		expect(lastRequest().body).toMatchObject({
 			callback_url: 'https://acme.example/hooks/kraken',
@@ -170,9 +175,9 @@ describe('url.optimize', () => {
 			'krakenio.url.optimize',
 			{
 				success: true,
-				originalBytes: 124000,
-				krakedBytes: 48210,
-				savedBytes: 75790,
+				originalBytes: 324520,
+				krakedBytes: 165358,
+				savedBytes: 159162,
 				files: 1,
 			},
 			'completed',
@@ -285,7 +290,16 @@ describe('url.optimize', () => {
 			{
 				url: 'https://a.example/x.jpg',
 				wait: true,
-				convert: { format: 'gif' },
+				convert: { format: 'bmp' },
+			},
+		],
+		// Kraken documents `strategy` as mandatory.
+		[{ url: 'https://a.example/x.jpg', wait: true, resize: { width: 800 } }],
+		[
+			{
+				url: 'https://a.example/x.jpg',
+				wait: true,
+				resize: { strategy: 'square' },
 			},
 		],
 	])('rejects %j before calling Kraken', async (input) => {
@@ -294,8 +308,26 @@ describe('url.optimize', () => {
 	});
 });
 
+describe('url.optimize resize strategies', () => {
+	it.each([
+		[{ size: 200, strategy: 'square' }],
+		[{ width: 100, height: 75, strategy: 'crop' }],
+		[{ width: 100, height: 75, strategy: 'fill', background: '#ff6600' }],
+	])('sends resize %j as given', async (resize) => {
+		respond(optimized);
+
+		await invoke(Kraken.url, {
+			url: 'https://acme.example/header.jpg',
+			wait: true,
+			resize,
+		});
+
+		expect(lastRequest().body).toMatchObject({ resize });
+	});
+});
+
 describe('upload.optimize', () => {
-	it('POSTs the base64 file with its name', async () => {
+	it('sends the decoded file as a multipart part beside the JSON options', async () => {
 		respond(optimized);
 
 		await invoke(Kraken.upload, {
@@ -304,16 +336,36 @@ describe('upload.optimize', () => {
 			wait: true,
 		});
 
-		expect(lastRequest()).toMatchObject({
-			method: 'POST',
-			path: '/v1/upload',
-		});
-		expect(lastRequest().body).toEqual({
-			data: 'aGVsbG8=',
-			filename: 'header.jpg',
+		// Kraken answers a JSON body on /v1/upload with a 500; it needs a form.
+		const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
+		expect(new URL(url).pathname).toBe('/v1/upload');
+		expect(init.method).toBe('POST');
+		expect(init.body).toBeInstanceOf(FormData);
+		const form = init.body as FormData;
+		const file = form.get('file');
+		expect(file).toBeInstanceOf(File);
+		expect((file as File).name).toBe('header.jpg');
+		expect(Buffer.from(await (file as File).arrayBuffer()).toString()).toBe(
+			'hello',
+		);
+		expect(JSON.parse(String(form.get('data')))).toEqual({
 			wait: true,
 			auth: { api_key: API_KEY, api_secret: API_SECRET },
 		});
+	});
+
+	it('accepts a data URL and strips its prefix', async () => {
+		respond(optimized);
+
+		await invoke(Kraken.upload, {
+			data: 'data:image/png;base64,aGVsbG8=',
+			wait: true,
+		});
+
+		const [, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
+		const file = (init.body as FormData).get('file') as File;
+		expect(file.name).toBe('upload');
+		expect(Buffer.from(await file.arrayBuffer()).toString()).toBe('hello');
 	});
 
 	it('rejects an upload with no file', async () => {
@@ -379,6 +431,54 @@ describe('the credentials', () => {
 		});
 	});
 
+	it('uses an inline pair without a database (no ctx.keys)', async () => {
+		respond(accountStatus);
+
+		const ctx = {
+			key: 'inline-key',
+			options: { apiKey: 'inline-key', apiSecret: 'inline-secret' },
+		};
+		await (Kraken.account as never as AnyEndpoint)(ctx as never, {} as never);
+
+		expect(lastRequest().body).toEqual({
+			auth: { api_key: 'inline-key', api_secret: 'inline-secret' },
+		});
+	});
+
+	it('sends the resolved key, not a different stored one', async () => {
+		respond(accountStatus);
+
+		const ctx = {
+			key: 'option-key',
+			options: { key: 'option-key', apiSecret: 'option-secret' },
+			keys: {
+				get_api_key: jest.fn().mockResolvedValue('stored-key'),
+				get_api_secret: jest.fn().mockResolvedValue('stored-secret'),
+			},
+		};
+		await (Kraken.account as never as AnyEndpoint)(ctx as never, {} as never);
+
+		expect(lastRequest().body).toEqual({
+			auth: { api_key: 'option-key', api_secret: 'option-secret' },
+		});
+	});
+
+	it('throws AuthMissingError before the call when no secret is found', async () => {
+		const ctx = {
+			key: 'stored-key',
+			options: {},
+			keys: {
+				get_api_key: jest.fn().mockResolvedValue('stored-key'),
+				get_api_secret: jest.fn().mockResolvedValue(null),
+			},
+		};
+
+		await expect(
+			(Kraken.account as never as AnyEndpoint)(ctx as never, {} as never),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('sends no auth header, because the pair travels in the body', async () => {
 		respond(accountStatus);
 
@@ -395,6 +495,15 @@ describe('error envelopes', () => {
 		await expect(invoke(Kraken.account, {})).rejects.toMatchObject({
 			status: 422,
 			message: 'Kraken 422: auth is required',
+		});
+	});
+
+	it('reads the `error` field that /user_status uses', async () => {
+		respond(userStatusNoAuth, 400);
+
+		await expect(invoke(Kraken.account, {})).rejects.toMatchObject({
+			status: 400,
+			message: `Kraken 400: ${userStatusNoAuth.error}`,
 		});
 	});
 

@@ -49,14 +49,32 @@ export const url: KrakenEndpoints['urlOptimize'] = (ctx, input) =>
 				originalBytes: result.original_size ?? undefined,
 				krakedBytes: result.kraked_size ?? undefined,
 				savedBytes: result.saved_bytes ?? undefined,
-				files: result.results ? Object.keys(result.results).length : 0,
+				// A one-file answer is flat; a multi-size one fills `results`.
+				files: result.results
+					? Object.keys(result.results).length
+					: result.kraked_url
+						? 1
+						: 0,
 			}),
 		},
 	);
 
-// The file travels as base64 in the JSON body, because Kraken's other form is a
-// multipart upload that `corsair/http` cannot express beside a JSON options
-// field.
+// The caller passes base64, because a tool call carries text. Kraken takes the
+// file as a multipart part, so the endpoint decodes it here.
+function decodeUpload(data: string): Uint8Array {
+	// A data URL is accepted too: only the part after the comma is the file.
+	const base64 = data.startsWith('data:')
+		? data.slice(data.indexOf(',') + 1)
+		: data;
+	const bytes = Buffer.from(base64, 'base64');
+	if (bytes.length === 0) {
+		throw new Error(
+			'`data` decoded to an empty file; pass the file as base64.',
+		);
+	}
+	return new Uint8Array(bytes);
+}
+
 export const upload: KrakenEndpoints['uploadOptimize'] = (ctx, input) =>
 	call(
 		ctx,
@@ -68,10 +86,10 @@ export const upload: KrakenEndpoints['uploadOptimize'] = (ctx, input) =>
 		input,
 		(parsed) => ({
 			path: '/v1/upload',
-			body: {
-				data: parsed.data,
-				filename: parsed.filename,
-				...optionBody(parsed),
+			body: optionBody(parsed),
+			file: {
+				bytes: decodeUpload(parsed.data),
+				filename: parsed.filename ?? 'upload',
 			},
 		}),
 		{

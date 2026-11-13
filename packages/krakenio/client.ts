@@ -53,7 +53,8 @@ export function readFailure(body: unknown): {
 	message?: string;
 } {
 	const record = asRecord(body);
-	const message = record?.message;
+	// `/user_status` names its reason `error`; the optimize routes say `message`.
+	const message = record?.message ?? record?.error;
 	const success = record?.success;
 	return {
 		success: typeof success === 'boolean' ? success : undefined,
@@ -137,6 +138,11 @@ export type KrakenRequest = {
 	// unknown: the endpoint's input schema has already validated the body, which
 	// is a JSON document with an `auth` block added here.
 	body: Record<string, unknown>;
+	/**
+	 * A file for `/v1/upload`. Kraken then takes a multipart form: the file part
+	 * and a `data` part holding the JSON options. A JSON body there answers 500.
+	 */
+	file?: { bytes: Uint8Array; filename: string };
 };
 
 /** Encodes one path segment. */
@@ -147,7 +153,7 @@ export function segment(value: string | number): string {
 // unknown: callers parse the body with the endpoint's zod output schema.
 export async function makeKrakenRequest(
 	credentials: KrakenCredentials,
-	{ path, body }: KrakenRequest,
+	{ path, body, file }: KrakenRequest,
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: KRAKEN_API_BASE,
@@ -158,20 +164,32 @@ export async function makeKrakenRequest(
 		HEADERS: { Accept: 'application/json' },
 	};
 
-	const requestOptions: ApiRequestOptions = {
-		method: 'POST',
-		url: path,
-		body: {
-			...body,
-			// The one place the credentials travel. Never logged, and never kept on
-			// an error.
-			auth: {
-				api_key: credentials.apiKey,
-				api_secret: credentials.apiSecret,
-			},
+	const payload = {
+		...body,
+		// The one place the credentials travel. Never logged, and never kept on
+		// an error.
+		auth: {
+			api_key: credentials.apiKey,
+			api_secret: credentials.apiSecret,
 		},
-		mediaType: 'application/json',
 	};
+	const requestOptions: ApiRequestOptions = file
+		? {
+				method: 'POST',
+				url: path,
+				// corsair/http serializes the `data` object as JSON text and lets
+				// fetch set the multipart boundary.
+				formData: {
+					data: payload,
+					file: new File([file.bytes], file.filename),
+				},
+			}
+		: {
+				method: 'POST',
+				url: path,
+				body: payload,
+				mediaType: 'application/json',
+			};
 
 	try {
 		const raw = await request<unknown>(config, requestOptions, {

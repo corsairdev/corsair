@@ -11,12 +11,13 @@ export const KRAKEN_MODES = ['lossy', 'lossless'] as const;
 /** The resizing strategies Kraken documents. */
 export const KRAKEN_RESIZE_STRATEGIES = [
 	'exact',
-	'fit',
-	'fill',
-	'auto',
 	'portrait',
 	'landscape',
+	'auto',
+	'fit',
+	'crop',
 	'square',
+	'fill',
 ] as const;
 
 const ResizeSchema = z
@@ -33,15 +34,34 @@ const ResizeSchema = z
 			.min(1)
 			.optional()
 			.describe('Target height in pixels.'),
+		size: z
+			.number()
+			.int()
+			.min(1)
+			.optional()
+			.describe('Edge length in pixels. Only the `square` strategy reads it.'),
 		strategy: z
 			.enum(KRAKEN_RESIZE_STRATEGIES)
+			.describe(
+				'Required by Kraken. `exact` forces both dimensions, `portrait` and `landscape` fix one side, `auto` picks by orientation, `fit` crops and resizes to fill the box, `crop` cuts to the exact size, `square` crops to a square of `size`, `fill` keeps the aspect ratio and pads with `background`.',
+			),
+		background: z
+			.string()
 			.optional()
 			.describe(
-				'How to fit the image: `exact` forces both dimensions, `fit` keeps the aspect ratio inside them, `fill` crops to cover, `auto` picks by orientation.',
+				'Padding colour for the `fill` strategy, as `#ff6600`, `rgb(...)` or `rgba(...)`. Kraken defaults to white.',
 			),
 	})
 	.superRefine((value, ctx) => {
-		if (value.width === undefined && value.height === undefined) {
+		if (value.strategy === 'square') {
+			if (value.size === undefined) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['size'],
+					message: 'The `square` strategy needs a `size`.',
+				});
+			}
+		} else if (value.width === undefined && value.height === undefined) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['width'],
@@ -71,7 +91,7 @@ const BaseOptionsSchema = z.object({
 		.boolean()
 		.optional()
 		.describe(
-			'`true` for lossy, `false` for lossless. Kraken’s default is lossy.',
+			'`true` for lossy, `false` for lossless. Kraken’s default, when this is left out, is lossless.',
 		),
 	resize: ResizeSchema.optional(),
 	quality: z
@@ -93,7 +113,7 @@ const BaseOptionsSchema = z.object({
 	convert: z
 		.object({
 			format: z
-				.enum(['jpeg', 'png', 'webp', 'avif'])
+				.enum(['jpeg', 'png', 'gif', 'webp', 'avif'])
 				.describe('The format to convert to.'),
 			background: z
 				.string()
@@ -129,16 +149,15 @@ export type UrlOptimizeInput = z.input<typeof UrlOptimizeInputSchema>;
 
 // ── upload.optimize ───────────────────────────────────────────────────────
 
-// Kraken takes the file as multipart alongside a JSON options field, which
-// `corsair/http` cannot express with one JSON body, so the caller passes a
-// base64 payload instead of a stream and this documents the limit.
+// Kraken takes the file as a multipart part beside a JSON options field. The
+// caller passes base64 (a tool call cannot carry a stream), and the endpoint
+// decodes it into the file part.
 const UploadOptimizeInputSchema = BaseOptionsSchema.extend({
-	/** The request carries the image as base64 in the JSON body. */
 	data: z
 		.string()
 		.min(1)
 		.describe(
-			'The file as a base64 string. Kraken also accepts a multipart upload, which this plugin does not wrap because it sends a JSON body.',
+			'The file as a base64 string. The plugin decodes it and sends it to Kraken as the multipart file part.',
 		),
 	filename: z
 		.string()
@@ -177,20 +196,40 @@ export const KrakenResultSchema = z
 
 export type KrakenResult = z.infer<typeof KrakenResultSchema>;
 
-// The whole answer, which carries the same ratio fields at the top level.
+// The whole answer. A `wait` call on one file answers flat: `file_name`,
+// `kraked_url` and the sizes sit at the top level. A `callback_url` call answers
+// only `{ id }` at once, so `success` is optional. A multi-size resize puts one
+// entry per size in `results`.
 const OptimizeResponseSchema = z
 	.object({
-		success: z.boolean(),
-		id: z.string().nullish().describe('The job ID, for a callback lookup.'),
+		success: z
+			.boolean()
+			.optional()
+			.describe('Absent on a callback request, which answers only `id`.'),
+		id: z
+			.string()
+			.nullish()
+			.describe('The job ID that the callback delivery repeats.'),
 		message: z.string().nullish(),
-		original_size: z.number().nullish(),
-		kraked_size: z.number().nullish(),
-		saved_bytes: z.number().nullish(),
+		file_name: z.string().nullish(),
+		original_size: z.number().nullish().describe('Bytes.'),
+		kraked_size: z.number().nullish().describe('Bytes.'),
+		saved_bytes: z.number().nullish().describe('Bytes saved.'),
+		original_width: z.number().nullish(),
+		original_height: z.number().nullish(),
+		kraked_width: z.number().nullish(),
+		kraked_height: z.number().nullish(),
+		kraked_url: z
+			.string()
+			.nullish()
+			.describe(
+				'Where the optimized file is served from `dl.kraken.io` for a limited time.',
+			),
 		results: z
 			.record(z.string(), KrakenResultSchema)
 			.nullish()
 			.describe(
-				'One entry per optimized file. A `wait` call fills this; a callback delivery puts the same shape in its body.',
+				'One entry per size, keyed by its `id`, on a multi-size resize.',
 			),
 	})
 	.loose();
