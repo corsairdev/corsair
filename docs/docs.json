@@ -2148,6 +2148,14 @@
                 ]
               },
               {
+                "group": "GetProspect",
+                "pages": [
+                  "plugins/getprospect/overview",
+                  "plugins/getprospect/api",
+                  "plugins/getprospect/database"
+                ]
+              },
+              {
                 "group": "GIPHY",
                 "pages": [
                   "plugins/giphy/overview",

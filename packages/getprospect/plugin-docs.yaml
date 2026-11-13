@@ -1,4 +1,164 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "GetProspect"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: GetProspect
+description: Search, enrich, verify, save, organize and export B2B prospect records with the GetProspect API v2.
+domain: getprospect.com
+recommendedAuth: api_key
+overviewNote: >-
+  Authenticate with an API key in the x-api-key header. Search endpoints may be free, while reveals, email verification, and selected background jobs spend credits or wallet funds; inspect credits and rate limits before billable operations. Poll asynchronous job resources explicitly. Webhook management and the event stream are not exposed in this scope.
+apiExamples:
+  "people.get":
+    args: {"path":{"id":"64f1a2b3c4d5e6f7a8b9c0d1"}}
+  "people.editsUpdate":
+    args: {"path":{"id":"x"},"body":{}}
+  "people.bulkEnrich":
+    args: {"body":{"data":[{}]}}
+  "people.calculateCredits":
+    args: {"body":{}}
+  "people.count":
+    args: {"body":{"filters":{}}}
+  "people.enrich":
+    args: {"body":{"data":{}}}
+  "people.enrichSearch":
+    args: {"body":{"filters":{}}}
+  "people.save":
+    args: {"body":{"data":["x"],"list_ids":["x"]}}
+  "people.saveSearch":
+    args: {"body":{"filters":{}}}
+  "people.search":
+    args: {"body":{"filters":{}}}
+  "companies.get":
+    args: {"path":{"id":"64f1a2b3c4d5e6f7a8b9c0d1"}}
+  "companies.editsUpdate":
+    args: {"path":{"id":"64f1a2b3c4d5e6f7a8b9c0d1"},"body":{}}
+  "companies.bulkEnrich":
+    args: {"body":{"data":[{}]}}
+  "companies.enrich":
+    args: {"body":{"data":{}}}
+  "companies.save":
+    args: {"body":{"data":["x"]}}
+  "companies.search":
+    args: {"body":{"filters":{}}}
+  "email.findGet":
+    args: {"query":{"full_name":"x","first_name":"x","last_name":"x","domain":"x","company":"x"}}
+  "email.verificationsList":
+    args: {"query":{"page":1,"per_page":1,"query":"x","owner":"x"}}
+  "email.verificationsCreate":
+    args: {"headers":{"idempotencyKey":"stable-test-key"},"body":{"data":{}}}
+  "email.verificationsGet":
+    args: {"path":{"id":"x"}}
+  "email.verificationsCancel":
+    args: {"path":{"id":"x"}}
+  "email.verificationsResults":
+    args: {"path":{"id":"x"},"query":{"cursor":"x","limit":1,"status":"valid","q":"x"}}
+  "email.verificationsStart":
+    args: {"path":{"id":"x"},"headers":{"idempotencyKey":"stable-test-key"}}
+  "email.verificationsHistoryList":
+    args: {"query":{"page":1,"per_page":1}}
+  "email.verificationsInspect":
+    args: {"body":{"data":{"file_key":"x"}}}
+  "email.verifyGet":
+    args: {"query":{"email":"person@samplemail.test"}}
+  "email.find":
+    args: {"body":{"data":{}}}
+  "email.verify":
+    args: {"body":{"data":{"email":"person@samplemail.test"}}}
+  "search.matchingTitles":
+    args: {"body":{"boolean_search":"xx"}}
+  "search.smartJobTitles":
+    args: {"body":{"job_titles":["x"]}}
+  "search.suggest":
+    args: {"body":{"type":"location"}}
+  "enums.list":
+    args: {}
+  "enums.get":
+    args: {"path":{"name":"industries"}}
+  "developer.apiLogsList":
+    args: {"query":{"per_page":1,"before":"x","key_id":"64f1a2b3c4d5e6f7a8b9c0d1"}}
+  "developer.rateLimitsGet":
+    args: {}
+  "lists.companiesListsRemove":
+    args: {"body":{"list_id":"x","ids":["x"]}}
+  "lists.companiesListsSet":
+    args: {"headers":{"idempotencyKey":"stable-test-key"},"body":{"list_ids":["x"]}}
+  "lists.list":
+    args: {"query":{"type":"people","owner":"x","query":"x","sort_by":"name","sort_direction":"asc","include_saved_views":"true","page":1,"per_page":1}}
+  "lists.create":
+    args: {"body":{"name":"x","type":"people"}}
+  "lists.get":
+    args: {"path":{"id":"x"}}
+  "lists.delete":
+    args: {"path":{"id":"x"},"query":{"with_records":"true"},"headers":{"idempotencyKey":"stable-test-key"}}
+  "lists.update":
+    args: {"path":{"id":"x"},"body":{"name":"x"}}
+  "lists.peopleListsAdd":
+    args: {"body":{"list_id":"x","ids":["x"]}}
+  "lists.peopleListsRemove":
+    args: {"body":{"list_id":"x","ids":["x"]}}
+  "lists.peopleListsSet":
+    args: {"headers":{"idempotencyKey":"stable-test-key"},"body":{"list_ids":["x"]}}
+  "exports.companiesExport":
+    args: {"headers":{"idempotencyKey":"stable-test-key"},"body":{}}
+  "exports.get":
+    args: {"path":{"id":"64f1a2b3c4d5e6f7a8b9c0d1"}}
+  "exports.peopleExport":
+    args: {"headers":{"idempotencyKey":"stable-test-key"},"body":{}}
+  "jobs.get":
+    args: {"path":{"id":"64f1a2b3c4d5e6f7a8b9c0d1"}}
+  "enrichments.companiesEnrichmentsCreate":
+    args: {"headers":{"idempotencyKey":"stable-test-key"},"body":{"data":[{}]}}
+  "enrichments.list":
+    args: {"query":{"page":1,"per_page":1,"status":"queued","source":"api"}}
+  "enrichments.get":
+    args: {"path":{"id":"x"}}
+  "enrichments.cancel":
+    args: {"path":{"id":"x"}}
+  "enrichments.results":
+    args: {"path":{"id":"x"},"query":{"cursor":"x","limit":1,"status":"matched"}}
+  "enrichments.peopleEnrichmentsCreate":
+    args: {"headers":{"idempotencyKey":"stable-test-key"},"body":{"data":[{}]}}
+  "trash.list":
+    args: {"query":{"kind":"person","search":"x","since":"x","page":1,"per_page":1}}
+  "trash.companiesAdd":
+    args: {"headers":{"idempotencyKey":"stable-test-key"},"body":{}}
+  "trash.peopleAdd":
+    args: {"headers":{"idempotencyKey":"stable-test-key"},"body":{}}
+  "trash.restore":
+    args: {"headers":{"idempotencyKey":"stable-test-key"},"body":{"kind":"person"}}
+  "account.meGet":
+    args: {}
+  "billing.subscriptionGet":
+    args: {}
+  "billing.creditsGet":
+    args: {}
+  "billing.usageSummaryGet":
+    args: {"query":{"from":"2026-01-01","to":"2026-01-01","users":"64f1a2b3c4d5e6f7a8b9c0d1","channel":"app","action":"search","entity":"people","group_by":"day"}}
+  "blocklist.companiesList":
+    args: {"query":{"query":"xx","page":1,"per_page":1}}
+  "blocklist.companiesDelete":
+    args: {"path":{"id":"x"}}
+  "blocklist.companiesAdd":
+    args: {"body":{"data":[{"domain":"x"}]}}
+  "blocklist.peopleList":
+    args: {"query":{"query":"xx","page":1,"per_page":1}}
+  "blocklist.peopleDelete":
+    args: {"path":{"id":"x"}}
+  "blocklist.peopleAdd":
+    args: {"body":{"data":[{"first_name":"x","last_name":"x"}]}}
+  "notifications.list":
+    args: {"query":{"page":1,"per_page":1,"read":"true"}}
+  "notifications.markRead":
+    args: {"body":{}}
+apiNotes:
+  "people.bulkEnrich": "Credit-aware operation: newly revealed email; phone number found; enrich_email (on by default) / enrich_phone, per item. Check the workspace balance and the provider response before repeating the request."
+  "people.enrich": "Credit-aware operation: newly revealed email; phone number found; enrich_email (on by default) / enrich_phone. Check the workspace balance and the provider response before repeating the request. This synchronous endpoint can take up to 95 seconds; a searching email result can be polled by calling the endpoint again after retry_after."
+  "people.enrichSearch": "Credit-aware operation: phone number found; always, until the balance runs out. Check the workspace balance and the provider response before repeating the request."
+  "people.save": "Credit-aware operation: person whose valid email is handed over and was not already owned; always; a re-save of a person already paid for is free. A person answered `searching` costs nothing until the refreshed search finds an email and the balance allows it. Check the workspace balance and the provider response before repeating the request."
+  "people.saveSearch": "Credit-aware operation: person whose stored valid email is handed over and was not already owned; always, in search order, until the balance runs out. Check the workspace balance and the provider response before repeating the request."
+  "people.search": "Credit-aware operation: newly revealed email; phone number found; only with enrich_email / enrich_phone. Check the workspace balance and the provider response before repeating the request."
+  "email.findGet": "Credit-aware operation: served_address; a valid address is served that the workspace does not already own (the email of a revealed or saved person, and an address charged before, are free). Check the workspace balance and the provider response before repeating the request."
+  "email.verificationsCreate": "Credit-aware operation: billable_row; when a `data.emails` job starts on its own after counting, for `counts.billable`; `unknown` rows and rows never verified are refunded when the job ends (a `file_key` job charges at `email_verifications_start`). Check the workspace balance and the provider response before repeating the request."
+  "email.verificationsStart": "Credit-aware operation: billable_row; at start, for `counts.billable`; `unknown` rows and rows never verified are refunded when the job ends. Check the workspace balance and the provider response before repeating the request."
+  "email.verifyGet": "Credit-aware operation: address; a valid, invalid or accept_all verdict, once per address per workspace. Check the workspace balance and the provider response before repeating the request."
+  "email.find": "Credit-aware operation: served_address; a valid address is served that the workspace does not already own (the email of a revealed or saved person, and an address charged before, are free). Check the workspace balance and the provider response before repeating the request. This synchronous endpoint can take up to 95 seconds; the client uses the documented timeout."
+  "email.verify": "Credit-aware operation: address; a valid, invalid or accept_all verdict, once per address per workspace. Check the workspace balance and the provider response before repeating the request. The provider documents a lookup timeout of up to 80 seconds; wallet charges apply only to billable verdicts."
+  "exports.peopleExport": "Credit-aware operation: revealed profile not already owned; per chunk during the run, against the balance read at that chunk; emails past it are withheld. Check the workspace balance and the provider response before repeating the request."
+  "enrichments.peopleEnrichmentsCreate": "Credit-aware operation: revealed profile not already owned / address found / mobile number found; during the job. Check the workspace balance and the provider response before repeating the request."
