@@ -49,14 +49,13 @@ describe('request with responseHeader', () => {
 		const body = { message: 'Daily lookup limit reached', code: 'limit' };
 		reply(status, body);
 
-		const error = await request(config, {
+		const call = request(config, {
 			method: 'POST',
 			url: '/bulkLookup',
 			responseHeader: 'RR-Request-ID',
-		}).catch((e: unknown) => e);
+		});
 
-		expect(error).toBeInstanceOf(ApiError);
-		expect((error as ApiError).body).toEqual(body);
-		expect((error as ApiError).message).toBe(message);
+		await expect(call).rejects.toBeInstanceOf(ApiError);
+		await expect(call).rejects.toMatchObject({ body, message });
 	});
 });
