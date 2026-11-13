@@ -114,6 +114,70 @@ describe('Freshdesk v2 route endpoints', () => {
 		);
 	});
 
+	it('accepts documented bulk and custom-object write payloads', async () => {
+		mockedRequest.mockResolvedValue({ job_id: 'job-1' });
+		const bulkAction = {
+			ids: [11, 12],
+			properties: { status: 3, custom_fields: { region: 'west' } },
+			reply: { body: 'We are investigating.' },
+		};
+		await Routes.bulkUpdateTicketsPostBulkUpdate.run(ctx, {
+			body: { bulk_action: bulkAction },
+		});
+		expect(mockedRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/api/v2/tickets/bulk_update',
+			body: { bulk_action: bulkAction },
+		});
+		const bulkDelete = { ids: [21, 22] };
+		await Routes.bulkDeleteTicketsPostBulkDelete.run(ctx, {
+			body: { bulk_action: bulkDelete },
+		});
+		expect(mockedRequest.mock.calls[1]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/api/v2/tickets/bulk_delete',
+			body: { bulk_action: bulkDelete },
+		});
+
+		const recordData = { customer_id: 'C-100', custom_value: { tier: 2 } };
+		await Routes.createANewCustomObjectRecordPostOperation.run(ctx, {
+			pathParams: { schemaId: '30' },
+			body: { data: recordData },
+		});
+		expect(mockedRequest.mock.calls[2]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/api/v2/custom_objects/schemas/30/records/',
+			body: { data: recordData },
+		});
+
+		await Routes.updateACustomObjectRecordPutRecordId.run(ctx, {
+			pathParams: { schemaId: '30', recordId: 'BKG-1' },
+			body: { display_id: 'BKG-1', version: 2, data: recordData },
+		});
+		expect(mockedRequest.mock.calls[3]?.[1]).toMatchObject({
+			method: 'PUT',
+			url: '/api/v2/custom_objects/schemas/30/records/BKG-1',
+			body: { display_id: 'BKG-1', version: 2, data: recordData },
+		});
+	});
+
+	it('uses the documented company and group name field', async () => {
+		await Routes.createCompanyPostCompanies.run(ctx, {
+			body: { name: 'Acme Support' },
+		});
+		await Routes.createGroupPostGroups.run(ctx, {
+			body: { name: 'Tier One' },
+		});
+		expect(mockedRequest.mock.calls[0]?.[1]).toMatchObject({
+			url: '/api/v2/companies',
+			body: { name: 'Acme Support' },
+		});
+		expect(mockedRequest.mock.calls[1]?.[1]).toMatchObject({
+			url: '/api/v2/groups',
+			body: { name: 'Tier One' },
+		});
+	});
+
 	it('rejects missing path parameters, extra input keys, and page sizes over 100 before I/O', async () => {
 		await expect(Routes.viewATicketGet.run(ctx, {})).rejects.toThrow();
 		await expect(

@@ -80,6 +80,7 @@ function validateDomain(domain: string): string {
 function makeFormData(
 	body: FreshdeskRouteInput['body'],
 	attachments: FreshdeskRouteInput['attachments'],
+	attachmentField: string,
 ): FormData {
 	const formData = new FormData();
 	for (const [key, value] of Object.entries(body ?? {})) {
@@ -105,7 +106,7 @@ function makeFormData(
 			character.charCodeAt(0),
 		);
 		formData.append(
-			'attachments[]',
+			attachmentField,
 			new Blob([bytes], { type: attachment.contentType }),
 			attachment.filename,
 		);
@@ -155,7 +156,11 @@ export async function makeFreshdeskRequest(
 			definition.method === 'PUT' ||
 			definition.method === 'PATCH'
 				? isMultipart
-					? makeFormData(parsedInput.body, parsedInput.attachments)
+					? makeFormData(
+							parsedInput.body,
+							parsedInput.attachments,
+							definition.multipartField ?? 'attachments[]',
+						)
 					: parsedInput.body
 				: undefined,
 		mediaType: isMultipart ? undefined : 'application/json; charset=utf-8',

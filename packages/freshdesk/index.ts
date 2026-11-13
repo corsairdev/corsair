@@ -1654,7 +1654,7 @@ export const freshdeskEndpointMeta = {
 			'Delete a Ticket: DELETE /api/v2/tickets/[id] (Freshdesk API v2).',
 	},
 	'routes.bulkDeleteTicketsPostBulkDelete.run': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Delete Multiple Tickets: POST /api/v2/tickets/bulk_delete (Freshdesk API v2).',
 	},

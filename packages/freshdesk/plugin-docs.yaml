@@ -2,12 +2,16 @@ displayName: Freshdesk
 description: Manage support tickets, customer records, agents, groups, knowledge base content, and account settings through Freshdesk REST API v2.
 domain: freshdesk.com
 recommendedAuth: api_key
+factory:
+  options:
+    domain: acme.freshdesk.com
+  note: Provide the account hostname shown in your Freshdesk portal; it is not discovered from the API key.
 overviewNote: |
   Set the exact account hostname from your Freshdesk portal in the `domain` option. Freshdesk API v2 does not support custom CNAMEs. The API key is sent using HTTP Basic authentication with `X` as the password.
 
   Freshdesk applies per-minute account and API sublimits. List operations accept `page` (1-based) and `per_page` (maximum 100). A 429 includes `Retry-After`; automatic retries are limited to safe GET requests.
 
-  Attachment-enabled ticket, contact, and conversation operations accept `{ filename, contentType, base64 }` entries and send multipart/form-data.
+  Ticket create/update/reply, note creation, contact avatar create/update, conversation updates, and outbound email with attachments accept `{ filename, contentType, base64 }` entries and send multipart/form-data. Contact avatars use the `avatar` file part; the other upload routes use `attachments[]`.
 
   Pass each route's documented request fields through its `body` object. Where Freshdesk publishes request attributes, the plugin validates field names and primitive types; tenant-defined `custom_fields` and nested object values remain open JSON. Responses are validated as JSON values to preserve optional embeds and custom fields; consult the linked route for resource-specific response fields.
 

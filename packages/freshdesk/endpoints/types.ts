@@ -75,6 +75,8 @@ export type FreshdeskRouteDefinition = {
 	queryDefaults: Readonly<Record<string, string>>;
 	bodyFields: readonly FreshdeskBodyFieldDefinition[];
 	multipart: boolean;
+	multipartField?: string;
+	multipartMaxFiles?: number;
 };
 
 export type FreshdeskBodyFieldDefinition = {
@@ -141,6 +143,36 @@ export function createFreshdeskRouteInputSchema(
 					message: `Missing required query parameter: ${name}`,
 				});
 			}
+		}
+		if (input.attachments?.length && !definition.multipart) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['attachments'],
+				message:
+					'This Freshdesk route does not document multipart file uploads',
+			});
+		}
+		if (
+			definition.multipartMaxFiles !== undefined &&
+			(input.attachments?.length ?? 0) > definition.multipartMaxFiles
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['attachments'],
+				message: `This Freshdesk route accepts at most ${definition.multipartMaxFiles} file upload(s)`,
+			});
+		}
+		if (
+			definition.multipartField === 'avatar' &&
+			input.attachments?.length &&
+			input.body?.avatar !== undefined
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['body', 'avatar'],
+				message:
+					'Provide the contact avatar as a file, not both a file and JSON object',
+			});
 		}
 		const allowedBodyFields = new Map(
 			definition.bodyFields.map((field) => [field.name, field.type]),

@@ -103,5 +103,9 @@ describe('Freshdesk endpoint schemas', () => {
 		expect(plugin.authConfig).toEqual({ api_key: {} });
 		expect(plugin.webhooks).toEqual({});
 		expect(plugin.options?.domain).toBe('acme.freshdesk.com');
+		expect(
+			freshdeskEndpointMeta['routes.bulkDeleteTicketsPostBulkDelete.run']
+				?.riskLevel,
+		).toBe('destructive');
 	});
 });

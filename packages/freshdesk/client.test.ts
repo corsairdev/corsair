@@ -6,6 +6,10 @@ import {
 	makeFreshdeskRequest,
 } from './client';
 import { FRESHDESK_OPERATIONS } from './endpoints/operations';
+import type {
+	FreshdeskRouteDefinition,
+	FreshdeskRouteInput,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import type { FreshdeskContext } from './index';
 
@@ -15,6 +19,14 @@ jest.mock('corsair/http', () => {
 });
 
 const mockedRequest = jest.mocked(request);
+
+type UploadTestCase = {
+	name: string;
+	definition: FreshdeskRouteDefinition;
+	input: FreshdeskRouteInput;
+	path: string;
+	field: string;
+};
 
 function buildContext(domain = 'acme.freshdesk.com'): FreshdeskContext {
 	return {
@@ -88,6 +100,99 @@ describe('Freshdesk client', () => {
 		expect(options.body.get('attachments[]')).toBeInstanceOf(Blob);
 	});
 
+	const uploadCases: UploadTestCase[] = [
+		{
+			name: 'ticket note attachments',
+			definition: FRESHDESK_OPERATIONS.addNoteToATicketPostNotes,
+			input: {
+				pathParams: { ticketId: '20' },
+				body: { body: 'Private note' },
+				attachments: [
+					{
+						filename: 'note.txt',
+						contentType: 'text/plain',
+						base64: 'SGVsbG8=',
+					},
+				],
+			},
+			path: '/api/v2/tickets/20/notes',
+			field: 'attachments[]',
+		},
+		{
+			name: 'outbound email attachments',
+			definition: FRESHDESK_OPERATIONS.createOutboundEmailPostOutboundEmail,
+			input: {
+				body: {
+					email: 'agent@freshdesk.invalid',
+					subject: 'Status',
+					email_config_id: 2,
+				},
+				attachments: [
+					{
+						filename: 'status.txt',
+						contentType: 'text/plain',
+						base64: 'SGVsbG8=',
+					},
+				],
+			},
+			path: '/api/v2/tickets/outbound_email',
+			field: 'attachments[]',
+		},
+		{
+			name: 'contact creation avatar',
+			definition: FRESHDESK_OPERATIONS.createContactPostContacts,
+			input: {
+				body: { name: 'Test Contact', email: 'contact@freshdesk.invalid' },
+				attachments: [
+					{
+						filename: 'avatar.png',
+						contentType: 'image/png',
+						base64: 'iVBORw==',
+					},
+				],
+			},
+			path: '/api/v2/contacts',
+			field: 'avatar',
+		},
+		{
+			name: 'contact update avatar',
+			definition: FRESHDESK_OPERATIONS.updateContactPut,
+			input: {
+				pathParams: { id: '32' },
+				body: { name: 'Test Contact' },
+				attachments: [
+					{
+						filename: 'avatar.png',
+						contentType: 'image/png',
+						base64: 'iVBORw==',
+					},
+				],
+			},
+			path: '/api/v2/contacts/32',
+			field: 'avatar',
+		},
+	];
+
+	it.each(uploadCases)(
+		'uploads $name under the documented multipart field',
+		async (testCase) => {
+			mockedRequest.mockResolvedValue({ id: 21 });
+			await makeFreshdeskRequest(
+				buildContext(),
+				'test-api-key',
+				testCase.definition,
+				testCase.input,
+			);
+
+			const options = mockedRequest.mock.calls[0]?.[1];
+			expect(options?.url).toBe(testCase.path);
+			expect(options?.mediaType).toBeUndefined();
+			if (!(options?.body instanceof FormData))
+				throw new Error('Expected multipart body');
+			expect(options.body.get(testCase.field)).toBeInstanceOf(Blob);
+		},
+	);
+
 	it('rejects custom CNAMEs and missing API keys before network I/O', async () => {
 		await expect(
 			makeFreshdeskRequest(
@@ -105,6 +210,22 @@ describe('Freshdesk client', () => {
 				{},
 			),
 		).rejects.toThrow(AuthMissingError);
+		await expect(
+			makeFreshdeskRequest(
+				buildContext(),
+				'test-api-key',
+				FRESHDESK_OPERATIONS.listAllTicketsGetTickets,
+				{
+					attachments: [
+						{
+							filename: 'ignored.txt',
+							contentType: 'text/plain',
+							base64: 'SGVsbG8=',
+						},
+					],
+				},
+			),
+		).rejects.toThrow('does not document multipart file uploads');
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
