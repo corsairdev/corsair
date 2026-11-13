@@ -12,7 +12,7 @@ Freshdesk applies per-minute account and API sublimits. List operations accept `
 
 Attachment-enabled ticket, contact, and conversation operations accept `{ filename, contentType, base64 }` entries and send multipart/form-data.
 
-Pass each route's documented request fields through its `body` object. Responses are validated as JSON values to preserve optional embed fields and tenant-defined custom fields; consult the linked Freshdesk route for resource-specific response fields.
+Pass each route's documented request fields through its `body` object. Where Freshdesk publishes request attributes, the plugin validates field names and primitive types; tenant-defined `custom_fields` and nested object values remain open JSON. Responses are validated as JSON values to preserve optional embeds and custom fields; consult the linked route for resource-specific response fields.
 
 The plugin covers the documented v2 REST routes. Freshdesk marks v1 deprecated/restricted for new users. No webhook delivery contract is documented here.
 

@@ -122,6 +122,14 @@ describe('Freshdesk v2 route endpoints', () => {
 		await expect(
 			Routes.listAllTicketsGetTickets.run(ctx, { query: { per_page: 101 } }),
 		).rejects.toThrow();
+		await expect(
+			Routes.createTicketPostTickets.run(ctx, {
+				body: { undocumented_field: 'reject me' },
+			}),
+		).rejects.toThrow('Undocumented Freshdesk request field');
+		await expect(
+			Routes.createTicketPostTickets.run(ctx, { body: { email: 123 } }),
+		).rejects.toThrow('Invalid value for Freshdesk request field');
 
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});

@@ -73,82 +73,97 @@ export type FreshdeskRouteDefinition = {
 	pathParams: readonly string[];
 	requiredQuery: readonly string[];
 	queryDefaults: Readonly<Record<string, string>>;
+	bodyFields: readonly FreshdeskBodyFieldDefinition[];
 	multipart: boolean;
 };
 
+export type FreshdeskBodyFieldDefinition = {
+	name: string;
+	type:
+		| 'string'
+		| 'number'
+		| 'boolean'
+		| 'stringArray'
+		| 'numberArray'
+		| 'jsonArray'
+		| 'object'
+		| 'json';
+};
+
+export function defineFreshdeskBodyFields(
+	fields: FreshdeskBodyFieldDefinition[],
+): readonly FreshdeskBodyFieldDefinition[] {
+	return fields;
+}
+
+function bodyFieldSchema(type: FreshdeskBodyFieldDefinition['type']) {
+	switch (type) {
+		case 'string':
+			return z.string().nullable();
+		case 'number':
+			return z.number().nullable();
+		case 'boolean':
+			return z.boolean().nullable();
+		case 'stringArray':
+			return z.array(z.string()).nullable();
+		case 'numberArray':
+			return z.array(z.number()).nullable();
+		case 'jsonArray':
+			return z.array(z.json()).nullable();
+		case 'object':
+			return z.record(z.string(), z.json()).nullable();
+		case 'json':
+			return z.json();
+	}
+}
+
 export function createFreshdeskRouteInputSchema(
 	definition: FreshdeskRouteDefinition,
-) {
-	const pathParamsSchema = definition.pathParams.length
-		? z
-				.object(
-					Object.fromEntries(
-						definition.pathParams.map((name) => [name, z.string().min(1)]),
-					),
-				)
-				.strict()
-		: z.object({}).strict().optional();
-	const querySchema = z.record(z.string(), QueryValueSchema);
-	const routeQuerySchema = definition.requiredQuery.length
-		? querySchema.superRefine((query, ctx) => {
-				for (const name of definition.requiredQuery) {
-					if (!(name in query)) {
-						ctx.addIssue({
-							code: 'custom',
-							path: [name],
-							message: `Missing required query parameter: ${name}`,
-						});
-					}
-				}
-			})
-		: querySchema.optional();
-	return z
-		.object({
-			pathParams: pathParamsSchema,
-			query: routeQuerySchema,
-			body: z.record(z.string(), z.json()).optional(),
-			attachments: z
-				.array(
-					z
-						.object({
-							filename: z.string().min(1),
-							contentType: z.string().min(1),
-							base64: z.string().min(1),
-						})
-						.strict(),
-				)
-				.optional(),
-		})
-		.strict()
-		.superRefine((input, ctx) => {
-			const perPageValue = input.query?.per_page;
-			const perPage =
-				typeof perPageValue === 'number' || typeof perPageValue === 'string'
-					? Number(perPageValue)
-					: undefined;
-			if (
-				perPage !== undefined &&
-				(!Number.isInteger(perPage) || perPage < 1 || perPage > 100)
-			) {
+): z.ZodType<FreshdeskRouteInput> {
+	return FreshdeskRouteInputSchema.superRefine((input, ctx) => {
+		const expectedPathParams = new Set(definition.pathParams);
+		const receivedPathParams = Object.keys(input.pathParams ?? {});
+		if (
+			receivedPathParams.length !== expectedPathParams.size ||
+			receivedPathParams.some((name) => !expectedPathParams.has(name))
+		) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['pathParams'],
+				message: 'Path parameters must match the selected Freshdesk v2 route',
+			});
+		}
+		for (const name of definition.requiredQuery) {
+			if (!(name in (input.query ?? {}))) {
 				ctx.addIssue({
 					code: 'custom',
-					path: ['query', 'per_page'],
-					message: 'Freshdesk page size must be between 1 and 100',
+					path: ['query', name],
+					message: `Missing required query parameter: ${name}`,
 				});
 			}
-			const pageValue = input.query?.page;
-			const page =
-				typeof pageValue === 'number' || typeof pageValue === 'string'
-					? Number(pageValue)
-					: undefined;
-			if (page !== undefined && (!Number.isInteger(page) || page < 1)) {
+		}
+		const allowedBodyFields = new Map(
+			definition.bodyFields.map((field) => [field.name, field.type]),
+		);
+		for (const [name, value] of Object.entries(input.body ?? {})) {
+			const fieldType = allowedBodyFields.get(name);
+			if (!fieldType) {
 				ctx.addIssue({
 					code: 'custom',
-					path: ['query', 'page'],
-					message: 'Freshdesk page numbers start at 1',
+					path: ['body', name],
+					message: `Undocumented Freshdesk request field: ${name}`,
+				});
+				continue;
+			}
+			if (!bodyFieldSchema(fieldType).safeParse(value).success) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['body', name],
+					message: `Invalid value for Freshdesk request field: ${name}`,
 				});
 			}
-		});
+		}
+	});
 }
 
 export type FreshdeskEndpointInputs = {

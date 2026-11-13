@@ -38,7 +38,7 @@ describe('Freshdesk endpoint schemas', () => {
 		for (const schema of Object.values(freshdeskEndpointSchemas)) {
 			expect(schema.input).toBeDefined();
 			expect(schema.output).toBeDefined();
-			expect(schema.output.safeParse([]).success).toBe(true);
+			if (schema.output) expect(schema.output.safeParse([]).success).toBe(true);
 		}
 	});
 
@@ -70,6 +70,22 @@ describe('Freshdesk endpoint schemas', () => {
 				FRESHDESK_OPERATIONS.filterTicketsGetTickets,
 			).safeParse({}).success,
 		).toBe(false);
+		const ticketInputSchema = createFreshdeskRouteInputSchema(
+			FRESHDESK_OPERATIONS.createTicketPostTickets,
+		);
+		expect(
+			ticketInputSchema.safeParse({
+				body: { email: 'person@freshdesk.invalid' },
+			}).success,
+		).toBe(true);
+		expect(
+			ticketInputSchema.safeParse({
+				body: { unsupported_field: 'no' },
+			}).success,
+		).toBe(false);
+		expect(ticketInputSchema.safeParse({ body: { email: 123 } }).success).toBe(
+			false,
+		);
 	});
 
 	it('validates JSON response values and accepts documented empty responses', () => {

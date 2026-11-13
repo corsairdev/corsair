@@ -26,21 +26,12 @@ await corsair.freshdesk.api.routes.addNoteToATicketPostNotes.run({ pathParams: {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  ticketId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -76,21 +67,12 @@ await corsair.freshdesk.api.routes.addOrRemoveAgentInAGroupPatchAgents.run({ pat
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -126,21 +108,12 @@ await corsair.freshdesk.api.routes.archiveTicketsDelete.run({ pathParams: { id: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -176,21 +149,12 @@ await corsair.freshdesk.api.routes.archiveTicketsGet.run({ pathParams: { id: '12
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -226,21 +190,12 @@ await corsair.freshdesk.api.routes.archiveTicketsGetConversations.run({ pathPara
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -276,20 +231,12 @@ await corsair.freshdesk.api.routes.bulkCreateCannedResponsesPostBulk.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -325,20 +272,12 @@ await corsair.freshdesk.api.routes.bulkDeleteTicketsPostBulkDelete.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -374,20 +313,12 @@ await corsair.freshdesk.api.routes.bulkUpdateTicketsPostBulkUpdate.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -423,21 +354,12 @@ await corsair.freshdesk.api.routes.categoryAttributesDelete.run({ pathParams: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -473,21 +395,12 @@ await corsair.freshdesk.api.routes.categoryAttributesGet.run({ pathParams: { id:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -523,20 +436,12 @@ await corsair.freshdesk.api.routes.categoryAttributesGetCategories.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -572,21 +477,12 @@ await corsair.freshdesk.api.routes.categoryAttributesGetForums.run({ pathParams:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -622,20 +518,12 @@ await corsair.freshdesk.api.routes.categoryAttributesPostCategories.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -671,21 +559,12 @@ await corsair.freshdesk.api.routes.categoryAttributesPut.run({ pathParams: { id:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -721,21 +600,12 @@ await corsair.freshdesk.api.routes.cloneTicketFormPostClone.run({ pathParams: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -771,21 +641,12 @@ await corsair.freshdesk.api.routes.commentAttributesDelete.run({ pathParams: { i
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -821,21 +682,12 @@ await corsair.freshdesk.api.routes.commentAttributesPostComments.run({ pathParam
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  topicId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -871,21 +723,12 @@ await corsair.freshdesk.api.routes.commentAttributesPut.run({ pathParams: { id: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -921,20 +764,12 @@ await corsair.freshdesk.api.routes.createAdminGroupPostGroups.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -970,20 +805,12 @@ await corsair.freshdesk.api.routes.createAgentPostOperation.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1019,21 +846,12 @@ await corsair.freshdesk.api.routes.createAnAutomationRulePostRules.run({ pathPar
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  automationTypeId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1069,21 +887,12 @@ await corsair.freshdesk.api.routes.createANewCustomObjectRecordPostOperation.run
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  schemaId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1119,20 +928,12 @@ await corsair.freshdesk.api.routes.createAThreadPostThreads.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1168,20 +969,12 @@ await corsair.freshdesk.api.routes.createCannedResponseFolderPostCannedResponseF
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1217,20 +1010,12 @@ await corsair.freshdesk.api.routes.createCannedResponsePostCannedResponses.run({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1266,20 +1051,12 @@ await corsair.freshdesk.api.routes.createCompanyFieldPostCompanyFields.run({  })
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1315,20 +1092,12 @@ await corsair.freshdesk.api.routes.createCompanyPostCompanies.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1364,20 +1133,12 @@ await corsair.freshdesk.api.routes.createContactFieldPostContactFields.run({  })
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1413,20 +1174,12 @@ await corsair.freshdesk.api.routes.createContactPostContacts.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1462,20 +1215,12 @@ await corsair.freshdesk.api.routes.createEmailMailboxPostMailboxes.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1511,20 +1256,12 @@ await corsair.freshdesk.api.routes.createGroupPostGroups.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1560,20 +1297,12 @@ await corsair.freshdesk.api.routes.createMessageForThreadPostMessages.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1609,20 +1338,12 @@ await corsair.freshdesk.api.routes.createMultipleAgentsPostBulk.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1658,20 +1379,12 @@ await corsair.freshdesk.api.routes.createOutboundEmailPostOutboundEmail.run({  }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1707,21 +1420,12 @@ await corsair.freshdesk.api.routes.createSatisfactionRatingPostSatisfactionRatin
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  ticketId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1757,21 +1461,12 @@ await corsair.freshdesk.api.routes.createSectionPostSections.run({ pathParams: {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1807,20 +1502,12 @@ await corsair.freshdesk.api.routes.createSkillPostSkills.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1856,20 +1543,12 @@ await corsair.freshdesk.api.routes.createSlaPolicyPostSlaPolicies.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1905,21 +1584,12 @@ await corsair.freshdesk.api.routes.createSurveyResponsesPostResponses.run({ path
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  surveyId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -1955,20 +1625,12 @@ await corsair.freshdesk.api.routes.createTicketFieldPostTicketFields.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2004,20 +1666,12 @@ await corsair.freshdesk.api.routes.createTicketFormPostTicketForms.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2053,20 +1707,12 @@ await corsair.freshdesk.api.routes.createTicketPostTickets.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2102,21 +1748,12 @@ await corsair.freshdesk.api.routes.createTimeEntryPostTimeEntries.run({ pathPara
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  ticketId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2152,20 +1789,12 @@ await corsair.freshdesk.api.routes.csatSurveysGetSurveys.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2201,22 +1830,12 @@ await corsair.freshdesk.api.routes.deleteACustomObjectRecordDeleteRecordId.run({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  schemaId: string,
-  recordId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2252,21 +1871,12 @@ await corsair.freshdesk.api.routes.deleteAdminGroupDelete.run({ pathParams: { id
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2302,21 +1912,12 @@ await corsair.freshdesk.api.routes.deleteAgentDelete.run({ pathParams: { id: '12
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2352,21 +1953,12 @@ await corsair.freshdesk.api.routes.deleteAnAttachmentDelete.run({ pathParams: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2402,22 +1994,12 @@ await corsair.freshdesk.api.routes.deleteAnAutomationRuleDelete.run({ pathParams
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  automationTypeId: string,
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2453,21 +2035,12 @@ await corsair.freshdesk.api.routes.deleteAThreadDelete.run({ pathParams: { id: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2503,21 +2076,12 @@ await corsair.freshdesk.api.routes.deleteATicketDelete.run({ pathParams: { id: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2553,21 +2117,12 @@ await corsair.freshdesk.api.routes.deleteCompanyDelete.run({ pathParams: { id: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2603,21 +2158,12 @@ await corsair.freshdesk.api.routes.deleteCompanyFieldDelete.run({ pathParams: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2653,21 +2199,12 @@ await corsair.freshdesk.api.routes.deleteContactDelete.run({ pathParams: { id: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2703,21 +2240,12 @@ await corsair.freshdesk.api.routes.deleteContactFieldDelete.run({ pathParams: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2753,21 +2281,12 @@ await corsair.freshdesk.api.routes.deleteConversationDelete.run({ pathParams: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2803,21 +2322,12 @@ await corsair.freshdesk.api.routes.deleteEmailMailboxDelete.run({ pathParams: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2853,21 +2363,12 @@ await corsair.freshdesk.api.routes.deleteGroupDelete.run({ pathParams: { id: '12
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2903,21 +2404,12 @@ await corsair.freshdesk.api.routes.deleteMessageForThreadDelete.run({ pathParams
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -2953,22 +2445,12 @@ await corsair.freshdesk.api.routes.deleteSectionDeleteSectionId.run({ pathParams
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  sectionId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3004,21 +2486,12 @@ await corsair.freshdesk.api.routes.deleteSkillDelete.run({ pathParams: { id: '12
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3054,21 +2527,12 @@ await corsair.freshdesk.api.routes.deleteTicketFieldDelete.run({ pathParams: { i
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3104,21 +2568,12 @@ await corsair.freshdesk.api.routes.deleteTicketFormDelete.run({ pathParams: { id
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3154,22 +2609,12 @@ await corsair.freshdesk.api.routes.deleteTicketFormFieldDeleteFieldId.run({ path
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  formId: string,
-  fieldId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3205,21 +2650,12 @@ await corsair.freshdesk.api.routes.deleteTimeEntryDelete.run({ pathParams: { id:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3255,21 +2691,12 @@ await corsair.freshdesk.api.routes.exportAuditLogGet.run({ pathParams: { id: '12
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3305,20 +2732,12 @@ await corsair.freshdesk.api.routes.exportAuditLogPostExport.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3354,21 +2773,12 @@ await corsair.freshdesk.api.routes.exportCompanyGet.run({ pathParams: { id: '123
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3404,20 +2814,12 @@ await corsair.freshdesk.api.routes.exportCompanyPostExport.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3453,21 +2855,12 @@ await corsair.freshdesk.api.routes.exportContactGet.run({ pathParams: { id: '123
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3503,20 +2896,12 @@ await corsair.freshdesk.api.routes.exportContactPostExport.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3552,20 +2937,12 @@ await corsair.freshdesk.api.routes.filterCompaniesGetCompanies.run({ query: { qu
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3601,20 +2978,12 @@ await corsair.freshdesk.api.routes.filterContactsGetContacts.run({ query: { quer
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3650,20 +3019,12 @@ await corsair.freshdesk.api.routes.filterTicketsGetTickets.run({ query: { query:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3699,21 +3060,12 @@ await corsair.freshdesk.api.routes.forumAttributesDelete.run({ pathParams: { id:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3749,21 +3101,12 @@ await corsair.freshdesk.api.routes.forumAttributesDeleteFollow.run({ pathParams:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  forumId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3799,21 +3142,12 @@ await corsair.freshdesk.api.routes.forumAttributesGet.run({ pathParams: { id: '1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3849,21 +3183,12 @@ await corsair.freshdesk.api.routes.forumAttributesGetFollow.run({ pathParams: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3899,21 +3224,12 @@ await corsair.freshdesk.api.routes.forumAttributesGetTopics.run({ pathParams: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3949,21 +3265,12 @@ await corsair.freshdesk.api.routes.forumAttributesPostFollow.run({ pathParams: {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -3999,21 +3306,12 @@ await corsair.freshdesk.api.routes.forumAttributesPostForums.run({ pathParams: {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  categoryId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4049,21 +3347,12 @@ await corsair.freshdesk.api.routes.forumAttributesPut.run({ pathParams: { id: '1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4099,21 +3388,12 @@ await corsair.freshdesk.api.routes.forwardTicketsPostForward.run({ pathParams: {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4149,20 +3429,12 @@ await corsair.freshdesk.api.routes.generateExportPostExport.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4198,21 +3470,12 @@ await corsair.freshdesk.api.routes.getAThreadGet.run({ pathParams: { id: '123' }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4248,21 +3511,12 @@ await corsair.freshdesk.api.routes.getDetailsOfCannedResponsesInFoldersGetRespon
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4298,21 +3552,12 @@ await corsair.freshdesk.api.routes.getMessageForThreadGet.run({ pathParams: { id
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4348,21 +3593,12 @@ await corsair.freshdesk.api.routes.getQuotedTextGetGenerateQuote.run({ pathParam
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4398,21 +3634,12 @@ await corsair.freshdesk.api.routes.hardDeleteContactDeleteHardDelete.run({ pathP
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4448,21 +3675,12 @@ await corsair.freshdesk.api.routes.importCompanyGet.run({ pathParams: { id: '123
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4498,20 +3716,12 @@ await corsair.freshdesk.api.routes.importCompanyGetImports.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4547,20 +3757,12 @@ await corsair.freshdesk.api.routes.importCompanyPostImports.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4596,21 +3798,12 @@ await corsair.freshdesk.api.routes.importCompanyPutCancel.run({ pathParams: { id
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4646,21 +3839,12 @@ await corsair.freshdesk.api.routes.importContactGet.run({ pathParams: { id: '123
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4696,20 +3880,12 @@ await corsair.freshdesk.api.routes.importContactGetImports.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4745,20 +3921,12 @@ await corsair.freshdesk.api.routes.importContactPostImports.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4794,21 +3962,12 @@ await corsair.freshdesk.api.routes.importContactPutCancel.run({ pathParams: { id
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4844,20 +4003,12 @@ await corsair.freshdesk.api.routes.listAllAdminGroupsGetGroups.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4893,20 +4044,12 @@ await corsair.freshdesk.api.routes.listAllAgentsAvailabilityGetAgents.run({ quer
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4942,20 +4085,12 @@ await corsair.freshdesk.api.routes.listAllAgentsGetAgents.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -4991,21 +4126,12 @@ await corsair.freshdesk.api.routes.listAllAgentsInAGroupGetAgents.run({ pathPara
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5041,21 +4167,12 @@ await corsair.freshdesk.api.routes.listAllAutomationRulesGetRules.run({ pathPara
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  automationTypeId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5091,20 +4208,12 @@ await corsair.freshdesk.api.routes.listAllBusinessHoursGetBusinessHours.run({  }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5140,20 +4249,12 @@ await corsair.freshdesk.api.routes.listAllCannedResponseFoldersGetCannedResponse
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5189,20 +4290,12 @@ await corsair.freshdesk.api.routes.listAllCompaniesGetCompanies.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5238,20 +4331,12 @@ await corsair.freshdesk.api.routes.listAllCompanyFieldsGetCompanyFields.run({  }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5287,20 +4372,12 @@ await corsair.freshdesk.api.routes.listAllContactFieldsGetContactFields.run({  }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5336,20 +4413,12 @@ await corsair.freshdesk.api.routes.listAllContactsGetContacts.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5385,20 +4454,12 @@ await corsair.freshdesk.api.routes.listAllEmailConfigsGetEmailConfigs.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5434,20 +4495,12 @@ await corsair.freshdesk.api.routes.listAllEmailMailboxesGetMailboxes.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5483,20 +4536,12 @@ await corsair.freshdesk.api.routes.listAllGroupsGetGroups.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5532,20 +4577,12 @@ await corsair.freshdesk.api.routes.listAllProductsGetProducts.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5581,20 +4618,12 @@ await corsair.freshdesk.api.routes.listAllRolesGetRoles.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5630,20 +4659,12 @@ await corsair.freshdesk.api.routes.listAllScenarioAutomationsGetScenarioAutomati
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5679,21 +4700,12 @@ await corsair.freshdesk.api.routes.listAllSectionFieldsGetSections.run({ pathPar
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5729,20 +4741,12 @@ await corsair.freshdesk.api.routes.listAllSkillsGetOperation.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5778,20 +4782,12 @@ await corsair.freshdesk.api.routes.listAllSlaPoliciesGetSlaPolicies.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5827,20 +4823,12 @@ await corsair.freshdesk.api.routes.listAllSurveyGetSurveys.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5876,20 +4864,12 @@ await corsair.freshdesk.api.routes.listAllTicketFieldsGetTicketFields.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5925,20 +4905,12 @@ await corsair.freshdesk.api.routes.listAllTicketFieldsGetTicketFields35.run({  }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -5974,20 +4946,12 @@ await corsair.freshdesk.api.routes.listAllTicketFormsGetTicketForms.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6023,21 +4987,12 @@ await corsair.freshdesk.api.routes.listAllTicketNotesGetConversations.run({ path
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6073,20 +5028,12 @@ await corsair.freshdesk.api.routes.listAllTicketsGetTickets.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6122,21 +5069,12 @@ await corsair.freshdesk.api.routes.listAllTicketTimeentriesGetTimeEntries.run({ 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6172,20 +5110,12 @@ await corsair.freshdesk.api.routes.listAllTimeEntriesGetTimeEntries.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6221,22 +5151,12 @@ await corsair.freshdesk.api.routes.listSpecificSectionGetSectionId.run({ pathPar
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  sectionId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6272,21 +5192,12 @@ await corsair.freshdesk.api.routes.makeAgentPutMakeAgent.run({ pathParams: { id:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6322,20 +5233,12 @@ await corsair.freshdesk.api.routes.meGetMe.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6371,20 +5274,12 @@ await corsair.freshdesk.api.routes.mergeContactPostMerge.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6420,20 +5315,12 @@ await corsair.freshdesk.api.routes.publishOmnichannelActivityPostContactActiviti
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6469,21 +5356,12 @@ await corsair.freshdesk.api.routes.replyTicketPostReply.run({ pathParams: { id: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6519,21 +5397,12 @@ await corsair.freshdesk.api.routes.replyToForwardPostReplyToForward.run({ pathPa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6569,21 +5438,12 @@ await corsair.freshdesk.api.routes.restoreATicketPutRestore.run({ pathParams: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6619,21 +5479,12 @@ await corsair.freshdesk.api.routes.restoreContactPutRestore.run({ pathParams: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6669,22 +5520,12 @@ await corsair.freshdesk.api.routes.retrieveACustomObjectRecordGetRecordId.run({ 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  schemaId: string,
-  recordId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6720,21 +5561,12 @@ await corsair.freshdesk.api.routes.retrieveAllTheRecordsOfACustomObjectGetRecord
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  schemaId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6770,20 +5602,12 @@ await corsair.freshdesk.api.routes.retrieveExistingCustomObjectsGetSchemas.run({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6819,21 +5643,12 @@ await corsair.freshdesk.api.routes.retrieveOutboundMessageGetMessageId.run({ pat
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  messageId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6869,21 +5684,12 @@ await corsair.freshdesk.api.routes.retrieveSpecificCustomObjectGetSchemaId.run({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  schemaId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6919,21 +5725,12 @@ await corsair.freshdesk.api.routes.retrieveTheCountOfRecordsCustomObjectsGetCoun
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  schemaId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -6969,20 +5766,12 @@ await corsair.freshdesk.api.routes.searchAgentsGetAutocomplete.run({ query: { te
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7018,20 +5807,12 @@ await corsair.freshdesk.api.routes.searchCompaniesGetAutocomplete.run({ query: {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7067,20 +5848,12 @@ await corsair.freshdesk.api.routes.searchContactsGetAutocomplete.run({ query: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7116,21 +5889,12 @@ await corsair.freshdesk.api.routes.sendInvitePutSendInvite.run({ pathParams: { i
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7166,20 +5930,12 @@ await corsair.freshdesk.api.routes.sendOutboundMessagePostOutboundMessages.run({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7215,20 +5971,12 @@ await corsair.freshdesk.api.routes.settingsHelpdeskGetHelpdesk.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7264,21 +6012,12 @@ await corsair.freshdesk.api.routes.solutionArticleAttributesDelete.run({ pathPar
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7314,21 +6053,12 @@ await corsair.freshdesk.api.routes.solutionArticleAttributesGet.run({ pathParams
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7364,21 +6094,12 @@ await corsair.freshdesk.api.routes.solutionArticleAttributesGetArticles.run({ pa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7414,22 +6135,12 @@ await corsair.freshdesk.api.routes.solutionArticleAttributesGetLanguageCode.run(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7465,22 +6176,12 @@ await corsair.freshdesk.api.routes.solutionArticleAttributesGetLanguageCode206.r
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7516,20 +6217,12 @@ await corsair.freshdesk.api.routes.solutionArticleAttributesGetSolutions.run({ q
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7565,21 +6258,12 @@ await corsair.freshdesk.api.routes.solutionArticleAttributesPostArticles.run({ p
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7615,22 +6299,12 @@ await corsair.freshdesk.api.routes.solutionArticleAttributesPostLanguageCode.run
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7666,21 +6340,12 @@ await corsair.freshdesk.api.routes.solutionArticleAttributesPut.run({ pathParams
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7716,22 +6381,12 @@ await corsair.freshdesk.api.routes.solutionArticleAttributesPutLanguageCode.run(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7767,21 +6422,12 @@ await corsair.freshdesk.api.routes.solutionCategoryAttributesDelete.run({ pathPa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7817,21 +6463,12 @@ await corsair.freshdesk.api.routes.solutionCategoryAttributesGet.run({ pathParam
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7867,20 +6504,12 @@ await corsair.freshdesk.api.routes.solutionCategoryAttributesGetCategories.run({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7916,22 +6545,12 @@ await corsair.freshdesk.api.routes.solutionCategoryAttributesGetLanguageCode.run
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -7967,21 +6586,12 @@ await corsair.freshdesk.api.routes.solutionCategoryAttributesGetLanguageCode186.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8017,20 +6627,12 @@ await corsair.freshdesk.api.routes.solutionCategoryAttributesPostCategories.run(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8066,22 +6668,12 @@ await corsair.freshdesk.api.routes.solutionCategoryAttributesPostLanguageCode.ru
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8117,21 +6709,12 @@ await corsair.freshdesk.api.routes.solutionCategoryAttributesPut.run({ pathParam
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8167,22 +6750,12 @@ await corsair.freshdesk.api.routes.solutionCategoryAttributesPutLanguageCode.run
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8218,21 +6791,12 @@ await corsair.freshdesk.api.routes.solutionFolderAttributesDelete.run({ pathPara
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8268,21 +6832,12 @@ await corsair.freshdesk.api.routes.solutionFolderAttributesGet.run({ pathParams:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8318,21 +6873,12 @@ await corsair.freshdesk.api.routes.solutionFolderAttributesGetFolders.run({ path
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  categoryId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8368,22 +6914,12 @@ await corsair.freshdesk.api.routes.solutionFolderAttributesGetLanguageCode.run({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8419,22 +6955,12 @@ await corsair.freshdesk.api.routes.solutionFolderAttributesGetLanguageCode195.ru
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  categoryId: string,
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8470,22 +6996,12 @@ await corsair.freshdesk.api.routes.solutionFolderAttributesGetLanguageCode197.ru
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  folderId: string,
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8521,21 +7037,12 @@ await corsair.freshdesk.api.routes.solutionFolderAttributesGetSubfolders.run({ p
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  folderId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8571,21 +7078,12 @@ await corsair.freshdesk.api.routes.solutionFolderAttributesPostFolders.run({ pat
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8621,22 +7119,12 @@ await corsair.freshdesk.api.routes.solutionFolderAttributesPostLanguageCode.run(
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8672,21 +7160,12 @@ await corsair.freshdesk.api.routes.solutionFolderAttributesPut.run({ pathParams:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8722,22 +7201,12 @@ await corsair.freshdesk.api.routes.solutionFolderAttributesPutLanguageCode.run({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  languageCode: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8773,21 +7242,12 @@ await corsair.freshdesk.api.routes.ticketAssociationGetAssociatedTickets.run({ p
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8823,21 +7283,12 @@ await corsair.freshdesk.api.routes.ticketAssociationGetPrimeAssociation.run({ pa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8873,20 +7324,12 @@ await corsair.freshdesk.api.routes.ticketMergePutMerge.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8922,21 +7365,12 @@ await corsair.freshdesk.api.routes.ticketSummaryDeleteSummary.run({ pathParams: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -8972,21 +7406,12 @@ await corsair.freshdesk.api.routes.ticketSummaryGetSummary.run({ pathParams: { i
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9022,21 +7447,12 @@ await corsair.freshdesk.api.routes.ticketSummaryPutSummary.run({ pathParams: { i
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9072,21 +7488,12 @@ await corsair.freshdesk.api.routes.ticketUserAccessesDeleteAccesses.run({ pathPa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9122,21 +7529,12 @@ await corsair.freshdesk.api.routes.ticketUserAccessesGetAccesses.run({ pathParam
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9172,21 +7570,12 @@ await corsair.freshdesk.api.routes.ticketUserAccessesPatchAccesses.run({ pathPar
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9222,21 +7611,12 @@ await corsair.freshdesk.api.routes.ticketUserAccessesPostAccesses.run({ pathPara
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9272,21 +7652,12 @@ await corsair.freshdesk.api.routes.toggleTimeEntryPutToggleTimer.run({ pathParam
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  timeEntryId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9322,21 +7693,12 @@ await corsair.freshdesk.api.routes.topicAttributesDelete.run({ pathParams: { id:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9372,21 +7734,12 @@ await corsair.freshdesk.api.routes.topicAttributesDeleteFollow.run({ pathParams:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  topicId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9422,21 +7775,12 @@ await corsair.freshdesk.api.routes.topicAttributesGet.run({ pathParams: { id: '1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9472,21 +7816,12 @@ await corsair.freshdesk.api.routes.topicAttributesGetComments.run({ pathParams: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9522,21 +7857,12 @@ await corsair.freshdesk.api.routes.topicAttributesGetFollow.run({ pathParams: { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9572,20 +7898,12 @@ await corsair.freshdesk.api.routes.topicAttributesGetFollowedBy.run({ query: { u
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9621,20 +7939,12 @@ await corsair.freshdesk.api.routes.topicAttributesGetParticipatedBy.run({ query:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
-| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
+| `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9670,21 +7980,12 @@ await corsair.freshdesk.api.routes.topicAttributesPostFollow.run({ pathParams: {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9720,21 +8021,12 @@ await corsair.freshdesk.api.routes.topicAttributesPostTopics.run({ pathParams: {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  forumId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9770,21 +8062,12 @@ await corsair.freshdesk.api.routes.topicAttributesPut.run({ pathParams: { id: '1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9820,22 +8103,12 @@ await corsair.freshdesk.api.routes.updateACustomObjectRecordPutRecordId.run({ pa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  schemaId: string,
-  recordId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9871,21 +8144,12 @@ await corsair.freshdesk.api.routes.updateAdminGroupPut.run({ pathParams: { id: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9921,21 +8185,12 @@ await corsair.freshdesk.api.routes.updateAgentAvailabilityPutAvailability.run({ 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -9971,21 +8226,12 @@ await corsair.freshdesk.api.routes.updateAgentPut.run({ pathParams: { id: '123' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10021,22 +8267,12 @@ await corsair.freshdesk.api.routes.updateAnAutomationRulePut.run({ pathParams: {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  automationTypeId: string,
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10072,21 +8308,12 @@ await corsair.freshdesk.api.routes.updateAThreadPut.run({ pathParams: { id: '123
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10122,20 +8349,12 @@ await corsair.freshdesk.api.routes.updateAutomaticBccEmailsPutBcc.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10171,21 +8390,12 @@ await corsair.freshdesk.api.routes.updateCannedResponseFolderPut.run({ pathParam
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10221,21 +8431,12 @@ await corsair.freshdesk.api.routes.updateCannedResponsePut.run({ pathParams: { i
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10271,21 +8472,12 @@ await corsair.freshdesk.api.routes.updateCompanyFieldPut.run({ pathParams: { id:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10321,21 +8513,12 @@ await corsair.freshdesk.api.routes.updateCompanyPut.run({ pathParams: { id: '123
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10371,21 +8554,12 @@ await corsair.freshdesk.api.routes.updateContactFieldPut.run({ pathParams: { id:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10421,21 +8595,12 @@ await corsair.freshdesk.api.routes.updateContactPut.run({ pathParams: { id: '123
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10471,21 +8636,12 @@ await corsair.freshdesk.api.routes.updateConversationPut.run({ pathParams: { id:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10521,21 +8677,12 @@ await corsair.freshdesk.api.routes.updateEmailMailboxPut.run({ pathParams: { id:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10571,21 +8718,12 @@ await corsair.freshdesk.api.routes.updateGroupPut.run({ pathParams: { id: '123' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10621,20 +8759,12 @@ await corsair.freshdesk.api.routes.updateMailboxSettingsPutSettings.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10670,21 +8800,12 @@ await corsair.freshdesk.api.routes.updateMessageForThreadPut.run({ pathParams: {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10720,22 +8841,12 @@ await corsair.freshdesk.api.routes.updateSectionPutSectionId.run({ pathParams: {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string,
-  sectionId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10771,21 +8882,12 @@ await corsair.freshdesk.api.routes.updateSkillPut.run({ pathParams: { id: '123' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10821,21 +8923,12 @@ await corsair.freshdesk.api.routes.updateSlaPolicyPut.run({ pathParams: { id: '1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10871,21 +8964,12 @@ await corsair.freshdesk.api.routes.updateTicketFieldPut.run({ pathParams: { id: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10921,22 +9005,12 @@ await corsair.freshdesk.api.routes.updateTicketFormFieldPutFieldId.run({ pathPar
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  formId: string,
-  fieldId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -10972,21 +9046,12 @@ await corsair.freshdesk.api.routes.updateTicketFormPut.run({ pathParams: { id: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11022,21 +9087,12 @@ await corsair.freshdesk.api.routes.updateTicketPut.run({ pathParams: { id: '123'
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11072,21 +9128,12 @@ await corsair.freshdesk.api.routes.updateTimeEntryPut.run({ pathParams: { id: '1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11122,20 +9169,12 @@ await corsair.freshdesk.api.routes.viewAccountGetAccount.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11171,21 +9210,12 @@ await corsair.freshdesk.api.routes.viewAdminGroupGet.run({ pathParams: { id: '12
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11221,21 +9251,12 @@ await corsair.freshdesk.api.routes.viewAgentAvailabilityGetAvailability.run({ pa
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11271,21 +9292,12 @@ await corsair.freshdesk.api.routes.viewAgentGet.run({ pathParams: { id: '123' } 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11321,20 +9333,12 @@ await corsair.freshdesk.api.routes.viewAllSatisfactionRatingsGetSatisfactionRati
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11370,22 +9374,12 @@ await corsair.freshdesk.api.routes.viewAnAutomationRuleGet.run({ pathParams: { a
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  automationTypeId: string,
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11421,21 +9415,12 @@ await corsair.freshdesk.api.routes.viewATicketGet.run({ pathParams: { id: '123' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11471,20 +9456,12 @@ await corsair.freshdesk.api.routes.viewAutomaticBccEmailsGetBcc.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11520,21 +9497,12 @@ await corsair.freshdesk.api.routes.viewBusinessHourGet.run({ pathParams: { id: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11570,21 +9538,12 @@ await corsair.freshdesk.api.routes.viewCannedResponseFoldersGet.run({ pathParams
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11620,21 +9579,12 @@ await corsair.freshdesk.api.routes.viewCannedResponseGet.run({ pathParams: { id:
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11670,21 +9620,12 @@ await corsair.freshdesk.api.routes.viewCompanyFieldGet.run({ pathParams: { id: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11720,21 +9661,12 @@ await corsair.freshdesk.api.routes.viewCompanyGet.run({ pathParams: { id: '123' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11770,21 +9702,12 @@ await corsair.freshdesk.api.routes.viewContactFieldGet.run({ pathParams: { id: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11820,21 +9743,12 @@ await corsair.freshdesk.api.routes.viewContactGet.run({ pathParams: { id: '123' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11870,21 +9784,12 @@ await corsair.freshdesk.api.routes.viewEmailConfigGet.run({ pathParams: { id: '1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11920,21 +9825,12 @@ await corsair.freshdesk.api.routes.viewEmailMailboxGet.run({ pathParams: { id: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -11970,21 +9866,12 @@ await corsair.freshdesk.api.routes.viewGroupGet.run({ pathParams: { id: '123' } 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12020,21 +9907,12 @@ await corsair.freshdesk.api.routes.viewJobGet.run({ pathParams: { id: '123' } })
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12070,20 +9948,12 @@ await corsair.freshdesk.api.routes.viewMailboxSettingsGetSettings.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12119,21 +9989,12 @@ await corsair.freshdesk.api.routes.viewProductGet.run({ pathParams: { id: '123' 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12169,21 +10030,12 @@ await corsair.freshdesk.api.routes.viewRoleGet.run({ pathParams: { id: '123' } }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12219,21 +10071,12 @@ await corsair.freshdesk.api.routes.viewSkillGet.run({ pathParams: { id: '123' } 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12269,21 +10112,12 @@ await corsair.freshdesk.api.routes.viewSurveyResponsesGetResponses.run({ pathPar
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  surveyId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12319,21 +10153,12 @@ await corsair.freshdesk.api.routes.viewTicketFieldGet.run({ pathParams: { id: '1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12369,22 +10194,12 @@ await corsair.freshdesk.api.routes.viewTicketFormFieldGetFieldId.run({ pathParam
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  formId: string,
-  fieldId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12420,21 +10235,12 @@ await corsair.freshdesk.api.routes.viewTicketFormGet.run({ pathParams: { id: '12
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12470,21 +10276,12 @@ await corsair.freshdesk.api.routes.viewTicketSatisfactionRatingsGetSatisfactionR
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  ticketId: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12520,21 +10317,12 @@ await corsair.freshdesk.api.routes.watcherGetWatchers.run({ pathParams: { id: '1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12570,21 +10358,12 @@ await corsair.freshdesk.api.routes.watcherPostWatch.run({ pathParams: { id: '123
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12620,20 +10399,12 @@ await corsair.freshdesk.api.routes.watcherPutBulkUnwatch.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12669,20 +10440,12 @@ await corsair.freshdesk.api.routes.watcherPutBulkWatch.run({  });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | No | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts
@@ -12718,21 +10481,12 @@ await corsair.freshdesk.api.routes.watcherPutUnwatch.run({ pathParams: { id: '12
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pathParams` | `object` | Yes | — |
+| `pathParams` | `Record<string, string>` | No | — |
 | `query` | `Record<string, string \| number \| boolean \| (string \| number \| boolean)[]>` | No | — |
 | `body` | `Record<string, JsonValue>` | No | — |
 | `attachments` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="pathParams full type">
-
-```ts
-{
-  id: string
-}
-```
-</Accordion>
-
 <Accordion title="attachments full type">
 
 ```ts

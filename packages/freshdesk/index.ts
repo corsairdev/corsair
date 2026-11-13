@@ -8,7 +8,6 @@ import type {
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
-	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
@@ -32,9 +31,7 @@ export type FreshdeskPluginOptions = {
 	key?: string;
 	// Exact account hostname from the Freshdesk portal; custom CNAMEs are unsupported.
 	domain?: string;
-	hooks?: InternalFreshdeskPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
-	permissions?: PluginPermissionsConfig<typeof freshdeskEndpointsNested>;
 };
 
 export type FreshdeskContext = CorsairPluginContext<
@@ -2871,7 +2868,6 @@ export function freshdesk<const T extends FreshdeskPluginOptions>(
 		authConfig: freshdeskAuthConfig,
 		schema: FreshdeskSchema,
 		options,
-		hooks: options.hooks,
 		endpoints: freshdeskEndpointsNested,
 		webhooks: {},
 		endpointMeta: freshdeskEndpointMeta,

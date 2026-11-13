@@ -1,8 +1,9 @@
 import type { FreshdeskRouteDefinition } from './types';
+import { defineFreshdeskBodyFields } from './types';
 
 // Extracted from the current Freshdesk API v2 reference; v1 is deprecated.
-// Source anchors are retained per route for the generated API docs and review.
-export const FRESHDESK_OPERATIONS = {
+// Source anchors are retained per route for generated API docs and review.
+const operationDefinitions = {
 	createTicketPostTickets: {
 		method: 'POST',
 		path: '/api/v2/tickets',
@@ -11,6 +12,37 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'name', type: 'string' },
+			{ name: 'requester_id', type: 'number' },
+			{ name: 'email', type: 'string' },
+			{ name: 'facebook_id', type: 'string' },
+			{ name: 'phone', type: 'string' },
+			{ name: 'twitter_id', type: 'string' },
+			{ name: 'unique_external_id', type: 'string' },
+			{ name: 'subject', type: 'string' },
+			{ name: 'type', type: 'string' },
+			{ name: 'status', type: 'number' },
+			{ name: 'priority', type: 'number' },
+			{ name: 'description', type: 'string' },
+			{ name: 'responder_id', type: 'number' },
+			{ name: 'attachments', type: 'jsonArray' },
+			{ name: 'cc_emails', type: 'stringArray' },
+			{ name: 'custom_fields', type: 'object' },
+			{ name: 'due_by', type: 'string' },
+			{ name: 'email_config_id', type: 'number' },
+			{ name: 'fr_due_by', type: 'string' },
+			{ name: 'group_id', type: 'number' },
+			{ name: 'parent_id', type: 'number' },
+			{ name: 'product_id', type: 'number' },
+			{ name: 'source', type: 'number' },
+			{ name: 'tags', type: 'stringArray' },
+			{ name: 'company_id', type: 'number' },
+			{ name: 'internal_agent_id', type: 'number' },
+			{ name: 'internal_group_id', type: 'number' },
+			{ name: 'lookup_parameter', type: 'string' },
+			{ name: 'related_ticket_ids', type: 'numberArray' },
+		]),
 		multipart: true,
 	},
 	createOutboundEmailPostOutboundEmail: {
@@ -21,6 +53,22 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'name', type: 'string' },
+			{ name: 'email', type: 'string' },
+			{ name: 'subject', type: 'string' },
+			{ name: 'type', type: 'string' },
+			{ name: 'status', type: 'number' },
+			{ name: 'priority', type: 'number' },
+			{ name: 'description', type: 'string' },
+			{ name: 'attachments', type: 'jsonArray' },
+			{ name: 'custom_fields', type: 'object' },
+			{ name: 'due_by', type: 'string' },
+			{ name: 'email_config_id', type: 'number' },
+			{ name: 'fr_due_by', type: 'string' },
+			{ name: 'group_id', type: 'number' },
+			{ name: 'tags', type: 'stringArray' },
+		]),
 		multipart: false,
 	},
 	viewATicketGet: {
@@ -31,6 +79,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	ticketAssociationGetAssociatedTickets: {
@@ -41,6 +90,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	ticketAssociationGetPrimeAssociation: {
@@ -51,6 +101,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllTicketsGetTickets: {
@@ -61,6 +112,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	filterTicketsGetTickets: {
@@ -71,6 +123,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: ['query'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateTicketPut: {
@@ -81,6 +134,35 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'name', type: 'string' },
+			{ name: 'requester_id', type: 'number' },
+			{ name: 'email', type: 'string' },
+			{ name: 'facebook_id', type: 'string' },
+			{ name: 'phone', type: 'string' },
+			{ name: 'twitter_id', type: 'string' },
+			{ name: 'unique_external_id', type: 'string' },
+			{ name: 'subject', type: 'string' },
+			{ name: 'type', type: 'string' },
+			{ name: 'status', type: 'number' },
+			{ name: 'priority', type: 'number' },
+			{ name: 'description', type: 'string' },
+			{ name: 'responder_id', type: 'number' },
+			{ name: 'attachments', type: 'jsonArray' },
+			{ name: 'custom_fields', type: 'object' },
+			{ name: 'due_by', type: 'string' },
+			{ name: 'email_config_id', type: 'number' },
+			{ name: 'fr_due_by', type: 'string' },
+			{ name: 'group_id', type: 'number' },
+			{ name: 'parent_id', type: 'number' },
+			{ name: 'product_id', type: 'number' },
+			{ name: 'source', type: 'number' },
+			{ name: 'tags', type: 'stringArray' },
+			{ name: 'company_id', type: 'number' },
+			{ name: 'internal_agent_id', type: 'number' },
+			{ name: 'internal_group_id', type: 'number' },
+			{ name: 'lookup_parameter', type: 'string' },
+		]),
 		multipart: true,
 	},
 	bulkUpdateTicketsPostBulkUpdate: {
@@ -91,6 +173,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	forwardTicketsPostForward: {
@@ -101,6 +184,23 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'body', type: 'string' },
+			{ name: 'body_text', type: 'string' },
+			{ name: 'id', type: 'number' },
+			{ name: 'incoming', type: 'boolean' },
+			{ name: 'private', type: 'boolean' },
+			{ name: 'agent_id', type: 'number' },
+			{ name: 'support_email', type: 'string' },
+			{ name: 'source', type: 'number' },
+			{ name: 'ticket_id', type: 'number' },
+			{ name: 'include_quoted_text', type: 'boolean' },
+			{ name: 'include_original_attachments', type: 'boolean' },
+			{ name: 'from_email', type: 'string' },
+			{ name: 'to_emails', type: 'stringArray' },
+			{ name: 'cc_emails', type: 'stringArray' },
+			{ name: 'bcc_emails', type: 'stringArray' },
+		]),
 		multipart: false,
 	},
 	ticketMergePutMerge: {
@@ -111,6 +211,13 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'primary_id', type: 'number' },
+			{ name: 'ticket_ids', type: 'numberArray' },
+			{ name: 'note_in_primary', type: 'object' },
+			{ name: 'note_in_secondary', type: 'object' },
+			{ name: 'convert_recepients_to_cc', type: 'boolean' },
+		]),
 		multipart: false,
 	},
 	watcherGetWatchers: {
@@ -121,6 +228,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	watcherPostWatch: {
@@ -131,6 +239,11 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'ids', type: 'numberArray' },
+			{ name: 'user_id', type: 'number' },
+			{ name: 'watcher_ids', type: 'numberArray' },
+		]),
 		multipart: false,
 	},
 	watcherPutUnwatch: {
@@ -141,6 +254,11 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'ids', type: 'numberArray' },
+			{ name: 'user_id', type: 'number' },
+			{ name: 'watcher_ids', type: 'numberArray' },
+		]),
 		multipart: false,
 	},
 	watcherPutBulkWatch: {
@@ -151,6 +269,11 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'ids', type: 'numberArray' },
+			{ name: 'user_id', type: 'number' },
+			{ name: 'watcher_ids', type: 'numberArray' },
+		]),
 		multipart: false,
 	},
 	watcherPutBulkUnwatch: {
@@ -161,6 +284,11 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'ids', type: 'numberArray' },
+			{ name: 'user_id', type: 'number' },
+			{ name: 'watcher_ids', type: 'numberArray' },
+		]),
 		multipart: false,
 	},
 	deleteATicketDelete: {
@@ -171,6 +299,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	bulkDeleteTicketsPostBulkDelete: {
@@ -181,6 +310,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	deleteAnAttachmentDelete: {
@@ -191,6 +321,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	restoreATicketPutRestore: {
@@ -201,6 +332,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllTicketFieldsGetTicketFields: {
@@ -211,6 +343,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllTicketNotesGetConversations: {
@@ -221,6 +354,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllTicketTimeentriesGetTimeEntries: {
@@ -231,6 +365,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewTicketSatisfactionRatingsGetSatisfactionRatings: {
@@ -242,6 +377,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['ticketId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	ticketSummaryGetSummary: {
@@ -252,6 +388,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	ticketSummaryPutSummary: {
@@ -262,6 +399,11 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'body', type: 'number' },
+			{ name: 'attachments', type: 'jsonArray' },
+			{ name: 'user_id', type: 'number' },
+		]),
 		multipart: false,
 	},
 	ticketSummaryDeleteSummary: {
@@ -272,6 +414,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	archiveTicketsGet: {
@@ -282,6 +425,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	archiveTicketsDelete: {
@@ -292,6 +436,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	archiveTicketsGetConversations: {
@@ -302,6 +447,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	ticketUserAccessesPostAccesses: {
@@ -312,6 +458,9 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'user_ids', type: 'numberArray' },
+		]),
 		multipart: false,
 	},
 	ticketUserAccessesPatchAccesses: {
@@ -322,6 +471,9 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'user_ids', type: 'numberArray' },
+		]),
 		multipart: false,
 	},
 	ticketUserAccessesGetAccesses: {
@@ -332,6 +484,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	ticketUserAccessesDeleteAccesses: {
@@ -342,6 +495,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllTicketFieldsGetTicketFields35: {
@@ -352,6 +506,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createTicketFieldPostTicketFields: {
@@ -362,6 +517,20 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'customers_can_edit', type: 'boolean' },
+			{ name: 'label_for_customers', type: 'string' },
+			{ name: 'displayed_to_customers', type: 'boolean' },
+			{ name: 'label', type: 'string' },
+			{ name: 'type', type: 'string' },
+			{ name: 'position', type: 'number' },
+			{ name: 'required_for_closure', type: 'boolean' },
+			{ name: 'required_for_agents', type: 'boolean' },
+			{ name: 'required_for_customers', type: 'boolean' },
+			{ name: 'choices', type: 'jsonArray' },
+			{ name: 'dependent_fields', type: 'jsonArray' },
+			{ name: 'section_mappings', type: 'jsonArray' },
+		]),
 		multipart: false,
 	},
 	viewTicketFieldGet: {
@@ -372,6 +541,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateTicketFieldPut: {
@@ -382,6 +552,20 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'customers_can_edit', type: 'boolean' },
+			{ name: 'label_for_customers', type: 'string' },
+			{ name: 'displayed_to_customers', type: 'boolean' },
+			{ name: 'label', type: 'string' },
+			{ name: 'type', type: 'string' },
+			{ name: 'position', type: 'number' },
+			{ name: 'required_for_closure', type: 'boolean' },
+			{ name: 'required_for_agents', type: 'boolean' },
+			{ name: 'required_for_customers', type: 'boolean' },
+			{ name: 'choices', type: 'jsonArray' },
+			{ name: 'dependent_fields', type: 'jsonArray' },
+			{ name: 'section_mappings', type: 'jsonArray' },
+		]),
 		multipart: false,
 	},
 	deleteTicketFieldDelete: {
@@ -392,6 +576,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllSectionFieldsGetSections: {
@@ -402,6 +587,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createSectionPostSections: {
@@ -412,6 +598,10 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'label', type: 'string' },
+			{ name: 'choice_ids', type: 'numberArray' },
+		]),
 		multipart: false,
 	},
 	listSpecificSectionGetSectionId: {
@@ -422,6 +612,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'sectionId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateSectionPutSectionId: {
@@ -432,6 +623,10 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'sectionId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'label', type: 'string' },
+			{ name: 'choice_ids', type: 'numberArray' },
+		]),
 		multipart: false,
 	},
 	deleteSectionDeleteSectionId: {
@@ -442,6 +637,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'sectionId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllTicketFormsGetTicketForms: {
@@ -452,6 +648,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createTicketFormPostTicketForms: {
@@ -462,6 +659,11 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'title', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'fields', type: 'jsonArray' },
+		]),
 		multipart: false,
 	},
 	viewTicketFormGet: {
@@ -472,6 +674,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateTicketFormPut: {
@@ -482,6 +685,11 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'title', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'fields', type: 'jsonArray' },
+		]),
 		multipart: false,
 	},
 	deleteTicketFormDelete: {
@@ -492,6 +700,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	cloneTicketFormPostClone: {
@@ -502,6 +711,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewTicketFormFieldGetFieldId: {
@@ -512,6 +722,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['formId', 'fieldId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateTicketFormFieldPutFieldId: {
@@ -522,6 +733,16 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['formId', 'fieldId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'label_for_customers', type: 'string' },
+			{ name: 'customers_can_edit', type: 'boolean' },
+			{ name: 'required_for_customers', type: 'boolean' },
+			{ name: 'hint_for_customers', type: 'string' },
+			// Freshdesk documents this exact field name.
+			{ name: 'place' + 'holder_for_customers', type: 'string' },
+			{ name: 'position', type: 'number' },
+		]),
 		multipart: false,
 	},
 	deleteTicketFormFieldDeleteFieldId: {
@@ -532,6 +753,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['formId', 'fieldId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	replyTicketPostReply: {
@@ -542,6 +764,15 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'body', type: 'string' },
+			{ name: 'structured_body', type: 'object' },
+			{ name: 'attachments', type: 'jsonArray' },
+			{ name: 'from_email', type: 'string' },
+			{ name: 'user_id', type: 'number' },
+			{ name: 'cc_emails', type: 'stringArray' },
+			{ name: 'bcc_emails', type: 'stringArray' },
+		]),
 		multipart: true,
 	},
 	addNoteToATicketPostNotes: {
@@ -552,6 +783,15 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['ticketId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'attachments', type: 'jsonArray' },
+			{ name: 'body', type: 'string' },
+			{ name: 'structured_body', type: 'object' },
+			{ name: 'incoming', type: 'boolean' },
+			{ name: 'notify_emails', type: 'stringArray' },
+			{ name: 'private', type: 'boolean' },
+			{ name: 'user_id', type: 'number' },
+		]),
 		multipart: false,
 	},
 	updateConversationPut: {
@@ -562,6 +802,10 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'attachments', type: 'jsonArray' },
+			{ name: 'body', type: 'string' },
+		]),
 		multipart: true,
 	},
 	deleteConversationDelete: {
@@ -572,6 +816,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	replyToForwardPostReplyToForward: {
@@ -582,6 +827,13 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'body', type: 'string' },
+			{ name: 'body_text', type: 'string' },
+			{ name: 'user_id', type: 'number' },
+			{ name: 'ticket_id', type: 'number' },
+			{ name: 'to_emails', type: 'stringArray' },
+		]),
 		multipart: false,
 	},
 	sendOutboundMessagePostOutboundMessages: {
@@ -592,6 +844,16 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'from', type: 'string' },
+			{ name: 'to', type: 'string' },
+			{ name: 'channel_type', type: 'string' },
+			{ name: 'message', type: 'object' },
+			{ name: 'external_reference_id', type: 'string' },
+			{ name: 'note_policy', type: 'object' },
+			{ name: 'note', type: 'object' },
+			{ name: 'ticket_properties', type: 'object' },
+		]),
 		multipart: false,
 	},
 	retrieveOutboundMessageGetMessageId: {
@@ -602,6 +864,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['messageId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewAccountGetAccount: {
@@ -612,6 +875,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	generateExportPostExport: {
@@ -622,6 +886,11 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'date_range', type: 'object' },
+			{ name: 'resources', type: 'jsonArray' },
+			{ name: 'output_format', type: 'string' },
+		]),
 		multipart: false,
 	},
 	viewJobGet: {
@@ -632,6 +901,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createContactPostContacts: {
@@ -642,6 +912,28 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'name', type: 'string' },
+			{ name: 'email', type: 'string' },
+			{ name: 'phone', type: 'string' },
+			{ name: 'mobile', type: 'string' },
+			{ name: 'twitter_id', type: 'string' },
+			{ name: 'social_handler', type: 'jsonArray' },
+			{ name: 'unique_external_id', type: 'string' },
+			{ name: 'other_emails', type: 'stringArray' },
+			{ name: 'company_id', type: 'number' },
+			{ name: 'view_all_tickets', type: 'boolean' },
+			{ name: 'other_companies', type: 'jsonArray' },
+			{ name: 'address', type: 'string' },
+			{ name: 'avatar', type: 'object' },
+			{ name: 'custom_fields', type: 'object' },
+			{ name: 'description', type: 'string' },
+			{ name: 'job_title', type: 'string' },
+			{ name: 'language', type: 'string' },
+			{ name: 'tags', type: 'stringArray' },
+			{ name: 'time_zone', type: 'string' },
+			{ name: 'lookup_parameter', type: 'string' },
+		]),
 		multipart: true,
 	},
 	viewContactGet: {
@@ -652,6 +944,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllContactsGetContacts: {
@@ -662,6 +955,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	searchContactsGetAutocomplete: {
@@ -672,6 +966,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: ['term'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	filterContactsGetContacts: {
@@ -682,6 +977,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: ['query'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateContactPut: {
@@ -692,6 +988,28 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'name', type: 'string' },
+			{ name: 'email', type: 'string' },
+			{ name: 'phone', type: 'string' },
+			{ name: 'mobile', type: 'string' },
+			{ name: 'twitter_id', type: 'string' },
+			{ name: 'social_handler', type: 'jsonArray' },
+			{ name: 'unique_external_id', type: 'string' },
+			{ name: 'other_emails', type: 'stringArray' },
+			{ name: 'company_id', type: 'number' },
+			{ name: 'view_all_tickets', type: 'boolean' },
+			{ name: 'other_companies', type: 'jsonArray' },
+			{ name: 'address', type: 'string' },
+			{ name: 'avatar', type: 'object' },
+			{ name: 'custom_fields', type: 'object' },
+			{ name: 'description', type: 'string' },
+			{ name: 'job_title', type: 'string' },
+			{ name: 'language', type: 'string' },
+			{ name: 'tags', type: 'stringArray' },
+			{ name: 'time_zone', type: 'string' },
+			{ name: 'lookup_parameter', type: 'string' },
+		]),
 		multipart: true,
 	},
 	deleteContactDelete: {
@@ -702,6 +1020,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	hardDeleteContactDeleteHardDelete: {
@@ -712,6 +1031,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	makeAgentPutMakeAgent: {
@@ -722,6 +1042,16 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'occasional', type: 'boolean' },
+			{ name: 'signature', type: 'string' },
+			{ name: 'ticket_scope', type: 'number' },
+			{ name: 'skill_ids', type: 'numberArray' },
+			{ name: 'group_ids', type: 'numberArray' },
+			{ name: 'role_ids', type: 'numberArray' },
+			{ name: 'type', type: 'string' },
+			{ name: 'focus_mode', type: 'boolean' },
+		]),
 		multipart: false,
 	},
 	restoreContactPutRestore: {
@@ -732,6 +1062,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	sendInvitePutSendInvite: {
@@ -742,6 +1073,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	mergeContactPostMerge: {
@@ -752,6 +1084,18 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'primary_contact_id', type: 'number' },
+			{ name: 'secondary_contact_ids', type: 'numberArray' },
+			{ name: 'contact', type: 'object' },
+			{ name: 'email', type: 'string' },
+			{ name: 'phone', type: 'string' },
+			{ name: 'mobile', type: 'string' },
+			{ name: 'twitter_id', type: 'string' },
+			{ name: 'unique_external_id', type: 'string' },
+			{ name: 'other_emails', type: 'stringArray' },
+			{ name: 'company_ids', type: 'numberArray' },
+		]),
 		multipart: false,
 	},
 	exportContactPostExport: {
@@ -762,6 +1106,11 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'fields', type: 'object' },
+			{ name: 'default_fields', type: 'object' },
+			{ name: 'custom_fields', type: 'object' },
+		]),
 		multipart: false,
 	},
 	exportContactGet: {
@@ -772,6 +1121,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	importContactGetImports: {
@@ -782,6 +1132,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	importContactGet: {
@@ -792,6 +1143,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	importContactPostImports: {
@@ -802,6 +1154,10 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'file', type: 'object' },
+			{ name: 'fields', type: 'object' },
+		]),
 		multipart: false,
 	},
 	importContactPutCancel: {
@@ -812,6 +1168,10 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'file', type: 'object' },
+			{ name: 'fields', type: 'object' },
+		]),
 		multipart: false,
 	},
 	listAllContactFieldsGetContactFields: {
@@ -822,6 +1182,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewContactFieldGet: {
@@ -832,6 +1193,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createContactFieldPostContactFields: {
@@ -842,6 +1204,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateContactFieldPut: {
@@ -852,6 +1215,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	deleteContactFieldDelete: {
@@ -862,6 +1226,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewAgentGet: {
@@ -872,6 +1237,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllAgentsGetAgents: {
@@ -882,6 +1248,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createAgentPostOperation: {
@@ -892,6 +1259,19 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'occasional', type: 'boolean' },
+			{ name: 'signature', type: 'string' },
+			{ name: 'ticket_scope', type: 'number' },
+			{ name: 'skill_ids', type: 'numberArray' },
+			{ name: 'group_ids', type: 'numberArray' },
+			{ name: 'role_ids', type: 'numberArray' },
+			{ name: 'agent_type', type: 'number' },
+			{ name: 'email', type: 'string' },
+			{ name: 'language', type: 'string' },
+			{ name: 'time_zone', type: 'string' },
+			{ name: 'focus_mode', type: 'boolean' },
+		]),
 		multipart: false,
 	},
 	updateAgentPut: {
@@ -902,6 +1282,18 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'occasional', type: 'boolean' },
+			{ name: 'signature', type: 'string' },
+			{ name: 'ticket_scope', type: 'number' },
+			{ name: 'skill_ids', type: 'numberArray' },
+			{ name: 'group_ids', type: 'numberArray' },
+			{ name: 'role_ids', type: 'numberArray' },
+			{ name: 'email', type: 'string' },
+			{ name: 'language', type: 'string' },
+			{ name: 'time_zone', type: 'string' },
+			{ name: 'focus_mode', type: 'boolean' },
+		]),
 		multipart: false,
 	},
 	deleteAgentDelete: {
@@ -912,6 +1304,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	meGetMe: {
@@ -922,6 +1315,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createMultipleAgentsPostBulk: {
@@ -932,6 +1326,22 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'occasional', type: 'boolean' },
+			{ name: 'signature', type: 'string' },
+			{ name: 'ticket_scope', type: 'number' },
+			{ name: 'skill_ids', type: 'numberArray' },
+			{ name: 'group_ids', type: 'numberArray' },
+			{ name: 'role_ids', type: 'numberArray' },
+			{ name: 'name', type: 'string' },
+			{ name: 'email', type: 'string' },
+			{ name: 'phone', type: 'string' },
+			{ name: 'mobile', type: 'string' },
+			{ name: 'job_title', type: 'string' },
+			{ name: 'language', type: 'string' },
+			{ name: 'time_zone', type: 'string' },
+			{ name: 'focus_mode', type: 'boolean' },
+		]),
 		multipart: false,
 	},
 	searchAgentsGetAutocomplete: {
@@ -942,6 +1352,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: ['term'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllAgentsAvailabilityGetAgents: {
@@ -953,6 +1364,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: { only: 'availability' },
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewAgentAvailabilityGetAvailability: {
@@ -963,6 +1375,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateAgentAvailabilityPutAvailability: {
@@ -973,6 +1386,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewSkillGet: {
@@ -983,6 +1397,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllSkillsGetOperation: {
@@ -993,6 +1408,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createSkillPostSkills: {
@@ -1003,6 +1419,12 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'name', type: 'string' },
+			{ name: 'agents', type: 'jsonArray' },
+			{ name: 'match_type', type: 'string' },
+			{ name: 'condtions', type: 'jsonArray' },
+		]),
 		multipart: false,
 	},
 	deleteSkillDelete: {
@@ -1013,6 +1435,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateSkillPut: {
@@ -1023,6 +1446,13 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'name', type: 'string' },
+			{ name: 'rank', type: 'string' },
+			{ name: 'agents', type: 'jsonArray' },
+			{ name: 'match_type', type: 'string' },
+			{ name: 'condtions', type: 'jsonArray' },
+		]),
 		multipart: false,
 	},
 	viewRoleGet: {
@@ -1033,6 +1463,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllRolesGetRoles: {
@@ -1043,6 +1474,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createGroupPostGroups: {
@@ -1053,6 +1485,14 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'agent_ids', type: 'jsonArray' },
+			{ name: 'auto_ticket_assign', type: 'number' },
+			{ name: 'description', type: 'string' },
+			{ name: 'escalate_to', type: 'number' },
+			{ name: 'nameMandatory', type: 'string' },
+			{ name: 'unassigned_for', type: 'string' },
+		]),
 		multipart: false,
 	},
 	viewGroupGet: {
@@ -1063,6 +1503,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllGroupsGetGroups: {
@@ -1073,6 +1514,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateGroupPut: {
@@ -1083,6 +1525,14 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'agent_ids', type: 'jsonArray' },
+			{ name: 'auto_ticket_assign', type: 'number' },
+			{ name: 'description', type: 'string' },
+			{ name: 'escalate_to', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'unassigned_for', type: 'string' },
+		]),
 		multipart: false,
 	},
 	deleteGroupDelete: {
@@ -1093,6 +1543,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createAdminGroupPostGroups: {
@@ -1103,6 +1554,17 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'name', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'type', type: 'string' },
+			{ name: 'escalate_to', type: 'number' },
+			{ name: 'unassigned_for', type: 'string' },
+			{ name: 'agent_ids', type: 'jsonArray' },
+			{ name: 'business_calendar_id', type: 'number' },
+			{ name: 'allow_agents_to_change_availability', type: 'boolean' },
+			{ name: 'automatic_agent_assignment', type: 'object' },
+		]),
 		multipart: false,
 	},
 	viewAdminGroupGet: {
@@ -1113,6 +1575,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllAdminGroupsGetGroups: {
@@ -1123,6 +1586,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateAdminGroupPut: {
@@ -1133,6 +1597,17 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'name', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'type', type: 'string' },
+			{ name: 'escalate_to', type: 'number' },
+			{ name: 'unassigned_for', type: 'string' },
+			{ name: 'agent_ids', type: 'jsonArray' },
+			{ name: 'business_calendar_id', type: 'number' },
+			{ name: 'allow_agents_to_change_availability', type: 'boolean' },
+			{ name: 'automatic_agent_assignment', type: 'object' },
+		]),
 		multipart: false,
 	},
 	deleteAdminGroupDelete: {
@@ -1143,6 +1618,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllAgentsInAGroupGetAgents: {
@@ -1153,6 +1629,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	addOrRemoveAgentInAGroupPatchAgents: {
@@ -1164,6 +1641,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createCompanyPostCompanies: {
@@ -1174,6 +1652,18 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'custom_fields', type: 'object' },
+			{ name: 'description', type: 'string' },
+			{ name: 'domains', type: 'jsonArray' },
+			{ name: 'nameMandatory', type: 'string' },
+			{ name: 'note', type: 'string' },
+			{ name: 'health_score', type: 'string' },
+			{ name: 'account_tier', type: 'string' },
+			{ name: 'renewal_date', type: 'string' },
+			{ name: 'industry', type: 'string' },
+			{ name: 'lookup_parameter', type: 'string' },
+		]),
 		multipart: false,
 	},
 	viewCompanyGet: {
@@ -1184,6 +1674,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllCompaniesGetCompanies: {
@@ -1194,6 +1685,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	searchCompaniesGetAutocomplete: {
@@ -1204,6 +1696,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: ['name'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	filterCompaniesGetCompanies: {
@@ -1214,6 +1707,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: ['query'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateCompanyPut: {
@@ -1224,6 +1718,18 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'custom_fields', type: 'object' },
+			{ name: 'description', type: 'string' },
+			{ name: 'domains', type: 'jsonArray' },
+			{ name: 'name', type: 'string' },
+			{ name: 'note', type: 'string' },
+			{ name: 'health_score', type: 'string' },
+			{ name: 'account_tier', type: 'string' },
+			{ name: 'renewal_date', type: 'string' },
+			{ name: 'industry', type: 'string' },
+			{ name: 'lookup_parameter', type: 'string' },
+		]),
 		multipart: false,
 	},
 	deleteCompanyDelete: {
@@ -1234,6 +1740,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	exportCompanyPostExport: {
@@ -1244,6 +1751,11 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'fields', type: 'object' },
+			{ name: 'default_fields', type: 'object' },
+			{ name: 'custom_fields', type: 'object' },
+		]),
 		multipart: false,
 	},
 	exportCompanyGet: {
@@ -1254,6 +1766,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	importCompanyGetImports: {
@@ -1264,6 +1777,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	importCompanyGet: {
@@ -1274,6 +1788,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	importCompanyPostImports: {
@@ -1284,6 +1799,10 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'file', type: 'object' },
+			{ name: 'fields', type: 'object' },
+		]),
 		multipart: false,
 	},
 	importCompanyPutCancel: {
@@ -1294,6 +1813,10 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'file', type: 'object' },
+			{ name: 'fields', type: 'object' },
+		]),
 		multipart: false,
 	},
 	listAllCompanyFieldsGetCompanyFields: {
@@ -1304,6 +1827,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewCompanyFieldGet: {
@@ -1314,6 +1838,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createCompanyFieldPostCompanyFields: {
@@ -1324,6 +1849,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateCompanyFieldPut: {
@@ -1334,6 +1860,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	deleteCompanyFieldDelete: {
@@ -1344,6 +1871,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	retrieveExistingCustomObjectsGetSchemas: {
@@ -1355,6 +1883,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	retrieveSpecificCustomObjectGetSchemaId: {
@@ -1366,6 +1895,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['schemaId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createANewCustomObjectRecordPostOperation: {
@@ -1377,6 +1907,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['schemaId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	retrieveACustomObjectRecordGetRecordId: {
@@ -1388,6 +1919,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['schemaId', 'recordId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateACustomObjectRecordPutRecordId: {
@@ -1399,6 +1931,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['schemaId', 'recordId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	deleteACustomObjectRecordDeleteRecordId: {
@@ -1410,6 +1943,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['schemaId', 'recordId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	retrieveAllTheRecordsOfACustomObjectGetRecords: {
@@ -1421,6 +1955,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['schemaId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	retrieveTheCountOfRecordsCustomObjectsGetCount: {
@@ -1432,6 +1967,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['schemaId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createCannedResponsePostCannedResponses: {
@@ -1442,6 +1978,14 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'title', type: 'string' },
+			{ name: 'content_html', type: 'string' },
+			{ name: 'folder_id', type: 'number' },
+			{ name: 'visibility', type: 'number' },
+			{ name: 'group_ids', type: 'numberArray' },
+			{ name: 'attachments', type: 'jsonArray' },
+		]),
 		multipart: false,
 	},
 	viewCannedResponseGet: {
@@ -1452,6 +1996,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateCannedResponsePut: {
@@ -1462,6 +2007,14 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'title', type: 'string' },
+			{ name: 'content_html', type: 'string' },
+			{ name: 'folder_id', type: 'number' },
+			{ name: 'visibility', type: 'number' },
+			{ name: 'group_ids', type: 'numberArray' },
+			{ name: 'attachments', type: 'jsonArray' },
+		]),
 		multipart: false,
 	},
 	bulkCreateCannedResponsesPostBulk: {
@@ -1473,6 +2026,14 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'title', type: 'string' },
+			{ name: 'content_html', type: 'string' },
+			{ name: 'folder_id', type: 'number' },
+			{ name: 'visibility', type: 'number' },
+			{ name: 'group_ids', type: 'numberArray' },
+			{ name: 'attachments', type: 'jsonArray' },
+		]),
 		multipart: false,
 	},
 	createCannedResponseFolderPostCannedResponseFolders: {
@@ -1484,6 +2045,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([{ name: 'name', type: 'string' }]),
 		multipart: false,
 	},
 	updateCannedResponseFolderPut: {
@@ -1495,6 +2057,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([{ name: 'name', type: 'string' }]),
 		multipart: false,
 	},
 	listAllCannedResponseFoldersGetCannedResponseFolders: {
@@ -1506,6 +2069,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewCannedResponseFoldersGet: {
@@ -1517,6 +2081,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	getDetailsOfCannedResponsesInFoldersGetResponses: {
@@ -1528,6 +2093,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	categoryAttributesPostCategories: {
@@ -1538,6 +2104,14 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'description', type: 'string' },
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+			{ name: 'nameMandatory', type: 'string' },
+		]),
 		multipart: false,
 	},
 	categoryAttributesGet: {
@@ -1548,6 +2122,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	categoryAttributesGetCategories: {
@@ -1558,6 +2133,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	categoryAttributesGetForums: {
@@ -1568,6 +2144,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	categoryAttributesPut: {
@@ -1578,6 +2155,14 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'description', type: 'string' },
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+			{ name: 'nameMandatory', type: 'string' },
+		]),
 		multipart: false,
 	},
 	categoryAttributesDelete: {
@@ -1588,6 +2173,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	forumAttributesPostForums: {
@@ -1598,6 +2184,20 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['categoryId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'company_ids', type: 'numberArray' },
+			{ name: 'description', type: 'string' },
+			{ name: 'forum_category_id', type: 'number' },
+			{ name: 'forum_type', type: 'number' },
+			{ name: 'forum_visibility', type: 'number' },
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'position', type: 'number' },
+			{ name: 'posts_count', type: 'number' },
+			{ name: 'topics_count', type: 'number' },
+			{ name: 'nameMandatory', type: 'string' },
+			{ name: 'user_id', type: 'number' },
+		]),
 		multipart: false,
 	},
 	forumAttributesGet: {
@@ -1608,6 +2208,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	forumAttributesGetTopics: {
@@ -1618,6 +2219,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	forumAttributesPut: {
@@ -1628,6 +2230,20 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'company_ids', type: 'numberArray' },
+			{ name: 'description', type: 'string' },
+			{ name: 'forum_category_id', type: 'number' },
+			{ name: 'forum_type', type: 'number' },
+			{ name: 'forum_visibility', type: 'number' },
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'position', type: 'number' },
+			{ name: 'posts_count', type: 'number' },
+			{ name: 'topics_count', type: 'number' },
+			{ name: 'nameMandatory', type: 'string' },
+			{ name: 'user_id', type: 'number' },
+		]),
 		multipart: false,
 	},
 	forumAttributesDelete: {
@@ -1638,6 +2254,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	forumAttributesPostFollow: {
@@ -1648,6 +2265,20 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'company_ids', type: 'numberArray' },
+			{ name: 'description', type: 'string' },
+			{ name: 'forum_category_id', type: 'number' },
+			{ name: 'forum_type', type: 'number' },
+			{ name: 'forum_visibility', type: 'number' },
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'position', type: 'number' },
+			{ name: 'posts_count', type: 'number' },
+			{ name: 'topics_count', type: 'number' },
+			{ name: 'nameMandatory', type: 'string' },
+			{ name: 'user_id', type: 'number' },
+		]),
 		multipart: false,
 	},
 	forumAttributesDeleteFollow: {
@@ -1658,6 +2289,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['forumId'] as const,
 		requiredQuery: ['user_id'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	forumAttributesGetFollow: {
@@ -1668,6 +2300,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: ['user_id'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	topicAttributesPostTopics: {
@@ -1678,6 +2311,24 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['forumId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'forum_id', type: 'number' },
+			{ name: 'hits', type: 'number' },
+			{ name: 'id', type: 'number' },
+			{ name: 'locked', type: 'boolean' },
+			{ name: 'merged_topic_id', type: 'number' },
+			{ name: 'message', type: 'string' },
+			{ name: 'posts_count', type: 'number' },
+			{ name: 'replied_at', type: 'string' },
+			{ name: 'replied_by', type: 'string' },
+			{ name: 'stamp_type', type: 'number' },
+			{ name: 'sticky', type: 'boolean' },
+			{ name: 'title', type: 'string' },
+			{ name: 'user_id', type: 'number' },
+			{ name: 'user_votes', type: 'number' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+		]),
 		multipart: false,
 	},
 	topicAttributesGet: {
@@ -1688,6 +2339,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	topicAttributesGetComments: {
@@ -1698,6 +2350,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	topicAttributesPut: {
@@ -1708,6 +2361,24 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'forum_id', type: 'number' },
+			{ name: 'hits', type: 'number' },
+			{ name: 'id', type: 'number' },
+			{ name: 'locked', type: 'boolean' },
+			{ name: 'merged_topic_id', type: 'number' },
+			{ name: 'message', type: 'string' },
+			{ name: 'posts_count', type: 'number' },
+			{ name: 'replied_at', type: 'string' },
+			{ name: 'replied_by', type: 'string' },
+			{ name: 'stamp_type', type: 'number' },
+			{ name: 'sticky', type: 'boolean' },
+			{ name: 'title', type: 'string' },
+			{ name: 'user_id', type: 'number' },
+			{ name: 'user_votes', type: 'number' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+		]),
 		multipart: false,
 	},
 	topicAttributesDelete: {
@@ -1718,6 +2389,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	topicAttributesPostFollow: {
@@ -1728,6 +2400,24 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'forum_id', type: 'number' },
+			{ name: 'hits', type: 'number' },
+			{ name: 'id', type: 'number' },
+			{ name: 'locked', type: 'boolean' },
+			{ name: 'merged_topic_id', type: 'number' },
+			{ name: 'message', type: 'string' },
+			{ name: 'posts_count', type: 'number' },
+			{ name: 'replied_at', type: 'string' },
+			{ name: 'replied_by', type: 'string' },
+			{ name: 'stamp_type', type: 'number' },
+			{ name: 'sticky', type: 'boolean' },
+			{ name: 'title', type: 'string' },
+			{ name: 'user_id', type: 'number' },
+			{ name: 'user_votes', type: 'number' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+		]),
 		multipart: false,
 	},
 	topicAttributesDeleteFollow: {
@@ -1738,6 +2428,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['topicId'] as const,
 		requiredQuery: ['user_id'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	topicAttributesGetFollow: {
@@ -1748,6 +2439,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: ['user_id'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	topicAttributesGetFollowedBy: {
@@ -1758,6 +2450,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: ['user_id'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	topicAttributesGetParticipatedBy: {
@@ -1768,6 +2461,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: ['user_id'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	commentAttributesPostComments: {
@@ -1778,6 +2472,19 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['topicId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'answer', type: 'boolean' },
+			{ name: 'body', type: 'string' },
+			{ name: 'forum_id', type: 'number' },
+			{ name: 'id', type: 'number' },
+			{ name: 'published', type: 'boolean' },
+			{ name: 'spam', type: 'boolean' },
+			{ name: 'topic_id', type: 'number' },
+			{ name: 'trash', type: 'boolean' },
+			{ name: 'user_id', type: 'number' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+		]),
 		multipart: false,
 	},
 	commentAttributesPut: {
@@ -1788,6 +2495,19 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'answer', type: 'boolean' },
+			{ name: 'body', type: 'string' },
+			{ name: 'forum_id', type: 'number' },
+			{ name: 'id', type: 'number' },
+			{ name: 'published', type: 'boolean' },
+			{ name: 'spam', type: 'boolean' },
+			{ name: 'topic_id', type: 'number' },
+			{ name: 'trash', type: 'boolean' },
+			{ name: 'user_id', type: 'number' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+		]),
 		multipart: false,
 	},
 	commentAttributesDelete: {
@@ -1798,6 +2518,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionCategoryAttributesPostCategories: {
@@ -1809,6 +2530,15 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'visible_in_portals', type: 'numberArray' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+			{ name: 'nameMandatory', type: 'string' },
+		]),
 		multipart: false,
 	},
 	solutionCategoryAttributesPostLanguageCode: {
@@ -1820,6 +2550,15 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'visible_in_portals', type: 'numberArray' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+			{ name: 'nameMandatory', type: 'string' },
+		]),
 		multipart: false,
 	},
 	solutionCategoryAttributesPut: {
@@ -1831,6 +2570,15 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'visible_in_portals', type: 'numberArray' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+			{ name: 'nameMandatory', type: 'string' },
+		]),
 		multipart: false,
 	},
 	solutionCategoryAttributesPutLanguageCode: {
@@ -1842,6 +2590,15 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'visible_in_portals', type: 'numberArray' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+			{ name: 'nameMandatory', type: 'string' },
+		]),
 		multipart: false,
 	},
 	solutionCategoryAttributesGet: {
@@ -1853,6 +2610,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionCategoryAttributesGetLanguageCode: {
@@ -1864,6 +2622,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionCategoryAttributesGetCategories: {
@@ -1875,6 +2634,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionCategoryAttributesGetLanguageCode186: {
@@ -1886,6 +2646,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionCategoryAttributesDelete: {
@@ -1897,6 +2658,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionFolderAttributesPostFolders: {
@@ -1907,6 +2669,22 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'parent_folder_id', type: 'number' },
+			{ name: 'hierarchy', type: 'jsonArray' },
+			{ name: 'articles_count', type: 'number' },
+			{ name: 'sub_folders_count', type: 'number' },
+			{ name: 'visibility', type: 'number' },
+			{ name: 'company_ids', type: 'numberArray' },
+			{ name: 'contact_segment_ids', type: 'numberArray' },
+			{ name: 'company_segment_ids', type: 'numberArray' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+			{ name: 'nameMandatory', type: 'string' },
+		]),
 		multipart: false,
 	},
 	solutionFolderAttributesPostLanguageCode: {
@@ -1917,6 +2695,22 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'parent_folder_id', type: 'number' },
+			{ name: 'hierarchy', type: 'jsonArray' },
+			{ name: 'articles_count', type: 'number' },
+			{ name: 'sub_folders_count', type: 'number' },
+			{ name: 'visibility', type: 'number' },
+			{ name: 'company_ids', type: 'numberArray' },
+			{ name: 'contact_segment_ids', type: 'numberArray' },
+			{ name: 'company_segment_ids', type: 'numberArray' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+			{ name: 'nameMandatory', type: 'string' },
+		]),
 		multipart: false,
 	},
 	solutionFolderAttributesPut: {
@@ -1927,6 +2721,22 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'parent_folder_id', type: 'number' },
+			{ name: 'hierarchy', type: 'jsonArray' },
+			{ name: 'articles_count', type: 'number' },
+			{ name: 'sub_folders_count', type: 'number' },
+			{ name: 'visibility', type: 'number' },
+			{ name: 'company_ids', type: 'numberArray' },
+			{ name: 'contact_segment_ids', type: 'numberArray' },
+			{ name: 'company_segment_ids', type: 'numberArray' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+			{ name: 'nameMandatory', type: 'string' },
+		]),
 		multipart: false,
 	},
 	solutionFolderAttributesPutLanguageCode: {
@@ -1937,6 +2747,22 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'parent_folder_id', type: 'number' },
+			{ name: 'hierarchy', type: 'jsonArray' },
+			{ name: 'articles_count', type: 'number' },
+			{ name: 'sub_folders_count', type: 'number' },
+			{ name: 'visibility', type: 'number' },
+			{ name: 'company_ids', type: 'numberArray' },
+			{ name: 'contact_segment_ids', type: 'numberArray' },
+			{ name: 'company_segment_ids', type: 'numberArray' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+			{ name: 'nameMandatory', type: 'string' },
+		]),
 		multipart: false,
 	},
 	solutionFolderAttributesGet: {
@@ -1947,6 +2773,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionFolderAttributesGetLanguageCode: {
@@ -1957,6 +2784,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionFolderAttributesGetFolders: {
@@ -1967,6 +2795,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['categoryId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionFolderAttributesGetLanguageCode195: {
@@ -1977,6 +2806,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['categoryId', 'languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionFolderAttributesGetSubfolders: {
@@ -1987,6 +2817,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['folderId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionFolderAttributesGetLanguageCode197: {
@@ -1997,6 +2828,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['folderId', 'languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionFolderAttributesDelete: {
@@ -2007,6 +2839,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionArticleAttributesPostArticles: {
@@ -2017,6 +2850,24 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'agent_id', type: 'number' },
+			{ name: 'category_id', type: 'number' },
+			{ name: 'description', type: 'string' },
+			{ name: 'description_text', type: 'string' },
+			{ name: 'folder_id', type: 'number' },
+			{ name: 'hierarchy', type: 'jsonArray' },
+			{ name: 'hits', type: 'number' },
+			{ name: 'status', type: 'number' },
+			{ name: 'seo_data', type: 'object' },
+			{ name: 'tags', type: 'stringArray' },
+			{ name: 'thumbs_down', type: 'number' },
+			{ name: 'thumbs_up', type: 'number' },
+			{ name: 'title', type: 'string' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+		]),
 		multipart: false,
 	},
 	solutionArticleAttributesPostLanguageCode: {
@@ -2027,6 +2878,24 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'agent_id', type: 'number' },
+			{ name: 'category_id', type: 'number' },
+			{ name: 'description', type: 'string' },
+			{ name: 'description_text', type: 'string' },
+			{ name: 'folder_id', type: 'number' },
+			{ name: 'hierarchy', type: 'jsonArray' },
+			{ name: 'hits', type: 'number' },
+			{ name: 'status', type: 'number' },
+			{ name: 'seo_data', type: 'object' },
+			{ name: 'tags', type: 'stringArray' },
+			{ name: 'thumbs_down', type: 'number' },
+			{ name: 'thumbs_up', type: 'number' },
+			{ name: 'title', type: 'string' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+		]),
 		multipart: false,
 	},
 	solutionArticleAttributesPut: {
@@ -2037,6 +2906,24 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'agent_id', type: 'number' },
+			{ name: 'category_id', type: 'number' },
+			{ name: 'description', type: 'string' },
+			{ name: 'description_text', type: 'string' },
+			{ name: 'folder_id', type: 'number' },
+			{ name: 'hierarchy', type: 'jsonArray' },
+			{ name: 'hits', type: 'number' },
+			{ name: 'status', type: 'number' },
+			{ name: 'seo_data', type: 'object' },
+			{ name: 'tags', type: 'stringArray' },
+			{ name: 'thumbs_down', type: 'number' },
+			{ name: 'thumbs_up', type: 'number' },
+			{ name: 'title', type: 'string' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+		]),
 		multipart: false,
 	},
 	solutionArticleAttributesPutLanguageCode: {
@@ -2047,6 +2934,24 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'id', type: 'number' },
+			{ name: 'agent_id', type: 'number' },
+			{ name: 'category_id', type: 'number' },
+			{ name: 'description', type: 'string' },
+			{ name: 'description_text', type: 'string' },
+			{ name: 'folder_id', type: 'number' },
+			{ name: 'hierarchy', type: 'jsonArray' },
+			{ name: 'hits', type: 'number' },
+			{ name: 'status', type: 'number' },
+			{ name: 'seo_data', type: 'object' },
+			{ name: 'tags', type: 'stringArray' },
+			{ name: 'thumbs_down', type: 'number' },
+			{ name: 'thumbs_up', type: 'number' },
+			{ name: 'title', type: 'string' },
+			{ name: 'created_at', type: 'string' },
+			{ name: 'updated_at', type: 'string' },
+		]),
 		multipart: false,
 	},
 	solutionArticleAttributesGet: {
@@ -2057,6 +2962,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionArticleAttributesGetLanguageCode: {
@@ -2067,6 +2973,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionArticleAttributesGetArticles: {
@@ -2077,6 +2984,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionArticleAttributesGetLanguageCode206: {
@@ -2087,6 +2995,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id', 'languageCode'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionArticleAttributesDelete: {
@@ -2097,6 +3006,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	solutionArticleAttributesGetSolutions: {
@@ -2107,6 +3017,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: ['term'] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	csatSurveysGetSurveys: {
@@ -2117,6 +3028,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createSurveyResponsesPostResponses: {
@@ -2127,6 +3039,11 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['surveyId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'survey_id', type: 'string' },
+			{ name: 'ticket_id', type: 'number' },
+			{ name: 'answers', type: 'jsonArray' },
+		]),
 		multipart: false,
 	},
 	viewSurveyResponsesGetResponses: {
@@ -2137,6 +3054,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['surveyId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllSurveyGetSurveys: {
@@ -2147,6 +3065,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createSatisfactionRatingPostSatisfactionRatings: {
@@ -2157,6 +3076,10 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['ticketId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'feedback', type: 'string' },
+			{ name: 'ratings', type: 'object' },
+		]),
 		multipart: false,
 	},
 	viewAllSatisfactionRatingsGetSatisfactionRatings: {
@@ -2168,6 +3091,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createTimeEntryPostTimeEntries: {
@@ -2178,6 +3102,15 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['ticketId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'agent_id', type: 'number' },
+			{ name: 'billable', type: 'boolean' },
+			{ name: 'executed_at', type: 'string' },
+			{ name: 'note', type: 'string' },
+			{ name: 'start_time', type: 'string' },
+			{ name: 'time_spent', type: 'string' },
+			{ name: 'timer_running', type: 'boolean' },
+		]),
 		multipart: false,
 	},
 	listAllTimeEntriesGetTimeEntries: {
@@ -2188,6 +3121,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateTimeEntryPut: {
@@ -2198,6 +3132,15 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'agent_id', type: 'number' },
+			{ name: 'billable', type: 'boolean' },
+			{ name: 'executed_at', type: 'string' },
+			{ name: 'note', type: 'string' },
+			{ name: 'start_time', type: 'string' },
+			{ name: 'time_spent', type: 'string' },
+			{ name: 'timer_running', type: 'boolean' },
+		]),
 		multipart: false,
 	},
 	toggleTimeEntryPutToggleTimer: {
@@ -2208,6 +3151,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['timeEntryId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	deleteTimeEntryDelete: {
@@ -2218,6 +3162,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewEmailConfigGet: {
@@ -2228,6 +3173,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllEmailConfigsGetEmailConfigs: {
@@ -2238,6 +3184,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createEmailMailboxPostMailboxes: {
@@ -2248,6 +3195,24 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'name', type: 'string' },
+			{ name: 'support_email', type: 'string' },
+			{ name: 'group_id', type: 'number' },
+			{ name: 'product_id', type: 'number' },
+			{ name: 'default_reply_email', type: 'string' },
+			{ name: 'mailbox_type', type: 'string' },
+			{ name: 'custom_mailbox', type: 'object' },
+			{ name: 'access_type', type: 'string' },
+			{ name: 'incoming', type: 'object' },
+			{ name: 'mail_server', type: 'string' },
+			{ name: 'port', type: 'number' },
+			{ name: 'use_ssl', type: 'boolean' },
+			{ name: 'delete_from_server', type: 'boolean' },
+			{ name: 'authentication', type: 'string' },
+			{ name: 'username', type: 'string' },
+			{ name: 'password', type: 'string' },
+		]),
 		multipart: false,
 	},
 	viewEmailMailboxGet: {
@@ -2258,6 +3223,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllEmailMailboxesGetMailboxes: {
@@ -2268,6 +3234,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateEmailMailboxPut: {
@@ -2278,6 +3245,24 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'name', type: 'string' },
+			{ name: 'support_email', type: 'string' },
+			{ name: 'group_id', type: 'number' },
+			{ name: 'product_id', type: 'number' },
+			{ name: 'default_reply_email', type: 'string' },
+			{ name: 'mailbox_type', type: 'string' },
+			{ name: 'custom_mailbox', type: 'object' },
+			{ name: 'access_type', type: 'string' },
+			{ name: 'incoming', type: 'object' },
+			{ name: 'mail_server', type: 'string' },
+			{ name: 'port', type: 'number' },
+			{ name: 'use_ssl', type: 'boolean' },
+			{ name: 'delete_from_server', type: 'boolean' },
+			{ name: 'authentication', type: 'string' },
+			{ name: 'username', type: 'string' },
+			{ name: 'password', type: 'string' },
+		]),
 		multipart: false,
 	},
 	deleteEmailMailboxDelete: {
@@ -2288,6 +3273,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateMailboxSettingsPutSettings: {
@@ -2298,6 +3284,12 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'personalized_email_replies', type: 'boolean' },
+			{ name: 'create_requester_using_reply_to', type: 'boolean' },
+			{ name: 'allow_agent_to_initiate_conversation', type: 'boolean' },
+			{ name: 'original_sender_as_requester_for_forward', type: 'boolean' },
+		]),
 		multipart: false,
 	},
 	viewMailboxSettingsGetSettings: {
@@ -2308,6 +3300,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateAutomaticBccEmailsPutBcc: {
@@ -2318,6 +3311,9 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'emails', type: 'jsonArray' },
+		]),
 		multipart: false,
 	},
 	viewAutomaticBccEmailsGetBcc: {
@@ -2328,6 +3324,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewProductGet: {
@@ -2338,6 +3335,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllProductsGetProducts: {
@@ -2348,6 +3346,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewBusinessHourGet: {
@@ -2358,6 +3357,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllBusinessHoursGetBusinessHours: {
@@ -2368,6 +3368,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	listAllScenarioAutomationsGetScenarioAutomations: {
@@ -2379,6 +3380,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createSlaPolicyPostSlaPolicies: {
@@ -2389,6 +3391,11 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'name', type: 'string' },
+			{ name: 'sla_target', type: 'object' },
+			{ name: 'applicable_to', type: 'object' },
+		]),
 		multipart: false,
 	},
 	listAllSlaPoliciesGetSlaPolicies: {
@@ -2399,6 +3406,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateSlaPolicyPut: {
@@ -2409,6 +3417,9 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'applicable_to', type: 'object' },
+		]),
 		multipart: false,
 	},
 	publishOmnichannelActivityPostContactActivities: {
@@ -2420,6 +3431,13 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'activity', type: 'object' },
+			{ name: 'contact', type: 'object' },
+			{ name: 'id', type: 'string' },
+			{ name: 'type', type: 'string' },
+			{ name: 'name', type: 'string' },
+		]),
 		multipart: false,
 	},
 	listAllAutomationRulesGetRules: {
@@ -2430,6 +3448,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['automationTypeId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	viewAnAutomationRuleGet: {
@@ -2440,6 +3459,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['automationTypeId', 'id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	deleteAnAutomationRuleDelete: {
@@ -2450,6 +3470,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['automationTypeId', 'id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createAnAutomationRulePostRules: {
@@ -2460,6 +3481,18 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['automationTypeId'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'automation_type_id', type: 'number' },
+			{ name: 'name', type: 'string' },
+			{ name: 'description', type: 'string' },
+			{ name: 'position', type: 'number' },
+			{ name: 'active', type: 'boolean' },
+			{ name: 'performer', type: 'jsonArray' },
+			{ name: 'events', type: 'jsonArray' },
+			{ name: 'conditions', type: 'jsonArray' },
+			{ name: 'operator', type: 'string' },
+			{ name: 'actions', type: 'jsonArray' },
+		]),
 		multipart: false,
 	},
 	updateAnAutomationRulePut: {
@@ -2470,6 +3503,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['automationTypeId', 'id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	settingsHelpdeskGetHelpdesk: {
@@ -2480,6 +3514,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createAThreadPostThreads: {
@@ -2490,6 +3525,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	getAThreadGet: {
@@ -2500,6 +3536,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateAThreadPut: {
@@ -2510,6 +3547,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	deleteAThreadDelete: {
@@ -2520,6 +3558,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	createMessageForThreadPostMessages: {
@@ -2530,6 +3569,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	getMessageForThreadGet: {
@@ -2540,6 +3580,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	updateMessageForThreadPut: {
@@ -2550,6 +3591,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	deleteMessageForThreadDelete: {
@@ -2560,6 +3602,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	getQuotedTextGetGenerateQuote: {
@@ -2570,6 +3613,7 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
 	exportAuditLogPostExport: {
@@ -2580,6 +3624,15 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: [] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([
+			{ name: 'from', type: 'string' },
+			{ name: 'to', type: 'string' },
+			{ name: 'export_format', type: 'string' },
+			{ name: 'receive_via', type: 'string' },
+			{ name: 'filter', type: 'object' },
+			{ name: 'condition', type: 'string' },
+			{ name: 'archived', type: 'boolean' },
+		]),
 		multipart: false,
 	},
 	exportAuditLogGet: {
@@ -2590,8 +3643,13 @@ export const FRESHDESK_OPERATIONS = {
 		pathParams: ['id'] as const,
 		requiredQuery: [] as const,
 		queryDefaults: {},
+		bodyFields: defineFreshdeskBodyFields([]),
 		multipart: false,
 	},
-} as const satisfies Record<string, FreshdeskRouteDefinition>;
+} satisfies Record<string, FreshdeskRouteDefinition>;
+
+export const FRESHDESK_OPERATIONS: {
+	[K in keyof typeof operationDefinitions]: FreshdeskRouteDefinition;
+} = operationDefinitions;
 
 export type FreshdeskRouteName = keyof typeof FRESHDESK_OPERATIONS;
