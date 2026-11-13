@@ -5,6 +5,7 @@ import {
 	operationTestOutputs,
 } from './endpoints/definitions';
 import {
+	assertForceManagerLoggingConfiguration,
 	executeForceManagerOperation,
 	safeOperationLogPayload,
 } from './endpoints/runtime';
@@ -209,5 +210,33 @@ describe('ForceManager operation registry and wire behavior', () => {
 		expect(new URL(String(requestUrl)).origin).toBe(
 			'https://sandbox-api.forcemanager.com',
 		);
+	});
+
+	it.each(['.', '..'])(
+		'rejects dot-segment path value %s before network I/O',
+		async (value) => {
+			const fetchMock = jest.spyOn(globalThis, 'fetch');
+			const input = recordOf(operationTestInputs.deleteWarningOfAResource);
+			const path = recordOf(input.path);
+
+			await expect(
+				executeForceManagerOperation(
+					'deleteWarningOfAResource',
+					{ ...input, path: { ...path, value3: value } },
+					'session-key',
+				),
+			).rejects.toThrow('Invalid ForceManager path parameter: value3');
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+
+	it('fails before a provider operation when encrypted event logging lacks a KEK', () => {
+		expect(() =>
+			assertForceManagerLoggingConfiguration({
+				$getAccountId: async () => 'account',
+				encryptDataAtRest: true,
+				kek: undefined,
+			}),
+		).toThrow('encryptDataAtRest requires kek');
 	});
 });

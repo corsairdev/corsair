@@ -34,6 +34,14 @@ function assertOperationOutput<K extends OperationKey>(
 	if (!result.success) throw result.error;
 }
 
+export function assertForceManagerLoggingConfiguration(
+	context: Parameters<typeof logEventFromContext>[0],
+): void {
+	if (context.encryptDataAtRest && !context.kek) {
+		throw new Error('encryptDataAtRest requires kek');
+	}
+}
+
 export function safeOperationLogPayload(
 	operationId: string,
 ): Record<string, string> {
@@ -63,7 +71,11 @@ export async function executeForceManagerOperation<K extends OperationKey>(
 		if (pathValue === undefined) {
 			throw new Error(`Missing ForceManager path parameter: ${name}`);
 		}
-		return encodeURIComponent(String(pathValue));
+		const segment = String(pathValue);
+		if (segment === '.' || segment === '..') {
+			throw new Error(`Invalid ForceManager path parameter: ${name}`);
+		}
+		return encodeURIComponent(segment);
 	});
 	const query = parsedInput.query;
 	const route = forceManagerRoutes.find((candidate) => candidate.name === key);
@@ -104,6 +116,7 @@ export function createOperation<K extends OperationKey>(
 	key: K,
 ): CorsairEndpoint<ForceManagerContext, OperationInput<K>, OperationOutput<K>> {
 	return async (ctx, input) => {
+		assertForceManagerLoggingConfiguration(ctx);
 		const result = await executeForceManagerOperation(
 			key,
 			input,
