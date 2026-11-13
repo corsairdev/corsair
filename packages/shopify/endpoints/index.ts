@@ -47,6 +47,7 @@ export const Shopify: {
 	orders: {
 		list: Endpoint<'ordersList'>;
 		get: Endpoint<'ordersGet'>;
+		listLineItems: Endpoint<'ordersListLineItems'>;
 		cancel: Endpoint<'ordersCancel'>;
 		markAsPaid: Endpoint<'ordersMarkAsPaid'>;
 		close: Endpoint<'ordersClose'>;
@@ -91,6 +92,7 @@ export const Shopify: {
 	orders: {
 		list: Orders.list,
 		get: Orders.get,
+		listLineItems: Orders.listLineItems,
 		cancel: Orders.cancel,
 		markAsPaid: Orders.markAsPaid,
 		close: Orders.close,

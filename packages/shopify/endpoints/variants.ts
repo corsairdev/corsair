@@ -83,13 +83,27 @@ export const update = (
 			mutation: true,
 		},
 		input,
-		({ productId, id, ...fields }) => ({
+		({ productId, id, sku, barcode, barcodeType, ...fields }) => ({
 			query: UPDATE_MUTATION,
-			// Undefined keys are dropped before the request, so an update names
-			// only the fields it changes.
+			// `ProductVariantsBulkInput` has no top-level `sku` or `barcode`.
+			// The SKU lives on the variant's inventory item, and a barcode goes
+			// in the `barcodes` list, which replaced the deprecated `barcode`
+			// field. Sending either at the top level fails validation and takes
+			// the rest of the update with it.
 			variables: {
 				productId,
-				variants: [{ id, ...definedOnly(fields) }],
+				variants: [
+					{
+						id,
+						...definedOnly(fields),
+						...(sku !== undefined ? { inventoryItem: { sku } } : {}),
+						...(barcode !== undefined
+							? {
+									barcodes: [{ value: barcode, type: barcodeType ?? 'UPC' }],
+								}
+							: {}),
+					},
+				],
 			},
 			payloadKey: 'productVariantsBulkUpdate',
 		}),

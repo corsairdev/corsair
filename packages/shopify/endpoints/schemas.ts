@@ -319,6 +319,16 @@ export const productsCreateOutput = z.object({ product: ProductSchema });
 export const productsUpdateOutput = z.object({ product: ProductSchema });
 export const productsDeleteOutput = z.object({
 	deletedProductId: z.string().nullish(),
+	// Present when the delete ran asynchronously: a polling handle. Null or
+	// absent for a synchronous delete, which returns the id directly.
+	productDeleteOperation: z
+		.object({
+			id: z.string(),
+			status: z.string(),
+			deletedProductId: z.string().nullish(),
+		})
+		.loose()
+		.nullish(),
 });
 
 // ── Variants ──────────────────────────────────────────────────────────────
@@ -333,8 +343,22 @@ export const variantsUpdateInput = z.object({
 	id: z.string().min(1).describe('Product variant GID.'),
 	price: z.string().optional().describe('Decimal string, e.g. "19.99".'),
 	compareAtPrice: z.string().optional(),
-	sku: z.string().optional(),
-	barcode: z.string().optional(),
+	sku: z
+		.string()
+		.optional()
+		.describe(
+			'SKU for this variant. Sent as inventoryItem.sku, which is where the API stores it.',
+		),
+	barcode: z
+		.string()
+		.optional()
+		.describe(
+			'Barcode value; sent in the barcodes list, not the deprecated barcode field.',
+		),
+	barcodeType: z
+		.enum(['UPC', 'EAN', 'ISBN', 'GTIN', 'ASIN', 'NS_PID'])
+		.optional()
+		.describe('Barcode standard. Defaults to UPC when barcode is set.'),
 	inventoryPolicy: z.enum(['DENY', 'CONTINUE']).optional(),
 });
 
@@ -362,8 +386,17 @@ export const variantsUpdateOutput = z.object({
 
 // ── Inventory ─────────────────────────────────────────────────────────────
 
-export const inventoryListInput = z.object({
+export const inventoryListInput = PageArgsSchema.extend({
 	inventoryItemId: z.string().min(1).describe('InventoryItem GID.'),
+	first: z
+		.number()
+		.int()
+		.min(1)
+		.max(MAX_PAGE_SIZE)
+		.optional()
+		.describe(
+			`Locations per page. Defaults to ${DEFAULT_PAGE_SIZE}; the maximum is ${MAX_PAGE_SIZE}.`,
+		),
 });
 
 export const inventoryAdjustInput = z.object({
@@ -377,6 +410,13 @@ export const inventoryAdjustInput = z.object({
 		.string()
 		.min(1)
 		.describe('Inventory change reason, e.g. "correction" or "received".'),
+	changeFromQuantity: z
+		.number()
+		.int()
+		.nullish()
+		.describe(
+			'Expected quantity before the change. Set it to turn the write into a compare-and-swap, which fails when the current quantity differs. Omit it to skip that check.',
+		),
 });
 
 export const inventoryListOutput = z.object({
@@ -464,7 +504,36 @@ export const ordersListInput = PageArgsSchema.extend({
 	reverse: z.boolean().optional(),
 });
 
-export const ordersGetInput = z.object({ id: z.string().min(1) });
+export const ordersGetInput = z.object({
+	id: z.string().min(1),
+	lineItemsFirst: z
+		.number()
+		.int()
+		.min(1)
+		.max(MAX_PAGE_SIZE)
+		.optional()
+		.describe(
+			`Line items per page. Defaults to 20; the maximum is ${MAX_PAGE_SIZE}.`,
+		),
+	lineItemsAfter: z
+		.string()
+		.optional()
+		.describe('Line-item cursor from a previous page.'),
+});
+
+export const ordersListLineItemsInput = z.object({
+	id: z.string().min(1).describe('Order GID.'),
+	first: z
+		.number()
+		.int()
+		.min(1)
+		.max(MAX_PAGE_SIZE)
+		.optional()
+		.describe(
+			`Line items per page. Defaults to ${DEFAULT_PAGE_SIZE}; the maximum is ${MAX_PAGE_SIZE}.`,
+		),
+	after: z.string().optional().describe('Cursor from a previous page.'),
+});
 
 export const ordersCancelInput = z.object({
 	id: z.string().min(1),
@@ -484,6 +553,9 @@ export const ordersCloseInput = z.object({ id: z.string().min(1) });
 
 export const ordersListOutput = z.object({ orders: connection(OrderSchema) });
 export const ordersGetOutput = z.object({ order: OrderSchema.nullish() });
+export const ordersListLineItemsOutput = z.object({
+	lineItems: connection(LineItemSchema),
+});
 export const ordersCancelOutput = z.object({ order: OrderSchema });
 export const ordersMarkAsPaidOutput = z.object({ order: OrderSchema });
 export const ordersCloseOutput = z.object({ order: OrderSchema });
@@ -523,9 +595,7 @@ export const customersUpdateOutput = z.object({ customer: CustomerSchema });
 
 export const shopGetInput = z.object({});
 
-export const locationsListInput = z.object({
-	first: z.number().int().min(1).max(MAX_PAGE_SIZE).optional(),
-});
+export const locationsListInput = PageArgsSchema;
 
 export const shopGetOutput = z.object({ shop: ShopSchema });
 export const locationsListOutput = z.object({

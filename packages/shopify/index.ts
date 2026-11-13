@@ -34,6 +34,7 @@ import {
 	CustomerWebhookSchema,
 	OrderWebhookSchema,
 	ProductWebhookSchema,
+	ShopifyWebhookOutputSchema,
 } from './webhooks/types';
 
 export const shopifyAuthConfig = {
@@ -133,6 +134,7 @@ const shopifyEndpointsNested = {
 	orders: {
 		list: Shopify.orders.list,
 		get: Shopify.orders.get,
+		listLineItems: Shopify.orders.listLineItems,
 		cancel: Shopify.orders.cancel,
 		markAsPaid: Shopify.orders.markAsPaid,
 		close: Shopify.orders.close,
@@ -219,6 +221,10 @@ export const shopifyEndpointSchemas = {
 		input: ShopifyEndpointInputSchemas.ordersGet,
 		output: ShopifyEndpointOutputSchemas.ordersGet,
 	},
+	'orders.listLineItems': {
+		input: ShopifyEndpointInputSchemas.ordersListLineItems,
+		output: ShopifyEndpointOutputSchemas.ordersListLineItems,
+	},
 	'orders.cancel': {
 		input: ShopifyEndpointInputSchemas.ordersCancel,
 		output: ShopifyEndpointOutputSchemas.ordersCancel,
@@ -278,9 +284,10 @@ const shopifyWebhookSchemas = {
 		payload: OrderWebhookSchema.or(ProductWebhookSchema).or(
 			CustomerWebhookSchema,
 		),
-		response: OrderWebhookSchema.or(ProductWebhookSchema).or(
-			CustomerWebhookSchema,
-		),
+		// The handler returns its own summary in `response.data`, not the
+		// resource: `payload` is what Shopify sends, `response` is what a caller
+		// receives back.
+		response: ShopifyWebhookOutputSchema,
 	},
 } as const satisfies RequiredPluginWebhookSchemas<typeof shopifyWebhooksNested>;
 
@@ -356,7 +363,13 @@ const shopifyEndpointMeta = {
 	},
 	'orders.get': {
 		riskLevel: 'read',
-		description: 'Read one order by GID with its customer and line items',
+		description:
+			'Read one order by GID with its customer and a page of its line items',
+	},
+	'orders.listLineItems': {
+		riskLevel: 'read',
+		description:
+			'Read one page of an order line items, cursor-paged, for orders with more than one page',
 	},
 	'orders.cancel': {
 		riskLevel: 'destructive',
@@ -489,13 +502,15 @@ export function shopify<const T extends ShopifyPluginOptions>(
 	} satisfies InternalShopifyPlugin;
 }
 
-export { resolveShopifyCredentials } from './auth';
+export { resolveShopDomain, resolveShopifyCredentials } from './auth';
 export {
+	getReplayMeta,
 	normaliseShopDomain,
 	ShopifyAPIError,
 	throttleDelayMs,
 } from './client';
 export { assertNoUserErrors, ShopifyUserError } from './endpoints/call';
+export { adjustmentIdempotencyKey } from './endpoints/inventory';
 export type {
 	ShopifyEndpointInputs,
 	ShopifyEndpointOutputs,

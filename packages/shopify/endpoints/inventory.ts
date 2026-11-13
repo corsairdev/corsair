@@ -11,13 +11,17 @@ import {
 
 // `quantities` requires the names it should return. Listing only `available`
 // keeps the cost down; `on_hand` is the other name Shopify defines.
+//
+// `inventoryLevels` is a connection: a store with stock at more than one page
+// of locations needs the cursor to read the rest, so `first` and `after` come
+// from the caller.
 const LIST_QUERY = `
-query InventoryList($id: ID!) {
+query InventoryList($id: ID!, $first: Int, $after: String) {
   inventoryItem(id: $id) {
     id
     sku
     tracked
-    inventoryLevels(first: 50) {
+    inventoryLevels(first: $first, after: $after) {
       edges {
         node {
           id
@@ -27,18 +31,26 @@ query InventoryList($id: ID!) {
           location { id name }
           quantities(names: ["available"]) { name quantity }
         }
+        cursor
       }
       pageInfo { hasNextPage endCursor }
     }
   }
 }`;
 
-// Shopify names this argument by field path, so the same value also lands in
-// the input object. `changeFromQuantity` is deliberately omitted: it turns the
-// write into a compare-and-swap, and this endpoint is a plain delta.
+// Two requirements from the live 2026-10 schema, both verified by running the
+// mutation without them:
+//
+//   - `InventoryChangeInput.changeFromQuantity` is mandatory: Shopify answers
+//     `must include the following argument: changeFromQuantity` when it is
+//     absent. Sending `null` explicitly skips the compare-and-swap check, which
+//     is what a plain delta wants.
+//   - The `@idempotent(key:)` directive is required. The key is derived from
+//     the change itself, so a retry of the same adjustment reuses it (Shopify
+//     applies it once) while a genuinely new adjustment gets a new key.
 const ADJUST_MUTATION = `
-mutation InventoryAdjust($input: InventoryAdjustQuantitiesInput!) {
-  inventoryAdjustQuantities(input: $input) {
+mutation InventoryAdjust($input: InventoryAdjustQuantitiesInput!, $idempotencyKey: String!) {
+  inventoryAdjustQuantities(input: $input) @idempotent(key: $idempotencyKey) {
     inventoryAdjustmentGroup {
       createdAt
       reason
@@ -47,6 +59,27 @@ mutation InventoryAdjust($input: InventoryAdjustQuantitiesInput!) {
     userErrors { field message }
   }
 }`;
+
+/**
+ * A stable key for one logical adjustment. Two calls that change the same item
+ * at the same location by the same delta for the same reason are the same
+ * adjustment, and Shopify applies it once; a different delta or location is a
+ * different adjustment and gets its own key.
+ */
+export function adjustmentIdempotencyKey(input: {
+	inventoryItemId: string;
+	locationId: string;
+	delta: number;
+	reason: string;
+}): string {
+	return [
+		'inventory-adjust',
+		input.inventoryItemId,
+		input.locationId,
+		String(input.delta),
+		input.reason,
+	].join(':');
+}
 
 export const list = (
 	ctx: ShopifyContext,
@@ -60,9 +93,9 @@ export const list = (
 			output: Outputs.inventoryList,
 		},
 		input,
-		({ inventoryItemId }) => ({
+		({ inventoryItemId, first, after }) => ({
 			query: LIST_QUERY,
-			variables: { id: inventoryItemId },
+			variables: { id: inventoryItemId, first: first ?? 50, after },
 			replaySafe: true,
 		}),
 		{ log: () => ({}) },
@@ -81,21 +114,38 @@ export const adjust = (
 			mutation: true,
 		},
 		input,
-		({ inventoryItemId, locationId, delta, reason }) => ({
+		({ inventoryItemId, locationId, delta, reason, changeFromQuantity }) => ({
 			query: ADJUST_MUTATION,
 			variables: {
 				input: {
 					reason,
 					name: 'available',
-					changes: [{ inventoryItemId, locationId, delta }],
+					changes: [
+						{
+							inventoryItemId,
+							locationId,
+							delta,
+							// Explicitly null unless the caller supplied the
+							// current quantity, which turns the write into a
+							// compare-and-swap. The field must be present either
+							// way or Shopify rejects the request.
+							changeFromQuantity: changeFromQuantity ?? null,
+						},
+					],
 				},
+				idempotencyKey: adjustmentIdempotencyKey({
+					inventoryItemId,
+					locationId,
+					delta,
+					reason,
+				}),
 			},
 			payloadKey: 'inventoryAdjustQuantities',
 		}),
 		{
-			// unknown: the mutation payload's data half; the output schema
-			// validates it after this narrowing.
 			shape: (raw) => {
+				// unknown: the mutation payload's data half; the output schema
+				// validates it after this narrowing.
 				const payload = raw as {
 					inventoryAdjustQuantities: { inventoryAdjustmentGroup?: unknown };
 				};

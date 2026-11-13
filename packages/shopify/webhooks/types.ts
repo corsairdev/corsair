@@ -202,6 +202,21 @@ export const SHOPIFY_WEBHOOK_SCHEMAS = {
 
 export type ShopifyWebhookTopic = keyof typeof SHOPIFY_WEBHOOK_SCHEMAS;
 
+/**
+ * What `receive.handler` puts in `response.data`. Declared here because
+ * `index.ts` registers it as the webhook's response schema, and `receive.ts`
+ * imports it for its return type, so neither file depends on the other's
+ * internals.
+ */
+export const ShopifyWebhookOutputSchema = z
+	.object({
+		topic: z.string(),
+		shopDomain: z.string().nullable(),
+		resourceId: z.string(),
+		signatureVerified: z.boolean(),
+	})
+	.loose();
+
 export function isSupportedTopic(topic: string): topic is ShopifyWebhookTopic {
 	return topic in SHOPIFY_WEBHOOK_SCHEMAS;
 }

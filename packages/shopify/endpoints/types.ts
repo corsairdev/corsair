@@ -41,6 +41,8 @@ import {
 	ordersGetInput,
 	ordersGetOutput,
 	ordersListInput,
+	ordersListLineItemsInput,
+	ordersListLineItemsOutput,
 	ordersListOutput,
 	ordersMarkAsPaidInput,
 	ordersMarkAsPaidOutput,
@@ -84,6 +86,7 @@ export type ShopifyEndpointInputs = {
 	collectionsAddProducts: z.input<typeof collectionsAddProductsInput>;
 	ordersList: z.input<typeof ordersListInput>;
 	ordersGet: z.input<typeof ordersGetInput>;
+	ordersListLineItems: z.input<typeof ordersListLineItemsInput>;
 	ordersCancel: z.input<typeof ordersCancelInput>;
 	ordersMarkAsPaid: z.input<typeof ordersMarkAsPaidInput>;
 	ordersClose: z.input<typeof ordersCloseInput>;
@@ -114,6 +117,7 @@ export type ShopifyEndpointOutputs = {
 	collectionsAddProducts: z.output<typeof collectionsAddProductsOutput>;
 	ordersList: z.output<typeof ordersListOutput>;
 	ordersGet: z.output<typeof ordersGetOutput>;
+	ordersListLineItems: z.output<typeof ordersListLineItemsOutput>;
 	ordersCancel: z.output<typeof ordersCancelOutput>;
 	ordersMarkAsPaid: z.output<typeof ordersMarkAsPaidOutput>;
 	ordersClose: z.output<typeof ordersCloseOutput>;
@@ -144,6 +148,7 @@ export const ShopifyEndpointInputSchemas = {
 	collectionsAddProducts: collectionsAddProductsInput,
 	ordersList: ordersListInput,
 	ordersGet: ordersGetInput,
+	ordersListLineItems: ordersListLineItemsInput,
 	ordersCancel: ordersCancelInput,
 	ordersMarkAsPaid: ordersMarkAsPaidInput,
 	ordersClose: ordersCloseInput,
@@ -174,6 +179,7 @@ export const ShopifyEndpointOutputSchemas = {
 	collectionsAddProducts: collectionsAddProductsOutput,
 	ordersList: ordersListOutput,
 	ordersGet: ordersGetOutput,
+	ordersListLineItems: ordersListLineItemsOutput,
 	ordersCancel: ordersCancelOutput,
 	ordersMarkAsPaid: ordersMarkAsPaidOutput,
 	ordersClose: ordersCloseOutput,

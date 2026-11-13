@@ -30,8 +30,8 @@ query ShopGet {
 // non-null but its members are not, which is how a location with no street
 // address still reads.
 const LOCATIONS_QUERY = `
-query LocationsList($first: Int) {
-  locations(first: $first) {
+query LocationsList($first: Int, $after: String) {
+  locations(first: $first, after: $after) {
     edges {
       node {
         id
@@ -74,9 +74,9 @@ export const listLocations = (
 			output: Outputs.locationsList,
 		},
 		input,
-		({ first }) => ({
+		({ first, after }) => ({
 			query: LOCATIONS_QUERY,
-			variables: { first: first ?? 50 },
+			variables: { first: first ?? 50, after },
 			replaySafe: true,
 		}),
 		{ log: (_, result) => ({ count: result.locations.edges.length }) },

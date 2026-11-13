@@ -79,10 +79,18 @@ mutation ProductUpdate($product: ProductUpdateInput!) {
 }
 ${PRODUCT_FRAGMENT}`;
 
+// productDelete takes `input: ProductDeleteInput!`, not a bare `id` argument.
+// `productDeleteOperation` is the polling handle for the asynchronous form:
+// with `synchronous: false` Shopify applies the delete in the background and
+// returns nothing else to track it with.
 const DELETE_MUTATION = `
-mutation ProductDelete($id: ID!, $synchronous: Boolean!) {
-  productDelete(id: $id, synchronous: $synchronous) {
+mutation ProductDelete($input: ProductDeleteInput!, $synchronous: Boolean!) {
+  productDelete(input: $input, synchronous: $synchronous) {
     deletedProductId
+    productDeleteOperation {
+      id
+      status
+    }
     userErrors { field message }
   }
 }`;
@@ -207,7 +215,7 @@ export const remove = (
 		input,
 		({ id, synchronous }) => ({
 			query: DELETE_MUTATION,
-			variables: { id, synchronous: synchronous ?? true },
+			variables: { input: { id }, synchronous: synchronous ?? true },
 			payloadKey: 'productDelete',
 		}),
 		{
@@ -215,9 +223,17 @@ export const remove = (
 			// validates it after this narrowing.
 			shape: (raw) => {
 				const payload = raw as {
-					productDelete: { deletedProductId?: unknown };
+					productDelete: {
+						deletedProductId?: unknown;
+						// unknown: validated by the output schema after this
+						// narrowing.
+						productDeleteOperation?: unknown;
+					};
 				};
-				return { deletedProductId: payload.productDelete.deletedProductId };
+				return {
+					deletedProductId: payload.productDelete.deletedProductId,
+					productDeleteOperation: payload.productDelete.productDeleteOperation,
+				};
 			},
 			log: (_, result) => ({ productId: result.deletedProductId ?? undefined }),
 		},

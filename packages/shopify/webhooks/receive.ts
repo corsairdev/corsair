@@ -1,6 +1,8 @@
 import type { CorsairWebhook, WebhookRequest } from 'corsair/core';
+import type { z } from 'zod';
 import type { ShopifyContext } from '..';
-import type { ShopifyWebhookTopic } from './types';
+import { normaliseShopDomain } from '../client';
+import type { ShopifyWebhookOutputSchema, ShopifyWebhookTopic } from './types';
 import {
 	headerValue,
 	isSupportedTopic,
@@ -11,14 +13,7 @@ import {
 	verifyShopifyWebhook,
 } from './types';
 
-export type ShopifyWebhookOutput = {
-	topic: string;
-	shopDomain: string | null;
-	/** Id of the resource the delivery describes (order, product, customer). */
-	resourceId: string;
-	/** False only when a Hub-verified delivery skipped local verification. */
-	signatureVerified: boolean;
-};
+export type ShopifyWebhookOutput = z.output<typeof ShopifyWebhookOutputSchema>;
 
 /**
  * Rejects a delivery by throwing. `processWebhook` builds its result as
@@ -29,10 +24,40 @@ function refuse(reason: string): never {
 	throw new Error(`Shopify webhook rejected: ${reason}`);
 }
 
+/**
+ * The secret that verifies this delivery.
+ *
+ * Core runs the handler on the tenant-scoped instance, so `ctx.key` is the
+ * secret the key builder resolved for that tenant (R8: the binder's value,
+ * after hooks and the per-tenant lookup). Verifying with it binds the delivery
+ * to the tenant whose hooks process it: a secret that belongs to another
+ * tenant fails here, rather than being accepted because two tenants happen to
+ * share a value. The option is only a fallback for a context with no resolved
+ * key, which is what a direct unit call looks like.
+ */
 function readSecret(ctx: ShopifyContext): string | undefined {
+	const resolved = typeof ctx.key === 'string' ? ctx.key.trim() : '';
+	if (resolved) return resolved;
 	return typeof ctx.options?.webhookSecret === 'string'
 		? ctx.options.webhookSecret
 		: undefined;
+}
+
+/**
+ * The shop domain stored for this tenant, normalised for comparison. Reading
+ * it can fail on a tenant that never configured one; that is not a reason to
+ * reject a delivery, so a failure reads as "unknown" and the check is skipped.
+ */
+async function readTenantDomain(
+	ctx: ShopifyContext,
+): Promise<string | undefined> {
+	try {
+		const stored = await ctx.keys?.get_shop_domain?.();
+		const value = stored?.trim();
+		return value ? normaliseShopDomain(value) : undefined;
+	} catch {
+		return undefined;
+	}
 }
 
 /**
@@ -86,6 +111,20 @@ export const receive: CorsairWebhook<
 		const resourceId = String(parsed.data.id);
 		const shopDomain =
 			headerValue(request.headers, SHOPIFY_SHOP_DOMAIN_HEADER) ?? null;
+
+		// The shop-domain header is not covered by the HMAC, so it cannot prove
+		// which shop sent a delivery. It is checked against the domain stored
+		// for this tenant instead: a delivery signed with this tenant's secret
+		// but claiming another shop is a config mistake or a replay, and either
+		// way its hooks must not run against this tenant's data. A tenant with
+		// no stored domain cannot be checked, so the value is read back as
+		// reported rather than trusted.
+		const tenantDomain = await readTenantDomain(ctx);
+		if (tenantDomain && shopDomain && tenantDomain !== shopDomain) {
+			refuse(
+				`the delivery names shop "${shopDomain}" but this tenant is configured for "${tenantDomain}"`,
+			);
+		}
 
 		const data: ShopifyWebhookOutput = {
 			topic,
