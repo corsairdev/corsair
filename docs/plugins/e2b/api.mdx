@@ -219,6 +219,7 @@ await corsair.e2b.api.events.list({"query":{"offset":0,"limit":10,"orderAsc":fal
 
 
 ---
+
 ### listBySandbox
 
 `events.listBySandbox`
@@ -302,7 +303,7 @@ MakeDir
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.filesystem.createDir({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.createDir({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
 ```
 
 **Input**
@@ -349,7 +350,7 @@ await corsair.e2b.api.filesystem.createDir({"headers":{"e2bSandboxId":"test","e2
 ```ts
 {
   name?: string,
-  type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK,
+  type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string,
   path?: string,
   size?: number | string,
   mode?: number,
@@ -379,7 +380,7 @@ CreateWatcher
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.filesystem.createWatcher({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.createWatcher({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
 ```
 
 **Input**
@@ -438,7 +439,7 @@ GetWatcherEvents
 **Risk:** `read`
 
 ```ts
-await corsair.e2b.api.filesystem.getWatcherEvents({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.getWatcherEvents({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
 ```
 
 **Input**
@@ -485,10 +486,10 @@ await corsair.e2b.api.filesystem.getWatcherEvents({"headers":{"e2bSandboxId":"te
 ```ts
 {
   name?: string,
-  type?: EVENT_TYPE_UNSPECIFIED | EVENT_TYPE_CREATE | EVENT_TYPE_WRITE | EVENT_TYPE_REMOVE | EVENT_TYPE_RENAME | EVENT_TYPE_CHMOD,
+  type?: EVENT_TYPE_UNSPECIFIED | EVENT_TYPE_CREATE | EVENT_TYPE_WRITE | EVENT_TYPE_REMOVE | EVENT_TYPE_RENAME | EVENT_TYPE_CHMOD | string,
   entry?: {
     name?: string,
-    type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK,
+    type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string,
     path?: string,
     size?: number | string,
     mode?: number,
@@ -519,7 +520,7 @@ ListDir
 **Risk:** `read`
 
 ```ts
-await corsair.e2b.api.filesystem.listDir({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.listDir({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
 ```
 
 **Input**
@@ -567,7 +568,7 @@ await corsair.e2b.api.filesystem.listDir({"headers":{"e2bSandboxId":"test","e2bS
 ```ts
 {
   name?: string,
-  type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK,
+  type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string,
   path?: string,
   size?: number | string,
   mode?: number,
@@ -597,7 +598,7 @@ Move
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.filesystem.move({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.move({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
 ```
 
 **Input**
@@ -645,7 +646,7 @@ await corsair.e2b.api.filesystem.move({"headers":{"e2bSandboxId":"test","e2bSand
 ```ts
 {
   name?: string,
-  type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK,
+  type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string,
   path?: string,
   size?: number | string,
   mode?: number,
@@ -675,7 +676,7 @@ Remove
 **Risk:** `destructive`
 
 ```ts
-await corsair.e2b.api.filesystem.remove({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.remove({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
 ```
 
 **Input**
@@ -724,7 +725,7 @@ RemoveWatcher
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.filesystem.removeWatcher({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.removeWatcher({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
 ```
 
 **Input**
@@ -773,7 +774,7 @@ Stat
 **Risk:** `read`
 
 ```ts
-await corsair.e2b.api.filesystem.stat({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.filesystem.stat({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
 ```
 
 **Input**
@@ -820,7 +821,7 @@ await corsair.e2b.api.filesystem.stat({"headers":{"e2bSandboxId":"test","e2bSand
 ```ts
 {
   name?: string,
-  type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK,
+  type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK | string,
   path?: string,
   size?: number | string,
   mode?: number,
@@ -852,7 +853,7 @@ CloseStdin
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.process.closeStdin({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.process.closeStdin({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
 ```
 
 **Input**
@@ -905,7 +906,7 @@ List
 **Risk:** `read`
 
 ```ts
-await corsair.e2b.api.process.list({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.process.list({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
 ```
 
 **Input**
@@ -977,7 +978,7 @@ SendInput
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.process.sendInput({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"input":{"stdin":"aGVsbG8="}}});
+await corsair.e2b.api.process.sendInput({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"input":{"stdin":"aGVsbG8="}}});
 ```
 
 **Input**
@@ -1037,7 +1038,7 @@ SendSignal
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.process.sendSignal({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.process.sendSignal({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
 ```
 
 **Input**
@@ -1091,7 +1092,7 @@ Update
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.process.update({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.process.update({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
 ```
 
 **Input**
@@ -1489,10 +1490,10 @@ await corsair.e2b.api.sandboxes.get({"path":{"sandboxID":"test"}});
 | `memoryMB` | `number` | Yes | — |
 | `diskSizeMB` | `number` | Yes | — |
 | `metadata` | `object` | No | — |
-| `state` | `running \| paused` | Yes | — |
+| `state` | `running \| paused \| string` | Yes | — |
 | `network` | `object` | No | — |
 | `lifecycle` | `object` | No | — |
-| `pauseMode` | `full \| filesystem` | No | — |
+| `pauseMode` | `full \| filesystem \| string` | No | — |
 | `volumeMounts` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -1535,7 +1536,7 @@ await corsair.e2b.api.sandboxes.get({"path":{"sandboxID":"test"}});
 ```ts
 {
   autoResume: boolean,
-  onTimeout: kill | pause
+  onTimeout: kill | pause | string
 }
 ```
 </Accordion>
@@ -1790,7 +1791,7 @@ The v2 list operation accepts state as a comma-separated array and returns `{ it
   diskSizeMB: number,
   metadata?: {
   },
-  state: running | paused,
+  state: running | paused | string,
   envdVersion: string,
   envdUnresponsiveAtPause?: boolean,
   volumeMounts?: {
@@ -3058,13 +3059,13 @@ Returns the template and its build page, including nextToken from X-Next-Token; 
   spawnCount: number,
   buildCount: number,
   envdVersion: string,
-  buildStatus: building | waiting | ready | error | uploaded,
+  buildStatus: building | waiting | ready | error | uploaded | string,
   isDefault?: boolean,
   description?: string
 }& {
   builds: {
     buildID: string,
-    status: building | waiting | ready | error | uploaded,
+    status: building | waiting | ready | error | uploaded | string,
     createdAt: string,
     updatedAt: string,
     finishedAt?: string,
@@ -3205,7 +3206,7 @@ await corsair.e2b.api.templates.getBuildStatus({"path":{"templateID":"test","bui
 | `logEntries` | `object[]` | Yes | — |
 | `templateID` | `string` | Yes | — |
 | `buildID` | `string` | Yes | — |
-| `status` | `building \| waiting \| ready \| error \| uploaded` | Yes | — |
+| `status` | `building \| waiting \| ready \| error \| uploaded \| string` | Yes | — |
 | `reason` | `object` | No | — |
 
 <AccordionGroup>
@@ -3406,7 +3407,7 @@ Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continu
   spawnCount: number,
   buildCount: number,
   envdVersion: string,
-  buildStatus: building | waiting | ready | error | uploaded,
+  buildStatus: building | waiting | ready | error | uploaded | string,
   isDefault?: boolean,
   description?: string
 }[]
@@ -3459,7 +3460,7 @@ await corsair.e2b.api.templates.listDefault({});
   spawnCount: number,
   buildCount: number,
   envdVersion: string,
-  buildStatus: building | waiting | ready | error | uploaded,
+  buildStatus: building | waiting | ready | error | uploaded | string,
   isDefault?: boolean,
   description?: string
 }[]
@@ -3758,3 +3759,4 @@ await corsair.e2b.api.volumes.list({});
 
 
 ---
+
