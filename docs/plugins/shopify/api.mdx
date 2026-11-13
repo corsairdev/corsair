@@ -310,7 +310,7 @@ await corsair.shopify.api.customers.get({ id: 'gid://shopify/Customer/1' });
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 
-Personal data needs a paid plan. On a development or Basic plan the name, email and phone come back null with an ACCESS_DENIED warning; the rest of the customer is returned.
+Personal data depends on the app access: without the customer scopes the name, email and phone come back null with an ACCESS_DENIED warning, and the rest of the customer is returned.
 
 
 
@@ -376,7 +376,7 @@ await corsair.shopify.api.customers.list({ first: 10 });
 | `after` | `string` | No | Cursor from a previous page. |
 | `query` | `string` | No | — |
 
-Personal data needs a paid plan. On a development or Basic plan Shopify nulls every PII field and returns an ACCESS_DENIED error beside the rows; the plugin keeps the rows and logs a warning. Ids, order counts and spend are still returned.
+Personal data depends on the app access: a custom app with the customer scopes receives names and emails, and without them Shopify nulls every PII field and returns an ACCESS_DENIED warning beside the rows. The plugin keeps the rows either way. Ids, order counts and spend are always returned.
 
 
 
@@ -526,6 +526,7 @@ await corsair.shopify.api.inventory.adjust({ inventoryItemId: 'gid://shopify/Inv
 | `locationId` | `string` | Yes | — |
 | `delta` | `number` | Yes | Signed change: positive adds stock, negative removes it. |
 | `reason` | `string` | Yes | Inventory change reason, e.g. "correction" or "received". |
+| `changeFromQuantity` | `number \| null` | No | Expected quantity before the change. Set it to turn the write into a compare-and-swap, which fails when the current quantity differs. Omit it to skip that check. |
 
 Adjusts the available quantity by a signed delta at one location. A positive delta adds stock and a negative one removes it.
 
@@ -573,6 +574,8 @@ await corsair.shopify.api.inventory.list({ inventoryItemId: 'gid://shopify/Inven
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `first` | `number` | No | Locations per page. Defaults to 50; the maximum is 250. |
+| `after` | `string` | No | Cursor from a previous page. |
 | `inventoryItemId` | `string` | Yes | InventoryItem GID. |
 
 
@@ -903,7 +906,7 @@ await corsair.shopify.api.orders.close({ id: 'gid://shopify/Order/1' });
 
 `orders.get`
 
-Read one order by GID with its customer and line items
+Read one order by GID with its customer and a page of its line items
 
 **Risk:** `read`
 
@@ -916,6 +919,8 @@ await corsair.shopify.api.orders.get({ id: 'gid://shopify/Order/1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
+| `lineItemsFirst` | `number` | No | Line items per page. Defaults to 20; the maximum is 250. |
+| `lineItemsAfter` | `string` | No | Line-item cursor from a previous page. |
 
 
 
@@ -1178,6 +1183,76 @@ await corsair.shopify.api.orders.list({ first: 10, query: 'financial_status:paid
 
 ---
 
+### listLineItems
+
+`orders.listLineItems`
+
+Read one page of an order line items, cursor-paged, for orders with more than one page
+
+**Risk:** `read`
+
+```ts
+await corsair.shopify.api.orders.listLineItems({ id: 'gid://shopify/Order/1', first: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Order GID. |
+| `first` | `number` | No | Line items per page. Defaults to 50; the maximum is 250. |
+| `after` | `string` | No | Cursor from a previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lineItems` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="lineItems full type">
+
+```ts
+{
+  edges: {
+    node: {
+      id?: string | null,
+      title?: string | null,
+      quantity?: number | null,
+      sku?: string | null,
+      variant?: {
+        id: string
+      } | null,
+      originalUnitPriceSet?: {
+        shopMoney: {
+          amount: string,
+          currencyCode: string
+        },
+        presentmentMoney?: {
+          amount: string,
+          currencyCode: string
+        } | null
+      } | null
+    },
+    cursor?: string | null
+  }[],
+  pageInfo: {
+    hasNextPage: boolean,
+    hasPreviousPage?: boolean | null,
+    endCursor?: string | null,
+    startCursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### markAsPaid
 
 `orders.markAsPaid`
@@ -1409,7 +1484,7 @@ await corsair.shopify.api.products.delete({ id: 'gid://shopify/Product/108828309
 | `id` | `string` | Yes | — |
 | `synchronous` | `boolean` | No | Delete synchronously. Defaults to true. |
 
-Deletes synchronously by default. Set synchronous to false for a product with many variants, which returns an operation to poll instead of a deleted id.
+Deletes synchronously by default and returns deletedProductId. Set synchronous to false for a product with many variants: the delete then runs in the background and returns productDeleteOperation, whose id and status let you track it, while deletedProductId may be null.
 
 
 
@@ -1418,6 +1493,20 @@ Deletes synchronously by default. Set synchronous to false for a product with ma
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `deletedProductId` | `string \| null` | No | — |
+| `productDeleteOperation` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="productDeleteOperation full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  deletedProductId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1724,7 +1813,8 @@ await corsair.shopify.api.shop.listLocations({ first: 10 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `first` | `number` | No | — |
+| `first` | `number` | No | Page size. Defaults to 50; the maximum is 250. |
+| `after` | `string` | No | Cursor from a previous page. |
 
 Returns the inventory locations. Pass a location id to inventory.adjust to change stock at that location.
 
@@ -1856,8 +1946,9 @@ await corsair.shopify.api.variants.update({ productId: 'gid://shopify/Product/10
 | `id` | `string` | Yes | Product variant GID. |
 | `price` | `string` | No | Decimal string, e.g. "19.99". |
 | `compareAtPrice` | `string` | No | — |
-| `sku` | `string` | No | — |
-| `barcode` | `string` | No | — |
+| `sku` | `string` | No | SKU for this variant. Sent as inventoryItem.sku, which is where the API stores it. |
+| `barcode` | `string` | No | Barcode value; sent in the barcodes list, not the deprecated barcode field. |
+| `barcodeType` | `UPC \| EAN \| ISBN \| GTIN \| ASIN \| NS_PID` | No | Barcode standard. Defaults to UPC when barcode is set. |
 | `inventoryPolicy` | `DENY \| CONTINUE` | No | — |
 
 

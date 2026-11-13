@@ -5,12 +5,25 @@ domain: "shopify.com"
 recommendedAuth: "api_key"
 overviewNote: |
   Shopify needs two credentials per store: an Admin API access token and the
-  store's `*.myshopify.com` domain. Create a custom app in the Shopify admin,
-  under Settings then Apps and sales channels then Develop apps, and install it
-  with the scopes the operations you call need (`read_products`,
-  `write_products`, `read_orders`, `write_orders`, `read_customers`,
-  `write_customers`, `read_inventory`, `write_inventory`). The access token and
-  the store domain are both stored on the account.
+  store's `*.myshopify.com` domain. Both are stored on the account.
+
+  New apps are created in the Dev Dashboard at dev.shopify.com, not in the store
+  admin: create the app there, add a version with the scopes the operations you
+  call need (`read_products`, `write_products`, `read_orders`, `write_orders`,
+  `read_customers`, `write_customers`, `read_inventory`, `write_inventory`),
+  release it, and install it on the store. There are then two ways to get a
+  token:
+
+  - A token issued before January 2026 by the old admin-created custom app flow
+    still works, and so does any app already installed. Copy it from the app's
+    API credentials once; this is the simplest path for a single store.
+  - For a new app, use the client credentials grant: copy the Client ID and
+    Client secret from the app's Settings, then exchange them for a token at
+    `POST https://<store>.myshopify.com/admin/oauth/access_token` with
+    `grant_type=client_credentials`. The token lasts 24 hours. This grant only
+    works when the app and the store belong to the same organisation in the Dev
+    Dashboard, so create the store from the Dev Dashboard's Dev stores page if
+    the exchange answers `shop_not_permitted`.
 
   The Admin API is GraphQL and versioned quarterly. This plugin calls
   `2026-10`, the newest stable version. Shopify throttles by calculated query
@@ -22,14 +35,15 @@ overviewNote: |
   `userErrors`. The plugin treats a populated `userErrors` as a failure, so a
   caller is never told a write succeeded when it did not.
 
-  Reading customer details needs a paid plan. On a development or Basic plan,
-  Shopify returns the customer rows with every personally identifiable field
-  nulled and an `ACCESS_DENIED` error beside the data. The plugin accepts that
-  partial result and logs a warning rather than failing the call, so
-  `customers.list` still returns ids, order counts and spend. The `Customer`
-  object's `displayName` is the one exception: asking for it returns no data at
-  all, so this plugin never selects it and callers build a name from
-  `firstName` and `lastName`.
+  Reading customer details depends on what the app is allowed to read, not on
+  the store's plan alone. A custom app holding the customer scopes gets the
+  personal fields; without them Shopify returns the customer rows with every
+  personally identifiable field nulled and an `ACCESS_DENIED` error beside the
+  data. The plugin accepts that partial result and logs a warning rather than
+  failing the call, so `customers.list` still returns ids, order counts and
+  spend. The `Customer` object's `displayName` is the one exception: asking for
+  it returns no data at all, so this plugin never selects it and callers build a
+  name from `firstName` and `lastName`.
 
   Webhook deliveries are JSON and signed with `X-Shopify-Hmac-Sha256`. Set the
   app's signing secret as the plugin's webhook secret. Verification runs over
@@ -77,6 +91,10 @@ apiExamples:
   orders.get:
     args:
       id: "gid://shopify/Order/1"
+  orders.listLineItems:
+    args:
+      id: "gid://shopify/Order/1"
+      first: 50
   orders.cancel:
     call: "{ id: 'gid://shopify/Order/1', reason: 'CUSTOMER', restock: true }"
   orders.markAsPaid:
@@ -113,15 +131,15 @@ exampleWebhook:
   after: '// result.data.topic names the delivery, e.g. orders/create'
 apiNotes:
   products.delete:
-    'Deletes synchronously by default. Set synchronous to false for a product with many variants, which returns an operation to poll instead of a deleted id.'
+    'Deletes synchronously by default and returns deletedProductId. Set synchronous to false for a product with many variants: the delete then runs in the background and returns productDeleteOperation, whose id and status let you track it, while deletedProductId may be null.'
   orders.cancel:
     'Cancels the order without refunding. Cancelling and refunding are separate decisions, so the deprecated refund flag is not used and no money moves on a cancel.'
   customers.update:
     'Passing tags replaces the full tag set. Use the Shopify admin or a tagsAdd mutation to append one without dropping the rest.'
   'customers.list':
-    'Personal data needs a paid plan. On a development or Basic plan Shopify nulls every PII field and returns an ACCESS_DENIED error beside the rows; the plugin keeps the rows and logs a warning. Ids, order counts and spend are still returned.'
+    'Personal data depends on the app access: a custom app with the customer scopes receives names and emails, and without them Shopify nulls every PII field and returns an ACCESS_DENIED warning beside the rows. The plugin keeps the rows either way. Ids, order counts and spend are always returned.'
   'customers.get':
-    'Personal data needs a paid plan. On a development or Basic plan the name, email and phone come back null with an ACCESS_DENIED warning; the rest of the customer is returned.'
+    'Personal data depends on the app access: without the customer scopes the name, email and phone come back null with an ACCESS_DENIED warning, and the rest of the customer is returned.'
   inventory.adjust:
     'Adjusts the available quantity by a signed delta at one location. A positive delta adds stock and a negative one removes it.'
   'webhookSubscriptions.create':
