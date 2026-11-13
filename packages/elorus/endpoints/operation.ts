@@ -1,6 +1,7 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
-import type { ZodType, z } from 'zod';
+import type { ZodType } from 'zod';
+import { z } from 'zod';
 import { makeElorusRequest } from '../client';
 import type { ElorusContext } from '../index';
 import { elorusOperationSpecs } from './specs';
@@ -40,6 +41,41 @@ export type ElorusOperationOutputs = {
 	>;
 };
 
+const responseSchemaCache = new WeakMap<ZodType, ZodType>();
+
+// The generated schemas are strict for inputs and shared by outputs. A response field Elorus adds later must not
+// fail a call that already succeeded (a create would report failure after the record exists), so responses are
+// parsed with the same shapes but unknown object keys stripped instead of rejected.
+export function acceptUnknownResponseFields(schema: ZodType): ZodType {
+	const cached = responseSchemaCache.get(schema);
+	if (cached) return cached;
+	let relaxed: ZodType = schema;
+	if (schema instanceof z.ZodObject) {
+		const shape: Record<string, ZodType> = {};
+		for (const [key, value] of Object.entries(schema.shape)) {
+			shape[key] = acceptUnknownResponseFields(value as ZodType);
+		}
+		relaxed = z.object(shape);
+	} else if (schema instanceof z.ZodOptional) {
+		relaxed = acceptUnknownResponseFields(
+			schema.unwrap() as ZodType,
+		).optional();
+	} else if (schema instanceof z.ZodNullable) {
+		relaxed = acceptUnknownResponseFields(
+			schema.unwrap() as ZodType,
+		).nullable();
+	} else if (schema instanceof z.ZodArray) {
+		relaxed = z.array(acceptUnknownResponseFields(schema.element as ZodType));
+	} else if (schema instanceof z.ZodRecord) {
+		relaxed = z.record(
+			schema.keyType as z.ZodString,
+			acceptUnknownResponseFields(schema.valueType as ZodType),
+		);
+	}
+	responseSchemaCache.set(schema, relaxed);
+	return relaxed;
+}
+
 export function createElorusOperation<
 	K extends ElorusOperationKey,
 	I extends ZodType<ElorusOperationInput>,
@@ -48,6 +84,7 @@ export function createElorusOperation<
 	operationKey: K,
 	schemas: { input: I; output: O },
 ): ElorusRegisteredOperation<K, I, O> {
+	const responseSchema = acceptUnknownResponseFields(schemas.output);
 	const execute = async (
 		ctx: ElorusContext,
 		parsed: z.output<I>,
@@ -68,7 +105,7 @@ export function createElorusOperation<
 			demo: parsed.demo ?? ctx.options.demo,
 			mode: specification.mode,
 		});
-		const output = schemas.output.parse(response);
+		const output = responseSchema.parse(response) as z.output<O>;
 		await logEventFromContext(
 			ctx,
 			`elorus.${specification.version}.${specification.operationId}`,
