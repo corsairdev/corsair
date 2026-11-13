@@ -207,7 +207,8 @@ describe('sanity plugin through createCorsair', () => {
 					DELIVERY_BODY,
 				);
 				expect(result.plugin).toBe('sanity');
-				expect(result.response).toEqual({
+				// Newer core also sets statusCode 500 on a handler that threw.
+				expect(result.response).toMatchObject({
 					success: false,
 					error: expect.stringMatching(
 						/Sanity webhook refused: The signature does not match/,
