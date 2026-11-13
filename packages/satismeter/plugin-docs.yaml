@@ -1,0 +1,64 @@
+displayName: SatisMeter
+description: Customer feedback with SatisMeter - read projects, surveys, responses and survey statistics, manage users and their traits, and record events that survey targeting can match on.
+domain: satismeter.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in SatisMeter under Settings > Integrations > API. That page also shows the Project ID, and the Survey Keys section lists each survey's ID. The plugin needs both: no API endpoint lists projects, so the project ID has to come from the dashboard.
+
+  Things to know before you call:
+
+  - **Use the API key, not the read or write key.** In newer projects a read request made with the read key returns 403, and a Users API request made with the write key returns 403 too. Your browser snippet keeps using the write key; leave it as it is.
+  - **A 404 `Project not found` means the project ID.** Both bases look the project up before they check the key, so a wrong project ID answers 404 whichever key you send. A wrong key on the right project answers `403 Forbidden` on both bases.
+  - **One key, two bases.** Survey reads live under `/api/v3`; the users operations live under `/api` with no version. The plugin picks the base for each call.
+  - **Two calls page by cursor.** `responses.list` and `responses.listForSurvey` return at most 20 rows unless you pass `pageSize` (up to 100). Read `page.nextPageCursor` and pass it back as `pageCursor`; when it is absent there are no more pages.
+  - **The default date range is 30 days.** Both response listings only return the last month unless you pass `startDate`, so older responses need an explicit range.
+  - **A tracked event is not readable back.** `users.track` returns 204 and the event is stored, but the users API never exposes it: the `events` list in `users.list` holds survey activity (such as a filled response), not tracked events, and a track with no event name is rejected with `400 Event not specified`. Treat the 204 as acceptance, not as proof the event reached targeting. Survey targeting on events is configured in the dashboard.
+  - **Writes are not retried.** `users.track` counts the event every time it arrives and `users.upsert` re-applies traits, so a failed write is reported rather than replayed: the write may have landed. Reads are replayed on a 500 or a dropped connection.
+  - **`users.remove` is irreversible.** It takes the internal `id` from `users.list`, not the `userId` you sent, and deleting a user does not delete their responses: it anonymises them.
+  - **Personal data.** Responses carry the answering user's email, traits and IP address. The plugin stores none of it locally; `referrer` is returned because the API returns it, but it is never written to the event log, since a URL can carry a token.
+  - **No webhooks.** SatisMeter does not send them.
+examples:
+  read:
+    path: surveys.list
+    title: List a project's surveys
+    args:
+      projectId: 61fce0adea447e24ec27d606
+  write:
+    path: users.track
+    title: Record an event for survey targeting
+    args:
+      projectId: 61fce0adea447e24ec27d606
+      userId: '007'
+      event: completed-checkout
+apiExamples:
+  projects.get:
+    call: "{ projectId: '61fce0adea447e24ec27d606' }"
+  surveys.list:
+    call: "{ projectId: '61fce0adea447e24ec27d606' }"
+  surveys.get:
+    call: "{ projectId: '61fce0adea447e24ec27d606', surveyId: '61fce0adea447e24ec27d609' }"
+  surveys.statistics:
+    call: "{ projectId: '61fce0adea447e24ec27d606', surveyId: '61fce0adea447e24ec27d609', startDate: '2026-01-01T00:00:00.000Z' }"
+  responses.list:
+    call: "{ projectId: '61fce0adea447e24ec27d606', pageSize: 100, startDate: '2026-01-01T00:00:00.000Z' }"
+  responses.listForSurvey:
+    call: "{ projectId: '61fce0adea447e24ec27d606', surveyId: '61fce0adea447e24ec27d609', pageCursor: 'eyJjcmVhdGVkIjoiMjAyMi0wMi0wNFQxMDoyMjo0OC42MThaIn0' }"
+  users.upsert:
+    call: "{ projectId: '61fce0adea447e24ec27d606', userId: '007', traits: { name: 'James Bond', plan: 'Gold' } }"
+  users.track:
+    call: "{ projectId: '61fce0adea447e24ec27d606', userId: '007', event: 'completed-checkout' }"
+  users.list:
+    call: "{ projectId: '61fce0adea447e24ec27d606', userId: '007' }"
+  users.remove:
+    call: "{ id: '5808e7031a943c7e564cdb17' }"
+apiNotes:
+  'projects.get': 'The project ID comes from Settings > Integrations > API. No endpoint lists projects, so this is the only way to read one.'
+  'surveys.list': 'The API calls these campaigns internally; this operation is the surveys in a project with their template (`nps`, `ces`, `csat`, `pmf`, `custom`) and state (`live`, `paused`, `draft`).'
+  'surveys.get': 'Reads one survey by ID.'
+  'surveys.statistics': 'Counts responses and displays with a response rate, plus a per-question breakdown: an answers count per choice, and the metric (NPS, CSAT, CES or PMF) with its value. A `long-text` question carries a count and no per-value breakdown.'
+  'responses.list': 'Every response in the project across all its surveys. Defaults to the last 30 days and 20 rows per page; pass `startDate` for older data and `pageCursor` to continue.'
+  'responses.listForSurvey': 'One survey\u2019s responses, with the same date-range and cursor paging.'
+  'users.upsert': 'Creates the user if they do not exist and updates their traits. `surveyDate` sets when the user next sees a survey, which is how you survey someone earlier or later than their targeting rules would.'
+  'users.track': 'Records an event that survey targeting can match on. Each call counts as one event, so it is never retried automatically. Returns 204 with no body, and the event cannot be read back: the `events` list in `users.list` holds survey activity, not tracked events.'
+  'users.list': 'Every user in the project, or one user when `userId` is given: the API still answers a list, holding one entry or none.'
+  'users.remove': 'Takes the internal `id` from `users.list`, not your own `userId`. It deletes personal data and anonymises the user\u2019s responses rather than deleting them, and cannot be undone. An unknown id answers 404 User not found.'

@@ -1,0 +1,111 @@
+{
+  "id": "01a1cffb-0189-0000-88e6-2e20d5e48bf6",
+  "name": "corsair-plugin-test-1794490650",
+  "description": "updated by corsair plugin test",
+  "type": "api",
+  "schedule": "once",
+  "linked_flag": null,
+  "linked_flag_id": null,
+  "linked_insight_id": null,
+  "targeting_flag": null,
+  "internal_targeting_flag": {
+    "id": 1069367,
+    "team_id": 309833,
+    "name": "Targeting flag for survey corsair-plugin-test-1794490650",
+    "key": "survey-targeting-353b89ad50-custom",
+    "filters": {
+      "groups": [
+        {
+          "variant": "",
+          "properties": [
+            {
+              "key": "$survey_dismissed/01a1cffb-0189-0000-88e6-2e20d5e48bf6",
+              "type": "person",
+              "value": "is_not_set",
+              "operator": "is_not_set"
+            },
+            {
+              "key": "$survey_responded/01a1cffb-0189-0000-88e6-2e20d5e48bf6",
+              "type": "person",
+              "value": "is_not_set",
+              "operator": "is_not_set"
+            }
+          ],
+          "rollout_percentage": 100,
+          "aggregation_group_type_index": null
+        }
+      ],
+      "aggregation_group_type_index": null
+    },
+    "deleted": false,
+    "active": false,
+    "ensure_experience_continuity": false,
+    "version": 2,
+    "evaluation_runtime": "all",
+    "bucketing_identifier": "distinct_id",
+    "evaluation_contexts": []
+  },
+  "questions": [
+    {
+      "id": "b4baec08-5a8e-477f-813b-05d0f3dc45f2",
+      "type": "open",
+      "question": "corsair plugin test?"
+    }
+  ],
+  "conditions": null,
+  "appearance": {
+    "thankYouMessageHeader": "Thank you for your feedback!",
+    "displayThankYouMessage": true
+  },
+  "created_at": "2026-11-12T13:38:16.079512Z",
+  "created_by": {
+    "id": 823519,
+    "uuid": "01a17792-e2c3-0000-6440-326f9c1491f0",
+    "distinct_id": "distinct-id-1",
+    "first_name": "Test",
+    "last_name": "Test",
+    "email": "user@example.com",
+    "is_email_verified": true,
+    "hedgehog_config": null,
+    "role_at_organization": "engineering"
+  },
+  "start_date": null,
+  "end_date": null,
+  "archived": false,
+  "responses_limit": null,
+  "feature_flag_keys": [
+    {
+      "key": "linked_flag_key",
+      "value": null
+    },
+    {
+      "key": "targeting_flag_key",
+      "value": null
+    },
+    {
+      "key": "internal_targeting_flag_key",
+      "value": "survey-targeting-353b89ad50-custom"
+    },
+    {
+      "key": "internal_response_sampling_flag_key",
+      "value": null
+    }
+  ],
+  "iteration_count": null,
+  "iteration_frequency_days": null,
+  "repeat_until_stopped": false,
+  "iteration_start_dates": [],
+  "current_iteration": null,
+  "current_iteration_start_date": null,
+  "response_sampling_start_date": null,
+  "response_sampling_interval_type": "week",
+  "response_sampling_interval": null,
+  "response_sampling_limit": null,
+  "response_sampling_daily_limits": null,
+  "enable_partial_responses": false,
+  "enable_iframe_embedding": false,
+  "base_language": "en",
+  "translations": null,
+  "user_access_level": "manager",
+  "form_content": null
+}

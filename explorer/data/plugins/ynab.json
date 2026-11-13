@@ -1,0 +1,872 @@
+{
+  "id": "ynab",
+  "displayName": "YNAB",
+  "description": "Budgeting with YNAB - read budgets, accounts, categories, payees and months, assign money to categories, and create, update and delete transactions and scheduled transactions.",
+  "npmPackageName": "@corsair-dev/ynab",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 24,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "ynab.api.accounts.create",
+      "shortPath": "accounts.create",
+      "description": "Create an account with a type and an opening balance, given in milliunits",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "checking | savings | cash | creditCard | otherAsset | otherLiability"
+          },
+          {
+            "key": "balance",
+            "optional": false,
+            "type": "number",
+            "description": "An amount in milliunits: the currency value times 1,000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ account?: { id?: string | null, name?: string | null, type?: string | null, on_budget?: boolean | null, closed?: boolean | null, note?: string | null, balance?: number | null, cleared_balance?: number | null, uncleared_balance?: number | null, transfer_payee_id?: string | null, deleted?: boolean | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.accounts.get",
+      "shortPath": "accounts.get",
+      "description": "Read one account with its balance and on-budget flag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ account?: { id?: string | null, name?: string | null, type?: string | null, on_budget?: boolean | null, closed?: boolean | null, note?: string | null, balance?: number | null, cleared_balance?: number | null, uncleared_balance?: number | null, transfer_payee_id?: string | null, deleted?: boolean | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "List the accounts in a budget with their cleared and uncleared balances",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "last_knowledge_of_server",
+            "optional": true,
+            "type": "number",
+            "description": "A previous response server_knowledge, to return only what changed since."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ accounts?: { id?: string | null, name?: string | null, type?: string | null, on_budget?: boolean | null, closed?: boolean | null, note?: string | null, balance?: number | null, cleared_balance?: number | null, uncleared_balance?: number | null, transfer_payee_id?: string | null, deleted?: boolean | null }[] | null, server_knowledge?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.budgets.get",
+      "shortPath": "budgets.get",
+      "description": "Read a whole budget: every account, category, payee, month and transaction; `last-used` reaches the most recent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ budget?: { id?: string | null, name?: string | null, last_modified_on?: string | null, first_month?: string | null, last_month?: string | null, accounts?: { id?: string | null, name?: string | null, type?: string | null, on_budget?: boolean | null, closed?: boolean | null, note?: string | null, balance?: number | null, cleared_balance?: number | null, uncleared_balance?: number | null, transfer_payee_id?: string | null, deleted?: boolean | null }[] | null, payees?: { id?: string | null, name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null, category_groups?: { id?: string | null, name?: string | null, hidden?: boolean | null, deleted?: boolean | null, categories?: { id?: string | null, category_group_id?: string | null, category_group_name?: string | null, name?: string | null, hidden?: boolean | null, budgeted?: number | null, activity?: number | null, balance?: number | null, goal_type?: string | null, goal_target?: number | null, goal_percentage_complete?: number | null, deleted?: boolean | null, note?: string | null }[] | null }[] | null, categories?: { id?: string | null, category_group_id?: string | null, category_group_name?: string | null, name?: string | null, hidden?: boolean | null, budgeted?: number | null, activity?: number | null, balance?: number | null, goal_type?: string | null, goal_target?: number | null, goal_percentage_complete?: number | null, deleted?: boolean | null, note?: string | null }[] | null, months?: { month?: string | null, note?: string | null, income?: number | null, budgeted?: number | null, activity?: number | null, to_be_budgeted?: number | null, age_of_money?: number | null, deleted?: boolean | null, categories?: { id?: string | null, category_group_id?: string | null, category_group_name?: string | null, name?: string | null, hidden?: boolean | null, budgeted?: number | null, activity?: number | null, balance?: number | null, goal_type?: string | null, goal_target?: number | null, goal_percentage_complete?: number | null, deleted?: boolean | null, note?: string | null }[] | null }[] | null, transactions?: { id?: string | null, date?: string | null, amount?: number | null, memo?: string | null, cleared?: string | null, approved?: boolean | null, flag_color?: string | null, account_id?: string | null, account_name?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, transfer_transaction_id?: string | null, matched_transaction_id?: string | null, import_id?: string | null, import_payee_name?: string | null, deleted?: boolean | null, subtransactions?: { id?: string | null, transaction_id?: string | null, amount?: number | null, memo?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null }[] | null, scheduled_transactions?: { id?: string | null, date_first?: string | null, date_next?: string | null, frequency?: string | null, amount?: number | null, memo?: string | null, flag_color?: string | null, account_id?: string | null, account_name?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null, subtransactions?: { id?: string | null, transaction_id?: string | null, amount?: number | null, memo?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null }[] | null } | null, server_knowledge?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.budgets.list",
+      "shortPath": "budgets.list",
+      "description": "List the budgets the token can see, with their date ranges",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_accounts",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also list each budget accounts, which makes the answer large."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ budgets?: { id?: string | null, name?: string | null, last_modified_on?: string | null, first_month?: string | null, last_month?: string | null, date_format?: Record<string, any> | null, currency_format?: Record<string, any> | null }[] | null, default_budget?: { id?: string | null, name?: string | null, last_modified_on?: string | null, first_month?: string | null, last_month?: string | null, date_format?: Record<string, any> | null, currency_format?: Record<string, any> | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.categories.get",
+      "shortPath": "categories.get",
+      "description": "Read one category with its budgeted and balance amounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "categoryId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ category?: { id?: string | null, category_group_id?: string | null, category_group_name?: string | null, name?: string | null, hidden?: boolean | null, budgeted?: number | null, activity?: number | null, balance?: number | null, goal_type?: string | null, goal_target?: number | null, goal_percentage_complete?: number | null, deleted?: boolean | null, note?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "List the category groups and categories with their budgeted, activity and balance amounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "last_knowledge_of_server",
+            "optional": true,
+            "type": "number",
+            "description": "A previous response server_knowledge, to return only what changed since."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ category_groups?: { id?: string | null, name?: string | null, hidden?: boolean | null, deleted?: boolean | null, categories?: { id?: string | null, category_group_id?: string | null, category_group_name?: string | null, name?: string | null, hidden?: boolean | null, budgeted?: number | null, activity?: number | null, balance?: number | null, goal_type?: string | null, goal_target?: number | null, goal_percentage_complete?: number | null, deleted?: boolean | null, note?: string | null }[] | null }[] | null, categories?: { id?: string | null, category_group_id?: string | null, category_group_name?: string | null, name?: string | null, hidden?: boolean | null, budgeted?: number | null, activity?: number | null, balance?: number | null, goal_type?: string | null, goal_target?: number | null, goal_percentage_complete?: number | null, deleted?: boolean | null, note?: string | null }[] | null, server_knowledge?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.categories.update",
+      "shortPath": "categories.update",
+      "description": "Set the amount assigned to a category for a month; the value replaces rather than adds, in milliunits",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "month",
+            "optional": false,
+            "type": "string",
+            "description": "The month, as the first day: `yyyy-MM-01`, or `current` for the current calendar month (UTC)."
+          },
+          {
+            "key": "categoryId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "budgeted",
+            "optional": false,
+            "type": "number",
+            "description": "The new budgeted amount for the month, in milliunits. This replaces the value rather than adding to it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ category?: { id?: string | null, category_group_id?: string | null, category_group_name?: string | null, name?: string | null, hidden?: boolean | null, budgeted?: number | null, activity?: number | null, balance?: number | null, goal_type?: string | null, goal_target?: number | null, goal_percentage_complete?: number | null, deleted?: boolean | null, note?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.months.get",
+      "shortPath": "months.get",
+      "description": "Read one month with its categories, income and how much is still unassigned",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "month",
+            "optional": false,
+            "type": "string",
+            "description": "The month, as the first day: `yyyy-MM-01`, or `current` for the current calendar month (UTC)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ month?: { month?: string | null, note?: string | null, income?: number | null, budgeted?: number | null, activity?: number | null, to_be_budgeted?: number | null, age_of_money?: number | null, deleted?: boolean | null, categories?: { id?: string | null, category_group_id?: string | null, category_group_name?: string | null, name?: string | null, hidden?: boolean | null, budgeted?: number | null, activity?: number | null, balance?: number | null, goal_type?: string | null, goal_target?: number | null, goal_percentage_complete?: number | null, deleted?: boolean | null, note?: string | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.months.list",
+      "shortPath": "months.list",
+      "description": "List the budget months with their income, budgeted and to-be-budgeted totals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "last_knowledge_of_server",
+            "optional": true,
+            "type": "number",
+            "description": "A previous response server_knowledge, to return only what changed since."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ months?: { month?: string | null, note?: string | null, income?: number | null, budgeted?: number | null, activity?: number | null, to_be_budgeted?: number | null, age_of_money?: number | null, deleted?: boolean | null, categories?: { id?: string | null, category_group_id?: string | null, category_group_name?: string | null, name?: string | null, hidden?: boolean | null, budgeted?: number | null, activity?: number | null, balance?: number | null, goal_type?: string | null, goal_target?: number | null, goal_percentage_complete?: number | null, deleted?: boolean | null, note?: string | null }[] | null }[] | null, server_knowledge?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.payees.create",
+      "shortPath": "payees.create",
+      "description": "Create a payee",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ payee?: { id?: string | null, name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.payees.get",
+      "shortPath": "payees.get",
+      "description": "Read one payee",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "payeeId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ payee?: { id?: string | null, name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.payees.list",
+      "shortPath": "payees.list",
+      "description": "List the payees in a budget",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "last_knowledge_of_server",
+            "optional": true,
+            "type": "number",
+            "description": "A previous response server_knowledge, to return only what changed since."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ payees?: { id?: string | null, name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null, server_knowledge?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.payees.update",
+      "shortPath": "payees.update",
+      "description": "Rename a payee",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "payeeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ payee?: { id?: string | null, name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.transactions.create",
+      "shortPath": "transactions.create",
+      "description": "Create up to 500 transactions in one call; a repeated import_id on the same account skips creation; use transactions.update for corrections",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "transactions",
+            "optional": false,
+            "type": "{ account_id: string, date: string, amount: number, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, memo?: string | null, cleared?: cleared | uncleared | reconciled, approved?: boolean, flag_color?: string | null, import_id?: string, subtransactions?: { amount: number, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, memo?: string | null }[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ transaction_ids?: string[] | null, transactions?: { id?: string | null, date?: string | null, amount?: number | null, memo?: string | null, cleared?: string | null, approved?: boolean | null, flag_color?: string | null, account_id?: string | null, account_name?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, transfer_transaction_id?: string | null, matched_transaction_id?: string | null, import_id?: string | null, import_payee_name?: string | null, deleted?: boolean | null, subtransactions?: { id?: string | null, transaction_id?: string | null, amount?: number | null, memo?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null }[] | null, duplicate_import_ids?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.transactions.delete",
+      "shortPath": "transactions.delete",
+      "description": "Delete a transaction, which answers the transaction as it was",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ transaction?: { id?: string | null, date?: string | null, amount?: number | null, memo?: string | null, cleared?: string | null, approved?: boolean | null, flag_color?: string | null, account_id?: string | null, account_name?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, transfer_transaction_id?: string | null, matched_transaction_id?: string | null, import_id?: string | null, import_payee_name?: string | null, deleted?: boolean | null, subtransactions?: { id?: string | null, transaction_id?: string | null, amount?: number | null, memo?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.transactions.get",
+      "shortPath": "transactions.get",
+      "description": "Read one transaction with its amount, splits and cleared state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ transaction?: { id?: string | null, date?: string | null, amount?: number | null, memo?: string | null, cleared?: string | null, approved?: boolean | null, flag_color?: string | null, account_id?: string | null, account_name?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, transfer_transaction_id?: string | null, matched_transaction_id?: string | null, import_id?: string | null, import_payee_name?: string | null, deleted?: boolean | null, subtransactions?: { id?: string | null, transaction_id?: string | null, amount?: number | null, memo?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.transactions.list",
+      "shortPath": "transactions.list",
+      "description": "List transactions, optionally since a date or only the uncategorized or unapproved ones. Without since_date, only the past year comes back.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "since_date",
+            "optional": true,
+            "type": "string",
+            "description": "Only transactions on or after this date, as `yyyy-MM-dd`. When omitted, YNAB returns transactions from one year ago onward, so pass an earlier date for older history."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "uncategorized | unapproved",
+            "description": "Only transactions matching this kind."
+          },
+          {
+            "key": "last_knowledge_of_server",
+            "optional": true,
+            "type": "number",
+            "description": "A previous response server_knowledge, to return only what changed since."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ transactions?: { id?: string | null, date?: string | null, amount?: number | null, memo?: string | null, cleared?: string | null, approved?: boolean | null, flag_color?: string | null, account_id?: string | null, account_name?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, transfer_transaction_id?: string | null, matched_transaction_id?: string | null, import_id?: string | null, import_payee_name?: string | null, deleted?: boolean | null, subtransactions?: { id?: string | null, transaction_id?: string | null, amount?: number | null, memo?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null }[] | null, server_knowledge?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.transactions.scheduledCreate",
+      "shortPath": "transactions.scheduledCreate",
+      "description": "Create a scheduled transaction that repeats on a given frequency",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "scheduled_transaction",
+            "optional": false,
+            "type": "{ account_id: string, date: string, amount: number, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, memo?: string | null, flag_color?: string | null, frequency: never | daily | weekly | everyOtherWeek | twiceAMonth | every4Weeks | monthly | everyOtherMonth | every3Months | every4Months | twiceAYear | yearly | everyOtherYear }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ scheduled_transaction?: { id?: string | null, date_first?: string | null, date_next?: string | null, frequency?: string | null, amount?: number | null, memo?: string | null, flag_color?: string | null, account_id?: string | null, account_name?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null, subtransactions?: { id?: string | null, transaction_id?: string | null, amount?: number | null, memo?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.transactions.scheduledDelete",
+      "shortPath": "transactions.scheduledDelete",
+      "description": "Delete a scheduled transaction",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "scheduledTransactionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ scheduled_transaction?: { id?: string | null, date_first?: string | null, date_next?: string | null, frequency?: string | null, amount?: number | null, memo?: string | null, flag_color?: string | null, account_id?: string | null, account_name?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null, subtransactions?: { id?: string | null, transaction_id?: string | null, amount?: number | null, memo?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.transactions.scheduledGet",
+      "shortPath": "transactions.scheduledGet",
+      "description": "Read one scheduled transaction",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "scheduledTransactionId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ scheduled_transaction?: { id?: string | null, date_first?: string | null, date_next?: string | null, frequency?: string | null, amount?: number | null, memo?: string | null, flag_color?: string | null, account_id?: string | null, account_name?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null, subtransactions?: { id?: string | null, transaction_id?: string | null, amount?: number | null, memo?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.transactions.scheduledList",
+      "shortPath": "transactions.scheduledList",
+      "description": "List scheduled transactions with their frequency and next date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "last_knowledge_of_server",
+            "optional": true,
+            "type": "number",
+            "description": "A previous response server_knowledge, to return only what changed since."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ scheduled_transactions?: { id?: string | null, date_first?: string | null, date_next?: string | null, frequency?: string | null, amount?: number | null, memo?: string | null, flag_color?: string | null, account_id?: string | null, account_name?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null, subtransactions?: { id?: string | null, transaction_id?: string | null, amount?: number | null, memo?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null }[] | null, server_knowledge?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.transactions.update",
+      "shortPath": "transactions.update",
+      "description": "Change a transaction amount, date, payee, category, memo or cleared state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "budgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or `last-used` for the one most recently opened."
+          },
+          {
+            "key": "transactionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string",
+            "description": "A date as `yyyy-MM-dd`, with no time or zone."
+          },
+          {
+            "key": "amount",
+            "optional": true,
+            "type": "number",
+            "description": "An amount in milliunits: the currency value times 1,000."
+          },
+          {
+            "key": "payee_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "payee_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The category, or null to clear it."
+          },
+          {
+            "key": "memo",
+            "optional": true,
+            "type": "string | null",
+            "description": "The memo, or null to clear it."
+          },
+          {
+            "key": "cleared",
+            "optional": true,
+            "type": "cleared | uncleared | reconciled"
+          },
+          {
+            "key": "approved",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "flag_color",
+            "optional": true,
+            "type": "string | null",
+            "description": "The flag, or null to clear it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ transaction?: { id?: string | null, date?: string | null, amount?: number | null, memo?: string | null, cleared?: string | null, approved?: boolean | null, flag_color?: string | null, account_id?: string | null, account_name?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, transfer_transaction_id?: string | null, matched_transaction_id?: string | null, import_id?: string | null, import_payee_name?: string | null, deleted?: boolean | null, subtransactions?: { id?: string | null, transaction_id?: string | null, amount?: number | null, memo?: string | null, payee_id?: string | null, payee_name?: string | null, category_id?: string | null, category_name?: string | null, transfer_account_id?: string | null, deleted?: boolean | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "ynab.api.user.get",
+      "shortPath": "user.get",
+      "description": "Read the user behind the token, which is the cheapest way to check it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ user?: { id?: string | null } | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
