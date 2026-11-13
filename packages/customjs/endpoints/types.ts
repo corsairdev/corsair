@@ -531,7 +531,7 @@ const PagesDeleteResponseSchema = z
 		success: z
 			.literal(true)
 			.describe(
-				'CustomJS accepted the delete. It answers the same for an unknown page ID, so read `pages.list` to confirm the page is gone.',
+				'CustomJS deleted the page. An unknown page ID fails with a 404 instead.',
 			),
 		pageId: z.string(),
 	})

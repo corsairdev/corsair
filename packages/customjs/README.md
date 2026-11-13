@@ -16,7 +16,7 @@ pnpm add @corsair-dev/customjs
 | `javascript.run` | `customjs.api.javascript.run` | `write` | Run JavaScript inline with the given input and return what it produced as text; the code can call any bundled NPM module and reach the network |
 | `javascript.runBinary` | `customjs.api.javascript.runBinary` | `write` | Run JavaScript inline and return its Buffer result as base64, for PDFs and images; the code can call any bundled NPM module and reach the network |
 | `pages.create` | `customjs.api.pages.create` | `write` | Publish an HTML page to a new live URL; CustomJS does not enforce unique names, so a repeated call publishes a second page |
-| `pages.delete` | `customjs.api.pages.delete` | `destructive` | Delete a hosted page, which takes its live URL down permanently; an unknown page ID is accepted silently |
+| `pages.delete` | `customjs.api.pages.delete` | `destructive` | Delete a hosted page, which takes its live URL down permanently; an unknown page ID fails with a 404 |
 | `pages.list` | `customjs.api.pages.list` | `read` | List the hosted HTML pages in the workspace with their live URLs |
 | `pages.update` | `customjs.api.pages.update` | `write` | Replace the HTML of a hosted page in place, keeping its live URL, and optionally rename it |
 | `pdf.fromHtml` | `customjs.api.pdf.fromHtml` | `read` | Render HTML or a Nunjucks template to PDF in Chromium, returning the bytes as base64 with an optional page size |

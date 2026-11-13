@@ -12,7 +12,7 @@ overviewNote: |
   - **`javascript.run` returns text, not parsed JSON.** The route answers `text/plain` whatever the script returns, so an object arrives JSON encoded in `output` and a script with no `return` arrives empty.
   - **Missing required fields render blank files.** CustomJS answers 200 with an empty PDF or PNG when `html` or `url` is absent, so the input schema requires them.
   - **`scrape.agent` bills model tokens.** It drives a browser for up to `maxSteps` actions and returns its token usage. `scrape.page` runs your exact steps and spends none.
-  - **Page names are not unique.** `pages.create` publishes a new page every call, even with a name that already exists, so a retry duplicates it and the plugin never replays that call. `pages.delete` answers 200 whether or not the page existed.
+  - **Page names are not unique.** `pages.create` publishes a new page every call, even with a name that already exists, so a retry duplicates it and the plugin never replays that call. `pages.delete` fails with a 404 for a page ID that does not exist.
   - **Stored functions are not wrapped.** The docs describe calling a saved script by ID; the route answered 500 with every ID tried, so this plugin only runs code inline.
 examples:
   read:
@@ -59,4 +59,4 @@ apiNotes:
   'javascript.runBinary': 'Send `returnBinary` by using this operation rather than `javascript.run`; the plugin sets it for you.'
   'scrape.page': 'A `wait` step here takes `ms`; the screenshot route takes `value` for the same thing.'
   'pages.create': 'CustomJS does not enforce unique names, and the answer carries `shortId` rather than the `name` the docs show.'
-  'pages.delete': 'An unknown `pageId` is accepted with 200 and `{}`, so read `pages.list` to confirm a page is gone.'
+  'pages.delete': 'An unknown `pageId` fails with a 404 (`CustomjsAPIError` with `status: 404`), so a delete that resolves removed the page.'

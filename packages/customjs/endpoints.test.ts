@@ -887,14 +887,15 @@ describe('pages.delete', () => {
 		);
 	});
 
-	// The route answers 200 with `{}` even for an ID that never existed, so this
-	// reports only that CustomJS accepted the call.
-	it('accepts an unknown page ID, as the route does', async () => {
-		respondJson(emptyFailure);
+	// The live route answers 404 for an ID that does not exist (checked 11-14),
+	// so an unknown page fails instead of reading as a delete.
+	it('surfaces an unknown page ID as a 404', async () => {
+		respondJson({ message: 'Not Found' }, 404);
 
 		await expect(
 			invoke(Pages.remove, { pageId: 'never-existed' }),
-		).resolves.toEqual({ success: true, pageId: 'never-existed' });
+		).rejects.toMatchObject({ status: 404 });
+		expect(mockLog).not.toHaveBeenCalled();
 	});
 
 	it.each([[{}], [{ pageId: '' }]])(

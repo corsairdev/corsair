@@ -219,7 +219,7 @@ const customjsEndpointMeta = {
 	'pages.delete': {
 		riskLevel: 'destructive',
 		description:
-			'Delete a hosted page, which takes its live URL down permanently; an unknown page ID is accepted silently',
+			'Delete a hosted page, which takes its live URL down permanently; an unknown page ID fails with a 404',
 		irreversible: true,
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof customjsEndpointsNested>;

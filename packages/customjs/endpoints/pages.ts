@@ -93,8 +93,9 @@ export const update: CustomjsEndpoints['pagesUpdate'] = (ctx, input) =>
 	);
 
 /**
- * Answers 200 with `{}` whether or not the page existed, so the response says
- * only that CustomJS accepted the call. Read `pages.list` to confirm.
+ * Answers 200 with `{}` once the page is gone, and 404 for an ID that does not
+ * exist (checked against the live API on 11-14), so a resolved call means the
+ * page was removed.
  */
 export const remove: CustomjsEndpoints['pagesDelete'] = (ctx, input) =>
 	call(
@@ -112,7 +113,7 @@ export const remove: CustomjsEndpoints['pagesDelete'] = (ctx, input) =>
 			path: `/pages/api/page/id/${encodeURIComponent(pageId)}`,
 		}),
 		{
-			// The route confirms nothing, so trust the request it accepted.
+			// The 200 body is `{}`, so the result names the page that was removed.
 			shape: (_, { pageId }) => ({ success: true, pageId }),
 			log: ({ pageId }) => ({ pageId }),
 		},
