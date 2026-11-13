@@ -20,8 +20,11 @@ export async function makeRequest(
 			string,
 			string | number | boolean | string[] | number[] | undefined
 		>;
+		// Different operations supply different validated, provider-defined JSON bodies.
 		body?: unknown;
 	},
+	// HTTP responses are untrusted and vary by operation; callers parse the result
+	// with their own output schema before exposing it.
 ): Promise<unknown> {
 	if (!ctx.key) throw new Error('Make API token is required');
 	const zone = ctx.options.zone;

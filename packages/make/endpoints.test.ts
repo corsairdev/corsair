@@ -1,42 +1,90 @@
 import { createCorsair, logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { make } from './index';
+import type { MakeContext, MakePluginOptions } from './index';
+import {
+	MakeEndpointInputSchemas,
+	MakeEndpointOutputSchemas,
+	make,
+	makeEndpointSchemas,
+} from './index';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
 	logEventFromContext: jest.fn().mockResolvedValue(null),
 }));
 
-type Endpoint = (ctx: never, input: never) => Promise<unknown>;
 const endpoints = make({ zone: 'eu1', key: 'test-token' }).endpoints!.scenarios;
+const context = (
+	options: MakePluginOptions = { zone: 'eu1' },
+	key = 'test-token',
+): MakeContext => ({
+	key,
+	options,
+	endpoints: {},
+	db: {},
+	keys: {
+		get_dek: async () => 'test-dek',
+		issue_new_dek: async () => 'test-dek',
+		get_api_key: async () => key,
+		set_api_key: async () => {},
+		get_webhook_signature: async () => null,
+		set_webhook_signature: async () => {},
+	},
+	$getAccountId: async () => 'test-account',
+});
 const id = { scenarioId: 123 };
 const scenario = { scenario: { id: 123, name: 'Example', folderId: null } };
-const cases: Array<
-	[keyof typeof endpoints, unknown, string, string, unknown, unknown?]
-> = [
-	[
+// Responses and bodies differ by operation and are compared as JSON fixtures;
+// their concrete shape cannot be represented by one common endpoint type.
+type TestCase = {
+	name: keyof typeof endpoints;
+	run: () => Promise<unknown>;
+	method: string;
+	path: string;
+	response: unknown;
+	body?: unknown;
+};
+function testCase<K extends keyof typeof endpoints>(
+	name: K,
+	input: Parameters<(typeof endpoints)[K]>[1],
+	method: string,
+	path: string,
+	response: unknown,
+	body?: unknown,
+): TestCase {
+	// This closure preserves each endpoint/input pairing when heterogeneous cases
+	// enter the table; the generic call is checked against that endpoint's input.
+	const run = () => {
+		// TypeScript cannot correlate a generic indexed function with its argument;
+		// the generic parameter above enforces the matching pair at every call site.
+		const endpoint = endpoints[name] as (
+			ctx: MakeContext,
+			value: Parameters<(typeof endpoints)[K]>[1],
+		) => Promise<unknown>;
+		return endpoint(context(), input);
+	};
+	return { name, run, method, path, response, body };
+}
+const cases: TestCase[] = [
+	testCase(
 		'list',
 		{ teamId: 7, 'pg[offset]': 20, 'cols[]': ['id', 'name'] },
 		'GET',
 		'/scenarios',
 		{ scenarios: [scenario.scenario], pg: { offset: 20 } },
-	],
-	[
+	),
+	testCase(
 		'create',
 		{ body: { blueprint: '{}', teamId: 7, scheduling: '{}' } },
 		'POST',
 		'/scenarios',
 		scenario,
 		{ blueprint: '{}', teamId: 7, scheduling: '{}' },
-	],
-	[
-		'countTrash',
-		{ teamId: 7 },
-		'GET',
-		'/scenarios/trash/count',
-		{ scenariosTrashedTotal: 1 },
-	],
-	[
+	),
+	testCase('countTrash', { teamId: 7 }, 'GET', '/scenarios/trash/count', {
+		scenariosTrashedTotal: 1,
+	}),
+	testCase(
 		'moveToTrash',
 		{ body: { teamId: 7, scenarioIds: [123] } },
 		'POST',
@@ -47,25 +95,22 @@ const cases: Array<
 			summary: { total: 1, trashed: 1, rejected: 0 },
 		},
 		{ teamId: 7, scenarioIds: [123] },
-	],
-	['get', id, 'GET', '/scenarios/123', scenario],
-	['delete', id, 'DELETE', '/scenarios/123', { scenario: 123 }],
-	[
+	),
+	testCase('get', id, 'GET', '/scenarios/123', scenario),
+	testCase('delete', id, 'DELETE', '/scenarios/123', { scenario: 123 }),
+	testCase(
 		'update',
 		{ ...id, body: { folderId: null } },
 		'PATCH',
 		'/scenarios/123',
 		scenario,
 		{ folderId: null },
-	],
-	[
-		'getTriggers',
-		id,
-		'GET',
-		'/scenarios/123/triggers',
-		{ id: 1, name: 'hook' },
-	],
-	[
+	),
+	testCase('getTriggers', id, 'GET', '/scenarios/123/triggers', {
+		id: 1,
+		name: 'hook',
+	}),
+	testCase(
 		'clone',
 		{
 			...id,
@@ -76,124 +121,118 @@ const cases: Array<
 		'/scenarios/123/clone',
 		scenario,
 		{ name: 'Copy', teamId: 7, states: false },
-	],
-	[
-		'restore',
-		id,
-		'POST',
-		'/scenarios/123/restore',
-		{
-			scenario: { id: 123, deleted: false, deletedAt: null },
-			strippedModules: [],
-		},
-	],
-	[
+	),
+	testCase('restore', id, 'POST', '/scenarios/123/restore', {
+		scenario: { id: 123, deleted: false, deletedAt: null },
+		strippedModules: [],
+	}),
+	testCase(
 		'getModuleData',
 		{ ...id, moduleId: 2 },
 		'GET',
 		'/scenarios/123/data/2',
 		{ exists: true },
-	],
-	[
-		'activate',
-		id,
-		'POST',
-		'/scenarios/123/start',
-		{ scenario: { id: 123, isActive: true } },
-	],
-	[
-		'deactivate',
-		id,
-		'POST',
-		'/scenarios/123/stop',
-		{ scenario: { id: 123, isActive: false } },
-	],
-	[
+	),
+	testCase('activate', id, 'POST', '/scenarios/123/start', {
+		scenario: { id: 123, isActive: true },
+	}),
+	testCase('deactivate', id, 'POST', '/scenarios/123/stop', {
+		scenario: { id: 123, isActive: false },
+	}),
+	testCase(
 		'run',
 		{ ...id, body: { responsive: false } },
 		'POST',
 		'/scenarios/123/run',
 		{ executionId: 'abc' },
 		{ responsive: false },
-	],
-	[
+	),
+	testCase(
 		'replay',
 		{ ...id, body: { executionIds: ['a'.repeat(32)] } },
 		'POST',
 		'/scenarios/123/replay',
 		{ executionId: 'next', replayed: [], failed: [] },
 		{ executionIds: ['a'.repeat(32)] },
-	],
-	[
-		'getInterface',
-		id,
-		'GET',
-		'/scenarios/123/interface',
-		{ interface: { input: [] } },
-	],
-	[
+	),
+	testCase('getInterface', id, 'GET', '/scenarios/123/interface', {
+		interface: { input: [] },
+	}),
+	testCase(
 		'updateInterface',
 		{ ...id, body: { interface: { input: [] } } },
 		'PATCH',
 		'/scenarios/123/interface',
 		{ interface: { input: [] } },
 		{ interface: { input: [] } },
-	],
-	[
-		'getUsage',
-		id,
-		'GET',
-		'/scenarios/123/usage',
-		{ data: [{ date: '2026-01-01', operations: 3 }] },
-	],
-	[
-		'listBuildVariables',
-		id,
-		'GET',
-		'/scenarios/123/build-variables',
-		{ variables: { foo: 'bar' } },
-	],
-	[
+	),
+	testCase('getUsage', id, 'GET', '/scenarios/123/usage', {
+		data: [{ date: '2026-01-01', operations: 3 }],
+	}),
+	testCase('listBuildVariables', id, 'GET', '/scenarios/123/build-variables', {
+		variables: { foo: 'bar' },
+	}),
+	testCase(
 		'addBuildVariables',
 		{ ...id, body: { input: [{ name: 'x', value: 'TAC_1' }] } },
 		'POST',
 		'/scenarios/123/build-variables',
 		{ ok: 1 },
 		{ input: [{ name: 'x', value: 'TAC_1' }] },
-	],
-	[
+	),
+	testCase(
 		'updateBuildVariables',
 		{ ...id, body: { input: [{ name: 'x', value: 'TAC_2' }] } },
 		'PUT',
 		'/scenarios/123/build-variables',
 		{ ok: 1 },
 		{ input: [{ name: 'x', value: 'TAC_2' }] },
-	],
-	[
+	),
+	testCase(
 		'deleteBuildVariable',
 		{ ...id, value: 'TAC_1' },
 		'DELETE',
 		'/scenarios/123/build-variables',
 		{ ok: 1 },
-	],
-	[
+	),
+	testCase(
 		'listAiAgents',
 		{ teamId: 7, 'pg[offset]': 10 },
 		'GET',
 		'/scenarios/ai-agents',
 		{ scenarios: [{ id: 1, description: null }], pg: { offset: 10 } },
-	],
-	[
+	),
+	testCase(
 		'getAiAgentModules',
 		{ teamId: 7, body: { scenarioIds: [123] } },
 		'POST',
 		'/scenarios/ai-agents/modules',
 		{ agentModules: [{ id: 1, userLabel: null }] },
 		{ scenarioIds: [123] },
-	],
+	),
 ];
 
 describe('Make scenario public endpoints', () => {
+	it('exports schema maps that match every registered scenario endpoint', () => {
+		const names = Object.keys(endpoints).sort();
+		expect(names).toHaveLength(24);
+		expect(Object.keys(MakeEndpointInputSchemas).sort()).toEqual(names);
+		expect(Object.keys(MakeEndpointOutputSchemas).sort()).toEqual(names);
+		expect(Object.keys(makeEndpointSchemas).sort()).toEqual(
+			names.map((name) => `scenarios.${name}`).sort(),
+		);
+		for (const [path, registered] of Object.entries(makeEndpointSchemas)) {
+			const name = path.slice('scenarios.'.length);
+			expect(Object.entries(MakeEndpointInputSchemas)).toContainEqual([
+				name,
+				registered.input,
+			]);
+			expect(Object.entries(MakeEndpointOutputSchemas)).toContainEqual([
+				name,
+				registered.output,
+			]);
+		}
+	});
 	let fetchMock: jest.SpyInstance;
 	beforeEach(() => {
 		fetchMock = jest.spyOn(globalThis, 'fetch');
@@ -201,26 +240,16 @@ describe('Make scenario public endpoints', () => {
 	afterEach(() => {
 		fetchMock.mockRestore();
 	});
-	// Keep six columns even for bodyless requests, so Jest does not inject a done callback.
-	it.each(
-		cases.map(
-			([name, input, method, path, response, body]) =>
-				[name, input, method, path, response, body] as const,
-		),
-	)(
-		'%s sends and parses the documented request',
-		async (name, input, method, path, response, body) => {
+	it.each(cases)(
+		'$name sends and parses the documented request',
+		async ({ name, run, method, path, response, body }) => {
 			fetchMock.mockResolvedValueOnce(
 				new Response(JSON.stringify(response), {
 					status: name === 'replay' ? 202 : 200,
 					headers: { 'Content-Type': 'application/json' },
 				}),
 			);
-			const endpoint: Endpoint = endpoints[name];
-			const result = await endpoint(
-				{ key: 'test-token', options: { zone: 'eu1' } } as never,
-				input as never,
-			);
+			const result = await run();
 			const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 			const parsed = new URL(url);
 			expect(parsed.origin).toBe('https://eu1.make.com');
@@ -242,26 +271,28 @@ describe('Make scenario public endpoints', () => {
 	it('rejects invalid paths and missing credentials', async () => {
 		await expect(
 			endpoints.get(
-				{ key: 'test-token', options: { zone: 'eu1' } } as never,
-				{ scenarioId: '../' } as never,
+				context(),
+				// @ts-expect-error Exercise validation of an invalid untyped caller's input.
+				{ scenarioId: '../' },
 			),
 		).rejects.toThrow();
 		await expect(
-			endpoints.get({ key: '', options: { zone: 'eu1' } } as never, {
+			endpoints.get(context({ zone: 'eu1' }, ''), {
 				scenarioId: 1,
 			}),
 		).rejects.toThrow('token');
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 	it('rejects duplicate IDs and extra trash fields before sending', async () => {
-		const ctx = { key: 'test-token', options: { zone: 'eu1' } } as never;
+		const ctx = context();
 		await expect(
 			endpoints.moveToTrash(ctx, { body: { teamId: 7, scenarioIds: [1, 1] } }),
 		).rejects.toThrow();
 		await expect(
 			endpoints.moveToTrash(ctx, {
+				// @ts-expect-error Exercise strict parsing for an untyped caller.
 				body: { teamId: 7, scenarioIds: [1], unexpected: true },
-			} as never),
+			}),
 		).rejects.toThrow();
 		await expect(
 			endpoints.replay(ctx, {
@@ -272,18 +303,22 @@ describe('Make scenario public endpoints', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 	it('requires a supported zone before sending credentials', async () => {
-		await expect(
-			endpoints.get({ key: 'test-token', options: {} } as never, id),
-		).rejects.toThrow('zone');
+		await expect(endpoints.get(context({}), id)).rejects.toThrow('zone');
 		await expect(
 			endpoints.get(
-				{ key: 'test-token', options: { zone: 'evil.example' } } as never,
+				context({
+					// @ts-expect-error Exercise runtime rejection of an unsupported zone.
+					zone: 'evil.example',
+				}),
 				id,
 			),
 		).rejects.toThrow('zone');
 		await expect(
 			endpoints.get(
-				{ key: 'test-token', options: { zone: 'constructor' } } as never,
+				context({
+					// @ts-expect-error Exercise runtime rejection of inherited object keys.
+					zone: 'constructor',
+				}),
 				id,
 			),
 		).rejects.toThrow('zone');
@@ -295,10 +330,11 @@ describe('Make scenario public endpoints', () => {
 				headers: { 'Content-Type': 'application/json' },
 			}),
 		);
-		await endpoints.listAiAgents(
-			{ key: 'test-token', options: { zone: 'us2' } } as never,
-			{ teamId: 7, 'pg[offset]': 20, 'pg[limit]': 10 },
-		);
+		await endpoints.listAiAgents(context({ zone: 'us2' }), {
+			teamId: 7,
+			'pg[offset]': 20,
+			'pg[limit]': 10,
+		});
 		const first = new URL(fetchMock.mock.calls[0][0] as string);
 		expect(first.origin).toBe('https://us2.make.com');
 		expect(first.searchParams.get('pg[offset]')).toBe('20');
@@ -308,10 +344,7 @@ describe('Make scenario public endpoints', () => {
 				headers: { 'Content-Type': 'application/json' },
 			}),
 		);
-		await endpoints.deleteBuildVariable(
-			{ key: 'test-token', options: { zone: 'eu1' } } as never,
-			{ ...id, value: 'TAC_1' },
-		);
+		await endpoints.deleteBuildVariable(context(), { ...id, value: 'TAC_1' });
 		expect(
 			new URL(fetchMock.mock.calls[1][0] as string).searchParams.get('value'),
 		).toBe('TAC_1');
@@ -359,12 +392,10 @@ describe('Make scenario public endpoints', () => {
 				},
 			),
 		);
+		// JavaScript can throw any value; narrow the caught value via Jest's assertions.
 		let caught: unknown;
 		try {
-			await endpoints.run(
-				{ key: 'test-token', options: { zone: 'eu1' } } as never,
-				id,
-			);
+			await endpoints.run(context(), id);
 		} catch (error) {
 			caught = error;
 		}
@@ -384,10 +415,7 @@ describe('Make scenario public endpoints', () => {
 			}),
 		);
 		await expect(
-			endpoints.update(
-				{ key: 'test-token', options: { zone: 'eu1' } } as never,
-				{ ...id, body: { name: 'changed' } },
-			),
+			endpoints.update(context(), { ...id, body: { name: 'changed' } }),
 		).rejects.toMatchObject({ status: 409, body: { code: 'SC409' } });
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
@@ -398,10 +426,7 @@ describe('Make scenario public endpoints', () => {
 				headers: { 'Content-Type': 'application/json' },
 			}),
 		);
-		await endpoints.get(
-			{ key: 'test-token', options: { zone: 'eu1' } } as never,
-			id,
-		);
+		await endpoints.get(context(), id);
 		expect(logEventFromContext).toHaveBeenCalledWith(
 			expect.anything(),
 			'make.scenarios.get',

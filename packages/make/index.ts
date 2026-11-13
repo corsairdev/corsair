@@ -58,89 +58,101 @@ const makeEndpointsNested = {
 	},
 } as const;
 export const makeEndpointSchemas = {
-	'scenarios.list': { input: schemas.listInput, output: schemas.listOutput },
+	'scenarios.list': {
+		input: schemas.MakeEndpointInputSchemas.list,
+		output: schemas.MakeEndpointOutputSchemas.list,
+	},
 	'scenarios.create': {
-		input: schemas.createInput,
-		output: schemas.createOutput,
+		input: schemas.MakeEndpointInputSchemas.create,
+		output: schemas.MakeEndpointOutputSchemas.create,
 	},
 	'scenarios.countTrash': {
-		input: schemas.countTrashInput,
-		output: schemas.countTrashOutput,
+		input: schemas.MakeEndpointInputSchemas.countTrash,
+		output: schemas.MakeEndpointOutputSchemas.countTrash,
 	},
 	'scenarios.moveToTrash': {
-		input: schemas.moveToTrashInput,
-		output: schemas.moveToTrashOutput,
+		input: schemas.MakeEndpointInputSchemas.moveToTrash,
+		output: schemas.MakeEndpointOutputSchemas.moveToTrash,
 	},
-	'scenarios.get': { input: schemas.getInput, output: schemas.getOutput },
+	'scenarios.get': {
+		input: schemas.MakeEndpointInputSchemas.get,
+		output: schemas.MakeEndpointOutputSchemas.get,
+	},
 	'scenarios.delete': {
-		input: schemas.deleteInput,
-		output: schemas.deleteOutput,
+		input: schemas.MakeEndpointInputSchemas.delete,
+		output: schemas.MakeEndpointOutputSchemas.delete,
 	},
 	'scenarios.update': {
-		input: schemas.updateInput,
-		output: schemas.updateOutput,
+		input: schemas.MakeEndpointInputSchemas.update,
+		output: schemas.MakeEndpointOutputSchemas.update,
 	},
 	'scenarios.getTriggers': {
-		input: schemas.getTriggersInput,
-		output: schemas.getTriggersOutput,
+		input: schemas.MakeEndpointInputSchemas.getTriggers,
+		output: schemas.MakeEndpointOutputSchemas.getTriggers,
 	},
-	'scenarios.clone': { input: schemas.cloneInput, output: schemas.cloneOutput },
+	'scenarios.clone': {
+		input: schemas.MakeEndpointInputSchemas.clone,
+		output: schemas.MakeEndpointOutputSchemas.clone,
+	},
 	'scenarios.restore': {
-		input: schemas.restoreInput,
-		output: schemas.restoreOutput,
+		input: schemas.MakeEndpointInputSchemas.restore,
+		output: schemas.MakeEndpointOutputSchemas.restore,
 	},
 	'scenarios.getModuleData': {
-		input: schemas.getModuleDataInput,
-		output: schemas.getModuleDataOutput,
+		input: schemas.MakeEndpointInputSchemas.getModuleData,
+		output: schemas.MakeEndpointOutputSchemas.getModuleData,
 	},
 	'scenarios.activate': {
-		input: schemas.activateInput,
-		output: schemas.activateOutput,
+		input: schemas.MakeEndpointInputSchemas.activate,
+		output: schemas.MakeEndpointOutputSchemas.activate,
 	},
 	'scenarios.deactivate': {
-		input: schemas.deactivateInput,
-		output: schemas.deactivateOutput,
+		input: schemas.MakeEndpointInputSchemas.deactivate,
+		output: schemas.MakeEndpointOutputSchemas.deactivate,
 	},
-	'scenarios.run': { input: schemas.runInput, output: schemas.runOutput },
+	'scenarios.run': {
+		input: schemas.MakeEndpointInputSchemas.run,
+		output: schemas.MakeEndpointOutputSchemas.run,
+	},
 	'scenarios.replay': {
-		input: schemas.replayInput,
-		output: schemas.replayOutput,
+		input: schemas.MakeEndpointInputSchemas.replay,
+		output: schemas.MakeEndpointOutputSchemas.replay,
 	},
 	'scenarios.getInterface': {
-		input: schemas.getInterfaceInput,
-		output: schemas.getInterfaceOutput,
+		input: schemas.MakeEndpointInputSchemas.getInterface,
+		output: schemas.MakeEndpointOutputSchemas.getInterface,
 	},
 	'scenarios.updateInterface': {
-		input: schemas.updateInterfaceInput,
-		output: schemas.updateInterfaceOutput,
+		input: schemas.MakeEndpointInputSchemas.updateInterface,
+		output: schemas.MakeEndpointOutputSchemas.updateInterface,
 	},
 	'scenarios.getUsage': {
-		input: schemas.getUsageInput,
-		output: schemas.getUsageOutput,
+		input: schemas.MakeEndpointInputSchemas.getUsage,
+		output: schemas.MakeEndpointOutputSchemas.getUsage,
 	},
 	'scenarios.listBuildVariables': {
-		input: schemas.listBuildVariablesInput,
-		output: schemas.listBuildVariablesOutput,
+		input: schemas.MakeEndpointInputSchemas.listBuildVariables,
+		output: schemas.MakeEndpointOutputSchemas.listBuildVariables,
 	},
 	'scenarios.addBuildVariables': {
-		input: schemas.addBuildVariablesInput,
-		output: schemas.addBuildVariablesOutput,
+		input: schemas.MakeEndpointInputSchemas.addBuildVariables,
+		output: schemas.MakeEndpointOutputSchemas.addBuildVariables,
 	},
 	'scenarios.updateBuildVariables': {
-		input: schemas.updateBuildVariablesInput,
-		output: schemas.updateBuildVariablesOutput,
+		input: schemas.MakeEndpointInputSchemas.updateBuildVariables,
+		output: schemas.MakeEndpointOutputSchemas.updateBuildVariables,
 	},
 	'scenarios.deleteBuildVariable': {
-		input: schemas.deleteBuildVariableInput,
-		output: schemas.deleteBuildVariableOutput,
+		input: schemas.MakeEndpointInputSchemas.deleteBuildVariable,
+		output: schemas.MakeEndpointOutputSchemas.deleteBuildVariable,
 	},
 	'scenarios.listAiAgents': {
-		input: schemas.listAiAgentsInput,
-		output: schemas.listAiAgentsOutput,
+		input: schemas.MakeEndpointInputSchemas.listAiAgents,
+		output: schemas.MakeEndpointOutputSchemas.listAiAgents,
 	},
 	'scenarios.getAiAgentModules': {
-		input: schemas.getAiAgentModulesInput,
-		output: schemas.getAiAgentModulesOutput,
+		input: schemas.MakeEndpointInputSchemas.getAiAgentModules,
+		output: schemas.MakeEndpointOutputSchemas.getAiAgentModules,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof makeEndpointsNested>;
 const makeEndpointMeta = {

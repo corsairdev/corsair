@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
 // Contract: https://developers.make.com/api-documentation/api-reference/scenarios
-// Unstructured objects represent provider-defined dynamic scenario data.
+// The reference leaves nested scenario data, flags, mappings, interfaces,
+// variables, and metadata open-ended. Their values depend on user configuration
+// or installed modules, so a stricter shared value schema would reject valid data.
 export const listInput = z
 	.object({
 		teamId: z.number().int().optional(),
@@ -1363,3 +1365,57 @@ export const getAiAgentModulesOutput = z
 			.optional(),
 	})
 	.passthrough();
+
+export const MakeEndpointInputSchemas = {
+	list: listInput,
+	create: createInput,
+	countTrash: countTrashInput,
+	moveToTrash: moveToTrashInput,
+	get: getInput,
+	delete: deleteInput,
+	update: updateInput,
+	getTriggers: getTriggersInput,
+	clone: cloneInput,
+	restore: restoreInput,
+	getModuleData: getModuleDataInput,
+	activate: activateInput,
+	deactivate: deactivateInput,
+	run: runInput,
+	replay: replayInput,
+	getInterface: getInterfaceInput,
+	updateInterface: updateInterfaceInput,
+	getUsage: getUsageInput,
+	listBuildVariables: listBuildVariablesInput,
+	addBuildVariables: addBuildVariablesInput,
+	updateBuildVariables: updateBuildVariablesInput,
+	deleteBuildVariable: deleteBuildVariableInput,
+	listAiAgents: listAiAgentsInput,
+	getAiAgentModules: getAiAgentModulesInput,
+} as const;
+
+export const MakeEndpointOutputSchemas = {
+	list: listOutput,
+	create: createOutput,
+	countTrash: countTrashOutput,
+	moveToTrash: moveToTrashOutput,
+	get: getOutput,
+	delete: deleteOutput,
+	update: updateOutput,
+	getTriggers: getTriggersOutput,
+	clone: cloneOutput,
+	restore: restoreOutput,
+	getModuleData: getModuleDataOutput,
+	activate: activateOutput,
+	deactivate: deactivateOutput,
+	run: runOutput,
+	replay: replayOutput,
+	getInterface: getInterfaceOutput,
+	updateInterface: updateInterfaceOutput,
+	getUsage: getUsageOutput,
+	listBuildVariables: listBuildVariablesOutput,
+	addBuildVariables: addBuildVariablesOutput,
+	updateBuildVariables: updateBuildVariablesOutput,
+	deleteBuildVariable: deleteBuildVariableOutput,
+	listAiAgents: listAiAgentsOutput,
+	getAiAgentModules: getAiAgentModulesOutput,
+} as const;
