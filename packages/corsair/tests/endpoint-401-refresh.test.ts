@@ -1,10 +1,16 @@
 import { createCorsair } from '../core';
+import { formatDefaultAuthMissingMessage } from '../core/auth/auth-missing-message';
 import {
 	encryptConfig,
 	encryptDEK,
 	generateDEK,
 } from '../core/auth/encryption';
+import { AuthMissingError } from '../core/auth/errors';
 import { getOAuthAccessToken } from '../core/auth/oauth-access';
+import {
+	classifyOAuthRefreshFailure,
+	OAuthRefreshError,
+} from '../core/auth/oauth-refresh-local';
 import { isUnauthorizedError } from '../core/endpoints/bind';
 import type { CorsairPlugin } from '../core/plugins';
 import { createTestDatabase } from './setup-db';
@@ -83,6 +89,8 @@ type ProbeOptions = {
 	rejected?: string[];
 	// What a rejected key fails with.
 	failure?: 'unauthorized' | 'server';
+	// What the provider's token endpoint answers the refresh with.
+	tokenReply?: { status: number; body: Record<string, unknown> };
 };
 
 function probePlugin(seen: string[], opts: ProbeOptions = {}): CorsairPlugin {
@@ -142,10 +150,14 @@ async function run(opts: ProbeOptions) {
 		const tokenCalls: string[] = [];
 		jest.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
 			tokenCalls.push(String(input));
-			return new Response(
-				JSON.stringify({ access_token: 'fresh', expires_in: 3600 }),
-				{ status: 200, headers: { 'content-type': 'application/json' } },
-			);
+			const reply = opts.tokenReply ?? {
+				status: 200,
+				body: { access_token: 'fresh', expires_in: 3600 },
+			};
+			return new Response(JSON.stringify(reply.body), {
+				status: reply.status,
+				headers: { 'content-type': 'application/json' },
+			});
 		});
 		const seen: string[] = [];
 		const corsair = createCorsair({
@@ -201,6 +213,41 @@ describe('endpoint 401 refresh', () => {
 		});
 	});
 
+	describe.each([
+		['the endpoint retries itself', true],
+		['core retries', false],
+	])('when the provider refuses the refresh (%s)', (_label, ownRetry) => {
+		it('a revoked grant becomes a reconnect error', async () => {
+			const out = await run({
+				ownRetry,
+				tokenReply: { status: 400, body: { error: 'invalid_grant' } },
+			});
+
+			expect(out.error).toBeInstanceOf(AuthMissingError);
+			expect(out.error).toMatchObject({
+				pluginId: 'probe',
+				authType: 'oauth_2',
+				reason: 'revoked',
+			});
+			expect(out.seen).toEqual(['revoked']);
+			expect(out.tokenCalls).toEqual([TOKEN_URL]);
+		});
+
+		it('a rejected OAuth app is not a reconnect', async () => {
+			const out = await run({
+				ownRetry,
+				tokenReply: { status: 401, body: { error: 'invalid_client' } },
+			});
+
+			expect(out.error).toBeInstanceOf(OAuthRefreshError);
+			expect(out.error).toMatchObject({
+				kind: 'client',
+				errorCode: 'invalid_client',
+			});
+			expect(out.error?.message).toContain('Reconnecting will not help');
+		});
+	});
+
 	it('core does not refresh on an error that is not a 401', async () => {
 		const out = await run({ failure: 'server' });
 
@@ -221,5 +268,50 @@ describe('isUnauthorizedError', () => {
 		[undefined, false],
 	])('%p -> %p', (error, expected) => {
 		expect(isUnauthorizedError(error)).toBe(expected);
+	});
+});
+
+describe('classifyOAuthRefreshFailure', () => {
+	it.each([
+		[400, 'invalid_grant', 'revoked'],
+		[401, 'invalid_token', 'revoked'],
+		[400, undefined, 'revoked'],
+		[401, 'invalid_client', 'client'],
+		[400, 'unauthorized_client', 'client'],
+		[500, undefined, 'transient'],
+		[503, 'temporarily_unavailable', 'transient'],
+		[429, undefined, 'transient'],
+		[408, undefined, 'transient'],
+	] as const)('%s %s -> %s', (status, code, kind) => {
+		expect(classifyOAuthRefreshFailure(status, code)).toBe(kind);
+	});
+
+	it('keeps the provider body off the message', () => {
+		const error = new OAuthRefreshError(400, 'invalid_grant');
+		expect(error.message).toBe(
+			'OAuth token refresh failed (400 invalid_grant)',
+		);
+	});
+});
+
+describe('formatDefaultAuthMissingMessage', () => {
+	it('says reconnect when access was revoked', () => {
+		expect(
+			formatDefaultAuthMissingMessage(
+				'gmail',
+				'https://hub.test/c/1',
+				'revoked',
+			),
+		).toBe(
+			'[auth-missing:gmail] Access was revoked or has expired at the provider. Direct the user to reconnect their account: https://hub.test/c/1',
+		);
+	});
+
+	it('keeps the first-connect wording otherwise', () => {
+		expect(
+			formatDefaultAuthMissingMessage('gmail', 'https://hub.test/c/1'),
+		).toBe(
+			'[auth-missing:gmail] Authentication required. Direct the user to connect their account: https://hub.test/c/1',
+		);
 	});
 });

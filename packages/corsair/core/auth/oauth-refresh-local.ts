@@ -27,6 +27,68 @@ export type LocalOAuthRefreshResult = {
 	scope?: string;
 };
 
+/**
+ * How a refused refresh should be handled:
+ * - 'revoked': the provider refused the refresh token (the user removed
+ *   access, or the grant expired). Only reconnecting fixes it.
+ * - 'client': the provider refused our OAuth app's own credentials (wrong or
+ *   deleted client id/secret). The app's owner must fix it; reconnecting won't.
+ * - 'transient': a 5xx, 408 or 429. Retrying later can work.
+ */
+export type OAuthRefreshFailureKind = 'revoked' | 'client' | 'transient';
+
+const CLIENT_ERRORS = new Set([
+	'invalid_client',
+	'unauthorized_client',
+	'incorrect_client_credentials',
+]);
+
+/** Classifies a token-endpoint failure by its HTTP status and RFC 6749
+ * `error` code. A 4xx without a recognised code counts as revoked. */
+export function classifyOAuthRefreshFailure(
+	status: number,
+	errorCode: string | undefined,
+): OAuthRefreshFailureKind {
+	if (errorCode && CLIENT_ERRORS.has(errorCode)) return 'client';
+	if (status >= 500 || status === 408 || status === 429) return 'transient';
+	if (status >= 400) return 'revoked';
+	return 'transient';
+}
+
+/** A refresh the token endpoint refused. The provider's body is kept off the
+ * message, which reaches agents and logs; only its `error` code is shown. */
+export class OAuthRefreshError extends Error {
+	readonly status: number;
+	readonly errorCode: string | undefined;
+	readonly kind: OAuthRefreshFailureKind;
+
+	constructor(status: number, errorCode: string | undefined) {
+		const kind = classifyOAuthRefreshFailure(status, errorCode);
+		super(
+			`OAuth token refresh failed (${status}${errorCode ? ` ${errorCode}` : ''})${
+				kind === 'client'
+					? ': the provider rejected the OAuth app credentials (client id/secret). Reconnecting will not help; fix the app configuration.'
+					: ''
+			}`,
+		);
+		Object.setPrototypeOf(this, new.target.prototype);
+		this.name = 'OAuthRefreshError';
+		this.status = status;
+		this.errorCode = errorCode;
+		this.kind = kind;
+	}
+}
+
+function readErrorCode(body: string): string | undefined {
+	try {
+		const parsed = JSON.parse(body) as { error?: unknown };
+		return typeof parsed.error === 'string' ? parsed.error : undefined;
+	} catch {
+		const match = /(?:^|[?&])error=([a-z_]+)/i.exec(body);
+		return match?.[1];
+	}
+}
+
 export async function refreshOAuthTokensLocal(
 	input: LocalOAuthRefreshInput,
 ): Promise<LocalOAuthRefreshResult> {
@@ -72,8 +134,9 @@ export async function refreshOAuthTokensLocal(
 	});
 
 	if (!response.ok) {
-		throw new Error(
-			`OAuth token refresh failed (${response.status}): ${await response.text()}`,
+		throw new OAuthRefreshError(
+			response.status,
+			readErrorCode(await response.text()),
 		);
 	}
 
