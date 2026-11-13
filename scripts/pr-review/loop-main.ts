@@ -180,19 +180,29 @@ const reviewComments = JSON.parse(
 
 const issueComments = JSON.parse(
 	gh(['api', `repos/${repo}/issues/${pr}/comments`, '--paginate']),
-) as { body: string; user?: { login: string } }[];
+) as { body: string; updated_at?: string; user?: { login: string } }[];
 
 // A clean Greptile re-review edits its summary and creates no review object,
 // so the latest review can belong to an older commit whose findings are
 // already fixed. Trust the newer summary when it raises nothing serious.
 const greptileSummary = issueComments
-	.filter((c) => c.user?.login === 'greptile-apps[bot]')
-	.map((c) => c.body)
-	.filter((b) => /Last reviewed commit/.test(b))
+	.filter(
+		(c) =>
+			c.user?.login === 'greptile-apps[bot]' &&
+			/Last reviewed commit/.test(c.body),
+	)
 	.pop();
 const staleReview = reviewSupersededByCleanSummary(
-	greptileSummary,
-	event.review.commit_id as string | undefined,
+	greptileSummary
+		? {
+				body: greptileSummary.body,
+				updatedAt: greptileSummary.updated_at ?? '',
+			}
+		: undefined,
+	{
+		commitId: (event.review.commit_id as string | undefined) ?? '',
+		submittedAt: (event.review.submitted_at as string | undefined) ?? '',
+	},
 );
 if (staleReview) {
 	console.log(

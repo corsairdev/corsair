@@ -97,19 +97,25 @@ export function buildResolvedComment(): string {
  * already fixed, and the loop keeps a stale "Maintainer review needed".
  */
 export function reviewSupersededByCleanSummary(
-	summaryBody: string | undefined,
-	reviewCommitId: string | undefined,
+	summary: { body: string; updatedAt: string } | undefined,
+	review: { commitId: string; submittedAt: string } | undefined,
 ): boolean {
-	if (!summaryBody || !reviewCommitId) return false;
-	const reviewed = summaryBody.match(
+	if (!summary || !review?.commitId || !review.submittedAt) return false;
+	// The summary must have been written after the review: a review that lands
+	// while the summary still describes an older clean commit carries new
+	// findings, not stale ones.
+	const summaryTime = Date.parse(summary.updatedAt);
+	const reviewTime = Date.parse(review.submittedAt);
+	if (!(summaryTime > reviewTime)) return false;
+	const reviewed = summary.body.match(
 		/Last reviewed commit:[\s\S]*?\/commit\/([0-9a-f]{7,40})/,
 	)?.[1];
 	if (!reviewed) return false;
 	if (
-		reviewCommitId.startsWith(reviewed) ||
-		reviewed.startsWith(reviewCommitId)
+		review.commitId.startsWith(reviewed) ||
+		reviewed.startsWith(review.commitId)
 	) {
 		return false;
 	}
-	return !/alt="P[01]"/.test(summaryBody);
+	return !/alt="P[01]"/.test(summary.body);
 }
