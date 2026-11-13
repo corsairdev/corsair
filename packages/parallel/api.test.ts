@@ -1,4 +1,4 @@
-import { createCorsair } from 'corsair/core';
+import { createCorsair, runWithMode } from 'corsair/core';
 import { parallel } from './index';
 
 const api = createCorsair({ plugins: [parallel({ key: 'test-key' })] }).parallel
@@ -262,7 +262,8 @@ test.each([
 			},
 		},
 		result: monitorFixture,
-		call: (x: any) => api.monitors.create(x),
+		call: (x: object) =>
+			api.monitors.create(x as Parameters<typeof api.monitors.create>[0]),
 	},
 	{
 		name: 'list',
@@ -275,7 +276,8 @@ test.each([
 			status: ['active'],
 		},
 		result: { monitors: [monitorFixture], next_cursor: null },
-		call: (x: any) => api.monitors.list(x),
+		call: (x: object) =>
+			api.monitors.list(x as Parameters<typeof api.monitors.list>[0]),
 	},
 	{
 		name: 'stats',
@@ -283,7 +285,8 @@ test.each([
 		url: '/v1/monitors/stats',
 		input: {},
 		result: { total: 1, processor_counts: { active: { lite: { '1d': 1 } } } },
-		call: (x: any) => api.monitors.stats(x),
+		call: (x: object) =>
+			api.monitors.stats(x as Parameters<typeof api.monitors.stats>[0]),
 	},
 	{
 		name: 'get',
@@ -291,7 +294,8 @@ test.each([
 		url: '/v1/monitors/m_1',
 		input: { monitor_id: 'm_1' },
 		result: monitorFixture,
-		call: (x: any) => api.monitors.get(x),
+		call: (x: object) =>
+			api.monitors.get(x as Parameters<typeof api.monitors.get>[0]),
 	},
 	{
 		name: 'cancel',
@@ -299,7 +303,8 @@ test.each([
 		url: '/v1/monitors/m_1/cancel',
 		input: { monitor_id: 'm_1' },
 		result: monitorFixture,
-		call: (x: any) => api.monitors.cancel(x),
+		call: (x: object) =>
+			api.monitors.cancel(x as Parameters<typeof api.monitors.cancel>[0]),
 	},
 	{
 		name: 'trigger',
@@ -307,7 +312,8 @@ test.each([
 		url: '/v1/monitors/m_1/trigger',
 		input: { monitor_id: 'm_1' },
 		result: undefined,
-		call: (x: any) => api.monitors.trigger(x),
+		call: (x: object) =>
+			api.monitors.trigger(x as Parameters<typeof api.monitors.trigger>[0]),
 	},
 	{
 		name: 'events',
@@ -318,7 +324,8 @@ test.each([
 			events: [{ event_type: 'completion', timestamp: '2026-01-01T00:00:00Z' }],
 			next_cursor: null,
 		},
-		call: (x: any) => api.monitors.events(x),
+		call: (x: object) =>
+			api.monitors.events(x as Parameters<typeof api.monitors.events>[0]),
 	},
 	{
 		name: 'update',
@@ -326,7 +333,8 @@ test.each([
 		url: '/v1/monitors/m_1/update',
 		input: { monitor_id: 'm_1', body: { webhook: null } },
 		result: monitorFixture,
-		call: (x: any) => api.monitors.update(x),
+		call: (x: object) =>
+			api.monitors.update(x as Parameters<typeof api.monitors.update>[0]),
 	},
 ])(
 	'monitor $name reaches the request seam',
@@ -343,7 +351,7 @@ test.each([
 			name === 'create'
 				? JSON.stringify(input)
 				: name === 'update'
-					? JSON.stringify((input as { body: unknown }).body)
+					? JSON.stringify((input as { body: object }).body)
 					: undefined;
 		expect(fetchMock).toHaveBeenCalledWith(
 			`https://api.parallel.ai${url}`,
@@ -396,7 +404,8 @@ test.each([
 		input: { metadata: { key: 'value' } },
 		body: { metadata: { key: 'value' } },
 		result: { taskgroup_id: 'tg_1', status: groupStatus, created_at: null },
-		call: (x: any) => api.tasks.createGroup(x),
+		call: (x: object) =>
+			api.tasks.createGroup(x as Parameters<typeof api.tasks.createGroup>[0]),
 	},
 	{
 		name: 'getGroup',
@@ -404,7 +413,8 @@ test.each([
 		url: '/v1/tasks/groups/tg_1',
 		input: { taskgroup_id: 'tg_1' },
 		result: { taskgroup_id: 'tg_1', status: groupStatus, created_at: null },
-		call: (x: any) => api.tasks.getGroup(x),
+		call: (x: object) =>
+			api.tasks.getGroup(x as Parameters<typeof api.tasks.getGroup>[0]),
 	},
 	{
 		name: 'addGroupRuns',
@@ -424,7 +434,8 @@ test.each([
 			run_cursor: null,
 			event_cursor: null,
 		},
-		call: (x: any) => api.tasks.addGroupRuns(x),
+		call: (x: object) =>
+			api.tasks.addGroupRuns(x as Parameters<typeof api.tasks.addGroupRuns>[0]),
 	},
 	{
 		name: 'getGroupRun',
@@ -432,7 +443,8 @@ test.each([
 		url: '/v1/tasks/groups/tg_1/runs/trun_1',
 		input: { taskgroup_id: 'tg_1', run_id: 'trun_1' },
 		result: taskRun,
-		call: (x: any) => api.tasks.getGroupRun(x),
+		call: (x: object) =>
+			api.tasks.getGroupRun(x as Parameters<typeof api.tasks.getGroupRun>[0]),
 	},
 	{
 		name: 'createRun',
@@ -442,7 +454,8 @@ test.each([
 		body: taskInput,
 		beta: 'feature',
 		result: taskRun,
-		call: (x: any) => api.tasks.createRun(x),
+		call: (x: object) =>
+			api.tasks.createRun(x as Parameters<typeof api.tasks.createRun>[0]),
 	},
 	{
 		name: 'getRun',
@@ -450,7 +463,8 @@ test.each([
 		url: '/v1/tasks/runs/trun_1',
 		input: { run_id: 'trun_1' },
 		result: taskRun,
-		call: (x: any) => api.tasks.getRun(x),
+		call: (x: object) =>
+			api.tasks.getRun(x as Parameters<typeof api.tasks.getRun>[0]),
 	},
 	{
 		name: 'getRunInput',
@@ -458,7 +472,8 @@ test.each([
 		url: '/v1/tasks/runs/trun_1/input',
 		input: { run_id: 'trun_1' },
 		result: taskInput,
-		call: (x: any) => api.tasks.getRunInput(x),
+		call: (x: object) =>
+			api.tasks.getRunInput(x as Parameters<typeof api.tasks.getRunInput>[0]),
 	},
 	{
 		name: 'getResult',
@@ -469,7 +484,8 @@ test.each([
 			run: taskRun,
 			output: { type: 'text', basis: [], content: 'answer' },
 		},
-		call: (x: any) => api.tasks.getResult(x),
+		call: (x: object) =>
+			api.tasks.getResult(x as Parameters<typeof api.tasks.getResult>[0]),
 	},
 ])(
 	'task $name reaches the request seam',
@@ -525,7 +541,10 @@ test.each([
 		input: { entity_type: 'companies', objective: 'AI firms', match_limit: 5 },
 		body: { entity_type: 'companies', objective: 'AI firms', match_limit: 5 },
 		result: { entity_set_id: 'e_1', entities: [] },
-		call: (x: any) => api.findall.entitySearch(x),
+		call: (x: object) =>
+			api.findall.entitySearch(
+				x as Parameters<typeof api.findall.entitySearch>[0],
+			),
 	},
 	{
 		name: 'ingest',
@@ -534,7 +553,8 @@ test.each([
 		input: { objective: 'AI firms' },
 		body: { objective: 'AI firms' },
 		result: findallSchema,
-		call: (x: any) => api.findall.ingest(x),
+		call: (x: object) =>
+			api.findall.ingest(x as Parameters<typeof api.findall.ingest>[0]),
 	},
 	{
 		name: 'createRun',
@@ -543,7 +563,8 @@ test.each([
 		input: findallInput,
 		body: findallInput,
 		result: findallRun,
-		call: (x: any) => api.findall.createRun(x),
+		call: (x: object) =>
+			api.findall.createRun(x as Parameters<typeof api.findall.createRun>[0]),
 	},
 	{
 		name: 'getRun',
@@ -551,7 +572,8 @@ test.each([
 		url: '/v1beta/findall/runs/find_1',
 		input: { findall_id: 'find_1' },
 		result: findallRun,
-		call: (x: any) => api.findall.getRun(x),
+		call: (x: object) =>
+			api.findall.getRun(x as Parameters<typeof api.findall.getRun>[0]),
 	},
 	{
 		name: 'cancel',
@@ -559,7 +581,8 @@ test.each([
 		url: '/v1beta/findall/runs/find_1/cancel',
 		input: { findall_id: 'find_1' },
 		result: undefined,
-		call: (x: any) => api.findall.cancel(x),
+		call: (x: object) =>
+			api.findall.cancel(x as Parameters<typeof api.findall.cancel>[0]),
 	},
 	{
 		name: 'enrich',
@@ -571,7 +594,8 @@ test.each([
 		},
 		body: { output_schema: { json_schema: { type: 'object' } } },
 		result: findallSchema,
-		call: (x: any) => api.findall.enrich(x),
+		call: (x: object) =>
+			api.findall.enrich(x as Parameters<typeof api.findall.enrich>[0]),
 	},
 	{
 		name: 'extend',
@@ -580,7 +604,8 @@ test.each([
 		input: { findall_id: 'find_1', body: { additional_match_limit: 10 } },
 		body: { additional_match_limit: 10 },
 		result: findallSchema,
-		call: (x: any) => api.findall.extend(x),
+		call: (x: object) =>
+			api.findall.extend(x as Parameters<typeof api.findall.extend>[0]),
 	},
 	{
 		name: 'result',
@@ -588,7 +613,8 @@ test.each([
 		url: '/v1beta/findall/runs/find_1/result',
 		input: { findall_id: 'find_1' },
 		result: { run: findallRun, candidates: [], last_event_id: null },
-		call: (x: any) => api.findall.result(x),
+		call: (x: object) =>
+			api.findall.result(x as Parameters<typeof api.findall.result>[0]),
 	},
 	{
 		name: 'schema',
@@ -596,7 +622,8 @@ test.each([
 		url: '/v1beta/findall/runs/find_1/schema',
 		input: { findall_id: 'find_1' },
 		result: findallSchema,
-		call: (x: any) => api.findall.schema(x),
+		call: (x: object) =>
+			api.findall.schema(x as Parameters<typeof api.findall.schema>[0]),
 	},
 ])(
 	'FindAll $name reaches the request seam',
@@ -784,4 +811,73 @@ test('task auto schemas remain intact in requests', async () => {
 	expect(JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body))).toEqual(
 		input.body,
 	);
+});
+
+// Billing: https://docs.parallel.ai/getting-started/pricing.
+// Schema generation and monitor updates are conservatively treated as billable.
+const billableCalls = [
+	() => api.chat.create({ model: 'base', messages: [] }),
+	() => api.responses.create({ model: 'parallel', input: 'question' }),
+	() =>
+		api.findall.entitySearch({ entity_type: 'companies', objective: 'firms' }),
+	() => api.findall.ingest({ objective: 'firms' }),
+	() =>
+		api.findall.createRun({
+			objective: 'firms',
+			entity_type: 'companies',
+			match_conditions: [],
+			generator: 'base',
+			match_limit: 5,
+		}),
+	() =>
+		api.findall.enrich({
+			findall_id: 'f',
+			body: { output_schema: { json_schema: {} } },
+		}),
+	() =>
+		api.findall.extend({
+			findall_id: 'f',
+			body: { additional_match_limit: 1 },
+		}),
+	() => api.tasks.addGroupRuns({ taskgroup_id: 'g', body: { inputs: [] } }),
+	() => api.tasks.createRun({ body: { processor: 'base', input: 'question' } }),
+	() =>
+		api.monitors.create({
+			type: 'event_stream',
+			frequency: '1d',
+			settings: { query: 'news' },
+		}),
+	() => api.monitors.trigger({ monitor_id: 'm' }),
+	() => api.monitors.update({ monitor_id: 'm', body: { frequency: '1d' } }),
+	() => api.images.search({ search_queries: ['query'] }),
+	() => api.places.search({ query: 'coffee', location: 'London' }),
+	() =>
+		api.decisions.create({
+			state: null,
+			questions: { q: { type: 'noul', instructions: 'question' } },
+		}),
+	() => api.search.search({ search_queries: ['query'] }),
+	() => api.extract.extract({ urls: ['https://example.com'] }),
+];
+
+test.each(['cautious', 'strict', 'readonly'] as const)(
+	'all potentially billable operations are blocked before network access in %s mode',
+	async (mode) => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch');
+		await runWithMode(mode, async () => {
+			for (const call of billableCalls) await expect(call()).rejects.toThrow();
+		});
+		expect(fetchMock).not.toHaveBeenCalled();
+	},
+);
+
+test('non-billable retrieval remains available in readonly mode', async () => {
+	const response = { total: 1, processor_counts: {} };
+	const fetchMock = jest
+		.spyOn(globalThis, 'fetch')
+		.mockResolvedValue(new Response(JSON.stringify(response)));
+	await runWithMode('readonly', async () =>
+		expect(await api.monitors.stats({})).toEqual(response),
+	);
+	expect(fetchMock).toHaveBeenCalledTimes(1);
 });

@@ -13,59 +13,7 @@ import type {
 import { AuthMissingError } from 'corsair/core';
 import type { z } from 'zod';
 import { endpoints } from './endpoints';
-import {
-	ChatInput,
-	ChatOutput,
-	DecisionInput,
-	DecisionOutput,
-	EmptyInput,
-	ExtractInput,
-	ExtractOutput,
-	FindAllCreateInput,
-	FindAllEnrichInput,
-	FindAllEntityInput,
-	FindAllEntityOutput,
-	FindAllExtendInput,
-	FindAllIdInput,
-	FindAllIngestInput,
-	FindAllResultOutput,
-	FindAllRunOutput,
-	FindAllSchemaOutput,
-	ImageSearchInput,
-	ImageSearchOutput,
-	MemoryClearInput,
-	MemoryEvictInput,
-	MemoryRetrieveInput,
-	MemoryRetrieveOutput,
-	MonitorCreateInput,
-	MonitorEventsInput,
-	MonitorEventsOutput,
-	MonitorIdInput,
-	MonitorListInput,
-	MonitorListOutput,
-	MonitorOutput,
-	MonitorStatsOutput,
-	MonitorUpdateInput,
-	NoContent,
-	PlaceSearchInput,
-	PlaceSearchOutput,
-	ResponseInput,
-	ResponseOutput,
-	SearchInput,
-	SearchOutput,
-	TaskGroupCreateInput,
-	TaskGroupIdInput,
-	TaskGroupOutput,
-	TaskGroupRunIdInput,
-	TaskGroupRunsInput,
-	TaskGroupRunsOutput,
-	TaskResultInput,
-	TaskResultOutput,
-	TaskRunCreateInput,
-	TaskRunIdInput,
-	TaskRunInput,
-	TaskRunOutput,
-} from './endpoints/types';
+import { EndpointInputSchemas, EndpointOutputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ParallelSchema } from './schema';
 
@@ -82,50 +30,146 @@ export type ParallelContext = CorsairPluginContext<
 >;
 export type ParallelBoundEndpoints = BindEndpoints<typeof endpoints>;
 export const parallelEndpointSchemas = {
-	'monitors.create': { input: MonitorCreateInput, output: MonitorOutput },
-	'monitors.list': { input: MonitorListInput, output: MonitorListOutput },
-	'monitors.stats': { input: EmptyInput, output: MonitorStatsOutput },
-	'monitors.get': { input: MonitorIdInput, output: MonitorOutput },
-	'monitors.cancel': { input: MonitorIdInput, output: MonitorOutput },
-	'monitors.trigger': { input: MonitorIdInput, output: NoContent },
-	'monitors.events': { input: MonitorEventsInput, output: MonitorEventsOutput },
-	'monitors.update': { input: MonitorUpdateInput, output: MonitorOutput },
-	'tasks.createGroup': { input: TaskGroupCreateInput, output: TaskGroupOutput },
-	'tasks.getGroup': { input: TaskGroupIdInput, output: TaskGroupOutput },
+	'monitors.create': {
+		input: EndpointInputSchemas['monitors.create'],
+		output: EndpointOutputSchemas['monitors.create'],
+	},
+	'monitors.list': {
+		input: EndpointInputSchemas['monitors.list'],
+		output: EndpointOutputSchemas['monitors.list'],
+	},
+	'monitors.stats': {
+		input: EndpointInputSchemas['monitors.stats'],
+		output: EndpointOutputSchemas['monitors.stats'],
+	},
+	'monitors.get': {
+		input: EndpointInputSchemas['monitors.get'],
+		output: EndpointOutputSchemas['monitors.get'],
+	},
+	'monitors.cancel': {
+		input: EndpointInputSchemas['monitors.cancel'],
+		output: EndpointOutputSchemas['monitors.cancel'],
+	},
+	'monitors.trigger': {
+		input: EndpointInputSchemas['monitors.trigger'],
+		output: EndpointOutputSchemas['monitors.trigger'],
+	},
+	'monitors.events': {
+		input: EndpointInputSchemas['monitors.events'],
+		output: EndpointOutputSchemas['monitors.events'],
+	},
+	'monitors.update': {
+		input: EndpointInputSchemas['monitors.update'],
+		output: EndpointOutputSchemas['monitors.update'],
+	},
+	'tasks.createGroup': {
+		input: EndpointInputSchemas['tasks.createGroup'],
+		output: EndpointOutputSchemas['tasks.createGroup'],
+	},
+	'tasks.getGroup': {
+		input: EndpointInputSchemas['tasks.getGroup'],
+		output: EndpointOutputSchemas['tasks.getGroup'],
+	},
 	'tasks.addGroupRuns': {
-		input: TaskGroupRunsInput,
-		output: TaskGroupRunsOutput,
+		input: EndpointInputSchemas['tasks.addGroupRuns'],
+		output: EndpointOutputSchemas['tasks.addGroupRuns'],
 	},
-	'tasks.getGroupRun': { input: TaskGroupRunIdInput, output: TaskRunOutput },
-	'tasks.createRun': { input: TaskRunCreateInput, output: TaskRunOutput },
-	'tasks.getRun': { input: TaskRunIdInput, output: TaskRunOutput },
-	'tasks.getRunInput': { input: TaskRunIdInput, output: TaskRunInput },
-	'tasks.getResult': { input: TaskResultInput, output: TaskResultOutput },
+	'tasks.getGroupRun': {
+		input: EndpointInputSchemas['tasks.getGroupRun'],
+		output: EndpointOutputSchemas['tasks.getGroupRun'],
+	},
+	'tasks.createRun': {
+		input: EndpointInputSchemas['tasks.createRun'],
+		output: EndpointOutputSchemas['tasks.createRun'],
+	},
+	'tasks.getRun': {
+		input: EndpointInputSchemas['tasks.getRun'],
+		output: EndpointOutputSchemas['tasks.getRun'],
+	},
+	'tasks.getRunInput': {
+		input: EndpointInputSchemas['tasks.getRunInput'],
+		output: EndpointOutputSchemas['tasks.getRunInput'],
+	},
+	'tasks.getResult': {
+		input: EndpointInputSchemas['tasks.getResult'],
+		output: EndpointOutputSchemas['tasks.getResult'],
+	},
 	'findall.entitySearch': {
-		input: FindAllEntityInput,
-		output: FindAllEntityOutput,
+		input: EndpointInputSchemas['findall.entitySearch'],
+		output: EndpointOutputSchemas['findall.entitySearch'],
 	},
-	'findall.ingest': { input: FindAllIngestInput, output: FindAllSchemaOutput },
-	'findall.createRun': { input: FindAllCreateInput, output: FindAllRunOutput },
-	'findall.getRun': { input: FindAllIdInput, output: FindAllRunOutput },
-	'findall.cancel': { input: FindAllIdInput, output: NoContent },
-	'findall.enrich': { input: FindAllEnrichInput, output: FindAllSchemaOutput },
-	'findall.extend': { input: FindAllExtendInput, output: FindAllSchemaOutput },
-	'findall.result': { input: FindAllIdInput, output: FindAllResultOutput },
-	'findall.schema': { input: FindAllIdInput, output: FindAllSchemaOutput },
-	'chat.create': { input: ChatInput, output: ChatOutput },
-	'responses.create': { input: ResponseInput, output: ResponseOutput },
-	'search.search': { input: SearchInput, output: SearchOutput },
-	'images.search': { input: ImageSearchInput, output: ImageSearchOutput },
-	'places.search': { input: PlaceSearchInput, output: PlaceSearchOutput },
-	'decisions.create': { input: DecisionInput, output: DecisionOutput },
-	'memory.clear': { input: MemoryClearInput, output: NoContent },
-	'memory.evict': { input: MemoryEvictInput, output: NoContent },
+	'findall.ingest': {
+		input: EndpointInputSchemas['findall.ingest'],
+		output: EndpointOutputSchemas['findall.ingest'],
+	},
+	'findall.createRun': {
+		input: EndpointInputSchemas['findall.createRun'],
+		output: EndpointOutputSchemas['findall.createRun'],
+	},
+	'findall.getRun': {
+		input: EndpointInputSchemas['findall.getRun'],
+		output: EndpointOutputSchemas['findall.getRun'],
+	},
+	'findall.cancel': {
+		input: EndpointInputSchemas['findall.cancel'],
+		output: EndpointOutputSchemas['findall.cancel'],
+	},
+	'findall.enrich': {
+		input: EndpointInputSchemas['findall.enrich'],
+		output: EndpointOutputSchemas['findall.enrich'],
+	},
+	'findall.extend': {
+		input: EndpointInputSchemas['findall.extend'],
+		output: EndpointOutputSchemas['findall.extend'],
+	},
+	'findall.result': {
+		input: EndpointInputSchemas['findall.result'],
+		output: EndpointOutputSchemas['findall.result'],
+	},
+	'findall.schema': {
+		input: EndpointInputSchemas['findall.schema'],
+		output: EndpointOutputSchemas['findall.schema'],
+	},
+	'chat.create': {
+		input: EndpointInputSchemas['chat.create'],
+		output: EndpointOutputSchemas['chat.create'],
+	},
+	'responses.create': {
+		input: EndpointInputSchemas['responses.create'],
+		output: EndpointOutputSchemas['responses.create'],
+	},
+	'search.search': {
+		input: EndpointInputSchemas['search.search'],
+		output: EndpointOutputSchemas['search.search'],
+	},
+	'images.search': {
+		input: EndpointInputSchemas['images.search'],
+		output: EndpointOutputSchemas['images.search'],
+	},
+	'places.search': {
+		input: EndpointInputSchemas['places.search'],
+		output: EndpointOutputSchemas['places.search'],
+	},
+	'decisions.create': {
+		input: EndpointInputSchemas['decisions.create'],
+		output: EndpointOutputSchemas['decisions.create'],
+	},
+	'memory.clear': {
+		input: EndpointInputSchemas['memory.clear'],
+		output: EndpointOutputSchemas['memory.clear'],
+	},
+	'memory.evict': {
+		input: EndpointInputSchemas['memory.evict'],
+		output: EndpointOutputSchemas['memory.evict'],
+	},
 	'memory.retrieve': {
-		input: MemoryRetrieveInput,
-		output: MemoryRetrieveOutput,
+		input: EndpointInputSchemas['memory.retrieve'],
+		output: EndpointOutputSchemas['memory.retrieve'],
 	},
-	'extract.extract': { input: ExtractInput, output: ExtractOutput },
+	'extract.extract': {
+		input: EndpointInputSchemas['extract.extract'],
+		output: EndpointOutputSchemas['extract.extract'],
+	},
 } satisfies RequiredPluginEndpointSchemas<typeof endpoints>;
 export type ParallelEndpointInputs = {
 	[K in keyof typeof parallelEndpointSchemas]: z.input<
@@ -139,29 +183,35 @@ export type ParallelEndpointOutputs = {
 };
 const meta = {
 	'chat.create': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description: 'Create a non-streaming chat completion',
 	},
 	'responses.create': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description: 'Create a non-streaming response',
 	},
 	'findall.entitySearch': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description: 'Search for entities',
 	},
 	'findall.ingest': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description: 'Create an entity search specification',
 	},
 	'findall.createRun': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a FindAll run',
 	},
 	'findall.getRun': { riskLevel: 'read', description: 'Get a FindAll run' },
 	'findall.cancel': { riskLevel: 'write', description: 'Cancel a FindAll run' },
-	'findall.enrich': { riskLevel: 'write', description: 'Enrich a FindAll run' },
-	'findall.extend': { riskLevel: 'write', description: 'Extend a FindAll run' },
+	'findall.enrich': {
+		riskLevel: 'destructive',
+		description: 'Enrich a FindAll run',
+	},
+	'findall.extend': {
+		riskLevel: 'destructive',
+		description: 'Extend a FindAll run',
+	},
 	'findall.result': { riskLevel: 'read', description: 'Get FindAll results' },
 	'findall.schema': {
 		riskLevel: 'read',
@@ -173,18 +223,24 @@ const meta = {
 	},
 	'tasks.getGroup': { riskLevel: 'read', description: 'Get a task group' },
 	'tasks.addGroupRuns': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Add runs to a task group',
 	},
 	'tasks.getGroupRun': {
 		riskLevel: 'read',
 		description: 'Get a run in a task group',
 	},
-	'tasks.createRun': { riskLevel: 'write', description: 'Create a task run' },
+	'tasks.createRun': {
+		riskLevel: 'destructive',
+		description: 'Create a task run',
+	},
 	'tasks.getRun': { riskLevel: 'read', description: 'Get a task run' },
 	'tasks.getRunInput': { riskLevel: 'read', description: 'Get task run input' },
 	'tasks.getResult': { riskLevel: 'read', description: 'Get task run result' },
-	'monitors.create': { riskLevel: 'write', description: 'Create a monitor' },
+	'monitors.create': {
+		riskLevel: 'destructive',
+		description: 'Create a monitor',
+	},
 	'monitors.list': { riskLevel: 'read', description: 'List monitors' },
 	'monitors.stats': {
 		riskLevel: 'read',
@@ -197,11 +253,14 @@ const meta = {
 		description: 'Permanently cancel a monitor',
 	},
 	'monitors.trigger': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Trigger a monitor run',
 	},
 	'monitors.events': { riskLevel: 'read', description: 'List monitor events' },
-	'monitors.update': { riskLevel: 'write', description: 'Update a monitor' },
+	'monitors.update': {
+		riskLevel: 'destructive',
+		description: 'Update a monitor',
+	},
 	'memory.clear': {
 		riskLevel: 'destructive',
 		description: 'Clear a memory scope',
@@ -211,21 +270,24 @@ const meta = {
 		description: 'Evict a memory source',
 	},
 	'memory.retrieve': { riskLevel: 'read', description: 'Retrieve memories' },
-	'images.search': { riskLevel: 'read', description: 'Search for images' },
+	'images.search': {
+		riskLevel: 'destructive',
+		description: 'Search for images',
+	},
 	'places.search': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description: 'Search for places by location',
 	},
 	'decisions.create': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description: 'Answer grounded decision questions',
 	},
 	'search.search': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description: 'Search the web for relevant sources and excerpts',
 	},
 	'extract.extract': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description: 'Extract content from web URLs',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof endpoints>;

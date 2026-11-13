@@ -69,7 +69,12 @@ function operation<I extends z.ZodType<object>, O extends z.ZodType>(
 function monitorPath(id: string): string {
 	return `/v1/monitors/${encodeURIComponent(safeId.parse(id))}`;
 }
-function queryString(params: Record<string, unknown>): string {
+function queryString(
+	params: Record<
+		string,
+		string | number | boolean | readonly string[] | null | undefined
+	>,
+): string {
 	const search = new URLSearchParams();
 	for (const [key, value] of Object.entries(params)) {
 		if (value === undefined || value === null) continue;

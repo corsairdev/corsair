@@ -11,7 +11,9 @@ export class ParallelError extends Error {
 	}
 }
 
-/** Send one request; never retry a potentially billable operation. */
+/** Send one request; never retry a potentially billable operation.
+ * The untrusted JSON varies by endpoint and must be parsed by its output schema.
+ */
 export async function parallelRequest(
 	key: string,
 	path: string,
