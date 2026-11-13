@@ -13,7 +13,9 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import type { SquareEnvironment } from './client';
+import { SQUARE_BASE_URLS } from './client';
 import {
 	Bookings,
 	Cards,
@@ -1316,21 +1318,36 @@ export function square<const T extends SquarePluginOptions>(
 		oauthWebhookTenantLinkResolver: () => null,
 		errorHandlers: mergeErrorHandlers(options.errorHandlers),
 		keyBuilder: async (ctx: SquareKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
+			// No webhooks are declared yet, so there is no signature key to build.
+			if (source !== 'endpoint') return '';
+
+			if (options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
+			if (ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+
+				if (!res) {
+					throw new AuthMissingError('square', 'api_key');
+				}
+
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+			if (ctx.authType === 'oauth_2') {
+				// Refreshes an expired token and sets ctx._refreshAuth, which
+				// client.ts calls once after a 401. Square's ObtainToken takes the
+				// client id and secret in a JSON body, on the same host as the API.
+				return getOAuthAccessToken(ctx, {
+					plugin: 'square',
+					tokenUrl: `${SQUARE_BASE_URLS[options.environment ?? 'production']}/oauth2/token`,
+					tokenAuthMethod: 'body',
+					bodyFormat: 'json',
+				});
 			}
 
-			return '';
+			throw new AuthMissingError('square', 'oauth_2');
 		},
 	} satisfies InternalSquarePlugin;
 }

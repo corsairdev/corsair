@@ -10,13 +10,11 @@ export const getTokenStatus: SquareEndpoints['oauthGetTokenStatus'] = async (
 	ctx,
 	rawInput,
 ) => {
-	const input = SquareEndpointInputSchemas.oauthGetTokenStatus.parse(
-		rawInput ?? {},
-	);
+	// The call takes no input; parsing still refuses a malformed one.
+	SquareEndpointInputSchemas.oauthGetTokenStatus.parse(rawInput ?? {});
 	return callSquare(ctx, '/oauth2/token/status', {
 		method: 'POST',
 		readOnly: true,
-
 		output: SquareEndpointOutputSchemas.oauthGetTokenStatus,
 		event: 'oauth.getTokenStatus',
 	});

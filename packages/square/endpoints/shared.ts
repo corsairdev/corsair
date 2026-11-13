@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { SquareRequestOptions } from '../client';
-import { makeSquareRequest, SquareAPIError } from '../client';
+import { makeAuthenticatedSquareRequest, SquareAPIError } from '../client';
 import type { SquareContext } from '../index';
 
 type CallOptions<S extends z.ZodType> = Omit<
@@ -22,7 +22,8 @@ type CallOptions<S extends z.ZodType> = Omit<
 /**
  * Sends one request to Square, parses the answer with `output` and logs the
  * call. An answer with no body is parsed as `{}`, so every path goes through
- * the output schema.
+ * the output schema. An OAuth token Square rejects with a 401 is refreshed and
+ * the request sent once more (see makeAuthenticatedSquareRequest).
  */
 export async function callSquare<S extends z.ZodType>(
 	ctx: SquareContext,
@@ -30,7 +31,7 @@ export async function callSquare<S extends z.ZodType>(
 	{ output, event, logged = {}, ...request }: CallOptions<S>,
 ): Promise<z.output<S>> {
 	// unknown: the raw JSON, until `output` parses it.
-	const raw = await makeSquareRequest<unknown>(endpoint, ctx.key, {
+	const raw = await makeAuthenticatedSquareRequest<unknown>(endpoint, ctx, {
 		...request,
 		environment: ctx.options.environment,
 	});
@@ -43,7 +44,9 @@ export async function callSquare<S extends z.ZodType>(
  * Name of the file part in Square's upload endpoints. The spec's `encoding`
  * for both uploads names it `image_file`; Square's reference cURL for
  * CreateInvoiceAttachment (developer.squareup.com/reference/square/invoices-api/create-invoice-attachment)
- * names it `file`. Unconfirmed against the live API, so this is the one place to change.
+ * names it `file`. Confirmed live for invoices.createAttachment (200 on the sandbox).
+ * disputes.createEvidenceFile uses the same name and has not been run live.
+ * This is the one place to change.
  */
 export const UPLOAD_FILE_PART = 'image_file';
 

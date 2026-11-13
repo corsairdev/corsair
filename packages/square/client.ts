@@ -186,3 +186,39 @@ export async function makeSquareRequest<T>(
 		);
 	}
 }
+
+/** What the endpoints pass in: the resolved token and, for OAuth, a way to refresh it. */
+export type SquareAuthContext = {
+	key: string;
+	/**
+	 * Set by the plugin's keyBuilder for OAuth connections (core's
+	 * getOAuthAccessToken); absent for an API key or a static `key` option.
+	 */
+	_refreshAuth?: () => Promise<string>;
+};
+
+/**
+ * Sends the request with `auth.key`. On a 401 with a refresh available it
+ * refreshes the token and sends the request once more; a second 401 is the
+ * caller's error. A 401 means Square rejected the request before running it,
+ * so sending it again cannot repeat a side effect, keyless POSTs included.
+ */
+export async function makeAuthenticatedSquareRequest<T>(
+	endpoint: string,
+	auth: SquareAuthContext,
+	options: SquareRequestOptions = {},
+): Promise<T> {
+	try {
+		return await makeSquareRequest<T>(endpoint, auth.key, options);
+	} catch (error) {
+		if (
+			error instanceof SquareAPIError &&
+			error.status === 401 &&
+			auth._refreshAuth
+		) {
+			const freshToken = await auth._refreshAuth();
+			return await makeSquareRequest<T>(endpoint, freshToken, options);
+		}
+		throw error;
+	}
+}
