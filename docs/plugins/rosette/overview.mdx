@@ -1,0 +1,153 @@
+---
+title: "Rosette plugin"
+sidebarTitle: "Overview"
+description: "Language detection, entity and relationship extraction, sentiment, topics, semantic vectors, name matching and transliteration with the Rosette text-analytics API."
+---
+
+Use **Rosette** through Corsair: one client, typed API calls.
+
+Rosette is now part of **Babel Street**, and both the host and the key header moved with it:
+
+- **Host:** `analytics.babelstreet.com/rest/v1`. The old `api.rosette.com` still answers, but the current docs and the official bindings point here, so this plugin uses the new host.
+- **Header:** `X-BabelStreetAPI-Key`. The legacy `X-RosetteAPI-Key` is still accepted by the server, but the bindings send the new one and so does the plugin.
+
+Get a key from your Babel Street account (developer.babelstreet.com); the 30-day free trial allows 2,000 calls a month and 500 a day.
+
+**One error body covers three different problems.** A key that is wrong, an endpoint your plan does not include, and an exhausted daily or monthly quota all answer the same `403` with `{"code":"forbidden","message":"you have either provided an invalid API key, or are not authorized to call the endpoint, or have exceeded the daily or monthly API call limits"}` — captured live on every endpoint. A `profileId` the account does not have gets the same answer. The plugin never retries that, because two of the three cannot be fixed by a retry, and it keeps the `endpoint` on the error so a failing call is identifiable.
+
+Every analysis takes the same shape:
+
+- **Give `content` or `contentUri`, never both.** `contentUri` fetches the page server-side over http, https, ftp or ftps. The plugin rejects a request with neither, since there is nothing to analyse, and one with both, since Rosette treats them as alternatives.
+- **`language` and `profileId` are optional.** Setting `language` skips detection and is worth doing when you know it, because detection errors change the result of every downstream analysis. A `profileId` applies a saved profile.
+- **A retry costs one more API call.** With `content` it returns the same answer. With `contentUri` Rosette fetches the page again, so a page that changed in between gives a different answer.
+
+Reading the answers:
+
+- **`language`** returns only `languageDetections`, most likely first. There is no separate top-level answer: the first candidate is the result.
+- **`entities`** groups mentions by `entityId`, so an entity's `count` is how many times it appears, and `mentionOffsets` holds the start and end of each one. A `Q…` ID is a Wikidata item; a `T…` ID is local to the text.
+- **`sentiment`** gives the document a `label` (`pos`, `neg` or `neu`) and a `confidence`; each entity carries its own label and confidence under `sentiment`.
+- **`tokens`** returns the tokens only. For part-of-speech tags and lemmas, call **`morphology`**, which returns `tokens`, `posTags` and `lemmas` as arrays in the **same order**, plus `compoundComponents` and `hanReadings` with `null` for a token that has none.
+- **`sentences`** returns each sentence as text, with its trailing whitespace.
+- **`topics`** returns `keyphrases` (phrases from the text) and `concepts` (broader themes with a Wikidata `conceptId`), each with a salience rather than a probability, so the scores are not comparable across documents the way a probability would be.
+- **`relationships`** links `arg1` and `arg2` (sometimes `arg3`) through a `predicate`, such as `PER-EMPLOYEE-MEMBER-OF`.
+- **`semantics.similarTerms`** needs `resultLanguages` (for example `["eng"]`); the API refuses the call without it. The answer is keyed by language.
+- **`semantics.vector`** returns `documentEmbedding`, one vector for the whole text.
+- **`nameSimilarity` is not symmetric.** It scores how likely `name1` is to be the same entity as `name2`, so swapping them can change the score. Use `language`, `script` and `entityType` on each name to sharpen it.
+- **`transliteration` is not translation.** It moves text between Latin and the native script of its `language` and keeps the words; it takes no target script. `nameTranslation` is the one that translates a name into another language.
+
+**What you get:**
+
+- 16 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/rosette better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/rosette better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/rosette better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/rosette better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { rosette } from '@corsair-dev/rosette';
+
+export const corsair = createCorsair({
+	plugins: [
+		rosette(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+rosette()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'rosette',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Score the sentiment of a review**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.rosette.api.sentiment({ content: 'I love this product, but the delivery was slow.' });
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/rosette/api) reference._
+
+
+See the full list on the [API](/plugins/rosette/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/rosette/api">
+    Every `rosette.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

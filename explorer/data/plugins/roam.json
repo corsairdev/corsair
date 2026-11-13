@@ -1,0 +1,703 @@
+{
+  "id": "roam",
+  "displayName": "Roam HQ",
+  "description": "Virtual office with Roam HQ - read the token's own identity, directory users, chats, groups and meetings, read a chat history and a meeting transcript, and post or edit a message and add a reaction.",
+  "npmPackageName": "@corsair-dev/roam",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "roam.api.chat.history",
+      "shortPath": "chat.history",
+      "description": "Read a chat or group’s messages with time-window and thread filters plus cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chat_id",
+            "optional": true,
+            "type": "string",
+            "description": "The chat uuid."
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string",
+            "description": "The group uuid."
+          },
+          {
+            "key": "user_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Read the direct or multi-person chat with these users instead of a chat or group."
+          },
+          {
+            "key": "thread_timestamp",
+            "optional": true,
+            "type": "number",
+            "description": "Only the replies in this thread."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages after this timestamp."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages before this timestamp."
+          },
+          {
+            "key": "ascending",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `next_cursor` from the previous page, passed through unchanged."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 200. Roam applies its own default when omitted."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string[]",
+            "description": "Relations to inline, as a comma-separated list on the wire."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ type?: string | null, userId?: string | null, userType?: string | null, chatId?: string | null, timestamp?: number | null, threadTimestamp?: number | null, replyTimestamp?: number | null, ephemeral?: boolean | null, contentType?: string | null, text?: string | null, color?: string | null, replyCount?: number | null, items?: { id?: string | null, type?: string | null, mime?: string | null, created?: string | null, name?: string | null, url?: string | null, thumbnail?: string | null, size?: number | null, width?: number | null, height?: number | null }[] | null, mentions?: string[] | null, sender?: { id?: string | null, type?: string | null, name?: string | null, imageUrl?: string | null, email?: string | null } | null, poll?: { question?: string | null, options?: { id?: string | null, text?: string | null }[] | null, allowMultipleAnswers?: boolean | null, closesAt?: string | null } | null, blocks?: { type?: string | null }[] | null, voice?: { audioUrl?: string | null, duration?: number | null, transcript?: string | null } | null }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "Record<string, { id?: string | null, type?: string | null, displayName?: string | null, displayImageUrl?: string | null, email?: string | null, isGuest?: boolean | null, botCode?: string | null, integrationId?: string | null }>",
+            "description": "Present only with `expand: ['addresses']`: display info for the ids in this page, keyed by id."
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; null on the last."
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roam.api.chat.list",
+      "shortPath": "chat.list",
+      "description": "List the chats the token can see, with cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 50. Roam applies its own default when omitted."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `next_cursor` from the previous page, passed through unchanged."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string[]",
+            "description": "Relations to inline, as a comma-separated list on the wire."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chats",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null, groupId?: string | null, threadTimestamp?: number | null, created?: string | null, lastMessageTime?: string | null, isUnread?: boolean | null, preview?: { text?: string | null, contentType?: string | null, senderId?: string | null, mentioned?: boolean | null } | null, isMuted?: boolean | null, isPinned?: boolean | null }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "Record<string, { id?: string | null, type?: string | null, displayName?: string | null, displayImageUrl?: string | null, email?: string | null, isGuest?: boolean | null, botCode?: string | null, integrationId?: string | null }>",
+            "description": "Present only with `expand: ['addresses']`: display info for the ids in this page, keyed by id."
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; null on the last."
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roam.api.chat.post",
+      "shortPath": "chat.post",
+      "description": "Post a message to a chat, group or direct conversation, or schedule one for later",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chat_id",
+            "optional": true,
+            "type": "string",
+            "description": "The chat to post into."
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "string",
+            "description": "The group to post into."
+          },
+          {
+            "key": "user_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Open a direct chat with these users."
+          },
+          {
+            "key": "thread_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "thread_key",
+            "optional": true,
+            "type": "string",
+            "description": "An external id that threads every post sharing it under the first one."
+          },
+          {
+            "key": "reply_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "string[]",
+            "description": "Item ids to attach to the message."
+          },
+          {
+            "key": "asset_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{ type: header | section | context | divider | actions, text?: JsonValue, fields?: JsonValue[], elements?: JsonValue[], accessory?: JsonValue, block_id?: string }[]",
+            "description": "Block Kit blocks, at most ten and 8,000 bytes in total."
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "poll",
+            "optional": true,
+            "type": "{ question: string, options: string[], allowMultipleAnswers?: boolean, closesAt?: string }"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "{ id?: string, name?: string, imageUrl?: string }"
+          },
+          {
+            "key": "sync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Wait for the post and return its `timestamp`, which `chat.update`, `reactions.add` and thread replies need. Without it the answer has no timestamp."
+          },
+          {
+            "key": "send_at",
+            "optional": true,
+            "type": "string",
+            "description": "Schedule the post for this ISO 8601 time instead of sending now: in the future, within 30 days, on a 15-minute UTC boundary."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post",
+            "optional": false,
+            "type": "{ ok?: boolean | null, chatId?: string | null, threadTimestamp?: number | null, timestamp?: number | null, scheduledMessageId?: string | null, sendAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roam.api.chat.update",
+      "shortPath": "chat.update",
+      "description": "Edit a message the token posted, replacing its content",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chat_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number",
+            "description": "The message timestamp to edit."
+          },
+          {
+            "key": "thread_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "items",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "asset_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "{ type: header | section | context | divider | actions, text?: JsonValue, fields?: JsonValue[], elements?: JsonValue[], accessory?: JsonValue, block_id?: string }[]"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "update",
+            "optional": false,
+            "type": "{ ok?: boolean | null, chatId?: string | null, timestamp?: number | null, threadTimestamp?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roam.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List groups with a search phrase and type filter, plus cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "A search phrase."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated group types: `standard`, `magicast`, `meeting`, `roam` or `onair`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 100. Roam applies its own default when omitted."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `next_cursor` from the previous page, passed through unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "{ id?: string | null, chatId?: string | null, name?: string | null, type?: string | null, accessMode?: string | null, groupManagement?: string | null, enforceThreadedMode?: boolean | null, dateCreated?: string | null, imageUrl?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; null on the last."
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roam.api.meetings.list",
+      "shortPath": "meetings.list",
+      "description": "List meetings with a time window, plus cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Only meetings before this timestamp."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Only meetings after this timestamp."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 100. Roam applies its own default when omitted."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `next_cursor` from the previous page, passed through unchanged."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "(summary | actionItems | chapters)[]",
+            "description": "Fields to inline on each meeting. Roam caps `limit` at 10 when any is set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meetings",
+            "optional": false,
+            "type": "{ id?: string | null, title?: string | null, subtitle?: string | null, start?: string | null, participantCount?: number | null, hasVideo?: boolean | null, videoStatus?: string | null, host?: { type?: string | null, id?: string | null, name?: string | null, email?: string | null } | null, summary?: string | null, actionItems?: { id?: string | null, title?: string | null, complete?: boolean | null, assigneeId?: string | null }[] | null, chapters?: { name?: string | null, start?: number | null, synopsis?: string | null }[] | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; null on the last."
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roam.api.meetings.transcript",
+      "shortPath": "meetings.transcript",
+      "description": "Fetch a meeting’s transcript cues with their speaker id and timing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meeting_id",
+            "optional": false,
+            "type": "string",
+            "description": "The meeting uuid."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcript",
+            "optional": false,
+            "type": "{ id?: string | null, cues?: { speakerId?: string | null, text?: string | null, start?: number | null, end?: number | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roam.api.reactions.add",
+      "shortPath": "reactions.add",
+      "description": "Add an emoji reaction to a message",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chat_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number",
+            "description": "The message timestamp to react to."
+          },
+          {
+            "key": "thread_timestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The emoji name, such as `thumbsup`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reaction",
+            "optional": false,
+            "type": "{ ok?: boolean | null, chatId?: string | null, timestamp?: number | null, name?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roam.api.reactions.list",
+      "shortPath": "reactions.list",
+      "description": "List the reactions on a message, and the votes on each option when it is a poll",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chat_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "thread_timestamp",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reactions",
+            "optional": false,
+            "type": "{ name?: string | null, count?: number | null, users?: string[] | null }[]"
+          },
+          {
+            "key": "pollVotes",
+            "optional": true,
+            "type": "{ optionId?: string | null, text?: string | null, count?: number | null, users?: string[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roam.api.token.info",
+      "shortPath": "token.info",
+      "description": "Read the account behind the token: its user, bot, workspace and granted scopes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "token",
+            "optional": false,
+            "type": "{ user?: { id?: string | null, type?: string | null, name?: string | null, imageUrl?: string | null, email?: string | null, isGuest?: boolean | null, isAdmin?: boolean | null, jobTitle?: string | null, location?: string | null, status?: string | null, available?: boolean | null, botCode?: string | null, integrationId?: string | null, willReturn?: { returnTime?: string | null, reason?: string | null } | null } | null, bot?: { id?: string | null, type?: string | null, name?: string | null, imageUrl?: string | null, email?: string | null } | null, clientId?: string | null, scopes?: string[] | null, roam?: { id?: string | null, name?: string | null, imageUrl?: string | null, iconUrl?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roam.api.users.info",
+      "shortPath": "users.info",
+      "description": "Look up one person or bot by uuid or email, including their role and availability",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "string",
+            "description": "The user uuid."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "The user email."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string[]",
+            "description": "Relations to inline, as a comma-separated list on the wire."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null, imageUrl?: string | null, email?: string | null, isGuest?: boolean | null, isAdmin?: boolean | null, jobTitle?: string | null, location?: string | null, status?: string | null, available?: boolean | null, botCode?: string | null, integrationId?: string | null, willReturn?: { returnTime?: string | null, reason?: string | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "roam.api.users.list",
+      "shortPath": "users.list",
+      "description": "List directory members with a search phrase or an explicit id list, plus cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these user uuids, up to 100. Not combinable with `q`, `limit` or `cursor`."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "A search phrase."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 100. Roam applies its own default when omitted."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The `next_cursor` from the previous page, passed through unchanged."
+          },
+          {
+            "key": "expand",
+            "optional": true,
+            "type": "string[]",
+            "description": "Relations to inline, as a comma-separated list on the wire."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null, imageUrl?: string | null, email?: string | null, isGuest?: boolean | null, isAdmin?: boolean | null, jobTitle?: string | null, location?: string | null, status?: string | null, available?: boolean | null, botCode?: string | null, integrationId?: string | null, willReturn?: { returnTime?: string | null, reason?: string | null } | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null",
+            "description": "Pass as `cursor` to read the next page; null on the last."
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,940 @@
+{
+  "id": "remarkety",
+  "displayName": "Remarkety",
+  "description": "Manage stores and their sync status, create and unsubscribe contacts, build and update email campaigns with their rules and templates, and read products, rules and segments with Remarkety.",
+  "npmPackageName": "@corsair-dev/remarkety",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 20,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "remarkety.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a campaign from a type and its actions, each an email or an api webhook with the rules that decide when it runs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "A campaign type from campaigns.types."
+          },
+          {
+            "key": "actions",
+            "optional": false,
+            "type": "{ type: email | api, webhook?: string, subject?: string, baseTemplate?: string, rules: { type: string, operator: string, value: string }[] }[]",
+            "description": "The action this campaign runs. This API version takes exactly one."
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "run | test | stop",
+            "description": "run starts it, test sends a sample to testEmail, stop halts it. Defaults to Remarkety's own choice."
+          },
+          {
+            "key": "testEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Where a test send goes, when mode is test."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "Record<string, JsonValue>[] | null"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string | null",
+            "description": "run, test or stop."
+          },
+          {
+            "key": "testEmail",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remarkety.api.campaigns.delete",
+      "shortPath": "campaigns.delete",
+      "description": "Delete a campaign",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "remarkety.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Read one campaign by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "Record<string, JsonValue>[] | null"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string | null",
+            "description": "run, test or stop."
+          },
+          {
+            "key": "testEmail",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remarkety.api.campaigns.types",
+      "shortPath": "campaigns.types",
+      "description": "Read the campaign types the store supports and their options",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string",
+            "description": "Only the options for this campaign type."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, JsonValue>"
+      }
+    },
+    {
+      "path": "remarkety.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Update a campaign, including its mode, which can start or stop real sending",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign to update."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "{ type: email | api, webhook?: string, subject?: string, baseTemplate?: string, rules: { type: string, operator: string, value: string }[] }[]",
+            "description": "The action this campaign runs. This API version takes exactly one."
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "run | test | stop"
+          },
+          {
+            "key": "testEmail",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "Record<string, JsonValue>[] | null"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string | null",
+            "description": "run, test or stop."
+          },
+          {
+            "key": "testEmail",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remarkety.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create or update a contact in a store; Remarkety emails a double opt-in request unless doubleOptin is false",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, JsonValue>",
+            "description": "Custom contact properties as one object, such as { country: \"US\", city: \"Austin\", rewardsPoints: 100 }. Remarkety refuses an array."
+          },
+          {
+            "key": "doubleOptin",
+            "optional": true,
+            "type": "boolean",
+            "description": "Remarkety defaults this to true, which emails the contact a confirmation request before they can be marketed to. Pass false to add the contact without that email."
+          },
+          {
+            "key": "allowedMarketing",
+            "optional": true,
+            "type": "boolean",
+            "description": "True marks the contact as marketing-allowed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "remarkety.api.contacts.unsubscribe",
+      "shortPath": "contacts.unsubscribe",
+      "description": "Unsubscribe one email address from a store",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "remarkety.api.emailTemplates.get",
+      "shortPath": "emailTemplates.get",
+      "description": "Read one campaign rule's email template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ruleId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "editor-v1 or html."
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "masterTemplate",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remarkety.api.emailTemplates.update",
+      "shortPath": "emailTemplates.update",
+      "description": "Replace one campaign rule's email template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "ruleId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "editor-v1 or html."
+          },
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string",
+            "description": "The template HTML, including its head tags."
+          },
+          {
+            "key": "masterTemplate",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "editor-v1 or html."
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "masterTemplate",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remarkety.api.masterTemplates.list",
+      "shortPath": "masterTemplates.list",
+      "description": "List the master email templates available to a store",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "A term to search the templates for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ metadata?: { id?: number | null, name?: string | null, author?: string | null, date_uploaded?: string | null, public?: boolean | null, tags?: string[] | null, thumbnail?: string | null, editor?: string | null, campaignTypes?: number[] | null } | null }[]"
+      }
+    },
+    {
+      "path": "remarkety.api.products.list",
+      "shortPath": "products.list",
+      "description": "Search a store's synced products by name or SKU, with paging and an update-time filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "A product name or SKU to search for."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 100, maximum 1000."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-indexed page number."
+          },
+          {
+            "key": "minUpdate",
+            "optional": true,
+            "type": "string",
+            "description": "Only products updated at or after this datetime."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ price?: { amount?: number | null, currency?: string | null } | null, title?: string | null, sku?: string | null, thumbnailUrl?: string | null, productPageUrl?: string | null, tags?: string[] | null }[]"
+      }
+    },
+    {
+      "path": "remarkety.api.rules.get",
+      "shortPath": "rules.get",
+      "description": "Read one rule type's operators and possible values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "ruleType",
+            "optional": false,
+            "type": "string",
+            "description": "A rule type from rules.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inputType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "operators",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "possibleValues",
+            "optional": true,
+            "type": "JsonValue | null",
+            "description": "A string, a map of value to label, or a list, depending on the rule."
+          },
+          {
+            "key": "defaultValue",
+            "optional": true,
+            "type": "JsonValue | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remarkety.api.rules.list",
+      "shortPath": "rules.list",
+      "description": "Read every rule a campaign action can use, with its operators and possible values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, { inputType?: string | null, displayName?: string | null, operators?: string[] | null, details?: string | null, possibleValues?: JsonValue | null, defaultValue?: JsonValue | null }>"
+      }
+    },
+    {
+      "path": "remarkety.api.segments.count",
+      "shortPath": "segments.count",
+      "description": "Count the shoppers matching a segment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remarkety.api.segments.list",
+      "shortPath": "segments.list",
+      "description": "List the emails and names matching a segment, with paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-indexed page number."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ email?: string | null, firstName?: string | null, lastName?: string | null }[]"
+      }
+    },
+    {
+      "path": "remarkety.api.stores.create",
+      "shortPath": "stores.create",
+      "description": "Create a store with the API key Remarkety will sync it with",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The store name."
+          },
+          {
+            "key": "apiKey",
+            "optional": false,
+            "type": "string",
+            "description": "The API key Remarkety uses to sync with the store. This is the store's key, not the token this plugin authenticates with."
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string",
+            "description": "PRESTASHOP, VIRTUEMART or MAGENTO."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "The store URL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apiKey",
+            "optional": true,
+            "type": "string | null",
+            "description": "The store's own sync key."
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remarkety.api.stores.delete",
+      "shortPath": "stores.delete",
+      "description": "Delete a store",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "remarkety.api.stores.get",
+      "shortPath": "stores.get",
+      "description": "Read one store by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apiKey",
+            "optional": true,
+            "type": "string | null",
+            "description": "The store's own sync key."
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remarkety.api.stores.status",
+      "shortPath": "stores.status",
+      "description": "Read the store sync status, including the last error and the last successful sync",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "storeId",
+            "optional": false,
+            "type": "string | number",
+            "description": "The store ID from Settings > API Keys (a short string such as AbC123xy), or the numeric store id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "syncStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "The current sync status, such as OK or ERROR."
+          },
+          {
+            "key": "syncLastError",
+            "optional": true,
+            "type": "string | null",
+            "description": "The last sync or runner message. It is set on a healthy store too; read syncStatus to tell a failure."
+          },
+          {
+            "key": "lastSyncSuccess",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastSyncAttempt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remarkety.api.stores.update",
+      "shortPath": "stores.update",
+      "description": "Update a store; the id goes in the body because the route is PUT /stores",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The numeric store id that stores.get returns."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The store name."
+          },
+          {
+            "key": "apiKey",
+            "optional": false,
+            "type": "string",
+            "description": "The API key Remarkety uses to sync with the store. This is the store's key, not the token this plugin authenticates with."
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string",
+            "description": "PRESTASHOP, VIRTUEMART or MAGENTO."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "The store URL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "apiKey",
+            "optional": true,
+            "type": "string | null",
+            "description": "The store's own sync key."
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
