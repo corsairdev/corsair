@@ -461,6 +461,7 @@ export const BaseProviders = [
 	'teamcamp',
 	'teams',
 	'telegram',
+	'textit',
 	'textrazor',
 	'ticketmaster',
 	'ticktick',
@@ -996,6 +997,7 @@ export const ProviderDisplayNames = {
 	teamcamp: 'Teamcamp',
 	teams: 'Teams',
 	telegram: 'Telegram',
+	textit: 'TextIt',
 	textrazor: 'TextRazor',
 	ticketmaster: 'Ticketmaster',
 	ticktick: 'TickTick',
@@ -1538,6 +1540,7 @@ export type AllProviders =
 	| 'teamcamp'
 	| 'teams'
 	| 'telegram'
+	| 'textit'
 	| 'textrazor'
 	| 'ticketmaster'
 	| 'ticktick'

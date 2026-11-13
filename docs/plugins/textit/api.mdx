@@ -1,0 +1,2634 @@
+---
+title: "TextIt API reference"
+sidebarTitle: "API"
+description: "API reference for the TextIt plugin in Corsair: every `textit.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Archives
+
+### list
+
+`archives.list`
+
+List archived message or flow-run data.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.archives.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `type` | `message \| run` | No | — |
+| `period` | `daily \| monthly` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string | null,
+  start_date?: string | null,
+  period?: string | null,
+  record_count?: number | null,
+  size?: number | null,
+  hash?: string | null,
+  download_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Broadcasts
+
+### list
+
+`broadcasts.list`
+
+List outgoing broadcasts.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.broadcasts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `uuid` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  urns?: string[] | null,
+  contacts?: {
+    uuid?: string | null,
+    name?: string | null
+  }[] | null,
+  groups?: {
+    uuid?: string | null,
+    name?: string | null
+  }[] | null,
+  text?: Record<string, string> | null,
+  attachments?: Record<string, string[]> | null,
+  quick_replies?: Record<string, {
+    type?: string | null,
+    text?: string | null,
+    extra?: string | null
+  }[]> | null,
+  base_language?: string | null,
+  status?: string | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`broadcasts.send`
+
+Send a translated broadcast to contacts, groups or URNs.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.broadcasts.send({
+	contacts: ['09d23a05-47fe-11e4-bfe9-b8f6b119e9ab'],
+	text: { eng: 'Hello!' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urns` | `string[]` | No | — |
+| `contacts` | `string[]` | No | — |
+| `groups` | `string[]` | No | — |
+| `text` | `Record<string, string>` | Yes | — |
+| `attachments` | `Record<string, string[]>` | No | — |
+| `quick_replies` | `object` | No | — |
+| `base_language` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="quick_replies full type">
+
+```ts
+Record<string, {
+  type?: text | form | url | location,
+  text: string,
+  extra?: string
+}[]>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `urns` | `string[] \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+| `groups` | `object[] \| null` | No | — |
+| `text` | `Record<string, string> \| null` | No | — |
+| `attachments` | `Record<string, string[]> \| null` | No | — |
+| `quick_replies` | `object \| null` | No | — |
+| `base_language` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="groups full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="quick_replies full type">
+
+```ts
+Record<string, {
+  type?: string | null,
+  text?: string | null,
+  extra?: string | null
+}[]> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaign Events
+
+### create
+
+`campaignEvents.create`
+
+Create a scheduled campaign event.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.campaignEvents.create({ "campaign": "f14e4ff0-724d-43fe-a953-1d16aefd1c00", "relative_to": "registration", "offset": 7, "unit": "days", "delivery_hour": 9, "message": "Hello!" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `string` | Yes | — |
+| `relative_to` | `string` | Yes | — |
+| `offset` | `number` | Yes | — |
+| `unit` | `minutes \| hours \| days \| weeks` | Yes | — |
+| `delivery_hour` | `number` | Yes | — |
+| `message` | `string` | No | — |
+| `flow` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `campaign` | `object \| null` | No | — |
+| `relative_to` | `object \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `unit` | `string \| null` | No | — |
+| `delivery_hour` | `number \| null` | No | — |
+| `message` | `Record<string, string> \| null` | No | — |
+| `flow` | `object \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="relative_to full type">
+
+```ts
+{
+  key?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="flow full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`campaignEvents.delete`
+
+Delete a campaign event.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textit.api.campaignEvents.delete({ uuid: '6a6d7531-6b44-4c45-8c33-957ddd8dfabc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### list
+
+`campaignEvents.list`
+
+List campaign events.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.campaignEvents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `uuid` | `string` | No | — |
+| `campaign` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  campaign?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  relative_to?: {
+    key?: string | null,
+    name?: string | null
+  } | null,
+  offset?: number | null,
+  unit?: string | null,
+  delivery_hour?: number | null,
+  message?: Record<string, string> | null,
+  flow?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaignEvents.update`
+
+Update a scheduled campaign event.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.campaignEvents.update({
+	uuid: '6a6d7531-6b44-4c45-8c33-957ddd8dfabc',
+	body: {
+		relative_to: 'registration',
+		offset: 7,
+		unit: 'days',
+		delivery_hour: 9,
+		message: 'Hello!',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  campaign?: string,
+  relative_to: string,
+  offset: number,
+  unit: minutes | hours | days | weeks,
+  delivery_hour: number,
+  message?: string,
+  flow?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `campaign` | `object \| null` | No | — |
+| `relative_to` | `object \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+| `unit` | `string \| null` | No | — |
+| `delivery_hour` | `number \| null` | No | — |
+| `message` | `Record<string, string> \| null` | No | — |
+| `flow` | `object \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="relative_to full type">
+
+```ts
+{
+  key?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="flow full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaigns
+
+### create
+
+`campaigns.create`
+
+Create a campaign for a contact group.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.campaigns.create({ name: 'Reminders', group: '09d23a05-47fe-11e4-bfe9-b8f6b119e9ab' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `group` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `group` | `object \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List campaigns.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.campaigns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `uuid` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  archived?: boolean | null,
+  group?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Update a campaign by UUID.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.campaigns.update({ uuid: 'f14e4ff0-724d-43fe-a953-1d16aefd1c00', name: 'Reminders' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `group` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `group` | `object \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Channels
+
+### list
+
+`channels.list`
+
+List messaging channels.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.channels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `uuid` | `string` | No | — |
+| `address` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  address?: string | null,
+  type?: string | null,
+  country?: string | null,
+  device?: {
+    name?: string | null,
+    power_level?: number | null,
+    power_status?: string | null,
+    power_source?: string | null,
+    network_type?: string | null
+  } | null,
+  last_seen?: string | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contact Actions
+
+### apply
+
+`contactActions.apply`
+
+Apply a bulk contact action, including permanent deletion.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textit.api.contactActions.apply({ "contacts": ["d33e9ad5-5c35-414c-abd4-e7451c69ff1d"], "action": "add", "group": "09d23a05-47fe-11e4-bfe9-b8f6b119e9ab" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `string[]` | Yes | — |
+| `action` | `add \| remove \| block \| unblock \| interrupt \| delete` | Yes | — |
+| `group` | `string` | No | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `urns` | `string[]` | No | — |
+| `groups` | `object[]` | No | — |
+| `fields` | `Record<string, string \| null>` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+(string | {
+  uuid: string,
+  name?: string
+})[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `urns` | `string[] \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `email_verified_on` | `string \| null` | No | — |
+| `groups` | `object[] \| null` | No | — |
+| `fields` | `Record<string, any> \| null` | No | — |
+| `flow` | `object \| null` | No | — |
+| `last_seen_on` | `string \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="flow full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Permanently delete a contact by UUID or URN.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.textit.api.contacts.delete({ uuid: 'd33e9ad5-5c35-414c-abd4-e7451c69ff1d' });
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  uuid: string
+} | {
+  urn: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `void`
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts and their custom fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `uuid` | `string` | No | — |
+| `urn` | `string` | No | — |
+| `group` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  status?: string | null,
+  language?: string | null,
+  urns?: string[] | null,
+  email?: string | null,
+  email_verified_on?: string | null,
+  groups?: {
+    uuid?: string | null,
+    name?: string | null
+  }[] | null,
+  fields?: Record<string, any> | null,
+  flow?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  last_seen_on?: string | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact by UUID or URN; an unknown URN creates one.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.contacts.update({
+	query: { uuid: 'd33e9ad5-5c35-414c-abd4-e7451c69ff1d' },
+	body: { name: 'Bob' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  uuid: string
+} | {
+  urn: string
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name?: string | null,
+  language?: string | null,
+  urns?: string[],
+  groups?: (string | {
+    uuid: string,
+    name?: string
+  })[],
+  fields?: Record<string, string | null>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `urns` | `string[] \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `email_verified_on` | `string \| null` | No | — |
+| `groups` | `object[] \| null` | No | — |
+| `fields` | `Record<string, any> \| null` | No | — |
+| `flow` | `object \| null` | No | — |
+| `last_seen_on` | `string \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="flow full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fields
+
+### create
+
+`fields.create`
+
+Create a custom contact field.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.fields.create({ "name": "Nickname", "type": "text" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `text \| number \| datetime \| state \| district \| ward` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`fields.list`
+
+List custom contact fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.fields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  key?: string | null,
+  name?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`fields.update`
+
+Update a custom contact field by key.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.fields.update({ key: 'nickname', name: 'Nickname' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `text \| number \| datetime \| state \| district \| ward` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+
+
+
+---
+
+## Flows
+
+### list
+
+`flows.list`
+
+List flows.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.flows.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `uuid` | `string` | No | — |
+| `type` | `message \| voice \| survey` | No | — |
+| `archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  type?: string | null,
+  archived?: boolean | null,
+  labels?: {
+    uuid?: string | null,
+    name?: string | null
+  }[] | null,
+  expires?: number | null,
+  runs?: {
+    active?: number | null,
+    completed?: number | null,
+    interrupted?: number | null,
+    expired?: number | null
+  } | null,
+  results?: {
+    key?: string | null,
+    name?: string | null,
+    categories?: string[] | null,
+    node_uuids?: string[] | null
+  }[] | null,
+  parent_refs?: string[] | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Flow Starts
+
+### create
+
+`flowStarts.create`
+
+Start contacts, groups or URNs in a flow.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.flowStarts.create({
+	flow: '5f05311e-8f81-4a67-a5b5-1501b6d6496a',
+	contacts: ['d33e9ad5-5c35-414c-abd4-e7451c69ff1d'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flow` | `string` | Yes | — |
+| `groups` | `string[]` | No | — |
+| `contacts` | `string[]` | No | — |
+| `urns` | `string[]` | No | — |
+| `restart_participants` | `boolean` | No | — |
+| `exclude_active` | `boolean` | No | — |
+| `params` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `flow` | `object \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+| `groups` | `object[] \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `params` | `Record<string, any> \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="flow full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="contacts full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="groups full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`flowStarts.list`
+
+List manual flow starts.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.flowStarts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `uuid` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  flow?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  contacts?: {
+    uuid?: string | null,
+    name?: string | null
+  }[] | null,
+  groups?: {
+    uuid?: string | null,
+    name?: string | null
+  }[] | null,
+  status?: string | null,
+  params?: Record<string, any> | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Globals
+
+### create
+
+`globals.create`
+
+Create a workspace global.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.globals.create({ name: 'Greeting', value: 'Hello' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `value` | `string \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`globals.list`
+
+List workspace globals.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.globals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  key?: string | null,
+  name?: string | null,
+  value?: string | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`globals.update`
+
+Update a workspace global by key.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.globals.update({ key: 'greeting', value: 'Hello' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `value` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `value` | `string \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+
+
+---
+
+## Groups
+
+### create
+
+`groups.create`
+
+Create a contact group.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.groups.create({ name: 'Volunteers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `query` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `system` | `boolean \| null` | No | — |
+| `count` | `number \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Delete a contact group.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textit.api.groups.delete({ uuid: '09d23a05-47fe-11e4-bfe9-b8f6b119e9ab' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### list
+
+`groups.list`
+
+List contact groups.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `uuid` | `string` | No | — |
+| `name` | `string` | No | — |
+| `manual_only` | `1 \| 0` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  query?: string | null,
+  status?: string | null,
+  system?: boolean | null,
+  count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`groups.update`
+
+Update a contact group.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.groups.update({ uuid: '09d23a05-47fe-11e4-bfe9-b8f6b119e9ab', name: 'Volunteers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `query` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `system` | `boolean \| null` | No | — |
+| `count` | `number \| null` | No | — |
+
+
+
+---
+
+## Labels
+
+### create
+
+`labels.create`
+
+Create a message label.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.labels.create({ name: 'Important' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `count` | `number \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`labels.delete`
+
+Delete a message label.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textit.api.labels.delete({ uuid: '5a4eb79e-1b1f-4ae3-8700-09384cca385f' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### list
+
+`labels.list`
+
+List message labels.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.labels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `uuid` | `string` | No | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`labels.update`
+
+Update a message label.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.labels.update({ uuid: '5a4eb79e-1b1f-4ae3-8700-09384cca385f', name: 'Important' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `count` | `number \| null` | No | — |
+
+
+
+---
+
+## Media
+
+### upload
+
+`media.upload`
+
+Upload a media file for message attachments.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.media.upload({ file: new Blob(['example'], { type: 'text/plain' }) });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `custom` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | — |
+| `content_type` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `filename` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+
+
+
+---
+
+## Message Actions
+
+### apply
+
+`messageActions.apply`
+
+Apply a bulk message action, including permanent deletion; inspect failures.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textit.api.messageActions.apply({ "messages": [123], "action": "archive" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `number[]` | Yes | — |
+| `action` | `label \| unlabel \| archive \| restore \| delete` | Yes | — |
+| `label` | `string` | No | — |
+
+
+
+**Output:** `void \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+void | {
+  failures: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Messages
+
+### list
+
+`messages.list`
+
+List messages with optional folder and label filters.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.messages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `uuid` | `string` | No | — |
+| `label` | `string` | No | — |
+| `folder` | `inbox \| flows \| archived \| outbox \| sent \| failed` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  contact?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  urn?: string | null,
+  channel?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  direction?: string | null,
+  type?: string | null,
+  status?: string | null,
+  visibility?: string | null,
+  text?: string | null,
+  attachments?: {
+    content_type?: string | null,
+    url?: string | null
+  }[] | null,
+  quick_replies?: {
+    type?: string | null,
+    text?: string | null,
+    extra?: string | null
+  }[] | null,
+  labels?: {
+    uuid?: string | null,
+    name?: string | null
+  }[] | null,
+  flow?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  sent_on?: string | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a message to a contact.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.messages.send({ contact: 'd33e9ad5-5c35-414c-abd4-e7451c69ff1d', text: 'Hello!' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `attachments` | `string[]` | No | — |
+| `quick_replies` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="quick_replies full type">
+
+```ts
+{
+  type?: text | form | url | location,
+  text: string,
+  extra?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `contact` | `object \| null` | No | — |
+| `urn` | `string \| null` | No | — |
+| `channel` | `object \| null` | No | — |
+| `direction` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `text` | `string \| null` | No | — |
+| `attachments` | `object[] \| null` | No | — |
+| `quick_replies` | `object[] \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+| `flow` | `object \| null` | No | — |
+| `sent_on` | `string \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="channel full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  content_type?: string | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="quick_replies full type">
+
+```ts
+{
+  type?: string | null,
+  text?: string | null,
+  extra?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="flow full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Resthook Events
+
+### list
+
+`resthookEvents.list`
+
+List outbound resthook events.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.resthookEvents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `resthook` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  resthook?: string | null,
+  data?: Record<string, any> | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Resthooks
+
+### list
+
+`resthooks.list`
+
+List outbound resthooks.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.resthooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  resthook?: string | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Resthook Subscribers
+
+### create
+
+`resthookSubscribers.create`
+
+Subscribe a target URL to a resthook.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.resthookSubscribers.create({ resthook: 'new-report', target_url: 'https://example.com/hook' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resthook` | `string` | Yes | — |
+| `target_url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `resthook` | `string \| null` | No | — |
+| `target_url` | `string \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`resthookSubscribers.delete`
+
+Remove an outbound resthook subscription.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.textit.api.resthookSubscribers.delete({ id: 10404016 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### list
+
+`resthookSubscribers.list`
+
+List outbound resthook subscribers.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.resthookSubscribers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `id` | `string \| number` | No | — |
+| `resthook` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | number | null,
+  resthook?: string | null,
+  target_url?: string | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Runs
+
+### list
+
+`runs.list`
+
+List flow runs.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.runs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `before` | `string` | No | — |
+| `after` | `string` | No | — |
+| `uuid` | `string` | No | — |
+| `flow` | `string` | No | — |
+| `responded` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  flow?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  contact?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  start?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  responded?: boolean | null,
+  values?: Record<string, {
+    name?: string | null,
+    value?: string | null,
+    category?: string | null,
+    node?: string | null,
+    time?: string | null
+  }> | {
+    name?: string | null,
+    value?: string | null,
+    category?: string | null,
+    node?: string | null,
+    time?: string | null
+  }[] | null,
+  exited_on?: string | null,
+  exit_type?: string | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ticket Actions
+
+### apply
+
+`ticketActions.apply`
+
+Apply a bulk ticket action.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.ticketActions.apply({ "tickets": ["9a8b001e-a913-486c-80f4-1356e23f582e"], "action": "close" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tickets` | `string[]` | Yes | — |
+| `action` | `assign \| note \| close \| reopen` | Yes | — |
+| `assignee` | `string` | No | — |
+| `note` | `string` | No | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+## Tickets
+
+### list
+
+`tickets.list`
+
+List support tickets.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.tickets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `uuid` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  contact?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  status?: string | null,
+  topic?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  assignee?: {
+    email?: string | null,
+    name?: string | null
+  } | null,
+  opened_on?: string | null,
+  opened_by?: {
+    email?: string | null,
+    name?: string | null
+  } | null,
+  opened_in?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  closed_on?: string | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Topics
+
+### create
+
+`topics.create`
+
+Create a ticket topic.
+
+**Risk:** `write`
+
+```ts
+await corsair.textit.api.topics.create({ name: 'Support' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `counts` | `object \| null` | No | — |
+| `system` | `boolean \| null` | No | — |
+| `created_on` | `string \| null` | No | — |
+| `modified_on` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="counts full type">
+
+```ts
+{
+  open?: number | null,
+  closed?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`topics.list`
+
+List ticket topics.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.topics.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  counts?: {
+    open?: number | null,
+    closed?: number | null
+  } | null,
+  system?: boolean | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### list
+
+`users.list`
+
+List workspace users.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cursor` | `string` | No | — |
+| `uuid` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next` | `string \| null` | Yes | — |
+| `previous` | `string \| null` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `count` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  uuid?: string | null,
+  avatar?: string | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  role?: string | null,
+  team?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  created_on?: string | null,
+  modified_on?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspace
+
+### get
+
+`workspace.get`
+
+Read current workspace details.
+
+**Risk:** `read`
+
+```ts
+await corsair.textit.api.workspace.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `languages` | `string[] \| null` | No | — |
+| `timezone` | `string \| null` | No | — |
+| `date_style` | `string \| null` | No | — |
+| `anon` | `boolean \| null` | No | — |
+
+
+
+---

@@ -1,0 +1,139 @@
+---
+title: "TextIt plugin"
+sidebarTitle: "Overview"
+description: "Manage TextIt messaging, contacts, flows, campaigns, tickets, workspace data and outbound resthook subscriptions."
+---
+
+Use **TextIt** through Corsair: one client, typed API calls.
+
+TextIt API v2 uses an API token from your TextIt account. List operations return a page with `next`, `previous` and `results`; pass the `cursor` from the next link to request another page.
+
+- Sending messages and broadcasts and starting flows can contact real people. Bulk contact and message actions include permanent deletion.
+- Updating a contact by URN creates it if the URN is unknown. `messageActions.apply` returns `undefined` on complete success or an object `{ failures: [...] }` when some messages could not be updated; access the failed IDs through `result.failures`.
+- Upload media with a `Blob` using `media.upload`; its UUID can be used in message attachments.
+- Rate-limited requests throw a `TextItAPIError` with `retryAfter` in milliseconds when TextIt supplies a numeric `Retry-After`. The default handlers do not retry; custom error handlers must not replay writes.
+- Outbound resthook subscription management is supported; inbound webhook verification is not included.
+- The provider's globals create example uses `/global.json`, which currently returns 404; the indexed plural `/globals.json` route is used. Its subscriber ID prose says integer while examples show strings, so both are accepted.
+
+**What you get:**
+
+- 49 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/textit better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/textit better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/textit better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/textit better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { textit } from '@corsair-dev/textit';
+
+export const corsair = createCorsair({
+	plugins: [
+		textit(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+textit()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'textit',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`archives.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.textit.api.archives.list({});
+```
+
+
+**`broadcasts.send`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.textit.api.broadcasts.send({
+	contacts: ['09d23a05-47fe-11e4-bfe9-b8f6b119e9ab'],
+	text: { eng: 'Hello!' },
+});
+```
+
+
+See the full list on the [API](/plugins/textit/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/textit/api">
+    Every `textit.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

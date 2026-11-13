@@ -1,0 +1,74 @@
+displayName: TextIt
+description: Manage TextIt messaging, contacts, flows, campaigns, tickets, workspace data and outbound resthook subscriptions.
+domain: textit.com
+recommendedAuth: api_key
+overviewNote: |
+  TextIt API v2 uses an API token from your TextIt account. List operations return a page with `next`, `previous` and `results`; pass the `cursor` from the next link to request another page.
+
+  - Sending messages and broadcasts and starting flows can contact real people. Bulk contact and message actions include permanent deletion.
+  - Updating a contact by URN creates it if the URN is unknown. `messageActions.apply` returns `undefined` on complete success or an object `{ failures: [...] }` when some messages could not be updated; access the failed IDs through `result.failures`.
+  - Upload media with a `Blob` using `media.upload`; its UUID can be used in message attachments.
+  - Rate-limited requests throw a `TextItAPIError` with `retryAfter` in milliseconds when TextIt supplies a numeric `Retry-After`. The default handlers do not retry; custom error handlers must not replay writes.
+  - Outbound resthook subscription management is supported; inbound webhook verification is not included.
+  - The provider's globals create example uses `/global.json`, which currently returns 404; the indexed plural `/globals.json` route is used. Its subscriber ID prose says integer while examples show strings, so both are accepted.
+examples:
+  write:
+    path: broadcasts.send
+    args:
+      contacts: ["09d23a05-47fe-11e4-bfe9-b8f6b119e9ab"]
+      text: { eng: "Hello!" }
+apiExamples:
+  broadcasts.send:
+    args: { contacts: ["09d23a05-47fe-11e4-bfe9-b8f6b119e9ab"], text: { eng: "Hello!" } }
+  campaignEvents.create:
+    call: '{ "campaign": "f14e4ff0-724d-43fe-a953-1d16aefd1c00", "relative_to": "registration", "offset": 7, "unit": "days", "delivery_hour": 9, "message": "Hello!" }'
+  campaignEvents.update:
+    args: { uuid: "6a6d7531-6b44-4c45-8c33-957ddd8dfabc", body: { relative_to: registration, offset: 7, unit: days, delivery_hour: 9, message: "Hello!" } }
+  campaignEvents.delete:
+    args: { uuid: "6a6d7531-6b44-4c45-8c33-957ddd8dfabc" }
+  campaigns.create:
+    args: { name: Reminders, group: "09d23a05-47fe-11e4-bfe9-b8f6b119e9ab" }
+  campaigns.update:
+    args: { uuid: "f14e4ff0-724d-43fe-a953-1d16aefd1c00", name: Reminders }
+  contactActions.apply:
+    call: '{ "contacts": ["d33e9ad5-5c35-414c-abd4-e7451c69ff1d"], "action": "add", "group": "09d23a05-47fe-11e4-bfe9-b8f6b119e9ab" }'
+  contacts.delete:
+    args: { uuid: "d33e9ad5-5c35-414c-abd4-e7451c69ff1d" }
+  contacts.update:
+    args: { query: { uuid: "d33e9ad5-5c35-414c-abd4-e7451c69ff1d" }, body: { name: "Bob" } }
+  fields.create:
+    call: '{ "name": "Nickname", "type": "text" }'
+  fields.update:
+    args: { key: nickname, name: Nickname }
+  flowStarts.create:
+    args: { flow: "5f05311e-8f81-4a67-a5b5-1501b6d6496a", contacts: ["d33e9ad5-5c35-414c-abd4-e7451c69ff1d"] }
+  globals.create:
+    args: { name: Greeting, value: Hello }
+  globals.update:
+    args: { key: greeting, value: Hello }
+  groups.create:
+    args: { name: Volunteers }
+  groups.update:
+    args: { uuid: "09d23a05-47fe-11e4-bfe9-b8f6b119e9ab", name: Volunteers }
+  groups.delete:
+    args: { uuid: "09d23a05-47fe-11e4-bfe9-b8f6b119e9ab" }
+  labels.create:
+    args: { name: Important }
+  labels.update:
+    args: { uuid: "5a4eb79e-1b1f-4ae3-8700-09384cca385f", name: Important }
+  labels.delete:
+    args: { uuid: "5a4eb79e-1b1f-4ae3-8700-09384cca385f" }
+  messageActions.apply:
+    call: '{ "messages": [123], "action": "archive" }'
+  messages.send:
+    args: { contact: "d33e9ad5-5c35-414c-abd4-e7451c69ff1d", text: "Hello!" }
+  resthookSubscribers.create:
+    args: { resthook: new-report, target_url: "https://example.com/hook" }
+  resthookSubscribers.delete:
+    args: { id: 10404016 }
+  ticketActions.apply:
+    call: '{ "tickets": ["9a8b001e-a913-486c-80f4-1356e23f582e"], "action": "close" }'
+  topics.create:
+    args: { name: Support }
+  media.upload:
+    call: "{ file: new Blob(['example'], { type: 'text/plain' }) }"
