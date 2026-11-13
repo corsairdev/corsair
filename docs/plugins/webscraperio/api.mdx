@@ -1,0 +1,191 @@
+---
+title: "Web Scraper Cloud API reference"
+sidebarTitle: "API"
+description: "API reference for Web Scraper Cloud: every `webscraperio.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Read the account user and the page credits left; the cheapest way to check a token
+
+**Risk:** `read`
+
+```ts
+await corsair.webscraperio.api.account.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email?: string | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  page_credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sitemaps
+
+### create
+
+`sitemaps.create`
+
+Create a sitemap from the definition the browser extension exports, selectors included
+
+**Risk:** `write`
+
+```ts
+await corsair.webscraperio.api.sitemaps.create({ sitemap: { _id: 'product_catalogue', startUrl: ['https://acme.example/products'], selectors: [{ id: 'name', parentSelectors: ['_root'], type: 'SelectorText', selector: 'h1.title', multiple: false }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sitemap` | `Record<string, any>` | Yes | The sitemap definition in the form the browser extension exports: `_id`, `startUrl` (an array of URLs) and `selectors`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  sitemap?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`sitemaps.get`
+
+Read one sitemap: its id, name and definition (start URLs and selectors) as a JSON string
+
+**Risk:** `read`
+
+```ts
+await corsair.webscraperio.api.sitemaps.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The sitemap id, from sitemaps.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  sitemap?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sitemaps.list`
+
+List the sitemaps on the account (id and name), a page at a time, optionally filtered by tag
+
+**Risk:** `read`
+
+```ts
+await corsair.webscraperio.api.sitemaps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | The page to return, 1-based. Defaults to 1. |
+| `tag` | `string` | No | Only return sitemaps carrying this tag. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `current_page` | `number \| null` | No | — |
+| `last_page` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `per_page` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  sitemap?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
