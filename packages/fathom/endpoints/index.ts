@@ -1,7 +1,23 @@
-import { get as exampleGet } from './example';
+export * as Account from './account';
 
-export const Example = {
-	get: exampleGet,
+import * as EventsModule from './events';
+import * as MilestonesModule from './milestones';
+
+export * as Reports from './reports';
+
+import * as SitesModule from './sites';
+
+export const Sites = {
+	...SitesModule,
+	delete: SitesModule.del,
 };
 
-export * from './types';
+export const Events = {
+	...EventsModule,
+	delete: EventsModule.del,
+};
+
+export const Milestones = {
+	...MilestonesModule,
+	delete: MilestonesModule.del,
+};

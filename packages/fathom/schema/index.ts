@@ -1,4 +1,6 @@
+import { fathomEntities } from './database';
+
 export const FathomSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: fathomEntities,
 } as const;
