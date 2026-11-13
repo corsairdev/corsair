@@ -968,12 +968,15 @@ describe('alerts.list', () => {
 });
 
 describe('account.get', () => {
-	it('GETs the token’s own user', async () => {
+	it('GETs the token’s own user without its API token', async () => {
 		respond(account);
 
-		await expect(invoke(Account.account, {})).resolves.toMatchObject({
+		const result = await invoke(Account.account, {});
+
+		expect(result).toMatchObject({
 			data: { attributes: { user_id: 252725, name: 'George' } },
 		});
+		expect(JSON.stringify(result)).not.toContain('ACCOUNT-API-TOKEN');
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',
 			path: '/api/v2/users/self',

@@ -10,9 +10,9 @@ type LogFields = Record<string, string | number | boolean | undefined>;
  * Validates the input, sends the request, shapes and validates the response,
  * then logs the event.
  *
- * The project's `auth` key is stripped from every result, at any depth: Keyword
- * returns it inside each project and keyword resource, and it is a credential
- * whose only home is the connection.
+ * The project's `auth` key and the account's `api_token` are stripped from
+ * every result, at any depth: Keyword returns them inside project, keyword and
+ * user resources, and they are credentials whose only home is the connection.
  */
 export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	ctx: KeywordContext,

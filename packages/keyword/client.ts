@@ -222,9 +222,12 @@ export function definedQuery(
 
 /**
  * The project's `auth` key is a credential that Keyword returns inside every
- * project and keyword resource. It is stripped before a result reaches a
- * caller's log or payload, because it is not theirs to pass on.
+ * project and keyword resource, and `users/self` returns the account's master
+ * `api_token`. Both are stripped before a result reaches a caller's log or
+ * payload, because they are not theirs to pass on.
  */
+const SECRET_KEYS = new Set(['auth', 'api_token']);
+
 // unknown: a resource is a JSON:API document whose attributes have no closed
 // shape per provider version, so the walk is over open records.
 export function stripProjectAuth(value: unknown): unknown {
@@ -234,7 +237,7 @@ export function stripProjectAuth(value: unknown): unknown {
 
 	const cleaned: Record<string, unknown> = {};
 	for (const [key, entry] of Object.entries(record)) {
-		if (key === 'auth') continue;
+		if (SECRET_KEYS.has(key)) continue;
 		cleaned[key] = stripProjectAuth(entry);
 	}
 	return cleaned;

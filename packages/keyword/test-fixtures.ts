@@ -268,6 +268,8 @@ export const account = {
 			verified: 1,
 			user_id: 252725,
 			name: 'George',
+			api_token: 'ACCOUNT-API-TOKEN',
+			access_level: 'master',
 		},
 	},
 };
