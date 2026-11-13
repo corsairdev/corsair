@@ -2735,6 +2735,14 @@
                 ]
               },
               {
+                "group": "Make",
+                "pages": [
+                  "plugins/make/overview",
+                  "plugins/make/api",
+                  "plugins/make/database"
+                ]
+              },
+              {
                 "group": "Mapbox",
                 "pages": [
                   "plugins/mapbox/overview",
