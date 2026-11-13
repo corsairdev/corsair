@@ -1,0 +1,296 @@
+{
+  "id": "remoteretrieval",
+  "displayName": "Remote Retrieval",
+  "description": "Create equipment-return orders, track pending, new and in-progress shipments, and read company details and live device prices with Remote Retrieval.",
+  "npmPackageName": "@corsair-dev/remoteretrieval",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "remoteretrieval.api.company.get",
+      "shortPath": "company.get",
+      "description": "Read the company record the key belongs to: name, address and creation date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "company_email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_date",
+            "optional": true,
+            "type": "string | null",
+            "description": "A date such as 24-Jun-2024, not ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoteretrieval.api.orders.create",
+      "shortPath": "orders.create",
+      "description": "Create one or more equipment-return orders. Each order is a real, paid shipment: Remote Retrieval mails a box to the named employee's home address and bills the account the per-device fee shown by prices",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orders",
+            "optional": false,
+            "type": "{ type_of_equipment: Laptop | Monitor | Monitor_27 | Cell Phone | Tablet, order_type: Return To Company | Recycle with Data Destruction, return_add_srv?: 1 | 2, ins_active?: 0 | 1, ins_amount?: number, custom_msg?: string, employee_info: { email: string, name: string, address_line_1: string, address_line_2?: string, address_city: string, address_state: string, address_country: string, address_zip: string, phone: string }, company_info: { return_person_name: string, return_company_name: string, return_address_line_1: string, return_address_line_2?: string, return_address_city: string, return_address_state: string, return_address_country: string, return_address_zip: string, email: string, phone: string }, new_employee_info?: { first_name: string, last_name: string, phone: string, email: string, address_line_1: string, address_city: string, address_state: string, address_zip: string, address_country: string, newemp_msg?: string } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "order",
+            "optional": true,
+            "type": "string | null",
+            "description": "The created order reference, as a string. One id comes back for a batch."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Success."
+          },
+          {
+            "key": "response_code",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoteretrieval.api.orders.get",
+      "shortPath": "orders.get",
+      "description": "Read one order by ID, taking it as the oid query parameter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "oid",
+            "optional": false,
+            "type": "number",
+            "description": "The order ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ order_id?: number | null, payment_status?: string | null, order_status?: string | null, employee_info?: { email?: string | null, name?: string | null, address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, zip?: string | null } | null, company_info?: { email?: string | null, name?: string | null, address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, zip?: string | null } | null, shipments?: { device_type?: string | null, send_status?: string | null, return_status?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "remoteretrieval.api.orders.inprogress",
+      "shortPath": "orders.inprogress",
+      "description": "List orders whose return has started but whose device has not arrived yet, with both shipment legs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "A page holds up to 25 orders. Defaults to 1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ order_id?: number | null, payment_status?: string | null, order_status?: string | null, employee_info?: { email?: string | null, name?: string | null, address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, zip?: string | null } | null, company_info?: { email?: string | null, name?: string | null, address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, zip?: string | null } | null, shipments?: { device_type?: string | null, send_status?: string | null, return_status?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "remoteretrieval.api.orders.list",
+      "shortPath": "orders.list",
+      "description": "List every order with its payment status and shipping status, paged by the response's own next link",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The previous response's next link, passed as it came back; the plugin reads the cursor out of it. A bare cursor value also works."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previous",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ order_id?: number | null, payment_status?: string | null, order_status?: string | null, employee_info?: { email?: string | null, name?: string | null, address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, zip?: string | null } | null, company_info?: { email?: string | null, name?: string | null, address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, zip?: string | null } | null, shipments?: { device_type?: string | null, send_status?: string | null, return_status?: string | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "remoteretrieval.api.orders.new",
+      "shortPath": "orders.new",
+      "description": "List orders whose payment completed and which are ready to process",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "A page holds up to 25 orders. Defaults to 1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ order_id?: number | null, payment_status?: string | null, order_status?: string | null, employee_info?: { email?: string | null, name?: string | null, address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, zip?: string | null } | null, company_info?: { email?: string | null, name?: string | null, address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, zip?: string | null } | null, shipments?: { device_type?: string | null, send_status?: string | null, return_status?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "remoteretrieval.api.orders.pending",
+      "shortPath": "orders.pending",
+      "description": "List orders whose payment has not completed; they are on hold until it does",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "A page holds up to 25 orders. Defaults to 1."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ order_id?: number | null, payment_status?: string | null, order_status?: string | null, employee_info?: { email?: string | null, name?: string | null, address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, zip?: string | null } | null, company_info?: { email?: string | null, name?: string | null, address_line_1?: string | null, address_line_2?: string | null, city?: string | null, state?: string | null, zip?: string | null } | null, shipments?: { device_type?: string | null, send_status?: string | null, return_status?: string | null } | null }[]"
+      }
+    },
+    {
+      "path": "remoteretrieval.api.prices",
+      "shortPath": "prices",
+      "description": "Read the live per-device prices, including the Monitor_27 band for 24-to-27-inch displays",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ equipment_type?: string | null, order_amount?: number | null, option_lbl?: string | null }[]"
+      }
+    },
+    {
+      "path": "remoteretrieval.api.validate",
+      "shortPath": "validate",
+      "description": "Check that the API key works and read the account email it belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "\"Valid Key!\" on success."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "The account the key belongs to."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Success."
+          },
+          {
+            "key": "response_code",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

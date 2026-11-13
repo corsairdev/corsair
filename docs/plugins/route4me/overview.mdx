@@ -1,0 +1,152 @@
+---
+title: "Route4Me plugin"
+sidebarTitle: "Overview"
+description: "Route planning and last-mile delivery with Route4Me - read routes, orders, vehicles, address book contacts, team members and optimization problems, create orders, vehicles and contacts, and submit addresses for optimization."
+---
+
+Use **Route4Me** through Corsair: one client, typed API calls.
+
+Copy the key from the Route4Me web app under **Settings → Organization Settings → API Key**. One key serves both API generations this plugin wraps, and it travels as the `api_key` query parameter. Things to know before you call:
+
+- **Two hosts, two generations.** Optimizations use the v4 API on `api.route4me.com/api.v4`; routes, orders, vehicles, the address book, customers and team users use the v5 API on `wh.route4me.com/modules`. Both are wrapped here, so a caller does not have to know which generation a resource lives on.
+- **The v5 host needs `Accept: application/json`.** `wh.route4me.com` also serves the web app, and a request that does not ask for JSON is redirected to the login page — even with a valid key. The plugin always sends that header. If you call this host yourself, send it too, or a rejected key looks like an HTML login page rather than a 401.
+- **The error envelopes differ.** v4 answers `{ errors: [...], error_code }`; v5 answers `{ status: false, error, code, messages: [...] }`. `Route4MeAPIError.errors` holds every message in both cases.
+- **v5 validates with 406.** A rejected field or filter comes back as `406`, not `400`, and the plugin treats it as a validation failure rather than a request that might succeed on a retry.
+- **Two kinds of paging.** The v5 collections page by `page`/`per_page` and return a `meta` block; `next_page` is derived from `meta.current_page` and `meta.last_page`. The address book pages by `limit`/`offset` and the plugin returns `next_offset`, which is null on a short page. v4 optimizations page by `limit`/`offset` with `totalRecords`.
+- **`optimizations.list` accepts one or many.** Passing `optimization_problem_id` makes v4 answer a single object instead of a collection; the plugin normalises both into the same `optimizations` array and reports `total_records: 1`. `optimizations.get` is the clearer call when you already have the id.
+- **Creating an optimization is asynchronous.** The solver queues the problem and returns an id with `state: 0`. Poll `optimizations.get` until `state` reaches 4 (Optimized); 5 is an error and 6 means directions are still being computed.
+- **Coordinates are required for an address book contact.** `addresses.create` needs `cached_lat` and `cached_lng` alongside the street address, because Route4Me will not geocode on write. An optimization stop, by contrast, takes either an address or a coordinate pair.
+- **Choosing a stop type.** `address_stop_type` takes one of `DELIVERY`, `PICKUP`, `BREAK`, `MEETUP`, `SERVICE` or `VISIT`; leaving it out lets Route4Me use the account default.
+- **Order contact fields are renamed on the wire.** `orders.create` sends `first_name`, `last_name`, `email` and `phone` as `EXT_FIELD_first_name` and so on, which is what the v5 API reads.
+- **Retries.** Route4Me documents no throughput window and no `Retry-After`, so a 429 is retried three times with exponential backoff. A 5xx is retried only for calls declared read-only: v5's list routes are POSTs, so the HTTP method alone would misclassify them.
+
+**What you get:**
+
+- 13 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/route4me better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/route4me better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/route4me better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/route4me better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { route4me } from '@corsair-dev/route4me';
+
+export const corsair = createCorsair({
+	plugins: [
+		route4me(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+route4me()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'route4me',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List routes with page paging**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.route4me.api.routes.list({
+	page: 1,
+	per_page: 50,
+	order_by: { field: 'route_created_unix', direction: 'desc' },
+});
+```
+
+
+**Create a delivery order**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.route4me.api.orders.create({
+	address_1: 'Prinsengracht 100',
+	address_city: 'Amsterdam',
+	address_zip: '1015 EA',
+	address_alias: 'Canal stop',
+	first_name: 'Jordan',
+	last_name: 'Lee',
+});
+```
+
+
+See the full list on the [API](/plugins/route4me/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/route4me/api">
+    Every `route4me.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

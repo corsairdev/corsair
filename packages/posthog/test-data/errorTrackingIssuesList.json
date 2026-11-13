@@ -1,0 +1,63 @@
+{
+  "cache_key": "cache_309833_55781b60d8324fcb9189e990362b617d70b0b19a9823110870e7cd0457e4bece",
+  "cache_target_age": "2026-11-12T13:42:38.153992Z",
+  "calculation_trigger": null,
+  "columns": [
+    "id",
+    "status",
+    "severity",
+    "name",
+    "description",
+    "assignee_user_id",
+    "assignee_role_id",
+    "first_seen",
+    "last_seen",
+    "function",
+    "source",
+    "occurrences",
+    "sessions",
+    "users",
+    "library"
+  ],
+  "error": null,
+  "hasMore": true,
+  "is_cached": false,
+  "last_refresh": "2026-11-12T13:37:38.153992Z",
+  "limit": 2,
+  "next_allowed_client_refresh": "2026-11-12T13:38:38.153992Z",
+  "offset": 0,
+  "query_scan": null,
+  "query_status": null,
+  "resolved_compare_date_range": null,
+  "resolved_date_range": null,
+  "results": [
+    {
+      "aggregations": {
+        "occurrences": 22,
+        "sessions": 1,
+        "users": 1,
+        "volumeRange": null,
+        "volume_buckets": []
+      },
+      "assignee": null,
+      "cohort": null,
+      "description": "Script error.",
+      "external_issues": null,
+      "first_event": null,
+      "first_seen": "2026-08-26T08:12:31.669000Z",
+      "function": null,
+      "id": "01a03d20-cc76-7a51-9e45-69031cb8d4ab",
+      "last_event": null,
+      "last_seen": "2026-11-12T06:41:51.131000Z",
+      "library": "web",
+      "name": "Error",
+      "severity": null,
+      "source": null,
+      "status": "active"
+    }
+  ],
+  "timezone": "UTC",
+  "used_data_warehouse_sources": null,
+  "warehouse_suggestions": null,
+  "warnings": null
+}

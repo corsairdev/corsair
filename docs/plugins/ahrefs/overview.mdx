@@ -6,9 +6,18 @@ description: "SEO toolkit for keyword research, backlink analysis, and search ra
 
 Use **Ahrefs** through Corsair: one client, typed API calls, local DB sync.
 
+Things to know before you call:
+
+- **Most calls cost API units.** Search Console (`gsc.*`), Web Analytics (`webAnalytics.*`), Rank Tracker, `public.*` and `management.*` calls are free; each Site Audit (`siteAudit.*`) read costs 50 units; Site Explorer and Keywords Explorer reads cost units per row, and some fields cost more. `subscriptionInfo.limitsAndUsage` shows what is left. Queries on ahrefs.com, wordcount.com and the keyword "ahrefs" are free test queries.
+- **Search Console and Site Audit need a project.** Pass the `project_id` of an Ahrefs project with Google Search Console connected (or a `portfolio_id` for `gsc.*`). `management.projects` and `siteAudit.projects` list them; they return the id as a string, so pass it back as a number.
+- **Web Analytics counts arrive as strings.** `visitors`, `visits`, `pageviews`, `entries` and `exits` come back as numeric strings such as `"689"`; rates and durations are numbers.
+- **Brand Radar needs the add-on for Ahrefs' prompts.** Without it, `brandRadar.*` reads only cover a report's custom prompts (`prompts: 'custom'`, free). The `*Entities` variants take brands and competitors as names or URL groups in a POST body. `management.updateBrandRadarReport` must include `prompts_frequency`. The API has no working call to delete a report yet; delete reports in the Ahrefs app.
+- **Social media posting is a write.** `socialMedia.createPost` with `timing: 'publish_now'` posts to the connected channels straight away; use `draft` or `scheduled` to review first.
+- **Tables take `select`, `where`, `order_by` and `limit`.** `select` picks the columns that come back, so rows only carry the fields you asked for. `where` is a JSON filter string; the Ahrefs API reference lists the fields each endpoint accepts.
+
 **What you get:**
 
-- 9 typed API operations
+- 154 typed API operations
 - 7 synced entities (`domainMetrics`, `keywords`, `pages`, `rankings`, `refdomains`, `serpPositions`, and 1 more) for fast `.search()` / `.list()`
 
 ## Setup
@@ -97,17 +106,24 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`keywordsExplorer.overview`**
+**List Search Console queries for a project**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.ahrefs.api.keywordsExplorer.overview({});
+await tenant.ahrefs.api.gsc.keywords({ project_id: 1234567, date_from: '2026-10-01', limit: 20 });
 ```
 
 
-**Write**
+**Save keywords to a new Keywords Explorer list**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/ahrefs/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.ahrefs.api.management.createKeywordList({
+	name: 'Launch keywords',
+	location: 'us',
+	keywords: ['mcp server', 'ai agent integrations'],
+});
+```
 
 
 See the full list on the [API](/plugins/ahrefs/api) page.
