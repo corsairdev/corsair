@@ -113,7 +113,7 @@ async function pollQueuedOperation(
 				Accept: 'application/json',
 				'X-ApiKey': apiKey,
 			},
-			signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+			signal: AbortSignal.timeout(Math.min(REQUEST_TIMEOUT_MS, remainingMs)),
 			redirect: 'error',
 		});
 		if (response.status === 200) return readJson(response);

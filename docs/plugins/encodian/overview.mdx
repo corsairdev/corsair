@@ -98,19 +98,28 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`general.getSubscriptionStatus`**
-
-```ts
-const tenant = corsair.withTenant('acme');
-await tenant.encodian.api.general.getSubscriptionStatus({});
-```
-
-
 **`barcodes.aiBarcodeRead`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.encodian.api.barcodes.aiBarcodeRead({});
+await tenant.encodian.api.barcodes.aiBarcodeRead({
+	body: { FileContent: 'AA==' },
+});
+```
+
+
+**`conversion.htmlToPdf`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.encodian.api.conversion.htmlToPdf({
+	body: {
+		encoding: 'UTF8',
+		FileName: 'x',
+		htmlData: '<html><body>Example</body></html>',
+		outputFilename: 'x',
+	},
+});
 ```
 
 

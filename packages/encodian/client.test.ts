@@ -152,6 +152,59 @@ describe('Encodian HTTP client', () => {
 		nowSpy.mockRestore();
 	});
 
+	it('limits an in-flight poll timeout to the remaining overall deadline', async () => {
+		let now = 0;
+		jest.spyOn(Date, 'now').mockImplementation(() => now);
+		const timeouts: number[] = [];
+		jest.spyOn(AbortSignal, 'timeout').mockImplementation((milliseconds) => {
+			timeouts.push(milliseconds);
+			const controller = new AbortController();
+			queueMicrotask(() =>
+				controller.abort(new DOMException('Poll timed out', 'TimeoutError')),
+			);
+			return controller.signal;
+		});
+		let pollCount = 0;
+		global.fetch = async (_input, init) => {
+			if (init?.method === 'POST') {
+				return new Response(null, {
+					status: 202,
+					headers: {
+						Location: '/api/v1/Conversion/GetOperationStatus?operationId=job-1',
+					},
+				});
+			}
+			pollCount += 1;
+			if (pollCount === 1) {
+				now = 110_000;
+				return new Response(null, {
+					status: 202,
+					headers: { 'Retry-After': '0' },
+				});
+			}
+			const signal = init?.signal;
+			if (!signal) throw new Error('Expected a poll timeout signal');
+			return new Promise<Response>((_resolve, reject) => {
+				const rejectOnAbort = () =>
+					reject(new DOMException('Poll exceeded its timeout', 'TimeoutError'));
+				if (signal.aborted) {
+					rejectOnAbort();
+					return;
+				}
+				signal.addEventListener('abort', rejectOnAbort, { once: true });
+			});
+		};
+
+		await expect(
+			makeEncodianRequest(
+				EncodianOperationRoutes['barcodes.createBarcode'],
+				API_KEY,
+				{ body: { value: 'sample' } },
+			),
+		).rejects.toThrow('Poll exceeded its timeout');
+		expect(timeouts.slice(-2)).toEqual([20_000, 10_000]);
+	});
+
 	it('fails with AuthMissingError before calling the API when the key is absent', async () => {
 		const fetchMock = jest.fn(global.fetch);
 		global.fetch = fetchMock;

@@ -85,6 +85,7 @@ describe('Encodian operation schemas', () => {
 	it('validates the documented HTML, text, and RSA examples against their schemas', () => {
 		const docs = readFileSync('plugin-docs.yaml', 'utf8');
 		for (const [operationId, field] of [
+			['barcodes.aiBarcodeRead', 'FileContent'],
 			['conversion.htmlToPdf', 'htmlData'],
 			['conversion.textToPdf', 'textData'],
 			['utilities.createRsaKeyPair', 'keySize'],
