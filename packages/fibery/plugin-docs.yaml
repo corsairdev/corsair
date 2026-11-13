@@ -31,7 +31,7 @@ overviewNote: >-
 apiExamples:
   schema.query: {}
   schema.createDatabase:
-    call: "{ database: { 'fibery/name': 'CRM/Lead', 'fibery/meta': { 'fibery/domain?': true, 'fibery/secured?': true }, 'fibery/fields': [{ 'fibery/name': 'fibery/id', 'fibery/type': 'fibery/uuid', 'fibery/meta': { 'fibery/id?': true, 'fibery/readonly?': true } }, { 'fibery/name': 'fibery/public-id', 'fibery/type': 'fibery/text', 'fibery/meta': { 'fibery/public-id?': true, 'fibery/readonly?': true } }, { 'fibery/name': 'fibery/creation-date', 'fibery/type': 'fibery/date-time', 'fibery/meta': { 'fibery/creation-date?': true, 'fibery/readonly?': true, 'fibery/default-value': '$now' } }, { 'fibery/name': 'fibery/modification-date', 'fibery/type': 'fibery/date-time', 'fibery/meta': { 'fibery/modification-date?': true, 'fibery/readonly?': true, 'fibery/default-value': '$now' } }, { 'fibery/name': 'CRM/Name', 'fibery/type': 'fibery/text', 'fibery/meta': { 'ui/title?': true } }] } }"
+    call: "{ database: { 'fibery/name': 'CRM/Lead', 'fibery/meta': { 'fibery/domain?': true, 'fibery/secured?': true }, 'fibery/fields': [{ 'fibery/name': 'fibery/id', 'fibery/type': 'fibery/uuid', 'fibery/meta': { 'fibery/id?': true, 'fibery/readonly?': true } }, { 'fibery/name': 'fibery/public-id', 'fibery/type': 'fibery/text', 'fibery/meta': { 'fibery/public-id?': true, 'fibery/readonly?': true } }, { 'fibery/name': 'fibery/creation-date', 'fibery/type': 'fibery/date-time', 'fibery/meta': { 'fibery/creation-date?': true, 'fibery/readonly?': true, 'fibery/default-value': '$now' } }, { 'fibery/name': 'fibery/modification-date', 'fibery/type': 'fibery/date-time', 'fibery/meta': { 'fibery/modification-date?': true, 'fibery/required?': true, 'fibery/readonly?': true, 'fibery/default-value': '$now' } }, { 'fibery/name': 'CRM/Name', 'fibery/type': 'fibery/text', 'fibery/meta': { 'ui/title?': true } }] } }"
   schema.renameDatabase:
     call: "{ fromName: 'CRM/Lead', toName: 'CRM/Prospect' }"
   schema.deleteDatabase:
@@ -94,7 +94,7 @@ apiNotes:
   schema.deleteDatabase: "This destructive operation can delete every entity in the database and related fields when the corresponding flags are enabled."
   schema.deleteField: "Deleting a non-empty field requires deleteValues: true; removed values cannot be restored by this operation."
   file.upload: "Supply the file bytes as base64 and provide the original file name and MIME content type."
-  file.download: "Returns { kind: 'binary', contentType, base64 }. Fibery's URL import endpoint is omitted because it fetches caller-provided URLs server-side."
+  file.download: "Returns `{ kind: 'binary', contentType, base64 }`. Fibery's URL import endpoint is omitted because it fetches caller-provided URLs server-side."
   document.get: "Rich-text fields are collaborative documents; first query the related document secret from the entity field."
   document.update: "Rich-text fields are collaborative documents; first query the related document secret from the entity field."
   history.search: "Pages may be shorter than limit; continue only while nextPage.hasNext, passing nextPage.sinceItem. The timeframe maximum span is one year. Field and operator values are documented string literals; the reference generator omits quotes around enum values in rendered type tables."
