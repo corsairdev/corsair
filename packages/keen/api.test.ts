@@ -10,7 +10,7 @@ const apiKey = process.env.KEEN_API_KEY;
 const projectId = process.env.KEEN_PROJECT_ID;
 const describeIfKey = apiKey && projectId ? describe : describe.skip;
 
-if (!describeIfKey) {
+if (!apiKey || !projectId) {
 	// A skipped run must not read as a pass, so say which variable is missing.
 	if (!apiKey) console.warn('KEEN_API_KEY is not set: live tests skipped');
 	if (!projectId)
