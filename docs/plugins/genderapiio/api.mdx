@@ -183,9 +183,9 @@ await corsair.genderapiio.api.gender.batch({ items: [{ type: 'name', value: 'Sop
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | Items to infer, answered in the same order, each with its own charge. An item can fail without failing the batch |
-| `ai_mode` | `off \| fallback \| always` | No | A batch defaults to `off`, where a single request defaults to `fallback` |
+| `ai_mode` | `off \| fallback \| always` | No | Applies to every item without its own `ai_mode`. A batch defaults to `off`, where a single request defaults to `fallback` |
 
-Up to 50 items; defaults to `ai_mode: off`, unlike a single request.
+Up to 50 items (10 on the IP trial); defaults to `ai_mode: off`, unlike a single request.
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -196,7 +196,8 @@ Up to 50 items; defaults to `ai_mode: off`, unlike a single request.
   type: name | email | username,
   value: string,
   country?: string,
-  forceToGenderize?: boolean
+  forceToGenderize?: boolean,
+  ai_mode?: off | fallback | always
 }[]
 ```
 </Accordion>
@@ -245,7 +246,14 @@ Up to 50 items; defaults to `ai_mode: off`, unlike a single request.
   },
   error?: {
     code?: string,
-    message?: string
+    status?: number,
+    title?: string,
+    detail?: string,
+    action?: string,
+    errors?: {
+      pointer?: string,
+      message?: string
+    }[]
   }
 }[]
 ```
@@ -304,10 +312,10 @@ await corsair.genderapiio.api.gender.infer({ type: 'name', value: 'Sophia', coun
 | `type` | `name \| email \| username` | Yes | What the value is: a first or full name, an email address, or a username or nickname |
 | `value` | `string` | Yes | The name, email address or username to infer from |
 | `country` | `string` | No | Scopes the lookup to one country, which changes the answer for names such as Kim |
-| `ai_mode` | `off \| fallback \| always` | No | `fallback` lets AI answer when the dataset cannot, and costs 2 credits; `off` is dataset only; `always` forces AI |
-| `forceToGenderize` | `boolean` | No | Resolves more names by falling back to nickname-based AI. A dataset hit costs 1 credit, an AI one 2 |
+| `ai_mode` | `off \| fallback \| always` | No | `fallback` lets AI answer when the dataset cannot (1 credit in total); `off` is dataset only; `always` forces AI (2 credits) |
+| `forceToGenderize` | `boolean` | No | Resolves more names by falling back to nickname-based AI. A dataset hit costs 1 credit, an AI one 2. Cannot be combined with `ai_mode` `off` or `always` |
 
-`ai_mode` defaults to `fallback` here, which costs 2 credits when AI answers.
+`ai_mode` defaults to `fallback` here (1 credit in total); `always` costs 2.
 
 
 
