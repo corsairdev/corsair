@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { asRecord } from 'corsair/core';
 import type {
 	ApiRequestOptions,
@@ -167,12 +168,22 @@ type CachedToken = {
 	expiresAt: number;
 };
 
-// One cache per client, so two accounts in one process do not share a token.
+// One cache entry per client pair, so two accounts in one process do not share
+// a token, and a caller with the right client id but the wrong secret cannot
+// reuse a token another tenant minted.
 const tokens = new Map<string, CachedToken>();
+
+// The secret is hashed so the key never holds it in the clear.
+function cacheKey(credentials: GagelistCredentials): string {
+	const secretHash = createHash('sha256')
+		.update(credentials.clientSecret)
+		.digest('hex');
+	return `${credentials.clientId}:${secretHash}`;
+}
 
 /** Clears the cached token, so the next call mints a new one. */
 export function clearGagelistToken(credentials: GagelistCredentials): void {
-	tokens.delete(credentials.clientId);
+	tokens.delete(cacheKey(credentials));
 }
 
 /**
@@ -254,11 +265,12 @@ async function mintToken(
 }
 
 async function tokenFor(credentials: GagelistCredentials): Promise<string> {
-	const cached = tokens.get(credentials.clientId);
+	const key = cacheKey(credentials);
+	const cached = tokens.get(key);
 	if (cached && cached.expiresAt > Date.now()) return cached.token;
 
 	const fresh = await mintToken(credentials);
-	tokens.set(credentials.clientId, fresh);
+	tokens.set(key, fresh);
 	return fresh.token;
 }
 

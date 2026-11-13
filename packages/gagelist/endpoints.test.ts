@@ -169,6 +169,28 @@ describe('the token', () => {
 		expect(lastRequest().headers.get('authorization')).toBe('Bearer token-2');
 	});
 
+	it('does not hand a cached token to the same client id with another secret', async () => {
+		respondToken('token-right');
+		respond(accountStatus);
+		await invoke(Account.accountStatus, {});
+
+		// Same client id, wrong secret: GageList must see a new token request,
+		// and its refusal must reach the caller.
+		respond(invalidClient, 400);
+		const ctx = {
+			key: CLIENT_ID,
+			options: { clientId: CLIENT_ID, clientSecret: 'someone-elses-guess' },
+			keys: {
+				get_api_key: jest.fn().mockResolvedValue(null),
+				get_api_secret: jest.fn().mockResolvedValue(null),
+			},
+		};
+		await expect(
+			Account.accountStatus(ctx as never, {} as never),
+		).rejects.toBeInstanceOf(GagelistAPIError);
+		expect(lastRequest().path).toBe('/api/token');
+	});
+
 	it('never puts the client secret in an error', async () => {
 		respond(invalidClient, 400);
 
