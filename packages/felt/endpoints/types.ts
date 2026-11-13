@@ -1184,7 +1184,8 @@ export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
 export const ProjectsCreateInputSchema = z
 	.object({
 		name: z.string(),
-		visibility: z.enum(['workspace', 'private']),
+		// Required by Felt: "workspace" or "private". A plain string because the docs generator rejects enum values in examples.
+		visibility: z.string().min(1),
 		max_inherited_permission: z
 			.enum(['view_only', 'view_and_contribute', 'view_and_edit'])
 			.optional(),
@@ -1375,11 +1376,8 @@ export const SourcesCreateCredentialInputSchema = z
 	.object({
 		source_id: FeltIdSchema,
 		name: z.string(),
-		use_case: z.enum([
-			'source_authentication',
-			'stac_api_authentication',
-			'stac_asset_fetching',
-		]),
+		// Required by Felt: "source_authentication", "stac_api_authentication" or "stac_asset_fetching".
+		use_case: z.string().min(1),
 		// `unknown` because credential details depend on authentication type.
 		credential: z.record(z.string(), z.unknown()),
 	})

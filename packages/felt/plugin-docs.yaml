@@ -180,7 +180,6 @@ apiExamples:
       - name: "Key Points"
   comments.export:
     map_id: "a1b2c3d4e5"
-    format: "json"
   comments.resolve:
     map_id: "a1b2c3d4e5"
     comment_id: "comm_123"
