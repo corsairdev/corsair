@@ -220,6 +220,8 @@ await corsair.eventee.api.content.get({ date: '2024-06-01', with_overlapping: fa
 | `date` | `string` | No | — |
 | `with_overlapping` | `boolean` | No | — |
 
+Output type note: Eventee's OpenAPI omits item schemas for session fields `files`, `visible_in_groups` and `mandatory_for_groups`; these remain `unknown[]` and render as `any[]` in compact type blocks.
+
 
 
 **Output**
@@ -228,8 +230,8 @@ await corsair.eventee.api.content.get({ date: '2024-06-01', with_overlapping: fa
 |------|------|----------|-------------|
 | `halls` | `object[]` | Yes | — |
 | `days` | `object[]` | Yes | — |
-| `lectures` | `object[]` | Yes | — |
-| `workshops` | `object[]` | Yes | — |
+| `lectures` | `object[]` | Yes | Nested session fields files, visible_in_groups, and mandatory_for_groups have undocumented array item schemas and remain unknown[]. |
+| `workshops` | `object[]` | Yes | Nested session fields files, visible_in_groups, and mandatory_for_groups have undocumented array item schemas and remain unknown[]. |
 | `pauses` | `object[]` | Yes | — |
 | `speakers` | `object[]` | Yes | — |
 | `tracks` | `object[]` | Yes | — |
@@ -1519,7 +1521,7 @@ await corsair.eventee.api.registrations.get({});
 
 **Input:** _empty object_
 
-Eventee returns all registrations in one response with no pagination. Status values are 0 pending, 1 confirmed, and 2 declined.
+Eventee returns all registrations in one response with no pagination. Status values are 0 pending, 1 confirmed, and 2 declined. Output type note: `answer_histories` and `form_answers` remain `unknown[]` because the OpenAPI omits their item schemas; compact type blocks render them as `any[]`.
 
 
 **Output:** `object[]`
@@ -1575,7 +1577,7 @@ await corsair.eventee.api.reviews.get({});
 
 **Input:** _empty object_
 
-Eventee returns all session reviews in one response; no pagination is documented.
+Eventee returns all session reviews in one response; no pagination is documented. Nested session fields `files`, `visible_in_groups` and `mandatory_for_groups` remain `unknown[]` because their item schemas are omitted by the OpenAPI and render as `any[]` in compact type blocks.
 
 
 **Output:** `object[]`
@@ -1717,7 +1719,7 @@ await corsair.eventee.api.session.patch({ lecture_id: 1, name: 'Opening Keynote'
 | `stream` | `string` | No | — |
 | `virtual_meeting` | `string` | No | — |
 
-Omitted speakers and tracks are removed and omitted type/capacity reset, while hall and stream are kept.
+Omitted speakers and tracks are removed and omitted type/capacity reset, while hall and stream are kept. Output type note: Eventee's OpenAPI omits item schemas for session fields `files`, `visible_in_groups` and `mandatory_for_groups`; these remain `unknown[]` and render as `any[]` in compact type blocks.
 
 
 
@@ -1743,7 +1745,7 @@ Omitted speakers and tracks are removed and omitted type/capacity reset, while h
 | `mentoring` | `boolean` | No | — |
 | `hall_id` | `number` | No | — |
 | `speakers` | `number[]` | No | — |
-| `files` | `any[]` | No | — |
+| `files` | `any[]` | No | Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape. |
 | `available` | `number` | No | — |
 | `booked` | `boolean` | No | — |
 | `capacity` | `number` | No | — |
@@ -1754,8 +1756,8 @@ Omitted speakers and tracks are removed and omitted type/capacity reset, while h
 | `event_id` | `number` | No | — |
 | `qr_code_url` | `string` | No | — |
 | `overlapping` | `boolean` | No | — |
-| `visible_in_groups` | `any[]` | No | — |
-| `mandatory_for_groups` | `any[]` | No | — |
+| `visible_in_groups` | `any[]` | No | Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape. |
+| `mandatory_for_groups` | `any[]` | No | Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape. |
 | `mandatory` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -1829,6 +1831,8 @@ await corsair.eventee.api.session.post({ name: 'Opening Keynote', start: '2024-0
 | `stream` | `string` | No | — |
 | `virtual_meeting` | `string` | No | — |
 
+Output type note: Eventee's OpenAPI omits item schemas for session fields `files`, `visible_in_groups` and `mandatory_for_groups`; these remain `unknown[]` and render as `any[]` in compact type blocks.
+
 
 
 **Output**
@@ -1853,7 +1857,7 @@ await corsair.eventee.api.session.post({ name: 'Opening Keynote', start: '2024-0
 | `mentoring` | `boolean` | No | — |
 | `hall_id` | `number` | No | — |
 | `speakers` | `number[]` | No | — |
-| `files` | `any[]` | No | — |
+| `files` | `any[]` | No | Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape. |
 | `available` | `number` | No | — |
 | `booked` | `boolean` | No | — |
 | `capacity` | `number` | No | — |
@@ -1864,8 +1868,8 @@ await corsair.eventee.api.session.post({ name: 'Opening Keynote', start: '2024-0
 | `event_id` | `number` | No | — |
 | `qr_code_url` | `string` | No | — |
 | `overlapping` | `boolean` | No | — |
-| `visible_in_groups` | `any[]` | No | — |
-| `mandatory_for_groups` | `any[]` | No | — |
+| `visible_in_groups` | `any[]` | No | Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape. |
+| `mandatory_for_groups` | `any[]` | No | Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape. |
 | `mandatory` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -2056,3 +2060,4 @@ await corsair.eventee.api.speaker.post({ name: 'Jane Doe', email: 'jane.doe@exam
 
 
 ---
+

@@ -321,8 +321,12 @@ const BookingInfoResponseSchema = z
 		booked_attendees: z.array(z.number()).optional(),
 	})
 	.passthrough();
-// Eventee's OpenAPI gives `files` and group-visibility arrays no item schema.
-const UndocumentedItemArraySchema = z.array(z.unknown());
+// Eventee's OpenAPI declares these arrays but omits their item schemas, so unknown avoids inventing item types.
+const UndocumentedItemArraySchema = z
+	.array(z.unknown())
+	.describe(
+		'Eventee OpenAPI declares an array without an item schema; this uses unknown[] (rendered as any[] here) rather than assuming a shape.',
+	);
 const SessionResponseSchema = z
 	.object({
 		id: IdSchema,
@@ -409,8 +413,16 @@ const EventContentResponseSchema = z
 	.object({
 		halls: z.array(HallResponseSchema),
 		days: z.array(DayResponseSchema),
-		lectures: z.array(SessionResponseSchema),
-		workshops: z.array(SessionResponseSchema),
+		lectures: z
+			.array(SessionResponseSchema)
+			.describe(
+				'Nested session fields files, visible_in_groups, and mandatory_for_groups have undocumented array item schemas and remain unknown[].',
+			),
+		workshops: z
+			.array(SessionResponseSchema)
+			.describe(
+				'Nested session fields files, visible_in_groups, and mandatory_for_groups have undocumented array item schemas and remain unknown[].',
+			),
 		pauses: z.array(BreakResponseSchema),
 		speakers: z.array(SpeakerResponseSchema),
 		tracks: z.array(LabelResponseSchema),
@@ -593,7 +605,9 @@ const ReviewResponseSchema = z
 		username: z.string().optional(),
 		userphoto: z.string().optional(),
 		account_deleted: z.boolean().optional(),
-		lecture: SessionResponseSchema.optional(),
+		lecture: SessionResponseSchema.optional().describe(
+			'Nested session fields files, visible_in_groups, and mandatory_for_groups have undocumented array item schemas and remain unknown[].',
+		),
 	})
 	.passthrough();
 const ReviewListResponseSchema = z.array(ReviewResponseSchema);

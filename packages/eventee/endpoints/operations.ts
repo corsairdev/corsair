@@ -17,7 +17,7 @@ type RequestParts<Input> = {
 	query?: (
 		input: Input,
 	) => Record<string, string | number | boolean | undefined>;
-	// Operation bodies have different documented field sets; the strict input Zod schema narrows each one before this JSON record is built.
+	// Per-operation body shapes differ; after strict Zod validation, this shared dispatcher uses a JSON record instead of `any`.
 	body?: (input: Input) => Record<string, unknown>;
 };
 
