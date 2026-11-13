@@ -20,7 +20,7 @@ export const list: KontentEndpoints['itemsList'] = (ctx, input) =>
 		(parsed) => ({
 			method: 'GET',
 			path: '/items',
-			previewToken: parsed.preview,
+			preview: parsed.preview,
 			query: definedQuery({
 				skip: parsed.skip,
 				limit: parsed.limit,
@@ -59,7 +59,7 @@ export const get: KontentEndpoints['itemsGet'] = (ctx, input) =>
 		({ codename, depth, language, elements, preview }) => ({
 			method: 'GET',
 			path: `/items/${segment(codename)}`,
-			previewToken: preview,
+			preview,
 			query: definedQuery({
 				depth,
 				language,

@@ -6,6 +6,7 @@ import type {
 	CorsairPluginContext,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
@@ -31,17 +32,40 @@ export type KontentPluginOptions = {
 	 * published read needs.
 	 */
 	key?: string;
+	/**
+	 * A Delivery API key. Overrides the account's stored `delivery_api_key`.
+	 * Needed for `preview` reads (preview access) and for every read in an
+	 * environment with secure access turned on (secure access).
+	 */
+	deliveryApiKey?: string;
 	hooks?: InternalKontentPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof kontentaiEndpointsNested>;
 };
 
+/**
+ * The account's `api_key` is the environment ID. `delivery_api_key` is optional:
+ * a Delivery API key for preview reads and secure-access environments. It is
+ * stored with the account, encrypted, so it never travels in a call's
+ * arguments, where approval records and logs would keep it.
+ */
+export const kontentaiAuthConfig = {
+	api_key: {
+		account: ['delivery_api_key'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type KontentContext = CorsairPluginContext<
 	typeof KontentaiSchema,
-	KontentPluginOptions
+	KontentPluginOptions,
+	undefined,
+	typeof kontentaiAuthConfig
 >;
 
-export type KontentKeyBuilderContext = KeyBuilderContext<KontentPluginOptions>;
+export type KontentKeyBuilderContext = KeyBuilderContext<
+	KontentPluginOptions,
+	typeof kontentaiAuthConfig
+>;
 
 export type KontentBoundEndpoints = BindEndpoints<
 	typeof kontentaiEndpointsNested
@@ -150,7 +174,8 @@ export type BaseKontentPlugin<T extends KontentPluginOptions> = CorsairPlugin<
 	typeof kontentaiEndpointsNested,
 	{},
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof kontentaiAuthConfig
 >;
 
 export type InternalKontentPlugin = BaseKontentPlugin<KontentPluginOptions>;
@@ -174,6 +199,7 @@ export function kontentai<const T extends KontentPluginOptions>(
 		webhooks: {},
 		endpointMeta: kontentEndpointMeta,
 		endpointSchemas: kontentaiEndpointSchemas,
+		authConfig: kontentaiAuthConfig,
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: KontentKeyBuilderContext, source) => {

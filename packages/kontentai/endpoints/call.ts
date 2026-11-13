@@ -11,8 +11,8 @@ type LogFields = Record<string, string | number | boolean | undefined>;
  * then logs the event.
  *
  * The environment ID doubles as the credential here, because the Delivery API
- * has no key for published content. It is never logged: it is the whole
- * secret a reader needs.
+ * needs no key for published content unless secure access is on. Neither it
+ * nor the Delivery API key is ever logged.
  */
 export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	ctx: KontentContext,
@@ -28,7 +28,13 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makeKontentRequest(ctx.key, toRequest(parsed));
+	const deliveryApiKey =
+		ctx.options.deliveryApiKey ?? (await ctx.keys.get_delivery_api_key());
+	const raw = await makeKontentRequest(
+		ctx.key,
+		toRequest(parsed),
+		deliveryApiKey,
+	);
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);

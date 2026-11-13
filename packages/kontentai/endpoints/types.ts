@@ -11,11 +11,14 @@ const CodenameSchema = z
 	.min(1)
 	.describe('The item, type or taxonomy codename, such as `about_us`.');
 
-const PREVIEW_TOKEN_SCHEMA = z
-	.string()
-	.min(1)
+// The Delivery API key with preview access lives on the account
+// (`delivery_api_key`), never in a call's arguments, so it stays out of logs,
+// approval records and an agent's context. A call only says whether it wants
+// preview content.
+const PREVIEW_SCHEMA = z
+	.boolean()
 	.describe(
-		'A preview token, so unpublished content comes back. Only a call that asks for it sends one.',
+		'Read the latest version, including unpublished content, from the Preview API. Needs a Delivery API key with preview access stored on the account.',
 	);
 
 export const KONTENT_DEFAULT_LIMIT = 10;
@@ -79,7 +82,7 @@ const ListInputBase = PaginationInputSchema.extend({
 		.describe(
 			'A sort, such as `system.last_modified` or `elements.price[asc]`. Suffix the field with `[desc]` to reverse it; a `-` prefix is refused with a 400.',
 		),
-	preview: PREVIEW_TOKEN_SCHEMA.optional(),
+	preview: PREVIEW_SCHEMA.optional(),
 });
 
 // ── shared element shape ──────────────────────────────────────────────────
@@ -218,7 +221,7 @@ const ItemGetInputSchema = z.object({
 		.describe(
 			'Return only these element codenames. Sent as one comma-separated `elements` value.',
 		),
-	preview: PREVIEW_TOKEN_SCHEMA.optional(),
+	preview: PREVIEW_SCHEMA.optional(),
 });
 
 export type ItemGetInput = z.input<typeof ItemGetInputSchema>;
@@ -289,6 +292,7 @@ export type TypesListResponse = z.infer<typeof TypesListResponseSchema>;
 
 const TypeGetInputSchema = z.object({
 	codename: CodenameSchema,
+	preview: PREVIEW_SCHEMA.optional(),
 });
 
 export type TypeGetInput = z.input<typeof TypeGetInputSchema>;

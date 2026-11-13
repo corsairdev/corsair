@@ -10,12 +10,16 @@ import { ApiError, request } from 'corsair/http';
  * The Delivery API serves published content from a CDN:
  * `https://deliver.kontent.ai/<environmentId>/<path>`.
  *
- * A preview environment is the same host with a preview token in an
- * `Authorization` header, which is the only call that needs one. The plugin uses
- * the one host and sends the token only when a preview read asks for it, so a
- * production read never carries a credential to a CDN request.
+ * Unpublished content comes from a separate host, the Preview API, and only
+ * with a Delivery API key that has preview access. A token sent to the
+ * published host does not switch it to preview: a live probe with a bearer
+ * header on `deliver.kontent.ai` answered 200 with published content.
+ *
+ * An environment with secure access turned on also wants a Delivery API key on
+ * published reads, so the stored key, when there is one, goes on every call.
  */
 export const KONTENT_DELIVERY_BASE = 'https://deliver.kontent.ai';
+export const KONTENT_PREVIEW_BASE = 'https://preview-deliver.kontent.ai';
 
 // Content is served from a CDN and answers quickly, and the largest read here is
 // a page of 2,000 items, so the 20 second default in corsair/http is enough.
@@ -154,8 +158,8 @@ export type KontentRequest = {
 	method: 'GET';
 	path: string;
 	query?: Record<string, KontentQueryValue | undefined>;
-	/** A preview token, sent only when a preview read asks for one. */
-	previewToken?: string;
+	/** Read from the Preview API instead of the published CDN. */
+	preview?: boolean;
 };
 
 /** Encodes one path segment. */
@@ -164,14 +168,15 @@ export function segment(value: string | number): string {
 }
 
 /**
- * The Delivery API repeats a key for each value of an array
- * (`elements=facts&elements=price`), which is what `corsair/http` does for an
- * array, so no joining is needed here.
+ * `deliveryApiKey` is the account's Delivery API key, if one is stored. It is
+ * required for a preview read and for published reads in an environment with
+ * secure access.
  */
 // unknown: callers parse the body with the endpoint's zod output schema.
 export async function makeKontentRequest(
 	environmentId: string,
-	{ path, query, previewToken }: KontentRequest,
+	{ path, query, preview }: KontentRequest,
+	deliveryApiKey?: string | null,
 ): Promise<unknown> {
 	if (!environmentId) {
 		throw new KontentAPIError(
@@ -179,16 +184,22 @@ export async function makeKontentRequest(
 			{ method: 'GET' },
 		);
 	}
+	if (preview && !deliveryApiKey) {
+		throw new KontentAPIError(
+			'A preview read needs a Kontent Delivery API key with preview access, stored on the account as delivery_api_key',
+			{ method: 'GET' },
+		);
+	}
 
 	const config: OpenAPIConfig = {
-		BASE: KONTENT_DELIVERY_BASE,
+		BASE: preview ? KONTENT_PREVIEW_BASE : KONTENT_DELIVERY_BASE,
 		VERSION: '2.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TIMEOUT: KONTENT_TIMEOUT_MS,
 		HEADERS: {
 			Accept: 'application/json',
-			...(previewToken ? { Authorization: `Bearer ${previewToken}` } : {}),
+			...(deliveryApiKey ? { Authorization: `Bearer ${deliveryApiKey}` } : {}),
 		},
 	};
 

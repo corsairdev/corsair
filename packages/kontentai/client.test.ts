@@ -138,7 +138,7 @@ describe('makeKontentRequest', () => {
 		expect(lastRequest().path).toBe(`/${ENVIRONMENT_ID}/items`);
 	});
 
-	it('sends no authorization header without a preview token', async () => {
+	it('sends no authorization header without a Delivery API key', async () => {
 		respond({ items: [] });
 
 		await makeKontentRequest(ENVIRONMENT_ID, { method: 'GET', path: '/items' });
@@ -146,17 +146,19 @@ describe('makeKontentRequest', () => {
 		expect(lastRequest().headers.get('authorization')).toBeNull();
 	});
 
-	it('sends the preview token as a bearer token when given', async () => {
+	it('sends a preview read to preview-deliver.kontent.ai with the key', async () => {
 		respond({ items: [] });
 
-		await makeKontentRequest(ENVIRONMENT_ID, {
-			method: 'GET',
-			path: '/items',
-			previewToken: 'preview-token',
-		});
+		await makeKontentRequest(
+			ENVIRONMENT_ID,
+			{ method: 'GET', path: '/items', preview: true },
+			'delivery-key',
+		);
 
+		const [url] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
+		expect(new URL(url).origin).toBe('https://preview-deliver.kontent.ai');
 		expect(lastRequest().headers.get('authorization')).toBe(
-			'Bearer preview-token',
+			'Bearer delivery-key',
 		);
 	});
 

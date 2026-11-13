@@ -19,7 +19,7 @@ export const list: KontentEndpoints['typesList'] = (ctx, input) =>
 		(parsed) => ({
 			method: 'GET',
 			path: '/types',
-			previewToken: parsed.preview,
+			preview: parsed.preview,
 			query: definedQuery({
 				skip: parsed.skip,
 				limit: parsed.limit,
@@ -42,9 +42,10 @@ export const get: KontentEndpoints['typesGet'] = (ctx, input) =>
 			output: Outputs.typesGet,
 		},
 		input,
-		({ codename }) => ({
+		({ codename, preview }) => ({
 			method: 'GET',
 			path: `/types/${segment(codename)}`,
+			preview,
 		}),
 		{
 			// Kontent answers the type at the root; the output is `{ type }`.
@@ -68,7 +69,7 @@ export const taxonomies: KontentEndpoints['taxonomiesList'] = (ctx, input) =>
 		(parsed) => ({
 			method: 'GET',
 			path: '/taxonomies',
-			previewToken: parsed.preview,
+			preview: parsed.preview,
 			query: definedQuery({
 				skip: parsed.skip,
 				limit: parsed.limit,
@@ -94,7 +95,7 @@ export const languages: KontentEndpoints['languagesList'] = (ctx, input) =>
 		(parsed) => ({
 			method: 'GET',
 			path: '/languages',
-			previewToken: parsed.preview,
+			preview: parsed.preview,
 			query: definedQuery({
 				skip: parsed.skip,
 				limit: parsed.limit,

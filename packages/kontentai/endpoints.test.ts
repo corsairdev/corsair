@@ -251,14 +251,44 @@ describe('items.get', () => {
 		);
 	});
 
-	it('sends a preview token only when a preview read asks for it', async () => {
+	it('sends a preview read to the Preview API with the stored key', async () => {
 		respond(itemDetail);
 
-		await invoke(Items.get, { codename: 'about_us', preview: 'preview-token' });
+		await invoke(Items.get, { codename: 'about_us', preview: true }, 'dk');
 
-		expect(lastRequest().headers.get('authorization')).toBe(
-			'Bearer preview-token',
-		);
+		const sent = lastRequest();
+		// A token on deliver.kontent.ai is ignored and published content comes
+		// back, so preview has to change the host.
+		expect(sent.origin).toBe('https://preview-deliver.kontent.ai');
+		expect(sent.path).toBe(`/${ENVIRONMENT_ID}/items/about_us`);
+		expect(sent.headers.get('authorization')).toBe('Bearer dk');
+	});
+
+	it('refuses a preview read without a stored key before calling Kontent', async () => {
+		await expect(
+			invoke(Items.get, { codename: 'about_us', preview: true }),
+		).rejects.toMatchObject({
+			name: 'KontentAPIError',
+			message: expect.stringContaining('delivery_api_key'),
+		});
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('takes no API key as a call argument', async () => {
+		await expect(
+			invoke(Items.get, { codename: 'about_us', preview: 'a-token' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('sends the stored key on published reads, for secure access', async () => {
+		respond(itemDetail);
+
+		await invoke(Items.get, { codename: 'about_us' }, 'dk');
+
+		const sent = lastRequest();
+		expect(sent.origin).toBe('https://deliver.kontent.ai');
+		expect(sent.headers.get('authorization')).toBe('Bearer dk');
 	});
 
 	it('sends no authorization header on a published read', async () => {
@@ -405,11 +435,11 @@ describe('the environment ID', () => {
 });
 
 describe('error envelopes', () => {
-	it('reads a refused preview token as an auth error', async () => {
+	it('reads a refused Delivery API key as an auth error', async () => {
 		respond(unauthorized, 401);
 
 		await expect(
-			invoke(Items.get, { codename: 'about_us', preview: 'bad' }),
+			invoke(Items.get, { codename: 'about_us', preview: true }, 'bad'),
 		).rejects.toMatchObject({ status: 401, isAuthError: true });
 	});
 
