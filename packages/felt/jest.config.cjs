@@ -49,6 +49,9 @@ module.exports = {
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
+	// api.test.ts hits the real Felt API; `pnpm test:live` runs it explicitly.
+	// Default `pnpm test` ignores it even when FELT_API_KEY happens to be exported.
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,
