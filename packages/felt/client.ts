@@ -62,6 +62,11 @@ export function extractSecretStrings(value: unknown): string[] {
 			// `unknown` because record entries can be arbitrary nested values.
 			for (const [k, v] of Object.entries(val as Record<string, unknown>)) {
 				const isSensitiveKey = SENSITIVE_KEY_NAMES.has(normalizeKeyName(k));
+				// A credential's `type` names the kind of credential (snowflake_pat, custom_headers);
+				// Felt quotes it in validation errors, so it stays readable.
+				if (!isSensitiveKey && k === 'type' && typeof v === 'string') {
+					continue;
+				}
 				const shouldTreatAsSecret = insideSensitiveBranch || isSensitiveKey;
 				if (typeof v === 'string') {
 					if (shouldTreatAsSecret && v.trim().length > 0) {

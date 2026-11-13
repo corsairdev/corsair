@@ -233,6 +233,47 @@ describe('makeFeltRequest client', () => {
 		).toBeUndefined();
 	});
 
+	it('keeps the credential type readable in a 422 while the token stays redacted', async () => {
+		// Live run 11-13: Felt answered "custom_headers is not allowed on feature_server" and the
+		// type name came back as [REDACTED], which hid the reason for the error.
+		const token = 'snowflake-token-value-123';
+		mockRequest.mockRejectedValue(
+			new ApiError(
+				{ method: 'POST', url: '/sources/s_1/credentials' },
+				{
+					url: 'https://felt.com/api/v2/sources/s_1/credentials',
+					ok: false,
+					status: 422,
+					statusText: 'Unprocessable Entity',
+					body: {
+						errors: [
+							{
+								detail: `snowflake_pat is not allowed on feature_server (${token})`,
+							},
+						],
+					},
+				},
+				'Unprocessable Entity',
+			),
+		);
+		const caught = (await makeFeltRequest(
+			'/sources/s_1/credentials',
+			'felt_pat_test',
+			{
+				method: 'POST',
+				body: {
+					name: 'n',
+					use_case: 'source_authentication',
+					credential: { type: 'snowflake_pat', token },
+				},
+			},
+		).catch((err: unknown) => err)) as FeltAPIError;
+		const detail = (caught.body as { errors: Array<{ detail: string }> })
+			.errors[0]?.detail;
+		expect(detail).toContain('snowflake_pat is not allowed on feature_server');
+		expect(detail).not.toContain(token);
+	});
+
 	it('ensures FeltAPIError constructor sanitizes cause if passed explicitly', () => {
 		const secretPassword = 'my-super-secret-password';
 		const rawApiError = new ApiError(
