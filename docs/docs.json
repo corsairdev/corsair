@@ -2304,6 +2304,14 @@
                 ]
               },
               {
+                "group": "Google Tasks",
+                "pages": [
+                  "plugins/googletasks/overview",
+                  "plugins/googletasks/api",
+                  "plugins/googletasks/database"
+                ]
+              },
+              {
                 "group": "Grafana",
                 "pages": [
                   "plugins/grafana/overview",

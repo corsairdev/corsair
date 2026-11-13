@@ -1,4 +1,6 @@
+import { googleTasksEntities } from './database';
+
 export const GoogleTasksSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: googleTasksEntities,
 } as const;

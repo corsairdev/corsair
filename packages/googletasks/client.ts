@@ -1,65 +1,55 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { request } from 'corsair/http';
 
-export class GoogleTasksAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'GoogleTasksAPIError';
-	}
-}
+const GOOGLE_TASKS_API_BASE = 'https://tasks.googleapis.com';
+const RATE_LIMIT_CONFIG = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: { retryAfter: 'retry-after' },
+} as const;
 
-// TODO: Update with your API base URL
-const GOOGLETASKS_API_BASE = 'https://api.example.com';
+export type GoogleTasksRequestContext = {
+	key?: string;
+};
 
-export async function makeGoogleTasksRequest<T>(
-	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	const { method = 'GET', body, query } = options;
+export type GoogleTasksRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+	// Endpoint-specific strict Zod schemas validate each JSON resource before it reaches this transport.
+	body?: Record<string, unknown>;
+	query?: Record<string, string | number | boolean | undefined>;
+};
+
+// The provider payload is untrusted until the operation-specific output schema parses it.
+export async function makeGoogleTasksRequest(
+	path: string,
+	ctx: GoogleTasksRequestContext,
+	options: GoogleTasksRequestOptions = {},
+): Promise<unknown> {
+	if (!ctx.key) throw new AuthMissingError('googletasks', 'oauth_2');
 
 	const config: OpenAPIConfig = {
-		BASE: GOOGLETASKS_API_BASE,
-		VERSION: '1.0.0',
+		BASE: GOOGLE_TASKS_API_BASE,
+		VERSION: 'v1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
+			Authorization: `Bearer ${ctx.key}`,
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
 		},
 	};
-
 	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		method: options.method ?? 'GET',
+		url: path,
+		body: options.body,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query: options.query,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		// Rethrow core's ApiError as is: its status and retryAfter are what the
-		// error handlers match (429 retries) and what core reads to refresh an
-		// OAuth token after a 401. Wrapping it in a new error loses both.
-		if (error instanceof ApiError) throw error;
-		if (error instanceof Error) {
-			throw new GoogleTasksAPIError(error.message);
-		}
-		throw new GoogleTasksAPIError('Unknown error');
-	}
+	// Keep provider JSON untrusted here; endpoint output schemas narrow every successful response.
+	return request<unknown>(config, requestOptions, {
+		rateLimitConfig: RATE_LIMIT_CONFIG,
+	});
 }

@@ -1,7 +1,5 @@
-import { get as exampleGet } from './example';
+import * as TaskLists from './tasklists';
+import * as Tasks from './tasks';
 
-export const Example = {
-	get: exampleGet,
-};
-
+export { TaskLists, Tasks };
 export * from './types';

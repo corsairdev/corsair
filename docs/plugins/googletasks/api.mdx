@@ -1,0 +1,853 @@
+---
+title: "Google Tasks API reference"
+sidebarTitle: "API"
+description: "API reference for the Google Tasks plugin in Corsair: every `googletasks.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Task Lists
+
+### delete
+
+`taskLists.delete`
+
+Delete a task list; assigned tasks and their source tasks may also be deleted. OAuth scope: https://www.googleapis.com/auth/tasks.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googletasks.api.taskLists.delete({ taskListId: 'list-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskListId` | `string` | Yes | — |
+
+The default task list cannot be deleted. Deleting a list containing assigned tasks may also delete the original tasks in Docs or Chat Spaces.
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`taskLists.get`
+
+Get one task list. OAuth scope: https://www.googleapis.com/auth/tasks.readonly or https://www.googleapis.com/auth/tasks.
+
+**Risk:** `read`
+
+```ts
+await corsair.googletasks.api.taskLists.get({ taskListId: '@default' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskListId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+
+
+
+---
+
+### insert
+
+`taskLists.insert`
+
+Create a task list. OAuth scope: https://www.googleapis.com/auth/tasks.
+
+**Risk:** `write`
+
+```ts
+await corsair.googletasks.api.taskLists.insert({ taskList: { title: 'Personal' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskList` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="taskList full type">
+
+```ts
+{
+  title?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`taskLists.list`
+
+List a page of task lists. OAuth scope: https://www.googleapis.com/auth/tasks.readonly or https://www.googleapis.com/auth/tasks.
+
+**Risk:** `read`
+
+```ts
+await corsair.googletasks.api.taskLists.list({ maxResults: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+`taskLists.list` accepts at most 1000 task lists per page and returns `nextPageToken` for continuation.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  title?: string,
+  updated?: string,
+  selfLink?: string,
+  kind?: string,
+  etag?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### patch
+
+`taskLists.patch`
+
+Partially update a task list. OAuth scope: https://www.googleapis.com/auth/tasks.
+
+**Risk:** `write`
+
+```ts
+await corsair.googletasks.api.taskLists.patch({ taskListId: 'list-id', taskList: { title: 'Personal' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskListId` | `string` | Yes | — |
+| `taskList` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="taskList full type">
+
+```ts
+{
+  title?: string,
+  etag?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`taskLists.update`
+
+Replace a task list. OAuth scope: https://www.googleapis.com/auth/tasks.
+
+**Risk:** `write`
+
+```ts
+await corsair.googletasks.api.taskLists.update({ taskListId: 'list-id', taskList: { title: 'Personal' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskListId` | `string` | Yes | — |
+| `taskList` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="taskList full type">
+
+```ts
+{
+  title?: string,
+  etag?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+
+
+
+---
+
+## Tasks
+
+### clear
+
+`tasks.clear`
+
+Hide all completed tasks in a task list. OAuth scope: https://www.googleapis.com/auth/tasks.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googletasks.api.tasks.clear({ taskListId: '@default' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskListId` | `string` | Yes | — |
+
+Clearing hides all completed tasks; it does not permanently delete them. Clear and delete methods return HTTP 204 with no response body.
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a task; assigned tasks may also delete their source task. OAuth scope: https://www.googleapis.com/auth/tasks.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googletasks.api.tasks.delete({ taskListId: '@default', taskId: 'task-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskListId` | `string` | Yes | — |
+| `taskId` | `string` | Yes | — |
+
+Deleting an assigned task may also delete its original task in Docs or Chat Spaces.
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`tasks.get`
+
+Get one task. OAuth scope: https://www.googleapis.com/auth/tasks.readonly or https://www.googleapis.com/auth/tasks.
+
+**Risk:** `read`
+
+```ts
+await corsair.googletasks.api.tasks.get({ taskListId: '@default', taskId: 'task-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskListId` | `string` | Yes | — |
+| `taskId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `webViewLink` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `status` | `needsAction \| completed` | No | — |
+| `due` | `string` | No | — |
+| `completed` | `string` | No | — |
+| `parent` | `string` | No | — |
+| `position` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `hidden` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `links` | `object[]` | No | — |
+| `assignmentInfo` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  type?: string,
+  link?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="assignmentInfo full type">
+
+```ts
+{
+  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE,
+  linkToTask?: string,
+  driveResourceInfo?: {
+    driveFileId?: string,
+    resourceKey?: string
+  },
+  spaceInfo?: {
+    space?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insert
+
+`tasks.insert`
+
+Create a task, optionally under a parent or after a sibling. OAuth scope: https://www.googleapis.com/auth/tasks.
+
+**Risk:** `write`
+
+```ts
+await corsair.googletasks.api.tasks.insert({ taskListId: '@default', task: { title: 'Buy groceries' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskListId` | `string` | Yes | — |
+| `task` | `object` | Yes | — |
+| `parent` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  title?: string,
+  notes?: string,
+  due?: string,
+  completed?: string,
+  status?: needsAction | completed,
+  deleted?: boolean,
+  etag?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `webViewLink` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `status` | `needsAction \| completed` | No | — |
+| `due` | `string` | No | — |
+| `completed` | `string` | No | — |
+| `parent` | `string` | No | — |
+| `position` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `hidden` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `links` | `object[]` | No | — |
+| `assignmentInfo` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  type?: string,
+  link?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="assignmentInfo full type">
+
+```ts
+{
+  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE,
+  linkToTask?: string,
+  driveResourceInfo?: {
+    driveFileId?: string,
+    resourceKey?: string
+  },
+  spaceInfo?: {
+    space?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List a page of tasks with the documented filters. OAuth scope: https://www.googleapis.com/auth/tasks.readonly or https://www.googleapis.com/auth/tasks.
+
+**Risk:** `read`
+
+```ts
+await corsair.googletasks.api.tasks.list({ taskListId: '@default', maxResults: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskListId` | `string` | Yes | — |
+| `completedMax` | `string` | No | — |
+| `completedMin` | `string` | No | — |
+| `dueMax` | `string` | No | — |
+| `dueMin` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `showAssigned` | `boolean` | No | — |
+| `showCompleted` | `boolean` | No | — |
+| `showDeleted` | `boolean` | No | — |
+| `showHidden` | `boolean` | No | — |
+| `updatedMin` | `string` | No | — |
+
+`tasks.list` returns 20 tasks by default and accepts at most 100 per page. Pass `nextPageToken` back as `pageToken` to continue. Its documented completion, due-date, update-time, and visibility filters are available as inputs.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `items` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  title?: string,
+  updated?: string,
+  selfLink?: string,
+  webViewLink?: string,
+  kind?: string,
+  etag?: string,
+  status?: needsAction | completed,
+  due?: string,
+  completed?: string,
+  parent?: string,
+  position?: string,
+  notes?: string,
+  hidden?: boolean,
+  deleted?: boolean,
+  links?: {
+    type?: string,
+    link?: string,
+    description?: string
+  }[],
+  assignmentInfo?: {
+    surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE,
+    linkToTask?: string,
+    driveResourceInfo?: {
+      driveFileId?: string,
+      resourceKey?: string
+    },
+    spaceInfo?: {
+      space?: string
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### move
+
+`tasks.move`
+
+Move a task within or between task lists or change its parent. OAuth scope: https://www.googleapis.com/auth/tasks.
+
+**Risk:** `write`
+
+```ts
+await corsair.googletasks.api.tasks.move({ taskListId: '@default', taskId: 'task-id', previous: 'previous-task-id' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskListId` | `string` | Yes | — |
+| `taskId` | `string` | Yes | — |
+| `destinationTasklist` | `string` | No | — |
+| `parent` | `string` | No | — |
+| `previous` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `webViewLink` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `status` | `needsAction \| completed` | No | — |
+| `due` | `string` | No | — |
+| `completed` | `string` | No | — |
+| `parent` | `string` | No | — |
+| `position` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `hidden` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `links` | `object[]` | No | — |
+| `assignmentInfo` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  type?: string,
+  link?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="assignmentInfo full type">
+
+```ts
+{
+  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE,
+  linkToTask?: string,
+  driveResourceInfo?: {
+    driveFileId?: string,
+    resourceKey?: string
+  },
+  spaceInfo?: {
+    space?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`tasks.patch`
+
+Partially update a task. OAuth scope: https://www.googleapis.com/auth/tasks.
+
+**Risk:** `write`
+
+```ts
+await corsair.googletasks.api.tasks.patch({ taskListId: '@default', taskId: 'task-id', task: { status: 'completed' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskListId` | `string` | Yes | — |
+| `taskId` | `string` | Yes | — |
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  title?: string,
+  notes?: string,
+  due?: string,
+  completed?: string,
+  status?: needsAction | completed,
+  deleted?: boolean,
+  etag?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `webViewLink` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `status` | `needsAction \| completed` | No | — |
+| `due` | `string` | No | — |
+| `completed` | `string` | No | — |
+| `parent` | `string` | No | — |
+| `position` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `hidden` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `links` | `object[]` | No | — |
+| `assignmentInfo` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  type?: string,
+  link?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="assignmentInfo full type">
+
+```ts
+{
+  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE,
+  linkToTask?: string,
+  driveResourceInfo?: {
+    driveFileId?: string,
+    resourceKey?: string
+  },
+  spaceInfo?: {
+    space?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Replace a task. OAuth scope: https://www.googleapis.com/auth/tasks.
+
+**Risk:** `write`
+
+```ts
+await corsair.googletasks.api.tasks.update({ taskListId: '@default', taskId: 'task-id', task: { title: 'Buy groceries' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskListId` | `string` | Yes | — |
+| `taskId` | `string` | Yes | — |
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  title?: string,
+  notes?: string,
+  due?: string,
+  completed?: string,
+  status?: needsAction | completed,
+  deleted?: boolean,
+  etag?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `updated` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `webViewLink` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `status` | `needsAction \| completed` | No | — |
+| `due` | `string` | No | — |
+| `completed` | `string` | No | — |
+| `parent` | `string` | No | — |
+| `position` | `string` | No | — |
+| `notes` | `string` | No | — |
+| `hidden` | `boolean` | No | — |
+| `deleted` | `boolean` | No | — |
+| `links` | `object[]` | No | — |
+| `assignmentInfo` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  type?: string,
+  link?: string,
+  description?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="assignmentInfo full type">
+
+```ts
+{
+  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE,
+  linkToTask?: string,
+  driveResourceInfo?: {
+    driveFileId?: string,
+    resourceKey?: string
+  },
+  spaceInfo?: {
+    space?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
