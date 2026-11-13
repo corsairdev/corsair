@@ -85,7 +85,8 @@ export const order = {
 	totalDiscountsSet: { shopMoney: money },
 	customer: {
 		id: 'gid://shopify/Customer/7',
-		displayName: 'Jenny Test',
+		// No displayName: the order fragment omits it because Shopify returns
+		// `data: null` for it without customer PII access.
 		defaultEmailAddress: { emailAddress: 'jenny@example.com' },
 	},
 	lineItems: {

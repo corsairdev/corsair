@@ -143,7 +143,8 @@ export const OrderSchema = z
 		customer: z
 			.object({
 				id: z.string(),
-				displayName: z.string(),
+				// No `displayName`: see the note in the order fragment. Shopify
+				// returns `data: null` for it without PII access.
 				defaultEmailAddress: z
 					.object({ emailAddress: z.string() })
 					.loose()
@@ -416,6 +417,13 @@ export const inventoryAdjustInput = z.object({
 		.nullish()
 		.describe(
 			'Expected quantity before the change. Set it to turn the write into a compare-and-swap, which fails when the current quantity differs. Omit it to skip that check.',
+		),
+	idempotencyKey: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'Key that makes this adjustment safe to repeat. Generated per call when omitted; supply your own to make a retry of the same logical adjustment reuse it.',
 		),
 });
 

@@ -32,30 +32,31 @@ fragment OrderFields on Order {
   totalTaxSet { shopMoney { amount currencyCode } }
   subtotalPriceSet { shopMoney { amount currencyCode } }
   totalDiscountsSet { shopMoney { amount currencyCode } }
+  # Customer.displayName is not selected: on an app without customer PII
+  # access Shopify returns no data at all for it, losing the whole order. The
+  # id and email address are nulled individually instead.
   customer {
     id
-    displayName
     defaultEmailAddress { emailAddress }
-  }
-  lineItems(first: 20) {
-    edges {
-      node {
-        id
-        title
-        quantity
-        sku
-        variant { id }
-        originalUnitPriceSet { shopMoney { amount currencyCode } }
-      }
-    }
-    pageInfo { hasNextPage endCursor }
   }
 }`;
 
 const LIST_QUERY = `
 query OrdersList($first: Int, $after: String, $query: String, $sortKey: OrderSortKeys, $reverse: Boolean) {
   orders(first: $first, after: $after, query: $query, sortKey: $sortKey, reverse: $reverse) {
-    edges { node { ...OrderFields } cursor }
+    edges {
+      node {
+        ...OrderFields
+        # The fragment deliberately omits lineItems: selecting it there as well
+        # as in a query's own selection makes GraphQL reject the document for
+        # conflicting arguments. Each query selects its page once.
+        lineItems(first: 20) {
+          edges { node { id title quantity sku variant { id } originalUnitPriceSet { shopMoney { amount currencyCode } } } cursor }
+          pageInfo { hasNextPage endCursor }
+        }
+      }
+      cursor
+    }
     pageInfo { hasNextPage endCursor }
   }
 }
@@ -99,8 +100,8 @@ query OrderLineItems($id: ID!, $first: Int, $after: String) {
 
 // `OrderCancelPayload` has no `order` field in 2026-10: cancellation is a job.
 // The payload carries `job` and `jobResult`, and the order arrives inside
-// `jobResult` once the job finishes. Selecting `order` here fails validation,
-// which is what the live schema reports.
+// `jobResult`. Selecting `order` at the top level fails validation, which is
+// what the live schema reports.
 const CANCEL_MUTATION = `
 mutation OrderCancel($orderId: ID!, $reason: OrderCancelReason!, $restock: Boolean!, $notifyCustomer: Boolean!, $refundOriginalPayment: Boolean!) {
   orderCancel(orderId: $orderId, reason: $reason, restock: $restock, notifyCustomer: $notifyCustomer, refundMethod: { originalPaymentMethodsRefund: $refundOriginalPayment }) {
@@ -116,21 +117,20 @@ mutation OrderCancel($orderId: ID!, $reason: OrderCancelReason!, $restock: Boole
 }
 ${ORDER_FRAGMENT}`;
 
-// Reads the cancel job again while it is still running. A job that starts
-// asynchronously reports `done: false` on the first response.
-const CANCEL_JOB_QUERY = `
-query OrderCancelJob($id: ID!) {
-  job(id: $id) {
-    id
-    done
-    query {
-      ... on OrderCancelJobResult {
-        done
-        status
-        errors { code message }
-        order { ...OrderFields }
-      }
-    }
+/**
+ * Reads the order back while its cancellation is still being applied.
+ *
+ * A cancellation job cannot be polled: `Job.query` is a `QueryRoot`, which
+ * GraphQL refuses to spread a job result into, and `QueryRoot.job` exposes no
+ * result. What is observable is the order itself. A verified live cancel
+ * returns `done: false` with `cancelledAt: null`, and the order carries
+ * `cancelledAt` a few seconds later. So the check is the order's own state,
+ * which is also what the caller asked about.
+ */
+const ORDER_STATE_QUERY = `
+query OrderCancelState($id: ID!) {
+  order(id: $id) {
+    ...OrderFields
   }
 }
 ${ORDER_FRAGMENT}`;
@@ -215,7 +215,27 @@ export const listLineItems = (
 			variables: { id, first: first ?? DEFAULT_PAGE_SIZE, after },
 			replaySafe: true,
 		}),
-		{ log: (_, result) => ({ count: result.lineItems.edges.length }) },
+		{
+			// The query returns `{ order: { id, lineItems } }`, but the operation's
+			// output describes only the connection, so the page is unwrapped here.
+			// An order that does not exist is an error rather than an empty page:
+			// a blank list would look like an order with no line items.
+			shape: (raw) => {
+				// unknown: the connection is validated by the output schema after
+				// this unwrapping.
+				const data = raw as {
+					order?: { lineItems?: unknown } | null;
+				};
+				if (!data.order) {
+					throw new ShopifyAPIError(
+						'orders.listLineItems found no order with that id',
+						{ status: 200 },
+					);
+				}
+				return { lineItems: data.order.lineItems };
+			},
+			log: (_, result) => ({ count: result.lineItems.edges.length }),
+		},
 	);
 
 // `orderCancel` cancels the order but does not move money unless it is asked
@@ -232,81 +252,111 @@ const CANCEL_DEFAULTS = {
 const CANCEL_POLL_INTERVAL_MS = 500;
 const CANCEL_POLL_TIMEOUT_MS = 15_000;
 
-type CancelJobResult = {
-	done?: boolean | null;
-	status?: string | null;
-	errors?: { code?: string; message?: string }[] | null;
-	// unknown: the order is validated by the operation's output schema after
-	// this job result is unwrapped, so it is not typed here.
-	order?: unknown;
-};
-
 /**
- * Waits for the cancellation job and returns the cancelled order.
+ * Waits until the order shows the cancellation, then returns it.
  *
- * Shopify runs `orderCancel` as a job. A job that finishes inline reports its
- * result straight away; one that does not has to be read again until it does.
- * Returning before then would either report a failure as success or hand back
- * no order at all, so the wait is bounded and a job that never finishes is an
- * error rather than a silent null.
+ * The mutation answers before the job finishes: a verified live call returned
+ * `done: false` with `cancelledAt: null`, and the order carried `cancelledAt`
+ * a few seconds later. The job itself cannot be polled, so the order's own
+ * state is what is read, which is also the thing the caller asked about.
+ *
+ * Only the order read is repeated, never the mutation: it has already run, and
+ * sending it again would fail with "order is already cancelled". The wait is
+ * bounded, and a cancellation that never lands is an error rather than a silent
+ * null.
  */
-async function awaitCancelJob(
-	first: CancelJobResult,
-	jobId: string | null | undefined,
+async function awaitCancellation(
+	// unknown: the order is parsed by the operation's output schema.
+	started: { order?: unknown; done?: boolean | null; status?: string | null },
+	orderId: string,
 	run: (
 		query: string,
 		// unknown: variables differ per operation and are sent as JSON.
 		variables: Record<string, unknown>,
-		// unknown: the polled response holds one field per operation; only
-		// `job` is read here.
 	) => Promise<Record<string, unknown>>,
-	// unknown: the order is parsed by the operation's output schema.
 ): Promise<{ order: unknown }> {
-	let current = first;
-	const deadline = Date.now() + CANCEL_POLL_TIMEOUT_MS;
+	const isCancelled = (order: unknown): boolean => {
+		const record = order as { cancelledAt?: string | null } | null;
+		return typeof record?.cancelledAt === 'string';
+	};
 
-	while (!current.done) {
-		if (!jobId) {
-			throw new ShopifyAPIError(
-				'orders.cancel started a job but returned no job id to poll',
-				{ status: 200 },
-			);
-		}
-		if (Date.now() > deadline) {
-			throw new ShopifyAPIError(
-				`orders.cancel job ${jobId} did not finish within ${
-					CANCEL_POLL_TIMEOUT_MS / 1000
-				}s`,
-				{ status: 200 },
-			);
-		}
+	if (started.status === 'FAILED') {
+		throw new ShopifyUserError('orders.cancel was rejected', [
+			{ message: 'the cancellation job reported failure' },
+		]);
+	}
+	if (isCancelled(started.order)) return { order: started.order };
+
+	const deadline = Date.now() + CANCEL_POLL_TIMEOUT_MS;
+	while (Date.now() < deadline) {
 		await new Promise((resolve) =>
 			setTimeout(resolve, CANCEL_POLL_INTERVAL_MS),
 		);
-		const polled = await run(CANCEL_JOB_QUERY, { id: jobId });
-		const job = polled.job as
-			| { done?: boolean | null; query?: CancelJobResult | null }
-			| null
-			| undefined;
-		current = job?.query ?? { done: job?.done ?? false };
+		const polled = await readOrderState(run, orderId);
+		const order = (polled.order ?? null) as {
+			cancelledAt?: string | null;
+		} | null;
+		if (order && typeof order.cancelledAt === 'string') {
+			return { order };
+		}
 	}
 
-	if (current.status === 'FAILED' || (current.errors?.length ?? 0) > 0) {
-		const detail =
-			current.errors?.[0]?.message ?? 'the cancellation job failed';
-		// A failed cancel is permanent for this input, so it is raised as a
-		// rejection rather than returned as a half-filled order.
-		throw new ShopifyUserError(`orders.cancel was rejected: ${detail}`, [
-			{ message: detail },
-		]);
+	// The order exists but never reported a cancellation within the window.
+	// Returning it would say the cancel succeeded when it may not have.
+	throw new ShopifyAPIError(
+		`orders.cancel did not cancel the order within ${
+			CANCEL_POLL_TIMEOUT_MS / 1000
+		}s; it may still be running`,
+		{ status: 200 },
+	);
+}
+
+/** How many times a throttled order read is retried before giving up. */
+const CANCEL_POLL_MAX_ATTEMPTS = 4;
+
+/**
+ * Reads the order's cancellation state, retrying only the read on a throttle.
+ *
+ * The read has no side effect, so repeating it is free; the mutation that
+ * started the job is not repeated, because it has already run.
+ */
+async function readOrderState(
+	run: (
+		query: string,
+		// unknown: variables differ per operation and are sent as JSON.
+		variables: Record<string, unknown>,
+		// unknown: the response holds one field per operation; only `order` is
+		// read here.
+	) => Promise<Record<string, unknown>>,
+	orderId: string,
+): Promise<Record<string, unknown>> {
+	// unknown: a rejection reason has no static type; only its message and
+	// retryAfter are read before it is rethrown.
+	let lastError: unknown;
+	for (let attempt = 0; attempt < CANCEL_POLL_MAX_ATTEMPTS; attempt += 1) {
+		try {
+			return await run(ORDER_STATE_QUERY, { id: orderId });
+		} catch (error) {
+			// Only a throttle is worth repeating here: the query was refused
+			// before running, and the wait is the one Shopify asked for.
+			const throttled =
+				(error instanceof ShopifyAPIError &&
+					(error.code === 'THROTTLED' || error.status === 429)) ||
+				(error instanceof Error && /throttl/i.test(error.message));
+			if (!throttled) throw error;
+			lastError = error;
+			const wait =
+				error instanceof ShopifyAPIError && error.retryAfter
+					? error.retryAfter
+					: CANCEL_POLL_INTERVAL_MS;
+			await new Promise((resolve) => setTimeout(resolve, wait));
+		}
 	}
-	if (!current.order) {
-		throw new ShopifyAPIError(
-			'orders.cancel finished without returning the order',
-			{ status: 200 },
-		);
-	}
-	return { order: current.order };
+	throw lastError instanceof Error
+		? lastError
+		: new ShopifyAPIError('orders.cancel state read kept being throttled', {
+				status: 429,
+			});
 }
 
 export const cancel = (
@@ -334,19 +384,35 @@ export const cancel = (
 			payloadKey: 'orderCancel',
 		}),
 		{
-			after: async (raw, _parsed, run) => {
+			after: async (raw, parsed, run) => {
 				// unknown: the mutation payload's data half; each field is read
 				// by name below and the output schema validates the result.
 				const payload = raw as {
 					orderCancel?: {
 						job?: { id?: string | null; done?: boolean | null } | null;
-						jobResult?: CancelJobResult | null;
+						jobResult?: {
+							done?: boolean | null;
+							status?: string | null;
+							errors?: { code?: string; message?: string }[] | null;
+							// unknown: validated by the output schema downstream.
+							order?: unknown;
+						} | null;
 					};
 				};
-				const job = payload.orderCancel?.job;
-				return awaitCancelJob(
-					payload.orderCancel?.jobResult ?? { done: job?.done ?? false },
-					job?.id,
+				const failed = payload.orderCancel?.jobResult?.errors ?? [];
+				if (failed.length > 0) {
+					const detail = failed[0]?.message ?? 'the cancellation failed';
+					throw new ShopifyUserError(`orders.cancel was rejected: ${detail}`, [
+						{ message: detail },
+					]);
+				}
+				return awaitCancellation(
+					{
+						order: payload.orderCancel?.jobResult?.order,
+						done: payload.orderCancel?.jobResult?.done,
+						status: payload.orderCancel?.jobResult?.status,
+					},
+					parsed.id,
 					run,
 				);
 			},
