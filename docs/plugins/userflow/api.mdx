@@ -1,0 +1,2053 @@
+---
+title: "Userflow API reference"
+sidebarTitle: "API"
+description: "API reference for the Userflow plugin in Corsair: every `userflow.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### get
+
+`accounts.get`
+
+Read one account, optionally expanding its environments with their region and primary flag
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.accounts.get({ id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', expand: 'environments' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `account \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `is_2fa_enforced` | `boolean \| null` | No | — |
+| `environments` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="environments full type">
+
+```ts
+{
+  id?: string | null,
+  object?: environment | null,
+  name?: string | null,
+  slug?: string | null,
+  created_at?: string | null,
+  is_primary?: boolean | null,
+  is_deactivated?: boolean | null,
+  region?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+List the accounts your personal key is a member of; needs a personal key, not an environment key
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.accounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `order_by` | `name \| created_at \| string \| (name \| created_at \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: account | null,
+  name?: string | null,
+  slug?: string | null,
+  created_at?: string | null,
+  is_2fa_enforced?: boolean | null,
+  environments?: {
+    id?: string | null,
+    object?: environment | null,
+    name?: string | null,
+    slug?: string | null,
+    created_at?: string | null,
+    is_primary?: boolean | null,
+    is_deactivated?: boolean | null,
+    region?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Attributes
+
+### list
+
+`attributes.list`
+
+List the attribute definitions Userflow has recorded, filtered by scope or by the events that use them
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.attributes.list({ scope: 'user' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `scope` | `event \| group \| group_membership \| user` | No | Only attributes attached to this kind of object. |
+| `event_name` | `string[]` | No | Only attributes used by any of these events. |
+| `order_by` | `created_at \| display_name \| name \| string \| (created_at \| display_name \| name \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: attribute_definition | null,
+  created_at?: string | null,
+  data_type?: string | null,
+  description?: string | null,
+  display_name?: string | null,
+  name?: string | null,
+  scope?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Content
+
+### get
+
+`content.get`
+
+Read one flow, checklist, launcher or other content object with its labels and version ids
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.content.get({ id: '54bce034-1303-4200-a09a-780a2eee355d', expand: 'published_version' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `content \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `draft_version_id` | `string \| null` | No | — |
+| `published_version_id` | `string \| null` | No | — |
+| `labels` | `string[] \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `draft_version` | `any \| null` | No | — |
+| `published_version` | `any \| null` | No | — |
+
+
+
+---
+
+### getVersion
+
+`content.getVersion`
+
+Read one content version, which holds the flow's questions or the checklist's tasks
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.content.getVersion({ id: '152a63cc-0a49-475a-a8e4-5f89bee94fe6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `content_version \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `edited_at` | `string \| null` | No | — |
+| `number` | `number \| null` | No | — |
+| `questions` | `any[] \| null` | No | — |
+| `tasks` | `any[] \| null` | No | — |
+
+
+
+---
+
+### list
+
+`content.list`
+
+List content objects, filtered by type
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.content.list({ type: 'flow' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `type` | `announcement \| assistant \| banner \| checklist \| embed \| flow \| launcher \| resource_center \| tracker` | No | Only content of this type. |
+| `order_by` | `created_at \| name \| string \| (created_at \| name \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: content | null,
+  created_at?: string | null,
+  draft_version_id?: string | null,
+  published_version_id?: string | null,
+  labels?: string[] | null,
+  name?: string | null,
+  type?: string | null,
+  draft_version?: any | null,
+  published_version?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listVersions
+
+`content.listVersions`
+
+List the versions of one content object; Userflow cannot list versions across content
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.content.listVersions({ content_id: '54bce034-1303-4200-a09a-780a2eee355d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content_id` | `string` | Yes | Required: Userflow cannot list versions across content objects. |
+| `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `number` | `number` | No | A specific version number. |
+| `order_by` | `number \| string \| (number \| string)[]` | No | Sort by version number, optionally prefixed with "-" for descending. |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: content_version | null,
+  created_at?: string | null,
+  description?: string | null,
+  edited_at?: string | null,
+  number?: number | null,
+  questions?: any[] | null,
+  tasks?: any[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Content Sessions
+
+### delete
+
+`contentSessions.delete`
+
+Permanently delete a content session with its progress and survey answers
+
+**Risk:** `destructive`
+
+```ts
+await corsair.userflow.api.contentSessions.delete({ id: '33af21fd-f025-43fc-a492-cf5179b38ee3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `content_session \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### end
+
+`contentSessions.end`
+
+End an active content session for a user; idempotent, and the session keeps its answers
+
+**Risk:** `write`
+
+```ts
+await corsair.userflow.api.contentSessions.end({ id: '33af21fd-f025-43fc-a492-cf5179b38ee3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `content_session \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
+| `completed` | `boolean \| null` | No | — |
+| `content_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `group_id` | `string \| null` | No | — |
+| `is_preview` | `boolean \| null` | No | — |
+| `last_activity_at` | `string \| null` | No | — |
+| `launcher_activated` | `boolean \| null` | No | — |
+| `progress` | `string \| null` | No | A decimal string from `0` to `1`, where `1` is complete. |
+| `user_id` | `string \| null` | No | — |
+| `version_id` | `string \| null` | No | — |
+| `answers` | `any[] \| null` | No | — |
+| `content` | `object \| null` | No | — |
+| `group` | `object \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `version` | `any \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id?: string | null,
+  object?: content | null,
+  created_at?: string | null,
+  draft_version_id?: string | null,
+  published_version_id?: string | null,
+  labels?: string[] | null,
+  name?: string | null,
+  type?: string | null,
+  draft_version?: any | null,
+  published_version?: any | null
+} | null
+```
+</Accordion>
+
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  object?: group | null,
+  attributes?: Record<string, any> | null,
+  created_at?: string | null,
+  users?: any[] | null,
+  memberships?: any[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string | null,
+  object?: user | null,
+  attributes?: Record<string, any> | null,
+  created_at?: string | null,
+  groups?: {
+    id?: string | null,
+    object?: group | null,
+    attributes?: Record<string, any> | null,
+    created_at?: string | null,
+    users?: any[] | null,
+    memberships?: any[] | null
+  }[] | null,
+  memberships?: {
+    id?: string | null,
+    object?: group_membership | null,
+    attributes?: Record<string, any> | null,
+    created_at?: string | null,
+    group_id?: string | null,
+    user_id?: string | null,
+    group?: {
+      id?: string | null,
+      object?: group | null,
+      attributes?: Record<string, any> | null,
+      created_at?: string | null,
+      users?: any[] | null,
+      memberships?: any[] | null
+    } | null,
+    user?: any | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`contentSessions.get`
+
+Read one content session with its progress, completion and optionally its survey answers
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.contentSessions.get({ id: '33af21fd-f025-43fc-a492-cf5179b38ee3', expand: 'answers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `content_session \| null` | No | — |
+| `completed_at` | `string \| null` | No | — |
+| `completed` | `boolean \| null` | No | — |
+| `content_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `group_id` | `string \| null` | No | — |
+| `is_preview` | `boolean \| null` | No | — |
+| `last_activity_at` | `string \| null` | No | — |
+| `launcher_activated` | `boolean \| null` | No | — |
+| `progress` | `string \| null` | No | A decimal string from `0` to `1`, where `1` is complete. |
+| `user_id` | `string \| null` | No | — |
+| `version_id` | `string \| null` | No | — |
+| `answers` | `any[] \| null` | No | — |
+| `content` | `object \| null` | No | — |
+| `group` | `object \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `version` | `any \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id?: string | null,
+  object?: content | null,
+  created_at?: string | null,
+  draft_version_id?: string | null,
+  published_version_id?: string | null,
+  labels?: string[] | null,
+  name?: string | null,
+  type?: string | null,
+  draft_version?: any | null,
+  published_version?: any | null
+} | null
+```
+</Accordion>
+
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  object?: group | null,
+  attributes?: Record<string, any> | null,
+  created_at?: string | null,
+  users?: any[] | null,
+  memberships?: any[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string | null,
+  object?: user | null,
+  attributes?: Record<string, any> | null,
+  created_at?: string | null,
+  groups?: {
+    id?: string | null,
+    object?: group | null,
+    attributes?: Record<string, any> | null,
+    created_at?: string | null,
+    users?: any[] | null,
+    memberships?: any[] | null
+  }[] | null,
+  memberships?: {
+    id?: string | null,
+    object?: group_membership | null,
+    attributes?: Record<string, any> | null,
+    created_at?: string | null,
+    group_id?: string | null,
+    user_id?: string | null,
+    group?: {
+      id?: string | null,
+      object?: group | null,
+      attributes?: Record<string, any> | null,
+      created_at?: string | null,
+      users?: any[] | null,
+      memberships?: any[] | null
+    } | null,
+    user?: any | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contentSessions.list`
+
+List content sessions, filtered by content or user, to see who has seen or completed what
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.contentSessions.list({ user_id: '34907ae0-24e0-4261-ac31-3c7299a354c0', content_id: '54bce034-1303-4200-a09a-780a2eee355d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `content_id` | `string` | No | Only sessions of this content. |
+| `user_id` | `string` | No | Only this user sessions. |
+| `order_by` | `created_at \| last_activity_at \| string \| (created_at \| last_activity_at \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: content_session | null,
+  completed_at?: string | null,
+  completed?: boolean | null,
+  content_id?: string | null,
+  created_at?: string | null,
+  group_id?: string | null,
+  is_preview?: boolean | null,
+  last_activity_at?: string | null,
+  launcher_activated?: boolean | null,
+  progress?: string | null,
+  user_id?: string | null,
+  version_id?: string | null,
+  answers?: any[] | null,
+  content?: {
+    id?: string | null,
+    object?: content | null,
+    created_at?: string | null,
+    draft_version_id?: string | null,
+    published_version_id?: string | null,
+    labels?: string[] | null,
+    name?: string | null,
+    type?: string | null,
+    draft_version?: any | null,
+    published_version?: any | null
+  } | null,
+  group?: {
+    id?: string | null,
+    object?: group | null,
+    attributes?: Record<string, any> | null,
+    created_at?: string | null,
+    users?: any[] | null,
+    memberships?: any[] | null
+  } | null,
+  user?: {
+    id?: string | null,
+    object?: user | null,
+    attributes?: Record<string, any> | null,
+    created_at?: string | null,
+    groups?: {
+      id?: string | null,
+      object?: group | null,
+      attributes?: Record<string, any> | null,
+      created_at?: string | null,
+      users?: any[] | null,
+      memberships?: any[] | null
+    }[] | null,
+    memberships?: {
+      id?: string | null,
+      object?: group_membership | null,
+      attributes?: Record<string, any> | null,
+      created_at?: string | null,
+      group_id?: string | null,
+      user_id?: string | null,
+      group?: {
+        id?: string | null,
+        object?: group | null,
+        attributes?: Record<string, any> | null,
+        created_at?: string | null,
+        users?: any[] | null,
+        memberships?: any[] | null
+      } | null,
+      user?: any | null
+    }[] | null
+  } | null,
+  version?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Event Definitions
+
+### list
+
+`eventDefinitions.list`
+
+List the event definitions Userflow has recorded
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.eventDefinitions.list({ limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `order_by` | `created_at \| display_name \| name \| string \| (created_at \| display_name \| name \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: event_definition | null,
+  created_at?: string | null,
+  description?: string | null,
+  display_name?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### track
+
+`events.track`
+
+Record an event against a user, a group or both, optionally with attributes and a past timestamp
+
+**Risk:** `write`
+
+```ts
+await corsair.userflow.api.events.track({ name: 'subscription_activated', user_id: '2a845972-4cde-4cb4-ba14-5cb2fc15ec4c', attributes: { plan_name: 'plus', plan_price: 199 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The event name, such as `subscription_activated`. Letters, digits, underscores, dashes, dots, parentheses and spaces only. |
+| `user_id` | `string` | No | The user who did it. At least one of user_id and group_id is required. |
+| `group_id` | `string` | No | The group it happened in. At least one of user_id and group_id is required. |
+| `attributes` | `Record<string, string \| number \| boolean \| Record<string, any> \| string[] \| null>` | No | Attributes of the event itself, such as a plan name or price. |
+| `time` | `string` | No | ISO 8601 when it happened, for importing historic events. Defaults to now. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `event \| null` | No | — |
+| `attributes` | `Record<string, any> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `group_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `time` | `string \| null` | No | — |
+| `group` | `object \| null` | No | — |
+| `user` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  id?: string | null,
+  object?: group | null,
+  attributes?: Record<string, any> | null,
+  created_at?: string | null,
+  users?: any[] | null,
+  memberships?: any[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string | null,
+  object?: user | null,
+  attributes?: Record<string, any> | null,
+  created_at?: string | null,
+  groups?: {
+    id?: string | null,
+    object?: group | null,
+    attributes?: Record<string, any> | null,
+    created_at?: string | null,
+    users?: any[] | null,
+    memberships?: any[] | null
+  }[] | null,
+  memberships?: {
+    id?: string | null,
+    object?: group_membership | null,
+    attributes?: Record<string, any> | null,
+    created_at?: string | null,
+    group_id?: string | null,
+    user_id?: string | null,
+    group?: {
+      id?: string | null,
+      object?: group | null,
+      attributes?: Record<string, any> | null,
+      created_at?: string | null,
+      users?: any[] | null,
+      memberships?: any[] | null
+    } | null,
+    user?: any | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### delete
+
+`groups.delete`
+
+Permanently delete a group with its attributes, memberships and events; the users in it stay
+
+**Risk:** `destructive`
+
+```ts
+await corsair.userflow.api.groups.delete({ id: 'ab82c312-b3a4-4feb-870c-53dd336f955e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `group \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`groups.get`
+
+Read one group with its attributes, optionally expanding its users or memberships
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.groups.get({ id: 'ab82c312-b3a4-4feb-870c-53dd336f955e', expand: 'users' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `group \| null` | No | — |
+| `attributes` | `Record<string, any> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `users` | `any[] \| null` | No | — |
+| `memberships` | `any[] \| null` | No | — |
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List groups, optionally filtered by a condition expression
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.groups.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `condition` | `Record<string, any> \| string` | No | A JSON condition, e.g. `{ type: "attribute", attribute_name: "plan", operator: "eq", value: "Pro" }`. Prefix group attributes with `group/`; combine with `{ type: "clause", operator: "and", conditions: [...] }`. Rejected when it matches more than 10,000 records. |
+| `user_id` | `string` | No | Only the groups this user belongs to. |
+| `segment_id` | `string` | No | Only the groups in this segment. |
+| `order_by` | `created_at \| attributes.name \| string \| (created_at \| attributes.name \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: group | null,
+  attributes?: Record<string, any> | null,
+  created_at?: string | null,
+  users?: any[] | null,
+  memberships?: any[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`groups.upsert`
+
+Create or update a group or company by your own id, merging the attributes sent
+
+**Risk:** `write`
+
+```ts
+await corsair.userflow.api.groups.upsert({ id: 'ab82c312-b3a4-4feb-870c-53dd336f955e', attributes: { name: 'Acme Inc.', billing_plan: 'plus' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Your own id for the group. An unseen id creates it, a known one merges the attributes in. |
+| `attributes` | `Record<string, string \| number \| boolean \| Record<string, any> \| string[] \| null>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `group \| null` | No | — |
+| `attributes` | `Record<string, any> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `users` | `any[] \| null` | No | — |
+| `memberships` | `any[] \| null` | No | — |
+
+
+
+---
+
+## Invites
+
+### create
+
+`invites.create`
+
+Send an email invite to join an account with a role and optional permissions; a pending invite or existing member makes it fail
+
+**Risk:** `write`
+
+```ts
+await corsair.userflow.api.invites.create({ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', name: 'Jane Doe', email: 'jane@example.com', role: 'editor' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `role` | `admin \| editor \| viewer` | Yes | owner is not invitable; that role is transferred. |
+| `permissions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  action: string,
+  subject: account | environment,
+  subject_id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `invite \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `sender_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `is_expired` | `boolean \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `permissions` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  action: string,
+  subject: account | environment,
+  subject_id: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`invites.delete`
+
+Delete a pending invite, so its link stops working
+
+**Risk:** `destructive`
+
+```ts
+await corsair.userflow.api.invites.delete({ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', id: 'e4d9916e-c5c3-4aa7-998b-8a7b1ff014c2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `invite \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`invites.get`
+
+Read one invite for an account
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.invites.get({ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', id: 'e4d9916e-c5c3-4aa7-998b-8a7b1ff014c2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `invite \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `sender_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `is_expired` | `boolean \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `permissions` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  action: string,
+  subject: account | environment,
+  subject_id: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invites.list`
+
+List pending and expired invites for an account
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.invites.list({ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `email` | `string` | No | Only the invite for this address. |
+| `is_expired` | `boolean` | No | Only expired invites, or only the ones still open. |
+| `order_by` | `name \| created_at \| string \| (name \| created_at \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: invite | null,
+  name?: string | null,
+  email?: string | null,
+  sender_id?: string | null,
+  created_at?: string | null,
+  is_expired?: boolean | null,
+  role?: string | null,
+  permissions?: {
+    action: string,
+    subject: account | environment,
+    subject_id: string
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Members
+
+### get
+
+`members.get`
+
+Read one member of an account with their role and permissions
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.members.get({ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', id: '3d7f23a1-0c24-4b94-9e39-57b93ccfa08e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `member \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `is_2fa_enabled` | `boolean \| null` | No | — |
+| `has_sso` | `boolean \| null` | No | — |
+| `has_password` | `boolean \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `permissions` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  action: string,
+  subject: account | environment,
+  subject_id: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`members.list`
+
+List the members of an account, filtered by email or role
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.members.list({ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', role: ['admin', 'editor'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `email` | `string[]` | No | — |
+| `role` | `(owner \| admin \| editor \| viewer)[]` | No | — |
+| `order_by` | `created_at \| string \| (created_at \| string)[]` | No | Sort by `created_at`, or `-created_at` for newest first. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: member | null,
+  name?: string | null,
+  email?: string | null,
+  created_at?: string | null,
+  avatar_url?: string | null,
+  is_2fa_enabled?: boolean | null,
+  has_sso?: boolean | null,
+  has_password?: boolean | null,
+  role?: string | null,
+  permissions?: {
+    action: string,
+    subject: account | environment,
+    subject_id: string
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`members.remove`
+
+Remove a member from an account, revoking their access to it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.userflow.api.members.remove({ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', id: '3d7f23a1-0c24-4b94-9e39-57b93ccfa08e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `member \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### update
+
+`members.update`
+
+Change a member's role or replace their permissions within an account
+
+**Risk:** `write`
+
+```ts
+await corsair.userflow.api.members.update({ account_id: '3f2a4b56-7c8d-9e0f-1a2b-3c4d5e6f7a8b', id: '3d7f23a1-0c24-4b94-9e39-57b93ccfa08e', role: 'admin' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `role` | `admin \| editor \| viewer` | No | The member new role in this account. owner cannot be set here; ownership is transferred in the app. |
+| `permissions` | `object[]` | No | Replaces the member permissions. Omit to leave them alone. |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  action: string,
+  subject: account | environment,
+  subject_id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `member \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `is_2fa_enabled` | `boolean \| null` | No | — |
+| `has_sso` | `boolean \| null` | No | — |
+| `has_password` | `boolean \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `permissions` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="permissions full type">
+
+```ts
+{
+  action: string,
+  subject: account | environment,
+  subject_id: string
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Memberships
+
+### remove
+
+`memberships.remove`
+
+Remove one user from one group, leaving both the user and the group in place
+
+**Risk:** `write`
+
+```ts
+await corsair.userflow.api.memberships.remove({ user_id: '2a845972-4cde-4cb4-ba14-5cb2fc15ec4c', group_id: 'ab82c312-b3a4-4feb-870c-53dd336f955e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+| `group_id` | `string` | Yes | The user is removed from this group only. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `group_membership \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+## Users
+
+### delete
+
+`users.delete`
+
+Permanently delete a user with their attributes, memberships, events and flow history; groups they were in stay
+
+**Risk:** `destructive`
+
+```ts
+await corsair.userflow.api.users.delete({ id: '2a845972-4cde-4cb4-ba14-5cb2fc15ec4c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `user \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`users.get`
+
+Read one user with their attributes, optionally expanding their groups or memberships
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.users.get({ id: '2a845972-4cde-4cb4-ba14-5cb2fc15ec4c', expand: 'memberships.group' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `user \| null` | No | — |
+| `attributes` | `Record<string, any> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `groups` | `object[] \| null` | No | — |
+| `memberships` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id?: string | null,
+  object?: group | null,
+  attributes?: Record<string, any> | null,
+  created_at?: string | null,
+  users?: any[] | null,
+  memberships?: any[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="memberships full type">
+
+```ts
+{
+  id?: string | null,
+  object?: group_membership | null,
+  attributes?: Record<string, any> | null,
+  created_at?: string | null,
+  group_id?: string | null,
+  user_id?: string | null,
+  group?: {
+    id?: string | null,
+    object?: group | null,
+    attributes?: Record<string, any> | null,
+    created_at?: string | null,
+    users?: any[] | null,
+    memberships?: any[] | null
+  } | null,
+  user?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List users, filtered by email, group, segment or a condition expression, with cursor paging
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.users.list({ email: 'evelyn@example.com', order_by: ['created_at'], limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `email` | `string` | No | Only the user whose `email` attribute equals this value. |
+| `group_id` | `string` | No | Only members of this group. |
+| `segment_id` | `string` | No | Only users in this segment; the id is in the segment menu in the UI. |
+| `condition` | `Record<string, any> \| string` | No | A JSON condition, e.g. `{ type: "attribute", attribute_name: "plan", operator: "eq", value: "Pro" }`. Prefix group attributes with `group/`; combine with `{ type: "clause", operator: "and", conditions: [...] }`. Rejected when it matches more than 10,000 records. |
+| `order_by` | `created_at \| attributes.signed_up_at \| attributes.last_seen_at \| attributes.name \| string \| (created_at \| attributes.signed_up_at \| attributes.last_seen_at \| attributes.name \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. Userflow defaults to `created_at`. |
+| `expand` | `string` | No | Relationships to expand, e.g. `memberships.group`. Dot-separated, at most four levels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: user | null,
+  attributes?: Record<string, any> | null,
+  created_at?: string | null,
+  groups?: {
+    id?: string | null,
+    object?: group | null,
+    attributes?: Record<string, any> | null,
+    created_at?: string | null,
+    users?: any[] | null,
+    memberships?: any[] | null
+  }[] | null,
+  memberships?: {
+    id?: string | null,
+    object?: group_membership | null,
+    attributes?: Record<string, any> | null,
+    created_at?: string | null,
+    group_id?: string | null,
+    user_id?: string | null,
+    group?: {
+      id?: string | null,
+      object?: group | null,
+      attributes?: Record<string, any> | null,
+      created_at?: string | null,
+      users?: any[] | null,
+      memberships?: any[] | null
+    } | null,
+    user?: any | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`users.upsert`
+
+Create or update a user by your own id, merging the attributes sent and optionally syncing their groups or memberships
+
+**Risk:** `write`
+
+```ts
+await corsair.userflow.api.users.upsert({ id: '2a845972-4cde-4cb4-ba14-5cb2fc15ec4c', attributes: { name: 'Evelyn Reichert', email: 'evelyn@example.com' }, groups: [{ id: 'ab82c312-b3a4-4feb-870c-53dd336f955e' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Your own id for the user. This is the key: an unseen id creates the user, a known one merges the attributes in. |
+| `attributes` | `Record<string, string \| number \| boolean \| Record<string, any> \| string[] \| null>` | No | Attributes to set. A literal sets the value; `{ add: 1 }`, `{ set_once: ... }` and `{ subtract: 1 }` are operations. Attributes not sent are left alone. |
+| `groups` | `object[]` | No | Groups to create or update and ensure membership of. Cannot be combined with `memberships`. |
+| `memberships` | `object[]` | No | Memberships to create or update, each naming its group. Use this instead of `groups` to set membership attributes. |
+| `prune_memberships` | `boolean` | No | Remove memberships not listed. Only set it when the list is complete, since anything missing is removed. |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id: string,
+  attributes?: Record<string, string | number | boolean | Record<string, any> | string[] | null>
+}[]
+```
+</Accordion>
+
+<Accordion title="memberships full type">
+
+```ts
+{
+  attributes?: Record<string, string | number | boolean | Record<string, any> | string[] | null>,
+  group: {
+    id: string,
+    attributes?: Record<string, string | number | boolean | Record<string, any> | string[] | null>
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `user \| null` | No | — |
+| `attributes` | `Record<string, any> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `groups` | `object[] \| null` | No | — |
+| `memberships` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id?: string | null,
+  object?: group | null,
+  attributes?: Record<string, any> | null,
+  created_at?: string | null,
+  users?: any[] | null,
+  memberships?: any[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="memberships full type">
+
+```ts
+{
+  id?: string | null,
+  object?: group_membership | null,
+  attributes?: Record<string, any> | null,
+  created_at?: string | null,
+  group_id?: string | null,
+  user_id?: string | null,
+  group?: {
+    id?: string | null,
+    object?: group | null,
+    attributes?: Record<string, any> | null,
+    created_at?: string | null,
+    users?: any[] | null,
+    memberships?: any[] | null
+  } | null,
+  user?: any | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhook Subscriptions
+
+### create
+
+`webhookSubscriptions.create`
+
+Subscribe a URL to user, group and event topics; the response is the only place the signing secret is shown
+
+**Risk:** `write`
+
+```ts
+await corsair.userflow.api.webhookSubscriptions.create({ url: 'https://acme.example/hooks/userflow', topics: ['user', 'event'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Where Userflow posts the notifications. |
+| `topics` | `string[]` | Yes | Namespaced topics: `user`, `event`, `user.created`, `event.tracked.flow_started`, or `*` for everything. |
+| `api_version` | `string` | No | Defaults to `2020-01-03`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `webhook_subscription \| null` | No | — |
+| `api_version` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `disabled` | `boolean \| null` | No | — |
+| `secret` | `string \| null` | No | Returned only by create; save it then to verify signatures. |
+| `topics` | `string[] \| null` | No | — |
+| `url` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`webhookSubscriptions.delete`
+
+Permanently delete a webhook subscription; prefer update with disabled to pause delivery
+
+**Risk:** `destructive`
+
+```ts
+await corsair.userflow.api.webhookSubscriptions.delete({ id: 'c8783643-7f16-4a02-b736-4f5a327f8231' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `webhook_subscription \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`webhookSubscriptions.get`
+
+Read one webhook subscription; the secret is not included
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.webhookSubscriptions.get({ id: 'c8783643-7f16-4a02-b736-4f5a327f8231' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `webhook_subscription \| null` | No | — |
+| `api_version` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `disabled` | `boolean \| null` | No | — |
+| `secret` | `string \| null` | No | Returned only by create; save it then to verify signatures. |
+| `topics` | `string[] \| null` | No | — |
+| `url` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`webhookSubscriptions.list`
+
+List webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.userflow.api.webhookSubscriptions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Items per page, 1 to 100. Userflow defaults to 10. |
+| `starting_after` | `string` | No | Return items after this id: pass the id of the last item on the previous page. Not the `next_page_url`, which is a whole URL. |
+| `order_by` | `created_at \| url \| string \| (created_at \| url \| string)[]` | No | Sort field or fields, each optionally prefixed with "-" for descending. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `has_more` | `boolean \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `next_page_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  object?: webhook_subscription | null,
+  api_version?: string | null,
+  created_at?: string | null,
+  disabled?: boolean | null,
+  secret?: string | null,
+  topics?: string[] | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhookSubscriptions.update`
+
+Change a subscription url, topics or api_version, or disable it without deleting it
+
+**Risk:** `write`
+
+```ts
+await corsair.userflow.api.webhookSubscriptions.update({ id: 'c8783643-7f16-4a02-b736-4f5a327f8231', disabled: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `topics` | `string[]` | No | — |
+| `api_version` | `string` | No | — |
+| `disabled` | `boolean` | No | true stops delivery without deleting the subscription. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `webhook_subscription \| null` | No | — |
+| `api_version` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `disabled` | `boolean \| null` | No | — |
+| `secret` | `string \| null` | No | Returned only by create; save it then to verify signatures. |
+| `topics` | `string[] \| null` | No | — |
+| `url` | `string \| null` | No | — |
+
+
+
+---
+
