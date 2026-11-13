@@ -74,6 +74,30 @@ describe('error handlers', () => {
 		expect(matchedHandler(error)).toBe('RATE_LIMIT_ERROR');
 	});
 
+	// Core raises an HTTP 429 as its own ApiError, which passes through
+	// unchanged and so has no Shopify `code`. Matching only the plugin's error
+	// let it fall through to DEFAULT, with no wait at all.
+	it('matches an HTTP 429 raised as a core ApiError and keeps its wait', async () => {
+		const error = new ApiError(
+			{ method: 'POST', url: '/admin/api/2026-10/graphql.json' },
+			{
+				url: 'https://s.myshopify.com',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: {},
+			},
+			'Too Many Requests',
+			{ retryAfter: 3000 },
+		);
+
+		expect(matchedHandler(error)).toBe('RATE_LIMIT_ERROR');
+		expect((await resolve(error)).result).toEqual({
+			maxRetries: 3,
+			headersRetryAfterMs: 3000,
+		});
+	});
+
 	it('never retries a rejected write', async () => {
 		const error = new ShopifyUserError('products.create was rejected', [
 			{ field: ['title'], message: 'Title is invalid' },

@@ -412,8 +412,10 @@ describe('orders', () => {
 						done: true,
 						status: 'SUCCEEDED',
 						errors: [],
-						order,
+						// Already cancelled inline: no second read is needed.
+						order: { ...order, cancelledAt: '2026-01-02T00:00:00Z' },
 					},
+					orderCancelUserErrors: [],
 				},
 			},
 		});
@@ -437,34 +439,32 @@ describe('orders', () => {
 			refundOriginalPayment: false,
 		});
 		expect(result.order.id).toBe('gid://shopify/Order/1001');
+		// One request only: the response already showed the cancellation.
+		expect(harness.fetchMock).toHaveBeenCalledTimes(1);
 	});
 
-	it('orders.cancel polls the job until the cancellation finishes', async () => {
+	// Verified live: the mutation answers with `done: false` and
+	// `cancelledAt: null`, and the order carries `cancelledAt` a moment later.
+	// The job cannot be polled, so the order is read until it does.
+	it('orders.cancel re-reads the order until the cancellation lands', async () => {
 		const ctx = createContext();
-		// First response: the job only started.
 		harness.respond({
 			data: {
 				orderCancel: {
 					job: { id: 'gid://shopify/Job/1', done: false },
-					jobResult: { done: false, status: 'STARTED' },
+					jobResult: {
+						done: false,
+						status: 'STARTED',
+						errors: [],
+						order,
+					},
 					orderCancelUserErrors: [],
 				},
 			},
 		});
-		// Polled response: finished, with the order.
+		// The follow-up order read shows the cancellation.
 		harness.respond({
-			data: {
-				job: {
-					id: 'gid://shopify/Job/1',
-					done: true,
-					query: {
-						done: true,
-						status: 'SUCCEEDED',
-						errors: [],
-						order,
-					},
-				},
-			},
+			data: { order: { ...order, cancelledAt: '2026-01-02T00:00:00Z' } },
 		});
 
 		const result = await Shopify.orders.cancel(ctx, {
@@ -472,7 +472,14 @@ describe('orders', () => {
 		});
 
 		expect(harness.fetchMock).toHaveBeenCalledTimes(2);
-		expect(result.order.cancelledAt).toBeNull();
+		// The second request is a read of the order, not a second cancel.
+		const second = JSON.parse(
+			String(harness.fetchMock.mock.calls[1]?.[1]?.body),
+		) as { query: string; variables: { id: string } };
+		expect(second.query).toContain('query OrderCancelState');
+		expect(second.query).not.toContain('orderCancel(');
+		expect(second.variables.id).toBe('gid://shopify/Order/1001');
+		expect(result.order.cancelledAt).toBe('2026-01-02T00:00:00Z');
 	});
 
 	it('orders.cancel fails when the job reports an error', async () => {
@@ -497,6 +504,71 @@ describe('orders', () => {
 		);
 
 		expect(error.message).toContain('Order could not be cancelled');
+	});
+
+	it('orders.listLineItems unwraps the order and returns its page', async () => {
+		const ctx = createContext();
+		harness.respond({
+			data: {
+				order: { id: 'gid://shopify/Order/1001', lineItems: order.lineItems },
+			},
+		});
+
+		const result = await Shopify.orders.listLineItems(ctx, {
+			id: 'gid://shopify/Order/1001',
+		});
+
+		const { query, variables } = sentGraphql();
+		expect(query).toContain('query OrderLineItems');
+		expect(variables).toEqual({
+			id: 'gid://shopify/Order/1001',
+			first: 50,
+			after: undefined,
+		});
+		// The response is `{ order: { lineItems } }`; the operation returns the
+		// connection itself.
+		expect(result.lineItems.edges).toHaveLength(1);
+	});
+
+	it('orders.listLineItems reads a later page with the cursor', async () => {
+		const ctx = createContext();
+		harness.respond({
+			data: {
+				order: {
+					id: 'gid://shopify/Order/1001',
+					lineItems: {
+						edges: [],
+						pageInfo: { ...pageInfo, hasNextPage: false },
+					},
+				},
+			},
+		});
+
+		await Shopify.orders.listLineItems(ctx, {
+			id: 'gid://shopify/Order/1001',
+			first: 25,
+			after: 'cursor-2',
+		});
+
+		expect(sentGraphql().variables).toEqual({
+			id: 'gid://shopify/Order/1001',
+			first: 25,
+			after: 'cursor-2',
+		});
+	});
+
+	it('orders.listLineItems fails when the order does not exist', async () => {
+		const ctx = createContext();
+		harness.respond({ data: { order: null } });
+
+		const error = await harness.expectRejection<Error>(
+			Shopify.orders.listLineItems(ctx, {
+				id: 'gid://shopify/Order/404',
+			}),
+		);
+
+		// A missing order must not read as an order with no line items.
+		expect(error.message).toContain('found no order');
 	});
 
 	it('orders.markAsPaid sends the order id in an input object', async () => {
