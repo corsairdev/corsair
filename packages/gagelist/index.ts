@@ -335,6 +335,11 @@ export function gagelist<const T extends GagelistPluginOptions>(
 				return options.key;
 			}
 
+			// A client pair set as options is complete without a stored key.
+			if (source === 'endpoint' && options.clientId && options.clientSecret) {
+				return options.clientId;
+			}
+
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (res) return res;

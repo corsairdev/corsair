@@ -1,4 +1,8 @@
-import { asRecord, logEventFromContext } from 'corsair/core';
+import {
+	AuthMissingError,
+	asRecord,
+	logEventFromContext,
+} from 'corsair/core';
 import type { z } from 'zod';
 import type { GagelistContext } from '..';
 import type { GagelistCredentials, GagelistRequest } from '../client';
@@ -8,24 +12,23 @@ type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
  * GageList needs a client id and a secret, and the pair mints a bearer token.
- * Both are account-level fields, so the key builder reads `get_api_key` and
- * `get_api_secret`, which the key manager generates for the account.
+ * Each half resolves on its own: the id from the `clientId` option, then the
+ * key the key builder chose (the `key` option or the stored `api_key`); the
+ * secret from the `clientSecret` option, then the stored `api_secret`. A missing
+ * half raises AuthMissingError here, before a token request goes out with an
+ * empty value.
  */
 export async function resolveCredentials(
 	ctx: GagelistContext,
 ): Promise<GagelistCredentials> {
-	if (ctx.options.clientId && ctx.options.clientSecret) {
-		return {
-			clientId: ctx.options.clientId,
-			clientSecret: ctx.options.clientSecret,
-		};
+	const clientId =
+		ctx.options.clientId || ctx.key || (await ctx.keys.get_api_key());
+	const clientSecret =
+		ctx.options.clientSecret || (await ctx.keys.get_api_secret());
+	if (!clientId || !clientSecret) {
+		throw new AuthMissingError('gagelist', 'api_key');
 	}
-
-	const [clientId, clientSecret] = await Promise.all([
-		ctx.keys.get_api_key(),
-		ctx.keys.get_api_secret(),
-	]);
-	return { clientId: clientId ?? ctx.key, clientSecret: clientSecret ?? '' };
+	return { clientId, clientSecret };
 }
 
 /**

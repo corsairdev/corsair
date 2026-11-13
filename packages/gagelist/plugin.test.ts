@@ -144,6 +144,15 @@ describe('gagelist key builder', () => {
 		expect(ctx.keys.get_api_key).not.toHaveBeenCalled();
 	});
 
+	it('accepts a client pair set as options with nothing stored', async () => {
+		await expect(
+			buildKey(
+				gagelist({ clientId: 'option-id', clientSecret: 'option-secret' }),
+				keyContext(null),
+			),
+		).resolves.toBe('option-id');
+	});
+
 	it('reads the stored client id', async () => {
 		await expect(buildKey(gagelist(), keyContext('stored-key'))).resolves.toBe(
 			'stored-key',

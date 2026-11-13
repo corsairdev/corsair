@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { clearGagelistToken, GagelistAPIError } from './client';
 import { Account, Calibrations, Gages } from './endpoints';
 import {
@@ -199,6 +199,55 @@ describe('the token', () => {
 		expect(JSON.stringify(error)).not.toContain(CLIENT_SECRET);
 		expect(String(error)).not.toContain(CLIENT_SECRET);
 		expect(require('node:util').inspect(error)).not.toContain(CLIENT_SECRET);
+	});
+});
+
+describe('credentials', () => {
+	// unknown: each case sets only the context fields it is about.
+	function ctxWith(fields: {
+		key?: string;
+		options?: Record<string, string>;
+		storedId?: string | null;
+		storedSecret?: string | null;
+	}) {
+		return {
+			key: fields.key,
+			options: fields.options ?? {},
+			keys: {
+				get_api_key: jest.fn().mockResolvedValue(fields.storedId ?? null),
+				get_api_secret: jest
+					.fn()
+					.mockResolvedValue(fields.storedSecret ?? null),
+			},
+		};
+	}
+
+	it('pairs the key option with the clientSecret option', async () => {
+		respondToken();
+		respond(accountStatus);
+
+		await Account.accountStatus(
+			ctxWith({
+				key: CLIENT_ID,
+				options: { key: CLIENT_ID, clientSecret: CLIENT_SECRET },
+			}) as never,
+			{} as never,
+		);
+
+		const tokenCall = fetchMock.mock.calls[0] as [string, RequestInit];
+		const form = new URLSearchParams(String(tokenCall[1].body));
+		expect(form.get('client_id')).toBe(CLIENT_ID);
+		expect(form.get('client_secret')).toBe(CLIENT_SECRET);
+	});
+
+	it('raises AuthMissingError, and sends nothing, when no secret is set', async () => {
+		await expect(
+			Account.accountStatus(
+				ctxWith({ key: CLIENT_ID, storedId: CLIENT_ID }) as never,
+				{} as never,
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
