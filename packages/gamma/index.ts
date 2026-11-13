@@ -165,7 +165,7 @@ const gammaEndpointMeta = {
 	'gammas.get': {
 		riskLevel: 'read',
 		description:
-			'One gamma’s title, author, theme, archive state and thumbnail',
+			'One gamma’s title, author, folder, theme, archive state and thumbnail',
 	},
 	'gammas.search': {
 		riskLevel: 'read',

@@ -433,7 +433,7 @@ describe('agent.get', () => {
 });
 
 describe('gammas.get', () => {
-	it('reads one gamma with its author and theme', async () => {
+	it('reads one gamma with its author, theme and folder', async () => {
 		respond(gamma);
 
 		await expect(
@@ -442,6 +442,7 @@ describe('gammas.get', () => {
 			id: 'gam_xyz789',
 			author: { name: 'Priya Raman' },
 			themeId: 'thm_1',
+			folderId: 'fld_1',
 		});
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',

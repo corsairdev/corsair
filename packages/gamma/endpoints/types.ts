@@ -458,6 +458,8 @@ export const GammaSchema = z
 		updatedTime: z.string().nullish(),
 		themeId: z.string().nullish(),
 		archived: z.boolean().nullish(),
+		// Not in Gamma's OpenAPI, but the live API returns it (checked 11-14).
+		folderId: z.string().nullish(),
 	})
 	.loose();
 

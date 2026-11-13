@@ -19,7 +19,7 @@ pnpm add @corsair-dev/gamma
 | `folders.list` | `gamma.api.folders.list` | `read` | The folders the caller can see. Some are view-only, and placing a gamma with `folderId` needs edit access |
 | `gammas.archive` | `gamma.api.gammas.archive` | `write` | Archive a gamma. Idempotent, and reversible from the Gamma app, so it is not destructive |
 | `gammas.delete` | `gamma.api.gammas.delete` | `destructive` | Delete a gamma permanently. Needs a workspace admin role |
-| `gammas.get` | `gamma.api.gammas.get` | `read` | One gamma’s title, author, theme, archive state and thumbnail |
+| `gammas.get` | `gamma.api.gammas.get` | `read` | One gamma’s title, author, folder, theme, archive state and thumbnail |
 | `gammas.search` | `gamma.api.gammas.search` | `read` | Full-text search over the gammas the caller can read. Needs `q` or a filter (`createdBy`, `updatedAfter`, `updatedBefore`) |
 | `generations.create` | `gamma.api.generations.create` | `write` | Start a Classic generation from text or a `pages` array, at once returning a `generationId` to poll. Spends credits. Use it for webpages and multi-page gammas; the agent route covers a single new presentation |
 | `generations.get` | `gamma.api.generations.get` | `read` | Where a Classic generation stands: `pending` is not final, `completed` carries the gamma ID, URL and any export URL, `failed` carries the error |

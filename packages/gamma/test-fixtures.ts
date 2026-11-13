@@ -96,6 +96,7 @@ export const gamma = {
 	updatedTime: '2026-11-01T10:00:00Z',
 	themeId: 'thm_1',
 	archived: false,
+	folderId: 'fld_1',
 };
 
 export const searchResults = {
