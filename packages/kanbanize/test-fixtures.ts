@@ -67,7 +67,7 @@ export const card = {
 	size: 3,
 	priority: 2,
 	deadline: '2026-12-01T17:00:00+00:00',
-	reporter: 'Priya Raman',
+	reporter: { type: 'internal', value: 12 },
 	created_at: '2026-11-02T09:12:04+00:00',
 	revision: 7,
 	last_modified: '2026-11-10T14:20:00+00:00',
@@ -87,8 +87,8 @@ export const cards = {
 
 export const comment = {
 	comment_id: 91001,
-	author_user_id: 12,
-	author_name: 'Priya Raman',
+	type: 'plain',
+	author: { type: 'internal', value: 12 },
 	text: 'Blocked on the plan table copy.',
 	created_at: '2026-11-10T14:25:00+00:00',
 	last_modified: null,

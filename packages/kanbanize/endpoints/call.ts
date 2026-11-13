@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { asRecord, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { KanbanizeContext } from '..';
 import type { KanbanizeRequest } from '../client';
@@ -59,4 +59,17 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
  */
 export function deletedResult(): { success: true } {
 	return { success: true };
+}
+
+/**
+ * A single-resource GET or PATCH answers with the record but without its own
+ * ID (`GET /boards/{board_id}` returns `{ data: { name, ... } }`), so the ID the
+ * caller asked about is put back. An ID the response does carry wins.
+ */
+// unknown: raw is the response body before the output schema checks it.
+export function withId(raw: unknown, key: string, id: number): unknown {
+	const outer = asRecord(raw);
+	const data = asRecord(outer?.data);
+	if (!outer || !data) return raw;
+	return { ...outer, data: { [key]: id, ...data } };
 }

@@ -1,6 +1,6 @@
 import type { KanbanizeEndpoints } from '..';
 import { segment } from '../client';
-import { call, deletedResult } from './call';
+import { call, deletedResult, withId } from './call';
 import {
 	KanbanizeEndpointInputSchemas as Inputs,
 	KanbanizeEndpointOutputSchemas as Outputs,
@@ -40,7 +40,10 @@ export const get: KanbanizeEndpoints['workflowsGet'] = (ctx, input) =>
 			method: 'GET',
 			path: `/boards/${segment(board_id)}/workflows/${segment(workflow_id)}`,
 		}),
-		{ log: (_, result) => ({ workflowId: result.data.workflow_id }) },
+		{
+			shape: (raw, { workflow_id }) => withId(raw, 'workflow_id', workflow_id),
+			log: (_, result) => ({ workflowId: result.data.workflow_id }),
+		},
 	);
 
 export const create: KanbanizeEndpoints['workflowsCreate'] = (ctx, input) =>
@@ -78,7 +81,10 @@ export const update: KanbanizeEndpoints['workflowsUpdate'] = (ctx, input) =>
 				Object.entries(changes).filter(([, value]) => value !== undefined),
 			),
 		}),
-		{ log: (_, result) => ({ workflowId: result.data.workflow_id }) },
+		{
+			shape: (raw, { workflow_id }) => withId(raw, 'workflow_id', workflow_id),
+			log: (_, result) => ({ workflowId: result.data.workflow_id }),
+		},
 	);
 
 export const remove: KanbanizeEndpoints['workflowsRemove'] = (ctx, input) =>

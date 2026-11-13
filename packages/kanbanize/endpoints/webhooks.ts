@@ -1,6 +1,6 @@
 import type { KanbanizeEndpoints } from '..';
 import { segment } from '../client';
-import { call, deletedResult } from './call';
+import { call, deletedResult, withId } from './call';
 import {
 	KanbanizeEndpointInputSchemas as Inputs,
 	KanbanizeEndpointOutputSchemas as Outputs,
@@ -62,7 +62,10 @@ export const update: KanbanizeEndpoints['webhooksUpdate'] = (ctx, input) =>
 				Object.entries(changes).filter(([, value]) => value !== undefined),
 			),
 		}),
-		{ log: ({ webhook_id }) => ({ webhookId: webhook_id }) },
+		{
+			shape: (raw, { webhook_id }) => withId(raw, 'webhook_id', webhook_id),
+			log: ({ webhook_id }) => ({ webhookId: webhook_id }),
+		},
 	);
 
 export const remove: KanbanizeEndpoints['webhooksRemove'] = (ctx, input) =>

@@ -595,13 +595,34 @@ export const KanbanizeCardSchema = z
 		size: z.number().nullish(),
 		priority: z.number().nullish(),
 		deadline: z.string().nullish(),
-		reporter: z.string().nullish(),
+		reporter: z
+			.object({
+				type: z
+					.string()
+					.nullish()
+					.describe('`internal` for a user, `external` for an email address.'),
+				value: z
+					.union([z.number(), z.string()])
+					.nullish()
+					.describe('The user ID, or the email address for `external`.'),
+			})
+			.loose()
+			.nullish()
+			.describe('Who created the card.'),
 		created_at: z.string().nullish(),
 		revision: z.number().nullish(),
 		last_modified: z.string().nullish(),
 		in_current_position_since: z.string().nullish(),
 		is_blocked: FlagSchema.nullish(),
-		block_reason: z.string().nullish(),
+		block_reason: z
+			.object({
+				block_type: z.number().nullish(),
+				reason_id: z.number().nullish(),
+				comment: z.string().nullish(),
+			})
+			.loose()
+			.nullish()
+			.describe('Why the card is blocked; null when it is not.'),
 		finished_subtask_count: z.number().nullish(),
 		unfinished_subtask_count: z.number().nullish(),
 		tag_ids: z.array(z.number()).nullish(),
@@ -634,6 +655,8 @@ const CardGetInputSchema = z.object({ card_id: CardIdSchema });
 
 export type CardGetInput = z.input<typeof CardGetInputSchema>;
 
+// `cards.create` and `cards.update` receive the card as a one-element array;
+// the endpoints unwrap it so every card write returns the shape `cards.get` does.
 const CardResponseSchema = z.object({ data: KanbanizeCardSchema }).loose();
 
 export type CardResponse = z.infer<typeof CardResponseSchema>;
@@ -760,8 +783,13 @@ export type CardRemoveInput = z.input<typeof CardRemoveInputSchema>;
 export const KanbanizeCommentSchema = z
 	.object({
 		comment_id: z.number(),
-		author_user_id: z.number().nullish(),
-		author_name: z.string().nullish(),
+		type: z
+			.string()
+			.nullish()
+			.describe('`plain`, `sent as email` or `received as email`.'),
+		// unknown: `{ type, value }` for a user comment; email comments carry
+		// `sender` and `recipients` instead.
+		author: z.record(z.string(), z.unknown()).nullish(),
 		text: z.string().nullish(),
 		created_at: z.string().nullish(),
 		last_modified: z.string().nullish(),

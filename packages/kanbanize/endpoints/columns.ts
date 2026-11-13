@@ -1,6 +1,6 @@
 import type { KanbanizeEndpoints } from '..';
 import { definedQuery, segment } from '../client';
-import { call, deletedResult } from './call';
+import { call, deletedResult, withId } from './call';
 import {
 	KanbanizeEndpointInputSchemas as Inputs,
 	KanbanizeEndpointOutputSchemas as Outputs,
@@ -41,7 +41,10 @@ export const get: KanbanizeEndpoints['columnsGet'] = (ctx, input) =>
 			method: 'GET',
 			path: `/boards/${segment(board_id)}/columns/${segment(column_id)}`,
 		}),
-		{ log: (_, result) => ({ columnId: result.data.column_id }) },
+		{
+			shape: (raw, { column_id }) => withId(raw, 'column_id', column_id),
+			log: (_, result) => ({ columnId: result.data.column_id }),
+		},
 	);
 
 // A column body has two documented shapes: a main column (`workflow_id` with
@@ -90,7 +93,10 @@ export const update: KanbanizeEndpoints['columnsUpdate'] = (ctx, input) =>
 				Object.entries(changes).filter(([, value]) => value !== undefined),
 			),
 		}),
-		{ log: ({ column_id }) => ({ columnId: column_id }) },
+		{
+			shape: (raw, { column_id }) => withId(raw, 'column_id', column_id),
+			log: ({ column_id }) => ({ columnId: column_id }),
+		},
 	);
 
 export const remove: KanbanizeEndpoints['columnsRemove'] = (ctx, input) =>

@@ -1,6 +1,6 @@
 import type { KanbanizeEndpoints } from '..';
 import { segment } from '../client';
-import { call, deletedResult } from './call';
+import { call, deletedResult, withId } from './call';
 import {
 	KanbanizeEndpointInputSchemas as Inputs,
 	KanbanizeEndpointOutputSchemas as Outputs,
@@ -40,7 +40,10 @@ export const get: KanbanizeEndpoints['lanesGet'] = (ctx, input) =>
 			method: 'GET',
 			path: `/boards/${segment(board_id)}/lanes/${segment(lane_id)}`,
 		}),
-		{ log: (_, result) => ({ laneId: result.data.lane_id }) },
+		{
+			shape: (raw, { lane_id }) => withId(raw, 'lane_id', lane_id),
+			log: (_, result) => ({ laneId: result.data.lane_id }),
+		},
 	);
 
 export const create: KanbanizeEndpoints['lanesCreate'] = (ctx, input) =>
@@ -78,7 +81,10 @@ export const update: KanbanizeEndpoints['lanesUpdate'] = (ctx, input) =>
 				Object.entries(changes).filter(([, value]) => value !== undefined),
 			),
 		}),
-		{ log: ({ lane_id }) => ({ laneId: lane_id }) },
+		{
+			shape: (raw, { lane_id }) => withId(raw, 'lane_id', lane_id),
+			log: ({ lane_id }) => ({ laneId: lane_id }),
+		},
 	);
 
 export const remove: KanbanizeEndpoints['lanesRemove'] = (ctx, input) =>

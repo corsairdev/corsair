@@ -50,6 +50,21 @@ function listShape(
 	};
 }
 
+/**
+ * `POST /cards` and `PATCH /cards/{card_id}` answer with `data` as an array
+ * holding the one card written. The plugin returns that card as `data`, the
+ * same shape `cards.get` returns. An empty or missing array is passed on so
+ * the output schema rejects it.
+ */
+// unknown: the raw body is an untyped envelope until the output schema runs.
+function writtenCard(raw: unknown): unknown {
+	const outer = asRecord(raw);
+	if (!outer || !Array.isArray(outer.data) || outer.data.length === 0) {
+		return raw;
+	}
+	return { ...outer, data: outer.data[0] };
+}
+
 export const list: KanbanizeEndpoints['cardsList'] = (ctx, input) =>
 	call(
 		ctx,
@@ -137,6 +152,7 @@ export const create: KanbanizeEndpoints['cardsCreate'] = (ctx, input) =>
 			),
 		}),
 		{
+			shape: writtenCard,
 			log: (_, result) => ({
 				cardId: result.data.card_id,
 				boardId: result.data.board_id ?? undefined,
@@ -160,7 +176,10 @@ export const update: KanbanizeEndpoints['cardsUpdate'] = (ctx, input) =>
 				Object.entries(changes).filter(([, value]) => value !== undefined),
 			),
 		}),
-		{ log: ({ card_id }) => ({ cardId: card_id }) },
+		{
+			shape: writtenCard,
+			log: ({ card_id }) => ({ cardId: card_id }),
+		},
 	);
 
 export const remove: KanbanizeEndpoints['cardsRemove'] = (ctx, input) =>

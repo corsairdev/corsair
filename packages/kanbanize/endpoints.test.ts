@@ -1330,3 +1330,143 @@ describe('error envelopes', () => {
 		expect(String(error)).not.toContain('secret plan table');
 	});
 });
+
+// The single-resource reads and updates leave the record's own ID out, and the
+// card writes answer with an array: the shapes below are copied from the
+// OpenAPI document's 200 responses.
+describe('responses shaped as the OpenAPI document gives them', () => {
+	const { board_id: _b, ...boardBody } = board;
+	const { workflow_id: _w, ...workflowBody } = workflow;
+	const { column_id: _c, ...columnBody } = column;
+	const { lane_id: _l, ...laneBody } = lane;
+	const { webhook_id: _h, ...webhookBody } = webhook;
+
+	it.each([
+		['boards.get', Boards.get, { board_id: 1075 }, boardBody, 'board_id', 1075],
+		[
+			'boards.update',
+			Boards.update,
+			{ board_id: 1075, name: 'Delivery' },
+			boardBody,
+			'board_id',
+			1075,
+		],
+		[
+			'workflows.get',
+			Workflows.get,
+			{ board_id: 1075, workflow_id: 1695 },
+			workflowBody,
+			'workflow_id',
+			1695,
+		],
+		[
+			'workflows.update',
+			Workflows.update,
+			{ board_id: 1075, workflow_id: 1695, name: 'Dev' },
+			workflowBody,
+			'workflow_id',
+			1695,
+		],
+		[
+			'columns.get',
+			Columns.get,
+			{ board_id: 1075, column_id: 15876 },
+			columnBody,
+			'column_id',
+			15876,
+		],
+		[
+			'columns.update',
+			Columns.update,
+			{ board_id: 1075, column_id: 15876, limit: 3 },
+			columnBody,
+			'column_id',
+			15876,
+		],
+		[
+			'lanes.get',
+			Lanes.get,
+			{ board_id: 1075, lane_id: 9838 },
+			laneBody,
+			'lane_id',
+			9838,
+		],
+		[
+			'lanes.update',
+			Lanes.update,
+			{ board_id: 1075, lane_id: 9838, name: 'Fast' },
+			laneBody,
+			'lane_id',
+			9838,
+		],
+		[
+			'webhooks.update',
+			Webhooks.update,
+			{ webhook_id: 77, is_enabled: 0 },
+			webhookBody,
+			'webhook_id',
+			77,
+		],
+	] as const)(
+		'%s accepts a record without its ID and returns the ID asked about',
+		async (_name, endpoint, input, body, key, id) => {
+			respond({ data: body });
+
+			await expect(invoke(endpoint, input)).resolves.toMatchObject({
+				data: { [key]: id },
+			});
+		},
+	);
+
+	it('cards.create returns the one card from the array Businessmap sends', async () => {
+		respond({ data: [card] });
+
+		await expect(
+			invoke(Cards.create, { title: 'x', column_id: 15876, lane_id: 9838 }),
+		).resolves.toMatchObject({ data: { card_id: 539522 } });
+	});
+
+	it('cards.update returns the one card from the array Businessmap sends', async () => {
+		respond({ data: [{ ...card, title: 'Renamed' }] });
+
+		await expect(
+			invoke(Cards.update, { card_id: 539522, title: 'Renamed' }),
+		).resolves.toMatchObject({ data: { card_id: 539522, title: 'Renamed' } });
+	});
+
+	it('cards.get reads the reporter and the block reason as objects', async () => {
+		respond({
+			data: {
+				...card,
+				is_blocked: 1,
+				reporter: { type: 'external', value: 'client@acme.example' },
+				block_reason: {
+					block_type: 1,
+					reason_id: 3,
+					comment: 'Waiting on legal',
+				},
+			},
+		});
+
+		await expect(invoke(Cards.get, { card_id: 539522 })).resolves.toMatchObject(
+			{
+				data: {
+					reporter: { type: 'external' },
+					block_reason: { reason_id: 3 },
+				},
+			},
+		);
+	});
+
+	it('subtasks.update accepts the 204 Businessmap sends when the result is not readable', async () => {
+		respondEmpty(204);
+
+		await expect(
+			invoke(Subtasks.update, {
+				card_id: 539522,
+				subtask_id: 4401,
+				is_finished: 1,
+			}),
+		).resolves.toEqual({ data: { subtask_id: 4401 } });
+	});
+});

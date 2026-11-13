@@ -1,6 +1,6 @@
 import type { KanbanizeEndpoints } from '..';
 import { queryFor, segment } from '../client';
-import { call, deletedResult } from './call';
+import { call, deletedResult, withId } from './call';
 import {
 	KanbanizeEndpointInputSchemas as Inputs,
 	KanbanizeEndpointOutputSchemas as Outputs,
@@ -43,7 +43,10 @@ export const get: KanbanizeEndpoints['boardsGet'] = (ctx, input) =>
 			method: 'GET',
 			path: `/boards/${segment(board_id)}`,
 		}),
-		{ log: (_, result) => ({ boardId: result.data.board_id }) },
+		{
+			shape: (raw, { board_id }) => withId(raw, 'board_id', board_id),
+			log: (_, result) => ({ boardId: result.data.board_id }),
+		},
 	);
 
 export const create: KanbanizeEndpoints['boardsCreate'] = (ctx, input) =>
@@ -82,7 +85,10 @@ export const update: KanbanizeEndpoints['boardsUpdate'] = (ctx, input) =>
 			path: `/boards/${segment(board_id)}`,
 			body: changes,
 		}),
-		{ log: ({ board_id }) => ({ boardId: board_id }) },
+		{
+			shape: (raw, { board_id }) => withId(raw, 'board_id', board_id),
+			log: ({ board_id }) => ({ boardId: board_id }),
+		},
 	);
 
 export const remove: KanbanizeEndpoints['boardsRemove'] = (ctx, input) =>

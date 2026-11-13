@@ -68,6 +68,10 @@ export const update: KanbanizeEndpoints['subtasksUpdate'] = (ctx, input) =>
 			),
 		}),
 		{
+			// Businessmap answers 204 when the change was made but the key's user
+			// may not read the subtask back; the result then carries only its ID.
+			shape: (raw, { subtask_id }) =>
+				raw === undefined || raw === null ? { data: { subtask_id } } : raw,
 			log: ({ card_id, subtask_id }) => ({
 				cardId: card_id,
 				subtaskId: subtask_id,
