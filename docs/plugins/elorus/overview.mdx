@@ -6,7 +6,7 @@ description: "Manage Elorus accounting, invoicing, expenses, contacts, inventory
 
 Use **Elorus** through Corsair: one client, typed API calls.
 
-Connect an Elorus API token and the organization ID used in the required X-Elorus-Organization header. The API key is stored as the secret; the organization ID is a separate account field. API v1.1 remains in maintenance until December 31, 2026; v1.2 is the current API.
+Connect an Elorus API token and the organization ID used in the required X-Elorus-Organization header. The API key is stored as the secret; the organization ID is a separate account field. List endpoints support page and page_size pagination (maximum 250). Tracking-category filters use dynamic keys such as tc_12345; unrelated query keys are rejected. API v1.1 remains in maintenance until December 31, 2026; v1.2 is the current API.
 
 **What you get:**
 
@@ -96,19 +96,26 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`v11.bills_email_read`**
+**Retrieve a bill**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.elorus.api.v11.bills_email_read({});
+await tenant.elorus.api.v12.bills_read({
+	path: { id: 'demo' },
+});
 ```
 
 
-**`v11.bills_create`**
+**Create a bill**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.elorus.api.v11.bills_create({});
+await tenant.elorus.api.v12.bills_create({
+	body: {
+		supplier: 'demo',
+		items: [],
+	},
+});
 ```
 
 

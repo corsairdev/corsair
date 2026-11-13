@@ -4,8 +4,23 @@ description: Manage Elorus accounting, invoicing, expenses, contacts, inventory,
 recommendedAuth: api_key
 overviewNote: Connect an Elorus API token and the organization ID used in the required
   X-Elorus-Organization header. The API key is stored as the secret; the organization ID is a
-  separate account field. API v1.1 remains in maintenance until December 31, 2026; v1.2 is the
-  current API.
+  separate account field. List endpoints support page and page_size pagination (maximum 250).
+  Tracking-category filters use dynamic keys such as tc_12345; unrelated query keys are rejected.
+  API v1.1 remains in maintenance until December 31, 2026; v1.2 is the current API.
+examples:
+  read:
+    path: v12.bills_read
+    title: Retrieve a bill
+    args:
+      path:
+        id: demo
+  write:
+    path: v12.bills_create
+    title: Create a bill
+    args:
+      body:
+        supplier: demo
+        items: []
 apiExamples:
   v11.bills_create:
     args:

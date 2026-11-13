@@ -20,6 +20,51 @@ describe('Elorus OpenAPI schemas', () => {
 		);
 	});
 
+	it('accepts documented tc_<category ID> filters on all 22 applicable lists only', () => {
+		const trackingFilterLists = [
+			'v11.bills_list',
+			'v11.cashpayments_list',
+			'v11.cashreceipts_list',
+			'v11.contacts_list',
+			'v11.creditnotes_list',
+			'v11.expenses_list',
+			'v11.invoices_list',
+			'v11.products_list',
+			'v11.projects_list',
+			'v11.recurringinvoices_list',
+			'v11.suppliercredits_list',
+			'v12.bills_list',
+			'v12.cashpayments_list',
+			'v12.cashreceipts_list',
+			'v12.contacts_list',
+			'v12.creditnotes_list',
+			'v12.expenses_list',
+			'v12.invoices_list',
+			'v12.products_list',
+			'v12.projects_list',
+			'v12.recurringinvoices_list',
+			'v12.suppliercredits_list',
+		] as const;
+
+		expect(trackingFilterLists).toHaveLength(22);
+		for (const key of trackingFilterLists) {
+			const schema = elorusOperationSchemas[key].input;
+			expect(
+				schema.safeParse({ query: { tc_12345: 'priority' } }).success,
+			).toBe(true);
+			expect(
+				schema.safeParse({ query: { 'tc_<trackingcategory_id>': 'priority' } })
+					.success,
+			).toBe(false);
+			expect(schema.safeParse({ query: { unrelated: 'value' } }).success).toBe(
+				false,
+			);
+			expect(schema.safeParse({ query: { tc_invalid: 'value' } }).success).toBe(
+				false,
+			);
+		}
+	});
+
 	it('rejects undocumented fields in a create request body', () => {
 		const schema = elorusOperationSchemas['v12.contacts_create'].input;
 		expect(

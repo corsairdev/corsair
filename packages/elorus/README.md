@@ -13,7 +13,8 @@ Endpoints are grouped by version and retain Elorus's OpenAPI `operationId`, for
 example `v12.invoices_list` and `v11.bills_read`. Each operation validates its
 documented path, query, body/form fields and response with Zod. List methods
 forward `page` and `page_size` (Elorus documents a maximum page size of 250);
-pagination is caller-controlled.
+pagination is caller-controlled. Documented tracking-category list filters accept
+dynamic query keys such as `tc_12345`; unrelated unknown query keys are rejected.
 
 ## Authentication and organization
 

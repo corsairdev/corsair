@@ -16,6 +16,18 @@ type ElorusOperationInput = {
 	demo?: boolean;
 };
 
+export type ElorusRegisteredOperation<
+	K extends ElorusOperationKey,
+	I extends ZodType,
+	O extends ZodType,
+> = CorsairEndpoint<ElorusContext, z.input<I>, z.output<O>> & {
+	// This entry point accepts external values and validates them with inputSchema before execution.
+	invoke: (ctx: ElorusContext, input: unknown) => Promise<z.output<O>>;
+	inputSchema: I;
+	outputSchema: O;
+	operationKey: K;
+};
+
 export type ElorusOperationInputs = {
 	[K in ElorusOperationKey]: z.input<
 		(typeof elorusOperationSchemas)[K]['input']
@@ -29,14 +41,17 @@ export type ElorusOperationOutputs = {
 };
 
 export function createElorusOperation<
+	K extends ElorusOperationKey,
 	I extends ZodType<ElorusOperationInput>,
 	O extends ZodType,
 >(
-	operationKey: ElorusOperationKey,
+	operationKey: K,
 	schemas: { input: I; output: O },
-): CorsairEndpoint<ElorusContext, z.input<I>, z.output<O>> {
-	return async (ctx, input) => {
-		const parsed = schemas.input.parse(input);
+): ElorusRegisteredOperation<K, I, O> {
+	const execute = async (
+		ctx: ElorusContext,
+		parsed: z.output<I>,
+	): Promise<z.output<O>> => {
 		const specification = elorusOperationSpecs[operationKey];
 		const organizationId =
 			ctx.options.organizationId ?? (await ctx.keys.get_organization_id());
@@ -62,4 +77,16 @@ export function createElorusOperation<
 		);
 		return output;
 	};
+	const endpoint: CorsairEndpoint<ElorusContext, z.input<I>, z.output<O>> = (
+		ctx,
+		input,
+	) => execute(ctx, schemas.input.parse(input));
+	const invoke = async (ctx: ElorusContext, input: unknown) =>
+		execute(ctx, schemas.input.parse(input));
+	return Object.assign(endpoint, {
+		invoke,
+		inputSchema: schemas.input,
+		outputSchema: schemas.output,
+		operationKey,
+	});
 }

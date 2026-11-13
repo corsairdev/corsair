@@ -11,6 +11,23 @@ const ElorusBinaryResponseSchema = z
 	})
 	.strict();
 
+// Elorus documents dynamic tracking filters such as tc_12345, not a literal tc_<trackingcategory_id> key.
+function withTrackingCategoryFilters<S extends z.ZodObject>(schema: S) {
+	const documentedQueryFields = new Set(Object.keys(schema.shape));
+	return schema.catchall(z.string()).superRefine((query, context) => {
+		for (const key of Object.keys(query)) {
+			if (documentedQueryFields.has(key) || /^tc_[0-9]+$/.test(key)) {
+				continue;
+			}
+			context.addIssue({
+				code: 'custom',
+				path: [key],
+				message: 'Use a documented query field or tc_<numeric category ID>.',
+			});
+		}
+	});
+}
+
 const v11Def_PUV11PurchaseList = z
 	.object({
 		id: z.string().min(1).optional(),
@@ -8158,8 +8175,8 @@ const v12Def_V12Warehouse = z
 
 const input_v11_bills_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -8178,7 +8195,6 @@ const input_v11_bills_list = z
 				self_billed: z.string().optional(),
 				sequence: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -8187,9 +8203,8 @@ const input_v11_bills_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -8279,8 +8294,8 @@ const input_v11_bills_mark_void = z
 const output_v11_bills_mark_void = v11Def_PUPurchaseMarkVoidResponse;
 const input_v11_cashpayments_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -8293,7 +8308,6 @@ const input_v11_cashpayments_list = z
 				purchase: z.string().optional(),
 				creditnote: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -8302,9 +8316,8 @@ const input_v11_cashpayments_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -8354,8 +8367,8 @@ const input_v11_cashpayments_pdf = z
 const output_v11_cashpayments_pdf = ElorusBinaryResponseSchema;
 const input_v11_cashreceipts_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -8370,7 +8383,6 @@ const input_v11_cashreceipts_list = z
 				invoice: z.string().optional(),
 				purchasecreditnote: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -8379,9 +8391,8 @@ const input_v11_cashreceipts_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -8431,8 +8442,8 @@ const input_v11_cashreceipts_pdf = z
 const output_v11_cashreceipts_pdf = ElorusBinaryResponseSchema;
 const input_v11_contacts_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -8442,7 +8453,6 @@ const input_v11_contacts_list = z
 				company: z.string().optional(),
 				active: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -8451,9 +8461,8 @@ const input_v11_contacts_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -8496,8 +8505,8 @@ const input_v11_contacts_delete = z
 const output_v11_contacts_delete = z.undefined();
 const input_v11_creditnotes_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -8514,7 +8523,6 @@ const input_v11_creditnotes_list = z
 				documenttype: z.string().optional(),
 				sequence: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -8523,9 +8531,8 @@ const input_v11_creditnotes_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -8889,8 +8896,8 @@ const output_v11_expensecategories_read =
 	v11Def_PUV11ExpenseCategoryListRetrieve;
 const input_v11_expenses_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -8901,7 +8908,6 @@ const input_v11_expenses_list = z
 				currency_code: z.string().optional(),
 				branch_id: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -8910,9 +8916,8 @@ const input_v11_expenses_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -8955,8 +8960,8 @@ const input_v11_expenses_delete = z
 const output_v11_expenses_delete = z.undefined();
 const input_v11_invoices_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -8974,7 +8979,6 @@ const input_v11_invoices_list = z
 				documenttype: z.string().optional(),
 				sequence: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -8983,9 +8987,8 @@ const input_v11_invoices_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -9189,15 +9192,14 @@ const output_v11_paymentgateways_list = z
 	.strict();
 const input_v11_products_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
 				sales: z.string().optional(),
 				purchases: z.string().optional(),
 				active: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				ordering: z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
@@ -9207,9 +9209,8 @@ const input_v11_products_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -9252,20 +9253,18 @@ const input_v11_products_delete = z
 const output_v11_products_delete = z.undefined();
 const input_v11_projects_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
 				active: z.string().optional(),
 				client: z.string().optional(),
 				billing_method: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -9286,8 +9285,8 @@ const input_v11_projects_read = z
 const output_v11_projects_read = v11Def_PUV11ProjectRetrieve;
 const input_v11_recurringinvoices_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -9298,7 +9297,6 @@ const input_v11_recurringinvoices_list = z
 				currency_code: z.string().optional(),
 				recurring_status: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -9307,9 +9305,8 @@ const input_v11_recurringinvoices_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -9352,8 +9349,8 @@ const input_v11_recurringinvoices_delete = z
 const output_v11_recurringinvoices_delete = z.undefined();
 const input_v11_suppliercredits_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -9371,7 +9368,6 @@ const input_v11_suppliercredits_list = z
 				self_billed: z.string().optional(),
 				sequence: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -9380,9 +9376,8 @@ const input_v11_suppliercredits_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -9687,8 +9682,8 @@ const input_v11_warehouse_delete = z
 const output_v11_warehouse_delete = z.undefined();
 const input_v12_bills_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -9706,7 +9701,6 @@ const input_v12_bills_list = z
 				documenttype: z.string().optional(),
 				self_billed: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -9715,9 +9709,8 @@ const input_v12_bills_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -9927,8 +9920,8 @@ const output_v12_bills_sent_email_messages_list = z
 	.strict();
 const input_v12_cashpayments_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -9941,7 +9934,6 @@ const input_v12_cashpayments_list = z
 				purchase: z.string().optional(),
 				creditnote: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -9950,9 +9942,8 @@ const input_v12_cashpayments_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -10098,8 +10089,8 @@ const input_v12_cashpayments_notes_delete = z
 const output_v12_cashpayments_notes_delete = z.undefined();
 const input_v12_cashreceipts_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -10114,7 +10105,6 @@ const input_v12_cashreceipts_list = z
 				invoice: z.string().optional(),
 				purchasecreditnote: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -10123,9 +10113,8 @@ const input_v12_cashreceipts_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -10271,8 +10260,8 @@ const input_v12_cashreceipts_notes_delete = z
 const output_v12_cashreceipts_notes_delete = z.undefined();
 const input_v12_contacts_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -10282,7 +10271,6 @@ const input_v12_contacts_list = z
 				company: z.string().optional(),
 				active: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -10291,9 +10279,8 @@ const input_v12_contacts_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -10432,8 +10419,8 @@ const input_v12_contacts_notes_delete = z
 const output_v12_contacts_notes_delete = z.undefined();
 const input_v12_creditnotes_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -10450,7 +10437,6 @@ const input_v12_creditnotes_list = z
 				documenttype: z.string().optional(),
 				sequence: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -10459,9 +10445,8 @@ const input_v12_creditnotes_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -11403,8 +11388,8 @@ const output_v12_expensecategories_read =
 	v12Def_PUV12ExpenseCategoryListRetrieve;
 const input_v12_expenses_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -11415,7 +11400,6 @@ const input_v12_expenses_list = z
 				currency_code: z.string().optional(),
 				branch_id: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -11424,9 +11408,8 @@ const input_v12_expenses_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -11766,8 +11749,8 @@ const output_v12_goodsreceiptsequences_rename_sequence =
 	v12Def_PUFlatSequenceRename;
 const input_v12_invoices_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -11785,7 +11768,6 @@ const input_v12_invoices_list = z
 				documenttype: z.string().optional(),
 				sequence: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -11794,9 +11776,8 @@ const input_v12_invoices_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -12172,15 +12153,14 @@ const output_v12_paymentgateways_list = z
 	.strict();
 const input_v12_products_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
 				sales: z.string().optional(),
 				purchases: z.string().optional(),
 				active: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				ordering: z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
@@ -12190,9 +12170,8 @@ const input_v12_products_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -12319,20 +12298,18 @@ const input_v12_products_stockadjustments_delete = z
 const output_v12_products_stockadjustments_delete = z.undefined();
 const input_v12_projects_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
 				active: z.string().optional(),
 				client: z.string().optional(),
 				billing_method: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -12579,8 +12556,8 @@ const input_v12_projects_projectextrafees_delete = z
 const output_v12_projects_projectextrafees_delete = z.undefined();
 const input_v12_recurringinvoices_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -12591,7 +12568,6 @@ const input_v12_recurringinvoices_list = z
 				currency_code: z.string().optional(),
 				recurring_status: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -12600,9 +12576,8 @@ const input_v12_recurringinvoices_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
@@ -12677,8 +12652,8 @@ const input_v12_recurringinvoices_notes_delete = z
 const output_v12_recurringinvoices_notes_delete = z.undefined();
 const input_v12_suppliercredits_list = z
 	.object({
-		query: z
-			.object({
+		query: withTrackingCategoryFilters(
+			z.object({
 				ordering: z.string().optional(),
 				search: z.string().optional(),
 				search_fields: z.string().optional(),
@@ -12695,7 +12670,6 @@ const input_v12_suppliercredits_list = z
 				documenttype: z.string().optional(),
 				self_billed: z.string().optional(),
 				custom_id: z.string().optional(),
-				'tc_<trackingcategory_id>': z.string().optional(),
 				created_after: z.string().optional(),
 				created_before: z.string().optional(),
 				modified_after: z.string().optional(),
@@ -12704,9 +12678,8 @@ const input_v12_suppliercredits_list = z
 				created_period: z.string().optional(),
 				page: z.number().int().optional(),
 				page_size: z.number().int().optional(),
-			})
-			.strict()
-			.optional(),
+			}),
+		).optional(),
 		demo: z.boolean().optional(),
 	})
 	.strict();
