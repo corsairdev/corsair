@@ -984,7 +984,7 @@ const gorgiasEndpointMeta = {
 		description: 'Gorgias REST: List voice calls.',
 	},
 	'widgets.createWidget': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Gorgias REST: Create a widget.',
 	},
 	'widgets.deleteWidget': {
@@ -1000,7 +1000,7 @@ const gorgiasEndpointMeta = {
 		description: 'Gorgias REST: List widgets.',
 	},
 	'widgets.updateWidget': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Gorgias REST: Update a widget.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof gorgiasEndpointsNested>;

@@ -1624,6 +1624,16 @@ const fixtures: Record<string, OperationFixture> = {
 	},
 };
 
+// `unknown` because one shared test reads fixtures whose shapes vary by REST operation.
+function readObject(value: unknown): Record<string, unknown> {
+	if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+		throw new Error('Expected an object fixture.');
+	}
+	const result: Record<string, unknown> = {};
+	for (const [key, entry] of Object.entries(value)) result[key] = entry;
+	return result;
+}
+
 describe('Gorgias schemas', () => {
 	it('declares a semver schema and no local entities', () => {
 		expect(GorgiasSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
@@ -1642,6 +1652,66 @@ describe('Gorgias schemas', () => {
 			)
 			.sort();
 		expect(endpointKeys).toEqual(keys);
+		expect(plugin.endpointMeta?.['widgets.createWidget']?.riskLevel).toBe(
+			'write',
+		);
+		expect(plugin.endpointMeta?.['widgets.updateWidget']?.riskLevel).toBe(
+			'write',
+		);
+	});
+
+	it('accepts documented customer channel fields and nullable ticket/page state', () => {
+		const customerFixture = fixtures['customers.getCustomer'];
+		const ticketFixture = fixtures['tickets.getTicket'];
+		const ticketPageFixture = fixtures['tickets.listTickets'];
+		if (!customerFixture || !ticketFixture || !ticketPageFixture) {
+			throw new Error('Missing customer or ticket schema fixtures.');
+		}
+		const customer = readObject(customerFixture.output);
+		expect(
+			GorgiasEndpointOutputSchemas['customers.getCustomer'].safeParse({
+				...customer,
+				channels: [
+					{
+						id: 42,
+						type: 'email',
+						address: 'customer@acme.test',
+						preferred: true,
+					},
+				],
+			}).success,
+		).toBe(true);
+
+		const ticket = readObject(ticketFixture.output);
+		expect(
+			GorgiasEndpointOutputSchemas['tickets.getTicket'].safeParse({
+				...ticket,
+				assignee_user: null,
+				from_agent: null,
+				imported: null,
+				language: null,
+				subject: null,
+				meta: null,
+				processed_datetime: null,
+				opened_datetime: null,
+				last_received_message_datetime: null,
+				last_message_datetime: null,
+				updated_datetime: null,
+				closed_datetime: null,
+				trashed_datetime: null,
+				snooze_datetime: null,
+				satisfaction_survey: null,
+			}).success,
+		).toBe(true);
+
+		const ticketPage = readObject(ticketPageFixture.output);
+		const pageMeta = readObject(ticketPage.meta);
+		expect(
+			GorgiasEndpointOutputSchemas['tickets.listTickets'].safeParse({
+				...ticketPage,
+				meta: { ...pageMeta, prev_cursor: null, next_cursor: null },
+			}).success,
+		).toBe(true);
 	});
 
 	for (const [key, inputSchema] of Object.entries(
