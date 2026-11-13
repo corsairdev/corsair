@@ -30,7 +30,7 @@ export async function makeEncodianRequest(
 		query?: Record<string, string | number | boolean | undefined>;
 		path?: Record<string, string | number>;
 	},
-	): Promise<unknown> {
+): Promise<unknown> {
 	const path = route.path.replace(
 		/\{([^}]+)\}/g,
 		(_match, parameter: string) => {
@@ -63,7 +63,7 @@ export async function makeEncodianRequest(
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: RATE_LIMIT_CONFIG,
 		});
-	// `unknown` because transport rejections do not have a guaranteed runtime class.
+		// `unknown` because transport rejections do not have a guaranteed runtime class.
 	} catch (error: unknown) {
 		if (error instanceof ApiError) {
 			throw new ApiError(
