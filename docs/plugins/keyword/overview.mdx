@@ -1,7 +1,7 @@
 ---
 title: "Keyword plugin"
 sidebarTitle: "Overview"
-description: "Rank tracking with Keyword.com - manage projects and their keywords, add and refresh keywords, and read rankings, movement metrics, rank history, competitors, tracked regions, top pages, Share of Voice and alerts."
+description: "Rank tracking with Keyword.com - manage projects and their keywords, add and refresh keywords, and read rankings, movement metrics, rank history, competitors, tracked regions, top pages and Share of Voice history."
 ---
 
 Use **Keyword** through Corsair: one client, typed API calls.
@@ -17,12 +17,12 @@ Things to know before you call:
 - **A refresh spends the plan's daily quota.** `keywords.refresh` queues keywords for an on-demand check. The whole request is refused when the quota would be exceeded, and the answer names how many refreshes remain.
 - **A full plan is a 402, not a rate limit.** Keyword enforces the plan's keyword allowance, and that failure is permanent, so it is not retried. A 429 is a throughput limit and is retried twice.
 - **Rank history is bounded.** `rankChart.get` refuses a call covering more than 400,000 keyword-days, so a large group needs a shorter `limit` or fewer keywords.
-- **Paging.** `keywords.list` and `alerts.list` take `page` and `per_page` and return a `meta` block; Keyword does not publish a total-count cursor, so read `meta` for what it does send.
+- **Paging.** `keywords.list` takes `page` and `per_page` and returns a `meta` block; Keyword does not publish a total-count cursor, so read `meta` for what it does send.
 - **Webhooks.** The plugin does not receive Keyword webhooks; none are configured here.
 
 **What you get:**
 
-- 25 typed API operations
+- 23 typed API operations
 
 ## Setup
 

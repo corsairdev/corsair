@@ -59,67 +59,6 @@ await corsair.keyword.api.account.get({});
 
 ---
 
-## Alerts
-
-### list
-
-`alerts.list`
-
-Rank change alerts, optionally only the ones that dropped or improved, paged and sortable
-
-**Risk:** `read`
-
-```ts
-await corsair.keyword.api.alerts.list({ view_type: 'All alerts', page: 1, per_page: 100, sort_field: 'created_at', sort_direction: 'desc' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `page` | `number` | No | 1-based page. |
-| `per_page` | `number` | No | Alerts per page. Defaults to 100. |
-| `sort_field` | `created_at \| time` | No | Field to sort on. Defaults to `created_at`. |
-| `sort_direction` | `asc \| desc` | No | — |
-| `view_type` | `All alerts \| Dropped \| Improved` | No | All alerts, only the ones that dropped, or only the ones that improved. |
-| `last` | `boolean` | No | `true` for only the newest alert per keyword. |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `meta` | `Record<string, any> \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  type?: string | null,
-  id: string,
-  attributes: {
-    category?: string | null,
-    keyword_id?: number | null,
-    url?: string | null,
-    kw?: string | null,
-    region?: string | null,
-    language?: string | null,
-    prevrank?: number | null,
-    result?: number | null,
-    time?: string | null
-  }
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
 ## Keywords
 
 ### add
@@ -598,7 +537,7 @@ await corsair.keyword.api.keywords.list({ projectName: 'Disney', page: 1, per_pa
 
 Queue keywords for an on-demand rank check; spends the plan’s daily refresh quota. The whole request is refused if the quota would be exceeded
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.keyword.api.keywords.refresh({ keywordIds: ['267540882', '267540883'] });
@@ -896,55 +835,6 @@ Scoped by numeric `projectId`, and read from Keyword’s cache.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `unknown` | Yes | — |
-
-
-
----
-
-### latest
-
-`mindshare.latest`
-
-The latest Share of Voice top 10: each competitor’s estimated clicks and share, with the month’s change
-
-**Risk:** `read`
-
-```ts
-await corsair.keyword.api.mindshare.latest({ projectName: 'Disney' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `projectName` | `string` | Yes | The project (group) name, such as `Disney`. A subproject is written `Parent[sub]Child`. |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  title?: string | null,
-  url?: string | null,
-  clicks?: number | null,
-  percentage?: number | null,
-  changes?: {
-    month?: number | null,
-    week?: number | null,
-    day?: number | null
-  } | null
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
