@@ -198,6 +198,7 @@ describe('Elorus REST operation coverage', () => {
 			try {
 				const spec = elorusOperationSpecs[handler.operationKey];
 				const schemaPair = elorusOperationSchemas[handler.operationKey];
+				let expectedRequestCount = 0;
 				expect(handler.operationKey.startsWith(`${spec.version}.`)).toBe(true);
 				expect(handler.inputSchema).toBe(schemaPair.input);
 				expect(handler.outputSchema).toBe(schemaPair.output);
@@ -243,6 +244,21 @@ describe('Elorus REST operation coverage', () => {
 					spec.mode === 'empty' || spec.mode === 'binary'
 						? undefined
 						: sampleFromJsonSchema(handler.outputSchema.toJSONSchema());
+				if (
+					spec.mode === 'json' &&
+					!schemaPair.output.safeParse(null).success
+				) {
+					nextResponse = new Response('null', {
+						status: spec.successStatus,
+						headers: { 'content-type': 'application/json' },
+					});
+					await expect(handler.invoke(context, input)).rejects.toMatchObject({
+						name: 'ZodError',
+					});
+					expectedRequestCount += 1;
+					expect(fetchSpy).toHaveBeenCalledTimes(expectedRequestCount);
+					expect(logEventFromContext).not.toHaveBeenCalled();
+				}
 				if (spec.mode === 'empty') {
 					nextResponse = new Response(null, { status: 204 });
 				} else if (spec.mode === 'binary') {
@@ -256,6 +272,7 @@ describe('Elorus REST operation coverage', () => {
 						headers: { 'content-type': 'application/json' },
 					});
 				}
+				expectedRequestCount += 1;
 				const result = await handler.invoke(context, input);
 				expect(handler.outputSchema.safeParse(result).success).toBe(true);
 
@@ -275,9 +292,9 @@ describe('Elorus REST operation coverage', () => {
 					'fixture-organization',
 				);
 				expect(headers.get('X-Elorus-Demo')).toBe('1');
-				expect(getOrganizationId).toHaveBeenCalledTimes(1);
+				expect(getOrganizationId).toHaveBeenCalledTimes(expectedRequestCount);
 				expect(logEventFromContext).toHaveBeenCalledTimes(1);
-				expect(fetchSpy).toHaveBeenCalledTimes(1);
+				expect(fetchSpy).toHaveBeenCalledTimes(expectedRequestCount);
 			} finally {
 				fetchSpy.mockRestore();
 			}

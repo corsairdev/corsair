@@ -23,7 +23,7 @@ export const elorusEndpointMeta = {
 	},
 	'v11.bills_email_read': {
 		riskLevel: 'read',
-		description: 'Send the document by email.',
+		description: 'Get the default document email fields.',
 	},
 	'v11.bills_email_create': {
 		riskLevel: 'write',
@@ -137,7 +137,7 @@ export const elorusEndpointMeta = {
 	},
 	'v11.creditnotes_email_read': {
 		riskLevel: 'read',
-		description: 'Send the document by email.',
+		description: 'Get the default document email fields.',
 	},
 	'v11.creditnotes_email_create': {
 		riskLevel: 'write',
@@ -223,7 +223,7 @@ export const elorusEndpointMeta = {
 	},
 	'v11.estimates_email_read': {
 		riskLevel: 'read',
-		description: 'Send the document by email.',
+		description: 'Get the default document email fields.',
 	},
 	'v11.estimates_email_create': {
 		riskLevel: 'write',
@@ -293,7 +293,7 @@ export const elorusEndpointMeta = {
 	},
 	'v11.invoices_email_read': {
 		riskLevel: 'read',
-		description: 'Send the document by email.',
+		description: 'Get the default document email fields.',
 	},
 	'v11.invoices_email_create': {
 		riskLevel: 'write',
@@ -424,7 +424,7 @@ export const elorusEndpointMeta = {
 	},
 	'v11.suppliercredits_email_read': {
 		riskLevel: 'read',
-		description: 'Send the document by email.',
+		description: 'Get the default document email fields.',
 	},
 	'v11.suppliercredits_email_create': {
 		riskLevel: 'write',
@@ -518,7 +518,7 @@ export const elorusEndpointMeta = {
 	},
 	'v12.bills_email_read': {
 		riskLevel: 'read',
-		description: 'Send the document by email.',
+		description: 'Get the default document email fields.',
 	},
 	'v12.bills_email_create': {
 		riskLevel: 'write',
@@ -796,7 +796,7 @@ export const elorusEndpointMeta = {
 	},
 	'v12.creditnotes_email_read': {
 		riskLevel: 'read',
-		description: 'Send the document by email.',
+		description: 'Get the default document email fields.',
 	},
 	'v12.creditnotes_email_create': {
 		riskLevel: 'write',
@@ -914,7 +914,7 @@ export const elorusEndpointMeta = {
 	},
 	'v12.deliverynotes_email_read': {
 		riskLevel: 'read',
-		description: 'Send the document by email.',
+		description: 'Get the default document email fields.',
 	},
 	'v12.deliverynotes_email_create': {
 		riskLevel: 'write',
@@ -1048,7 +1048,7 @@ export const elorusEndpointMeta = {
 	},
 	'v12.estimates_email_read': {
 		riskLevel: 'read',
-		description: 'Send the document by email.',
+		description: 'Get the default document email fields.',
 	},
 	'v12.estimates_email_create': {
 		riskLevel: 'write',
@@ -1218,7 +1218,7 @@ export const elorusEndpointMeta = {
 	},
 	'v12.goodsreceipts_email_read': {
 		riskLevel: 'read',
-		description: 'Send the document by email.',
+		description: 'Get the default document email fields.',
 	},
 	'v12.goodsreceipts_email_create': {
 		riskLevel: 'write',
@@ -1300,7 +1300,7 @@ export const elorusEndpointMeta = {
 	},
 	'v12.invoices_email_read': {
 		riskLevel: 'read',
-		description: 'Send the document by email.',
+		description: 'Get the default document email fields.',
 	},
 	'v12.invoices_email_create': {
 		riskLevel: 'write',
@@ -1637,7 +1637,7 @@ export const elorusEndpointMeta = {
 	},
 	'v12.suppliercredits_email_read': {
 		riskLevel: 'read',
-		description: 'Send the document by email.',
+		description: 'Get the default document email fields.',
 	},
 	'v12.suppliercredits_email_create': {
 		riskLevel: 'write',

@@ -9,8 +9,8 @@ overviewNote: Connect an Elorus API token and the organization ID used in the re
   API v1.1 remains in maintenance until December 31, 2026; v1.2 is the current API.
 examples:
   read:
-    path: v12.bills_read
-    title: Retrieve a bill
+    path: v12.bills_email_read
+    title: Retrieve bill email settings
     args:
       path:
         id: demo

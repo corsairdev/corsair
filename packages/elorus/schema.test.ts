@@ -1,3 +1,4 @@
+import type { ElorusOperationInputs } from './endpoints/operation';
 import { elorusOperationSchemas } from './endpoints/types';
 
 describe('Elorus OpenAPI schemas', () => {
@@ -11,6 +12,10 @@ describe('Elorus OpenAPI schemas', () => {
 
 	it('validates pagination types and rejects unknown query parameters', () => {
 		const schema = elorusOperationSchemas['v12.invoices_list'].input;
+		const typedPagination: ElorusOperationInputs['v12.invoices_list'] = {
+			query: { page: 2, page_size: 250, tc_12345: 'priority' },
+		};
+		expect(schema.safeParse(typedPagination).success).toBe(true);
 		expect(
 			schema.safeParse({ query: { page: 2, page_size: 250 } }).success,
 		).toBe(true);
@@ -56,6 +61,9 @@ describe('Elorus OpenAPI schemas', () => {
 				schema.safeParse({ query: { 'tc_<trackingcategory_id>': 'priority' } })
 					.success,
 			).toBe(false);
+			expect(schema.safeParse({ query: { tc_12345: 12345 } }).success).toBe(
+				false,
+			);
 			expect(schema.safeParse({ query: { unrelated: 'value' } }).success).toBe(
 				false,
 			);

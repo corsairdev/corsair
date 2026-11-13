@@ -96,11 +96,11 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Retrieve a bill**
+**Retrieve bill email settings**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.elorus.api.v12.bills_read({
+await tenant.elorus.api.v12.bills_email_read({
 	path: { id: 'demo' },
 });
 ```

@@ -14,9 +14,13 @@ const ElorusBinaryResponseSchema = z
 // Elorus documents dynamic tracking filters such as tc_12345, not a literal tc_<trackingcategory_id> key.
 function withTrackingCategoryFilters<S extends z.ZodObject>(schema: S) {
 	const documentedQueryFields = new Set(Object.keys(schema.shape));
-	return schema.catchall(z.string()).superRefine((query, context) => {
+	// Unknown catchall values keep the inferred index signature from widening typed fields like numeric pagination.
+	return schema.catchall(z.unknown()).superRefine((query, context) => {
 		for (const key of Object.keys(query)) {
-			if (documentedQueryFields.has(key) || /^tc_[0-9]+$/.test(key)) {
+			if (documentedQueryFields.has(key)) {
+				continue;
+			}
+			if (/^tc_[0-9]+$/.test(key) && typeof query[key] === 'string') {
 				continue;
 			}
 			context.addIssue({
