@@ -88,33 +88,89 @@ apiExamples:
     layer_id: "layer_123"
   layers.duplicate:
     layers:
-      - map_id: "a1b2c3d4e5"
+      - destination_map_id: "a1b2c3d4e5"
         layer_id: "layer_123"
   layers.listLibrary: {}
+  layers.update:
+    map_id: "a1b2c3d4e5"
+    layers:
+      - id: "layer_123"
+        name: "Updated Points of Interest"
+  layers.updateStyle:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+    style:
+      color: "#ff0000"
+  layers.createCustomExport:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+    output_format: "geojson"
+  layers.pollCustomExport:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+    export_id: "exp_123"
+  layers.getExportLink:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
   layerGroups.list:
     map_id: "a1b2c3d4e5"
   layerGroups.get:
     map_id: "a1b2c3d4e5"
     layer_group_id: "grp_123"
+  layerGroups.update:
+    map_id: "a1b2c3d4e5"
+    layer_group_id: "grp_123"
+    name: "Updated Base Layers"
+  layerGroups.updateBulk:
+    map_id: "a1b2c3d4e5"
+    layer_groups:
+      - id: "grp_123"
+        name: "Base Layers"
   layerGroups.delete:
+    map_id: "a1b2c3d4e5"
+    layer_group_id: "grp_123"
+  layerGroups.publish:
     map_id: "a1b2c3d4e5"
     layer_group_id: "grp_123"
   layerComponents.list:
     map_id: "a1b2c3d4e5"
     layer_id: "layer_123"
+  layerComponents.create:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+    component:
+      type: "legend"
   layerComponents.get:
     map_id: "a1b2c3d4e5"
     layer_id: "layer_123"
     component_id: "comp_123"
+  layerComponents.update:
+    map_id: "a1b2c3d4e5"
+    layer_id: "layer_123"
+    component_id: "comp_123"
+    component:
+      type: "legend"
   layerComponents.delete:
     map_id: "a1b2c3d4e5"
     layer_id: "layer_123"
     component_id: "comp_123"
   elements.list:
     map_id: "a1b2c3d4e5"
+  elements.upsert:
+    map_id: "a1b2c3d4e5"
+    features: []
   elements.delete:
     map_id: "a1b2c3d4e5"
     element_id: "elem_123"
+  elements.listGroups:
+    map_id: "a1b2c3d4e5"
+  elements.getGroup:
+    map_id: "a1b2c3d4e5"
+    group_id: "grp_123"
+  elements.upsertGroups:
+    map_id: "a1b2c3d4e5"
+    groups:
+      - name: "Key Points"
   comments.export:
     map_id: "a1b2c3d4e5"
   comments.resolve:
@@ -134,25 +190,69 @@ apiExamples:
   projects.delete:
     project_id: "proj_123"
   sources.list: {}
+  sources.create:
+    name: "Enterprise PostGIS"
+    connection:
+      host: "db.example.com"
   sources.get:
     source_id: "src_123"
+  sources.update:
+    source_id: "src_123"
+    name: "Updated PostGIS"
   sources.delete:
     source_id: "src_123"
   sources.sync:
     source_id: "src_123"
+  sources.createCredential:
+    source_id: "src_123"
+    credential:
+      username: "felt_user"
+  sources.updateCredential:
+    source_id: "src_123"
+    credential_id: "cred_123"
+    credential:
+      username: "felt_user"
+  sources.deleteCredential:
+    source_id: "src_123"
+    credential_id: "cred_123"
   printPages.listLayouts:
     map_id: "a1b2c3d4e5"
+  printPages.createLayout:
+    map_id: "a1b2c3d4e5"
+  printPages.updateLayout:
+    map_id: "a1b2c3d4e5"
+    layout_id: "layout_123"
+    name: "Updated Layout"
   printPages.deleteLayout:
     map_id: "a1b2c3d4e5"
     layout_id: "layout_123"
   printPages.listPages:
     map_id: "a1b2c3d4e5"
+  printPages.createPage:
+    map_id: "a1b2c3d4e5"
+    name: "Overview Page"
   printPages.getPage:
     map_id: "a1b2c3d4e5"
     page_id: "page_123"
+  printPages.updatePage:
+    map_id: "a1b2c3d4e5"
+    page_id: "page_123"
+    name: "Updated Overview Page"
   printPages.deletePage:
     map_id: "a1b2c3d4e5"
     page_id: "page_123"
+  printPages.exportPage:
+    map_id: "a1b2c3d4e5"
+    page_id: "page_123"
+  printPages.upsertItems:
+    map_id: "a1b2c3d4e5"
+    page_id: "page_123"
+    items:
+      - id: "item_123"
+  printPages.deleteItem:
+    map_id: "a1b2c3d4e5"
+    page_id: "page_123"
+    item_id: "item_123"
 apiNotes:
   maps.create: "Creates a new Felt map. You can optionally supply initial coordinates and zoom level."
   layers.upload: "Imports spatial data into a Felt map from a publicly accessible URL or pre-signed upload URL."

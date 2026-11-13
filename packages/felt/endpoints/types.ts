@@ -1414,6 +1414,7 @@ export const PrintPageSchema = z
 		url: z.string().optional(),
 		// `unknown` because page dimensions and margins are flexible JSON objects.
 		page: z.record(z.string(), z.unknown()).optional(),
+		// `unknown` because export output settings accept format and DPI parameters.
 		output: z.record(z.string(), z.unknown()).optional(),
 	})
 	.passthrough();
@@ -1456,7 +1457,9 @@ export const PrintPagesCreatePageInputSchema = z
 		layout_id: z.string().optional(),
 		// `unknown` because page dimensions and map views are dynamic specifications.
 		page: z.record(z.string(), z.unknown()).optional(),
+		// `unknown` because export output settings accept format and DPI parameters.
 		output: z.record(z.string(), z.unknown()).optional(),
+		// `unknown` because map_view configuration accepts flexible zoom and center parameters.
 		map_view: z.record(z.string(), z.unknown()).optional(),
 		// `unknown` because items are arbitrary print page element specifications.
 		items: z.array(z.record(z.string(), z.unknown())).optional(),

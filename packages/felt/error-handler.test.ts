@@ -99,6 +99,7 @@ describe('errorHandlers', () => {
 			expect(isNonIdempotent('felt.maps.delete')).toBe(true);
 			expect(isNonIdempotent('felt.layers.upload')).toBe(true);
 			expect(isNonIdempotent('felt.layers.delete')).toBe(true);
+			expect(isNonIdempotent('felt.layerGroups.updateBulk')).toBe(true);
 			expect(isNonIdempotent('felt.sources.createCredential')).toBe(true);
 
 			expect(isNonIdempotent('felt.maps.get')).toBe(false);
@@ -111,6 +112,14 @@ describe('errorHandlers', () => {
 			const err500 = makeFeltError(500, 'Internal Server Error');
 			const result = await errorHandlers.SERVER_ERROR.handler(err500, {
 				operation: 'felt.maps.create',
+			});
+			expect(result).toEqual({ maxRetries: 0 });
+		});
+
+		it('returns maxRetries: 0 for bulk writes such as layerGroups.updateBulk on 5xx', async () => {
+			const err500 = makeFeltError(500, 'Internal Server Error');
+			const result = await errorHandlers.SERVER_ERROR.handler(err500, {
+				operation: 'felt.layerGroups.updateBulk',
 			});
 			expect(result).toEqual({ maxRetries: 0 });
 		});

@@ -157,7 +157,7 @@ Get elements in an element group as GeoJSON
 **Risk:** `read`
 
 ```ts
-await corsair.felt.api.elements.getGroup({});
+await corsair.felt.api.elements.getGroup({ map_id: 'a1b2c3d4e5', group_id: 'grp_123' });
 ```
 
 **Input**
@@ -220,7 +220,7 @@ List element groups in a map
 **Risk:** `read`
 
 ```ts
-await corsair.felt.api.elements.listGroups({});
+await corsair.felt.api.elements.listGroups({ map_id: 'a1b2c3d4e5' });
 ```
 
 **Input**
@@ -260,7 +260,10 @@ Create or update elements on a map using GeoJSON FeatureCollection
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.elements.upsert({});
+await corsair.felt.api.elements.upsert({
+	map_id: 'a1b2c3d4e5',
+	features: [],
+});
 ```
 
 **Input**
@@ -293,7 +296,10 @@ Create or update element groups in a map
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.elements.upsertGroups({});
+await corsair.felt.api.elements.upsertGroups({
+	map_id: 'a1b2c3d4e5',
+	groups: [{ name: 'Key Points' }],
+});
 ```
 
 **Input**
@@ -350,7 +356,11 @@ Create a dashboard component on a layer
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.layerComponents.create({});
+await corsair.felt.api.layerComponents.create({
+	map_id: 'a1b2c3d4e5',
+	layer_id: 'layer_123',
+	component: { type: 'legend' },
+});
 ```
 
 **Input**
@@ -490,7 +500,12 @@ Update a dashboard component on a layer
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.layerComponents.update({});
+await corsair.felt.api.layerComponents.update({
+	map_id: 'a1b2c3d4e5',
+	layer_id: 'layer_123',
+	component_id: 'comp_123',
+	component: { type: 'legend' },
+});
 ```
 
 **Input**
@@ -716,7 +731,7 @@ Publish a layer group to the library
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.layerGroups.publish({});
+await corsair.felt.api.layerGroups.publish({ map_id: 'a1b2c3d4e5', layer_group_id: 'grp_123' });
 ```
 
 **Input**
@@ -798,7 +813,7 @@ Update properties of a layer group
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.layerGroups.update({});
+await corsair.felt.api.layerGroups.update({ map_id: 'a1b2c3d4e5', layer_group_id: 'grp_123', name: 'Updated Base Layers' });
 ```
 
 **Input**
@@ -883,7 +898,10 @@ Update multiple layer groups in bulk
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.layerGroups.updateBulk({});
+await corsair.felt.api.layerGroups.updateBulk({
+	map_id: 'a1b2c3d4e5',
+	layer_groups: [{ id: 'grp_123', name: 'Base Layers' }],
+});
 ```
 
 **Input**
@@ -1012,7 +1030,7 @@ Request an export of layer data in a specified format
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.layers.createCustomExport({});
+await corsair.felt.api.layers.createCustomExport({ map_id: 'a1b2c3d4e5', layer_id: 'layer_123', output_format: 'geojson' });
 ```
 
 **Input**
@@ -1080,7 +1098,7 @@ Duplicate layers across maps
 
 ```ts
 await corsair.felt.api.layers.duplicate({
-	layers: [{ map_id: 'a1b2c3d4e5', layer_id: 'layer_123' }],
+	layers: [{ destination_map_id: 'a1b2c3d4e5', layer_id: 'layer_123' }],
 });
 ```
 
@@ -1246,7 +1264,7 @@ Get a direct download link for layer data
 **Risk:** `read`
 
 ```ts
-await corsair.felt.api.layers.getExportLink({});
+await corsair.felt.api.layers.getExportLink({ map_id: 'a1b2c3d4e5', layer_id: 'layer_123' });
 ```
 
 **Input**
@@ -1421,7 +1439,7 @@ Check status and get download URL of a layer export request
 **Risk:** `read`
 
 ```ts
-await corsair.felt.api.layers.pollCustomExport({});
+await corsair.felt.api.layers.pollCustomExport({ map_id: 'a1b2c3d4e5', layer_id: 'layer_123', export_id: 'exp_123' });
 ```
 
 **Input**
@@ -1616,7 +1634,10 @@ Update multiple map layers in bulk
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.layers.update({});
+await corsair.felt.api.layers.update({
+	map_id: 'a1b2c3d4e5',
+	layers: [{ id: 'layer_123', name: 'Updated Points of Interest' }],
+});
 ```
 
 **Input**
@@ -1713,7 +1734,11 @@ Update visual style of a layer using Felt Style Language
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.layers.updateStyle({});
+await corsair.felt.api.layers.updateStyle({
+	map_id: 'a1b2c3d4e5',
+	layer_id: 'layer_123',
+	style: { color: '#ff0000' },
+});
 ```
 
 **Input**
@@ -2388,7 +2413,7 @@ Save a print page as a reusable layout template
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.printPages.createLayout({});
+await corsair.felt.api.printPages.createLayout({ map_id: 'a1b2c3d4e5' });
 ```
 
 **Input**
@@ -2424,7 +2449,7 @@ Create a new print page design in a map
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.printPages.createPage({});
+await corsair.felt.api.printPages.createPage({ map_id: 'a1b2c3d4e5', name: 'Overview Page' });
 ```
 
 **Input**
@@ -2480,7 +2505,7 @@ Delete an item from a print page design
 **Risk:** `destructive`
 
 ```ts
-await corsair.felt.api.printPages.deleteItem({});
+await corsair.felt.api.printPages.deleteItem({ map_id: 'a1b2c3d4e5', page_id: 'page_123', item_id: 'item_123' });
 ```
 
 **Input**
@@ -2577,7 +2602,7 @@ Export a print page as a PDF or image
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.printPages.exportPage({});
+await corsair.felt.api.printPages.exportPage({ map_id: 'a1b2c3d4e5', page_id: 'page_123' });
 ```
 
 **Input**
@@ -2743,7 +2768,7 @@ Update a print layout template
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.printPages.updateLayout({});
+await corsair.felt.api.printPages.updateLayout({ map_id: 'a1b2c3d4e5', layout_id: 'layout_123', name: 'Updated Layout' });
 ```
 
 **Input**
@@ -2780,7 +2805,7 @@ Update properties and dimensions of a print page design
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.printPages.updatePage({});
+await corsair.felt.api.printPages.updatePage({ map_id: 'a1b2c3d4e5', page_id: 'page_123', name: 'Updated Overview Page' });
 ```
 
 **Input**
@@ -2835,7 +2860,11 @@ Create or update items on a print page design
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.printPages.upsertItems({});
+await corsair.felt.api.printPages.upsertItems({
+	map_id: 'a1b2c3d4e5',
+	page_id: 'page_123',
+	items: [{ id: 'item_123' }],
+});
 ```
 
 **Input**
@@ -3123,7 +3152,10 @@ Connect a new cloud database or warehouse data source
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.sources.create({});
+await corsair.felt.api.sources.create({
+	name: 'Enterprise PostGIS',
+	connection: { host: 'db.example.com' },
+});
 ```
 
 **Input**
@@ -3160,7 +3192,10 @@ Add an authentication credential to a data source
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.sources.createCredential({});
+await corsair.felt.api.sources.createCredential({
+	source_id: 'src_123',
+	credential: { username: 'felt_user' },
+});
 ```
 
 **Input**
@@ -3231,7 +3266,7 @@ Permanently delete a credential from a data source
 **Risk:** `destructive`
 
 ```ts
-await corsair.felt.api.sources.deleteCredential({});
+await corsair.felt.api.sources.deleteCredential({ source_id: 'src_123', credential_id: 'cred_123' });
 ```
 
 **Input**
@@ -3396,7 +3431,7 @@ Update data source configuration or permissions
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.sources.update({});
+await corsair.felt.api.sources.update({ source_id: 'src_123', name: 'Updated PostGIS' });
 ```
 
 **Input**
@@ -3434,7 +3469,11 @@ Update an authentication credential on a data source
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.sources.updateCredential({});
+await corsair.felt.api.sources.updateCredential({
+	source_id: 'src_123',
+	credential_id: 'cred_123',
+	credential: { username: 'felt_user' },
+});
 ```
 
 **Input**

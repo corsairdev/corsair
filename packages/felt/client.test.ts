@@ -5,6 +5,7 @@ import {
 	FeltAPIError,
 	makeFeltRequest,
 	redactSensitiveData,
+	sanitizeErrorMessage,
 } from './client';
 import { errorHandlers } from './error-handlers';
 
@@ -119,30 +120,52 @@ describe('makeFeltRequest client', () => {
 		expect(arrayData[1]?.label).toBe('normal');
 	});
 
-	it('sanitizes ApiError by wrapping in FeltAPIError and redacting credential fields', async () => {
-		const rawError = buildApiError(422, 'Invalid credentials', undefined, {
-			errors: [
-				{
-					detail: 'Wrong secret',
-					source: { parameter: 'password' },
-					password: 'plain-password-leak',
+	it('sanitizes ApiError by wrapping in FeltAPIError, redacting credential fields, and omitting unredacted cause', async () => {
+		const rawError = new ApiError(
+			{
+				method: 'POST',
+				url: '/sources/1/credentials',
+				body: { password: 'submitted-secret-password', username: 'felt_user' },
+			},
+			{
+				url: 'https://felt.com/api/v2/sources/1/credentials',
+				ok: false,
+				status: 422,
+				statusText: 'Unprocessable Entity',
+				body: {
+					errors: [
+						{
+							detail: 'Wrong secret for password',
+							source: { parameter: 'password' },
+							password: 'plain-password-leak',
+						},
+					],
 				},
-			],
-		});
+			},
+			'Unprocessable Entity: password=submitted-secret-password',
+		);
 		mockRequest.mockRejectedValue(rawError);
 
 		// `unknown` because rejection catch returns an untyped error object.
-		const caught = await makeFeltRequest('/sources', 'my-token', {
+		const caught = await makeFeltRequest('/sources/1/credentials', 'my-token', {
 			method: 'POST',
+			body: { password: 'submitted-secret-password' },
 		}).catch((err: unknown) => err);
 
 		expect(caught).toBeInstanceOf(FeltAPIError);
 		const feltErr = caught as FeltAPIError;
 		expect(feltErr.status).toBe(422);
-		expect(feltErr.message).toBe('Invalid credentials');
+		expect(feltErr.message).toBe('Unprocessable Entity: password=[REDACTED]');
 		// Verify password in error body was redacted
 		const body = feltErr.body as { errors: Array<Record<string, unknown>> };
 		expect(body.errors[0]?.password).toBe('[REDACTED]');
+		// Verify unredacted cause is not preserved (preventing leak of raw request body passwords)
+		expect(feltErr.cause).toBeUndefined();
+
+		// Test message sanitization
+		expect(
+			sanitizeErrorMessage('Failed with password=plain-pass and Bearer secret123', 'secret123'),
+		).toBe('Failed with password=[REDACTED] and Bearer [REDACTED]');
 	});
 
 	it('preserves retryAfter on 429 rate limit error', async () => {

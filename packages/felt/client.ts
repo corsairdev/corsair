@@ -90,6 +90,28 @@ export function redactSensitiveData(value: unknown): unknown {
 	return result;
 }
 
+/**
+ * Redacts tokens, passwords, and sensitive strings from error messages.
+ */
+export function sanitizeErrorMessage(message: string, apiKey?: string): string {
+	let sanitized = message
+		.replace(/Bearer\s+[^\s"',]+/gi, 'Bearer [REDACTED]')
+		.replace(
+			/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g,
+			'[REDACTED_JWT]',
+		)
+		.replace(
+			/(["']?(?:api[_-]?key|token|secret|password|authorization|access_token|client_secret)["']?\s*[:=]\s*["']?)[^"',\s}]+/gi,
+			'$1[REDACTED]',
+		);
+
+	if (apiKey && apiKey.length > 0) {
+		sanitized = sanitized.split(apiKey).join('[REDACTED]');
+	}
+
+	return sanitized;
+}
+
 export async function makeFeltRequest<T>(
 	endpoint: string,
 	apiKey?: string,
@@ -141,16 +163,17 @@ export async function makeFeltRequest<T>(
 		// `unknown` because catch blocks in TypeScript receive an untyped rejection value.
 		if (error instanceof ApiError) {
 			const sanitizedBody = redactSensitiveData(error.body);
-			throw new FeltAPIError(error.message, String(error.status), {
+			const safeMessage = sanitizeErrorMessage(error.message, apiKey);
+			throw new FeltAPIError(safeMessage, String(error.status), {
 				status: error.status,
 				statusText: error.statusText,
 				body: sanitizedBody,
 				retryAfter: error.retryAfter,
-				cause: error,
 			});
 		}
 		if (error instanceof Error) {
-			throw new FeltAPIError(error.message, undefined, { cause: error });
+			const safeMessage = sanitizeErrorMessage(error.message, apiKey);
+			throw new FeltAPIError(safeMessage);
 		}
 		throw new FeltAPIError('Unknown error');
 	}

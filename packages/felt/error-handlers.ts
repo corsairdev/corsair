@@ -15,6 +15,7 @@ function getStatus(error: Error): number | undefined {
 const WRITE_ACTIONS = new Set([
 	'create',
 	'update',
+	'updateBulk',
 	'delete',
 	'duplicate',
 	'move',
