@@ -4,7 +4,7 @@ recommendedAuth: api_key
 overviewNote: |-
   Encodian Flowr API requests require an account subscription API key in the X-ApiKey header. The official API key guide says keys are issued when an organization starts a subscription or trial.
 
-  File contents are passed as base64 strings in the documented JSON body fields. POST actions are not automatically retried because provider documentation does not establish idempotency or retry behavior. A 202 response may represent queued work; the Swagger marks operation-status helpers as internal, so these are not exposed as Corsair operations.
+  File contents are passed as base64 strings in the documented JSON body fields. POST actions are not automatically retried because provider documentation does not establish idempotency or retry behavior. When Encodian returns HTTP 202, the client polls its same-origin Location URL with GET until HTTP 200 returns the processed result; polling is bounded and does not replay the POST.
 apiExamples:
   'barcodes.createBarcode':
     call: '{"body":{"codeTextEncoding":"Default","dotCodemask":0}}'
@@ -39,7 +39,7 @@ apiExamples:
   'conversion.htmlToImage':
     call: '{"body":{}}'
   'conversion.htmlToPdf':
-    call: '{"body":{"encoding":"UTF8","FileName":"x","outputFilename":"x"}}'
+    call: '{"body":{"encoding":"UTF8","FileName":"x","htmlData":"<html><body>Example</body></html>","outputFilename":"x"}}'
   'conversion.htmlToPDFV2':
     call: '{"body":{}}'
   'conversion.htmlToWord':
@@ -65,7 +65,7 @@ apiExamples:
   'conversion.convertPowerPoint':
     call: '{"body":{"fileContent":"AA==","fileName":"x","outputFilename":"x","outputFormat":"PDF"}}'
   'conversion.textToPdf':
-    call: '{"body":{"FileName":"x","outputFilename":"x"}}'
+    call: '{"body":{"FileName":"x","outputFilename":"x","textData":"Example text"}}'
   'conversion.convertVisio':
     call: '{"body":{"fileContent":"AA==","fileName":"x","outputFormat":"PDF"}}'
   'conversion.convertWord':
@@ -419,7 +419,7 @@ apiExamples:
   'utilities.rsaDecryption':
     call: '{"body":{"data":"x","key":"x","keyType":"PUBLIC","mode":"RSA","rsaInputDataType":"BASE64"}}'
   'utilities.createRsaKeyPair':
-    call: '{"body":{"addHeaderAndFooter":false,"keySize":"Size512","privateKeyFormat":"PKCS1"}}'
+    call: '{"body":{"addHeaderAndFooter":false,"keySize":"Size2048","privateKeyFormat":"PKCS1"}}'
   'utilities.regexSearchTextV2':
     call: '{"body":{"query":"x","text":"x"}}'
   'utilities.splitText':

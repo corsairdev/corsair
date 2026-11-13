@@ -8,7 +8,7 @@ Use **Encodian** through Corsair: one client, typed API calls.
 
 Encodian Flowr API requests require an account subscription API key in the X-ApiKey header. The official API key guide says keys are issued when an organization starts a subscription or trial.
 
-File contents are passed as base64 strings in the documented JSON body fields. POST actions are not automatically retried because provider documentation does not establish idempotency or retry behavior. A 202 response may represent queued work; the Swagger marks operation-status helpers as internal, so these are not exposed as Corsair operations.
+File contents are passed as base64 strings in the documented JSON body fields. POST actions are not automatically retried because provider documentation does not establish idempotency or retry behavior. When Encodian returns HTTP 202, the client polls its same-origin Location URL with GET until HTTP 200 returns the processed result; polling is bounded and does not replay the POST.
 
 **What you get:**
 
@@ -109,13 +109,8 @@ await tenant.encodian.api.general.getSubscriptionStatus({});
 **`barcodes.aiBarcodeRead`**
 
 ```ts
-import { readFile } from 'node:fs/promises';
-
 const tenant = corsair.withTenant('acme');
-const fileContent = await readFile('./barcode.pdf', 'base64');
-await tenant.encodian.api.barcodes.aiBarcodeRead({
-  body: { FileContent: fileContent },
-});
+await tenant.encodian.api.barcodes.aiBarcodeRead({});
 ```
 
 

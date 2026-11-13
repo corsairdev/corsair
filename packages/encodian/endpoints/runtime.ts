@@ -20,7 +20,7 @@ type ParsedOperationInput = {
 function isParsedOperationInput(value: unknown): value is ParsedOperationInput {
 	if (typeof value !== 'object' || value === null || Array.isArray(value))
 		return false;
-	if ('query' in value) {
+	if ('query' in value && value.query !== undefined) {
 		if (
 			typeof value.query !== 'object' ||
 			value.query === null ||

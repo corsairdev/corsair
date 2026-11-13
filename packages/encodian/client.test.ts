@@ -14,6 +14,7 @@ const originalFetch = global.fetch;
 
 afterEach(() => {
 	global.fetch = originalFetch;
+	jest.restoreAllMocks();
 });
 
 describe('Encodian HTTP client', () => {
@@ -38,6 +39,117 @@ describe('Encodian HTTP client', () => {
 		expect(new URL(observedUrl).origin).toBe('https://api.apps-encodian.com');
 		expect(observedHeaders.get('X-ApiKey')).toBe(API_KEY);
 		expect(observedHeaders.get('Authorization')).toBeNull();
+	});
+
+	it('polls a queued request by its Location using authenticated GET only', async () => {
+		const observedMethods: string[] = [];
+		const observedUrls: string[] = [];
+		const observedKeys: Array<string | null> = [];
+		global.fetch = async (input, init) => {
+			observedMethods.push(init?.method ?? '');
+			observedUrls.push(String(input));
+			observedKeys.push(new Headers(init?.headers).get('X-ApiKey'));
+			if (observedMethods.length === 1) {
+				return new Response(null, {
+					status: 202,
+					headers: {
+						Location: '/api/v1/Conversion/GetOperationStatus?operationId=job-1',
+					},
+				});
+			}
+			return new Response('{"Filename":"result.pdf"}', {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			});
+		};
+
+		const result = await makeEncodianRequest(
+			EncodianOperationRoutes['barcodes.createBarcode'],
+			API_KEY,
+			{ body: { value: 'sample' } },
+		);
+
+		expect(result).toEqual({ Filename: 'result.pdf' });
+		expect(observedMethods).toEqual(['POST', 'GET']);
+		expect(observedUrls).toEqual([
+			'https://api.apps-encodian.com/api/v1/Barcodes/CreateBarcode',
+			'https://api.apps-encodian.com/api/v1/Conversion/GetOperationStatus?operationId=job-1',
+		]);
+		expect(observedKeys).toEqual([API_KEY, API_KEY]);
+	});
+
+	it('does not send the API key to a queued URL outside the Encodian origin', async () => {
+		let fetchCount = 0;
+		global.fetch = async () => {
+			fetchCount += 1;
+			return new Response(null, {
+				status: 202,
+				headers: { Location: 'https://example.invalid/job-1' },
+			});
+		};
+
+		await expect(
+			makeEncodianRequest(
+				EncodianOperationRoutes['barcodes.createBarcode'],
+				API_KEY,
+				{ body: { value: 'sample' } },
+			),
+		).rejects.toThrow('unsafe queued-operation URL');
+		expect(fetchCount).toBe(1);
+	});
+
+	it('stops polling after the configured attempt bound without replaying the POST', async () => {
+		const observedMethods: string[] = [];
+		global.fetch = async (_input, init) => {
+			observedMethods.push(init?.method ?? '');
+			return new Response(null, {
+				status: 202,
+				headers: {
+					Location: '/api/v1/Conversion/GetOperationStatus?operationId=job-1',
+					'Retry-After': '0',
+				},
+			});
+		};
+
+		await expect(
+			makeEncodianRequest(
+				EncodianOperationRoutes['barcodes.createBarcode'],
+				API_KEY,
+				{ body: { value: 'sample' } },
+			),
+		).rejects.toThrow('polling limit');
+		expect(observedMethods).toHaveLength(31);
+		expect(observedMethods[0]).toBe('POST');
+		expect(observedMethods.slice(1).every((method) => method === 'GET')).toBe(
+			true,
+		);
+	});
+
+	it('stops polling at the overall deadline', async () => {
+		let now = 0;
+		const nowSpy = jest.spyOn(Date, 'now').mockImplementation(() => now);
+		let fetchCount = 0;
+		global.fetch = async () => {
+			fetchCount += 1;
+			if (fetchCount > 1) now = 120_000;
+			return new Response(null, {
+				status: 202,
+				headers: {
+					Location: '/api/v1/Conversion/GetOperationStatus?operationId=job-1',
+					'Retry-After': '0',
+				},
+			});
+		};
+
+		await expect(
+			makeEncodianRequest(
+				EncodianOperationRoutes['barcodes.createBarcode'],
+				API_KEY,
+				{ body: { value: 'sample' } },
+			),
+		).rejects.toThrow('timed out');
+		expect(fetchCount).toBe(2);
+		nowSpy.mockRestore();
 	});
 
 	it('fails with AuthMissingError before calling the API when the key is absent', async () => {

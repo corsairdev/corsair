@@ -1783,7 +1783,7 @@ Convert - HTML to PDF
 **Risk:** `write`
 
 ```ts
-await corsair.encodian.api.conversion.htmlToPdf({"body":{"encoding":"UTF8","FileName":"x","outputFilename":"x"}});
+await corsair.encodian.api.conversion.htmlToPdf({"body":{"encoding":"UTF8","FileName":"x","htmlData":"<html><body>Example</body></html>","outputFilename":"x"}});
 ```
 
 **Input**
@@ -1985,7 +1985,7 @@ Convert - Text to PDF
 **Risk:** `write`
 
 ```ts
-await corsair.encodian.api.conversion.textToPdf({"body":{"FileName":"x","outputFilename":"x"}});
+await corsair.encodian.api.conversion.textToPdf({"body":{"FileName":"x","outputFilename":"x","textData":"Example text"}});
 ```
 
 **Input**
@@ -11125,7 +11125,7 @@ Utility - RSA Create Key Pair
 **Risk:** `write`
 
 ```ts
-await corsair.encodian.api.utilities.createRsaKeyPair({"body":{"addHeaderAndFooter":false,"keySize":"Size512","privateKeyFormat":"PKCS1"}});
+await corsair.encodian.api.utilities.createRsaKeyPair({"body":{"addHeaderAndFooter":false,"keySize":"Size2048","privateKeyFormat":"PKCS1"}});
 ```
 
 **Input**
@@ -14501,3 +14501,4 @@ await corsair.encodian.api.word.wordUnlock({"body":{"fileContent":"AA==","fileNa
 
 
 ---
+

@@ -122,6 +122,24 @@ describe('Encodian operation requests', () => {
 		).toBe(false);
 	});
 
+	it('accepts an explicitly undefined optional query on barcode creation', async () => {
+		let fetchCount = 0;
+		global.fetch = async () => {
+			fetchCount += 1;
+			return new Response('{}', {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			});
+		};
+
+		await callEncodianOperation('barcodes.createBarcode', API_KEY, {
+			body: { codeTextEncoding: 'Default', dotCodemask: 0 },
+			query: undefined,
+		});
+
+		expect(fetchCount).toBe(1);
+	});
+
 	it('keeps event payloads to a route identifier rather than request data', () => {
 		expect(encodianLogPayload('barcodes.readBarcodeFromImage')).toEqual({
 			operationId: 'barcodes.readBarcodeFromImage',
