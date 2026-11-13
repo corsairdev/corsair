@@ -24,7 +24,7 @@ await corsair.conversiontools.api.account.getConfig({});
 
 **Input:** _empty object_
 
-These snippets use a single-tenant client. With `multiTenancy: true`, bind a tenant first (`const tenant = corsair.withTenant('acme')`) and replace `corsair` with `tenant` in the API calls. The generated expanded output type renders this enum as `type?: string | boolean | enum | number`; that display is not valid TypeScript. The valid TypeScript declaration is `type?: 'string' | 'boolean' | 'enum' | 'number'`.
+These snippets use a single-tenant client. With `multiTenancy: true`, bind a tenant first (`const tenant = corsair.withTenant('acme')`) and replace `corsair` with `tenant` in the API calls. The converters sit under `data.conversions` in the live response. An option's `type` is `'string'`, `'boolean'`, `'enum'` or `'number'` today, and the schema also accepts a type the catalog adds later.
 
 
 **Output**
@@ -32,27 +32,29 @@ These snippets use a single-tenant client. With `multiTenancy: true`, bind a ten
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `error` | `string \| null` | Yes | — |
-| `conversions` | `object[]` | No | — |
+| `data` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="conversions full type">
+<Accordion title="data full type">
 
 ```ts
 {
-  type: string,
-  title?: string,
-  options?: {
-    key: string,
+  conversions?: {
+    type: string,
     title?: string,
-    type?: string | boolean | enum | number,
-    values?: {
-      value: string,
-      label?: string
-    }[],
-    default?: JsonValue,
-    placeholder?: string
+    options?: {
+      key: string,
+      title?: string,
+      type?: string | boolean | enum | number | string,
+      values?: {
+        value: string,
+        label?: string
+      }[],
+      default?: JsonValue,
+      placeholder?: string
+    }[]
   }[]
-}[]
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -132,7 +134,7 @@ await corsair.conversiontools.api.conversions.get({ type: 'convert.xml_to_json' 
 |------|------|----------|-------------|
 | `type` | `string` | Yes | — |
 
-In this expanded conversion type, the generated enum display `type?: string | boolean | enum | number` is not valid TypeScript. The valid TypeScript declaration is `type?: 'string' | 'boolean' | 'enum' | 'number'`.
+An option's `type` is `'string'`, `'boolean'`, `'enum'` or `'number'` today, and the schema also accepts a type the catalog adds later.
 
 
 
@@ -158,7 +160,7 @@ In this expanded conversion type, the generated enum display `type?: string | bo
   options?: {
     key: string,
     title?: string,
-    type?: string | boolean | enum | number,
+    type?: string | boolean | enum | number | string,
     values?: {
       value: string,
       label?: string
@@ -199,7 +201,7 @@ await corsair.conversiontools.api.conversions.list({ input: 'xml', output: 'json
 | `output` | `string` | No | — |
 | `ai` | `boolean` | No | — |
 
-In this expanded conversion type, the generated enum display `type?: string | boolean | enum | number` is not valid TypeScript. The valid TypeScript declaration is `type?: 'string' | 'boolean' | 'enum' | 'number'`.
+An option's `type` is `'string'`, `'boolean'`, `'enum'` or `'number'` today, and the schema also accepts a type the catalog adds later.
 
 
 
@@ -226,7 +228,7 @@ In this expanded conversion type, the generated enum display `type?: string | bo
   options?: {
     key: string,
     title?: string,
-    type?: string | boolean | enum | number,
+    type?: string | boolean | enum | number | string,
     values?: {
       value: string,
       label?: string
@@ -408,10 +410,11 @@ await corsair.conversiontools.api.files.getInfo({ file_id: '0123456789abcdef0123
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `preview` | `boolean` | Yes | — |
+| `preview` | `boolean` | No | — |
 | `size` | `number` | Yes | — |
 | `name` | `string` | No | — |
-| `previewData` | `string[]` | No | — |
+| `previewData` | `string \| string[] \| null` | No | — |
+| `detectedFormat` | `string \| null` | No | — |
 
 
 
@@ -545,7 +548,7 @@ await corsair.conversiontools.api.tasks.get({ task_id: 'fedcba9876543210fedcba98
 |------|------|----------|-------------|
 | `error` | `string \| null` | Yes | — |
 | `type` | `string` | No | — |
-| `status` | `PENDING \| RUNNING \| SUCCESS \| ERROR` | Yes | — |
+| `status` | `PENDING \| RUNNING \| SUCCESS \| ERROR \| string` | Yes | — |
 | `file_id` | `string \| null` | Yes | 32-character lowercase hexadecimal file ID |
 | `conversionProgress` | `number` | No | — |
 | `conversionResult` | `object` | No | — |
@@ -569,12 +572,12 @@ await corsair.conversiontools.api.tasks.get({ task_id: 'fedcba9876543210fedcba98
 
 `tasks.list`
 
-List up to 50 recent tasks, optionally filtered by status. https://api.conversiontools.io/openapi.yaml
+List recent tasks, optionally filtered by status, with page and limit (up to 100 a page). https://api.conversiontools.io/openapi.yaml
 
 **Risk:** `read`
 
 ```ts
-await corsair.conversiontools.api.tasks.list({ status: 'RUNNING' });
+await corsair.conversiontools.api.tasks.list({ status: 'RUNNING', limit: 20, page: 1 });
 ```
 
 **Input**
@@ -582,6 +585,8 @@ await corsair.conversiontools.api.tasks.list({ status: 'RUNNING' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `PENDING \| RUNNING \| SUCCESS \| ERROR` | No | — |
+| `page` | `number` | No | Page number, from 1 |
+| `limit` | `number` | No | Tasks per page, 1 to 100 (default 50) |
 
 
 
@@ -591,6 +596,7 @@ await corsair.conversiontools.api.tasks.list({ status: 'RUNNING' });
 |------|------|----------|-------------|
 | `error` | `string \| null` | Yes | — |
 | `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -599,7 +605,7 @@ await corsair.conversiontools.api.tasks.list({ status: 'RUNNING' });
 {
   id?: string,
   type?: string,
-  status?: PENDING | RUNNING | SUCCESS | ERROR,
+  status?: PENDING | RUNNING | SUCCESS | ERROR | string,
   error?: string | null,
   url?: string | null,
   dateCreated?: string,
@@ -617,11 +623,23 @@ await corsair.conversiontools.api.tasks.list({ status: 'RUNNING' });
     size?: number,
     exists?: boolean
   } | null,
-  retentionMode?: standard_24h | ttl_15m,
-  cleanupStatus?: none | scheduled | running | completed | failed,
+  retentionMode?: standard_24h | ttl_15m | string,
+  cleanupStatus?: none | scheduled | running | completed | failed | string,
   dateDeleted?: string | null,
   dateExpires?: string | null
 }[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  limit: number,
+  total: number,
+  totalPages: number
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -688,7 +706,7 @@ await corsair.conversiontools.api.tasks.updateRetention({ task_id: 'fedcba987654
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `error` | `string \| null` | No | — |
-| `retentionMode` | `standard_24h \| ttl_15m` | Yes | — |
+| `retentionMode` | `standard_24h \| ttl_15m \| string` | Yes | — |
 | `dateExpires` | `string` | Yes | — |
 
 
