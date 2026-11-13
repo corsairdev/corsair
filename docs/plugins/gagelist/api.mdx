@@ -68,7 +68,7 @@ await corsair.gagelist.api.account.status({});
 
 `calibrations.certificate`
 
-Render a calibration certificate for a record, returned as the document GageList produces
+Render a calibration certificate PDF for a record, returned base64-encoded with its content type
 
 **Risk:** `read`
 
@@ -82,7 +82,7 @@ await corsair.gagelist.api.calibrations.certificate({ id: 500 });
 |------|------|----------|-------------|
 | `id` | `number` | Yes | The GageList record ID. |
 
-Returns the rendered document as a string rather than JSON.
+Returns the PDF base64-encoded in `certificate`, with `encoding`, `contentType` and `byteLength`.
 
 
 
@@ -90,7 +90,10 @@ Returns the rendered document as a string rather than JSON.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `certificate` | `string` | Yes | — |
+| `certificate` | `string` | Yes | The certificate: base64 bytes when `encoding` is `base64`, otherwise the text GageList sent. |
+| `encoding` | `base64 \| text` | Yes | — |
+| `contentType` | `string` | Yes | The Content-Type GageList sent, usually `application/pdf`. |
+| `byteLength` | `number` | No | Size of the decoded file. |
 
 
 
@@ -113,31 +116,78 @@ await corsair.gagelist.api.calibrations.create({ EquipmentRefId: 12, EquipmentAs
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Id` | `number` | No | — |
-| `RecordNumber` | `string` | No | — |
-| `EquipmentRefId` | `number` | No | The gage this calibration records. |
-| `EquipmentAsFound` | `string` | No | — |
-| `EquipmentAsLeft` | `string` | No | — |
-| `LastCalibrationDate` | `string` | No | — |
-| `CalibrationDueDate` | `string` | No | — |
-| `MasterStandard` | `string` | No | — |
-| `Type` | `string` | No | — |
-| `Manufacturer` | `string` | No | — |
-| `Website` | `string` | No | — |
-| `Model` | `string` | No | — |
-| `SerialNumber` | `string` | No | — |
-| `TypesMeasurement` | `string` | No | — |
-| `UnitOfMeasure` | `string` | No | — |
-| `RangeOrSize` | `string` | No | — |
-| `Tolerance` | `string` | No | — |
-| `Location` | `string` | No | — |
-| `ResponsibleUser` | `string` | No | — |
-| `Interval` | `string` | No | — |
-| `Years` | `number` | No | — |
-| `Months` | `number` | No | — |
-| `Days` | `number` | No | — |
-| `Uncertainty` | `string` | No | — |
-| `CalibrationTest` | `string` | No | — |
-| `OtherInformation` | `string` | No | — |
+| `RecordNumber` | `string \| null` | No | — |
+| `EquipmentRefId` | `number \| null` | No | The gage this calibration records. |
+| `EquipmentAsFound` | `string \| null` | No | — |
+| `EquipmentAsLeft` | `string \| null` | No | — |
+| `LastCalibrationDate` | `string \| null` | No | — |
+| `CalibrationDueDate` | `string \| null` | No | — |
+| `MasterStandard` | `string \| null` | No | — |
+| `Type` | `string \| null` | No | — |
+| `Manufacturer` | `string \| null` | No | — |
+| `Website` | `string \| null` | No | — |
+| `Model` | `string \| null` | No | — |
+| `SerialNumber` | `string \| null` | No | — |
+| `TypesMeasurement` | `string \| null` | No | — |
+| `UnitOfMeasure` | `string \| null` | No | — |
+| `RangeOrSize` | `string \| null` | No | — |
+| `Tolerance` | `string \| null` | No | — |
+| `Location` | `string \| null` | No | — |
+| `ResponsibleUser` | `string \| null` | No | — |
+| `Interval` | `string \| null` | No | — |
+| `Years` | `number \| null` | No | — |
+| `Months` | `number \| null` | No | — |
+| `Days` | `number \| null` | No | — |
+| `Uncertainty` | `string \| null` | No | — |
+| `CalibrationTest` | `string \| null` | No | — |
+| `OtherInformation` | `string \| null` | No | — |
+| `ControlNumber` | `string \| null` | No | — |
+| `AssetNo` | `string \| null` | No | — |
+| `CalibrationInstructions` | `string \| null` | No | — |
+| `CalibrationEnvironment` | `string \| null` | No | — |
+| `CalibrationTestMode` | `string \| null` | No | — |
+| `ConditionReceived` | `string \| null` | No | — |
+| `AdjustmentsRequired` | `string \| null` | No | — |
+| `RepairsRequired` | `string \| null` | No | — |
+| `ExernalCalibrationRecord` | `string \| null` | No | — |
+| `TestEquipmentFalls` | `string \| null` | No | — |
+| `TestEquipmentFallsAsFound` | `string \| null` | No | — |
+| `AppropriateNotified` | `string \| null` | No | — |
+| `ToleranceCondition` | `string \| null` | No | — |
+| `ProductRecalled` | `string \| null` | No | — |
+| `ToleranceComment` | `string \| null` | No | — |
+| `AdditionalComments` | `string \| null` | No | — |
+| `DateCalibrated` | `string \| null` | No | ISO 8601. |
+| `NextCalibrationDue` | `string \| null` | No | ISO 8601. |
+| `CalibrationDate` | `string \| null` | No | ISO 8601. |
+| `TestEquipmentAvailability` | `string \| null` | No | — |
+| `TestTime` | `string \| null` | No | — |
+| `TestCost` | `string \| null` | No | — |
+| `CalibrationTechinician` | `string \| null` | No | — |
+| `DescribedRepairs` | `string \| null` | No | — |
+| `ActionRequired` | `string \| null` | No | — |
+| `FitIntendedPurpose` | `string \| null` | No | — |
+| `CalibrationTests` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="CalibrationTests full type">
+
+```ts
+{
+  Id: number,
+  CalibrationRefId?: number | null,
+  TestNumber?: string | null,
+  Parameter?: string | null,
+  ExpectedResult?: string | null,
+  RefStandardID?: string | null,
+  AsFound?: string | null,
+  AsLeft?: string | null,
+  ChkAsLeft?: string | null,
+  PassFail?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -177,7 +227,7 @@ await corsair.gagelist.api.calibrations.delete({ id: 500 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `boolean \| null` | No | — |
+| `data` | `number \| boolean \| null` | No | — |
 | `success` | `boolean \| null` | No | — |
 | `message` | `string \| null` | No | — |
 
@@ -346,7 +396,7 @@ Update a calibration record
 **Risk:** `write`
 
 ```ts
-await corsair.gagelist.api.calibrations.update({ Id: 500, Uncertainty: '0.003' });
+await corsair.gagelist.api.calibrations.update({ ...(await corsair.gagelist.api.calibrations.get({ id: 500 })).data, Uncertainty: '0.003' });
 ```
 
 **Input**
@@ -354,31 +404,80 @@ await corsair.gagelist.api.calibrations.update({ Id: 500, Uncertainty: '0.003' }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Id` | `nonoptional` | Yes | — |
-| `RecordNumber` | `string` | No | — |
-| `EquipmentRefId` | `number` | No | The gage this calibration records. |
-| `EquipmentAsFound` | `string` | No | — |
-| `EquipmentAsLeft` | `string` | No | — |
-| `LastCalibrationDate` | `string` | No | — |
-| `CalibrationDueDate` | `string` | No | — |
-| `MasterStandard` | `string` | No | — |
-| `Type` | `string` | No | — |
-| `Manufacturer` | `string` | No | — |
-| `Website` | `string` | No | — |
-| `Model` | `string` | No | — |
-| `SerialNumber` | `string` | No | — |
-| `TypesMeasurement` | `string` | No | — |
-| `UnitOfMeasure` | `string` | No | — |
-| `RangeOrSize` | `string` | No | — |
-| `Tolerance` | `string` | No | — |
-| `Location` | `string` | No | — |
-| `ResponsibleUser` | `string` | No | — |
-| `Interval` | `string` | No | — |
-| `Years` | `number` | No | — |
-| `Months` | `number` | No | — |
-| `Days` | `number` | No | — |
-| `Uncertainty` | `string` | No | — |
-| `CalibrationTest` | `string` | No | — |
-| `OtherInformation` | `string` | No | — |
+| `RecordNumber` | `string \| null` | No | — |
+| `EquipmentRefId` | `number \| null` | No | The gage this calibration records. |
+| `EquipmentAsFound` | `string \| null` | No | — |
+| `EquipmentAsLeft` | `string \| null` | No | — |
+| `LastCalibrationDate` | `string \| null` | No | — |
+| `CalibrationDueDate` | `string \| null` | No | — |
+| `MasterStandard` | `string \| null` | No | — |
+| `Type` | `string \| null` | No | — |
+| `Manufacturer` | `string \| null` | No | — |
+| `Website` | `string \| null` | No | — |
+| `Model` | `string \| null` | No | — |
+| `SerialNumber` | `string \| null` | No | — |
+| `TypesMeasurement` | `string \| null` | No | — |
+| `UnitOfMeasure` | `string \| null` | No | — |
+| `RangeOrSize` | `string \| null` | No | — |
+| `Tolerance` | `string \| null` | No | — |
+| `Location` | `string \| null` | No | — |
+| `ResponsibleUser` | `string \| null` | No | — |
+| `Interval` | `string \| null` | No | — |
+| `Years` | `number \| null` | No | — |
+| `Months` | `number \| null` | No | — |
+| `Days` | `number \| null` | No | — |
+| `Uncertainty` | `string \| null` | No | — |
+| `CalibrationTest` | `string \| null` | No | — |
+| `OtherInformation` | `string \| null` | No | — |
+| `ControlNumber` | `string \| null` | No | — |
+| `AssetNo` | `string \| null` | No | — |
+| `CalibrationInstructions` | `string \| null` | No | — |
+| `CalibrationEnvironment` | `string \| null` | No | — |
+| `CalibrationTestMode` | `string \| null` | No | — |
+| `ConditionReceived` | `string \| null` | No | — |
+| `AdjustmentsRequired` | `string \| null` | No | — |
+| `RepairsRequired` | `string \| null` | No | — |
+| `ExernalCalibrationRecord` | `string \| null` | No | — |
+| `TestEquipmentFalls` | `string \| null` | No | — |
+| `TestEquipmentFallsAsFound` | `string \| null` | No | — |
+| `AppropriateNotified` | `string \| null` | No | — |
+| `ToleranceCondition` | `string \| null` | No | — |
+| `ProductRecalled` | `string \| null` | No | — |
+| `ToleranceComment` | `string \| null` | No | — |
+| `AdditionalComments` | `string \| null` | No | — |
+| `DateCalibrated` | `string \| null` | No | ISO 8601. |
+| `NextCalibrationDue` | `string \| null` | No | ISO 8601. |
+| `CalibrationDate` | `string \| null` | No | ISO 8601. |
+| `TestEquipmentAvailability` | `string \| null` | No | — |
+| `TestTime` | `string \| null` | No | — |
+| `TestCost` | `string \| null` | No | — |
+| `CalibrationTechinician` | `string \| null` | No | — |
+| `DescribedRepairs` | `string \| null` | No | — |
+| `ActionRequired` | `string \| null` | No | — |
+| `FitIntendedPurpose` | `string \| null` | No | — |
+| `CalibrationTests` | `object[] \| null` | No | — |
+
+The body is the whole record with its `Id`, not a partial patch: read it with `calibrations.get` and send it back with your change.
+
+<AccordionGroup>
+<Accordion title="CalibrationTests full type">
+
+```ts
+{
+  Id: number,
+  CalibrationRefId?: number | null,
+  TestNumber?: string | null,
+  Parameter?: string | null,
+  ExpectedResult?: string | null,
+  RefStandardID?: string | null,
+  AsFound?: string | null,
+  AsLeft?: string | null,
+  ChkAsLeft?: string | null,
+  PassFail?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -386,7 +485,7 @@ await corsair.gagelist.api.calibrations.update({ Id: 500, Uncertainty: '0.003' }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `boolean \| null` | No | — |
+| `data` | `number \| boolean \| null` | No | — |
 | `success` | `boolean \| null` | No | — |
 | `message` | `string \| null` | No | — |
 
@@ -400,7 +499,7 @@ await corsair.gagelist.api.calibrations.update({ Id: 500, Uncertainty: '0.003' }
 
 `customFields.list`
 
-The account’s custom fields, with the `Id` and `RefType` a value needs
+The account’s custom fields: each `Id` is the `FieldId` a value write takes, and `ForType` says whether it belongs on gages or calibrations
 
 **Risk:** `read`
 
@@ -415,6 +514,8 @@ await corsair.gagelist.api.customFields.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `total` | `number \| null` | No | — |
+| `count` | `number \| null` | No | — |
 | `data` | `object[]` | Yes | — |
 | `success` | `boolean \| null` | No | — |
 | `message` | `string \| null` | No | — |
@@ -425,10 +526,15 @@ await corsair.gagelist.api.customFields.list({});
 ```ts
 {
   Id?: number | null,
-  Name?: string | null,
   FieldName?: string | null,
   FieldType?: string | null,
-  RefType?: number | null
+  FieldOptions?: string | null,
+  Status?: string | null,
+  ForType?: string | null,
+  GageRequired?: number | null,
+  CalibrationRequired?: number | null,
+  DisplayOrder?: number | null,
+  UpdatedDate?: string | null
 }[]
 ```
 </Accordion>
@@ -506,40 +612,57 @@ await corsair.gagelist.api.gages.create({ SerialNumber: 'SN-1001', Type: 'Calipe
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Id` | `number` | No | `0` on a create. |
-| `SerialNumber` | `string` | No | — |
-| `ControlNumber` | `string` | No | — |
-| `AssetNo` | `string` | No | — |
-| `PurchasePrice` | `number` | No | — |
-| `Status` | `string` | No | — |
-| `LastCalibrationDate` | `string` | No | ISO 8601. |
-| `CalibrationDueDate` | `string` | No | ISO 8601. |
-| `MasterStandard` | `string` | No | — |
-| `Type` | `string` | No | — |
-| `Manufacturer` | `string` | No | — |
-| `Website` | `string` | No | — |
-| `Model` | `string` | No | — |
-| `TypesMeasurement` | `string` | No | — |
-| `UnitOfMeasure` | `string` | No | — |
-| `RangeOrSize` | `string` | No | — |
-| `Tolerance` | `string` | No | — |
-| `DateAquired` | `string` | No | ISO 8601. |
-| `SourceOrVendor` | `string` | No | — |
-| `ConditionAquired` | `string` | No | — |
-| `Location` | `string` | No | — |
-| `ResponsibleUser` | `string` | No | — |
-| `NotificationList` | `string` | No | — |
-| `Interval` | `string` | No | — |
-| `Years` | `number` | No | — |
-| `Months` | `number` | No | — |
-| `Days` | `number` | No | — |
-| `CalibrationEnvironment` | `string` | No | — |
-| `CalibrationInstructions` | `string` | No | — |
-| `OtherInformation` | `string` | No | — |
-| `CalibrationTestMode` | `string` | No | — |
-| `Area` | `string` | No | — |
-| `NISTNumber` | `string` | No | — |
+| `SerialNumber` | `string \| null` | No | — |
+| `ControlNumber` | `string \| null` | No | — |
+| `AssetNo` | `string \| null` | No | — |
+| `PurchasePrice` | `number \| null` | No | — |
+| `Status` | `string \| null` | No | — |
+| `LastCalibrationDate` | `string \| null` | No | ISO 8601. |
+| `CalibrationDueDate` | `string \| null` | No | ISO 8601. |
+| `MasterStandard` | `string \| null` | No | — |
+| `Type` | `string \| null` | No | — |
+| `Manufacturer` | `string \| null` | No | — |
+| `Website` | `string \| null` | No | — |
+| `Model` | `string \| null` | No | — |
+| `TypesMeasurement` | `string \| null` | No | — |
+| `UnitOfMeasure` | `string \| null` | No | — |
+| `RangeOrSize` | `string \| null` | No | — |
+| `Tolerance` | `string \| null` | No | — |
+| `DateAquired` | `string \| null` | No | ISO 8601. |
+| `SourceOrVendor` | `string \| null` | No | — |
+| `ConditionAquired` | `string \| null` | No | — |
+| `Location` | `string \| null` | No | — |
+| `ResponsibleUser` | `string \| null` | No | — |
+| `NotificationList` | `string \| null` | No | — |
+| `Interval` | `string \| null` | No | — |
+| `Years` | `number \| null` | No | — |
+| `Months` | `number \| null` | No | — |
+| `Days` | `number \| null` | No | — |
+| `CalibrationEnvironment` | `string \| null` | No | — |
+| `CalibrationInstructions` | `string \| null` | No | — |
+| `OtherInformation` | `string \| null` | No | — |
+| `CalibrationTestMode` | `string \| null` | No | — |
+| `Area` | `string \| null` | No | — |
+| `NISTNumber` | `string \| null` | No | — |
+| `TestTemplates` | `object[] \| null` | No | — |
 
 Field names are PascalCase and bind case-sensitively. GageList spells the acquisition date `DateAquired`.
+
+<AccordionGroup>
+<Accordion title="TestTemplates full type">
+
+```ts
+{
+  Id: number,
+  EquipmentRefId?: number | null,
+  TestNumber?: string | null,
+  Parameter?: string | null,
+  ExpectedResult?: string | null,
+  RefStandardID?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -579,7 +702,7 @@ await corsair.gagelist.api.gages.delete({ id: 12 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `boolean \| null` | No | — |
+| `data` | `number \| boolean \| null` | No | — |
 | `success` | `boolean \| null` | No | — |
 | `message` | `string \| null` | No | — |
 
@@ -770,7 +893,7 @@ Update a gage. The body is the whole record with its `Id`, not a partial patch
 **Risk:** `write`
 
 ```ts
-await corsair.gagelist.api.gages.update({ Id: 12, Location: 'Bench 4' });
+await corsair.gagelist.api.gages.update({ ...(await corsair.gagelist.api.gages.get({ id: 12 })).data, Location: 'Bench 4' });
 ```
 
 **Input**
@@ -778,40 +901,57 @@ await corsair.gagelist.api.gages.update({ Id: 12, Location: 'Bench 4' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `Id` | `nonoptional` | Yes | — |
-| `SerialNumber` | `string` | No | — |
-| `ControlNumber` | `string` | No | — |
-| `AssetNo` | `string` | No | — |
-| `PurchasePrice` | `number` | No | — |
-| `Status` | `string` | No | — |
-| `LastCalibrationDate` | `string` | No | ISO 8601. |
-| `CalibrationDueDate` | `string` | No | ISO 8601. |
-| `MasterStandard` | `string` | No | — |
-| `Type` | `string` | No | — |
-| `Manufacturer` | `string` | No | — |
-| `Website` | `string` | No | — |
-| `Model` | `string` | No | — |
-| `TypesMeasurement` | `string` | No | — |
-| `UnitOfMeasure` | `string` | No | — |
-| `RangeOrSize` | `string` | No | — |
-| `Tolerance` | `string` | No | — |
-| `DateAquired` | `string` | No | ISO 8601. |
-| `SourceOrVendor` | `string` | No | — |
-| `ConditionAquired` | `string` | No | — |
-| `Location` | `string` | No | — |
-| `ResponsibleUser` | `string` | No | — |
-| `NotificationList` | `string` | No | — |
-| `Interval` | `string` | No | — |
-| `Years` | `number` | No | — |
-| `Months` | `number` | No | — |
-| `Days` | `number` | No | — |
-| `CalibrationEnvironment` | `string` | No | — |
-| `CalibrationInstructions` | `string` | No | — |
-| `OtherInformation` | `string` | No | — |
-| `CalibrationTestMode` | `string` | No | — |
-| `Area` | `string` | No | — |
-| `NISTNumber` | `string` | No | — |
+| `SerialNumber` | `string \| null` | No | — |
+| `ControlNumber` | `string \| null` | No | — |
+| `AssetNo` | `string \| null` | No | — |
+| `PurchasePrice` | `number \| null` | No | — |
+| `Status` | `string \| null` | No | — |
+| `LastCalibrationDate` | `string \| null` | No | ISO 8601. |
+| `CalibrationDueDate` | `string \| null` | No | ISO 8601. |
+| `MasterStandard` | `string \| null` | No | — |
+| `Type` | `string \| null` | No | — |
+| `Manufacturer` | `string \| null` | No | — |
+| `Website` | `string \| null` | No | — |
+| `Model` | `string \| null` | No | — |
+| `TypesMeasurement` | `string \| null` | No | — |
+| `UnitOfMeasure` | `string \| null` | No | — |
+| `RangeOrSize` | `string \| null` | No | — |
+| `Tolerance` | `string \| null` | No | — |
+| `DateAquired` | `string \| null` | No | ISO 8601. |
+| `SourceOrVendor` | `string \| null` | No | — |
+| `ConditionAquired` | `string \| null` | No | — |
+| `Location` | `string \| null` | No | — |
+| `ResponsibleUser` | `string \| null` | No | — |
+| `NotificationList` | `string \| null` | No | — |
+| `Interval` | `string \| null` | No | — |
+| `Years` | `number \| null` | No | — |
+| `Months` | `number \| null` | No | — |
+| `Days` | `number \| null` | No | — |
+| `CalibrationEnvironment` | `string \| null` | No | — |
+| `CalibrationInstructions` | `string \| null` | No | — |
+| `OtherInformation` | `string \| null` | No | — |
+| `CalibrationTestMode` | `string \| null` | No | — |
+| `Area` | `string \| null` | No | — |
+| `NISTNumber` | `string \| null` | No | — |
+| `TestTemplates` | `object[] \| null` | No | — |
 
-The body is the whole record with its `Id`, not a partial patch.
+The body is the whole record with its `Id`, not a partial patch: read it with `gages.get` and send it back with your change.
+
+<AccordionGroup>
+<Accordion title="TestTemplates full type">
+
+```ts
+{
+  Id: number,
+  EquipmentRefId?: number | null,
+  TestNumber?: string | null,
+  Parameter?: string | null,
+  ExpectedResult?: string | null,
+  RefStandardID?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -819,7 +959,7 @@ The body is the whole record with its `Id`, not a partial patch.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `boolean \| null` | No | — |
+| `data` | `number \| boolean \| null` | No | — |
 | `success` | `boolean \| null` | No | — |
 | `message` | `string \| null` | No | — |
 
@@ -890,7 +1030,7 @@ await corsair.gagelist.api.manufacturers.delete({ id: 7 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `boolean \| null` | No | — |
+| `data` | `number \| boolean \| null` | No | — |
 | `success` | `boolean \| null` | No | — |
 | `message` | `string \| null` | No | — |
 
@@ -979,7 +1119,7 @@ await corsair.gagelist.api.manufacturers.update({ Id: 7, Name: 'Mitutoyo Corp' }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `data` | `boolean \| null` | No | — |
+| `data` | `number \| boolean \| null` | No | — |
 | `success` | `boolean \| null` | No | — |
 | `message` | `string \| null` | No | — |
 
