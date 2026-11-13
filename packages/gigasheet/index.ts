@@ -303,8 +303,8 @@ export type ExternalGigasheetPlugin<T extends GigasheetPluginOptions> =
 	BaseGigasheetPlugin<T>;
 
 export function gigasheet<const T extends GigasheetPluginOptions>(
-	incomingOptions: GigasheetPluginOptions &
-		T = {} as GigasheetPluginOptions & T,
+	incomingOptions: GigasheetPluginOptions & T = {} as GigasheetPluginOptions &
+		T,
 ): ExternalGigasheetPlugin<T> {
 	const options = {
 		...incomingOptions,

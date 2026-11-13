@@ -5,7 +5,6 @@ import {
 import {
 	gigasheet,
 	gigasheetAuthConfig,
-	gigasheetEndpointSchemas,
 	PUBLIC_ENDPOINTS,
 } from './index';
 import { GigasheetSchema } from './schema';
@@ -113,7 +112,8 @@ describe('Gigasheet Schema & Types', () => {
 
 		it('validates user.getSpaceUsed schemas', () => {
 			expect(
-				GigasheetEndpointInputSchemas['user.getSpaceUsed'].safeParse({}).success,
+				GigasheetEndpointInputSchemas['user.getSpaceUsed'].safeParse({})
+					.success,
 			).toBe(true);
 			expect(
 				GigasheetEndpointOutputSchemas['user.getSpaceUsed'].safeParse({
@@ -129,7 +129,8 @@ describe('Gigasheet Schema & Types', () => {
 
 		it('validates user.getEnrichmentCredits schemas', () => {
 			expect(
-				GigasheetEndpointInputSchemas['user.getEnrichmentCredits'].safeParse({}).success,
+				GigasheetEndpointInputSchemas['user.getEnrichmentCredits'].safeParse({})
+					.success,
 			).toBe(true);
 			expect(
 				GigasheetEndpointOutputSchemas['user.getEnrichmentCredits'].safeParse({
@@ -157,7 +158,8 @@ describe('Gigasheet Schema & Types', () => {
 				folderHandle: 'folder_123',
 			};
 			expect(
-				GigasheetEndpointInputSchemas['upload.fromUrl'].safeParse(valid).success,
+				GigasheetEndpointInputSchemas['upload.fromUrl'].safeParse(valid)
+					.success,
 			).toBe(true);
 			expect(
 				GigasheetEndpointInputSchemas['upload.fromUrl'].safeParse({
@@ -183,10 +185,12 @@ describe('Gigasheet Schema & Types', () => {
 				contents: [1, 2, 3, 4],
 			};
 			expect(
-				GigasheetEndpointInputSchemas['upload.direct'].safeParse(validString).success,
+				GigasheetEndpointInputSchemas['upload.direct'].safeParse(validString)
+					.success,
 			).toBe(true);
 			expect(
-				GigasheetEndpointInputSchemas['upload.direct'].safeParse(validBytes).success,
+				GigasheetEndpointInputSchemas['upload.direct'].safeParse(validBytes)
+					.success,
 			).toBe(true);
 			expect(
 				GigasheetEndpointInputSchemas['upload.direct'].safeParse({
@@ -282,15 +286,19 @@ describe('Gigasheet Schema & Types', () => {
 				}).success,
 			).toBe(true);
 			expect(
-				GigasheetEndpointOutputSchemas['datasets.getOperationStatus'].safeParse({
-					Status: 'Done',
-					Message: 'All rows processed',
-				}).success,
+				GigasheetEndpointOutputSchemas['datasets.getOperationStatus'].safeParse(
+					{
+						Status: 'Done',
+						Message: 'All rows processed',
+					},
+				).success,
 			).toBe(true);
 			expect(
-				GigasheetEndpointOutputSchemas['datasets.getOperationStatus'].safeParse({
-					Status: 'InvalidStatus',
-				}).success,
+				GigasheetEndpointOutputSchemas['datasets.getOperationStatus'].safeParse(
+					{
+						Status: 'InvalidStatus',
+					},
+				).success,
 			).toBe(false);
 		});
 	});
@@ -399,7 +407,9 @@ describe('Gigasheet Schema & Types', () => {
 					filename: 'export.csv',
 					compressionType: 'zip',
 					useClientState: true,
-					clientState: { filterModel: { col1: { type: 'equals', filter: 'val' } } },
+					clientState: {
+						filterModel: { col1: { type: 'equals', filter: 'val' } },
+					},
 				}).success,
 			).toBe(true);
 			expect(
