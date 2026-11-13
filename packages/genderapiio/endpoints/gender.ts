@@ -8,15 +8,13 @@ import {
 } from './types';
 
 /**
- * An absent key is deliberate here: GenderAPI.io falls back to an IP-scoped
- * trial instead of refusing, and the response says which mode was used.
+ * The key comes from the key builder (`ctx.key`), so a key set by a before hook
+ * or the plugin option is the one sent. An empty key is deliberate here:
+ * GenderAPI.io falls back to an IP-scoped trial instead of refusing, and the
+ * response says which mode was used.
  */
-async function resolveCredentials(
-	ctx: GenderApiIoContext,
-): Promise<GenderApiIoCredentials> {
-	if (ctx.options.key) return { apiKey: ctx.options.key };
-	const stored = await ctx.keys.get_api_key();
-	return { apiKey: stored ?? undefined };
+function resolveCredentials(ctx: GenderApiIoContext): GenderApiIoCredentials {
+	return { apiKey: ctx.key || undefined };
 }
 
 /**
@@ -30,7 +28,7 @@ export const gender: GenderApiIoEndpoints['gender']['infer'] = async (
 ) => {
 	const parsed = GenderApiIoEndpointInputSchemas.gender.parse(input ?? {});
 
-	const raw = await makeGenderApiIoRequest(await resolveCredentials(ctx), {
+	const raw = await makeGenderApiIoRequest(resolveCredentials(ctx), {
 		method: 'POST',
 		path: '/api/v2/gender',
 		body: {
@@ -68,7 +66,7 @@ export const genderBatch: GenderApiIoEndpoints['gender']['batch'] = async (
 ) => {
 	const parsed = GenderApiIoEndpointInputSchemas.genderBatch.parse(input ?? {});
 
-	const raw = await makeGenderApiIoRequest(await resolveCredentials(ctx), {
+	const raw = await makeGenderApiIoRequest(resolveCredentials(ctx), {
 		method: 'POST',
 		path: '/api/v2/gender/batch',
 		body: {
@@ -103,7 +101,7 @@ export const phoneValidate: GenderApiIoEndpoints['phone']['validate'] = async (
 		input ?? {},
 	);
 
-	const raw = await makeGenderApiIoRequest(await resolveCredentials(ctx), {
+	const raw = await makeGenderApiIoRequest(resolveCredentials(ctx), {
 		method: 'POST',
 		path: '/api/v2/phone/validate',
 		body: { number: parsed.number, country: parsed.country },
@@ -136,7 +134,7 @@ export const usage: GenderApiIoEndpoints['account']['usage'] = async (
 ) => {
 	GenderApiIoEndpointInputSchemas.usage.parse(input ?? {});
 
-	const raw = await makeGenderApiIoRequest(await resolveCredentials(ctx), {
+	const raw = await makeGenderApiIoRequest(resolveCredentials(ctx), {
 		method: 'GET',
 		path: '/api/v2/usage',
 	});
@@ -161,7 +159,7 @@ export const capabilities: GenderApiIoEndpoints['account']['capabilities'] =
 	async (ctx, input) => {
 		GenderApiIoEndpointInputSchemas.capabilities.parse(input ?? {});
 
-		const raw = await makeGenderApiIoRequest(await resolveCredentials(ctx), {
+		const raw = await makeGenderApiIoRequest(resolveCredentials(ctx), {
 			method: 'GET',
 			path: '/api/v2',
 		});
@@ -186,7 +184,7 @@ export const errorCatalog: GenderApiIoEndpoints['account']['errorCatalog'] =
 	async (ctx, input) => {
 		GenderApiIoEndpointInputSchemas.errorCatalog.parse(input ?? {});
 
-		const raw = await makeGenderApiIoRequest(await resolveCredentials(ctx), {
+		const raw = await makeGenderApiIoRequest(resolveCredentials(ctx), {
 			method: 'GET',
 			path: '/api/v2/errors',
 		});

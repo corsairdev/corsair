@@ -129,6 +129,22 @@ describe('GenderAPI.io client', () => {
 		expect(lastRequest().headers.get('authorization')).toBeNull();
 	});
 
+	it('sends the key the key builder resolved, not a second lookup of the stored key', async () => {
+		respond(sophiaResponse);
+		const ctx = {
+			// What the key builder or a before hook put on the context.
+			key: 'hookkeyhookkeyhookkeyxx',
+			options: { key: 'optionkeyoptionkeyoption' },
+			keys: { get_api_key: jest.fn().mockResolvedValue('storedkeystoredkeystored') },
+		};
+		await gender(ctx as never, { type: 'name', value: 'Sophia' } as never);
+
+		expect(lastRequest().headers.get('authorization')).toBe(
+			'Bearer hookkeyhookkeyhookkeyxx',
+		);
+		expect(ctx.keys.get_api_key).not.toHaveBeenCalled();
+	});
+
 	it('reads the code, action and field errors from a problem document', async () => {
 		respond(validationProblem, 422);
 		const error = await failure(
