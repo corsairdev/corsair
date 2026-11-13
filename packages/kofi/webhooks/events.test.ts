@@ -27,12 +27,6 @@ function request(payload: unknown) {
 	return { payload, headers: {} } as never;
 }
 
-/** The error a refused delivery throws, since a returned failure is not one. */
-// unknown: a thrown value has no static type here; the assertion narrows it.
-async function rejection(run: Promise<unknown>): Promise<unknown> {
-	return run.catch((caught: unknown) => caught);
-}
-
 beforeEach(() => {
 	mockLog.mockClear();
 });
@@ -110,55 +104,72 @@ describe('payment handlers', () => {
 		expect(logged).not.toContain('123 Example St');
 	});
 
-	it('throws on a wrong token rather than returning a failure', async () => {
-		// processWebhook overwrites a returned `success: false`, so a refusal has
-		// to throw for Ko-fi to see it as one.
-		const error = await rejection(
-			PaymentWebhooks.donation.handler(
-				context(),
-				request(formBody(wrongToken)),
-			),
+	it('refuses a wrong token with a 401 and logs nothing', async () => {
+		const result = await PaymentWebhooks.donation.handler(
+			context(),
+			request(formBody(wrongToken)),
 		);
 
-		expect((error as Error).message).toContain(
-			'verification_token does not match',
-		);
+		expect(result).toMatchObject({
+			success: false,
+			statusCode: 401,
+			error: 'Ko-fi verification_token does not match',
+		});
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 
-	it('throws when no token is configured, rather than accepting anything', async () => {
-		const error = await rejection(
-			PaymentWebhooks.donation.handler(
-				context(''),
-				request(formBody(donation)),
-			),
+	it('refuses with a 401 when no token is configured, rather than accepting anything', async () => {
+		const result = await PaymentWebhooks.donation.handler(
+			context(''),
+			request(formBody(donation)),
 		);
 
-		expect((error as Error).message).toContain('cannot be trusted');
+		expect(result).toMatchObject({ success: false, statusCode: 401 });
+		expect(result.error).toContain('cannot be trusted');
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 
-	it('throws on a body that is not a payment', async () => {
-		const error = await rejection(
-			PaymentWebhooks.donation.handler(context(), request('not-a-body')),
+	it('refuses a body that is not a payment with a 400', async () => {
+		const result = await PaymentWebhooks.donation.handler(
+			context(),
+			request('not-a-body'),
 		);
 
-		expect((error as Error).message).toContain('form-encoded');
+		expect(result).toMatchObject({ success: false, statusCode: 400 });
+		expect(result.error).toContain('form-encoded');
 	});
 
-	it('throws on a payment with no amount, which the schema requires', async () => {
+	it('refuses a payment with no amount, which the schema requires', async () => {
 		const { amount: _amount, ...withoutAmount } = donation;
 
-		const error = await rejection(
-			PaymentWebhooks.donation.handler(
-				context(),
-				request(formBody(withoutAmount)),
-			),
+		const result = await PaymentWebhooks.donation.handler(
+			context(),
+			request(formBody(withoutAmount)),
 		);
 
-		expect((error as Error).message).toContain(
-			'Invalid Ko-fi Donation payload',
+		expect(result).toMatchObject({
+			success: false,
+			statusCode: 400,
+			error: 'Invalid Ko-fi Donation payload',
+		});
+	});
+
+	it('accepts a Hub-verified delivery, for which no key is supplied', async () => {
+		const result = await PaymentWebhooks.donation.handler(
+			{ key: undefined } as never,
+			{ payload: donation, headers: {}, hubVerified: true } as never,
 		);
+
+		expect(result.success).toBe(true);
+	});
+
+	it('still refuses a Hub-verified body that is not a payment', async () => {
+		const result = await PaymentWebhooks.donation.handler(
+			{ key: undefined } as never,
+			{ payload: 'not-a-body', headers: {}, hubVerified: true } as never,
+		);
+
+		expect(result).toMatchObject({ success: false, statusCode: 400 });
 	});
 
 	it('accepts a delivery whose data field was already parsed out', async () => {

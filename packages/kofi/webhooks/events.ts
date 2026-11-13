@@ -11,10 +11,11 @@ import { looksLikeKofiPayment, readPayment, verifyKofiPayment } from './verify';
  * amount and currency but never the supporter's name, address or message, and
  * return the event.
  *
- * A refused delivery throws rather than returning `success: false`.
- * `processWebhook` builds its result as `{ ...returnToSender, success: true }`,
- * so a returned failure is reported to Ko-fi as a successful delivery and the
- * retry never happens.
+ * A refused delivery returns `success: false` with a status code, which
+ * `processWebhook` passes back to the route: 401 for a token that does not
+ * match, 400 for a body that is not a Ko-fi payment. Ko-fi retries anything
+ * that is not a 200. When Hub already verified the delivery (`hubVerified`),
+ * no key is supplied and the token check is skipped.
  */
 function handlerFor(
 	type: KofiPaymentType,
@@ -24,14 +25,27 @@ function handlerFor(
 		match,
 		handler: async (ctx, request) => {
 			const payment = readPayment(request.payload);
-			const verification = verifyKofiPayment(payment, ctx.key);
+			// Hub verified the token before forwarding and supplies no key, so
+			// only a missing payment is refused then.
+			const verification =
+				request.hubVerified && payment
+					? ({ valid: true } as const)
+					: verifyKofiPayment(payment, ctx.key);
 			if (!verification.valid) {
-				throw new Error(verification.error);
+				return {
+					success: false,
+					statusCode: verification.statusCode,
+					error: verification.error,
+				};
 			}
 
 			const parsed = KofiPaymentSchema.safeParse(payment);
 			if (!parsed.success) {
-				throw new Error(`Invalid Ko-fi ${type} payload`);
+				return {
+					success: false,
+					statusCode: 400,
+					error: `Invalid Ko-fi ${type} payload`,
+				};
 			}
 
 			const data = parsed.data;
