@@ -179,6 +179,11 @@ function sanitizeCause(
 		);
 		sanitizedCause.name = cause.name;
 		sanitizedCause.stack = cause.stack;
+		// `unknown` because augmenting an Error instance with custom metadata requires untyped record access.
+		const sanitizedRecord = sanitizedCause as unknown as Record<
+			string,
+			unknown
+		>;
 
 		for (const [k, v] of Object.entries(causeRecord)) {
 			if (k === 'request' && v && typeof v === 'object') {
@@ -186,12 +191,11 @@ function sanitizeCause(
 				if ('body' in req && req.body !== undefined) {
 					req.body = sanitizeSensitiveValues(req.body, secrets);
 				}
-				(sanitizedCause as Record<string, unknown>)[k] = req;
+				sanitizedRecord[k] = req;
 			} else if (k === 'body') {
-				(sanitizedCause as Record<string, unknown>)[k] =
-					sanitizeSensitiveValues(v, secrets);
+				sanitizedRecord[k] = sanitizeSensitiveValues(v, secrets);
 			} else if (k !== 'message') {
-				(sanitizedCause as Record<string, unknown>)[k] = v;
+				sanitizedRecord[k] = v;
 			}
 		}
 		return sanitizedCause;

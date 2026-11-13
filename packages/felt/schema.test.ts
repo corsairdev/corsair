@@ -428,19 +428,26 @@ describe('plugin-docs.yaml examples', () => {
 			const schemaName = dotToCamel(dotPath);
 			const schema = schemas[schemaName];
 			expect(schema).toBeDefined();
+			if (!schema) continue;
 			expect(() => schema.parse(example)).not.toThrow();
 		}
 
 		if (doc.examples?.read) {
-			const schema = schemas[dotToCamel(doc.examples.read.path)];
+			const readExample = doc.examples.read;
+			const schema = schemas[dotToCamel(readExample.path)];
 			expect(schema).toBeDefined();
-			expect(() => schema.parse(doc.examples.read.args ?? {})).not.toThrow();
+			if (schema) {
+				expect(() => schema.parse(readExample.args ?? {})).not.toThrow();
+			}
 		}
 
 		if (doc.examples?.write) {
-			const schema = schemas[dotToCamel(doc.examples.write.path)];
+			const writeExample = doc.examples.write;
+			const schema = schemas[dotToCamel(writeExample.path)];
 			expect(schema).toBeDefined();
-			expect(() => schema.parse(doc.examples.write.args ?? {})).not.toThrow();
+			if (schema) {
+				expect(() => schema.parse(writeExample.args ?? {})).not.toThrow();
+			}
 		}
 	});
 });
