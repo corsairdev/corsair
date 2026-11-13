@@ -45,13 +45,21 @@ export const list: FinmeiEndpoints['invoicesList'] = async (ctx, input) => {
 
 export const create: FinmeiEndpoints['invoicesCreate'] = async (ctx, input) => {
 	const parsedInput = FinmeiCreateInvoiceInputSchema.parse(input);
+	// Finmei's reference says use_default_seller_info defaults to true, but the API
+	// answers 422 "seller field is required" when it is left out. Send it explicitly
+	// when the caller gives no seller block.
+	const body =
+		parsedInput.seller === undefined &&
+		parsedInput.use_default_seller_info === undefined
+			? { ...parsedInput, use_default_seller_info: true }
+			: parsedInput;
 
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{
 		data: FinmeiInvoice;
 	}>('/invoices', ctx.key, {
 		method: 'POST',
-		body: parsedInput,
+		body,
 	});
 
 	const parsed = FinmeiInvoiceOutputSchema.parse(rawResponse);
@@ -82,13 +90,18 @@ export const get: FinmeiEndpoints['invoicesGet'] = async (ctx, input) => {
 export const update: FinmeiEndpoints['invoicesUpdate'] = async (ctx, input) => {
 	const parsedInput = FinmeiUpdateInvoiceInputSchema.parse(input);
 	const { id, ...bodyFields } = parsedInput;
+	const body =
+		bodyFields.seller === undefined &&
+		bodyFields.use_default_seller_info === undefined
+			? { ...bodyFields, use_default_seller_info: true }
+			: bodyFields;
 
 	// `unknown` because response from provider is untrusted JSON before Zod schema validation.
 	const rawResponse: unknown = await makeFinmeiRequest<{
 		data: FinmeiInvoice;
 	}>(`/invoices/${seg(id)}`, ctx.key, {
 		method: 'PUT',
-		body: bodyFields,
+		body,
 	});
 
 	const parsed = FinmeiInvoiceOutputSchema.parse(rawResponse);
@@ -110,7 +123,10 @@ export const del: FinmeiEndpoints['invoicesDelete'] = async (ctx, input) => {
 		},
 	);
 
-	const parsed = FinmeiDeleteResponseSchema.parse(rawResponse);
+	// Finmei answers a delete with 200 and an empty body.
+	const parsed = FinmeiDeleteResponseSchema.parse(
+		rawResponse === '' ? null : rawResponse,
+	);
 	await safeLog(ctx, 'invoices.delete', {
 		id: parsedInput.id,
 	});

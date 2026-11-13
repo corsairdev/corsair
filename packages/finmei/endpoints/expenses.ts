@@ -20,6 +20,28 @@ import {
 	FinmeiUpdateExpenseInputSchema,
 } from './types';
 
+// Finmei checks the uploaded file's extension (jpeg, jpg, bmp, gif, pdf, png,
+// tiff, xlsx, xls, doc, docx, odf), so the upload needs a file name, not a bare Blob.
+const EXTENSION_BY_TYPE: Record<string, string> = {
+	'application/pdf': 'pdf',
+	'image/jpeg': 'jpg',
+	'image/png': 'png',
+	'image/gif': 'gif',
+	'image/bmp': 'bmp',
+	'image/tiff': 'tiff',
+	'application/msword': 'doc',
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+		'docx',
+	'application/vnd.ms-excel': 'xls',
+	'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+};
+
+function toUploadFile(base64: string, fileType?: string, fileName?: string) {
+	const type = fileType ?? 'application/pdf';
+	const name = fileName ?? `expense.${EXTENSION_BY_TYPE[type] ?? 'pdf'}`;
+	return new File([Buffer.from(base64, 'base64')], name, { type });
+}
+
 export const list: FinmeiEndpoints['expensesList'] = async (ctx, input) => {
 	const parsedInput = FinmeiListExpensesInputSchema.parse(input);
 	const query = compactQuery({
@@ -51,9 +73,11 @@ export const create: FinmeiEndpoints['expensesCreate'] = async (ctx, input) => {
 	const requestOptions = {
 		method: 'POST' as const,
 		formData: {
-			file: new Blob([Buffer.from(parsedInput.file, 'base64')], {
-				type: parsedInput.fileType ?? 'application/pdf',
-			}),
+			file: toUploadFile(
+				parsedInput.file,
+				parsedInput.fileType,
+				parsedInput.fileName,
+			),
 			seller: parsedInput.seller,
 			total: String(parsedInput.total),
 			currency: parsedInput.currency,
@@ -122,7 +146,10 @@ export const del: FinmeiEndpoints['expensesDelete'] = async (ctx, input) => {
 		},
 	);
 
-	const parsed = FinmeiDeleteResponseSchema.parse(rawResponse);
+	// Finmei answers a delete with 200 and an empty body.
+	const parsed = FinmeiDeleteResponseSchema.parse(
+		rawResponse === '' ? null : rawResponse,
+	);
 	await safeLog(ctx, 'expenses.delete', {
 		id: parsedInput.id,
 	});
@@ -141,9 +168,11 @@ export const updateFile: FinmeiEndpoints['expensesUpdateFile'] = async (
 	}>(`/expenses/${seg(parsedInput.id)}/file`, ctx.key, {
 		method: 'POST',
 		formData: {
-			file: new Blob([Buffer.from(parsedInput.file, 'base64')], {
-				type: parsedInput.fileType ?? 'application/pdf',
-			}),
+			file: toUploadFile(
+				parsedInput.file,
+				parsedInput.fileType,
+				parsedInput.fileName,
+			),
 		},
 	});
 

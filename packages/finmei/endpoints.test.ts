@@ -126,9 +126,10 @@ describe('Invoices endpoints', () => {
 
 		const res = await Invoices.create(ctx, invoiceInput);
 		expect(res.data).toEqual(created);
+		// Finmei answers 422 "seller field is required" unless this flag is sent
 		expect(mockRequest).toHaveBeenCalledWith('/invoices', 'test-api-key', {
 			method: 'POST',
-			body: invoiceInput,
+			body: { ...invoiceInput, use_default_seller_info: true },
 		});
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			ctx,
@@ -184,17 +185,41 @@ describe('Invoices endpoints', () => {
 
 	it('invoices.update sends PUT /invoices/:id', async () => {
 		mockRequest.mockResolvedValue({ data: { id: 'inv-123', currency: 'EUR' } });
+		const fields = {
+			type: 'regular_invoice' as const,
+			invoice_date: '2024-05-01',
+			series: 'FIN',
+			currency: 'EUR',
+			payment_status: 'paid' as const,
+			buyer: { type: 'company' as const, company_name: 'Acme Corp' },
+			products: [{ name: 'Design', units: 'pcs', quantity: 1, price: 10 }],
+		};
 
-		const res = await Invoices.update(ctx, { id: 'inv-123', currency: 'EUR' });
+		const res = await Invoices.update(ctx, { id: 'inv-123', ...fields });
 		expect(res.data.currency).toBe('EUR');
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/invoices/inv-123',
 			'test-api-key',
 			{
 				method: 'PUT',
-				body: { currency: 'EUR' },
+				body: { ...fields, use_default_seller_info: true },
 			},
 		);
+	});
+
+	it('invoices.update rejects a partial body, since PUT replaces the invoice', async () => {
+		// Live: Finmei answered 422 for type, invoice_date, series, currency, ...
+		await expect(
+			Invoices.update(ctx, { id: 'inv-123', payment_status: 'paid' } as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('invoices.delete accepts the empty 200 body Finmei returns', async () => {
+		mockRequest.mockResolvedValue('' as never);
+
+		const res = await Invoices.delete(ctx, { id: 'inv-123' });
+		expect(res).toBeNull();
 	});
 
 	it('invoices.delete sends DELETE /invoices/:id', async () => {
@@ -290,6 +315,33 @@ describe('Expenses endpoints', () => {
 				}),
 			}),
 		);
+		// Finmei rejects an upload whose name has no allowed extension ("blob")
+		const sent = mockRequest.mock.calls[0]?.[2]?.formData?.file as File;
+		expect(sent).toBeInstanceOf(File);
+		expect(sent.name).toBe('expense.pdf');
+		expect(sent.type).toBe('application/pdf');
+	});
+
+	it('expenses.updateFile names the upload after its type or the given name', async () => {
+		mockRequest.mockResolvedValue({
+			data: { id: 'exp-1', total: 10, currency: 'USD' },
+		});
+
+		await Expenses.updateFile(ctx, {
+			id: 'exp-1',
+			file: 'c2FtcGxl',
+			fileType: 'image/png',
+		});
+		await Expenses.updateFile(ctx, {
+			id: 'exp-1',
+			file: 'c2FtcGxl',
+			fileType: 'application/octet-stream',
+			fileName: 'bill.xlsx',
+		});
+		const first = mockRequest.mock.calls[0]?.[2]?.formData?.file as File;
+		const second = mockRequest.mock.calls[1]?.[2]?.formData?.file as File;
+		expect(first.name).toBe('expense.png');
+		expect(second.name).toBe('bill.xlsx');
 	});
 
 	it('expenses.get sends GET /expenses/:id', async () => {
@@ -313,16 +365,37 @@ describe('Expenses endpoints', () => {
 			data: { id: 'exp-1', total: 30, currency: 'USD' },
 		});
 
-		const res = await Expenses.update(ctx, { id: 'exp-1', total: 30 });
+		const fields = {
+			seller: 'Acme',
+			total: 30,
+			currency: 'USD',
+			date: '2024-03-01',
+		};
+		const res = await Expenses.update(ctx, { id: 'exp-1', ...fields });
 		expect(res.data.total).toBe(30);
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/expenses/exp-1',
 			'test-api-key',
 			{
 				method: 'PUT',
-				body: { total: 30 },
+				body: fields,
 			},
 		);
+	});
+
+	it('expenses.update rejects a partial body, since PUT replaces the expense', async () => {
+		// Live: Finmei answered 422 "This field is required" for currency, seller, date
+		await expect(
+			Expenses.update(ctx, { id: 'exp-1', total: 30 } as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('expenses.delete accepts the empty 200 body Finmei returns', async () => {
+		mockRequest.mockResolvedValue('' as never);
+
+		const res = await Expenses.delete(ctx, { id: 'exp-1' });
+		expect(res).toBeNull();
 	});
 
 	it('expenses.delete sends DELETE /expenses/:id', async () => {

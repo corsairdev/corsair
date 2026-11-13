@@ -312,13 +312,11 @@ export const FinmeiGetInvoiceInputSchema = z
 	})
 	.strict();
 
-// Update takes the create fields; all optional so a caller can send only what changes.
+// PUT replaces the whole invoice: Finmei requires the same fields as create.
 export const FinmeiUpdateInvoiceInputSchema =
-	FinmeiCreateInvoiceInputSchema.partial()
-		.extend({
-			id: z.string().min(1),
-		})
-		.strict();
+	FinmeiCreateInvoiceInputSchema.extend({
+		id: z.string().min(1),
+	}).strict();
 
 export const FinmeiDeleteInvoiceInputSchema = z
 	.object({
@@ -348,6 +346,8 @@ export const FinmeiCreateExpenseInputSchema = z
 		// Base64-encoded bill (PDF or image); Finmei rejects an expense without one.
 		file: z.string().min(1),
 		fileType: z.string().optional(),
+		// File name with extension, e.g. "bill.png"; Finmei rejects unknown extensions.
+		fileName: z.string().optional(),
 	})
 	.strict();
 
@@ -360,10 +360,11 @@ export const FinmeiGetExpenseInputSchema = z
 export const FinmeiUpdateExpenseInputSchema = z
 	.object({
 		id: z.string().min(1),
-		seller: z.string().optional(),
-		total: z.number().optional(),
-		currency: z.string().optional(),
-		date: z.string().optional(),
+		// PUT replaces the expense: Finmei requires all four fields.
+		seller: z.string().min(1),
+		total: z.number(),
+		currency: z.string().min(1),
+		date: z.string().min(1),
 	})
 	.strict();
 
@@ -378,6 +379,8 @@ export const FinmeiUpdateExpenseFileInputSchema = z
 		id: z.string().min(1),
 		file: z.string().min(1),
 		fileType: z.string().optional(),
+		// File name with extension, e.g. "bill.png"; Finmei rejects unknown extensions.
+		fileName: z.string().optional(),
 	})
 	.strict();
 
