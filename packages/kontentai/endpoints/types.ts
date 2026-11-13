@@ -167,7 +167,9 @@ const ItemsListInputSchema = ListInputBase.extend({
 		.string()
 		.min(1)
 		.optional()
-		.describe('Only this language codename, such as `en-US`.'),
+		.describe(
+			'Read content in this language codename, such as `es-ES`. Items not translated into it fall back to another language; add `system.language=es-ES` to `in_filter` to drop them.',
+		),
 	collection: z
 		.string()
 		.min(1)
@@ -213,7 +215,13 @@ export type ItemsListResponse = z.infer<typeof ItemsListResponseSchema>;
 const ItemGetInputSchema = z.object({
 	codename: CodenameSchema,
 	depth: DEPTH_SCHEMA,
-	language: z.string().min(1).optional(),
+	language: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'Read the item in this language codename. An untranslated item falls back to another language; check `system.language` on the answer.',
+		),
 	elements: z
 		.array(z.string().min(1))
 		.min(1)
