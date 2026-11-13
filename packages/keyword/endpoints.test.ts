@@ -13,9 +13,14 @@ import {
 	alerts,
 	competitors,
 	deleted,
+	emptyMindshareHistory,
+	flatKeyword,
 	forbidden,
+	freshKeywords,
+	KEYWORD_CONTENT_TYPE,
 	keyword,
 	keywords,
+	liveRankChart,
 	metrics,
 	mindshareHistory,
 	mindshareLatest,
@@ -58,7 +63,7 @@ function respond(body: unknown, status = 200) {
 	fetchMock.mockResolvedValueOnce(
 		new Response(status === 204 ? null : JSON.stringify(body), {
 			status,
-			headers: status === 204 ? {} : { 'Content-Type': 'application/json' },
+			headers: status === 204 ? {} : { 'Content-Type': KEYWORD_CONTENT_TYPE },
 		}),
 	);
 }
@@ -92,7 +97,9 @@ async function caught(promise: Promise<unknown>): Promise<unknown> {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+		throw new Error('unmocked fetch: queue a response with respond first');
+	});
 	mockLog.mockClear();
 });
 
@@ -401,6 +408,23 @@ describe('sharing', () => {
 });
 
 describe('keywords.list', () => {
+	it('reads a fresh keyword whose trends are still N/A', async () => {
+		respond(freshKeywords);
+
+		await expect(
+			invoke(Keywords.list, { projectName: 'corsair.dev', per_page: 10 }),
+		).resolves.toMatchObject({
+			data: [
+				{
+					attributes: {
+						kw: 'corsair mcp',
+						trends: { day: 'N/A', week: 'N/A', month: 'N/A', life: 0 },
+					},
+				},
+			],
+		});
+	});
+
 	it('GETs the keywords and strips the project auth key', async () => {
 		respond(keywords);
 
@@ -454,6 +478,28 @@ describe('keywords.list', () => {
 });
 
 describe('keywords.get', () => {
+	it('wraps the bare keyword Keyword answers into a resource', async () => {
+		respond(flatKeyword);
+
+		const result = await invoke(Keywords.get, {
+			projectName: 'corsair.dev',
+			keywordId: 297034045,
+		});
+
+		expect(result).toMatchObject({
+			data: {
+				type: 'keyword',
+				id: '297034045',
+				attributes: {
+					kw: 'corsair mcp',
+					grank: 1,
+					notes: { manual_start: true },
+				},
+			},
+		});
+		expect(JSON.stringify(result)).not.toContain('KEYWORD-AUTH-KEY');
+	});
+
 	it('GETs one keyword, with a date', async () => {
 		respond({ data: keyword });
 
@@ -603,8 +649,48 @@ describe('keywords.update', () => {
 	});
 
 	it.each([
+		['ACTIVE', 1],
+		['INACTIVE', 0],
+		['ARCHIVED', 2],
+	])(
+		'sends status %s as the number Keyword takes (%d)',
+		async (status, code) => {
+			respond({ data: keyword });
+
+			await invoke(Keywords.update, {
+				projectName: 'Disney',
+				keywordId: '1',
+				status,
+			});
+
+			expect(lastRequest().body).toEqual({
+				data: { type: 'keyword', attributes: { status: code } },
+			});
+		},
+	);
+
+	it('sends the starting position as baseline, which Keyword applies', async () => {
+		respond({ data: keyword });
+
+		await invoke(Keywords.update, {
+			projectName: 'Disney',
+			keywordId: '1',
+			start: 7,
+		});
+
+		expect(lastRequest().body).toEqual({
+			data: { type: 'keyword', attributes: { baseline: 7 } },
+		});
+	});
+
+	it.each([
 		[{ projectName: 'Disney', keywordId: '1' }],
 		[{ projectName: 'Disney', keywordId: '1', status: 'DONE' }],
+		// Keyword answers 422 to PAUSED; its inactive status is INACTIVE.
+		[{ projectName: 'Disney', keywordId: '1', status: 'PAUSED' }],
+		// Keyword accepts notes here and drops them, so they are not offered.
+		[{ projectName: 'Disney', keywordId: '1', notes: 'x' }],
+		[{ projectName: 'Disney', keywordId: '1', start: 101 }],
 	])('rejects %j before calling Keyword', async (input) => {
 		await expect(invoke(Keywords.update, input)).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
@@ -681,6 +767,20 @@ describe('keywords.bulkUpdate', () => {
 		});
 	});
 
+	it('sends status as the number Keyword takes', async () => {
+		respond({ meta: { title: '1 keyword has been updated' } });
+
+		await invoke(Keywords.bulkUpdate, {
+			projectId: 3057417,
+			keywordIds: ['1'],
+			changes: { status: 'INACTIVE' },
+		});
+
+		expect(lastRequest().body).toEqual({
+			data: { ids: ['1'], type: 'keyword', attributes: { status: 0 } },
+		});
+	});
+
 	it('rejects a change set with nothing in it', async () => {
 		await expect(
 			invoke(Keywords.bulkUpdate, {
@@ -751,9 +851,20 @@ describe('metrics.get', () => {
 	it('sends the tag filter', async () => {
 		respond(metrics);
 
-		await invoke(Ranking.metrics, { projectName: 'Disney', tagId: 27727 });
+		await invoke(Ranking.metrics, {
+			projectName: 'Disney',
+			tagId: 27727,
+			timeframe: 7,
+		});
 
-		expect(lastRequest().query).toEqual({ tagId: '27727' });
+		expect(lastRequest().query).toEqual({ tagId: '27727', timeframe: '7' });
+	});
+
+	it('refuses a call without timeframe, which Keyword requires', async () => {
+		await expect(
+			invoke(Ranking.metrics, { projectName: 'Disney' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
@@ -787,6 +898,31 @@ describe('metrics.competitors', () => {
 });
 
 describe('rankChart.get', () => {
+	it('reads the live tuple, with ISO dates and no keyword auth key', async () => {
+		respond(liveRankChart);
+
+		const result = await invoke(Ranking.rankChart, {
+			keywordIds: ['297034045'],
+			limit: 7,
+		});
+
+		expect(result).toMatchObject({
+			data: [
+				{
+					kwid: 297034045,
+					data: [
+						[{ name: 'corsair.dev', data: [['2026-11-13', 1]] }],
+						[],
+						'corsair.dev|corsair mcp|corsair.dev|google.com|en',
+						'297034045',
+						{ days: 0, rankingurls: [{ date: '2026-11-13', rank: 1 }] },
+					],
+				},
+			],
+		});
+		expect(JSON.stringify(result)).not.toContain('KEYWORD-AUTH-KEY');
+	});
+
 	it('POSTs the keyword IDs with the day range in the query', async () => {
 		respond(rankChart);
 
@@ -892,6 +1028,20 @@ describe('mindshare', () => {
 			method: 'GET',
 			path: '/api/v2/metrics/Disney/mindshare/latest',
 		});
+	});
+
+	it('reads an empty history, which Keyword sends as an array', async () => {
+		respond(emptyMindshareHistory);
+
+		await expect(
+			invoke(Mindshare.history, { projectId: 3853510 }),
+		).resolves.toMatchObject({ data: {} });
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'keyword.mindshare.history',
+			{ projectId: 3853510, points: 0 },
+			'completed',
+		);
 	});
 
 	it('GETs the history by project ID, keyed by date', async () => {

@@ -227,7 +227,13 @@ export type SharingUpdateInput = z.input<typeof SharingUpdateInputSchema>;
 
 // ── keywords ──────────────────────────────────────────────────────────────
 
-export const KEYWORD_STATUSES = ['ACTIVE', 'PAUSED', 'ARCHIVED'] as const;
+export const KEYWORD_STATUSES = ['ACTIVE', 'INACTIVE', 'ARCHIVED'] as const;
+
+/** The number Keyword's update routes take for each status (it refuses the names). */
+export const KEYWORD_STATUS_CODES: Record<
+	(typeof KEYWORD_STATUSES)[number],
+	number
+> = { INACTIVE: 0, ACTIVE: 1, ARCHIVED: 2 };
 
 export const KEYWORD_TYPES = ['se', 'local', 'gmb'] as const;
 
@@ -241,7 +247,8 @@ const KeywordAttributesSchema = z
 		kw: z.string().nullish(),
 		source: z.number().nullish(),
 		start: z.number().nullish(),
-		notes: z.string().nullish(),
+		// Text, or an object such as `{ manual_start: true }` once a baseline is set.
+		notes: z.union([z.string(), z.record(z.string(), z.unknown())]).nullish(),
 		tags_count: z.number().nullish(),
 		tags: z.array(TagSchema).nullish(),
 		tag: z.string().nullish(),
@@ -273,12 +280,13 @@ const KeywordAttributesSchema = z
 		in_local_pack: z.boolean().nullish(),
 		rankingurl: z.string().nullish(),
 		grankhistory: z.array(z.number().nullable()).nullish(),
+		// Positions moved; `N/A` until Keyword has a second check to compare.
 		trends: z
 			.object({
-				day: z.number().nullish(),
-				week: z.number().nullish(),
-				month: z.number().nullish(),
-				life: z.number().nullish(),
+				day: z.union([z.number(), z.string()]).nullish(),
+				week: z.union([z.number(), z.string()]).nullish(),
+				month: z.union([z.number(), z.string()]).nullish(),
+				life: z.union([z.number(), z.string()]).nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -390,15 +398,19 @@ const KeywordUpdateInputSchema = z
 			.array(z.string().min(1))
 			.optional()
 			.describe('Replace every tag on the keyword with this list.'),
-		notes: z.string().optional(),
 		isfav: z.boolean().optional(),
 		ignore_local: z.boolean().optional(),
 		ignore_featured: z.boolean().optional(),
 		url_tracking_method: z.enum(KEYWORD_URL_TRACKING_METHODS).optional(),
 		start: z
 			.number()
+			.int()
+			.min(0)
+			.max(100)
 			.optional()
-			.describe('A starting position, when importing history.'),
+			.describe(
+				'The starting rank the keyword’s change is measured from (sent as Keyword’s `baseline`).',
+			),
 	})
 	.superRefine((value, ctx) => {
 		const {
@@ -508,8 +520,7 @@ const MetricsInputSchema = z.object({
 		.number()
 		.int()
 		.min(1)
-		.optional()
-		.describe('Days to compare over. Defaults to Keyword’s own 30.'),
+		.describe('Days to compare over, such as 30. Keyword requires it.'),
 });
 
 export type MetricsInput = z.input<typeof MetricsInputSchema>;
@@ -576,7 +587,18 @@ const RankChartSeriesSchema = z
 const RankChartKeywordSchema = z
 	.object({
 		kwid: z.union([z.number(), z.string()]),
-		data: z.array(z.array(RankChartSeriesSchema)).nullish(),
+		data: z
+			.array(
+				z.union([
+					z.array(RankChartSeriesSchema),
+					z.string(),
+					z.record(z.string(), z.unknown()),
+				]),
+			)
+			.nullish()
+			.describe(
+				'A tuple: series lists, then a label, the keyword ID and a ranking-URL summary.',
+			),
 	})
 	.loose();
 
@@ -738,7 +760,11 @@ const MindshareHistoryEntrySchema = z
 
 const MindshareHistoryResponseSchema = z
 	.object({
-		data: z.record(z.string(), z.array(MindshareHistoryEntrySchema)),
+		// A project with no Share of Voice data yet answers `data: []`.
+		data: z.preprocess(
+			(value) => (Array.isArray(value) && value.length === 0 ? {} : value),
+			z.record(z.string(), z.array(MindshareHistoryEntrySchema)),
+		),
 	})
 	.loose();
 

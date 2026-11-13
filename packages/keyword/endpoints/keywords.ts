@@ -1,8 +1,10 @@
+import { asRecord } from 'corsair/core';
 import type { KeywordEndpoints } from '..';
 import { definedQuery, projectSegment, segment } from '../client';
 import { call, dropUndefined, resourceBody, resourcesBody } from './call';
 import {
 	KeywordEndpointInputSchemas as Inputs,
+	KEYWORD_STATUS_CODES,
 	KeywordEndpointOutputSchemas as Outputs,
 } from './types';
 
@@ -43,6 +45,7 @@ export const get: KeywordEndpoints['keywordsGet'] = (ctx, input) =>
 			query: definedQuery({ date }),
 		}),
 		{
+			shape: wrapBareKeyword,
 			log: ({ projectName }, result) => ({
 				projectName,
 				keywordId: result.data.id,
@@ -86,10 +89,18 @@ export const update: KeywordEndpoints['keywordsUpdate'] = (ctx, input) =>
 			output: Outputs.keywordsUpdate,
 		},
 		input,
-		({ projectName, keywordId, ...attributes }) => ({
+		({ projectName, keywordId, status, start, ...attributes }) => ({
 			method: 'PATCH',
 			path: `/groups/${projectSegment(projectName)}/keywords/${segment(keywordId)}`,
-			body: resourceBody('keyword', dropUndefined(attributes)),
+			body: resourceBody(
+				'keyword',
+				dropUndefined({
+					...attributes,
+					status:
+						status === undefined ? undefined : KEYWORD_STATUS_CODES[status],
+					baseline: start,
+				}),
+			),
 		}),
 		{
 			log: ({ projectName, keywordId }) => ({
@@ -166,7 +177,13 @@ export const bulkUpdate: KeywordEndpoints['keywordsBulkUpdate'] = (
 				data: {
 					ids: keywordIds.map(String),
 					type: 'keyword',
-					attributes: dropUndefined(changes),
+					attributes: dropUndefined({
+						...changes,
+						status:
+							changes.status === undefined
+								? undefined
+								: KEYWORD_STATUS_CODES[changes.status],
+					}),
 				},
 			},
 		}),
@@ -195,3 +212,16 @@ export const refresh: KeywordEndpoints['keywordsRefresh'] = (ctx, input) =>
 		// Only the count: the message names the plan's remaining quota.
 		{ log: (_, result) => ({ message: result.message }) },
 	);
+
+/**
+ * The read-by-ID route answers the bare keyword with a numeric `id` (live,
+ * 11-14), where the docs and the list route use a JSON:API resource. The bare
+ * form is wrapped so `keywords.get` returns the same shape as `keywords.list`.
+ */
+// unknown: raw is the response body; the output schema validates the result.
+function wrapBareKeyword(raw: unknown): unknown {
+	const record = asRecord(raw);
+	if (!record || 'data' in record || record.id === undefined) return raw;
+	const { id, ...attributes } = record;
+	return { data: { type: 'keyword', id: String(id), attributes } };
+}

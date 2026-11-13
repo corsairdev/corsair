@@ -347,3 +347,106 @@ export const projectNotFound = {
 		},
 	],
 };
+
+/**
+ * A keyword the day after it was added, from the live API (11-14, trimmed).
+ * Before a second check, `trends` holds `N/A` where a number will be.
+ */
+export const freshKeywords = {
+	data: [
+		{
+			type: 'keyword',
+			id: '297034045',
+			attributes: {
+				project_id: 3853510,
+				category: 'corsair.dev',
+				url: 'corsair.dev',
+				auth: 'PROJECT-AUTH-KEY',
+				kw: 'corsair mcp',
+				source: 3,
+				start: 1,
+				status: 'ACTIVE',
+				clicks: -1,
+				impressions: -1,
+				ctr: 0,
+				competition: null,
+				grank: 1,
+				best: 1,
+				trends: { day: 'N/A', week: 'N/A', month: 'N/A', life: 0 },
+				crawled_at: 1794600580,
+				updated_at: '2026-11-13T20:09:07+00:00',
+				grankhistory: [],
+			},
+		},
+	],
+	meta: {
+		pagination: {
+			total: 1,
+			count: 1,
+			per_page: 10,
+			current_page: 1,
+			total_pages: 1,
+		},
+	},
+};
+
+/** Share of Voice history for a project with no data yet, from the live API. */
+export const emptyMindshareHistory = { data: [], meta: [] };
+
+/**
+ * One keyword read by ID, from the live API (11-14, trimmed). Unlike the list,
+ * it is the bare keyword with a numeric `id`, not a JSON:API resource.
+ */
+export const flatKeyword = {
+	id: 297034045,
+	project_id: 3853510,
+	category: 'corsair.dev',
+	url: 'corsair.dev',
+	auth: 'KEYWORD-AUTH-KEY',
+	kw: 'corsair mcp',
+	status: 'ACTIVE',
+	grank: 1,
+	trends: { day: 'N/A', week: 'N/A', month: 'N/A', life: 0 },
+	// Set by Keyword once a baseline is given.
+	notes: { manual_start: true },
+	start: 7,
+	crawled_at: 1794600580,
+	updated_at: '2026-11-13T20:09:07+00:00',
+};
+
+/**
+ * A rank chart from the live API (11-14). Each keyword's `data` is a tuple:
+ * the series, an empty list, a label, `<kwid>|<keyword auth key>` and a
+ * ranking-URL summary. Dates come as Highcharts `Date.UTC` text with a
+ * zero-based month.
+ */
+export const liveRankChart = {
+	data: [
+		{
+			kwid: 297034045,
+			data: [
+				[
+					{
+						name: 'corsair.dev',
+						data: [['Date.UTC(2026,10,13)', 1]],
+						visible: true,
+						pointInterval: 86400000,
+					},
+				],
+				[],
+				'corsair.dev|corsair mcp|corsair.dev|google.com|en',
+				'297034045|KEYWORD-AUTH-KEY',
+				{
+					days: 0,
+					rankingurls: [
+						{
+							date: '2026-11-13',
+							rank: 1,
+							rankingurl: 'https://corsair.dev/',
+						},
+					],
+				},
+			],
+		},
+	],
+};

@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 import type { KeywordEndpoints } from '..';
 import { definedQuery, projectSegment, segment } from '../client';
 import { call } from './call';
@@ -40,7 +41,10 @@ export const rankChart: KeywordEndpoints['rankChart'] = (ctx, input) =>
 			query: definedQuery({ action: 'bulkChart', limit }),
 			body: { kwid: keywordIds.map(String) },
 		}),
-		{ log: (_, result) => ({ keywords: result.data.length }) },
+		{
+			shape: cleanRankChart,
+			log: (_, result) => ({ keywords: result.data.length }),
+		},
 	);
 
 export const competitors: KeywordEndpoints['competitors'] = (ctx, input) =>
@@ -108,3 +112,53 @@ export const rankingUrls: KeywordEndpoints['rankingUrls'] = (ctx, input) =>
 			}),
 		},
 	);
+
+// `Date.UTC(2026,10,13)`: Highcharts text with a zero-based month.
+const HIGHCHARTS_DATE = /^Date\.UTC\((\d{4}),(\d{1,2}),(\d{1,2})\)$/;
+// `<kwid>|<the keyword's auth key>`.
+const KWID_WITH_AUTH = /^(\d+)\|[^|]+$/;
+
+function isoDate(value: string): string {
+	const match = HIGHCHARTS_DATE.exec(value);
+	if (!match) return value;
+	const [, year, month, day] = match;
+	return `${year}-${String(Number(month) + 1).padStart(2, '0')}-${day?.padStart(2, '0')}`;
+}
+
+/**
+ * Each keyword's chart `data` is a tuple (live, 11-14): series lists, a label,
+ * `<kwid>|<keyword auth key>` and a ranking-URL summary. The auth key is cut
+ * from that string, since it is a credential like the `auth` attributes, and
+ * series dates sent as `Date.UTC(...)` text become `YYYY-MM-DD`.
+ */
+// unknown: raw is the response body; the output schema validates the result.
+function cleanRankChart(raw: unknown): unknown {
+	const record = asRecord(raw);
+	if (!record || !Array.isArray(record.data)) return raw;
+	return {
+		...record,
+		data: record.data.map((keyword) => {
+			const entry = asRecord(keyword);
+			if (!entry || !Array.isArray(entry.data)) return keyword;
+			return { ...entry, data: entry.data.map(cleanChartPart) };
+		}),
+	};
+}
+
+// unknown: one element of the chart tuple, of any of its kinds.
+function cleanChartPart(part: unknown): unknown {
+	if (typeof part === 'string') return part.replace(KWID_WITH_AUTH, '$1');
+	if (!Array.isArray(part)) return part;
+	return part.map((series) => {
+		const record = asRecord(series);
+		if (!record || !Array.isArray(record.data)) return series;
+		return {
+			...record,
+			data: record.data.map((point) =>
+				Array.isArray(point) && typeof point[0] === 'string'
+					? [isoDate(point[0]), ...point.slice(1)]
+					: point,
+			),
+		};
+	});
+}

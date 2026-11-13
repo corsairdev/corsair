@@ -295,7 +295,7 @@ const keywordEndpointMeta = {
 	'keywords.update': {
 		riskLevel: 'write',
 		description:
-			'Change a keyword’s domain, region, tags, status, notes or favourite flag',
+			'Change a keyword’s domain, region, tags, status, baseline or favourite flag',
 	},
 	'keywords.delete': {
 		riskLevel: 'destructive',
