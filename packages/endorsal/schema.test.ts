@@ -79,7 +79,7 @@ describe('Endorsal request schemas', () => {
 			ContactSchema.safeParse({ _id: 'contact_123', activity: { added: 123 } })
 				.success,
 		).toBe(true);
-		expect(TestimonialSchema.safeParse({ rating: 0 }).success).toBe(false);
+		expect(TestimonialSchema.safeParse({ rating: 'five' }).success).toBe(false);
 	});
 
 	it('accepts existing tag objects with provider fields in addition to _id', () => {
@@ -144,6 +144,54 @@ describe('Endorsal request schemas', () => {
 				'<section>Reviews</section>',
 			).success,
 		).toBe(true);
+	});
+
+	it('parses the reference Wall of Love example, which has rating 0 and a null tag', () => {
+		// Example response from Endorsal's published OpenAPI (Wall-of-Love-Object).
+		const example = {
+			success: true,
+			data: {
+				_id: 'string',
+				widgetType: 'wallOfLove',
+				settings: { columns: 3, minRating: 3 },
+				propertyID: 'string',
+				hiddenTestimonials: {},
+				edited: 'string',
+				testimonials: [
+					{
+						_id: 'string',
+						name: 'string',
+						comments: 'string',
+						rating: 0,
+						added: 'string',
+						approved: 0,
+						featured: 0,
+						tags: [null],
+					},
+				],
+			},
+		};
+		expect(
+			EndorsalEndpointOutputSchemas.wallOfLoveGet.safeParse(example).success,
+		).toBe(true);
+	});
+
+	it('accepts a search response without data, which the reference allows when nothing matches', () => {
+		expect(
+			EndorsalEndpointOutputSchemas.testimonialsSearch.safeParse({
+				success: false,
+			}).success,
+		).toBe(true);
+		expect(
+			EndorsalEndpointOutputSchemas.contactsSearch.safeParse({
+				success: false,
+			}).success,
+		).toBe(true);
+		expect(
+			EndorsalEndpointOutputSchemas.testimonialsList.safeParse({
+				success: true,
+			}).success,
+		).toBe(false);
 	});
 
 	it('enforces comparison operators and the array-only in operator', () => {

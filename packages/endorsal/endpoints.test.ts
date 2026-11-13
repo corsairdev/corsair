@@ -333,7 +333,7 @@ describe('Endorsal REST operations', () => {
 	it('rejects malformed provider responses before logging completion', async () => {
 		mockedRequest.mockResolvedValue({
 			success: true,
-			data: { rating: 6 },
+			data: { rating: 'six' },
 		});
 		await expect(
 			Testimonials.get(ctx, { id: 'testimonial_123' }),

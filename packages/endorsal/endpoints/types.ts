@@ -16,7 +16,8 @@ export const TestimonialSchema = z
 		name: OptionalText,
 		propertyID: OptionalText,
 		comments: OptionalText,
-		rating: z.number().int().min(1).max(5).nullable().optional(),
+		// Documented as 1-5, but the reference's own Wall of Love example returns 0.
+		rating: z.number().nullable().optional(),
 		avatar: z
 			.object({
 				url: OptionalText,
@@ -42,7 +43,8 @@ export const TestimonialSchema = z
 		added: UnixOrDate,
 		approved: z.number().int().nullable().optional(),
 		featured: z.number().int().nullable().optional(),
-		tags: z.array(z.string()).nullable().optional(),
+		// Tag IDs; the reference's Wall of Love example includes a null entry.
+		tags: z.array(z.string().nullable()).nullable().optional(),
 	})
 	.passthrough();
 
@@ -226,6 +228,11 @@ const TestimonialResponseSchema = z
 const TestimonialListResponseSchema = z
 	.object({ success: z.boolean(), data: z.array(TestimonialSchema) })
 	.passthrough();
+// The reference marks only `success` as required on search responses, so a
+// search with no match may omit `data`.
+const TestimonialSearchResponseSchema = z
+	.object({ success: z.boolean(), data: z.array(TestimonialSchema).optional() })
+	.passthrough();
 const TagResponseSchema = z
 	.object({ success: SuccessValue, data: TagSchema })
 	.passthrough();
@@ -237,6 +244,9 @@ const ContactResponseSchema = z
 	.passthrough();
 const ContactListResponseSchema = z
 	.object({ success: z.boolean(), data: z.array(ContactSchema) })
+	.passthrough();
+const ContactSearchResponseSchema = z
+	.object({ success: z.boolean(), data: z.array(ContactSchema).optional() })
 	.passthrough();
 const WidgetListResponseSchema = z
 	.object({ success: z.boolean(), data: z.array(WidgetSchema) })
@@ -298,7 +308,7 @@ export const EndorsalEndpointOutputSchemas = {
 	testimonialsUpdate: ResponseEnvelope,
 	testimonialsDelete: ResponseEnvelope,
 	testimonialsAddTags: TestimonialResponseSchema,
-	testimonialsSearch: TestimonialListResponseSchema,
+	testimonialsSearch: TestimonialSearchResponseSchema,
 	testimonialsByTag: TestimonialListResponseSchema,
 	testimonialsByContact: TestimonialListResponseSchema,
 	contactsList: ContactListResponseSchema,
@@ -306,7 +316,7 @@ export const EndorsalEndpointOutputSchemas = {
 	contactsGet: ContactResponseSchema,
 	contactsUpdate: ResponseEnvelope,
 	contactsArchive: ResponseEnvelope,
-	contactsSearch: ContactListResponseSchema,
+	contactsSearch: ContactSearchResponseSchema,
 	tagsList: TagListResponseSchema,
 	tagsCreate: TagResponseSchema,
 	tagsGet: TagResponseSchema,
