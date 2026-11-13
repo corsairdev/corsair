@@ -250,6 +250,7 @@ export const BaseProviders = [
 	'flexisign',
 	'flutterwave',
 	'fluxguard',
+	'fly',
 	'followupboss',
 	'formbricks',
 	'foursquare',
@@ -785,6 +786,7 @@ export const ProviderDisplayNames = {
 	flexisign: 'Flexisign',
 	flutterwave: 'Flutterwave',
 	fluxguard: 'Fluxguard',
+	fly: 'Fly',
 	followupboss: 'Follow Up Boss',
 	formbricks: 'Formbricks',
 	foursquare: 'Foursquare',
@@ -1327,6 +1329,7 @@ export type AllProviders =
 	| 'flexisign'
 	| 'flutterwave'
 	| 'fluxguard'
+	| 'fly'
 	| 'followupboss'
 	| 'formbricks'
 	| 'foursquare'
