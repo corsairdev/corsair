@@ -136,9 +136,9 @@ Corsair refreshes an OAuth token before a call when the stored one has expired. 
 
 When the provider refuses the refresh itself, the error says why:
 
-- The refresh token is gone (`invalid_grant`, or another 400 or 401): the user removed access or the grant expired. Corsair throws `AuthMissingError` with `reason: 'revoked'` and a reconnect link. The connection is marked unverified, and its message says "Access was revoked or has expired at the provider".
-- The OAuth app's own credentials were refused (`invalid_client`, `unauthorized_client`): Corsair throws `OAuthRefreshError` (from `corsair/core`) with `kind: 'client'`. Reconnecting won't help; fix the client ID and secret.
-- A 5xx, 408 or 429 from the token endpoint is temporary: `OAuthRefreshError` with `kind: 'transient'`. Try the call again later.
+- The refresh token is gone: a 400 or 401 with `invalid_grant`, another error code, or none. The user removed access or the grant expired. Corsair throws `AuthMissingError` with `reason: 'revoked'` and a reconnect link. The connection is marked unverified, and its message says "Access was revoked or has expired at the provider".
+- The OAuth app's own credentials were refused (`invalid_client`, `unauthorized_client`, `incorrect_client_credentials`): Corsair throws `OAuthRefreshError` (from `corsair/core`) with `kind: 'client'`. Reconnecting won't help; fix the client ID and secret.
+- Anything else throws `OAuthRefreshError` with `kind: 'transient'`: a 5xx, 408 or 429, another status such as a 403 or 404, or a refusal of the request itself (`invalid_request`, `unsupported_grant_type`, `invalid_scope`, even on a 400). Reconnecting won't fix these either. Retry later, or check the plugin's token URL and scopes if it keeps failing.
 
 ## Reconnect and auth-missing
 

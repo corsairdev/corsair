@@ -384,9 +384,10 @@ After connect, Corsair refreshes tokens on its own: before a call when the store
 
 | Token endpoint answer | What your code gets |
 |---|---|
-| `invalid_grant`, or another 400/401 | `AuthMissingError` with `reason: 'revoked'` and `connectUrl` set to a fresh link to your `/connect` page. Send the user there to reconnect. |
-| `invalid_client`, `unauthorized_client` | `OAuthRefreshError` with `kind: 'client'`: your OAuth app's client ID or secret was refused. Reconnecting won't fix it. |
-| 5xx, 408, 429 | `OAuthRefreshError` with `kind: 'transient'`. Retry later. |
+| 400 or 401 with `invalid_grant`, another code, or none | `AuthMissingError` with `reason: 'revoked'` and `connectUrl` set to a fresh link to your `/connect` page. Send the user there to reconnect. |
+| `invalid_client`, `unauthorized_client`, `incorrect_client_credentials` | `OAuthRefreshError` with `kind: 'client'`: your OAuth app's client ID or secret was refused. Reconnecting won't fix it. |
+| `invalid_request`, `unsupported_grant_type`, `invalid_scope` (even on a 400) | `OAuthRefreshError` with `kind: 'transient'`: the refresh request itself was wrong. Reconnecting won't fix it; check the token URL and scopes. |
+| 5xx, 408, 429, or any other status | `OAuthRefreshError` with `kind: 'transient'`. Retry later. |
 
 Only the provider's `error` code goes on the message. The rest of its response body stays out, so it never reaches logs or an agent. See [Error handling](/concepts/error-handling#expired-oauth-tokens).
 
