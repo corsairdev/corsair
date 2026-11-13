@@ -223,6 +223,20 @@ describe('geoapify.geocode.forward', () => {
 		expect(lastRequest().params('countrycodes')).toEqual(['de', 'at']);
 	});
 
+	it('reads the json bbox, which is an object of two corners', async () => {
+		respond(berlin);
+		const result = (await invoke(forwardGeocode, {
+			text: 'Berlin',
+		})) as typeof berlin;
+
+		expect(result.results[0]?.bbox).toEqual({
+			lon1: 13.228,
+			lat1: 52.437,
+			lon2: 13.548,
+			lat2: 52.597,
+		});
+	});
+
 	it('always asks for json: geojson has no results array to parse', async () => {
 		respond(berlin);
 		await invoke(forwardGeocode, { text: 'Berlin', format: 'geojson' });

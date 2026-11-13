@@ -50,7 +50,15 @@ const AddressSchema = z.object({
 			match_type: z.string().optional(),
 		})
 		.optional(),
-	bbox: z.array(z.number()).optional(),
+	/** The result's extent. The json format answers it as two corners. */
+	bbox: z
+		.object({
+			lon1: z.number(),
+			lat1: z.number(),
+			lon2: z.number(),
+			lat2: z.number(),
+		})
+		.optional(),
 	timezone: z
 		.object({
 			name: z.string().optional(),

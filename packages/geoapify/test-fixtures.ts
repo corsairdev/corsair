@@ -53,7 +53,8 @@ export const berlin = {
 				abbreviation_STD: 'CET',
 				abbreviation_DST: 'CEST',
 			},
-			bbox: [13.228, 52.437, 13.548, 52.597],
+			// The json format answers bbox as an object, not an array (live, 11-14).
+			bbox: { lon1: 13.228, lat1: 52.437, lon2: 13.548, lat2: 52.597 },
 		},
 		{
 			country: 'United States',
