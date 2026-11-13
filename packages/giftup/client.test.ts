@@ -157,28 +157,36 @@ describe('Gift Up! client', () => {
 		expect(encodeGiftUpPathId(42)).toBe('42');
 	});
 
-	it('redacts credentials in-place from ApiError request and body', () => {
-		const error = makeApiError(400, 'Bad Request', {
-			requestHeaders: {
-				Authorization: 'Bearer secret-token-value',
-				Accept: 'application/json',
-			},
-			requestBody: {
-				apiKey: 'secret-token-value',
-				token: 'nested-token',
-				name: 'John Doe',
-			},
-			responseBody: {
-				message: 'Invalid key: secret-token-value',
-				details: {
+	it('redacts credentials in-place from ApiError request, body, message, and stack', () => {
+		const error = makeApiError(
+			422,
+			'Unprocessable: secret-token-value invalid',
+			{
+				requestHeaders: {
+					Authorization: 'Bearer secret-token-value',
+					Accept: 'application/json',
+				},
+				requestBody: {
 					apiKey: 'secret-token-value',
+					token: 'nested-token',
+					name: 'John Doe',
+				},
+				responseBody: {
+					message: 'Invalid key: secret-token-value',
+					details: {
+						apiKey: 'secret-token-value',
+					},
 				},
 			},
-		});
+		);
+		// Simulate stack containing the secret token
+		error.stack = 'Error: secret-token-value at function test()';
 
 		redactApiErrorInPlace(error, ['secret-token-value']);
 
 		expect(error.request?.headers?.Authorization).toBe('[redacted]');
+		expect(error.message).toBe('Unprocessable: [redacted] invalid');
+		expect(error.stack).toBe('Error: [redacted] at function test()');
 		const reqBody = error.request?.body;
 		if (typeof reqBody === 'object' && reqBody !== null) {
 			expect(Reflect.get(reqBody, 'apiKey')).toBe('[redacted]');

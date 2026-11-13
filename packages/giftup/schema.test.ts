@@ -2,6 +2,7 @@ import {
 	CheckoutSettingsSchema,
 	CompanySchema,
 	EmailSettingsSchema,
+	EmptyResponseSchema,
 	GiftCardSchema,
 	GiftCardsGetInputSchema,
 	GiftCardsListInputSchema,
@@ -34,13 +35,46 @@ import {
 
 describe('Gift Up! schemas', () => {
 	describe('Common schemas', () => {
-		it('validates JsonPatchOperationSchema', () => {
-			const valid = { op: 'replace', path: '/title', value: 'New title' };
-			expect(JsonPatchOperationSchema.parse(valid)).toEqual(valid);
+		it('validates JsonPatchOperationSchema RFC 6902 requirements', () => {
+			const validReplace = {
+				op: 'replace',
+				path: '/title',
+				value: 'New title',
+			};
+			expect(JsonPatchOperationSchema.parse(validReplace)).toEqual(
+				validReplace,
+			);
 
+			const validMove = {
+				op: 'move',
+				path: '/title',
+				from: '/oldTitle',
+			};
+			expect(JsonPatchOperationSchema.parse(validMove)).toEqual(validMove);
+
+			// replace without value must fail
+			expect(() =>
+				JsonPatchOperationSchema.parse({ op: 'replace', path: '/title' }),
+			).toThrow();
+
+			// move without from must fail
+			expect(() =>
+				JsonPatchOperationSchema.parse({ op: 'move', path: '/title' }),
+			).toThrow();
+
+			// invalid op must fail
 			expect(() =>
 				JsonPatchOperationSchema.parse({ op: 'invalid_op', path: '/title' }),
 			).toThrow();
+		});
+
+		it('validates EmptyResponseSchema allows null, undefined, and objects', () => {
+			expect(EmptyResponseSchema.parse(null)).toBeNull();
+			expect(EmptyResponseSchema.parse(undefined)).toBeUndefined();
+			expect(EmptyResponseSchema.parse({})).toEqual({});
+			expect(EmptyResponseSchema.parse({ success: true })).toEqual({
+				success: true,
+			});
 		});
 	});
 

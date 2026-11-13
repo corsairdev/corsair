@@ -106,6 +106,20 @@ export function redactApiErrorInPlace(
 	if (error.body !== undefined) {
 		Reflect.set(error, 'body', sanitizeValue(error.body, secrets));
 	}
+	for (const secret of secrets) {
+		if (secret && secret.length >= 3) {
+			if (typeof error.message === 'string' && error.message.includes(secret)) {
+				Reflect.set(
+					error,
+					'message',
+					error.message.split(secret).join(REDACTED),
+				);
+			}
+			if (typeof error.stack === 'string' && error.stack.includes(secret)) {
+				Reflect.set(error, 'stack', error.stack.split(secret).join(REDACTED));
+			}
+		}
+	}
 	return error;
 }
 

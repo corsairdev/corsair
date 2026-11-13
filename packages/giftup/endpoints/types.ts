@@ -4,22 +4,51 @@ import { z } from 'zod';
 // Common & Helper Schemas
 // ==========================================
 
-export const JsonPatchOperationSchema = z.object({
-	op: z.enum(['add', 'remove', 'replace', 'move', 'copy', 'test']),
-	path: z.string(),
-	// `unknown` because RFC 6902 JSON patch values can be any JSON type
-	value: z.unknown().optional(),
-	from: z.string().optional(),
-});
+export const JsonPatchOperationSchema = z.discriminatedUnion('op', [
+	z.object({
+		op: z.literal('add'),
+		path: z.string(),
+		// `unknown` because RFC 6902 JSON patch values can be any JSON type
+		value: z.unknown(),
+	}),
+	z.object({
+		op: z.literal('remove'),
+		path: z.string(),
+	}),
+	z.object({
+		op: z.literal('replace'),
+		path: z.string(),
+		// `unknown` because RFC 6902 JSON patch values can be any JSON type
+		value: z.unknown(),
+	}),
+	z.object({
+		op: z.literal('move'),
+		path: z.string(),
+		from: z.string(),
+	}),
+	z.object({
+		op: z.literal('copy'),
+		path: z.string(),
+		from: z.string(),
+	}),
+	z.object({
+		op: z.literal('test'),
+		path: z.string(),
+		// `unknown` because RFC 6902 JSON patch values can be any JSON type
+		value: z.unknown(),
+	}),
+]);
 export type JsonPatchOperation = z.infer<typeof JsonPatchOperationSchema>;
 
-export const SuccessResponseSchema = z
-	.object({
-		success: z.boolean().optional(),
-	})
-	// `passthrough` because provider 200 responses for status/action updates may return empty body or status metadata
-	.passthrough();
-export type SuccessResponse = z.infer<typeof SuccessResponseSchema>;
+// `unknown` because 200/204 empty responses can be null, undefined, empty object, or provider confirmation map
+export const EmptyResponseSchema = z.union([
+	z.record(z.string(), z.unknown()),
+	z.null(),
+	z.undefined(),
+]);
+export type EmptyResponse = z.infer<typeof EmptyResponseSchema>;
+export const SuccessResponseSchema = EmptyResponseSchema;
+export type SuccessResponse = EmptyResponse;
 
 // ==========================================
 // 1. Ping

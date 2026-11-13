@@ -94,7 +94,7 @@ export const Orders = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return SuccessResponseSchema.parse(response ?? { success: true });
+		return SuccessResponseSchema.parse(response);
 	},
 	markAsPosted: async (
 		ctx: GiftUpContext,
@@ -110,6 +110,6 @@ export const Orders = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return SuccessResponseSchema.parse(response ?? { success: true });
+		return SuccessResponseSchema.parse(response);
 	},
 };

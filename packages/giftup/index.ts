@@ -498,7 +498,7 @@ export const giftupEndpointMeta = {
 		description: 'Retrieve details of a specific order by ID',
 	},
 	'orders.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create an order and issue associated gift cards',
 	},
 	'orders.update': {
@@ -619,7 +619,7 @@ export const giftupEndpointMeta = {
 		description: 'Retrieve user details by ID',
 	},
 	'users.invite': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Invite a staff user or administrator',
 	},
 	'users.update': {

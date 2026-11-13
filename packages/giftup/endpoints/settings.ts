@@ -177,7 +177,7 @@ export const Settings = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return SuccessResponseSchema.parse(response ?? { success: true });
+		return SuccessResponseSchema.parse(response);
 	},
 	getShipping: async (
 		ctx: GiftUpContext,

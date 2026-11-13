@@ -93,6 +93,6 @@ export const Groups = {
 				testMode: ctx.options?.testMode,
 			},
 		);
-		return SuccessResponseSchema.parse(response ?? { success: true });
+		return SuccessResponseSchema.parse(response);
 	},
 };
