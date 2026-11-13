@@ -6,14 +6,13 @@ overviewNote: >-
   database migration once before passing the connection to `createCorsair`;
   creating a SQLite file does not create Corsair's tables. Before creating a
   tenant connect link, mount a Hub delivery handler as described in [Connect /
-  OAuth](/management/connect). Cloudlayer does not prompt for an API key on the
-  first request: connect the tenant through Hub or store its key before making
-  API calls.
+  OAuth](/management/connect). A call for a tenant with no stored key fails with
+  `AuthMissingError`, which carries a connect link when Hub is configured.
 factory:
   note: >-
-    The generic first-request API-key prompt does not apply to Cloudlayer.
-    Missing keys fail with `AuthMissingError`; connect the tenant through Hub
-    below or store the key with `tenant.cloudlayer.keys.set_api_key(...)` first.
+    A call with no stored key fails with `AuthMissingError` and a connect link
+    when Hub is configured. To skip that, connect the tenant through Hub below
+    or store the key with `tenant.cloudlayer.keys.set_api_key(...)` first.
 examples:
   read:
     path: account.get

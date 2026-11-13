@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Account,
 	Assets,
@@ -408,7 +409,14 @@ export function cloudlayer<const T extends CloudlayerPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				return (await ctx.keys.get_api_key()) ?? '';
+				const apiKey = await ctx.keys.get_api_key();
+				// Core mints a connect link only for an AuthMissingError raised
+				// here; the same error thrown later by the client reaches the
+				// caller without one.
+				if (!apiKey) {
+					throw new AuthMissingError('cloudlayer', 'api_key');
+				}
+				return apiKey;
 			}
 
 			return '';
