@@ -1,20 +1,43 @@
+import {
+	operationDefinitions,
+	operationTestInputs,
+	operationTestOutputs,
+} from './endpoints/definitions';
+import { forceManagerRoutes } from './endpoints/routes';
 import { ForceManagerSchema } from './schema';
 
-describe('ForceManager schema', () => {
-	it('declares a semver version', () => {
-		expect(ForceManagerSchema.version).toBeDefined();
+describe('ForceManager operation schemas', () => {
+	it('declares a semver schema version and no persisted entities', () => {
 		expect(ForceManagerSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
+		expect(ForceManagerSchema.entities).toEqual({});
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof ForceManagerSchema.entities).toBe('object');
-		expect(ForceManagerSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(ForceManagerSchema.entities))).toBe(true);
-		for (const entity of Object.values(ForceManagerSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
-	});
+	for (const route of forceManagerRoutes) {
+		it(`${route.name} validates documented input and output fixtures`, () => {
+			const definition = operationDefinitions[route.name];
+			const input = operationTestInputs[route.name];
+			const output = operationTestOutputs[route.name];
+
+			expect(definition.input.safeParse(input).success).toBe(true);
+			expect(definition.output.safeParse(output).success).toBe(true);
+			expect(
+				definition.input.safeParse({ ...input, undocumented: true }).success,
+			).toBe(false);
+			expect(definition.output.safeParse(undefined).success).toBe(false);
+		});
+	}
+
+	for (const route of forceManagerRoutes) {
+		it(`${route.name} rejects undocumented request body fields`, () => {
+			const definition = operationDefinitions[route.name];
+			const input = operationTestInputs[route.name];
+
+			expect(
+				definition.input.safeParse({
+					...input,
+					body: { undocumented: 'field' },
+				}).success,
+			).toBe(false);
+		});
+	}
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

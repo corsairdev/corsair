@@ -1,61 +1,91 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
+
+export type ForceManagerRequestInput = Omit<ApiRequestOptions, 'url'>;
+
+export type ForceManagerEnvironment = 'production' | 'sandbox';
+
+const FORCE_MANAGER_BASES: Record<ForceManagerEnvironment, string> = {
+	production: 'https://api.forcemanager.com/api/v4',
+	sandbox: 'https://sandbox-api.forcemanager.com/api/v4',
+};
+
+const RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: { retryAfter: 'retry-after' },
+};
 
 export class ForceManagerAPIError extends Error {
 	constructor(
 		message: string,
-		public readonly code?: string,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'ForceManagerAPIError';
 	}
 }
 
-// TODO: Update with your API base URL
-const FORCEMANAGER_API_BASE = 'https://api.example.com';
-
-export async function makeForceManagerRequest<T>(
-	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+// `unknown` is the safe default because the provider payload is untrusted until an operation schema parses it.
+export async function makeForceManagerRequest<T = unknown>(
+	path: string,
+	apiKey: string | undefined,
+	input: ForceManagerRequestInput,
+	environment: ForceManagerEnvironment = 'production',
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	if (apiKey !== undefined && apiKey.length === 0) {
+		throw new AuthMissingError('forcemanager', 'api_key');
+	}
+	if (!apiKey) {
+		throw new AuthMissingError('forcemanager', 'api_key');
+	}
 
 	const config: OpenAPIConfig = {
-		BASE: FORCEMANAGER_API_BASE,
-		VERSION: '1.0.0',
+		BASE: FORCE_MANAGER_BASES[environment],
+		VERSION: '4.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			'X-Session-Key': apiKey,
 		},
 	};
-
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+	const options: ApiRequestOptions = {
+		...input,
+		url: path,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new ForceManagerAPIError(error.message);
+		return await request<T>(config, options, {
+			rateLimitConfig: RATE_LIMIT_CONFIG,
+		});
+	} catch (error: unknown) {
+		// `unknown` because transport failures may be non-Error values; preserve only safe status metadata.
+		if (error instanceof ApiError) {
+			throw new ForceManagerAPIError(
+				`ForceManager request failed with HTTP ${error.status}`,
+				error.status,
+				error.retryAfter,
+			);
 		}
-		throw new ForceManagerAPIError('Unknown error');
+		if (error instanceof Error) {
+			throw new ForceManagerAPIError('ForceManager request failed');
+		}
+		throw new ForceManagerAPIError('ForceManager request failed');
 	}
+}
+
+export function forceManagerBaseUrl(
+	environment: ForceManagerEnvironment,
+): string {
+	return FORCE_MANAGER_BASES[environment];
 }
