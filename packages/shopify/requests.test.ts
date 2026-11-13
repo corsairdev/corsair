@@ -157,8 +157,10 @@ describe('products', () => {
 
 		const { query, variables } = sentGraphql();
 		expect(query).toContain('mutation ProductDelete');
+		// productDelete takes `input: ProductDeleteInput!`, not a bare id.
+		expect(query).toContain('productDelete(input: $input');
 		expect(variables).toEqual({
-			id: 'gid://shopify/Product/1',
+			input: { id: 'gid://shopify/Product/1' },
 			synchronous: true,
 		});
 		expect(result.deletedProductId).toBe('gid://shopify/Product/1');
@@ -238,7 +240,12 @@ describe('inventory', () => {
 
 		const { query, variables } = sentGraphql();
 		expect(query).toContain('quantities(names: ["available"])');
-		expect(variables).toEqual({ id: 'gid://shopify/InventoryItem/3' });
+		// inventoryLevels is a connection, so the page size is passed through.
+		expect(variables).toEqual({
+			id: 'gid://shopify/InventoryItem/3',
+			first: 50,
+			after: undefined,
+		});
 		expect(
 			result.inventoryItem?.inventoryLevels.edges[0]?.node.quantities[0]
 				?.quantity,
@@ -269,7 +276,10 @@ describe('inventory', () => {
 
 		const { query, variables } = sentGraphql();
 		expect(query).toContain('mutation InventoryAdjust');
-		expect(variables).toEqual({
+		// The @idempotent directive is required from 2026-04, and
+		// changeFromQuantity must be present even when it is null.
+		expect(query).toContain('@idempotent(key: $idempotencyKey)');
+		expect(variables).toMatchObject({
 			input: {
 				reason: 'correction',
 				name: 'available',
@@ -278,10 +288,14 @@ describe('inventory', () => {
 						inventoryItemId: 'gid://shopify/InventoryItem/3',
 						locationId: 'gid://shopify/Location/9',
 						delta: -4,
+						changeFromQuantity: null,
 					},
 				],
 			},
 		});
+		expect(variables.idempotencyKey).toBe(
+			'inventory-adjust:gid://shopify/InventoryItem/3:gid://shopify/Location/9:-4:correction',
+		);
 	});
 });
 
@@ -379,20 +393,42 @@ describe('orders', () => {
 
 		await Shopify.orders.get(ctx, { id: 'gid://shopify/Order/1001' });
 
-		expect(sentGraphql().variables).toEqual({ id: 'gid://shopify/Order/1001' });
+		expect(sentGraphql().variables).toEqual({
+			id: 'gid://shopify/Order/1001',
+			lineItemsFirst: 20,
+			lineItemsAfter: undefined,
+		});
 	});
 
 	// Cancelling must not refund by default: the deprecated flag did, and a
 	// caller who only asked to cancel would move money.
 	it('orders.cancel does not refund unless asked', async () => {
 		const ctx = createContext();
-		harness.respond({ data: { orderCancel: { order, userErrors: [] } } });
+		harness.respond({
+			data: {
+				orderCancel: {
+					job: { id: 'gid://shopify/Job/1', done: true },
+					jobResult: {
+						done: true,
+						status: 'SUCCEEDED',
+						errors: [],
+						order,
+					},
+				},
+			},
+		});
 
-		await Shopify.orders.cancel(ctx, { id: 'gid://shopify/Order/1001' });
+		const result = await Shopify.orders.cancel(ctx, {
+			id: 'gid://shopify/Order/1001',
+		});
 
 		const { query, variables } = sentGraphql();
 		expect(query).toContain('refundMethod');
 		expect(query).not.toContain('$refund:');
+		// OrderCancelPayload has no `order` field: the order arrives in the job
+		// result, so selecting it directly would fail validation.
+		expect(query).toContain('jobResult');
+		expect(query).toContain('orderCancelUserErrors');
 		expect(variables).toMatchObject({
 			orderId: 'gid://shopify/Order/1001',
 			reason: 'CUSTOMER',
@@ -400,6 +436,67 @@ describe('orders', () => {
 			notifyCustomer: false,
 			refundOriginalPayment: false,
 		});
+		expect(result.order.id).toBe('gid://shopify/Order/1001');
+	});
+
+	it('orders.cancel polls the job until the cancellation finishes', async () => {
+		const ctx = createContext();
+		// First response: the job only started.
+		harness.respond({
+			data: {
+				orderCancel: {
+					job: { id: 'gid://shopify/Job/1', done: false },
+					jobResult: { done: false, status: 'STARTED' },
+					orderCancelUserErrors: [],
+				},
+			},
+		});
+		// Polled response: finished, with the order.
+		harness.respond({
+			data: {
+				job: {
+					id: 'gid://shopify/Job/1',
+					done: true,
+					query: {
+						done: true,
+						status: 'SUCCEEDED',
+						errors: [],
+						order,
+					},
+				},
+			},
+		});
+
+		const result = await Shopify.orders.cancel(ctx, {
+			id: 'gid://shopify/Order/1001',
+		});
+
+		expect(harness.fetchMock).toHaveBeenCalledTimes(2);
+		expect(result.order.cancelledAt).toBeNull();
+	});
+
+	it('orders.cancel fails when the job reports an error', async () => {
+		const ctx = createContext();
+		harness.respond({
+			data: {
+				orderCancel: {
+					job: { id: 'gid://shopify/Job/1', done: true },
+					jobResult: {
+						done: true,
+						status: 'FAILED',
+						errors: [{ message: 'Order could not be cancelled' }],
+						order: null,
+					},
+					orderCancelUserErrors: [],
+				},
+			},
+		});
+
+		const error = await harness.expectRejection<Error>(
+			Shopify.orders.cancel(ctx, { id: 'gid://shopify/Order/1001' }),
+		);
+
+		expect(error.message).toContain('Order could not be cancelled');
 	});
 
 	it('orders.markAsPaid sends the order id in an input object', async () => {

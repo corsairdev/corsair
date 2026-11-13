@@ -1,5 +1,6 @@
 import { ApiError } from 'corsair/http';
 import {
+	getReplayMeta,
 	makeShopifyGraphqlRequest,
 	normaliseShopDomain,
 	SHOPIFY_API_VERSION,
@@ -32,6 +33,27 @@ describe('normaliseShopDomain', () => {
 
 	it('rejects an empty domain', () => {
 		expect(() => normaliseShopDomain('  ')).toThrow(ShopifyAPIError);
+	});
+
+	// The token is attached to the request, so a stored value must not be able
+	// to point the client at a server that is not Shopify.
+	it('rejects a host that is not under myshopify.com', () => {
+		expect(() => normaliseShopDomain('evil.example.com')).toThrow(
+			/must end in \.myshopify\.com/,
+		);
+	});
+
+	it('rejects a domain carrying credentials', () => {
+		expect(() =>
+			normaliseShopDomain('https://user:pass@my-store.myshopify.com'),
+		).toThrow(/cannot contain credentials/);
+	});
+
+	it('rejects a domain carrying a port', () => {
+		expect(() => normaliseShopDomain('my-store.myshopify.com:8443')).toThrow(
+			/cannot include a port/,
+		);
+		expect(() => normaliseShopDomain('my-store')).not.toThrow();
 	});
 });
 
@@ -150,10 +172,10 @@ describe('makeShopifyGraphqlRequest', () => {
 		expect(error.replaySafe).toBe(true);
 	});
 
-	it('reports an HTTP error status as a typed error', async () => {
+	it('passes a core ApiError through unchanged, as R8 requires', async () => {
 		harness.respond({ error: 'nope' }, 500);
 
-		const error = await harness.expectRejection<ShopifyAPIError>(
+		const error = await harness.expectRejection<ApiError>(
 			makeShopifyGraphqlRequest({
 				shopDomain: SHOP_DOMAIN,
 				accessToken: ACCESS_TOKEN,
@@ -161,15 +183,31 @@ describe('makeShopifyGraphqlRequest', () => {
 			}),
 		);
 
-		// Wrapped, not raw: the cause is dropped so a request body echoed by
-		// Shopify cannot print the token through console.error.
-		expect(error).toBeInstanceOf(ShopifyAPIError);
-		expect(error).not.toBeInstanceOf(ApiError);
+		// Core's status and retryAfter are what the handlers match, so the
+		// error must keep its identity rather than being wrapped.
+		expect(error).toBeInstanceOf(ApiError);
 		expect(error.status).toBe(500);
 	});
 
 	it('marks a 5xx on a write as unsafe to replay', async () => {
 		harness.respond({ error: 'boom' }, 502);
+
+		const error = await harness.expectRejection<Error>(
+			makeShopifyGraphqlRequest({
+				shopDomain: SHOP_DOMAIN,
+				accessToken: ACCESS_TOKEN,
+				query: 'mutation { x }',
+				replaySafe: false,
+			}),
+		);
+
+		expect(getReplayMeta(error)?.replaySafe).toBe(false);
+	});
+
+	// R8: a network retry is allowed only for a read or a replayable write,
+	// because Shopify may have applied the write before the connection dropped.
+	it('does not mark a transport failure safe when the write is not replayable', async () => {
+		harness.fetchMock.mockRejectedValueOnce(new Error('socket hang up'));
 
 		const error = await harness.expectRejection<ShopifyAPIError>(
 			makeShopifyGraphqlRequest({
@@ -180,17 +218,19 @@ describe('makeShopifyGraphqlRequest', () => {
 			}),
 		);
 
+		expect(error.transportFailure).toBe(true);
 		expect(error.replaySafe).toBe(false);
 	});
 
-	it('treats a transport failure as replay-safe, because nothing was sent', async () => {
+	it('marks a transport failure safe for a read, which changes nothing', async () => {
 		harness.fetchMock.mockRejectedValueOnce(new Error('socket hang up'));
 
 		const error = await harness.expectRejection<ShopifyAPIError>(
 			makeShopifyGraphqlRequest({
 				shopDomain: SHOP_DOMAIN,
 				accessToken: ACCESS_TOKEN,
-				query: 'mutation { x }',
+				query: '{ shop { name } }',
+				replaySafe: true,
 			}),
 		);
 
@@ -228,7 +268,7 @@ describe('makeShopifyGraphqlRequest', () => {
 		const onPartial = jest.fn();
 
 		const result = await makeShopifyGraphqlRequest<{
-			customers: { edges: unknown[] };
+			customers: { edges: { node: { id: string; firstName: null } }[] };
 		}>({
 			shopDomain: SHOP_DOMAIN,
 			accessToken: ACCESS_TOKEN,

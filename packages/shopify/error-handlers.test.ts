@@ -1,5 +1,6 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ShopifyAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { recordReplayMeta, ShopifyAPIError } from './client';
 import { ShopifyUserError } from './endpoints/call';
 import {
 	DEFAULT_THROTTLE_DELAY_MS,
@@ -116,8 +117,53 @@ describe('error handlers', () => {
 			status: 500,
 			replaySafe: true,
 		});
+		recordReplayMeta(error, { replaySafe: true, transportFailure: false });
 
 		expect((await resolve(error)).result).toEqual({ maxRetries: 2 });
+	});
+
+	// Core's ApiError passes through unchanged, so the plugin records replay
+	// safety beside it. A 5xx on a write must not be replayed.
+	it('recognises a pass-through ApiError and retries it only when replayable', async () => {
+		const read = new ApiError(
+			{ method: 'POST', url: '/admin/api/2026-10/graphql.json' },
+			{
+				url: 'https://s.myshopify.com',
+				ok: false,
+				status: 500,
+				statusText: 'x',
+				body: {},
+			},
+			'Internal Server Error',
+		);
+		recordReplayMeta(read, { replaySafe: true, transportFailure: false });
+		expect(matchedHandler(read)).toBe('SERVER_ERROR');
+		expect((await resolve(read)).result).toEqual({ maxRetries: 2 });
+
+		const write = new ApiError(
+			{ method: 'POST', url: '/admin/api/2026-10/graphql.json' },
+			{
+				url: 'https://s.myshopify.com',
+				ok: false,
+				status: 500,
+				statusText: 'x',
+				body: {},
+			},
+			'Internal Server Error',
+		);
+		recordReplayMeta(write, { replaySafe: false, transportFailure: false });
+		expect((await resolve(write)).result).toEqual({ maxRetries: 0 });
+	});
+
+	// An error with no recorded metadata is treated as unsafe on purpose:
+	// replaying a write that may already have landed is worse than failing.
+	it('does not retry an error whose replay safety is unknown', async () => {
+		const untracked = new ShopifyAPIError('Internal Server Error', {
+			status: 500,
+		});
+
+		expect(matchedHandler(untracked)).toBe('SERVER_ERROR');
+		expect((await resolve(untracked)).result).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not replay a 5xx on a write', async () => {

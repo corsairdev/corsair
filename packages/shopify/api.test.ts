@@ -83,20 +83,24 @@ describeLive('Shopify live reads', () => {
 		}
 	});
 
-	// A plan that cannot read customer PII (Basic App Development, for one)
-	// nulls the denied fields and returns the rows anyway, with an
-	// ACCESS_DENIED entry beside the data. The call must succeed and hand back
-	// what it was allowed to read.
-	it('lists customers with PII nulled when the plan cannot read it', async () => {
+	// Whether PII comes back populated depends on the app's access, not on the
+	// store's plan: a custom app granted the scopes returns names, an app
+	// without them gets nulls. A live run cannot assume either, so this asserts
+	// the field parses and nothing more. The denied case is covered by a
+	// controlled response in client.test.ts.
+	it('lists customers and parses a name whether or not PII is readable', async () => {
 		const result = await Shopify.customers.list(ctx, { first: 5 });
 
 		for (const edge of result.customers.edges) {
 			// numberOfOrders is an UnsignedInt64, serialised as a string.
 			expect(typeof edge.node.numberOfOrders).toBe('string');
-			// PII is null when the plan denies it, never absent. The query
-			// deliberately omits the Customer object's `displayName`, which
-			// returns `data: null` rather than a nulled field.
-			expect(edge.node.firstName ?? null).toBeNull();
+			expect(
+				edge.node.firstName === null ||
+					edge.node.firstName === undefined ||
+					typeof edge.node.firstName === 'string',
+			).toBe(true);
+			// The address lives under defaultEmailAddress; `email` is not a
+			// field on Customer in 2026-10.
 			const address = edge.node.defaultEmailAddress?.emailAddress;
 			expect(address === undefined || typeof address === 'string').toBe(true);
 		}

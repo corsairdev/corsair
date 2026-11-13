@@ -42,7 +42,7 @@ function buildRequest(
 	};
 }
 
-const ctx = { options: { webhookSecret: SECRET } } as never;
+const ctx = { key: SECRET, options: {} } as never;
 
 describe('verifyShopifySignature', () => {
 	it('accepts a signature computed over the exact body bytes', () => {
@@ -132,10 +132,66 @@ describe('receive handler', () => {
 	it('throws when no secret is configured', async () => {
 		await expect(
 			receive.handler(
-				{ options: {} } as never,
+				{ key: '', options: {} } as never,
 				buildRequest(orderWebhookPayload),
 			),
 		).rejects.toThrow(/No Shopify webhook secret/);
+	});
+
+	// The binder puts the tenant's resolved secret on ctx.key. Reading only the
+	// option would reject every delivery for an account that stores it.
+	it('verifies with the binder-resolved secret on ctx.key', async () => {
+		const response = await receive.handler(
+			// No option at all: the secret must come from ctx.key.
+			{ key: SECRET, options: {} } as never,
+			buildRequest(orderWebhookPayload),
+		);
+
+		expect(response.success).toBe(true);
+		expect(response.data?.signatureVerified).toBe(true);
+	});
+
+	it('rejects a delivery signed with another tenant secret', async () => {
+		// ctx.key belongs to this tenant; the delivery was signed with a
+		// different one, so verification fails rather than running the hooks.
+		await expect(
+			receive.handler(
+				{ key: 'another-tenant-secret', options: {} } as never,
+				buildRequest(orderWebhookPayload),
+			),
+		).rejects.toThrow(/Signature does not match/);
+	});
+
+	// The shop-domain header is not signed, so it is checked against the domain
+	// stored for the tenant rather than trusted on its own.
+	it('rejects a delivery naming a shop the tenant is not configured for', async () => {
+		const request = buildRequest(orderWebhookPayload);
+		const scoped = {
+			key: SECRET,
+			options: {},
+			keys: { get_shop_domain: async () => 'other-store.myshopify.com' },
+		} as never;
+
+		await expect(receive.handler(scoped, request)).rejects.toThrow(
+			/this tenant is configured for/,
+		);
+	});
+
+	it('accepts a delivery whose shop matches the tenant domain', async () => {
+		const scoped = {
+			key: SECRET,
+			options: {},
+			keys: {
+				get_shop_domain: async () => 'corsair-test.myshopify.com',
+			},
+		} as never;
+
+		const response = await receive.handler(
+			scoped,
+			buildRequest(orderWebhookPayload),
+		);
+
+		expect(response.data?.shopDomain).toBe('corsair-test.myshopify.com');
 	});
 
 	it('throws for a topic it does not handle', async () => {
