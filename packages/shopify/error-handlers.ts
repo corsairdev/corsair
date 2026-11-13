@@ -1,5 +1,6 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ShopifyAPIError, throttleDelayMs } from './client';
+import { ApiError } from 'corsair/http';
+import { getReplayMeta, ShopifyAPIError, throttleDelayMs } from './client';
 import { ShopifyUserError } from './endpoints/call';
 
 /** How long to wait when Shopify throttles and reports no bucket detail. */
@@ -7,6 +8,27 @@ export const DEFAULT_THROTTLE_DELAY_MS = 2000;
 
 function isShopifyError(error: Error): error is ShopifyAPIError {
 	return error instanceof ShopifyAPIError;
+}
+
+/**
+ * True when the request can be sent again without changing provider state.
+ *
+ * Core's `ApiError` passes through unchanged (R8), so replay safety cannot live
+ * on it. The client records it in a WeakMap keyed by the error, and this reads
+ * it back; an error with no record is treated as unsafe, because replaying a
+ * write that may already have landed is worse than failing.
+ */
+function isReplaySafe(error: Error): boolean {
+	const meta = getReplayMeta(error);
+	if (meta) return meta.replaySafe;
+	return isShopifyError(error) && error.replaySafe;
+}
+
+/** True when the request never reached Shopify, whatever the verb. */
+function isTransportFailure(error: Error): boolean {
+	const meta = getReplayMeta(error);
+	if (meta) return meta.transportFailure;
+	return isShopifyError(error) && error.transportFailure;
 }
 
 /**
@@ -44,10 +66,20 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			isShopifyError(error) &&
-			(error.status === 401 || error.status === 403) &&
-			error.code !== 'SHOP_INACTIVE',
+		match: (error: Error) => {
+			// Core raises its own ApiError for an HTTP 401/403 body.
+			if (error instanceof ApiError) {
+				return error.status === 401 || error.status === 403;
+			}
+			return (
+				isShopifyError(error) &&
+				(error.status === 401 || error.status === 403) &&
+				error.code !== 'SHOP_INACTIVE' &&
+				// A field-level denial is not an auth failure: the token was
+				// accepted and the caller simply cannot read that field.
+				error.code !== 'ACCESS_DENIED'
+			);
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// The shop is frozen, usually for repeated rate-limit breaches. A token
@@ -58,22 +90,34 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// Shopify's own internal failure. Safe to retry a read; a write is only
-	// replayed when the plugin marked it replay-safe, which a mutation never is.
+	// replayed when the operation marked itself replay-safe.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			isShopifyError(error) &&
-			((error.status !== undefined && error.status >= 500) ||
-				error.code === 'INTERNAL_SERVER_ERROR'),
-		handler: async (error: Error) => {
-			const safe = isShopifyError(error) && error.replaySafe;
-			return { maxRetries: safe ? 2 : 0 };
+		match: (error: Error) => {
+			// Core's ApiError and the plugin's own error both carry a status.
+			const status =
+				error instanceof ApiError
+					? error.status
+					: isShopifyError(error)
+						? error.status
+						: undefined;
+			return (
+				(status !== undefined && status >= 500) ||
+				(isShopifyError(error) && error.code === 'INTERNAL_SERVER_ERROR')
+			);
 		},
+		handler: async (error: Error) => ({
+			maxRetries: isReplaySafe(error) ? 2 : 0,
+		}),
 	},
-	// A reset or abort never reached Shopify, so replaying it is safe even for
-	// a write.
+	// A transport failure for a read can be sent again. For a write it cannot,
+	// because Shopify may have applied the request before the connection
+	// dropped: replaying it could adjust stock twice or create a second
+	// product. R8 permits a network retry only for reads and replayable writes.
 	TRANSPORT_ERROR: {
-		match: (error: Error) => isShopifyError(error) && error.transportFailure,
-		handler: async () => ({ maxRetries: 2 }),
+		match: (error: Error) => isTransportFailure(error),
+		handler: async (error: Error) => ({
+			maxRetries: isReplaySafe(error) ? 2 : 0,
+		}),
 	},
 	// Anything else, including an unrecognised body code. Kept last: core stops
 	// at the first match.

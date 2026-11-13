@@ -16,33 +16,48 @@ export type ShopifyAuthContext = {
 };
 
 export type ShopifyCredentials = {
-	/** `<shop>.myshopify.com`, normalised. */
+	/** `<shop>.myshopify.com`, normalised by the client before use. */
 	shopDomain: string;
 	accessToken: string;
 };
 
 /**
- * Resolves both credentials, preferring the plugin options so a caller can
- * point one instance at a specific shop. A fixture-based test that supplies a
- * method the runtime never creates would hide a bad authConfig, so the shape
- * here is exactly what `createAccountKeyManager` builds.
+ * The shop host: the plugin option when set, else the stored account value.
+ *
+ * Endpoints need this on its own. The token they send is `ctx.key`, the value
+ * the binder resolved after hooks and the per-tenant lookup, so re-reading the
+ * token from options or account storage here would ignore a hook that replaced
+ * it (R8). This function deliberately reads only the domain.
+ */
+export async function resolveShopDomain(
+	ctx: { keys: { get_shop_domain: () => Promise<string | null | undefined> } },
+	options: { shopDomain?: string } = {},
+): Promise<string> {
+	const shopDomain =
+		options.shopDomain?.trim() || (await ctx.keys.get_shop_domain());
+	if (!shopDomain) {
+		// The token alone is not usable: every request URL is built from the
+		// shop host, so a missing domain would become a request to `https://`.
+		throw new AuthMissingError('shopify', 'api_key');
+	}
+	return shopDomain.trim();
+}
+
+/**
+ * Resolves both credentials. Used by `keyBuilder`, which has to produce the
+ * token core assigns to `ctx.key`; endpoints call `resolveShopDomain` and read
+ * the token from `ctx.key` instead.
  */
 export async function resolveShopifyCredentials(
 	ctx: ShopifyAuthContext,
 	options: { key?: string; shopDomain?: string } = {},
 ): Promise<ShopifyCredentials> {
 	const accessToken = options.key?.trim() || (await ctx.keys.get_api_key());
-	const shopDomain =
-		options.shopDomain?.trim() || (await ctx.keys.get_shop_domain());
+	const shopDomain = await resolveShopDomain(ctx, options);
 
 	if (!accessToken) {
 		throw new AuthMissingError('shopify', ctx.authType ?? 'api_key');
 	}
-	if (!shopDomain) {
-		// The token alone is not usable: every request URL is built from the
-		// shop host, so a missing domain would become a request to `https://`.
-		throw new AuthMissingError('shopify', ctx.authType ?? 'api_key');
-	}
 
-	return { accessToken: accessToken.trim(), shopDomain: shopDomain.trim() };
+	return { accessToken: accessToken.trim(), shopDomain };
 }

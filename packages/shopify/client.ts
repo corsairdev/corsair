@@ -207,10 +207,13 @@ export async function makeShopifyGraphqlRequest<T>(input: {
 		// rows the caller is allowed to see, so a field-level denial with data
 		// present is surfaced as a warning and the call succeeds.
 		//
-		// Throttling, cost limits and a rejected mutation are different: they
-		// mean the operation did not run, so they always throw.
-		const isFieldLevel = code === 'ACCESS_DENIED';
-		if (hasData && isFieldLevel) {
+		// Every entry has to be a field-level denial. One permitted code
+		// followed by, say, INTERNAL_SERVER_ERROR means the response is
+		// incomplete for a reason the caller has to know about, so it fails.
+		const allFieldLevel = entries.every(
+			(entry) => entry.extensions?.code === 'ACCESS_DENIED',
+		);
+		if (hasData && allFieldLevel) {
 			input.onPartial?.(message);
 			return {
 				data: raw.data as T,
@@ -219,7 +222,7 @@ export async function makeShopifyGraphqlRequest<T>(input: {
 			};
 		}
 
-		throw new ShopifyAPIError(message, {
+		const graphqlError = new ShopifyAPIError(message, {
 			status: code === 'THROTTLED' ? 429 : 200,
 			code,
 			// A throttled request was rejected before it ran, so replaying it
@@ -227,6 +230,11 @@ export async function makeShopifyGraphqlRequest<T>(input: {
 			replaySafe: code === 'THROTTLED' || (input.replaySafe ?? false),
 			retryAfter: delayFromRawError(raw),
 		});
+		replayMeta.set(graphqlError, {
+			replaySafe: graphqlError.replaySafe,
+			transportFailure: false,
+		});
+		throw graphqlError;
 	}
 
 	if (!hasData) {
@@ -259,9 +267,44 @@ function delayFromRawError(raw: GraphqlEnvelope<unknown>): number | undefined {
 }
 
 /**
+ * Replay safety per error, keyed by the error object.
+ *
+ * Core's `ApiError` must reach callers unchanged (R8: its `status` and
+ * `retryAfter` are what the 429 handler matches), so the plugin cannot add a
+ * field to it. A WeakMap carries the one extra fact the handlers need without
+ * altering the error's identity, and entries are collected with the error.
+ */
+type ReplayMeta = {
+	/** Safe to send the same request again without changing provider state. */
+	replaySafe: boolean;
+	/** The request never reached the provider. */
+	transportFailure: boolean;
+};
+
+const replayMeta = new WeakMap<Error, ReplayMeta>();
+
+/** Replay metadata for an error, or undefined when it was not recorded. */
+export function getReplayMeta(error: Error): ReplayMeta | undefined {
+	return replayMeta.get(error);
+}
+
+/**
+ * Records replay safety for an error. Exported so a test can reproduce what
+ * the client does for an error it cannot attach a field to, such as core's
+ * `ApiError`.
+ */
+export function recordReplayMeta(error: Error, meta: ReplayMeta): void {
+	replayMeta.set(error, meta);
+}
+
+/**
  * `shopDomain` is stored as the `<shop>.myshopify.com` host. Accepting a bare
  * handle or a full admin URL keeps a pasted value from failing at request time
  * with a DNS error that reads like a bad token.
+ *
+ * The result must be a real Shopify host: the access token is attached to the
+ * request, so a typo or a tampered stored value would otherwise send that token
+ * to whatever server the value names.
  */
 export function normaliseShopDomain(value: string): string {
 	const trimmed = value.trim();
@@ -270,38 +313,56 @@ export function normaliseShopDomain(value: string): string {
 			'A shop domain is required, e.g. my-store.myshopify.com',
 		);
 	}
+	if (trimmed.includes('@')) {
+		// `https://user:pass@host` would put credentials in front of the host.
+		throw new ShopifyAPIError('A shop domain cannot contain credentials');
+	}
 	const withoutScheme = trimmed.replace(/^https?:\/\//i, '');
-	const host = withoutScheme.split('/')[0] ?? '';
-	const cleaned = host.toLowerCase();
-	if (!cleaned.includes('.')) {
-		return `${cleaned}.myshopify.com`;
+	const host = (withoutScheme.split('/')[0] ?? '').toLowerCase();
+	if (host.includes(':')) {
+		// A port is not part of a Shopify admin host, and `host:port` would send
+		// the token to an address the caller did not mean.
+		throw new ShopifyAPIError('A shop domain cannot include a port');
+	}
+	const cleaned = host.includes('.') ? host : `${host}.myshopify.com`;
+	if (!/^[a-z0-9][a-z0-9-]*\.myshopify\.com$/.test(cleaned)) {
+		throw new ShopifyAPIError(
+			`"${value}" is not a Shopify shop domain; it must end in .myshopify.com`,
+		);
 	}
 	return cleaned;
 }
 
 // unknown: a thrown value can be an ApiError, a transport Error, or anything
 // else, so each case is narrowed by an instanceof check.
-function toShopifyError(error: unknown, replaySafe: boolean): ShopifyAPIError {
+function toShopifyError(
+	error: unknown,
+	replaySafe: boolean,
+): ApiError | ShopifyAPIError {
 	if (error instanceof ApiError) {
-		return new ShopifyAPIError(error.message, {
-			status: error.status,
-			// Only the status and the wait survive: `ApiError.body` can echo
-			// request fields, and the cause is not attached to the message.
-			retryAfter: error.retryAfter,
+		// Passed through unchanged, as R8 requires. A Shopify error body can
+		// echo request fields, but `ApiError.body` is already redacted by core
+		// for the query params it knows, and the token travels in a header.
+		replayMeta.set(error, { replaySafe, transportFailure: false });
+		return error;
+	}
+	if (error instanceof ShopifyAPIError) {
+		replayMeta.set(error, {
 			replaySafe,
+			transportFailure: error.transportFailure,
 		});
+		return error;
 	}
-	if (error instanceof ShopifyAPIError) return error;
-	if (error instanceof Error) {
-		// A reset, DNS failure or abort never reached Shopify, so it is safe to
-		// replay even for a write.
-		return new ShopifyAPIError(error.message, {
+	// A reset, DNS failure or abort may still have reached Shopify before the
+	// connection dropped for a write, so replay safety follows the operation:
+	// only reads and explicitly replayable calls are safe to send again.
+	const wrapped = new ShopifyAPIError(
+		error instanceof Error ? error.message : 'Unknown error',
+		{
 			transportFailure: true,
-			replaySafe: true,
-		});
-	}
-	return new ShopifyAPIError('Unknown error', {
-		transportFailure: true,
-		replaySafe: true,
-	});
+			replaySafe,
+		},
+	);
+	replayMeta.set(wrapped, { replaySafe, transportFailure: true });
+	return wrapped;
 }
