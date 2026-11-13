@@ -1133,13 +1133,10 @@ export const errorHandlers = {
 \t\t\tconst msg = error.message.toLowerCase();
 \t\t\treturn msg.includes('rate_limited') || msg.includes('429');
 \t\t},
-\t\thandler: async (error: Error) => {
-\t\t\tlet retryAfterMs: number | undefined;
-\t\t\tif (error instanceof ApiError && error.retryAfter !== undefined) {
-\t\t\t\tretryAfterMs = error.retryAfter;
-\t\t\t}
-\t\t\treturn { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-\t\t},
+\t\t// Core's request() has already retried this 429 (three times, honouring
+\t\t// Retry-After) before it reaches a handler. Retrying the endpoint again
+\t\t// here would multiply the attempts and the wait.
+\t\thandler: async () => ({ maxRetries: 0 }),
 \t},
 \tAUTH_ERROR: {
 \t\tmatch: (error: Error) => {

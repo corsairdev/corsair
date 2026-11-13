@@ -409,9 +409,9 @@ function authTypeCredentialInstructions(
 		// AuthMissingError (with a connect link only when Hub or manual connect
 		// is set up). Say how the key gets stored instead.
 		case 'api_key':
-			return `Store the ${title} API key before the first call: \`pnpm corsair setup --plugin=${pluginId} api_key=<your-key>\`, or pass it as \`key\` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).`;
+			return `Store the ${title} API key before the first call: \`pnpm corsair setup --plugin=${pluginId} --tenant=acme api_key=<your-key>\` (leave out \`--tenant\` without \`multiTenancy\`), or pass it as \`key\` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).`;
 		case 'bot_token':
-			return `Store the ${title} bot token before the first call: \`pnpm corsair setup --plugin=${pluginId} bot_token=<your-token>\`, or pass it as \`key\` in the plugin options. With Hub, each tenant enters their own token on the connect page. See [API key auth](/concepts/api-key).`;
+			return `Store the ${title} bot token before the first call: \`pnpm corsair setup --plugin=${pluginId} --tenant=acme bot_token=<your-token>\` (leave out \`--tenant\` without \`multiTenancy\`), or pass it as \`key\` in the plugin options. With Hub, each tenant enters their own token on the connect page. See [API key auth](/concepts/api-key).`;
 		default:
 			return `See [Get Credentials](${base}/get-credentials) for provider-specific setup steps.`;
 	}
@@ -1892,7 +1892,7 @@ export async function POST(request: Request) {
         return Response.json({ success: false }, { status: 404 });
     }
     const status =
-        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+        result.response?.success === false ? (result.response.statusCode ?? 500) : 200;
     return Response.json(result.response ?? { success: true }, {
         status,
         headers: result.responseHeaders,
