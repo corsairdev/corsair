@@ -406,6 +406,45 @@ describe('gages.update', () => {
 		});
 	});
 
+	it('keeps the test templates on a create and update', async () => {
+		respondToken();
+		respond(updated);
+
+		const TestTemplates = [
+			{
+				Id: 0,
+				EquipmentRefId: 12,
+				TestNumber: '1',
+				Parameter: 'Length',
+				ExpectedResult: '25.00',
+				RefStandardID: 'GB-1',
+			},
+		];
+		await invoke(Gages.update, { Id: 12, TestTemplates });
+
+		expect(lastRequest().jsonBody).toEqual({ Id: 12, TestTemplates });
+	});
+
+	it('takes a record read from gages.get, nulls included, as the update body', async () => {
+		respondToken();
+		respond(updated);
+
+		// A read answers null for empty fields, and the update takes the record back.
+		const { Id, OtherInformation, ImageName, Location } = gageDetail.data;
+		await invoke(Gages.update, {
+			Id,
+			OtherInformation,
+			ImageName,
+			Location: `${Location} (moved)`,
+		});
+
+		expect(lastRequest().jsonBody).toEqual({
+			Id: 12,
+			OtherInformation: null,
+			Location: 'Bench 3 (moved)',
+		});
+	});
+
 	it('rejects an update with no Id', async () => {
 		await expect(
 			invoke(Gages.update, { Location: 'Bench 4' }),
@@ -483,6 +522,41 @@ describe('calibrations', () => {
 		expect(lastRequest()).toMatchObject({
 			method: 'POST',
 			path: '/GageList/api/Calibration/Update',
+		});
+	});
+
+	it('keeps the measured tests and the documented calibration fields on an update', async () => {
+		respondToken();
+		respond(updated);
+
+		const CalibrationTests = [
+			{
+				Id: 0,
+				CalibrationRefId: 500,
+				TestNumber: '1',
+				Parameter: 'Length',
+				ExpectedResult: '25.00',
+				RefStandardID: 'GB-1',
+				AsFound: '25.01',
+				AsLeft: '25.00',
+				ChkAsLeft: 'true',
+				PassFail: 'Pass',
+			},
+		];
+		await invoke(Calibrations.update, {
+			Id: 500,
+			DateCalibrated: '2026-04-24T00:00:00Z',
+			CalibrationTechinician: 'Lab tech',
+			ControlNumber: 'CN-1001',
+			CalibrationTests,
+		});
+
+		expect(lastRequest().jsonBody).toEqual({
+			Id: 500,
+			DateCalibrated: '2026-04-24T00:00:00Z',
+			CalibrationTechinician: 'Lab tech',
+			ControlNumber: 'CN-1001',
+			CalibrationTests,
 		});
 	});
 
