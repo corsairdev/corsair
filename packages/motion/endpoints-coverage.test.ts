@@ -46,8 +46,8 @@ const recurringTaskResource = {
 	creator: { id: 'usr_1' },
 	assignee: { id: 'usr_1' },
 };
-// Fixture items span every list family, so each stays a provider-defined
-// record that the endpoint's own output schema validates.
+// Fixture items span different list resource shapes, so one narrower record
+// type cannot cover every family; each endpoint validates its own output.
 const page = (items: Record<string, unknown>, key: string) => ({
 	meta: { nextCursor: null, pageSize: 1 },
 	[key]: [items],
@@ -58,8 +58,8 @@ let consoleErrorSpy: jest.SpyInstance;
 
 const originalConsoleError = console.error.bind(console);
 
-// Test responses stay arbitrary JSON so the public output schemas, not the
-// test author, define what the seam accepts.
+// Fixtures cover different endpoint responses and malformed payloads, so no
+// single narrower type is appropriate; output schemas validate each response.
 function respond(body: unknown, status = 200) {
 	fetchMock.mockResolvedValueOnce(
 		new Response(body === undefined ? null : JSON.stringify(body), {
@@ -78,6 +78,8 @@ beforeEach(() => {
 	// undici's SyntaxError comes from Node's primary realm and fails instanceof.
 	consoleErrorSpy = jest
 		.spyOn(console, 'error')
+		// Console accepts values of any shape, so the spy must forward opaque arguments
+		// rather than claim they match a narrower error or message type.
 		.mockImplementation((...args: unknown[]) => {
 			const first = args[0];
 			if (
@@ -99,6 +101,8 @@ afterEach(() => {
 });
 
 describe('Motion operation seams', () => {
+	// Endpoints return different resource shapes or no body, so no single
+	// narrower type represents every case in this heterogeneous table.
 	const operations: Array<{
 		name: string;
 		call: () => Promise<unknown>;
@@ -239,7 +243,7 @@ describe('Motion operation seams', () => {
 				RecurringTasks.create(ctx as never, {
 					name: 'Weekly sync',
 					workspaceId: 'ws_1',
-					frequency: {},
+					frequency: 'weekly_any_day',
 					assigneeId: 'usr_1',
 				}),
 			result: recurringTaskResource,
@@ -343,7 +347,11 @@ describe('Motion operation seams', () => {
 		{
 			name: 'statuses.list',
 			call: () => Statuses.list(ctx as never, { workspaceId: 'ws_1' }),
-			result: [{ name: 'TODO', isDefaultStatus: true }],
+			result: [
+				{
+					status: { name: 'TODO', isDefaultStatus: true, isResolvedStatus: false },
+				},
+			],
 			method: 'GET',
 			path: '/v1/statuses?workspaceId=ws_1',
 		},

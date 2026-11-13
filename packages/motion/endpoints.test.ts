@@ -21,8 +21,8 @@ let consoleErrorSpy: jest.SpyInstance;
 
 const originalConsoleError = console.error.bind(console);
 
-// Test responses stay arbitrary JSON so the public output schemas, not the
-// test author, define what the seam accepts.
+// Fixtures cover different endpoint responses and malformed payloads, so no
+// single narrower type is appropriate; output schemas validate each response.
 function respond(
 	body: unknown,
 	status = 200,
@@ -44,6 +44,8 @@ beforeEach(() => {
 	// undici's SyntaxError comes from Node's primary realm and fails instanceof.
 	consoleErrorSpy = jest
 		.spyOn(console, 'error')
+		// Console accepts values of any shape, so the spy must forward opaque arguments
+		// rather than claim they match a narrower error or message type.
 		.mockImplementation((...args: unknown[]) => {
 			const first = args[0];
 			if (
@@ -152,9 +154,52 @@ describe('Motion public seam behavior', () => {
 		});
 		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 		expect(init.method).toBe('POST');
+		// Inspect the serialized wire object without assuming the unasserted fields
+		// have a particular value type.
 		const body = JSON.parse(String(init.body)) as Record<string, unknown>;
 		expect(body.autoScheduled).toBeNull();
 		expect(body.name).toBe('Draft launch post');
+	});
+
+	it('nests scheduling options inside autoScheduled, not at the top level', async () => {
+		respond(taskResource);
+		await Tasks.create(ctx as never, {
+			name: 'Draft launch post',
+			workspaceId: 'ws_1',
+			autoScheduled: {
+				startDate: '2026-01-01',
+				deadlineType: 'HARD',
+				schedule: 'Work Hours',
+			},
+		});
+		const body = JSON.parse(
+			String((fetchMock.mock.calls[0] as [string, RequestInit])[1].body),
+		) as Record<string, unknown>;
+		expect(body.autoScheduled).toEqual({
+			startDate: '2026-01-01',
+			deadlineType: 'HARD',
+			schedule: 'Work Hours',
+		});
+		expect(body.startDate).toBeUndefined();
+		expect(body.deadlineType).toBeUndefined();
+		expect(body.schedule).toBeUndefined();
+	});
+
+	it('parses documented person custom-field values from objects', async () => {
+		respond({
+			type: 'person',
+			value: { id: 'usr_1', name: 'Ada', email: 'ada@example.com' },
+		});
+		await expect(
+			CustomFieldValues.addToProject(ctx as never, {
+				projectId: 'proj_1',
+				customFieldInstanceId: 'cfi_1',
+				value: { type: 'person', value: 'usr_1' },
+			}),
+		).resolves.toMatchObject({
+			type: 'person',
+			value: { id: 'usr_1', name: 'Ada', email: 'ada@example.com' },
+		});
 	});
 
 	it('keeps the custom field value wrapper while omitting the path project id', async () => {
@@ -168,6 +213,8 @@ describe('Motion public seam behavior', () => {
 		expect(url).toBe(
 			'https://api.usemotion.com/beta/custom-field-values/project/proj_1',
 		);
+		// Inspect the serialized wire object without assuming the unasserted fields
+		// have a particular value type.
 		const body = JSON.parse(String(init.body)) as Record<string, unknown>;
 		expect(body.customFieldInstanceId).toBe('cfi_1');
 		expect(body.value).toEqual({ type: 'text', value: 'x' });

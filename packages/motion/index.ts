@@ -275,31 +275,31 @@ const motionEndpointMeta = {
 	},
 	'customFields.list': {
 		riskLevel: 'read',
-		description: 'List the custom fields of a workspace.',
+		description: 'List the custom fields of a workspace (beta endpoint).',
 	},
 	'customFields.create': {
 		riskLevel: 'write',
-		description: 'Create a custom field in a workspace.',
+		description: 'Create a custom field in a workspace (beta endpoint).',
 	},
 	'customFields.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a custom field from a workspace.',
+		description: 'Delete a custom field from a workspace (beta endpoint).',
 	},
 	'customFieldValues.addToProject': {
 		riskLevel: 'write',
-		description: 'Set a custom field value on a project.',
+		description: 'Set a custom field value on a project (beta endpoint).',
 	},
 	'customFieldValues.addToTask': {
 		riskLevel: 'write',
-		description: 'Set a custom field value on a task.',
+		description: 'Set a custom field value on a task (beta endpoint).',
 	},
 	'customFieldValues.deleteFromProject': {
 		riskLevel: 'destructive',
-		description: 'Delete a custom field value from a project.',
+		description: 'Delete a custom field value from a project (beta endpoint).',
 	},
 	'customFieldValues.deleteFromTask': {
 		riskLevel: 'destructive',
-		description: 'Delete a custom field value from a task.',
+		description: 'Delete a custom field value from a task (beta endpoint).',
 	},
 	'schedules.list': {
 		riskLevel: 'read',

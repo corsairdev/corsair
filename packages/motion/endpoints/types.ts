@@ -48,9 +48,23 @@ const CustomFieldValueSchema = z
 	.object({
 		type: z.string(),
 		// multiPerson values are arrays of provider-defined shape; Motion does not
-		// document their element schema.
+		// document their element schema. person and relatedTo values are documented
+		// objects (for example { id, name, email } for person), so the union accepts
+		// loose objects too.
 		value: z
-			.union([z.string(), z.number(), z.boolean(), z.array(z.unknown())])
+			.union([
+				z.string(),
+				z.number(),
+				z.boolean(),
+				z.array(z.unknown()),
+				z
+					.object({
+						id: z.string().optional(),
+						name: z.string().optional(),
+						email: z.string().optional(),
+					})
+					.loose(),
+			])
 			.nullable()
 			.optional(),
 	})
@@ -201,6 +215,8 @@ const ScheduleSchema = z
 	.partial()
 	.loose();
 
+// Motion returns { id, field } when listing custom fields but { id, type } when
+// creating one, so each response keeps its own documented shape.
 const CustomFieldResourceSchema = z
 	.object({
 		id: z.string(),
@@ -210,9 +226,23 @@ const CustomFieldResourceSchema = z
 	.extend({ id: z.string() })
 	.loose();
 
-// Motion documents the Frequency object without enumerating its fields on the
-// reference page, so its documented structure stays provider-defined.
-const FrequencySchema = z.object({}).loose();
+const CustomFieldCreateSchema = z
+	.object({
+		id: z.string(),
+		type: CustomFieldTypeSchema,
+	})
+	.partial()
+	.extend({ id: z.string() })
+	.loose();
+
+// Motion documents frequency as a string value in its frequency cookbook, with
+// families like daily_every_day, weekly_any_day, and monthly_first_MO.
+const FrequencySchema = z
+	.string()
+	.min(1)
+	.describe(
+		'Frequency in which the task should be scheduled (for example daily_every_day, weekly_any_day, monthly_first_MO).',
+	);
 
 const TaskFields = {
 	dueDate: z
@@ -236,28 +266,30 @@ const TaskFields = {
 		.optional()
 		.describe('Defaults to the workspace default status.'),
 	// Motion documents autoScheduled as an object or null, where null turns auto
-	// scheduling off; the object fields are provider-defined.
+	// scheduling off. startDate, deadlineType, and schedule are documented as
+	// children of autoScheduled, not top-level task fields.
 	autoScheduled: z
-		.object({})
+		.object({
+			startDate: z
+				.string()
+				.optional()
+				.describe('ISO 8601 date trimmed to the start of the day passed.'),
+			deadlineType: z
+				.enum(['HARD', 'SOFT', 'NONE'])
+				.optional()
+				.describe('Defaults to SOFT.'),
+			schedule: z
+				.string()
+				.optional()
+				.describe(
+					'Schedule the task must adhere to. Must be "Work Hours" when scheduling the task for another user.',
+				),
+		})
 		.loose()
 		.nullable()
 		.optional()
 		.describe(
 			'Set values to turn auto scheduling on, or null to turn auto scheduling off.',
-		),
-	startDate: z
-		.string()
-		.optional()
-		.describe('ISO 8601 date trimmed to the start of the day passed.'),
-	deadlineType: z
-		.enum(['HARD', 'SOFT', 'NONE'])
-		.optional()
-		.describe('Defaults to SOFT.'),
-	schedule: z
-		.string()
-		.optional()
-		.describe(
-			'Schedule the task must adhere to. Must be "Work Hours" when scheduling the task for another user.',
 		),
 	projectId: z
 		.string()
@@ -708,14 +740,15 @@ export const MotionEndpointOutputSchemas = {
 	createRecurringTask: RecurringTaskResourceSchema,
 	deleteRecurringTask: z.void(),
 	listCustomFields: z.array(CustomFieldResourceSchema),
-	createCustomField: CustomFieldResourceSchema,
+	createCustomField: CustomFieldCreateSchema,
 	deleteCustomField: z.void(),
 	addProjectCustomFieldValue: CustomFieldValueSchema,
 	addTaskCustomFieldValue: CustomFieldValueSchema,
 	deleteProjectCustomFieldValue: z.void(),
 	deleteTaskCustomFieldValue: z.void(),
 	listSchedules: z.array(ScheduleSchema),
-	listStatuses: z.array(ProjectStatusSchema),
+	// Motion wraps each status item in a { status: ... } object.
+	listStatuses: z.array(z.object({ status: ProjectStatusSchema }).loose()),
 } as const;
 
 export type MotionEndpointInputs = {

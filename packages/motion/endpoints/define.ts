@@ -22,6 +22,8 @@ type Operation<T extends EndpointName> = {
 
 export const pathValue = (value: string | number) =>
 	encodeURIComponent(String(value));
+// Input objects differ by endpoint; the helper only removes keys and leaves
+// each field value opaque rather than assuming a single request-body shape.
 export const omit = <T extends Record<string, unknown>>(
 	input: T,
 	keys: readonly string[],
