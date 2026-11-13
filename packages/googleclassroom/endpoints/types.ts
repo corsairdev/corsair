@@ -1046,9 +1046,21 @@ const CourseAliasCreateBodySchema = z
 	.strict();
 const AnnouncementCreateBodySchema = z
 	.object({
-		text: z.string().min(1),
+		text: z.string().min(1).max(30000),
+		materials: z.array(GoogleClassroomModelSchemas.Material).max(20).optional(),
+		state: z.enum(['PUBLISHED', 'DRAFT']).optional(),
+		scheduledTime: z.string().optional(),
+		assigneeMode: z.enum(['ALL_STUDENTS', 'INDIVIDUAL_STUDENTS']).optional(),
+		individualStudentsOptions:
+			GoogleClassroomModelSchemas.IndividualStudentsOptions.optional(),
 	})
-	.strict();
+	.strict()
+	.refine(
+		(body) =>
+			body.assigneeMode !== 'INDIVIDUAL_STUDENTS' ||
+			(body.individualStudentsOptions?.studentIds?.length ?? 0) > 0,
+		'Individual announcements require at least one student ID.',
+	);
 const CourseWorkCreateBodySchema =
 	GoogleClassroomModelSchemas.CourseWork.extend({
 		title: z.string().min(1),
@@ -1142,7 +1154,7 @@ const StudentSubmissionUpdateBodySchema = z
 	);
 const AddOnSubmissionUpdateBodySchema = z
 	.object({
-		pointsEarned: z.number(),
+		pointsEarned: z.number().optional(),
 	})
 	.strict();
 const ModifyCourseWorkAssigneesBodySchema =
@@ -1324,6 +1336,7 @@ export const GoogleClassroomEndpointInputSchemas = {
 						.describe('Optional. Deprecated, use `item_id` instead.'),
 					addOnToken: z
 						.string()
+						.optional()
 						.describe(
 							"Optional. Token that authorizes the request. The token is passed as a query parameter when the user is redirected from Classroom to the add-on's URL. This authorization token is required for in-Classroom attachment creation but optional for partner-first attachment creation. Returns an error if not provided for partner-first attachment creation and the developer projects that created the attachment and its parent stream item do not match.",
 						),
@@ -1702,11 +1715,13 @@ export const GoogleClassroomEndpointInputSchemas = {
 						.describe('Optional. Deprecated, use `item_id` instead.'),
 					attachmentId: z
 						.string()
+						.optional()
 						.describe(
 							'Optional. The identifier of the attachment. This field is required for all requests except when the user is in the [Attachment Discovery iframe](https://developers.google.com/workspace/classroom/add-ons/get-started/iframes/attachment-discovery-iframe).',
 						),
 					addOnToken: z
 						.string()
+						.optional()
 						.describe(
 							"Optional. Token that authorizes the request. The token is passed as a query parameter when the user is redirected from Classroom to the add-on's URL. The authorization token is required when neither of the following is true: * The add-on has attachments on the post. * The developer project issuing the request is the same project that created the post.",
 						),
@@ -1908,6 +1923,7 @@ export const GoogleClassroomEndpointInputSchemas = {
 				.object({
 					addOnToken: z
 						.string()
+						.optional()
 						.describe(
 							"Optional. Token that authorizes the request. The token is passed as a query parameter when the user is redirected from Classroom to the add-on's URL. This authorization token is required for in-Classroom attachment creation but optional for partner-first attachment creation. Returns an error if not provided for partner-first attachment creation and the developer projects that created the attachment and its parent stream item do not match.",
 						),
@@ -2447,11 +2463,13 @@ export const GoogleClassroomEndpointInputSchemas = {
 				.object({
 					attachmentId: z
 						.string()
+						.optional()
 						.describe(
 							'Optional. The identifier of the attachment. This field is required for all requests except when the user is in the [Attachment Discovery iframe](https://developers.google.com/workspace/classroom/add-ons/get-started/iframes/attachment-discovery-iframe).',
 						),
 					addOnToken: z
 						.string()
+						.optional()
 						.describe(
 							"Optional. Token that authorizes the request. The token is passed as a query parameter when the user is redirected from Classroom to the add-on's URL. The authorization token is required when neither of the following is true: * The add-on has attachments on the post. * The developer project issuing the request is the same project that created the post.",
 						),
@@ -3203,6 +3221,7 @@ export const GoogleClassroomEndpointInputSchemas = {
 				.object({
 					addOnToken: z
 						.string()
+						.optional()
 						.describe(
 							"Optional. Token that authorizes the request. The token is passed as a query parameter when the user is redirected from Classroom to the add-on's URL. This authorization token is required for in-Classroom attachment creation but optional for partner-first attachment creation. Returns an error if not provided for partner-first attachment creation and the developer projects that created the attachment and its parent stream item do not match.",
 						),
@@ -3581,6 +3600,7 @@ export const GoogleClassroomEndpointInputSchemas = {
 				.object({
 					addOnToken: z
 						.string()
+						.optional()
 						.describe(
 							"Optional. Token that authorizes the request. The token is passed as a query parameter when the user is redirected from Classroom to the add-on's URL. The authorization token is required when neither of the following is true: * The add-on has attachments on the post. * The developer project issuing the request is the same project that created the post.",
 						),
@@ -3590,6 +3610,7 @@ export const GoogleClassroomEndpointInputSchemas = {
 						.describe('Optional. Deprecated, use `item_id` instead.'),
 					attachmentId: z
 						.string()
+						.optional()
 						.describe(
 							'Optional. The identifier of the attachment. This field is required for all requests except when the user is in the [Attachment Discovery iframe](https://developers.google.com/workspace/classroom/add-ons/get-started/iframes/attachment-discovery-iframe).',
 						),
@@ -4022,6 +4043,7 @@ export const GoogleClassroomEndpointInputSchemas = {
 				.object({
 					addOnToken: z
 						.string()
+						.optional()
 						.describe(
 							"Optional. Token that authorizes the request. The token is passed as a query parameter when the user is redirected from Classroom to the add-on's URL. This authorization token is required for in-Classroom attachment creation but optional for partner-first attachment creation. Returns an error if not provided for partner-first attachment creation and the developer projects that created the attachment and its parent stream item do not match.",
 						),
@@ -4377,6 +4399,7 @@ export const GoogleClassroomEndpointInputSchemas = {
 				.object({
 					addOnToken: z
 						.string()
+						.optional()
 						.describe(
 							"Optional. Token that authorizes the request. The token is passed as a query parameter when the user is redirected from Classroom to the add-on's URL. The authorization token is required when neither of the following is true: * The add-on has attachments on the post. * The developer project issuing the request is the same project that created the post.",
 						),
@@ -4387,6 +4410,7 @@ export const GoogleClassroomEndpointInputSchemas = {
 						),
 					attachmentId: z
 						.string()
+						.optional()
 						.describe(
 							'Optional. The identifier of the attachment. This field is required for all requests except when the user is in the [Attachment Discovery iframe](https://developers.google.com/workspace/classroom/add-ons/get-started/iframes/attachment-discovery-iframe).',
 						),
@@ -4745,6 +4769,7 @@ export const GoogleClassroomEndpointInputSchemas = {
 				.object({
 					enrollmentCode: z
 						.string()
+						.optional()
 						.describe(
 							'Enrollment code of the course to create the student in. This code is required if userId corresponds to the requesting user; it may be omitted if the requesting user has administrative permissions to create students for any user.',
 						),

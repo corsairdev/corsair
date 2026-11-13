@@ -1,6 +1,7 @@
 import { GoogleClassroomResponseSchemas } from './endpoints/models';
 import {
 	GOOGLE_CLASSROOM_OAUTH_SCOPES,
+	GOOGLE_CLASSROOM_RESPONSE_MODELS,
 	GOOGLE_CLASSROOM_SUPPORTED_SCOPES,
 	GoogleClassroomEndpointMetadata,
 	GoogleClassroomEndpointSchemas,
@@ -23,6 +24,9 @@ describe('Google Classroom endpoint schemas', () => {
 		expect(Object.keys(GoogleClassroomEndpointSchemas).sort()).toEqual(
 			routeIds,
 		);
+		expect(Object.keys(GOOGLE_CLASSROOM_RESPONSE_MODELS).sort()).toEqual(
+			routeIds,
+		);
 		expect(Object.keys(GoogleClassroomEndpointMetadata).sort()).toEqual(
 			routeIds,
 		);
@@ -36,6 +40,15 @@ describe('Google Classroom endpoint schemas', () => {
 		expect(GOOGLE_CLASSROOM_OAUTH_SCOPES.length).toBeLessThan(
 			GOOGLE_CLASSROOM_SUPPORTED_SCOPES.length,
 		);
+		expect(GOOGLE_CLASSROOM_SUPPORTED_SCOPES).toContain(
+			'https://www.googleapis.com/auth/spreadsheets.readonly',
+		);
+		expect(GOOGLE_CLASSROOM_SUPPORTED_SCOPES).toContain(
+			'https://www.googleapis.com/auth/spreadsheets',
+		);
+		expect(
+			defaultScopes.has('https://www.googleapis.com/auth/spreadsheets'),
+		).toBe(false);
 	});
 
 	it('validates every documented input and response envelope while rejecting undocumented callback fields', () => {
@@ -698,8 +711,12 @@ describe('Google Classroom endpoint schemas', () => {
 					courseId: 'courseId-123',
 					itemId: 'itemId-123',
 				},
-				query: { fields: 'id', updateMask: 'title', postId: 'sample-query' },
-				body: { pointsEarned: 1 },
+				query: {
+					fields: 'id',
+					updateMask: 'pointsEarned',
+					postId: 'postId-123',
+				},
+				body: {},
 			}).success,
 		).toBe(true);
 		expect(
@@ -712,8 +729,12 @@ describe('Google Classroom endpoint schemas', () => {
 					courseId: 'courseId-123',
 					itemId: 'itemId-123',
 				},
-				query: { fields: 'id', updateMask: 'title', postId: 'sample-query' },
-				body: { pointsEarned: 1 },
+				query: {
+					fields: 'id',
+					updateMask: 'pointsEarned',
+					postId: 'postId-123',
+				},
+				body: {},
 				unlistedCallback: 'https://corsair.dev/callback',
 			}).success,
 		).toBe(false);
@@ -1977,7 +1998,7 @@ describe('Google Classroom endpoint schemas', () => {
 					updateMask: 'pointsEarned',
 					itemId: 'itemId-123',
 				},
-				body: { pointsEarned: 1 },
+				body: {},
 			}).success,
 		).toBe(true);
 		expect(
@@ -1995,7 +2016,7 @@ describe('Google Classroom endpoint schemas', () => {
 					updateMask: 'pointsEarned',
 					itemId: 'itemId-123',
 				},
-				body: { pointsEarned: 1 },
+				body: {},
 				unlistedCallback: 'https://corsair.dev/callback',
 			}).success,
 		).toBe(false);
@@ -2219,14 +2240,14 @@ describe('Google Classroom endpoint schemas', () => {
 		expect(
 			GoogleClassroomEndpointInputSchemas['courses.students.create'].safeParse({
 				pathParams: { courseId: 'courseId-123' },
-				query: { fields: 'id', enrollmentCode: 'sample-query' },
+				query: { fields: 'id' },
 				body: { userId: 'student-123' },
 			}).success,
 		).toBe(true);
 		expect(
 			GoogleClassroomEndpointInputSchemas['courses.students.create'].safeParse({
 				pathParams: { courseId: 'courseId-123' },
-				query: { fields: 'id', enrollmentCode: 'sample-query' },
+				query: { fields: 'id' },
 				body: { userId: 'student-123' },
 				unlistedCallback: 'https://corsair.dev/callback',
 			}).success,

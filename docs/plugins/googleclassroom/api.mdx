@@ -213,6 +213,8 @@ await corsair.googleclassroom.api.courses.announcements.addOnAttachments.create(
 | `query` | `object` | Yes | — |
 | `body` | `object` | Yes | — |
 
+addOnToken may be omitted for partner-first creation when the creating project matches the project that created the parent post. Google enforces the project and authorization conditions.
+
 <AccordionGroup>
 <Accordion title="pathParams full type">
 
@@ -229,7 +231,7 @@ await corsair.googleclassroom.api.courses.announcements.addOnAttachments.create(
 ```ts
 {
   postId?: string,
-  addOnToken: string,
+  addOnToken?: string,
   fields?: string,
   prettyPrint?: boolean,
   quotaUser?: string,
@@ -880,7 +882,51 @@ await corsair.googleclassroom.api.courses.announcements.create({ pathParams: {"c
 
 ```ts
 {
-  text: string
+  text: string,
+  materials?: {
+    gem?: {
+      id?: string,
+      url?: string,
+      title?: string
+    },
+    youtubeVideo?: {
+      id?: string,
+      title?: string,
+      alternateLink?: string,
+      thumbnailUrl?: string
+    },
+    form?: {
+      title?: string,
+      formUrl?: string,
+      responseUrl?: string,
+      thumbnailUrl?: string
+    },
+    driveFile?: {
+      driveFile?: {
+        thumbnailUrl?: string,
+        alternateLink?: string,
+        id?: string,
+        title?: string
+      },
+      shareMode?: UNKNOWN_SHARE_MODE | VIEW | EDIT | STUDENT_COPY
+    },
+    notebook?: {
+      url?: string,
+      id?: string,
+      title?: string
+    },
+    link?: {
+      url?: string,
+      thumbnailUrl?: string,
+      title?: string
+    }
+  }[],
+  state?: PUBLISHED | DRAFT,
+  scheduledTime?: string,
+  assigneeMode?: ALL_STUDENTS | INDIVIDUAL_STUDENTS,
+  individualStudentsOptions?: {
+    studentIds?: string[]
+  }
 }
 ```
 </Accordion>
@@ -1146,7 +1192,7 @@ Gets metadata for Classroom add-ons in the context of a specific post. To mainta
 **Risk:** `read`
 
 ```ts
-await corsair.googleclassroom.api.courses.announcements.getAddOnContext({ pathParams: {"courseId":"courseId-123","itemId":"itemId-123"}, query: {"attachmentId":"attachment-123"} });
+await corsair.googleclassroom.api.courses.announcements.getAddOnContext({ pathParams: {"courseId":"courseId-123","itemId":"itemId-123"}, query: {} });
 ```
 
 **Input**
@@ -1156,6 +1202,8 @@ await corsair.googleclassroom.api.courses.announcements.getAddOnContext({ pathPa
 | `pathParams` | `object` | Yes | — |
 | `query` | `object` | Yes | — |
 | `body` | `never` | No | — |
+
+attachmentId is optional only for the Attachment Discovery iframe. addOnToken is required when the add-on has no attachment on the post and the calling project differs from the post's creating project; Google enforces this.
 
 <AccordionGroup>
 <Accordion title="pathParams full type">
@@ -1173,8 +1221,8 @@ await corsair.googleclassroom.api.courses.announcements.getAddOnContext({ pathPa
 ```ts
 {
   postId?: string,
-  attachmentId: string,
-  addOnToken: string,
+  attachmentId?: string,
+  addOnToken?: string,
   fields?: string,
   prettyPrint?: boolean,
   quotaUser?: string,
@@ -1678,6 +1726,8 @@ await corsair.googleclassroom.api.courses.courseWork.addOnAttachments.create({ p
 | `query` | `object` | Yes | — |
 | `body` | `object` | Yes | — |
 
+addOnToken may be omitted for partner-first creation when the creating project matches the project that created the parent post. Google enforces the project and authorization conditions.
+
 <AccordionGroup>
 <Accordion title="pathParams full type">
 
@@ -1693,7 +1743,7 @@ await corsair.googleclassroom.api.courses.courseWork.addOnAttachments.create({ p
 
 ```ts
 {
-  addOnToken: string,
+  addOnToken?: string,
   postId?: string,
   fields?: string,
   prettyPrint?: boolean,
@@ -2457,6 +2507,8 @@ await corsair.googleclassroom.api.courses.courseWork.addOnAttachments.studentSub
 | `query` | `object` | Yes | — |
 | `body` | `object` | Yes | — |
 
+To clear a passback grade, include pointsEarned in updateMask and omit pointsEarned from the request body.
+
 <AccordionGroup>
 <Accordion title="pathParams full type">
 
@@ -2488,7 +2540,7 @@ await corsair.googleclassroom.api.courses.courseWork.addOnAttachments.studentSub
 
 ```ts
 {
-  pointsEarned: number
+  pointsEarned?: number
 }
 ```
 </Accordion>
@@ -3044,7 +3096,7 @@ Gets metadata for Classroom add-ons in the context of a specific post. To mainta
 **Risk:** `read`
 
 ```ts
-await corsair.googleclassroom.api.courses.courseWork.getAddOnContext({ pathParams: {"itemId":"itemId-123","courseId":"courseId-123"}, query: {"attachmentId":"attachment-123"} });
+await corsair.googleclassroom.api.courses.courseWork.getAddOnContext({ pathParams: {"itemId":"itemId-123","courseId":"courseId-123"}, query: {} });
 ```
 
 **Input**
@@ -3054,6 +3106,8 @@ await corsair.googleclassroom.api.courses.courseWork.getAddOnContext({ pathParam
 | `pathParams` | `object` | Yes | — |
 | `query` | `object` | Yes | — |
 | `body` | `never` | No | — |
+
+attachmentId is optional only for the Attachment Discovery iframe. addOnToken is required when the add-on has no attachment on the post and the calling project differs from the post's creating project; Google enforces this.
 
 <AccordionGroup>
 <Accordion title="pathParams full type">
@@ -3070,8 +3124,8 @@ await corsair.googleclassroom.api.courses.courseWork.getAddOnContext({ pathParam
 
 ```ts
 {
-  attachmentId: string,
-  addOnToken: string,
+  attachmentId?: string,
+  addOnToken?: string,
   postId?: string,
   fields?: string,
   prettyPrint?: boolean,
@@ -3782,6 +3836,8 @@ await corsair.googleclassroom.api.courses.courseWork.rubrics.create({ pathParams
 | `query` | `object` | Yes | — |
 | `body` | `object` | Yes | — |
 
+Importing a rubric with sourceSpreadsheetId additionally requires either the Google Sheets spreadsheets.readonly or spreadsheets OAuth scope; these scopes are available through oauthScopes but are not requested by default.
+
 <AccordionGroup>
 <Accordion title="pathParams full type">
 
@@ -4109,6 +4165,8 @@ await corsair.googleclassroom.api.courses.courseWork.rubrics.patch({ pathParams:
 | `pathParams` | `object` | Yes | — |
 | `query` | `object` | Yes | — |
 | `body` | `object` | Yes | — |
+
+Importing a rubric with sourceSpreadsheetId additionally requires either the Google Sheets spreadsheets.readonly or spreadsheets OAuth scope; these scopes are available through oauthScopes but are not requested by default.
 
 <AccordionGroup>
 <Accordion title="pathParams full type">
@@ -5094,6 +5152,8 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.addOnAttachments.c
 | `query` | `object` | Yes | — |
 | `body` | `object` | Yes | — |
 
+addOnToken may be omitted for partner-first creation when the creating project matches the project that created the parent post. Google enforces the project and authorization conditions.
+
 <AccordionGroup>
 <Accordion title="pathParams full type">
 
@@ -5109,7 +5169,7 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.addOnAttachments.c
 
 ```ts
 {
-  addOnToken: string,
+  addOnToken?: string,
   postId?: string,
   fields?: string,
   prettyPrint?: boolean,
@@ -6083,7 +6143,7 @@ Gets metadata for Classroom add-ons in the context of a specific post. To mainta
 **Risk:** `read`
 
 ```ts
-await corsair.googleclassroom.api.courses.courseWorkMaterials.getAddOnContext({ pathParams: {"itemId":"itemId-123","courseId":"courseId-123"}, query: {"attachmentId":"attachment-123"} });
+await corsair.googleclassroom.api.courses.courseWorkMaterials.getAddOnContext({ pathParams: {"itemId":"itemId-123","courseId":"courseId-123"}, query: {} });
 ```
 
 **Input**
@@ -6093,6 +6153,8 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.getAddOnContext({ 
 | `pathParams` | `object` | Yes | — |
 | `query` | `object` | Yes | — |
 | `body` | `never` | No | — |
+
+attachmentId is optional only for the Attachment Discovery iframe. addOnToken is required when the add-on has no attachment on the post and the calling project differs from the post's creating project; Google enforces this.
 
 <AccordionGroup>
 <Accordion title="pathParams full type">
@@ -6109,9 +6171,9 @@ await corsair.googleclassroom.api.courses.courseWorkMaterials.getAddOnContext({ 
 
 ```ts
 {
-  addOnToken: string,
+  addOnToken?: string,
   postId?: string,
-  attachmentId: string,
+  attachmentId?: string,
   fields?: string,
   prettyPrint?: boolean,
   quotaUser?: string,
@@ -7299,6 +7361,8 @@ await corsair.googleclassroom.api.courses.posts.addOnAttachments.create({ pathPa
 | `query` | `object` | Yes | — |
 | `body` | `object` | Yes | — |
 
+Deprecated posts-based route retained for compatibility; use the matching resource-specific add-on method. addOnToken may be omitted for partner-first creation when the creating project matches the project that created the parent post. Google enforces the project and authorization conditions.
+
 <AccordionGroup>
 <Accordion title="pathParams full type">
 
@@ -7314,7 +7378,7 @@ await corsair.googleclassroom.api.courses.posts.addOnAttachments.create({ pathPa
 
 ```ts
 {
-  addOnToken: string,
+  addOnToken?: string,
   itemId: string,
   fields?: string,
   prettyPrint?: boolean,
@@ -7474,6 +7538,8 @@ await corsair.googleclassroom.api.courses.posts.addOnAttachments.delete({ pathPa
 | `query` | `object` | Yes | — |
 | `body` | `never` | No | — |
 
+Deprecated posts-based route retained for compatibility. Use the matching announcement, courseWork, or courseWorkMaterial add-on resource method instead.
+
 <AccordionGroup>
 <Accordion title="pathParams full type">
 
@@ -7526,6 +7592,8 @@ await corsair.googleclassroom.api.courses.posts.addOnAttachments.get({ pathParam
 | `pathParams` | `object` | Yes | — |
 | `query` | `object` | Yes | — |
 | `body` | `never` | No | — |
+
+Deprecated posts-based route retained for compatibility. Use the matching announcement, courseWork, or courseWorkMaterial add-on resource method instead.
 
 <AccordionGroup>
 <Accordion title="pathParams full type">
@@ -7661,6 +7729,8 @@ await corsair.googleclassroom.api.courses.posts.addOnAttachments.list({ pathPara
 | `query` | `object` | Yes | — |
 | `body` | `never` | No | — |
 
+Deprecated posts-based route retained for compatibility. Use the matching announcement, courseWork, or courseWorkMaterial add-on resource method instead.
+
 <AccordionGroup>
 <Accordion title="pathParams full type">
 
@@ -7763,6 +7833,8 @@ await corsair.googleclassroom.api.courses.posts.addOnAttachments.patch({ pathPar
 | `pathParams` | `object` | Yes | — |
 | `query` | `object` | Yes | — |
 | `body` | `object` | Yes | — |
+
+Deprecated posts-based route retained for compatibility. Use the matching announcement, courseWork, or courseWorkMaterial add-on resource method instead.
 
 <AccordionGroup>
 <Accordion title="pathParams full type">
@@ -7940,6 +8012,8 @@ await corsair.googleclassroom.api.courses.posts.addOnAttachments.studentSubmissi
 | `query` | `object` | Yes | — |
 | `body` | `never` | No | — |
 
+Deprecated posts-based route retained for compatibility. Use the matching resource-specific add-on studentSubmissions method instead.
+
 <AccordionGroup>
 <Accordion title="pathParams full type">
 
@@ -8003,6 +8077,8 @@ await corsair.googleclassroom.api.courses.posts.addOnAttachments.studentSubmissi
 | `query` | `object` | Yes | — |
 | `body` | `object` | Yes | — |
 
+Deprecated posts-based route retained for compatibility. Use the matching resource-specific add-on studentSubmissions method instead. To clear a passback grade, include pointsEarned in updateMask and omit pointsEarned from the request body.
+
 <AccordionGroup>
 <Accordion title="pathParams full type">
 
@@ -8034,7 +8110,7 @@ await corsair.googleclassroom.api.courses.posts.addOnAttachments.studentSubmissi
 
 ```ts
 {
-  pointsEarned: number
+  pointsEarned?: number
 }
 ```
 </Accordion>
@@ -8065,7 +8141,7 @@ Gets metadata for Classroom add-ons in the context of a specific post. To mainta
 **Risk:** `read`
 
 ```ts
-await corsair.googleclassroom.api.courses.posts.getAddOnContext({ pathParams: {"postId":"postId-123","courseId":"courseId-123"}, query: {"itemId":"item-123","attachmentId":"attachment-123"} });
+await corsair.googleclassroom.api.courses.posts.getAddOnContext({ pathParams: {"postId":"postId-123","courseId":"courseId-123"}, query: {"itemId":"item-123"} });
 ```
 
 **Input**
@@ -8075,6 +8151,8 @@ await corsair.googleclassroom.api.courses.posts.getAddOnContext({ pathParams: {"
 | `pathParams` | `object` | Yes | — |
 | `query` | `object` | Yes | — |
 | `body` | `never` | No | — |
+
+Deprecated posts-based route retained for compatibility; prefer the matching resource-specific route. attachmentId is optional only for the Attachment Discovery iframe. addOnToken is required when the add-on has no attachment on the post and the calling project differs from the post's creating project; Google enforces this.
 
 <AccordionGroup>
 <Accordion title="pathParams full type">
@@ -8091,9 +8169,9 @@ await corsair.googleclassroom.api.courses.posts.getAddOnContext({ pathParams: {"
 
 ```ts
 {
-  addOnToken: string,
+  addOnToken?: string,
   itemId: string,
-  attachmentId: string,
+  attachmentId?: string,
   fields?: string,
   prettyPrint?: boolean,
   quotaUser?: string,
@@ -8597,7 +8675,7 @@ Adds a user as a student of a course. Domain administrators are permitted to [di
 **Risk:** `write`
 
 ```ts
-await corsair.googleclassroom.api.courses.students.create({ pathParams: {"courseId":"courseId-123"}, query: {"enrollmentCode":"code-123"}, body: {"userId":"student-123"} });
+await corsair.googleclassroom.api.courses.students.create({ pathParams: {"courseId":"courseId-123"}, query: {}, body: {"userId":"student-123"} });
 ```
 
 **Input**
@@ -8622,7 +8700,7 @@ await corsair.googleclassroom.api.courses.students.create({ pathParams: {"course
 
 ```ts
 {
-  enrollmentCode: string,
+  enrollmentCode?: string,
   fields?: string,
   prettyPrint?: boolean,
   quotaUser?: string,

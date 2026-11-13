@@ -2242,7 +2242,7 @@
                   "plugins/googlecalendar/webhooks"
                 ]
               },
-              {
+                            {
                 "group": "Google Classroom",
                 "pages": [
                   "plugins/googleclassroom/overview",
@@ -2250,7 +2250,7 @@
                   "plugins/googleclassroom/database"
                 ]
               },
-              {
+{
                 "group": "Google Cloud Vision",
                 "pages": [
                   "plugins/googlecloudvision/overview",

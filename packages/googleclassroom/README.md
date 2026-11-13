@@ -1,6 +1,6 @@
 # @corsair-dev/googleclassroom
 
-Google Classroom plugin for Corsair. Exposes 104 stable, documented v1 REST operations across courses, rosters, classwork, student submissions, add-ons, guardians, invitations, rubrics, topics, and notification registrations.
+Google Classroom plugin for Corsair. Exposes 104 documented v1 operations: 96 current nondeprecated methods plus 8 deprecated posts-based add-on compatibility methods. Coverage spans courses, rosters, classwork, submissions, add-ons, guardians, invitations, rubrics, topics, and notification registrations.
 
 ## Install
 
@@ -10,7 +10,7 @@ pnpm add @corsair-dev/googleclassroom
 
 ## Authentication
 
-OAuth 2.0 via Google. The plugin passes the resolved OAuth access token in the `Authorization: Bearer` header; it does not use API keys or query-string credentials. By default, the consent configuration requests the narrowest 10 official scopes that cover the complete supported API surface. For least privilege when a deployment enables only selected operations, pass a smaller `oauthScopes` list chosen from `GOOGLE_CLASSROOM_SUPPORTED_SCOPES`. Google may require app verification for sensitive scopes.
+OAuth 2.0 via Google. The plugin passes the resolved OAuth access token in the `Authorization: Bearer` header; it does not use API keys or query-string credentials. By default, the consent configuration requests the narrowest 10 official scopes that cover the complete supported API surface. For least privilege when a deployment enables only selected operations, pass a smaller `oauthScopes` list chosen from `GOOGLE_CLASSROOM_SUPPORTED_SCOPES`. Importing a rubric with `sourceSpreadsheetId` additionally needs `spreadsheets.readonly` or `spreadsheets`; those optional scopes are supported but not requested by default. Google may require app verification for sensitive scopes.
 
 See [Google's OAuth scope guide](https://developers.google.com/classroom/guides/auth).
 
@@ -135,13 +135,32 @@ Each listed scope is an accepted alternative for that operation, not a scope tha
 
 `registrations.create` and `registrations.delete` manage Google's notification registrations and are included because their lifecycle is a normal REST resource operation. Creating one requires a valid Pub/Sub topic and Google Classroom's publish permission on that topic. This plugin does not implement a Pub/Sub message receiver or webhook callback.
 
+## Deprecated but supported posts-based add-on routes
+
+Google marks the legacy `courses.posts` add-on routes below deprecated and directs callers to the resource-specific `announcements`, `courseWork`, or `courseWorkMaterials` methods. They remain exposed for compatibility because the v1 methods are still documented.
+
+| Operation | Method and path |
+|---|---|
+| `courses.posts.getAddOnContext` | `GET /v1/courses/{courseId}/posts/{postId}/addOnContext` |
+| `courses.posts.addOnAttachments.create` | `POST /v1/courses/{courseId}/posts/{postId}/addOnAttachments` |
+| `courses.posts.addOnAttachments.delete` | `DELETE /v1/courses/{courseId}/posts/{postId}/addOnAttachments/{attachmentId}` |
+| `courses.posts.addOnAttachments.get` | `GET /v1/courses/{courseId}/posts/{postId}/addOnAttachments/{attachmentId}` |
+| `courses.posts.addOnAttachments.list` | `GET /v1/courses/{courseId}/posts/{postId}/addOnAttachments` |
+| `courses.posts.addOnAttachments.patch` | `PATCH /v1/courses/{courseId}/posts/{postId}/addOnAttachments/{attachmentId}` |
+| `courses.posts.addOnAttachments.studentSubmissions.get` | `GET /v1/courses/{courseId}/posts/{postId}/addOnAttachments/{attachmentId}/studentSubmissions/{submissionId}` |
+| `courses.posts.addOnAttachments.studentSubmissions.patch` | `PATCH /v1/courses/{courseId}/posts/{postId}/addOnAttachments/{attachmentId}/studentSubmissions/{submissionId}` |
+
+## Add-ons and rubrics
+
+`addOnToken` may be omitted for partner-first attachment creation when the creating project matches the project that created the parent post. For `getAddOnContext`, `attachmentId` may be omitted in the Attachment Discovery iframe; Google enforces the remaining token and project-match conditions. Rubric requests using `sourceSpreadsheetId` additionally need either `spreadsheets.readonly` or `spreadsheets`, which can be selected through `oauthScopes` but are not requested by default.
+
 ## Excluded routes
 
 - `courses.checkAddOnCreationEligibility` — `GET /v1/courses/{courseId}:checkAddOnCreationEligibility`; marked deprecated in the [REST reference](https://developers.google.com/workspace/classroom/reference/rest/v1/courses/checkAddOnCreationEligibility).
 - `courses.checkGradingPeriodsSetupEligibility` — `GET /v1/courses/{courseId}:checkGradingPeriodsSetupEligibility`; marked deprecated and Developer Preview in the [REST reference](https://developers.google.com/workspace/classroom/reference/rest/v1/courses/checkGradingPeriodsSetupEligibility).
 - `userProfiles.checkUserCapability` — `GET /v1/userProfiles/{userId}:checkUserCapability`; Developer Preview, not stable v1, in the [REST reference](https://developers.google.com/workspace/classroom/reference/rest/v1/userProfiles/checkUserCapability).
 - `courses.courseWork.updateRubric` (`PATCH /v1/courses/{courseId}/courseWork/{courseWorkId}/rubric`) — present in Discovery metadata but absent from the current REST method catalog (its method reference returns 404); use the documented plural rubrics resource instead.
-- JSONP callbacks, query-string credentials, media/protobuf response formats, and upload protocol parameters — excluded because the stable Classroom methods implemented here use OAuth-authenticated JSON and expose no binary endpoint.
+- JSONP callbacks, query-string credentials, media/protobuf response formats, and upload protocol parameters — excluded because the supported Classroom methods use OAuth-authenticated JSON and expose no binary endpoint.
 
 ## Error handling and privacy
 

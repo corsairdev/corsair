@@ -1,6 +1,19 @@
 # Google Classroom endpoint inventory
 
-The package implements 104 stable operations listed in the [Google Classroom REST reference](https://developers.google.com/workspace/classroom/reference/rest) and [Discovery document](https://classroom.googleapis.com/$discovery/rest?version=v1). OAuth scope alternatives per route and method/path coverage are documented in the package README.
+The package implements 104 documented operations listed in the [Google Classroom REST reference](https://developers.google.com/workspace/classroom/reference/rest) and [Discovery document](https://classroom.googleapis.com/$discovery/rest?version=v1): 96 nondeprecated methods plus eight deprecated posts-based add-on compatibility methods. OAuth scope alternatives per route and method/path coverage are documented in the package README.
+
+Google marks the legacy posts-based add-on routes deprecated and recommends the corresponding `announcements`, `courseWork`, or `courseWorkMaterials` resource methods. They remain implemented because they are still documented v1 routes:
+
+| Route | Status | Replacement |
+|---|---|---|
+| `GET /v1/courses/{courseId}/posts/{postId}/addOnContext` | Deprecated | `courses.announcements/courseWork/courseWorkMaterials.getAddOnContext` |
+| `POST /v1/courses/{courseId}/posts/{postId}/addOnAttachments` | Deprecated | Resource-specific `addOnAttachments.create` |
+| `DELETE /v1/courses/{courseId}/posts/{postId}/addOnAttachments/{attachmentId}` | Deprecated | Resource-specific `addOnAttachments.delete` |
+| `GET /v1/courses/{courseId}/posts/{postId}/addOnAttachments/{attachmentId}` | Deprecated | Resource-specific `addOnAttachments.get` |
+| `GET /v1/courses/{courseId}/posts/{postId}/addOnAttachments` | Deprecated | Resource-specific `addOnAttachments.list` |
+| `PATCH /v1/courses/{courseId}/posts/{postId}/addOnAttachments/{attachmentId}` | Deprecated | Resource-specific `addOnAttachments.patch` |
+| `GET /v1/courses/{courseId}/posts/{postId}/addOnAttachments/{attachmentId}/studentSubmissions/{submissionId}` | Deprecated | Resource-specific add-on `studentSubmissions.get` |
+| `PATCH /v1/courses/{courseId}/posts/{postId}/addOnAttachments/{attachmentId}/studentSubmissions/{submissionId}` | Deprecated | Resource-specific add-on `studentSubmissions.patch` |
 
 The excluded v1 routes are:
 

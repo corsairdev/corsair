@@ -6,7 +6,24 @@ overviewNote: |
 
   The plugin includes Google Pub/Sub notification registration create/delete operations, but does not receive Pub/Sub messages. Configure the topic and message consumer separately. No database migration or inbound webhook handler is needed.
 apiNotes:
+  courses.announcements.addOnAttachments.create: addOnToken may be omitted for partner-first creation when the creating project matches the project that created the parent post. Google enforces the project and authorization conditions.
+  courses.courseWork.addOnAttachments.create: addOnToken may be omitted for partner-first creation when the creating project matches the project that created the parent post. Google enforces the project and authorization conditions.
+  courses.courseWorkMaterials.addOnAttachments.create: addOnToken may be omitted for partner-first creation when the creating project matches the project that created the parent post. Google enforces the project and authorization conditions.
+  courses.posts.addOnAttachments.create: Deprecated posts-based route retained for compatibility; use the matching resource-specific add-on method. addOnToken may be omitted for partner-first creation when the creating project matches the project that created the parent post. Google enforces the project and authorization conditions.
+  courses.announcements.getAddOnContext: attachmentId is optional only for the Attachment Discovery iframe. addOnToken is required when the add-on has no attachment on the post and the calling project differs from the post's creating project; Google enforces this.
+  courses.courseWork.getAddOnContext: attachmentId is optional only for the Attachment Discovery iframe. addOnToken is required when the add-on has no attachment on the post and the calling project differs from the post's creating project; Google enforces this.
+  courses.courseWorkMaterials.getAddOnContext: attachmentId is optional only for the Attachment Discovery iframe. addOnToken is required when the add-on has no attachment on the post and the calling project differs from the post's creating project; Google enforces this.
+  courses.posts.getAddOnContext: Deprecated posts-based route retained for compatibility; prefer the matching resource-specific route. attachmentId is optional only for the Attachment Discovery iframe. addOnToken is required when the add-on has no attachment on the post and the calling project differs from the post's creating project; Google enforces this.
+  courses.posts.addOnAttachments.delete: Deprecated posts-based route retained for compatibility. Use the matching announcement, courseWork, or courseWorkMaterial add-on resource method instead.
+  courses.posts.addOnAttachments.get: Deprecated posts-based route retained for compatibility. Use the matching announcement, courseWork, or courseWorkMaterial add-on resource method instead.
+  courses.posts.addOnAttachments.list: Deprecated posts-based route retained for compatibility. Use the matching announcement, courseWork, or courseWorkMaterial add-on resource method instead.
+  courses.posts.addOnAttachments.patch: Deprecated posts-based route retained for compatibility. Use the matching announcement, courseWork, or courseWorkMaterial add-on resource method instead.
+  courses.posts.addOnAttachments.studentSubmissions.get: Deprecated posts-based route retained for compatibility. Use the matching resource-specific add-on studentSubmissions method instead.
+  courses.posts.addOnAttachments.studentSubmissions.patch: Deprecated posts-based route retained for compatibility. Use the matching resource-specific add-on studentSubmissions method instead. To clear a passback grade, include pointsEarned in updateMask and omit pointsEarned from the request body.
+  courses.courseWork.addOnAttachments.studentSubmissions.patch: To clear a passback grade, include pointsEarned in updateMask and omit pointsEarned from the request body.
   courses.courseWork.rubrics.list: The pageSize maximum is 1; Google coerces larger values to 1. Continue with nextPageToken when returned.
+  courses.courseWork.rubrics.create: Importing a rubric with sourceSpreadsheetId additionally requires either the Google Sheets spreadsheets.readonly or spreadsheets OAuth scope; these scopes are available through oauthScopes but are not requested by default.
+  courses.courseWork.rubrics.patch: Importing a rubric with sourceSpreadsheetId additionally requires either the Google Sheets spreadsheets.readonly or spreadsheets OAuth scope; these scopes are available through oauthScopes but are not requested by default.
   registrations.create: A valid Google Cloud Pub/Sub topic must exist and grant Classroom permission to publish. The plugin manages the registration but does not receive messages.
   userProfiles.get: Profile email and photo fields require their corresponding Google OAuth scopes and may be absent when those scopes are not granted.
 references:
@@ -40,7 +57,7 @@ apiExamples:
   "courses.announcements.get":
     call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {} }"
   "courses.announcements.getAddOnContext":
-    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"itemId\":\"itemId-123\"}, query: {\"attachmentId\":\"attachment-123\"} }"
+    call: "{ pathParams: {\"courseId\":\"courseId-123\",\"itemId\":\"itemId-123\"}, query: {} }"
   "courses.announcements.list":
     call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1,\"announcementStates\":[\"PUBLISHED\"],\"orderBy\":\"updateTime desc\"} }"
   "courses.announcements.modifyAssignees":
@@ -70,7 +87,7 @@ apiExamples:
   "courses.courseWork.get":
     call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {} }"
   "courses.courseWork.getAddOnContext":
-    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"courseId\":\"courseId-123\"}, query: {\"attachmentId\":\"attachment-123\"} }"
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"courseId\":\"courseId-123\"}, query: {} }"
   "courses.courseWork.list":
     call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1,\"courseWorkStates\":[\"PUBLISHED\"],\"orderBy\":\"updateTime desc\"} }"
   "courses.courseWork.modifyAssignees":
@@ -118,7 +135,7 @@ apiExamples:
   "courses.courseWorkMaterials.get":
     call: "{ pathParams: {\"id\":\"id-123\",\"courseId\":\"courseId-123\"}, query: {} }"
   "courses.courseWorkMaterials.getAddOnContext":
-    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"courseId\":\"courseId-123\"}, query: {\"attachmentId\":\"attachment-123\"} }"
+    call: "{ pathParams: {\"itemId\":\"itemId-123\",\"courseId\":\"courseId-123\"}, query: {} }"
   "courses.courseWorkMaterials.list":
     call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"materialDriveId\":\"drive-file-123\",\"pageSize\":1,\"orderBy\":\"updateTime desc\",\"materialLink\":\"https://drive.google.com\",\"courseWorkMaterialStates\":[\"PUBLISHED\"]} }"
   "courses.courseWorkMaterials.patch":
@@ -150,7 +167,7 @@ apiExamples:
   "courses.posts.addOnAttachments.studentSubmissions.patch":
     call: "{ pathParams: {\"submissionId\":\"submissionId-123\",\"courseId\":\"courseId-123\",\"attachmentId\":\"attachmentId-123\",\"postId\":\"postId-123\"}, query: {\"updateMask\":\"pointsEarned\",\"itemId\":\"itemId-123\"}, body: {\"pointsEarned\":1} }"
   "courses.posts.getAddOnContext":
-    call: "{ pathParams: {\"postId\":\"postId-123\",\"courseId\":\"courseId-123\"}, query: {\"itemId\":\"item-123\",\"attachmentId\":\"attachment-123\"} }"
+    call: "{ pathParams: {\"postId\":\"postId-123\",\"courseId\":\"courseId-123\"}, query: {\"itemId\":\"item-123\"} }"
   "courses.studentGroups.create":
     call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {}, body: {\"title\":\"Study group\"} }"
   "courses.studentGroups.delete":
@@ -166,7 +183,7 @@ apiExamples:
   "courses.studentGroups.studentGroupMembers.list":
     call: "{ pathParams: {\"studentGroupId\":\"studentGroupId-123\",\"courseId\":\"courseId-123\"}, query: {\"pageSize\":1} }"
   "courses.students.create":
-    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {\"enrollmentCode\":\"code-123\"}, body: {\"userId\":\"student-123\"} }"
+    call: "{ pathParams: {\"courseId\":\"courseId-123\"}, query: {}, body: {\"userId\":\"student-123\"} }"
   "courses.students.delete":
     call: "{ pathParams: {\"userId\":\"userId-123\",\"courseId\":\"courseId-123\"}, query: {} }"
   "courses.students.get":
