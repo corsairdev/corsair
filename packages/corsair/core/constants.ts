@@ -274,6 +274,7 @@ export const BaseProviders = [
 	'googlesheets',
 	'googleslides',
 	'grafana',
+	'grafbase',
 	'griptape',
 	'groqcloud',
 	'gumroad',
@@ -809,6 +810,7 @@ export const ProviderDisplayNames = {
 	googlesheets: 'Google Sheets',
 	googleslides: 'Google Slides',
 	grafana: 'Grafana',
+	grafbase: 'Grafbase',
 	griptape: 'Griptape',
 	groqcloud: 'GroqCloud',
 	gumroad: 'Gumroad',
@@ -1351,6 +1353,7 @@ export type AllProviders =
 	| 'googlesheets'
 	| 'googleslides'
 	| 'grafana'
+	| 'grafbase'
 	| 'griptape'
 	| 'groqcloud'
 	| 'gumroad'
