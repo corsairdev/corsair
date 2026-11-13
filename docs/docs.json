@@ -2609,9 +2609,9 @@
                   "plugins/knack/overview",
                   "plugins/knack/api",
                   "plugins/knack/database"
-                  ]
-                },
-                {
+                ]
+              },
+              {
                 "group": "Kraken.io",
                 "pages": [
                   "plugins/krakenio/overview",
