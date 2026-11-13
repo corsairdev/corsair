@@ -1,4 +1,24 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
 displayName: "GoDial"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+description: List GoDial contact lists and add contacts to a selected list through the documented external API.
+domain: godial.cc
+recommendedAuth: api_key
+examples:
+  read:
+    path: lists.list
+    title: List GoDial lists
+    args: {}
+  write:
+    path: contacts.add
+    title: Add a contact to a list
+    args:
+      listId: list-123
+      name: Ada Lovelace
+      phone: "+15555550123"
+apiExamples:
+  lists.list: {}
+  contacts.add:
+    call: "{ listId: 'list-123', name: 'Ada Lovelace', phone: '+15555550123' }"
+apiNotes:
+  lists.list: "The official overview documents this route but does not publish its response envelope or fields. Only this route and contacts.add are verified; other GoDial operations are excluded until their API contract is available."
+  contacts.add: "The official overview documents this route but does not publish its response envelope or fields. Only this route and lists.list are verified; other GoDial operations are excluded until their API contract is available."
+overviewNote: "Create an External API access token in the GoDial dashboard. The provider requires it as the access_token query parameter for every request."

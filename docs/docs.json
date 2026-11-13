@@ -2201,6 +2201,14 @@
                 ]
               },
               {
+                "group": "GoDial",
+                "pages": [
+                  "plugins/godial/overview",
+                  "plugins/godial/api",
+                  "plugins/godial/database"
+                ]
+              },
+              {
                 "group": "Gong",
                 "pages": [
                   "plugins/gong/overview",

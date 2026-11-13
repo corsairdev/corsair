@@ -1,40 +1,33 @@
 import type {
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { GoDialEndpointInputs, GoDialEndpointOutputs } from './endpoints/types';
-import { GoDialEndpointInputSchemas, GoDialEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
+import { Contacts, Lists } from './endpoints';
 import type {
-	GoDialWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { GoDialSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	GoDialEndpointInputs,
+	GoDialEndpointOutputs,
+} from './endpoints/types';
+import {
+	GoDialEndpointInputSchemas,
+	GoDialEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchGoDialTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveGoDialOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { GoDialSchema } from './schema';
 
 export type GoDialPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalGoDialPlugin['hooks'];
-	webhookHooks?: InternalGoDialPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof goDialEndpointsNested>;
 };
@@ -45,74 +38,53 @@ export type GoDialContext = CorsairPluginContext<
 >;
 
 export type GoDialKeyBuilderContext = KeyBuilderContext<GoDialPluginOptions>;
-
 export type GoDialBoundEndpoints = BindEndpoints<typeof goDialEndpointsNested>;
 
-type GoDialEndpoint<
-	K extends keyof GoDialEndpointOutputs,
-> = CorsairEndpoint<
+type GoDialEndpoint<K extends keyof GoDialEndpointOutputs> = CorsairEndpoint<
 	GoDialContext,
 	GoDialEndpointInputs[K],
 	GoDialEndpointOutputs[K]
 >;
 
 export type GoDialEndpoints = {
-	exampleGet: GoDialEndpoint<'exampleGet'>;
+	listsList: GoDialEndpoint<'listsList'>;
+	contactsAdd: GoDialEndpoint<'contactsAdd'>;
 };
-
-type GoDialWebhook<
-	K extends keyof GoDialWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<GoDialContext, TEvent, GoDialWebhookOutputs[K]>;
-
-export type GoDialWebhooks = {
-	example: GoDialWebhook<'example', ExampleEvent>;
-};
-
-export type GoDialBoundWebhooks = BindWebhooks<GoDialWebhooks>;
 
 const goDialEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
-} as const;
-
-const goDialWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
+	lists: { list: Lists.list },
+	contacts: { add: Contacts.add },
 } as const;
 
 export const goDialEndpointSchemas = {
-	'example.get': {
-		input: GoDialEndpointInputSchemas.exampleGet,
-		output: GoDialEndpointOutputSchemas.exampleGet,
+	'lists.list': {
+		input: GoDialEndpointInputSchemas.listsList,
+		output: GoDialEndpointOutputSchemas.listsList,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof goDialEndpointsNested>;
-
-const goDialWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'contacts.add': {
+		input: GoDialEndpointInputSchemas.contactsAdd,
+		output: GoDialEndpointOutputSchemas.contactsAdd,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof goDialWebhooksNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof goDialEndpointsNested
+>;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType = 'api_key' as const;
 
 const goDialEndpointMeta = {
-	'example.get': {
+	'lists.list': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'List the authenticated GoDial account’s lists',
+	},
+	'contacts.add': {
+		riskLevel: 'write',
+		description: 'Add a contact to a GoDial list',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof goDialEndpointsNested>;
 
 export const goDialAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['tenant_external_id'],
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -120,13 +92,12 @@ export type BaseGoDialPlugin<T extends GoDialPluginOptions> = CorsairPlugin<
 	'godial',
 	typeof GoDialSchema,
 	typeof goDialEndpointsNested,
-	typeof goDialWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
 
 export type InternalGoDialPlugin = BaseGoDialPlugin<GoDialPluginOptions>;
-
 export type ExternalGoDialPlugin<T extends GoDialPluginOptions> =
 	BaseGoDialPlugin<T>;
 
@@ -141,62 +112,36 @@ export function godial<const T extends GoDialPluginOptions>(
 		id: 'godial',
 		authConfig: goDialAuthConfig,
 		schema: GoDialSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: goDialEndpointsNested,
-		webhooks: goDialWebhooksNested,
+		webhooks: {},
 		endpointMeta: goDialEndpointMeta,
 		endpointSchemas: goDialEndpointSchemas,
-		webhookSchemas: goDialWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-godial-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchGoDialTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveGoDialOAuthWebhookTenantLink,
+		webhookSchemas: {},
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: GoDialKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
+			if (source !== 'endpoint') return '';
+			if (options.key !== undefined) {
+				if (options.key.length === 0) {
+					throw new AuthMissingError('godial', 'api_key');
+				}
 				return options.key;
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			const apiKey = await ctx.keys?.get_api_key();
+			if (!apiKey) throw new AuthMissingError('godial', 'api_key');
+			return apiKey;
 		},
 	} satisfies InternalGoDialPlugin;
 }
 
 export type {
-	ExampleEvent,
-	GoDialWebhookOutputs,
-} from './webhooks/types';
-
-export type {
+	AddContactInput,
 	GoDialEndpointInputs,
 	GoDialEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
 } from './endpoints/types';

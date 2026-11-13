@@ -1,65 +1,56 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { request } from 'corsair/http';
 
-export class GoDialAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'GoDialAPIError';
+export const GODIAL_API_BASE = 'https://enterprise.godial.cc';
+
+const GODIAL_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: { retryAfter: 'Retry-After' },
+};
+
+export type GoDialRequestOptions = {
+	method: 'GET' | 'POST';
+	apiKey: string;
+	body?: Record<string, string>;
+};
+
+/** GoDial requires access_token in the query string on every API request. */
+// unknown because GoDial's response shapes are not available in the published API overview.
+export async function makeGoDialRequest(
+	path: string,
+	options: GoDialRequestOptions,
+): Promise<unknown> {
+	if (options.apiKey.length === 0) {
+		throw new AuthMissingError('godial', 'api_key');
 	}
-}
-
-// TODO: Update with your API base URL
-const GODIAL_API_BASE = 'https://api.example.com';
-
-export async function makeGoDialRequest<T>(
-	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
-): Promise<T> {
-	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: GODIAL_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
-		},
+		// GoDial uses a query token, not an Authorization header.
+		TOKEN: undefined,
+		HEADERS: { Accept: 'application/json' },
 	};
-
 	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		method: options.method,
+		url: path,
+		query: { access_token: options.apiKey },
+		body: options.body,
+		mediaType: options.body ? 'application/json; charset=utf-8' : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		// Rethrow core's ApiError as is: its status and retryAfter are what the
-		// error handlers match (429 retries) and what core reads to refresh an
-		// OAuth token after a 401. Wrapping it in a new error loses both.
-		if (error instanceof ApiError) throw error;
-		if (error instanceof Error) {
-			throw new GoDialAPIError(error.message);
-		}
-		throw new GoDialAPIError('Unknown error');
-	}
+	// unknown because the shared transport returns untrusted provider JSON before endpoint validation.
+	return request<unknown>(config, requestOptions, {
+		rateLimitConfig: GODIAL_RATE_LIMIT_CONFIG,
+	});
 }

@@ -1,7 +1,7 @@
-import { get as exampleGet } from './example';
+import { add as contactsAdd } from './contacts';
+import { list as listsList } from './lists';
 
-export const Example = {
-	get: exampleGet,
-};
+export const Contacts = { add: contactsAdd };
+export const Lists = { list: listsList };
 
 export * from './types';
