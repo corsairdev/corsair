@@ -37,9 +37,11 @@ function normalizeKeyName(key: string): string {
  * Recursively extracts all string secret values from request bodies or records
  * (e.g. fields named password, secret, token, apiKey, credential, etc., or nested in credential).
  */
+// `unknown` because extractSecretStrings traverses arbitrary JSON request payloads to collect secrets.
 export function extractSecretStrings(value: unknown): string[] {
 	const secrets: string[] = [];
 
+	// `unknown` because recursive walk inspects arbitrary nested structures.
 	function walk(val: unknown, insideSensitiveBranch: boolean) {
 		if (val === null || val === undefined) {
 			return;
@@ -57,6 +59,7 @@ export function extractSecretStrings(value: unknown): string[] {
 			return;
 		}
 		if (typeof val === 'object') {
+			// `unknown` because record entries can be arbitrary nested values.
 			for (const [k, v] of Object.entries(val as Record<string, unknown>)) {
 				const isSensitiveKey = SENSITIVE_KEY_NAMES.has(normalizeKeyName(k));
 				const shouldTreatAsSecret = insideSensitiveBranch || isSensitiveKey;
@@ -165,6 +168,7 @@ export function redactSensitiveData(value: unknown): unknown {
 /**
  * Sanitizes cause objects so that raw request bodies or credentials are never exposed.
  */
+// `unknown` because underlying error causes can be arbitrary error types or rejection values.
 function sanitizeCause(
 	cause: unknown,
 	secrets?: string | (string | undefined)[],
@@ -173,6 +177,7 @@ function sanitizeCause(
 		return undefined;
 	}
 	if (cause instanceof Error) {
+		// `unknown` because inspecting custom error properties requires untyped record access.
 		const causeRecord = cause as unknown as Record<string, unknown>;
 		const sanitizedCause = new Error(
 			sanitizeErrorMessage(cause.message, secrets),
@@ -219,6 +224,7 @@ export class FeltAPIError extends Error {
 			// `unknown` because provider error JSON is untrusted until narrowed by callers.
 			body?: unknown;
 			retryAfter?: number;
+			// `unknown` because underlying error causes can be arbitrary error types or rejection values.
 			cause?: unknown;
 		},
 	) {

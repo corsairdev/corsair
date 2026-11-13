@@ -406,10 +406,14 @@ describe('Print Pages schemas', () => {
 describe('plugin-docs.yaml examples', () => {
 	it('validates every example in plugin-docs.yaml against endpoint input schemas', () => {
 		const docPath = path.resolve(__dirname, 'plugin-docs.yaml');
+		// `unknown` because parsed YAML contains untyped document trees before schema assertions.
 		const doc = parseYaml(fs.readFileSync(docPath, 'utf8')) as {
+			// `unknown` because apiExamples holds untyped example objects.
 			apiExamples?: Record<string, unknown>;
 			examples?: {
+				// `unknown` because read example arguments are untyped test inputs.
 				read?: { path: string; args?: unknown };
+				// `unknown` because write example arguments are untyped test inputs.
 				write?: { path: string; args?: unknown };
 			};
 		};
@@ -419,8 +423,10 @@ describe('plugin-docs.yaml examples', () => {
 			return `${parts[0]}${parts[1] ? parts[1].charAt(0).toUpperCase() + parts[1].slice(1) : ''}`;
 		}
 
+		// `unknown` because schemas map maps string keys to Zod parsers handling arbitrary test values.
 		const schemas = FeltEndpointInputSchemas as Record<
 			string,
+			// `unknown` because Zod parser inputs and outputs are untrusted at dynamic invocation sites.
 			{ parse: (val: unknown) => unknown }
 		>;
 
