@@ -135,7 +135,9 @@ describe('GenderAPI.io client', () => {
 			// What the key builder or a before hook put on the context.
 			key: 'hookkeyhookkeyhookkeyxx',
 			options: { key: 'optionkeyoptionkeyoption' },
-			keys: { get_api_key: jest.fn().mockResolvedValue('storedkeystoredkeystored') },
+			keys: {
+				get_api_key: jest.fn().mockResolvedValue('storedkeystoredkeystored'),
+			},
 		};
 		await gender(ctx as never, { type: 'name', value: 'Sophia' } as never);
 
@@ -276,14 +278,15 @@ describe('genderapiio.gender.infer', () => {
 		await invoke(gender, {
 			type: 'username',
 			value: 'xX_darklord_Xx',
-			ai_mode: 'always',
+			// forceToGenderize only combines with fallback; the API refuses off or always.
+			ai_mode: 'fallback',
 			forceToGenderize: true,
 		});
 
 		// The v2 POST schema refuses a top-level ai_mode with a 422.
 		const body = lastRequest().body as Record<string, unknown>;
 		expect(body).toMatchObject({
-			options: { ai_mode: 'always' },
+			options: { ai_mode: 'fallback' },
 			forceToGenderize: true,
 		});
 		expect(body).not.toHaveProperty('ai_mode');
@@ -363,7 +366,7 @@ describe('genderapiio.gender.batch', () => {
 		expect(result.data[1]?.index).toBe(1);
 	});
 
-	it('sends ai_mode under each item, with an item's own mode winning', async () => {
+	it("sends ai_mode under each item, an item's own mode wins", async () => {
 		respond(batch);
 		await invoke(genderBatch, {
 			ai_mode: 'fallback',
@@ -391,7 +394,9 @@ describe('genderapiio.gender.batch', () => {
 		respond(batch);
 		await invoke(genderBatch, { items: [{ type: 'name', value: 'Sophia' }] });
 
-		const body = lastRequest().body as { items: Array<Record<string, unknown>> };
+		const body = lastRequest().body as {
+			items: Array<Record<string, unknown>>;
+		};
 		expect(body.items[0]).toEqual({ type: 'name', value: 'Sophia' });
 	});
 

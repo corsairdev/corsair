@@ -210,7 +210,7 @@ const GenderInputSchema = z.object({
 		.boolean()
 		.optional()
 		.describe(
-			'Resolves more names by falling back to nickname-based AI. A dataset hit costs 1 credit, an AI one 2',
+			'Resolves more names by falling back to nickname-based AI. A dataset hit costs 1 credit, an AI one 2. Cannot be combined with `ai_mode` `off` or `always`',
 		),
 });
 

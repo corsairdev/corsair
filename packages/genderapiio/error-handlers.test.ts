@@ -118,7 +118,9 @@ describe('error handler selection', () => {
 	it('does not retry a billed POST that failed with any 5xx', async () => {
 		// 500 internal_error says contact support; a repeat is a new charge.
 		await expect(
-			resolve(apiError({ status: 500, code: 'internal_error', method: 'POST' })),
+			resolve(
+				apiError({ status: 500, code: 'internal_error', method: 'POST' }),
+			),
 		).resolves.toEqual({ maxRetries: 0 });
 		await expect(
 			resolve(apiError({ status: 504, method: 'POST' })),
@@ -141,7 +143,9 @@ describe('error handler selection', () => {
 	});
 
 	it('retries a 5xx on a free GET route', async () => {
-		await expect(resolve(apiError({ status: 500, method: 'GET' }))).resolves.toMatchObject({
+		await expect(
+			resolve(apiError({ status: 500, method: 'GET' })),
+		).resolves.toMatchObject({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
 		});
@@ -156,11 +160,9 @@ describe('error handler selection', () => {
 	it('retries a dropped connection twice', async () => {
 		await expect(
 			resolve(apiError({ method: 'GET', transport: true })),
-		).resolves.toMatchObject(
-			{
-				maxRetries: 2,
-			},
-		);
+		).resolves.toMatchObject({
+			maxRetries: 2,
+		});
 	});
 
 	it('leaves an unclassified error alone, through DEFAULT', async () => {

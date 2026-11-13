@@ -39,7 +39,6 @@ export const gender: GenderApiIoEndpoints['gender']['infer'] = async (
 			type: parsed.type,
 			value: parsed.value,
 			country: parsed.country,
-			ai_mode: parsed.ai_mode,
 			forceToGenderize: parsed.forceToGenderize,
 			options: aiOptions(parsed.ai_mode),
 		},
