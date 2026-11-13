@@ -21,6 +21,9 @@ apiExamples:
   connections.setMetadata: { connection_id: example, provider_config_key: example, metadata: { label: value } }
   connections.updateMetadata: { connection_id: example, provider_config_key: example, metadata: { label: value } }
   connections.delete: { connectionId: example, provider_config_key: example }
+  sessions.create: { tags: { end_user_id: example } }
   sessions.reconnect: { connection_id: example, integration_id: example }
   sessions.get: { session_token: example }
   sessions.delete: { session_token: example }
+apiNotes:
+  sessions.create: Either `tags` or `end_user` is required; Nango recommends using tags.

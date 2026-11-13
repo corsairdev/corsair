@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { createCorsair } from 'corsair/core';
 import { NangoError, nango, nangoEndpointSchemas } from './index';
 
@@ -34,15 +36,19 @@ const session = {
 		connect_link: 'https://example.com/connect',
 	},
 };
+// Cases cover different endpoint bodies and results (including no-content), so
+// no single narrower type represents every fixture and public endpoint call.
 type WireCase = {
 	name: string;
 	method: string;
 	path: string;
 	query?: Record<string, string>;
+	// Fixtures include differently shaped request bodies and provider responses.
 	body?: unknown;
 	response: unknown;
 	status?: number;
 	token?: string;
+	// Each callback returns the distinct result type of its public operation.
 	call: () => Promise<unknown>;
 };
 const metadata = {
@@ -186,6 +192,31 @@ const cases: WireCase[] = [
 
 describe('Nango public HTTP seam', () => {
 	afterEach(() => jest.restoreAllMocks());
+	it('documents a session creation example that reaches the public HTTP seam', async () => {
+		const reference = readFileSync(
+			resolve(__dirname, '../../docs/plugins/nango/api.mdx'),
+			'utf8',
+		);
+		const section = reference.split('### create\n\n`sessions.create`')[1];
+		const example = section?.match(
+			/await corsair\.nango\.api\.sessions\.create\(\{\s*tags:\s*\{\s*end_user_id:\s*'([^']+)'\s*\},?\s*\}\);/,
+		);
+		expect(example).toBeTruthy();
+		expect(section).toContain('Either `tags` or `end_user` is required');
+		const endUserId = example?.[1];
+		if (!endUserId) throw new Error('Missing documented end-user tag');
+		const fetchMock = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(JSON.stringify(session), { status: 201 }),
+			);
+		expect(
+			await api.sessions.create({ tags: { end_user_id: endUserId } }),
+		).toEqual(session);
+		expect(JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body))).toEqual({
+			tags: { end_user_id: endUserId },
+		});
+	});
 	it.each(cases)(
 		'$name forwards the documented request and parses the response',
 		async (testCase) => {

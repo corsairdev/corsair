@@ -132,6 +132,7 @@ await corsair.nango.api.connections.get({ connectionId: 'example', provider_conf
 
 
 ---
+
 ### import
 
 `connections.import`
@@ -508,7 +509,9 @@ Create a connect session
 **Risk:** `write`
 
 ```ts
-await corsair.nango.api.sessions.create({});
+await corsair.nango.api.sessions.create({
+	tags: { end_user_id: 'example' },
+});
 ```
 
 **Input**
@@ -522,6 +525,8 @@ await corsair.nango.api.sessions.create({});
 | `overrides` | `object` | No | — |
 | `webhook_url_override` | `string` | No | — |
 | `allowed_integrations` | `string[]` | No | — |
+
+Either `tags` or `end_user` is required; Nango recommends using tags.
 
 <AccordionGroup>
 <Accordion title="end_user full type">

@@ -13,12 +13,14 @@ export class NangoError extends Error {
 	}
 }
 
-/** JSON is untrusted until the operation's output schema validates it. */
+/** Response JSON varies by operation and is untrusted until its output schema validates it. */
 export async function nangoRequest(
 	key: string,
 	method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
 	path: string,
 	query: Record<string, string | number | boolean | undefined> = {},
+	// Each endpoint validates its own differently shaped body before transport;
+	// this shared serializer cannot impose one more specific body type.
 	body?: unknown,
 ): Promise<unknown> {
 	if (!key.trim()) throw new AuthMissingError('nango', 'api_key');
@@ -57,6 +59,7 @@ export async function nangoRequest(
 		let providerCode: string | undefined;
 		let providerMessage: string | undefined;
 		try {
+			// Error JSON is untrusted and may not match Nango's standard error shape.
 			const payload: unknown = await response.json();
 			if (payload && typeof payload === 'object') {
 				if (

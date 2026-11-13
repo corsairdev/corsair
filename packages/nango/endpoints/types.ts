@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-// Nango connection metadata and connection configuration are provider-defined JSON.
+// Metadata, connection configuration, and raw credentials contain provider-defined
+// values, so a more specific nested value schema would reject valid provider data.
 const JsonObject = z.record(z.string(), z.unknown());
 const Tags = z
 	.record(z.string(), z.string().max(255))

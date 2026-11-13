@@ -10,6 +10,8 @@ import {
 function operation<I extends z.ZodType, O extends z.ZodType>(
 	inputSchema: I,
 	outputSchema: O,
+	// Provider responses are untrusted and vary by operation; the output schema
+	// validates their shape before they become typed endpoint results.
 	request: (ctx: NangoContext, args: z.output<I>) => Promise<unknown>,
 ): CorsairEndpoint<NangoContext, z.input<I>, z.output<O>> {
 	return async (ctx, raw) => {
