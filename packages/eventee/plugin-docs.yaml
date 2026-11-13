@@ -55,10 +55,14 @@ apiNotes:
   attendeeInvite.put: >-
     The first 25 users are processed immediately and the rest in the background.
     Invalid entries and event admins/moderators are skipped.
+    `send_email: true` makes Eventee email each person an invitation; leave it
+    unset or false for a silent import.
   registrationInvite.put: >-
     The first 25 registrations are processed immediately and the rest in the
     background. Invalid entries are skipped; duplicate emails update existing
     registrations.
+    `send_email: true` makes Eventee email each person; leave it unset or false
+    for a silent import.
   attendees.get: >-
     Eventee returns all participants in one response with no pagination.
     Emails can be non-contactable placeholders for anonymous or deleted accounts.
