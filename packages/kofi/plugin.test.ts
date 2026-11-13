@@ -2,12 +2,15 @@ import { kofi, kofiEndpointSchemas, kofiWebhookSchemas } from './index';
 import { donation, formBody, TOKEN } from './test-fixtures';
 
 // The key builder reads authType and keys.
-function keyContext(token: string | null) {
+function keyContext(token: string | null, apiKey: string | null = null) {
 	return {
 		authType: 'api_key' as const,
 		options: {},
 		tenantId: 'default',
-		keys: { get_verification_token: jest.fn().mockResolvedValue(token) },
+		keys: {
+			get_verification_token: jest.fn().mockResolvedValue(token),
+			get_api_key: jest.fn().mockResolvedValue(apiKey),
+		},
 	};
 }
 
@@ -129,6 +132,21 @@ describe('kofi key builder', () => {
 		await expect(buildKey(kofi(), keyContext(null), 'webhook')).resolves.toBe(
 			'',
 		);
+	});
+
+	it('falls back to the stored api_key, where setup and Hub put the token', async () => {
+		await expect(
+			buildKey(kofi(), keyContext(null, TOKEN), 'webhook'),
+		).resolves.toBe(TOKEN);
+		await expect(buildKey(kofi(), keyContext(null, TOKEN))).resolves.toBe(
+			TOKEN,
+		);
+	});
+
+	it('prefers a stored verification_token over the api_key', async () => {
+		await expect(
+			buildKey(kofi(), keyContext(TOKEN, 'other'), 'webhook'),
+		).resolves.toBe(TOKEN);
 	});
 
 	it('reads the stored token for the catalog endpoint', async () => {

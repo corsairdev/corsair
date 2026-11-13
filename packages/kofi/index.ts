@@ -193,9 +193,14 @@ export function kofi<const T extends KofiPluginOptions>(
 			// The webhook path needs the verification token, which is the only
 			// thing that makes a delivery trustworthy. An empty string fails the
 			// comparison closed rather than accepting everything.
+			// `corsair setup ... api_key=<token>` and Hub's connect page store the
+			// token as the account's api_key, so that is read when no
+			// verification_token was saved.
 			if (source === 'webhook') {
 				if (options.key) return options.key;
-				const stored = await ctx.keys.get_verification_token();
+				const stored =
+					(await ctx.keys.get_verification_token()) ??
+					(await ctx.keys.get_api_key());
 				return stored ?? '';
 			}
 
@@ -204,7 +209,9 @@ export function kofi<const T extends KofiPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_verification_token();
+				const res =
+					(await ctx.keys.get_verification_token()) ??
+					(await ctx.keys.get_api_key());
 				if (res) return res;
 			}
 
