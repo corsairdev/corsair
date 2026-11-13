@@ -206,7 +206,7 @@ describe('Google Tasks endpoint routing', () => {
 
 		mockedRequest.mockResolvedValue(undefined);
 		await endpoints.tasks.clear(ctx, { taskListId: 'list-1' });
-		expectRequest('/tasks/v1/lists/list-1/tasks/clear', 'POST');
+		expectRequest('/tasks/v1/lists/list-1/clear', 'POST');
 	});
 
 	it('rejects invalid input before network I/O and logs no task data', async () => {

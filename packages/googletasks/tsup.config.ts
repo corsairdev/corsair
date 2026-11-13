@@ -1,7 +1,7 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-	clean: false,
+	clean: true,
 	dts: false,
 	format: ['esm'],
 	target: 'esnext',

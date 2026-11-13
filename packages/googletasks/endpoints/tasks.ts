@@ -129,9 +129,13 @@ export const move: GoogleTasksEndpoints['tasksMove'] = async (ctx, input) => {
 export const clear: GoogleTasksEndpoints['tasksClear'] = async (ctx, input) => {
 	const args = GoogleTasksEndpointInputSchemas.tasksClear.parse(input);
 	const result = GoogleTasksEndpointOutputSchemas.tasksClear.parse(
-		await makeGoogleTasksRequest(`${tasksPath(args.taskListId)}/clear`, ctx, {
-			method: 'POST',
-		}),
+		await makeGoogleTasksRequest(
+			`/tasks/v1/lists/${pathId(args.taskListId)}/clear`,
+			ctx,
+			{
+				method: 'POST',
+			},
+		),
 	);
 	await logEventFromContext(ctx, 'googletasks.tasks.clear', {}, 'completed');
 	return result;

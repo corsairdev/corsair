@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "tsc --build --force && tsup",
+    "build": "tsup && tsc --build --force",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
