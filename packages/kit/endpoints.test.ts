@@ -208,6 +208,20 @@ describe('subscribers.list', () => {
 		});
 	});
 
+	it('sends an engagement sort Kit documents', async () => {
+		respond(subscribers);
+
+		await invoke(Subscribers.list, {
+			sort_field: 'engagement__opens',
+			sort_order: 'desc',
+		});
+
+		expect(lastRequest().query).toMatchObject({
+			sort_field: 'engagement__opens',
+			sort_order: 'desc',
+		});
+	});
+
 	it('rejects an include that pairs canceled_at with another status', async () => {
 		respond(subscribers);
 
@@ -224,9 +238,11 @@ describe('subscribers.list', () => {
 		[{ status: 'everyone' }],
 		[{ include: [] }],
 		[{ include: ['everything'] }],
-		[{ sort_field: 'engagement__opens' }],
+		[{ sort_field: 'engagement__nothing' }],
+		[{ sort_field: 'engagement__opens', email_address: 'a@b.example' }],
 		[{ sort_order: 'newest' }],
 		[{ per_page: 0 }],
+		[{ per_page: 1001 }],
 	])('rejects %j before calling Kit', async (input) => {
 		await expect(invoke(Subscribers.list, input)).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();

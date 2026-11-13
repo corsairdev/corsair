@@ -73,8 +73,9 @@ const PaginationInputSchema = z.object({
 		.number()
 		.int()
 		.min(1)
+		.max(1000)
 		.optional()
-		.describe('Items per page. Kit’s default applies when omitted.'),
+		.describe('Items per page, up to 1000. Kit’s default is 500.'),
 });
 
 // ── account ───────────────────────────────────────────────────────────────
@@ -225,17 +226,41 @@ const SubscribersListInputSchema = PaginationInputSchema.extend({
 		.optional()
 		.describe('Omit the `fields` object for a smaller, faster response.'),
 	sort_field: z
-		.enum(['id', 'created_at', 'updated_at', 'cancelled_at'])
+		.enum([
+			'id',
+			'created_at',
+			'updated_at',
+			'cancelled_at',
+			'canceled_at',
+			'engagement__sent',
+			'engagement__opens',
+			'engagement__clicks',
+			'engagement__open_rate',
+			'engagement__click_rate',
+		])
 		.optional()
 		.describe(
-			'Field to order by. An `engagement__<metric>` sort is not accepted here.',
+			'Field to order by. `cancelled_at` needs `status: "cancelled"`. An `engagement__<metric>` sort orders by the trailing 90 days and cannot be combined with `email_address`.',
 		),
 	sort_order: z.enum(['asc', 'desc']).optional(),
-	created_after: z.string().optional().describe('ISO 8601.'),
-	created_before: z.string().optional().describe('ISO 8601.'),
-	updated_after: z.string().optional().describe('ISO 8601.'),
-	updated_before: z.string().optional().describe('ISO 8601.'),
+	created_after: z.string().optional().describe('A date, `yyyy-mm-dd`.'),
+	created_before: z.string().optional().describe('A date, `yyyy-mm-dd`.'),
+	updated_after: z.string().optional().describe('A date, `yyyy-mm-dd`.'),
+	updated_before: z.string().optional().describe('A date, `yyyy-mm-dd`.'),
 }).superRefine((value, ctx) => {
+	// Kit documents that an engagement sort cannot be combined with an address
+	// lookup, so the pairing is refused before the call.
+	if (
+		value.sort_field?.startsWith('engagement__') === true &&
+		value.email_address !== undefined
+	) {
+		ctx.addIssue({
+			code: 'custom',
+			path: ['sort_field'],
+			message:
+				'An `engagement__` sort cannot be combined with `email_address`.',
+		});
+	}
 	// Kit answers 422 for `canceled_at` beside any status but `cancelled`, so the
 	// pairing is refused before the call rather than after it.
 	if (
