@@ -389,6 +389,36 @@ describe('Cloudflare Browser Run schema', () => {
 		).toBe(false);
 	});
 
+	it('keeps DevTools outputs working when Cloudflare adds fields or values', () => {
+		const O = CloudflareBrowserRenderingEndpointOutputSchemas;
+		expect(
+			O.sessionsGet.safeParse({
+				sessionId: '61f3298e-e5cd-46de-b56a-c07ee50d6edc',
+				startTime: 1,
+				region: 'new-field',
+			}).success,
+		).toBe(true);
+		expect(O.browserClose.safeParse({ status: 'terminated' }).success).toBe(
+			true,
+		);
+		expect(
+			O.targetsGet.safeParse({
+				id: 't1',
+				type: 'page',
+				url: 'https://example.com/',
+				parentId: 'new-field',
+			}).success,
+		).toBe(true);
+		expect(
+			O.liveViewCreate.safeParse({
+				id: 'lv1',
+				devtoolsFrontendUrl: 'https://live.example/view',
+				webSocketDebuggerUrl: 'wss://live.example/ws',
+				options: { mode: 'kiosk' },
+			}).success,
+		).toBe(true);
+	});
+
 	it('parses a live crawl result cancelled by the user', () => {
 		const live = {
 			id: 'job-123',

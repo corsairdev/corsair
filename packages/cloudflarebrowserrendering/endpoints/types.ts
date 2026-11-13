@@ -514,7 +514,7 @@ const SessionOutputSchema = z
 		startTime: z.number().optional(),
 		webSocketDebuggerUrl: z.string().optional(),
 	})
-	.strict();
+	.passthrough();
 
 const SessionListOutputSchema = z.array(SessionOutputSchema);
 
@@ -523,11 +523,14 @@ const BrowserCreateOutputSchema = z
 		sessionId: z.string(),
 		webSocketDebuggerUrl: z.string().optional(),
 	})
-	.strict();
+	.passthrough();
 
 const BrowserCloseOutputSchema = z
-	.object({ status: z.enum(['closing', 'closed']) })
-	.strict();
+	.object({
+		// Documented: closing | closed; a new status must not fail the call.
+		status: z.string(),
+	})
+	.passthrough();
 
 const BrowserVersionOutputSchema = z
 	.object({
@@ -538,7 +541,7 @@ const BrowserVersionOutputSchema = z
 		'WebKit-Version': z.string(),
 		webSocketDebuggerUrl: z.string(),
 	})
-	.strict();
+	.passthrough();
 
 // CDP protocol declarations vary with the browser build; preserve their recursive JSON shape.
 const ProtocolDeclarationSchema = JsonObjectSchema;
@@ -558,10 +561,10 @@ const BrowserProtocolOutputSchema = z
 		),
 		version: z
 			.object({ major: z.string(), minor: z.string() })
-			.strict()
+			.passthrough()
 			.optional(),
 	})
-	.strict();
+	.passthrough();
 
 const LiveViewCreateOutputSchema = z
 	.object({
@@ -569,16 +572,14 @@ const LiveViewCreateOutputSchema = z
 		devtoolsFrontendUrl: z.string().url(),
 		options: z
 			.object({
-				mode: z.enum(['devtools', 'tab', 'full']),
-				guardrails: z
-					.object({ mode: z.literal('readonly') })
-					.strict()
-					.optional(),
+				// Documented: devtools | tab | full.
+				mode: z.string(),
+				guardrails: z.object({ mode: z.string() }).passthrough().optional(),
 			})
-			.strict(),
+			.passthrough(),
 		webSocketDebuggerUrl: z.string().url(),
 	})
-	.strict();
+	.passthrough();
 
 const TargetOutputSchema = z
 	.object({
@@ -590,11 +591,13 @@ const TargetOutputSchema = z
 		title: z.string().optional(),
 		webSocketDebuggerUrl: z.string().optional(),
 	})
-	.strict();
+	.passthrough();
 
 const TargetListOutputSchema = z.array(TargetOutputSchema);
-const TargetActivateOutputSchema = z.object({ message: z.string() }).strict();
-const TargetCloseOutputSchema = z.object({ message: z.string() }).strict();
+const TargetActivateOutputSchema = z
+	.object({ message: z.string() })
+	.passthrough();
+const TargetCloseOutputSchema = z.object({ message: z.string() }).passthrough();
 
 const AccessibilityTreeNodeSchema = z
 	.object({ role: z.string() })
@@ -665,7 +668,8 @@ const CrawlGetOutputSchema = z
 			.array(
 				z.object({
 					origin: z.string(),
-					state: z.enum(['available', 'absent', 'fetch_failed']),
+					// Documented: available | absent | fetch_failed.
+					state: z.string(),
 					status: z.number().optional(),
 				}),
 			)
