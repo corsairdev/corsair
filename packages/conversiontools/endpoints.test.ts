@@ -100,18 +100,28 @@ describe('account endpoints', () => {
 		);
 	});
 
-	it('gets account converter configuration', async () => {
-		mockedRequest.mockResolvedValue({ error: null, conversions: [] });
+	it('gets account converter configuration from the live data envelope', async () => {
+		// Live GET /v1/config shape (11-13): converters sit under `data`.
+		const response = {
+			error: null,
+			data: {
+				conversions: [{ type: 'convert.custom_xml', title: 'Custom XML' }],
+				subscriptionStatus: 'active',
+			},
+		};
+		mockedRequest.mockResolvedValue(response);
 		const result = await Account.getConfig(ctx, {});
 
-		expect(result).toEqual({ error: null, conversions: [] });
+		expect(result.data.conversions).toEqual([
+			{ type: 'convert.custom_xml', title: 'Custom XML' },
+		]);
 		expect(mockedRequest).toHaveBeenCalledWith('/config', 'test-api-key', {
 			method: 'GET',
 		});
 		expect(mockedLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'conversiontools.account.getConfig',
-			{ count: 0 },
+			{ count: 1 },
 			'completed',
 		);
 	});
@@ -183,6 +193,29 @@ describe('file endpoints', () => {
 			'conversiontools.files.upload',
 			{ count: 1 },
 			'completed',
+		);
+	});
+
+	it('parses the upload response the API labels text/html', async () => {
+		// Live POST /v1/files answers with Content-Type text/html, so the shared
+		// request parser hands the JSON body back as a string.
+		const file = new Blob(['xml'], { type: 'application/xml' });
+		mockedRequest.mockResolvedValue(
+			JSON.stringify({ error: null, file_id: FILE_ID }),
+		);
+
+		await expect(Files.upload(ctx, { file })).resolves.toEqual({
+			error: null,
+			file_id: FILE_ID,
+		});
+	});
+
+	it('fails an upload whose body is not JSON', async () => {
+		const file = new Blob(['xml'], { type: 'application/xml' });
+		mockedRequest.mockResolvedValue('<html>Bad gateway</html>');
+
+		await expect(Files.upload(ctx, { file })).rejects.toThrow(
+			'Conversion Tools returned a response that is not JSON',
 		);
 	});
 
@@ -438,6 +471,33 @@ describe('task endpoints', () => {
 			{ count: 1 },
 			'completed',
 		);
+	});
+
+	it('pages tasks with page and limit and returns the pagination block', async () => {
+		// Live GET /v1/tasks?limit=1&page=2 shape (11-13), trimmed.
+		const response = {
+			error: null,
+			data: [{ id: TASK_ID, status: 'SUCCESS', type: 'xml_to_json' }],
+			pagination: { page: 2, limit: 1, total: 2, totalPages: 2 },
+		};
+		mockedRequest.mockResolvedValue(response);
+		const result = await Tasks.list(ctx, { page: 2, limit: 1 });
+
+		expect(result.pagination).toEqual({
+			page: 2,
+			limit: 1,
+			total: 2,
+			totalPages: 2,
+		});
+		expect(mockedRequest).toHaveBeenCalledWith('/tasks', 'test-api-key', {
+			method: 'GET',
+			query: { page: 2, limit: 1 },
+		});
+	});
+
+	it('rejects a tasks page size above the API cap of 100', async () => {
+		await expect(Tasks.list(ctx, { limit: 101 })).rejects.toThrow();
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
 	it('gets task status without polling autonomously', async () => {

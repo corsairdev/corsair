@@ -265,7 +265,7 @@ const conversiontoolsEndpointMeta = {
 	'tasks.list': {
 		riskLevel: 'read',
 		description:
-			'List up to 50 recent tasks, optionally filtered by status. https://api.conversiontools.io/openapi.yaml',
+			'List recent tasks, optionally filtered by status, with page and limit (up to 100 a page). https://api.conversiontools.io/openapi.yaml',
 	},
 	'tasks.get': {
 		riskLevel: 'read',

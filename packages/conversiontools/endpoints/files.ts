@@ -5,6 +5,7 @@ import {
 	makeConversiontoolsDownloadByIdRequest,
 	makeConversiontoolsDownloadFromLinkRequest,
 	makeConversiontoolsRequest,
+	parseJsonTextResponse,
 } from '../client';
 import { DEFAULT_TRANSFER_TIMEOUT_MS } from '../limits';
 import type {
@@ -25,17 +26,16 @@ const upload: ConversiontoolsEndpoints['files']['upload'] = async (
 ) => {
 	const parsedInput =
 		ConversiontoolsEndpointInputSchemas.filesUpload.parse(input);
-	const response = await makeConversiontoolsRequest<FilesUploadResponse>(
-		'/files',
-		ctx.key,
-		{
-			method: 'POST',
-			formData: { file: parsedInput.file },
-			timeoutMs: ctx.options?.transferTimeoutMs ?? DEFAULT_TRANSFER_TIMEOUT_MS,
-		},
+	const response = await makeConversiontoolsRequest<
+		FilesUploadResponse | string
+	>('/files', ctx.key, {
+		method: 'POST',
+		formData: { file: parsedInput.file },
+		timeoutMs: ctx.options?.transferTimeoutMs ?? DEFAULT_TRANSFER_TIMEOUT_MS,
+	});
+	const parsed = ConversiontoolsEndpointOutputSchemas.filesUpload.parse(
+		parseJsonTextResponse(response),
 	);
-	const parsed =
-		ConversiontoolsEndpointOutputSchemas.filesUpload.parse(response);
 	await logEventFromContext(
 		ctx,
 		'conversiontools.files.upload',

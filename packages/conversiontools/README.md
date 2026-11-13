@@ -32,7 +32,7 @@ The plugin exposes the documented JSON-compatible operations below. Task creatio
 | `tasks.updateRetention` | `PATCH /v1/tasks/{task_id}/retention` | write | [OpenAPI](https://api.conversiontools.io/openapi.yaml) |
 | `tasks.remove` | `POST /v1/tasks/{task_id}/delete` | destructive | [OpenAPI](https://api.conversiontools.io/openapi.yaml) |
 
-`GET /v1/tasks` returns up to 50 recent tasks and accepts the documented `status` filter; no pagination parameters are published. `GET /v1/conversions` accepts `input`, `output`, and `ai` filters and is public. Task status values are `PENDING`, `RUNNING`, `SUCCESS`, and `ERROR`. Poll no more often than every 5–10 seconds.
+`GET /v1/tasks` returns recent tasks and accepts the documented `status` filter. The OpenAPI document publishes no pagination parameters, but the live API pages with `page` and `limit` (default 50, at most 100) and returns a `pagination` block; `tasks.list` passes both through. `GET /v1/conversions` accepts `input`, `output`, and `ai` filters and is public. Task status values are `PENDING`, `RUNNING`, `SUCCESS`, and `ERROR`. Poll no more often than every 5–10 seconds.
 
 Provider `file_id`, `task_id`, and `download_id` values are 32-character lowercase hexadecimal strings. The plugin validates these IDs before making requests.
 

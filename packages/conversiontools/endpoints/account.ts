@@ -75,7 +75,7 @@ const getConfig: ConversiontoolsEndpoints['account']['getConfig'] = async (
 	await logEventFromContext(
 		ctx,
 		'conversiontools.account.getConfig',
-		{ count: parsed.conversions?.length ?? 0 },
+		{ count: parsed.data.conversions?.length ?? 0 },
 		'completed',
 	);
 	return parsed;

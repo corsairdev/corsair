@@ -52,7 +52,11 @@ export const ConversionOptionSchema = z
 	.object({
 		key: z.string(),
 		title: z.string().optional(),
-		type: z.enum(['string', 'boolean', 'enum', 'number']).optional(),
+		// The documented four types, or a type the catalog adds later.
+		type: z
+			.enum(['string', 'boolean', 'enum', 'number'])
+			.or(z.string())
+			.optional(),
 		values: z
 			.array(
 				z
@@ -168,10 +172,16 @@ const ConfiguredConversionSchema = z
 export const AccountGetConfigInputSchema = EmptyInputSchema;
 export type AccountGetConfigInput = z.infer<typeof AccountGetConfigInputSchema>;
 
+// The live API nests the converters under `data` (with subscription fields
+// beside them); the OpenAPI document shows them at the top level.
 export const AccountGetConfigResponseSchema = z
 	.object({
 		error: ErrorFieldSchema,
-		conversions: z.array(ConfiguredConversionSchema).optional(),
+		data: z
+			.object({
+				conversions: z.array(ConfiguredConversionSchema).optional(),
+			})
+			.passthrough(),
 	})
 	.passthrough();
 export type AccountGetConfigResponse = z.infer<
@@ -198,12 +208,15 @@ export const FilesGetInfoInputSchema = z
 	.strict();
 export type FilesGetInfoInput = z.infer<typeof FilesGetInfoInputSchema>;
 
+// The live API returns previewData as one string (the first lines of a text
+// file) and omits `preview`; the OpenAPI document shows a boolean and an array.
 export const FilesGetInfoResponseSchema = z
 	.object({
-		preview: z.boolean(),
+		preview: z.boolean().optional(),
 		size: z.number().nonnegative(),
 		name: z.string().optional(),
-		previewData: z.array(z.string()).optional(),
+		previewData: z.union([z.string(), z.array(z.string())]).nullish(),
+		detectedFormat: z.string().nullish(),
 	})
 	.passthrough();
 export type FilesGetInfoResponse = z.infer<typeof FilesGetInfoResponseSchema>;
@@ -306,6 +319,10 @@ export const TaskStatusValueSchema = z.enum([
 	'ERROR',
 ]);
 export type TaskStatusValue = z.infer<typeof TaskStatusValueSchema>;
+// Responses accept a status the API adds later instead of failing the read.
+const TaskStatusOutputSchema = TaskStatusValueSchema.or(z.string());
+const RetentionModeSchema = z.enum(['standard_24h', 'ttl_15m']);
+const RetentionModeOutputSchema = RetentionModeSchema.or(z.string());
 
 function isValidUrl(value: JsonValue | undefined): boolean {
 	if (typeof value !== 'string') return false;
@@ -387,8 +404,20 @@ export const TasksCreateResponseSchema = z
 	.passthrough();
 export type TasksCreateResponse = z.infer<typeof TasksCreateResponseSchema>;
 
+// `page` and `limit` are not in the OpenAPI document; the live API (11-13)
+// pages with them, echoes them in `pagination` and caps `limit` at 100.
 export const TasksListInputSchema = z
-	.object({ status: TaskStatusValueSchema.optional() })
+	.object({
+		status: TaskStatusValueSchema.optional(),
+		page: z.number().int().min(1).optional().describe('Page number, from 1'),
+		limit: z
+			.number()
+			.int()
+			.min(1)
+			.max(100)
+			.optional()
+			.describe('Tasks per page, 1 to 100 (default 50)'),
+	})
 	.strict();
 export type TasksListInput = z.infer<typeof TasksListInputSchema>;
 
@@ -405,7 +434,7 @@ const TaskDetailSchema = z
 	.object({
 		id: TaskIdSchema.optional(),
 		type: z.string().optional(),
-		status: TaskStatusValueSchema.optional(),
+		status: TaskStatusOutputSchema.optional(),
 		error: z.string().nullable().optional(),
 		url: z.string().nullable().optional(),
 		dateCreated: z.string().optional(),
@@ -413,9 +442,10 @@ const TaskDetailSchema = z
 		conversionProgress: z.number().optional(),
 		fileSource: TaskFileSchema.optional(),
 		fileResult: TaskFileSchema.nullable().optional(),
-		retentionMode: z.enum(['standard_24h', 'ttl_15m']).optional(),
+		retentionMode: RetentionModeOutputSchema.optional(),
 		cleanupStatus: z
 			.enum(['none', 'scheduled', 'running', 'completed', 'failed'])
+			.or(z.string())
 			.optional(),
 		dateDeleted: z.string().nullable().optional(),
 		dateExpires: z.string().nullable().optional(),
@@ -426,6 +456,15 @@ export const TasksListResponseSchema = z
 	.object({
 		error: ErrorFieldSchema,
 		data: z.array(TaskDetailSchema),
+		pagination: z
+			.object({
+				page: z.number().int(),
+				limit: z.number().int(),
+				total: z.number().int(),
+				totalPages: z.number().int(),
+			})
+			.passthrough()
+			.optional(),
 	})
 	.passthrough();
 export type TasksListResponse = z.infer<typeof TasksListResponseSchema>;
@@ -437,7 +476,7 @@ export const TasksGetResponseSchema = z
 	.object({
 		error: z.string().nullable(),
 		type: z.string().optional(),
-		status: TaskStatusValueSchema,
+		status: TaskStatusOutputSchema,
 		file_id: FileIdSchema.nullable(),
 		conversionProgress: z.number().int().min(0).max(100).optional(),
 		conversionResult: z
@@ -451,7 +490,7 @@ export type TasksGetResponse = z.infer<typeof TasksGetResponseSchema>;
 export const TasksUpdateRetentionInputSchema = z
 	.object({
 		task_id: TaskIdSchema,
-		retentionMode: z.enum(['standard_24h', 'ttl_15m']),
+		retentionMode: RetentionModeSchema,
 	})
 	.strict();
 export type TasksUpdateRetentionInput = z.infer<
@@ -461,7 +500,7 @@ export type TasksUpdateRetentionInput = z.infer<
 export const TasksUpdateRetentionResponseSchema = z
 	.object({
 		error: ErrorFieldSchema.optional(),
-		retentionMode: z.enum(['standard_24h', 'ttl_15m']),
+		retentionMode: RetentionModeOutputSchema,
 		dateExpires: z.string().min(1),
 	})
 	.passthrough();

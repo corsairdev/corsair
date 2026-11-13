@@ -37,6 +37,22 @@ export class ConversiontoolsDownloadError extends Error {
 	}
 }
 
+/**
+ * POST /files answers with a JSON body labelled `text/html`, which the shared
+ * request parser returns as a string. Parse it here; anything that is not JSON
+ * is an error rather than a made-up success.
+ */
+export function parseJsonTextResponse<T>(response: T | string): T | JsonObject {
+	if (typeof response !== 'string') return response;
+	try {
+		return JSON.parse(response) as JsonObject;
+	} catch {
+		throw new ConversiontoolsAPIError(
+			'Conversion Tools returned a response that is not JSON',
+		);
+	}
+}
+
 const UPLOAD_SESSION_PATH_PREFIX = '/v1/upload-sessions/';
 const REDACTED_UPLOAD_SESSION_PATH = `${UPLOAD_SESSION_PATH_PREFIX}[REDACTED]`;
 

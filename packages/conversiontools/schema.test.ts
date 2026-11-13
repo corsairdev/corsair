@@ -89,13 +89,27 @@ describe('Conversion Tools endpoint input and output schemas', () => {
 		expect(AccountGetConfigInputSchema.safeParse({ extra: true }).success).toBe(
 			false,
 		);
+		// Live GET /v1/config response (11-13), trimmed.
+		expect(
+			AccountGetConfigResponseSchema.safeParse({
+				error: null,
+				data: {
+					conversions: [],
+					subscriptionStatus: 'active',
+					canPause: true,
+					canResume: false,
+				},
+			}).success,
+		).toBe(true);
 		expect(
 			AccountGetConfigResponseSchema.safeParse({ error: null, conversions: [] })
 				.success,
-		).toBe(true);
+		).toBe(false);
 		expect(
-			AccountGetConfigResponseSchema.safeParse({ error: 2, conversions: [] })
-				.success,
+			AccountGetConfigResponseSchema.safeParse({
+				error: 2,
+				data: { conversions: [] },
+			}).success,
 		).toBe(false);
 	});
 
@@ -179,6 +193,17 @@ describe('Conversion Tools endpoint input and output schemas', () => {
 				size: 123,
 				name: 'result.txt',
 				previewData: ['text'],
+			}).success,
+		).toBe(true);
+		// Live GET /v1/files/{file_id}/info response (11-13), trimmed.
+		expect(
+			FilesGetInfoResponseSchema.safeParse({
+				size: 27,
+				name: 'input.xml',
+				previewData: '<root><item>1</item></root>\n',
+				detectedFormat: null,
+				renderHint: 'xml',
+				canViewInline: true,
 			}).success,
 		).toBe(true);
 		expect(
@@ -385,12 +410,16 @@ describe('Conversion Tools endpoint input and output schemas', () => {
 				conversionProgress: 0,
 			}).success,
 		).toBe(true);
+		// A status the API adds later still parses; a missing one does not.
 		expect(
 			TasksGetResponseSchema.safeParse({
 				error: null,
 				status: 'WAITING',
 				file_id: null,
 			}).success,
+		).toBe(true);
+		expect(
+			TasksGetResponseSchema.safeParse({ error: null, file_id: null }).success,
 		).toBe(false);
 	});
 
