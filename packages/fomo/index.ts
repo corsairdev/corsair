@@ -1,40 +1,62 @@
-import type {
-	BindEndpoints,
-	BindWebhooks,
-	CorsairEndpoint,
-	CorsairErrorHandler,
-	CorsairPlugin,
-	CorsairPluginContext,
-	CorsairWebhook,
-	KeyBuilderContext,
-	PickAuth,
-	PluginAuthConfig,
-	PluginPermissionsConfig,
-	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
+import {
+	AuthMissingError,
+	type AuthTypes,
+	type BindEndpoints,
+	type CorsairEndpoint,
+	type CorsairErrorHandler,
+	type CorsairPlugin,
+	type CorsairPluginContext,
+	type KeyBuilderContext,
+	type PickAuth,
+	type PluginAuthConfig,
+	type PluginPermissionsConfig,
+	type RequiredPluginEndpointMeta,
+	type RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { FomoEndpointInputs, FomoEndpointOutputs } from './endpoints/types';
-import { FomoEndpointInputSchemas, FomoEndpointOutputSchemas } from './endpoints/types';
+import { Application, Events, Templates } from './endpoints';
 import type {
-	FomoWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { FomoSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	ApplicationGetInput,
+	ApplicationGetOutput,
+	ApplicationGetStatsInput,
+	ApplicationGetStatsOutput,
+	ApplicationUpdateInput,
+	ApplicationUpdateOutput,
+	EventsCreateInput,
+	EventsCreateOutput,
+	EventsDeleteInput,
+	EventsDeleteOutput,
+	EventsGetInput,
+	EventsGetOutput,
+	EventsListInput,
+	EventsListOutput,
+	EventsSearchInput,
+	EventsSearchOutput,
+	EventsUpdateInput,
+	EventsUpdateOutput,
+	FomoEndpointInputs,
+	FomoEndpointOutputs,
+	TemplatesCreateInput,
+	TemplatesCreateOutput,
+	TemplatesDeleteInput,
+	TemplatesDeleteOutput,
+	TemplatesGetInput,
+	TemplatesGetOutput,
+	TemplatesListInput,
+	TemplatesListOutput,
+	TemplatesUpdateInput,
+	TemplatesUpdateOutput,
+} from './endpoints/types';
+import {
+	FomoEndpointInputSchemas,
+	FomoEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchFomoTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveFomoOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { FomoSchema } from './schema';
 
 export type FomoPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalFomoPlugin['hooks'];
-	webhookHooks?: InternalFomoPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof fomoEndpointsNested>;
 };
@@ -48,87 +70,188 @@ export type FomoKeyBuilderContext = KeyBuilderContext<FomoPluginOptions>;
 
 export type FomoBoundEndpoints = BindEndpoints<typeof fomoEndpointsNested>;
 
-type FomoEndpoint<
-	K extends keyof FomoEndpointOutputs,
-> = CorsairEndpoint<
+type FomoEndpoint<K extends keyof FomoEndpointOutputs> = CorsairEndpoint<
 	FomoContext,
 	FomoEndpointInputs[K],
 	FomoEndpointOutputs[K]
 >;
 
 export type FomoEndpoints = {
-	exampleGet: FomoEndpoint<'exampleGet'>;
+	'events.list': FomoEndpoint<'events.list'>;
+	'events.get': FomoEndpoint<'events.get'>;
+	'events.create': FomoEndpoint<'events.create'>;
+	'events.update': FomoEndpoint<'events.update'>;
+	'events.delete': FomoEndpoint<'events.delete'>;
+	'events.search': FomoEndpoint<'events.search'>;
+	'templates.list': FomoEndpoint<'templates.list'>;
+	'templates.get': FomoEndpoint<'templates.get'>;
+	'templates.create': FomoEndpoint<'templates.create'>;
+	'templates.update': FomoEndpoint<'templates.update'>;
+	'templates.delete': FomoEndpoint<'templates.delete'>;
+	'application.get': FomoEndpoint<'application.get'>;
+	'application.update': FomoEndpoint<'application.update'>;
+	'application.getStats': FomoEndpoint<'application.getStats'>;
 };
-
-type FomoWebhook<
-	K extends keyof FomoWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<FomoContext, TEvent, FomoWebhookOutputs[K]>;
-
-export type FomoWebhooks = {
-	example: FomoWebhook<'example', ExampleEvent>;
-};
-
-export type FomoBoundWebhooks = BindWebhooks<FomoWebhooks>;
 
 const fomoEndpointsNested = {
-	example: {
-		get: Example.get,
+	events: {
+		list: Events.list,
+		get: Events.get,
+		create: Events.create,
+		update: Events.update,
+		delete: Events.delete,
+		search: Events.search,
 	},
-} as const;
-
-const fomoWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	templates: {
+		list: Templates.list,
+		get: Templates.get,
+		create: Templates.create,
+		update: Templates.update,
+		delete: Templates.delete,
+	},
+	application: {
+		get: Application.get,
+		update: Application.update,
+		getStats: Application.getStats,
 	},
 } as const;
 
 export const fomoEndpointSchemas = {
-	'example.get': {
-		input: FomoEndpointInputSchemas.exampleGet,
-		output: FomoEndpointOutputSchemas.exampleGet,
+	'events.list': {
+		input: FomoEndpointInputSchemas['events.list'],
+		output: FomoEndpointOutputSchemas['events.list'],
+	},
+	'events.get': {
+		input: FomoEndpointInputSchemas['events.get'],
+		output: FomoEndpointOutputSchemas['events.get'],
+	},
+	'events.create': {
+		input: FomoEndpointInputSchemas['events.create'],
+		output: FomoEndpointOutputSchemas['events.create'],
+	},
+	'events.update': {
+		input: FomoEndpointInputSchemas['events.update'],
+		output: FomoEndpointOutputSchemas['events.update'],
+	},
+	'events.delete': {
+		input: FomoEndpointInputSchemas['events.delete'],
+		output: FomoEndpointOutputSchemas['events.delete'],
+	},
+	'events.search': {
+		input: FomoEndpointInputSchemas['events.search'],
+		output: FomoEndpointOutputSchemas['events.search'],
+	},
+	'templates.list': {
+		input: FomoEndpointInputSchemas['templates.list'],
+		output: FomoEndpointOutputSchemas['templates.list'],
+	},
+	'templates.get': {
+		input: FomoEndpointInputSchemas['templates.get'],
+		output: FomoEndpointOutputSchemas['templates.get'],
+	},
+	'templates.create': {
+		input: FomoEndpointInputSchemas['templates.create'],
+		output: FomoEndpointOutputSchemas['templates.create'],
+	},
+	'templates.update': {
+		input: FomoEndpointInputSchemas['templates.update'],
+		output: FomoEndpointOutputSchemas['templates.update'],
+	},
+	'templates.delete': {
+		input: FomoEndpointInputSchemas['templates.delete'],
+		output: FomoEndpointOutputSchemas['templates.delete'],
+	},
+	'application.get': {
+		input: FomoEndpointInputSchemas['application.get'],
+		output: FomoEndpointOutputSchemas['application.get'],
+	},
+	'application.update': {
+		input: FomoEndpointInputSchemas['application.update'],
+		output: FomoEndpointOutputSchemas['application.update'],
+	},
+	'application.getStats': {
+		input: FomoEndpointInputSchemas['application.getStats'],
+		output: FomoEndpointOutputSchemas['application.getStats'],
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof fomoEndpointsNested>;
-
-const fomoWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof fomoWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const fomoEndpointMeta = {
-	'example.get': {
+	'events.list': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'List Fomo events with optional pagination',
+	},
+	'events.get': {
+		riskLevel: 'read',
+		description: 'Retrieve a Fomo event by ID',
+	},
+	'events.create': {
+		riskLevel: 'write',
+		description: 'Create a new Fomo event notification',
+	},
+	'events.update': {
+		riskLevel: 'write',
+		description: 'Update an existing Fomo event by ID',
+	},
+	'events.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Fomo event by ID',
+	},
+	'events.search': {
+		riskLevel: 'read',
+		description: 'Search for an event by external_id or email_address',
+	},
+	'templates.list': {
+		riskLevel: 'read',
+		description: 'List Fomo event templates (event types)',
+	},
+	'templates.get': {
+		riskLevel: 'read',
+		description: 'Retrieve a Fomo event template by ID',
+	},
+	'templates.create': {
+		riskLevel: 'write',
+		description: 'Create a new Fomo event template',
+	},
+	'templates.update': {
+		riskLevel: 'write',
+		description: 'Update an existing Fomo event template',
+	},
+	'templates.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a Fomo event template by ID',
+	},
+	'application.get': {
+		riskLevel: 'read',
+		description: 'Get Fomo application settings',
+	},
+	'application.update': {
+		riskLevel: 'write',
+		description: 'Update Fomo application settings',
+	},
+	'application.getStats': {
+		riskLevel: 'read',
+		description: 'Get notification statistics and conversion data',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof fomoEndpointsNested>;
 
 export const fomoAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseFomoPlugin<T extends FomoPluginOptions> = CorsairPlugin<
 	'fomo',
 	typeof FomoSchema,
 	typeof fomoEndpointsNested,
-	typeof fomoWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
 
 export type InternalFomoPlugin = BaseFomoPlugin<FomoPluginOptions>;
 
-export type ExternalFomoPlugin<T extends FomoPluginOptions> =
-	BaseFomoPlugin<T>;
+export type ExternalFomoPlugin<T extends FomoPluginOptions> = BaseFomoPlugin<T>;
 
 export function fomo<const T extends FomoPluginOptions>(
 	incomingOptions: FomoPluginOptions & T = {} as FomoPluginOptions & T,
@@ -137,66 +260,78 @@ export function fomo<const T extends FomoPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
+	const { DEFAULT: builtInDefault, ...builtIns } = errorHandlers;
+	const { DEFAULT: callerDefault, ...callers } = options.errorHandlers ?? {};
+	const mergedErrorHandlers = {
+		...callers,
+		...builtIns,
+		DEFAULT: callerDefault ?? builtInDefault,
+	};
+
 	return {
 		id: 'fomo',
 		authConfig: fomoAuthConfig,
 		schema: FomoSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: fomoEndpointsNested,
-		webhooks: fomoWebhooksNested,
+		webhooks: {},
 		endpointMeta: fomoEndpointMeta,
 		endpointSchemas: fomoEndpointSchemas,
-		webhookSchemas: fomoWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-fomo-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchFomoTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveFomoOAuthWebhookTenantLink,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: mergedErrorHandlers,
 		keyBuilder: async (ctx: FomoKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
+			if (source !== 'endpoint') return '';
+			if (options.key !== undefined) {
+				if (options.key.trim().length === 0) {
+					throw new AuthMissingError('fomo', 'api_key');
+				}
 				return options.key;
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+			if (!ctx.keys) throw new AuthMissingError('fomo', 'api_key');
+			const apiKey = await ctx.keys.get_api_key();
+			if (!apiKey || apiKey.trim().length === 0) {
+				throw new AuthMissingError('fomo', 'api_key');
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			return apiKey;
 		},
 	} satisfies InternalFomoPlugin;
 }
 
 export type {
-	ExampleEvent,
-	FomoWebhookOutputs,
-} from './webhooks/types';
-
-export type {
+	ApplicationGetInput,
+	ApplicationGetOutput,
+	ApplicationGetStatsInput,
+	ApplicationGetStatsOutput,
+	ApplicationSettings,
+	ApplicationUpdateInput,
+	ApplicationUpdateOutput,
+	CustomEventFieldAttribute,
+	EventsCreateInput,
+	EventsCreateOutput,
+	EventsDeleteInput,
+	EventsDeleteOutput,
+	EventsGetInput,
+	EventsGetOutput,
+	EventsListInput,
+	EventsListOutput,
+	EventsMeta,
+	EventsSearchInput,
+	EventsSearchOutput,
+	EventsUpdateInput,
+	EventsUpdateOutput,
 	FomoEndpointInputs,
 	FomoEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	FomoEvent,
+	Template,
+	TemplatesCreateInput,
+	TemplatesCreateOutput,
+	TemplatesDeleteInput,
+	TemplatesDeleteOutput,
+	TemplatesGetInput,
+	TemplatesGetOutput,
+	TemplatesListInput,
+	TemplatesListOutput,
+	TemplatesUpdateInput,
+	TemplatesUpdateOutput,
 } from './endpoints/types';

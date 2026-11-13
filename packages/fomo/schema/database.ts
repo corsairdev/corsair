@@ -1,9 +1,2 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const FomoExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type FomoExample = z.infer<typeof FomoExample>;
+// Fomo does not persist entities locally.
+export const fomoEntities = {} as const;
