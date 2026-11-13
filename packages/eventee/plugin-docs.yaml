@@ -33,6 +33,9 @@ apiNotes:
     `files`, `visible_in_groups` and `mandatory_for_groups`; these remain
     `unknown[]` and render as `any[]` in compact type blocks.
   hall.delete: Deleting a hall also deletes every session assigned to that hall.
+  hall.patch: >-
+    `name` is required and an omitted `order` is kept, but an omitted `stream`
+    removes the hall's live stream. Pass the current `stream` code to keep it.
   session.patch: >-
     Omitted speakers and tracks are removed and omitted type/capacity reset,
     while hall and stream are kept. Output type note: Eventee's OpenAPI omits
@@ -54,13 +57,16 @@ apiNotes:
     `unknown[]` and render as `any[]` in compact type blocks.
   attendeeInvite.put: >-
     The first 25 users are processed immediately and the rest in the background.
-    Invalid entries and event admins/moderators are skipped.
+    Eventee skips event admins/moderators and entries it rejects. Every email
+    is validated locally first, so one malformed address fails the whole call
+    before anything is sent.
     `send_email: true` makes Eventee email each person an invitation; leave it
     unset or false for a silent import.
   registrationInvite.put: >-
     The first 25 registrations are processed immediately and the rest in the
-    background. Invalid entries are skipped; duplicate emails update existing
-    registrations.
+    background. Eventee skips entries it rejects; duplicate emails update
+    existing registrations. Every email is validated locally first, so one
+    malformed address fails the whole call before anything is sent.
     `send_email: true` makes Eventee email each person; leave it unset or false
     for a silent import.
   attendees.get: >-

@@ -78,7 +78,7 @@ await corsair.eventee.api.attendeeInvite.put({ users: [{ email: 'jane.doe@exampl
 |------|------|----------|-------------|
 | `users` | `object[]` | Yes | — |
 
-The first 25 users are processed immediately and the rest in the background. Invalid entries and event admins/moderators are skipped. `send_email: true` makes Eventee email each person an invitation; leave it unset or false for a silent import.
+The first 25 users are processed immediately and the rest in the background. Eventee skips event admins/moderators and entries it rejects. Every email is validated locally first, so one malformed address fails the whole call before anything is sent. `send_email: true` makes Eventee email each person an invitation; leave it unset or false for a silent import.
 
 <AccordionGroup>
 <Accordion title="users full type">
@@ -572,6 +572,8 @@ await corsair.eventee.api.hall.patch({ hall_id: 1, name: 'Main Stage', order: 0 
 | `name` | `string` | Yes | — |
 | `order` | `number` | No | — |
 | `stream` | `string` | No | — |
+
+`name` is required and an omitted `order` is kept, but an omitted `stream` removes the hall's live stream. Pass the current `stream` code to keep it.
 
 
 
@@ -1441,7 +1443,7 @@ await corsair.eventee.api.registrationInvite.put({ registrations: [{ email: 'jan
 |------|------|----------|-------------|
 | `registrations` | `object[]` | Yes | — |
 
-The first 25 registrations are processed immediately and the rest in the background. Invalid entries are skipped; duplicate emails update existing registrations. `send_email: true` makes Eventee email each person; leave it unset or false for a silent import.
+The first 25 registrations are processed immediately and the rest in the background. Eventee skips entries it rejects; duplicate emails update existing registrations. Every email is validated locally first, so one malformed address fails the whole call before anything is sent. `send_email: true` makes Eventee email each person; leave it unset or false for a silent import.
 
 <AccordionGroup>
 <Accordion title="registrations full type">
