@@ -132,7 +132,7 @@ describe('GoSquared error-handlers tests', () => {
 				},
 			});
 
-			const handlerKeys = Object.keys(plugin.errorHandlers);
+			const handlerKeys = Object.keys(plugin.errorHandlers ?? {});
 			expect(handlerKeys[0]).toBe('CUSTOM_ERROR');
 			expect(handlerKeys[handlerKeys.length - 1]).toBe('DEFAULT');
 		});
