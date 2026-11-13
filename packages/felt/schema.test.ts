@@ -1,3 +1,6 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { parse as parseYaml } from 'yaml';
 import {
 	FeltEndpointInputSchemas,
 	FeltEndpointOutputSchemas,
@@ -397,5 +400,47 @@ describe('Print Pages schemas', () => {
 		expect(
 			FeltEndpointOutputSchemas.printPagesExportPage.parse(exportOut),
 		).toMatchObject(exportOut);
+	});
+});
+
+describe('plugin-docs.yaml examples', () => {
+	it('validates every example in plugin-docs.yaml against endpoint input schemas', () => {
+		const docPath = path.resolve(__dirname, 'plugin-docs.yaml');
+		const doc = parseYaml(fs.readFileSync(docPath, 'utf8')) as {
+			apiExamples?: Record<string, unknown>;
+			examples?: {
+				read?: { path: string; args?: unknown };
+				write?: { path: string; args?: unknown };
+			};
+		};
+
+		function dotToCamel(dot: string): string {
+			const parts = dot.split('.');
+			return `${parts[0]}${parts[1] ? parts[1].charAt(0).toUpperCase() + parts[1].slice(1) : ''}`;
+		}
+
+		const schemas = FeltEndpointInputSchemas as Record<
+			string,
+			{ parse: (val: unknown) => unknown }
+		>;
+
+		for (const [dotPath, example] of Object.entries(doc.apiExamples ?? {})) {
+			const schemaName = dotToCamel(dotPath);
+			const schema = schemas[schemaName];
+			expect(schema).toBeDefined();
+			expect(() => schema.parse(example)).not.toThrow();
+		}
+
+		if (doc.examples?.read) {
+			const schema = schemas[dotToCamel(doc.examples.read.path)];
+			expect(schema).toBeDefined();
+			expect(() => schema.parse(doc.examples.read.args ?? {})).not.toThrow();
+		}
+
+		if (doc.examples?.write) {
+			const schema = schemas[dotToCamel(doc.examples.write.path)];
+			expect(schema).toBeDefined();
+			expect(() => schema.parse(doc.examples.write.args ?? {})).not.toThrow();
+		}
 	});
 });

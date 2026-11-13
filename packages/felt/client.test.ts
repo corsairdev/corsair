@@ -171,6 +171,100 @@ describe('makeFeltRequest client', () => {
 		).toBe('Failed with password=[REDACTED] and Bearer [REDACTED]');
 	});
 
+	it('redacts password from message, statusText, and body when sources.createCredential fails with 422', async () => {
+		const secretPassword = 'my-super-secret-password';
+		const rawError = new ApiError(
+			{
+				method: 'POST',
+				url: '/sources/src_123/credentials',
+				body: { credential: { password: secretPassword } },
+			},
+			{
+				url: 'https://felt.com/api/v2/sources/src_123/credentials',
+				ok: false,
+				status: 422,
+				statusText: `Unprocessable Entity: password ${secretPassword} invalid`,
+				body: {
+					message: `Failed to authenticate using password ${secretPassword}`,
+					errors: [
+						{
+							detail: `Invalid credentials with password '${secretPassword}'`,
+							source: { parameter: 'credential.password' },
+							password: secretPassword,
+						},
+					],
+				},
+			},
+			`422 Unprocessable Entity: Failed to verify credential password ${secretPassword}`,
+		);
+		mockRequest.mockRejectedValue(rawError);
+
+		const caught = await makeFeltRequest(
+			'/sources/src_123/credentials',
+			'felt_token_abc',
+			{
+				method: 'POST',
+				body: { credential: { password: secretPassword } },
+			},
+		).catch((err: unknown) => err);
+
+		expect(caught).toBeInstanceOf(FeltAPIError);
+		const feltErr = caught as FeltAPIError;
+		expect(feltErr.status).toBe(422);
+		expect(feltErr.message).not.toContain(secretPassword);
+		expect(feltErr.message).toContain('[REDACTED]');
+		expect(feltErr.statusText).not.toContain(secretPassword);
+		expect(feltErr.statusText).toContain('[REDACTED]');
+
+		const body = feltErr.body as {
+			message: string;
+			errors: Array<{ detail: string; password: string }>;
+		};
+		expect(body.message).not.toContain(secretPassword);
+		expect(body.message).toContain('[REDACTED]');
+		expect(body.errors[0]?.detail).not.toContain(secretPassword);
+		expect(body.errors[0]?.detail).toContain('[REDACTED]');
+		expect(body.errors[0]?.password).toBe('[REDACTED]');
+
+		// Verify cause is not exposing raw request body
+		expect(
+			(feltErr as unknown as { cause?: { request?: { body?: unknown } } })
+				.cause,
+		).toBeUndefined();
+	});
+
+	it('ensures FeltAPIError constructor sanitizes cause if passed explicitly', () => {
+		const secretPassword = 'my-super-secret-password';
+		const rawApiError = new ApiError(
+			{
+				method: 'POST',
+				url: '/sources/src_123/credentials',
+				body: { credential: { password: secretPassword } },
+			},
+			{
+				url: 'https://felt.com/api/v2/sources/src_123/credentials',
+				ok: false,
+				status: 422,
+				statusText: 'Unprocessable',
+				body: { password: secretPassword },
+			},
+			`Error with ${secretPassword}`,
+		);
+
+		const error = new FeltAPIError('Safe message', '422', {
+			cause: rawApiError,
+		});
+
+		const cause = (
+			error as unknown as {
+				cause?: { request?: { body?: { credential?: unknown } } };
+			}
+		).cause;
+		expect(cause).toBeDefined();
+		expect(JSON.stringify(cause)).not.toContain(secretPassword);
+		expect(cause?.request?.body?.credential).toBe('[REDACTED]');
+	});
+
 	it('preserves retryAfter on 429 rate limit error', async () => {
 		const rateLimited = buildApiError(429, 'Too Many Requests', 4000);
 		mockRequest.mockRejectedValue(rateLimited);

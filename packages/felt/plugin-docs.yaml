@@ -158,7 +158,13 @@ apiExamples:
     map_id: "a1b2c3d4e5"
   elements.upsert:
     map_id: "a1b2c3d4e5"
-    features: []
+    features:
+      - type: "Feature"
+        geometry:
+          type: "Point"
+          coordinates: [-122.4194, 37.7749]
+        properties:
+          title: "San Francisco Marker"
   elements.delete:
     map_id: "a1b2c3d4e5"
     element_id: "elem_123"
@@ -219,6 +225,7 @@ apiExamples:
     map_id: "a1b2c3d4e5"
   printPages.createLayout:
     map_id: "a1b2c3d4e5"
+    name: "Landscape Layout"
   printPages.updateLayout:
     map_id: "a1b2c3d4e5"
     layout_id: "layout_123"
