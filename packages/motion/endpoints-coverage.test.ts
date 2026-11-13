@@ -52,6 +52,9 @@ const page = (items: Record<string, unknown>, key: string) => ({
 });
 
 let fetchMock: jest.SpyInstance;
+let consoleErrorSpy: jest.SpyInstance;
+
+const originalConsoleError = console.error.bind(console);
 
 // Test responses remain arbitrary JSON so public endpoint schemas validate the boundary.
 function respond(body: unknown, status = 200) {
@@ -65,12 +68,30 @@ function respond(body: unknown, status = 200) {
 }
 
 beforeEach(() => {
+	// The shared transport logs its own empty-body parse warning when a documented
+	// 200-without-body delete response is exercised; silence exactly that log so
+	// test output stays readable while every other error still surfaces.
+	consoleErrorSpy = jest
+		.spyOn(console, 'error')
+		.mockImplementation((...args: unknown[]) => {
+			const first = args[0];
+			if (
+				first instanceof SyntaxError &&
+				first.message === 'Unexpected end of JSON input'
+			) {
+				return;
+			}
+			originalConsoleError(...(args as Parameters<typeof console.error>));
+		});
 	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
 		throw new Error('unmocked fetch');
 	});
 });
 
-afterEach(() => fetchMock.mockRestore());
+afterEach(() => {
+	fetchMock.mockRestore();
+	consoleErrorSpy.mockRestore();
+});
 
 describe('Motion operation seams', () => {
 	const operations: Array<{

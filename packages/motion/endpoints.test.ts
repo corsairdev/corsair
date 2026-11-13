@@ -17,6 +17,9 @@ const taskResource = {
 };
 
 let fetchMock: jest.SpyInstance;
+let consoleErrorSpy: jest.SpyInstance;
+
+const originalConsoleError = console.error.bind(console);
 
 function respond(
 	body: unknown,
@@ -32,12 +35,30 @@ function respond(
 }
 
 beforeEach(() => {
+	// The shared transport logs its own empty-body parse warning when a documented
+	// 200-without-body delete response is exercised; silence exactly that log so
+	// test output stays readable while every other error still surfaces.
+	consoleErrorSpy = jest
+		.spyOn(console, 'error')
+		.mockImplementation((...args: unknown[]) => {
+			const first = args[0];
+			if (
+				first instanceof SyntaxError &&
+				first.message === 'Unexpected end of JSON input'
+			) {
+				return;
+			}
+			originalConsoleError(...(args as Parameters<typeof console.error>));
+		});
 	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
 		throw new Error('unmocked fetch');
 	});
 });
 
-afterEach(() => fetchMock.mockRestore());
+afterEach(() => {
+	fetchMock.mockRestore();
+	consoleErrorSpy.mockRestore();
+});
 
 describe('Motion public seam behavior', () => {
 	it('requests page two of tasks with the documented cursor', async () => {
