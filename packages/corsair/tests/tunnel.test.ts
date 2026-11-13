@@ -408,14 +408,22 @@ describe('processCorsair — probe tunnel', () => {
 });
 
 describe('processCorsair — webhook failures', () => {
-	// One plugin whose handler answers with the given failure.
-	function corsairAnswering(reply: { success: false; statusCode: number }) {
+	// One plugin whose handler answers with the given failure, or throws.
+	function corsairAnswering(
+		reply: { success: false; statusCode?: number } | 'throw',
+	) {
 		return {
 			slack: {
 				pluginWebhookMatcher: () => true,
 				webhooks: {
 					events: {
-						message: { match: () => true, handler: async () => reply },
+						message: {
+							match: () => true,
+							handler: async () => {
+								if (reply === 'throw') throw new Error('database unavailable');
+								return reply;
+							},
+						},
 					},
 				},
 			},
@@ -448,6 +456,26 @@ describe('processCorsair — webhook failures', () => {
 	it('keeps a refusal (4xx) final', async () => {
 		const ack = await processCorsair(
 			corsairAnswering({ success: false, statusCode: 401 }),
+			{ headers: {}, body: delivery },
+			{ allowUnsignedTunnel: true },
+		);
+		expect(ack.status).toBe('failed');
+		expect(ack.retryable).toBe(false);
+	});
+
+	it('keeps a handler that threw retryable', async () => {
+		const ack = await processCorsair(
+			corsairAnswering('throw'),
+			{ headers: {}, body: delivery },
+			{ allowUnsignedTunnel: true },
+		);
+		expect(ack.status).toBe('failed');
+		expect(ack.retryable).toBe(true);
+	});
+
+	it('treats a failure with no status as a final refusal', async () => {
+		const ack = await processCorsair(
+			corsairAnswering({ success: false }),
 			{ headers: {}, body: delivery },
 			{ allowUnsignedTunnel: true },
 		);

@@ -371,6 +371,9 @@ export async function processWebhook(
 				response: {
 					success: false,
 					error: error instanceof Error ? error.message : 'Unknown error',
+					// A handler that threw failed on our side, not on the sender's:
+					// a 5xx keeps the delivery retryable.
+					statusCode: 500,
 				},
 			};
 		}
