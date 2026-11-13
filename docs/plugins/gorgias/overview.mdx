@@ -1,0 +1,139 @@
+---
+title: "Gorgias plugin"
+sidebarTitle: "Overview"
+description: "Access the Gorgias REST API for customer support accounts, including tickets, customers, messages, users, configuration, reporting, and file operations."
+---
+
+Use **Gorgias** through Corsair: one client, typed API calls.
+
+This plugin uses Gorgias private-app API-key authentication. Store the API key as the account API key, the agent email in the account email field, and the account subdomain in tenant_external_id (the hostname prefix from your Gorgias URL). Requests use HTTP Basic authentication with email as username and API key as password.
+
+Public Gorgias apps require OAuth 2.0. This plugin intentionally supports private apps only; it does not provide the public-app authorization, scope-consent, or token lifecycle flow. Do not use a private API key for a public app.
+
+Account subdomains are tenant-specific and are validated as a single hostname label before request construction. No webhook receiver is included.
+
+Cursor pagination uses the provider cursor and limit parameters and returns the documented next/previous cursors. Gorgias documents API-key rate limits of 40 requests per 20 seconds (enterprise accounts use a 10-second window); the shared transport honors Retry-After on HTTP 429 responses.
+
+File downloads follow the provider redirect internally and return bounded base64 data; signed URLs and file contents are not logged. The client enforces a 20 MiB local safety limit for file transfer.
+
+The deprecated ticket-message listing route remains available because Gorgias still lists it in its REST reference; prefer ticketMessages.listMessages for new work.
+
+**What you get:**
+
+- 114 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/gorgias better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/gorgias better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/gorgias better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/gorgias better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { gorgias } from '@corsair-dev/gorgias';
+
+export const corsair = createCorsair({
+	plugins: [
+		gorgias(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Gorgias API key before the first call: `pnpm corsair setup --plugin=gorgias --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+gorgias()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'gorgias',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`account.getAccount`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gorgias.api.account.getAccount({});
+```
+
+
+**`account.createAccountSetting`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gorgias.api.account.createAccountSetting({});
+```
+
+
+See the full list on the [API](/plugins/gorgias/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/gorgias/api">
+    Every `gorgias.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

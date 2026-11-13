@@ -1,0 +1,254 @@
+displayName: Gorgias
+description: Access the Gorgias REST API for customer support accounts, including tickets, customers, messages, users, configuration, reporting, and file operations.
+recommendedAuth: api_key
+overviewNote: |
+  This plugin uses Gorgias private-app API-key authentication. Store the API key as the account API key, the agent email in the account email field, and the account subdomain in tenant_external_id (the hostname prefix from your Gorgias URL). Requests use HTTP Basic authentication with email as username and API key as password.
+
+  Public Gorgias apps require OAuth 2.0. This plugin intentionally supports private apps only; it does not provide the public-app authorization, scope-consent, or token lifecycle flow. Do not use a private API key for a public app.
+
+  Account subdomains are tenant-specific and are validated as a single hostname label before request construction. No webhook receiver is included.
+
+  Cursor pagination uses the provider cursor and limit parameters and returns the documented next/previous cursors. Gorgias documents API-key rate limits of 40 requests per 20 seconds (enterprise accounts use a 10-second window); the shared transport honors Retry-After on HTTP 429 responses.
+
+  File downloads follow the provider redirect internally and return bounded base64 data; signed URLs and file contents are not logged. The client enforces a 20 MiB local safety limit for file transfer.
+
+  The deprecated ticket-message listing route remains available because Gorgias still lists it in its REST reference; prefer ticketMessages.listMessages for new work.
+apiExamples:
+  account.createAccountSetting:
+    call: "{\"body\":{\"type\":\"x\"}}"
+  account.getAccount:
+    call: "{}"
+  account.listAccountSettings:
+    call: "{}"
+  account.updateAccountSetting:
+    call: "{\"path\":{\"id\":1},\"body\":{\"type\":\"x\"}}"
+  customFields.createCustomField:
+    call: "{\"body\":{\"object_type\":\"Ticket\",\"label\":\"x\",\"definition\":{\"data_type\":\"text\",\"input_settings\":{\"input_type\":\"input\"}}}}"
+  customFields.getCustomField:
+    call: "{\"path\":{\"id\":1}}"
+  customFields.listCustomFields:
+    call: "{\"query\":{\"object_type\":\"Ticket\"}}"
+  customFields.updateCustomField:
+    call: "{\"path\":{\"id\":1},\"body\":{\"external_id\":\"x\",\"object_type\":\"Ticket\",\"label\":\"x\",\"description\":\"x\",\"priority\":1,\"required\":true,\"requirement_type\":\"visible\",\"managed_type\":\"contact_reason\",\"definition\":{\"data_type\":\"text\",\"input_settings\":{\"input_type\":\"input\"}},\"deactivated_datetime\":\"2025-01-01T00:00:00Z\"}}"
+  customFields.updateCustomFields:
+    call: "{\"body\":[]}"
+  customers.createCustomer:
+    call: "{\"body\":{\"channels\":[]}}"
+  customers.deleteCustomer:
+    call: "{\"path\":{\"id\":1}}"
+  customers.deleteCustomerCustomFieldValue:
+    call: "{\"path\":{\"customer_id\":1,\"id\":1}}"
+  customers.deleteCustomers:
+    call: "{\"body\":{\"ids\":[]}}"
+  customers.getCustomer:
+    call: "{\"path\":{\"id\":1}}"
+  customers.listCustomerCustomFieldsValues:
+    call: "{\"path\":{\"customer_id\":1}}"
+  customers.listCustomers:
+    call: "{}"
+  customers.mergeCustomers:
+    call: "{\"query\":{\"source_id\":1,\"target_id\":1},\"body\":{\"channels\":[],\"email\":\"agent@acme.test\",\"external_id\":\"x\",\"language\":\"aa\",\"name\":\"x\",\"timezone\":\"Africa/Abidjan\"}}"
+  customers.updateCustomer:
+    call: "{\"path\":{\"id\":1},\"body\":{\"channels\":[],\"email\":\"agent@acme.test\",\"external_id\":\"x\",\"language\":\"aa\",\"name\":\"x\",\"timezone\":\"Africa/Abidjan\"}}"
+  customers.updateCustomerCustomFieldValue:
+    call: "{\"path\":{\"customer_id\":1,\"id\":1},\"body\":\"x\"}"
+  customers.updateCustomerCustomFieldValues:
+    call: "{\"path\":{\"customer_id\":1},\"body\":[]}"
+  customers.updateCustomerData:
+    call: "{\"path\":{\"customer_id\":1},\"body\":{\"data\":{}}}"
+  events.getEvent:
+    call: "{\"path\":{\"id\":1}}"
+  events.listEvents:
+    call: "{}"
+  files.uploadFiles:
+    call: "{\"body\":{\"files\":[{\"filename\":\"file.txt\",\"contentType\":\"text/plain\",\"contentBase64\":\"SGVsbG8=\"}]}}"
+  files.downloadFile:
+    call: "{\"path\":{\"file_type\":\"attachment\",\"domain_hash\":\"Hna8kldnmlal\",\"resource_name\":\"file-resource.png\"}}"
+  integrations.createIntegration:
+    call: "{\"body\":{\"name\":\"x\",\"type\":\"http\"}}"
+  integrations.deleteIntegration:
+    call: "{\"path\":{\"id\":1}}"
+  integrations.getIntegration:
+    call: "{\"path\":{\"id\":1}}"
+  integrations.listIntegrations:
+    call: "{}"
+  integrations.updateIntegration:
+    call: "{\"path\":{\"id\":1},\"body\":{\"name\":\"x\"}}"
+  jobs.cancelJob:
+    call: "{\"path\":{\"id\":1}}"
+  jobs.createJob:
+    call: "{\"body\":{\"params\":{\"apply_and_close\":true,\"end_datetime\":\"x\",\"macro_id\":1,\"start_datetime\":\"x\",\"ticket_ids\":[],\"url\":\"x\",\"updates\":{},\"view\":{},\"view_id\":1,\"context\":{}},\"type\":\"applyMacro\"}}"
+  jobs.getJob:
+    call: "{\"path\":{\"id\":1}}"
+  jobs.listJobs:
+    call: "{}"
+  jobs.updateJob:
+    call: "{\"path\":{\"id\":1},\"body\":{\"meta\":{},\"params\":{\"apply_and_close\":true,\"end_datetime\":\"x\",\"macro_id\":1,\"start_datetime\":\"x\",\"ticket_ids\":[],\"url\":\"x\",\"updates\":{},\"view\":{},\"view_id\":1,\"context\":{}},\"scheduled_datetime\":\"2025-01-01T00:00:00Z\",\"status\":\"cancel_requested\"}}"
+  macros.bulkArchiveMacros:
+    call: "{\"body\":{\"ids\":[1]}}"
+  macros.bulkUnarchiveMacros:
+    call: "{\"body\":{\"ids\":[1]}}"
+  macros.createMacro:
+    call: "{\"body\":{\"name\":\"x\"}}"
+  macros.deleteMacro:
+    call: "{\"path\":{\"id\":1}}"
+  macros.getMacro:
+    call: "{\"path\":{\"id\":1}}"
+  macros.listMacros:
+    call: "{}"
+  macros.updateMacro:
+    call: "{\"path\":{\"id\":1},\"body\":{\"external_id\":\"x\",\"name\":\"x\",\"intent\":\"discount/request\",\"language\":\"x\",\"actions\":[]}}"
+  metricCards.createMetricCardFeedback:
+    call: "{\"path\":{\"slug\":\"x\"}}"
+  metricCards.getMetricCard:
+    call: "{\"path\":{\"slug\":\"x\"}}"
+  metricCards.searchMetricCards:
+    call: "{}"
+  reportingStatistics.getStatistic:
+    call: "{\"body\":{\"query\":{\"scope\":\"tickets-closed\",\"filters\":[],\"timezone\":\"x\"}}}"
+  rules.createRule:
+    call: "{\"body\":{\"code\":\"x\",\"name\":\"x\"}}"
+  rules.deleteRule:
+    call: "{\"path\":{\"id\":1}}"
+  rules.getRule:
+    call: "{\"path\":{\"id\":1}}"
+  rules.listRules:
+    call: "{}"
+  rules.updateRule:
+    call: "{\"path\":{\"id\":1},\"body\":{\"code\":\"x\",\"code_ast\":{},\"deactivated_datetime\":\"2025-01-01T00:00:00Z\",\"description\":\"x\",\"event_types\":\"ticket-created\",\"name\":\"x\",\"priority\":1}}"
+  rules.updateRulesPriorities:
+    call: "{\"body\":{\"priorities\":[]}}"
+  satisfactionSurveys.createSatisfactionSurvey:
+    call: "{\"body\":{\"customer_id\":1,\"ticket_id\":1}}"
+  satisfactionSurveys.getSatisfactionSurvey:
+    call: "{\"path\":{\"id\":1}}"
+  satisfactionSurveys.listSatisfactionSurveys:
+    call: "{}"
+  satisfactionSurveys.updateSatisfactionSurvey:
+    call: "{\"path\":{\"id\":1},\"body\":{\"body_text\":\"x\",\"created_datetime\":\"2025-01-01T00:00:00Z\",\"customer_id\":1,\"meta\":{},\"score\":1,\"scored_datetime\":\"2025-01-01T00:00:00Z\",\"sent_datetime\":\"2025-01-01T00:00:00Z\",\"should_send_datetime\":\"2025-01-01T00:00:00Z\",\"ticket_id\":1}}"
+  search.search:
+    call: "{\"body\":{\"type\":\"agent\"}}"
+  statistics.downloadLegacyStatistic:
+    call: "{\"path\":{\"name\":\"overview\"},\"body\":{\"filters\":{\"period\":{\"end_datetime\":\"2025-01-01T00:00:00Z\",\"start_datetime\":\"2025-01-01T00:00:00Z\"},\"agents\":[],\"channels\":[],\"campaigns\":[],\"tags\":[],\"integrations\":[],\"score\":[]}}}"
+  statistics.getLegacyStatistic:
+    call: "{\"path\":{\"name\":\"overview\"},\"body\":{\"filters\":{\"period\":{\"end_datetime\":\"2025-01-01T00:00:00Z\",\"start_datetime\":\"2025-01-01T00:00:00Z\"},\"agents\":[],\"channels\":[],\"campaigns\":[],\"tags\":[],\"integrations\":[],\"score\":[]}}}"
+  tags.createTag:
+    call: "{\"body\":{\"name\":\"x\"}}"
+  tags.deleteTag:
+    call: "{\"path\":{\"id\":1}}"
+  tags.deleteTags:
+    call: "{\"body\":{\"ids\":[1]}}"
+  tags.getTag:
+    call: "{\"path\":{\"id\":1}}"
+  tags.listTags:
+    call: "{}"
+  tags.mergeTags:
+    call: "{\"path\":{\"destination_tag_id\":1},\"body\":{\"source_tags_ids\":[]}}"
+  tags.updateTag:
+    call: "{\"path\":{\"id\":1},\"body\":{\"name\":\"x\",\"description\":\"x\",\"decoration\":{\"color\":\"x\"}}}"
+  teams.createTeam:
+    call: "{\"body\":{\"name\":\"x\"}}"
+  teams.deleteTeam:
+    call: "{\"path\":{\"id\":1}}"
+  teams.getTeam:
+    call: "{\"path\":{\"id\":1}}"
+  teams.listTeams:
+    call: "{}"
+  teams.updateTeam:
+    call: "{\"path\":{\"id\":1},\"body\":{\"name\":\"x\",\"description\":\"x\",\"default_email_integration_id\":1,\"decoration\":{},\"members\":[]}}"
+  ticketMessages.createTicketMessage:
+    call: "{\"path\":{\"ticket_id\":1},\"body\":{\"channel\":\"aircall\",\"from_agent\":true}}"
+  ticketMessages.deleteTicketMessage:
+    call: "{\"path\":{\"ticket_id\":1,\"id\":1}}"
+  ticketMessages.getTicketMessage:
+    call: "{\"path\":{\"ticket_id\":1,\"id\":1}}"
+  ticketMessages.listMessages:
+    call: "{}"
+  ticketMessages.listTicketMessages:
+    call: "{\"path\":{\"ticket_id\":1}}"
+  ticketMessages.updateTicketMessage:
+    call: "{\"path\":{\"ticket_id\":1,\"id\":1},\"body\":{\"channel\":\"aircall\",\"from_agent\":true}}"
+  tickets.createTicket:
+    call: "{\"body\":{\"messages\":[{\"channel\":\"aircall\",\"from_agent\":true}]}}"
+  tickets.createTicketTags:
+    call: "{\"path\":{\"ticket_id\":1},\"body\":{\"names\":[],\"ids\":[]}}"
+  tickets.deleteTicket:
+    call: "{\"path\":{\"id\":1}}"
+  tickets.deleteTicketCustomField:
+    call: "{\"path\":{\"ticket_id\":1,\"id\":1}}"
+  tickets.deleteTicketTags:
+    call: "{\"path\":{\"ticket_id\":1},\"body\":{\"names\":[],\"ids\":[]}}"
+  tickets.getTicket:
+    call: "{\"path\":{\"id\":1}}"
+  tickets.listTicketCustomFields:
+    call: "{\"path\":{\"ticket_id\":1}}"
+  tickets.listTicketTags:
+    call: "{\"path\":{\"ticket_id\":1}}"
+  tickets.listTickets:
+    call: "{}"
+  tickets.updateTicket:
+    call: "{\"path\":{\"id\":1},\"body\":{\"assignee_team\":{\"id\":1},\"assignee_user\":{\"id\":1},\"channel\":\"aircall\",\"closed_datetime\":\"2025-01-01T00:00:00Z\",\"custom_fields\":[],\"customer\":{\"id\":1,\"email\":\"x\",\"name\":\"x\"},\"external_id\":\"x\",\"from_agent\":true,\"is_unread\":true,\"language\":\"x\",\"last_message_datetime\":\"2025-01-01T00:00:00Z\",\"last_received_message_datetime\":\"2025-01-01T00:00:00Z\",\"meta\":{},\"opened_datetime\":\"2025-01-01T00:00:00Z\",\"priority\":\"critical\",\"snooze_datetime\":\"2025-01-01T00:00:00Z\",\"spam\":true,\"status\":\"open\",\"subject\":\"x\",\"tags\":[],\"trashed_datetime\":\"2025-01-01T00:00:00Z\",\"updated_datetime\":\"2025-01-01T00:00:00Z\",\"via\":\"aircall\"}}"
+  tickets.updateTicketCustomField:
+    call: "{\"path\":{\"ticket_id\":1,\"id\":1},\"body\":\"x\"}"
+  tickets.updateTicketCustomFields:
+    call: "{\"path\":{\"ticket_id\":1},\"body\":[]}"
+  tickets.updateTicketTags:
+    call: "{\"path\":{\"ticket_id\":1},\"body\":{\"names\":[],\"ids\":[]}}"
+  users.createUser:
+    call: "{\"body\":{\"email\":\"agent@acme.test\",\"name\":\"x\",\"role\":{\"name\":\"admin\"}}}"
+  users.deleteUser:
+    call: "{\"path\":{\"id\":1}}"
+  users.getUser:
+    call: "{\"path\":{\"id\":1}}"
+  users.listUsers:
+    call: "{}"
+  users.updateUser:
+    call: "{\"path\":{\"id\":1},\"body\":{\"bio\":\"x\",\"country\":\"x\",\"email\":\"agent@acme.test\",\"external_id\":\"x\",\"language\":\"fr\",\"meta\":{\"sso\":\"google\",\"profile_picture_url\":\"https://acme.test/resource\"},\"name\":\"x\",\"new_password\":\"x\",\"old_password\":\"x\",\"password_confirmation\":\"x\",\"role\":{\"name\":\"admin\"},\"timezone\":\"Africa/Abidjan\",\"two_fa_code\":\"x\"}}"
+  views.createView:
+    call: "{\"body\":{\"slug\":\"x\"}}"
+  views.deleteView:
+    call: "{\"path\":{\"id\":1}}"
+  views.getView:
+    call: "{\"path\":{\"id\":1}}"
+  views.listViewItems:
+    call: "{\"path\":{\"view_id\":1}}"
+  views.listViews:
+    call: "{}"
+  views.updateView:
+    call: "{\"path\":{\"id\":1},\"body\":{\"decoration\":{\"emoji\":\"x\"},\"fields\":[],\"filters\":\"x\",\"name\":\"x\",\"order_by\":\"x\",\"order_dir\":\"asc\",\"shared_with_teams\":[],\"shared_with_users\":[],\"slug\":\"x\",\"type\":\"ticket-list\",\"visibility\":\"public\"}}"
+  views.updateViewItems:
+    call: "{\"path\":{\"view_id\":1},\"body\":{\"view\":{\"category\":\"x\",\"fields\":[],\"filters\":\"x\",\"order_by\":\"x\",\"order_dir\":\"asc\",\"search\":\"x\",\"type\":\"ticket-list\"}}}"
+  voiceCallEvents.getVoiceCallEvent:
+    call: "{\"path\":{\"id\":1}}"
+  voiceCallEvents.listVoiceCallEvents:
+    call: "{}"
+  voiceCallRecordings.deleteVoiceCallRecording:
+    call: "{\"path\":{\"id\":1}}"
+  voiceCallRecordings.getVoiceCallRecording:
+    call: "{\"path\":{\"id\":1}}"
+  voiceCallRecordings.listVoiceCallRecordings:
+    call: "{}"
+  voiceCalls.getVoiceCall:
+    call: "{\"path\":{\"id\":1}}"
+  voiceCalls.listVoiceCalls:
+    call: "{}"
+  widgets.createWidget:
+    call: "{\"body\":{\"template\":{},\"type\":\"bigcommerce\"}}"
+  widgets.deleteWidget:
+    call: "{\"path\":{\"id\":1}}"
+  widgets.getWidget:
+    call: "{\"path\":{\"id\":1}}"
+  widgets.listWidgets:
+    call: "{}"
+  widgets.updateWidget:
+    call: "{\"path\":{\"id\":1},\"body\":{\"context\":\"ticket\",\"deactivated_datetime\":\"2025-01-01T00:00:00Z\",\"integration_id\":1,\"app_id\":\"x\",\"order\":1,\"template\":{},\"type\":\"bigcommerce\"}}"
+apiNotes:
+  files.downloadFile: "Returns { kind: \"binary\", contentType, base64, sizeBytes }. The signed redirect URL is followed internally and is never returned or logged. Downloads above the client safety limit of 20 MiB are rejected."
+  files.uploadFiles: "Provide one to ten files in body.files using filename, contentType, and base64-encoded contentBase64. The client caps combined upload data at 20 MiB."
+  statistics.downloadLegacyStatistic: "Returns a { kind: \"binary\", contentType, base64, sizeBytes } object for the provider CSV response."
+  ticketMessages.listTicketMessages: "Gorgias marks this route deprecated; use ticketMessages.listMessages with query.ticket_id for new integrations."
+  tickets.updateTicketCustomFields: "This route replaces all custom-field values on the ticket. Include every value you want to retain."
+  ticketMessages.createTicketMessage: "This operation can send a customer-visible message and is marked destructive. Set query.action and the documented If-Unmodified-Since header when using concurrency control."
+  customers.mergeCustomers: "Merges and deletes the source customer; this action cannot be undone."
+  tags.mergeTags: "Merges source tags into the destination tag and deletes the source tags."
+  users.getUser: "The route page's 200 response does not name a schema; the output is validated against Gorgias's documented User object."
