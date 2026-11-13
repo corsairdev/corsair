@@ -91,6 +91,8 @@ type ProbeOptions = {
 	failure?: 'unauthorized' | 'server';
 	// What the provider's token endpoint answers the refresh with.
 	tokenReply?: { status: number; body: Record<string, unknown> };
+	// The plugin opts out of core's retry.
+	refreshOnUnauthorized?: false;
 };
 
 function probePlugin(seen: string[], opts: ProbeOptions = {}): CorsairPlugin {
@@ -107,6 +109,9 @@ function probePlugin(seen: string[], opts: ProbeOptions = {}): CorsairPlugin {
 	return {
 		id: 'probe',
 		options: { authType: 'oauth_2' },
+		...(opts.refreshOnUnauthorized === false
+			? { refreshOnUnauthorized: false }
+			: {}),
 		...(opts.withHooks
 			? {
 					hooks: {
@@ -246,6 +251,14 @@ describe('endpoint 401 refresh', () => {
 			});
 			expect(out.error?.message).toContain('Reconnecting will not help');
 		});
+	});
+
+	it('core leaves a 401 alone for a plugin that opted out', async () => {
+		const out = await run({ refreshOnUnauthorized: false });
+
+		expect(out.error).toBeInstanceOf(UnauthorizedError);
+		expect(out.seen).toEqual(['revoked']);
+		expect(out.tokenCalls).toEqual([]);
 	});
 
 	it('core does not refresh on an error that is not a 401', async () => {

@@ -568,6 +568,7 @@ export function bindEndpointsRecursively({
 						const refresh = callCtx._refreshAuth;
 						if (
 							refreshedThisCall ||
+							plugin?.refreshOnUnauthorized === false ||
 							typeof refresh !== 'function' ||
 							!isUnauthorizedError(error)
 						) {
