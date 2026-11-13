@@ -3,6 +3,9 @@ import type { EndorsalContext } from './index';
 
 const apiKey = process.env.ENDORSAL_API_KEY;
 const liveIt = apiKey ? it : it.skip;
+if (!apiKey) {
+	console.warn('Skipping Endorsal live tests: ENDORSAL_API_KEY is not set.');
+}
 
 function buildLiveContext(): Parameters<typeof Testimonials.list>[0] {
 	const ctx: EndorsalContext = {
