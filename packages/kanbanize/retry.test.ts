@@ -118,7 +118,11 @@ describe('retry behaviour', () => {
 			respond({ error: { code: 'X001', message: 'Server error' } }, 503);
 
 			await expect(
-				corsair.kanbanize.api.cards.create({ title: 'A card' }),
+				corsair.kanbanize.api.cards.create({
+					title: 'A card',
+					column_id: 1,
+					lane_id: 2,
+				}),
 			).rejects.toMatchObject({ status: 503 });
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
@@ -267,7 +271,11 @@ describe('retry behaviour', () => {
 			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
 			await expect(
-				corsair.kanbanize.api.cards.create({ title: 'A card' }),
+				corsair.kanbanize.api.cards.create({
+					title: 'A card',
+					column_id: 1,
+					lane_id: 2,
+				}),
 			).rejects.toMatchObject({ transport: true, method: 'POST' });
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {

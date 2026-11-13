@@ -443,6 +443,17 @@ describe('columns', () => {
 		});
 	});
 
+	it('sends the fields as one comma-joined value with the column ID', async () => {
+		respond({ data: [{ column_id: 15876, name: 'In progress' }] });
+
+		await invoke(Columns.list, { board_id: 1075, fields: ['name', 'limit'] });
+
+		const url = new URL(
+			(fetchMock.mock.calls.at(-1) as [string, RequestInit])[0],
+		);
+		expect(url.searchParams.getAll('fields')).toEqual(['column_id,name,limit']);
+	});
+
 	it('gets one column', async () => {
 		respond({ data: column });
 
@@ -845,13 +856,33 @@ describe('cards.create', () => {
 		});
 	});
 
-	it('sends only the title when that is all it is given', async () => {
-		respond({ data: card });
+	it('sends only the title and location when that is all it is given', async () => {
+		respond({ data: [card] });
 
-		await invoke(Cards.create, { title: 'Fix the invoice PDF' });
+		await invoke(Cards.create, {
+			title: 'Fix the invoice PDF',
+			column_id: 15876,
+			lane_id: 9838,
+		});
 
-		expect(lastRequest().body).toEqual({ title: 'Fix the invoice PDF' });
+		expect(lastRequest().body).toEqual({
+			title: 'Fix the invoice PDF',
+			column_id: 15876,
+			lane_id: 9838,
+		});
 	});
+
+	it.each([
+		[{ title: 'No place', lane_id: 9838 }],
+		[{ title: 'No place', column_id: 15876 }],
+		[{ title: 'No place' }],
+	])(
+		'rejects a card with no column or lane before calling Businessmap: %j',
+		async (input) => {
+			await expect(invoke(Cards.create, input)).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 
 	it('creates a card from a template', async () => {
 		respond({ data: card });
@@ -860,12 +891,14 @@ describe('cards.create', () => {
 			title: 'Weekly release',
 			template_id: 91,
 			column_id: 15876,
+			lane_id: 9838,
 		});
 
 		expect(lastRequest().body).toEqual({
 			title: 'Weekly release',
 			template_id: 91,
 			column_id: 15876,
+			lane_id: 9838,
 		});
 	});
 
@@ -1282,7 +1315,12 @@ describe('error envelopes', () => {
 		respond(invalidField, 400);
 
 		await expect(
-			invoke(Cards.create, { title: 'x', priority: 1 }),
+			invoke(Cards.create, {
+				title: 'x',
+				column_id: 15876,
+				lane_id: 9838,
+				priority: 1,
+			}),
 		).rejects.toMatchObject({ status: 400, code: 'V001' });
 	});
 
@@ -1468,5 +1506,41 @@ describe('responses shaped as the OpenAPI document gives them', () => {
 				is_finished: 1,
 			}),
 		).resolves.toEqual({ data: { subtask_id: 4401 } });
+	});
+});
+
+describe('fields projections keep the record IDs', () => {
+	it.each([
+		['boards.list', Boards.list, { fields: ['name'] }, 'board_id,name'],
+		['users.list', Account.users, { fields: ['email'] }, 'user_id,email'],
+		[
+			'cards.list',
+			Cards.list,
+			{ fields: ['title', 'card_id'] },
+			'title,card_id',
+		],
+	] as const)(
+		'%s asks for the ID with the named fields',
+		async (_name, endpoint, input, sent) => {
+			respond(
+				endpoint === Cards.list
+					? cards
+					: endpoint === Boards.list
+						? boards
+						: users,
+			);
+
+			await invoke(endpoint, input);
+
+			expect(lastRequest().query.fields).toBe(sent);
+		},
+	);
+});
+
+describe('cards.list with no body', () => {
+	it('throws rather than reporting an empty last page', async () => {
+		respondEmpty(200);
+
+		await expect(invoke(Cards.list, {})).rejects.toThrow();
 	});
 });

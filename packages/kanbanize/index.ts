@@ -367,7 +367,7 @@ const kanbanizeEndpointMeta = {
 	'boards.create': {
 		riskLevel: 'write',
 		description:
-			'Create a Kanban board or an AI Canvas in a workspace; it starts empty and needs a workflow before it takes cards',
+			'Create a Kanban board or an AI Canvas in a workspace; it starts with a cards workflow and an initiatives workflow',
 	},
 	'boards.update': {
 		riskLevel: 'write',

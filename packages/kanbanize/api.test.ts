@@ -10,7 +10,7 @@ const apiKey = process.env.KANBANIZE_API_KEY;
 const subdomain = process.env.KANBANIZE_SUBDOMAIN;
 const describeIfKey = apiKey && subdomain ? describe : describe.skip;
 
-if (!describeIfKey) {
+if (!apiKey || !subdomain) {
 	// A skipped run must not read as a pass, so say which variable is missing.
 	if (!apiKey) console.warn('KANBANIZE_API_KEY is not set: live tests skipped');
 	if (!subdomain)

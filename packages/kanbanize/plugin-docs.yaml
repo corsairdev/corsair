@@ -115,7 +115,7 @@ apiExamples:
 apiNotes:
   boards.list: 'A list such as `board_ids` goes as one comma-separated value, which is how the API documents it.'
   cards.list: 'The only paginated read. `next_page` is null on the last page; `per_page` defaults to 200 and tops out at 1000.'
-  cards.create: '`title` is required even though the spec does not mark it so. Businessmap rejects a card without one.'
+  cards.create: '`title`, `column_id` and `lane_id` are required: Businessmap places every new card in a column and a lane. It answers with a one-card array, which the plugin returns as `data`.'
   cards.update: 'Moving into a column whose WIP limit is reached answers 409 with code `L001`, which is not retried.'
   columns.create: 'A main column takes `workflow_id` and `section`; a subcolumn takes `parent_column_id` and no section.'
   lanes.create: 'A lane sits on a `workflow_id` or under a `parent_lane_id`, never both.'

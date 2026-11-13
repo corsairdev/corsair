@@ -1,5 +1,5 @@
 import type { KanbanizeEndpoints } from '..';
-import { queryFor } from '../client';
+import { queryFor, withIdField } from '../client';
 import { call } from './call';
 import {
 	KanbanizeEndpointInputSchemas as Inputs,
@@ -18,7 +18,7 @@ export const users: KanbanizeEndpoints['usersList'] = (ctx, input) =>
 		({ fields }) => ({
 			method: 'GET',
 			path: '/users',
-			query: queryFor({ fields }),
+			query: queryFor({ fields: withIdField(fields, 'user_id') }),
 		}),
 		{ log: (_, result) => ({ count: result.data.length }) },
 	);

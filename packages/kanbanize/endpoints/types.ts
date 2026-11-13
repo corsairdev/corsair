@@ -67,7 +67,7 @@ const BoardsListInputSchema = z.object({
 		)
 		.min(1)
 		.optional()
-		.describe('Return only these fields.'),
+		.describe('Return only these fields. The record’s ID is always included.'),
 	expand: z
 		.array(
 			z.enum([
@@ -274,7 +274,7 @@ const ColumnsListInputSchema = z.object({
 		.array(z.string().min(1))
 		.min(1)
 		.optional()
-		.describe('Return only these fields.'),
+		.describe('Return only these fields. The record’s ID is always included.'),
 });
 
 export type ColumnsListInput = z.input<typeof ColumnsListInputSchema>;
@@ -563,7 +563,7 @@ const CardsListInputSchema = z.object({
 		.array(z.string().min(1))
 		.min(1)
 		.optional()
-		.describe('Return only these fields.'),
+		.describe('Return only these fields. The record’s ID is always included.'),
 	expand: z
 		.array(z.enum(KANBANIZE_CARD_EXPANDS))
 		.min(1)
@@ -716,6 +716,18 @@ const cardWritableFields = {
 
 const CardCreateInputSchema = z.object({
 	...cardWritableFields,
+	// Businessmap places every new card in a lane and a column of a board, so
+	// both are required here, though optional on update.
+	column_id: z
+		.number()
+		.int()
+		.positive()
+		.describe('The column the new card goes in, from `columns.list`.'),
+	lane_id: z
+		.number()
+		.int()
+		.positive()
+		.describe('The lane the new card goes in, from `lanes.list`.'),
 	// `title` is required on create even though the spec does not mark it so;
 	// Businessmap rejects a card without one.
 	title: z.string().min(1).describe('The card title.'),
@@ -933,7 +945,7 @@ const UsersListInputSchema = z.object({
 		.array(z.string().min(1))
 		.min(1)
 		.optional()
-		.describe('Return only these fields.'),
+		.describe('Return only these fields. The record’s ID is always included.'),
 });
 
 export type UsersListInput = z.input<typeof UsersListInputSchema>;

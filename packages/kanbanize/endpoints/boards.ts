@@ -1,5 +1,5 @@
 import type { KanbanizeEndpoints } from '..';
-import { queryFor, segment } from '../client';
+import { queryFor, segment, withIdField } from '../client';
 import { call, deletedResult, withId } from './call';
 import {
 	KanbanizeEndpointInputSchemas as Inputs,
@@ -23,7 +23,7 @@ export const list: KanbanizeEndpoints['boardsList'] = (ctx, input) =>
 				workspace_ids: parsed.workspace_ids,
 				is_archived: parsed.is_archived,
 				if_assigned: parsed.if_assigned,
-				fields: parsed.fields,
+				fields: withIdField(parsed.fields, 'board_id'),
 				expand: parsed.expand,
 			}),
 		}),

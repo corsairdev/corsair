@@ -1,6 +1,6 @@
 import { asRecord } from 'corsair/core';
 import type { KanbanizeEndpoints } from '..';
-import { queryFor, segment } from '../client';
+import { queryFor, segment, withIdField } from '../client';
 import { call, deletedResult } from './call';
 import {
 	KanbanizeEndpointInputSchemas as Inputs,
@@ -22,12 +22,9 @@ function listShape(
 	raw: unknown,
 	parsed: { page?: number | undefined; per_page?: number | undefined },
 ) {
-	if (raw === undefined || raw === null) {
-		return { data: { data: [] }, next_page: null };
-	}
-	const outer = asRecord(raw) ?? {};
-	const inner = asRecord(outer.data);
-	if (!inner) return outer;
+	const outer = asRecord(raw);
+	const inner = asRecord(outer?.data);
+	if (!outer || !inner) return raw;
 
 	const cards = inner.data;
 	const pagination = asRecord(inner.pagination);
@@ -106,7 +103,7 @@ export const list: KanbanizeEndpoints['cardsList'] = (ctx, input) =>
 				deadline_to_date: parsed.deadline_to_date,
 				page: parsed.page,
 				per_page: parsed.per_page,
-				fields: parsed.fields,
+				fields: withIdField(parsed.fields, 'card_id'),
 				expand: parsed.expand,
 			}),
 		}),

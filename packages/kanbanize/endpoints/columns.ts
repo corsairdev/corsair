@@ -1,5 +1,5 @@
 import type { KanbanizeEndpoints } from '..';
-import { definedQuery, segment } from '../client';
+import { queryFor, segment, withIdField } from '../client';
 import { call, deletedResult, withId } from './call';
 import {
 	KanbanizeEndpointInputSchemas as Inputs,
@@ -18,7 +18,7 @@ export const list: KanbanizeEndpoints['columnsList'] = (ctx, input) =>
 		({ board_id, fields }) => ({
 			method: 'GET',
 			path: `/boards/${segment(board_id)}/columns`,
-			query: definedQuery({ fields }),
+			query: queryFor({ fields: withIdField(fields, 'column_id') }),
 		}),
 		{
 			log: ({ board_id }, result) => ({

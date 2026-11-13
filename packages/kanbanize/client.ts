@@ -265,3 +265,15 @@ export function queryFor(
 	}
 	return joined;
 }
+
+/**
+ * Businessmap returns only the fields a caller names, and every list output
+ * needs each record's ID, so the ID field is always added to a `fields` list.
+ */
+export function withIdField(
+	fields: readonly string[] | undefined,
+	idField: string,
+): string[] | undefined {
+	if (!fields) return undefined;
+	return fields.includes(idField) ? [...fields] : [idField, ...fields];
+}
