@@ -113,7 +113,7 @@ export async function makeGigasheetRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body: method !== 'GET' && method !== 'HEAD' ? sanitizedRequestBody : undefined,
+		body: method !== 'GET' ? sanitizedRequestBody : undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query,
 	};
