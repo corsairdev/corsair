@@ -183,6 +183,74 @@ describe('Fibery schema and endpoint schemas', () => {
 		},
 	);
 
+	it('accepts a top-level count query without q/limit, but not an entity list', () => {
+		expect(
+			Inputs.entityQuery.safeParse({
+				query: { 'q/from': 'CRM/Lead', 'q/select': ['q/count', ['fibery/id']] },
+			}).success,
+		).toBe(true);
+		expect(
+			Inputs.entityQuery.safeParse({
+				query: { 'q/from': 'CRM/Lead', 'q/select': ['fibery/id'] },
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts the documented field not-in history filter', () => {
+		expect(
+			Inputs.historySearch.safeParse({
+				limit: 50,
+				where: [
+					{
+						field: 'field',
+						operator: 'not-in',
+						value: [
+							{ field: ':hidden', options: { includeSoftDeleted: true } },
+							{ field: 'fibery/rank' },
+						],
+					},
+				],
+			}).success,
+		).toBe(true);
+	});
+
+	it('parses the live document, file upload and upsert shapes', () => {
+		// Trimmed from the live API (11-13): documents carry modificationDate, json content is an object.
+		const md = {
+			secret: id,
+			content: 'corsair-plugin-test body',
+			modificationDate: '2026-11-13T18:58:59.842Z',
+		};
+		expect(Outputs.documentGet.safeParse(md).success).toBe(true);
+		expect(Outputs.documentGetBatch.safeParse([md]).success).toBe(true);
+		expect(
+			Outputs.documentGet.safeParse({
+				...md,
+				content: { doc: { type: 'doc', content: [{ type: 'paragraph' }] } },
+			}).success,
+		).toBe(true);
+		expect(
+			Outputs.fileUpload.safeParse({
+				'fibery/id': id,
+				'fibery/name': 'corsair-plugin-test.txt',
+				'fibery/content-type': 'text/plain',
+				'fibery/secret': id,
+				'fibery/content-length': 24,
+				'fibery/rank': 0,
+				'fibery/temp?': true,
+				'fibery/checksum': 'abc123',
+			}).success,
+		).toBe(true);
+		expect(
+			Inputs.entityUpsert.safeParse({
+				type: 'CRM/Lead',
+				entities: [{ 'CRM/Name': 'No id' }],
+				conflictField: 'CRM/Name',
+				conflictAction: 'update-latest',
+			}).success,
+		).toBe(false);
+	});
+
 	it('rejects undocumented request properties and invalid response shapes', () => {
 		expect(
 			Inputs.entityQuery.safeParse({

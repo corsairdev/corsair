@@ -12,9 +12,20 @@ const QuerySchema = z
 		'q/where': FiberyJsonSchema.optional(),
 		'q/order-by': FiberyJsonSchema.optional(),
 		'q/offset': z.number().int().nonnegative().optional(),
-		'q/limit': z.number().int().positive(),
+		'q/limit': z.number().int().positive().optional(),
 	})
-	.strict();
+	.strict()
+	.superRefine((query, ctx) => {
+		// Fibery's top-level count query (`['q/count', [...]]`) takes no q/limit; entity lists need one.
+		const isCount = query['q/select'][0] === 'q/count';
+		if (!isCount && query['q/limit'] === undefined) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['q/limit'],
+				message: 'q/limit is required unless q/select is a q/count aggregate.',
+			});
+		}
+	});
 const HistoryWhereSchema = z
 	.object({
 		field: z.enum([
@@ -27,6 +38,7 @@ const HistoryWhereSchema = z
 			'entityTypeId',
 			'entityName',
 			'entityId',
+			'field',
 		]),
 		operator: z.enum(['=', 'in', 'contains', 'not-in', 'empty', 'not-empty']),
 		value: FiberyJsonSchema.optional(),
@@ -111,7 +123,10 @@ export const FiberyEndpointInputSchemas = {
 	entityUpsert: z
 		.object({
 			type: WorkspaceTypeSchema,
-			entities: z.array(FiberyRecordSchema).min(1),
+			// Fibery rejects upsert entities without fibery/id (create-or-update-entities-without-id-failed).
+			entities: z
+				.array(z.object({ 'fibery/id': UuidSchema }).catchall(FiberyJsonSchema))
+				.min(1),
 			conflictField: WorkspaceTypeSchema,
 			conflictAction: z.enum(['skip-create', 'update-latest']),
 		})
@@ -212,6 +227,16 @@ export const FiberyEndpointInputSchemas = {
 		.strict(),
 } as const;
 
+// md, html and plain-text return content as a string; json returns a ProseMirror-style object.
+// Loose because the live API also returns modificationDate, which the guide does not list.
+const FiberyDocumentSchema = z
+	.object({
+		secret: z.string(),
+		content: z.union([z.string(), FiberyRecordSchema]),
+		modificationDate: z.string().optional(),
+	})
+	.catchall(FiberyJsonSchema);
+
 export const FiberyEndpointOutputSchemas = {
 	schemaQuery: FiberyJsonSchema,
 	databaseCreate: FiberyJsonSchema,
@@ -232,12 +257,11 @@ export const FiberyEndpointOutputSchemas = {
 	collectionRemove: FiberyJsonSchema,
 	collectionSet: FiberyJsonSchema,
 	collectionReset: FiberyJsonSchema,
-	documentGet: z.object({ secret: z.string(), content: z.string() }).strict(),
-	documentGetBatch: z.array(
-		z.object({ secret: z.string(), content: z.string() }).strict(),
-	),
+	documentGet: FiberyDocumentSchema,
+	documentGetBatch: z.array(FiberyDocumentSchema),
 	documentUpdate: FiberyJsonSchema,
 	documentUpdateBatch: FiberyJsonSchema,
+	// Loose: the live upload also returns fibery/temp? and fibery/checksum, which the guide does not list.
 	fileUpload: z
 		.object({
 			'fibery/id': UuidSchema,
@@ -247,7 +271,7 @@ export const FiberyEndpointOutputSchemas = {
 			'fibery/content-length': z.number(),
 			'fibery/rank': z.number(),
 		})
-		.strict(),
+		.catchall(FiberyJsonSchema),
 	fileDownload: z
 		.object({
 			kind: z.literal('binary'),
