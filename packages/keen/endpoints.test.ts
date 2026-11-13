@@ -471,7 +471,6 @@ describe('queries.run', () => {
 		},
 	);
 
-
 	it.each([
 		[{ analysis_type: 'sum', event_collection: 'purchases' }],
 		[{ analysis_type: 'count' }],
