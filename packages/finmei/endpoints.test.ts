@@ -120,6 +120,9 @@ describe('Invoices endpoints', () => {
 			type: 'vat_invoice' as const,
 			currency: 'USD',
 			invoice_date: '2024-05-01',
+			series: 'FIN',
+			buyer: { type: 'company' as const, company_name: 'Acme Corp' },
+			products: [{ name: 'Consulting', units: 'hours', quantity: 2, price: 50 }],
 		};
 		const created = { id: 'inv-99', currency: 'USD' };
 		mockRequest.mockResolvedValue({ data: created });
@@ -136,6 +139,36 @@ describe('Invoices endpoints', () => {
 			{ id: 'inv-99', currency: 'USD' },
 			'completed',
 		);
+	});
+
+	it('invoices.create keeps individual seller and buyer fields in the body', async () => {
+		const invoiceInput = {
+			type: 'regular_invoice' as const,
+			currency: 'EUR',
+			invoice_date: '2024-05-01',
+			series: 'FIN',
+			invoice_number: 12,
+			use_default_seller_info: false,
+			seller: {
+				first_name: 'Jane',
+				last_name: 'Roe',
+				individual_tax_id: 'TAX-1',
+			},
+			buyer: {
+				type: 'individual' as const,
+				first_name: 'John',
+				last_name: 'Doe',
+				individual_tax_id: 'TAX-2',
+			},
+			products: [{ name: 'Design', units: 'pcs', quantity: 1, price: 10 }],
+		};
+		mockRequest.mockResolvedValue({ data: { id: 'inv-7', currency: 'EUR' } });
+
+		await Invoices.create(ctx, invoiceInput);
+		expect(mockRequest).toHaveBeenCalledWith('/invoices', 'test-api-key', {
+			method: 'POST',
+			body: invoiceInput,
+		});
 	});
 
 	it('invoices.get sends GET /invoices/:id', async () => {

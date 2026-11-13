@@ -42,6 +42,7 @@ describe('Finmei invoice schemas', () => {
 		const valid = {
 			type: 'vat_invoice' as const,
 			invoice_date: '2024-05-22',
+			series: 'FIN',
 			currency: 'USD',
 			payment_status: 'paid' as const,
 			products: [
@@ -54,6 +55,7 @@ describe('Finmei invoice schemas', () => {
 				},
 			],
 			buyer: {
+				type: 'company' as const,
 				company_name: 'Acme Corp',
 				email: 'billing@acme.example',
 			},
@@ -63,6 +65,30 @@ describe('Finmei invoice schemas', () => {
 		expect(
 			FinmeiCreateInvoiceInputSchema.safeParse({ type: 'vat_invoice' }).success,
 		).toBe(false);
+		// Finmei requires type, invoice_date, series, buyer and products
+		for (const field of [
+			'type',
+			'invoice_date',
+			'series',
+			'buyer',
+			'products',
+		] as const) {
+			const { [field]: _omitted, ...rest } = valid;
+			expect(FinmeiCreateInvoiceInputSchema.safeParse(rest).success).toBe(
+				false,
+			);
+		}
+		// invoice_number may be a string or a number
+		expect(
+			FinmeiCreateInvoiceInputSchema.safeParse({ ...valid, invoice_number: 7 })
+				.success,
+		).toBe(true);
+		expect(
+			FinmeiCreateInvoiceInputSchema.safeParse({
+				...valid,
+				invoice_number: 'A-007',
+			}).success,
+		).toBe(true);
 		// Unknown field rejected due to strict
 		expect(
 			FinmeiCreateInvoiceInputSchema.safeParse({ ...valid, extraField: 'fail' })
