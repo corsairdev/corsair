@@ -60,22 +60,21 @@ export const create: KeywordEndpoints['projectsCreate'] = (ctx, input) =>
 		},
 	);
 
-export const update: KeywordEndpoints['projectsUpdate'] = (ctx, input) =>
+// Archiving is a PUT on the group with `status: 2`, which is how Keyword
+// documents it. `restore` undoes it.
+export const archive: KeywordEndpoints['projectsArchive'] = (ctx, input) =>
 	call(
 		ctx,
 		{
-			event: 'projects.update',
-			input: Inputs.projectsUpdate,
-			output: Outputs.projectsUpdate,
+			event: 'projects.archive',
+			input: Inputs.projectsArchive,
+			output: Outputs.projectsArchive,
 		},
 		input,
-		({ projectName, ...attributes }) => ({
+		({ projectName }) => ({
 			method: 'PUT',
 			path: `/groups/${projectSegment(projectName)}`,
-			body: resourceBody(
-				'group',
-				dropUndefined({ name: projectName, ...attributes }),
-			),
+			body: resourceBody('group', { status: 2 }),
 		}),
 		{ log: ({ projectName }) => ({ projectName }) },
 	);

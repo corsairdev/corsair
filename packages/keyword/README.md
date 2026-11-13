@@ -26,12 +26,12 @@ pnpm add @corsair-dev/keyword
 | `metrics.get` | `keyword.api.metrics.get` | `read` | Keyword movement for a project, group or tag: how many sit in each top-N bucket and how that changed day over day |
 | `mindshare.history` | `keyword.api.mindshare.history` | `read` | Share of Voice over a date window, read from Keyword’s cache |
 | `mindshare.latest` | `keyword.api.mindshare.latest` | `read` | The latest Share of Voice top 10: each competitor’s estimated clicks and share, with the month’s change |
+| `projects.archive` | `keyword.api.projects.archive` | `write` | Archive a project or subproject: it stops updating until `projects.restore` brings it back. Keyword refuses to archive the account’s only active top-level project |
 | `projects.create` | `keyword.api.projects.create` | `write` | Create a project, or a subproject from a `Parent[sub]Child` name; the parent must exist first |
 | `projects.delete` | `keyword.api.projects.delete` | `destructive` | Delete a project with every keyword and its ranking history; it cannot be restored |
 | `projects.get` | `keyword.api.projects.get` | `read` | One project or subproject with its tags and counts |
 | `projects.list` | `keyword.api.projects.list` | `read` | Every project and subproject with its tags and keyword counts; a subproject is named `Parent[sub]Child` |
 | `projects.restore` | `keyword.api.projects.restore` | `write` | Undo an archive, bringing the project and its keywords back |
-| `projects.update` | `keyword.api.projects.update` | `write` | Change a project’s domain, currency or company details |
 | `rankChart.get` | `keyword.api.rankChart.get` | `read` | Daily rank history for a set of keywords over up to 180 days; Keyword refuses a call covering more than 400,000 keyword-days |
 | `rankingUrls.list` | `keyword.api.rankingUrls.list` | `read` | The pages that rank best for a project, with their average position and total search volume |
 | `regions.list` | `keyword.api.regions.list` | `read` | The Google regions a project tracks, with each one’s language and keyword count |

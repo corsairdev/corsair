@@ -39,8 +39,8 @@ apiExamples:
     call: "{ projectName: 'Disney' }"
   projects.create:
     call: "{ category: 'Disney', currency_code: 'USD', url: 'disney.com' }"
-  projects.update:
-    call: "{ projectName: 'Disney', url: 'shopdisney.com' }"
+  projects.archive:
+    call: "{ projectName: 'Disney' }"
   projects.delete:
     call: "{ projectName: 'Disney' }"
   projects.restore:

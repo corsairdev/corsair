@@ -244,34 +244,33 @@ describe('projects.create', () => {
 	);
 });
 
-describe('projects.update', () => {
-	it('PUTs the changed attributes', async () => {
-		respond({ data: project });
+describe('projects.archive', () => {
+	it('PUTs status 2 on the group and returns the meta title', async () => {
+		respond({ meta: { title: 'Group has been archived', code: '1003' } });
 
-		await invoke(Projects.update, {
-			projectName: 'Disney',
-			url: 'shopdisney.com',
-		});
-
+		await expect(
+			invoke(Projects.archive, { projectName: 'Disney' }),
+		).resolves.toMatchObject({ meta: { title: 'Group has been archived' } });
 		expect(lastRequest()).toMatchObject({
 			method: 'PUT',
 			path: '/api/v2/groups/Disney',
-			body: {
-				data: {
-					type: 'group',
-					attributes: { name: 'Disney', url: 'shopdisney.com' },
-				},
-			},
+			body: { data: { type: 'group', attributes: { status: 2 } } },
 		});
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'keyword.projects.archive',
+			{ projectName: 'Disney' },
+			'completed',
+		);
 	});
 
-	it.each([
-		[{ projectName: 'Disney' }],
-		[{ projectName: 'Disney', unknown: 1 }],
-	])('rejects %j before calling Keyword', async (input) => {
-		await expect(invoke(Projects.update, input)).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
+	it.each([[{}], [{ projectName: '' }]])(
+		'rejects %j before calling Keyword',
+		async (input) => {
+			await expect(invoke(Projects.archive, input)).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 });
 
 describe('projects.delete', () => {
@@ -295,10 +294,12 @@ describe('projects.delete', () => {
 });
 
 describe('projects.restore', () => {
-	it('GETs the undo/archive route', async () => {
-		respond({ data: project });
+	it('GETs the undo/archive route and returns the meta title', async () => {
+		respond({ meta: { title: 'Group has been restored', code: '1004' } });
 
-		await invoke(Projects.restore, { projectName: 'Disney' });
+		await expect(
+			invoke(Projects.restore, { projectName: 'Disney' }),
+		).resolves.toMatchObject({ meta: { title: 'Group has been restored' } });
 
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',

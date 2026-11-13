@@ -123,33 +123,21 @@ const ProjectRemoveInputSchema = z.object({ projectName: ProjectNameSchema });
 
 export type ProjectRemoveInput = z.input<typeof ProjectRemoveInputSchema>;
 
-const ProjectUpdateInputSchema = z
-	.object({
-		projectName: ProjectNameSchema,
-		url: z.string().optional(),
-		currency_code: z.string().optional(),
-		company_name: z.string().optional(),
-		company_desc: z.string().optional(),
-		company_link: z.string().optional(),
-	})
-	.superRefine((value, ctx) => {
-		const { projectName: _projectName, ...changes } = value;
-		if (Object.values(changes).every((entry) => entry === undefined)) {
-			ctx.addIssue({
-				code: 'custom',
-				path: ['projectName'],
-				message: 'Send at least one field to update.',
-			});
-		}
-	});
+// Keyword's only documented PUT on a group is the archive: it takes
+// `{ status: 2 }` and answers with a `meta` title. There is no route that edits
+// a project's domain, currency or company details.
+const ProjectArchiveInputSchema = z.object({ projectName: ProjectNameSchema });
 
-export type ProjectUpdateInput = z.input<typeof ProjectUpdateInputSchema>;
+export type ProjectArchiveInput = z.input<typeof ProjectArchiveInputSchema>;
 
 const ProjectRestoreInputSchema = z.object({ projectName: ProjectNameSchema });
 
 export type ProjectRestoreInput = z.input<typeof ProjectRestoreInputSchema>;
 
-/** Projects and keywords answer their deletes with a `meta` title. */
+/**
+ * Projects and keywords answer their deletes, archives and restores with a
+ * `meta` title.
+ */
 const MetaResponseSchema = z
 	.object({
 		meta: z.object({ title: z.string() }).loose().optional(),
@@ -830,7 +818,7 @@ export type KeywordEndpointInputs = {
 	projectsList: ProjectsListInput;
 	projectsGet: ProjectGetInput;
 	projectsCreate: ProjectCreateInput;
-	projectsUpdate: ProjectUpdateInput;
+	projectsArchive: ProjectArchiveInput;
 	projectsRemove: ProjectRemoveInput;
 	projectsRestore: ProjectRestoreInput;
 	sharingGet: SharingGetInput;
@@ -858,9 +846,9 @@ export type KeywordEndpointOutputs = {
 	projectsList: ProjectsListResponse;
 	projectsGet: ProjectResponse;
 	projectsCreate: ProjectResponse;
-	projectsUpdate: ProjectResponse;
+	projectsArchive: MetaResponse;
 	projectsRemove: MetaResponse;
-	projectsRestore: ProjectResponse;
+	projectsRestore: MetaResponse;
 	sharingGet: SharingSettings;
 	sharingUpdate: SharingSettings;
 	keywordsList: KeywordsListResponse;
@@ -886,7 +874,7 @@ export const KeywordEndpointInputSchemas = {
 	projectsList: ProjectsListInputSchema,
 	projectsGet: ProjectGetInputSchema,
 	projectsCreate: ProjectCreateInputSchema,
-	projectsUpdate: ProjectUpdateInputSchema,
+	projectsArchive: ProjectArchiveInputSchema,
 	projectsRemove: ProjectRemoveInputSchema,
 	projectsRestore: ProjectRestoreInputSchema,
 	sharingGet: SharingGetInputSchema,
@@ -914,9 +902,9 @@ export const KeywordEndpointOutputSchemas = {
 	projectsList: ProjectsListResponseSchema,
 	projectsGet: ProjectResponseSchema,
 	projectsCreate: ProjectResponseSchema,
-	projectsUpdate: ProjectResponseSchema,
+	projectsArchive: MetaResponseSchema,
 	projectsRemove: MetaResponseSchema,
-	projectsRestore: ProjectResponseSchema,
+	projectsRestore: MetaResponseSchema,
 	sharingGet: SharingSettingsSchema,
 	sharingUpdate: SharingSettingsSchema,
 	keywordsList: KeywordsListResponseSchema,

@@ -59,7 +59,7 @@ export type KeywordEndpoints = {
 	projectsList: KeywordEndpoint<'projectsList'>;
 	projectsGet: KeywordEndpoint<'projectsGet'>;
 	projectsCreate: KeywordEndpoint<'projectsCreate'>;
-	projectsUpdate: KeywordEndpoint<'projectsUpdate'>;
+	projectsArchive: KeywordEndpoint<'projectsArchive'>;
 	projectsRemove: KeywordEndpoint<'projectsRemove'>;
 	projectsRestore: KeywordEndpoint<'projectsRestore'>;
 	sharingGet: KeywordEndpoint<'sharingGet'>;
@@ -88,7 +88,7 @@ const keywordEndpointsNested = {
 		list: Projects.list,
 		get: Projects.get,
 		create: Projects.create,
-		update: Projects.update,
+		archive: Projects.archive,
 		delete: Projects.remove,
 		restore: Projects.restore,
 	},
@@ -144,9 +144,9 @@ export const keywordEndpointSchemas = {
 		input: KeywordEndpointInputSchemas.projectsCreate,
 		output: KeywordEndpointOutputSchemas.projectsCreate,
 	},
-	'projects.update': {
-		input: KeywordEndpointInputSchemas.projectsUpdate,
-		output: KeywordEndpointOutputSchemas.projectsUpdate,
+	'projects.archive': {
+		input: KeywordEndpointInputSchemas.projectsArchive,
+		output: KeywordEndpointOutputSchemas.projectsArchive,
 	},
 	'projects.delete': {
 		input: KeywordEndpointInputSchemas.projectsRemove,
@@ -253,9 +253,10 @@ const keywordEndpointMeta = {
 		description:
 			'Create a project, or a subproject from a `Parent[sub]Child` name; the parent must exist first',
 	},
-	'projects.update': {
+	'projects.archive': {
 		riskLevel: 'write',
-		description: 'Change a project’s domain, currency or company details',
+		description:
+			'Archive a project or subproject: it stops updating until `projects.restore` brings it back. Keyword refuses to archive the account’s only active top-level project',
 	},
 	'projects.delete': {
 		riskLevel: 'destructive',
@@ -444,6 +445,7 @@ export type {
 	MindshareHistoryResponse,
 	MindshareLatestInput,
 	MindshareLatestResponse,
+	ProjectArchiveInput,
 	ProjectCreateInput,
 	ProjectGetInput,
 	ProjectRemoveInput,
@@ -451,7 +453,6 @@ export type {
 	ProjectRestoreInput,
 	ProjectsListInput,
 	ProjectsListResponse,
-	ProjectUpdateInput,
 	RankChartInput,
 	RankChartResponse,
 	RankingUrlsInput,
