@@ -396,16 +396,23 @@ export type ManufacturerRemoveInput = z.input<
 
 // ── custom fields ─────────────────────────────────────────────────────────
 
+// The list answers each field's settings. Which record a field belongs to is
+// `ForType`, a string; the numeric `RefType` exists only on a value write.
 export const GagelistCustomFieldSchema = z
 	.object({
-		Id: z.number().nullish(),
-		Name: z.string().nullish(),
+		Id: z.number().nullish().describe('The `FieldId` a value write takes.'),
 		FieldName: z.string().nullish(),
 		FieldType: z.string().nullish(),
-		RefType: z
-			.number()
+		FieldOptions: z.string().nullish(),
+		Status: z.string().nullish(),
+		ForType: z
+			.string()
 			.nullish()
-			.describe('`1` for a gage, `2` for a calibration.'),
+			.describe('Whether the field belongs on gages, calibrations or both.'),
+		GageRequired: z.number().nullish(),
+		CalibrationRequired: z.number().nullish(),
+		DisplayOrder: z.number().nullish(),
+		UpdatedDate: z.string().nullish(),
 	})
 	.loose();
 
@@ -417,6 +424,8 @@ export type CustomFieldsListInput = z.input<typeof CustomFieldsListInputSchema>;
 
 const CustomFieldsListResponseSchema = z
 	.object({
+		total: z.number().nullish(),
+		count: z.number().nullish(),
 		data: z.array(GagelistCustomFieldSchema),
 		success: z.boolean().nullish(),
 		message: z.string().nullish(),

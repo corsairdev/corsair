@@ -575,17 +575,19 @@ describe('manufacturers', () => {
 });
 
 describe('customFields', () => {
-	it('lists the fields with their RefType', async () => {
+	it('lists the fields with the ForType string GageList returns', async () => {
 		respondToken();
 		respond(customFields);
 
-		const result = (await invoke(
-			Account.customFields,
-			{},
-		)) as typeof customFields;
+		const result = await invoke(Account.customFields, {});
 
-		expect(result.data[0]?.RefType).toBe(1);
-		expect(result.data[1]?.RefType).toBe(2);
+		expect(result).toMatchObject({
+			total: 2,
+			data: [
+				{ Id: 3, FieldName: 'Cost centre', ForType: 'Gage' },
+				{ Id: 4, FieldName: 'Witness', ForType: 'Calibration' },
+			],
+		});
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',
 			path: '/GageList/api/CustomField/GetCustomFields',

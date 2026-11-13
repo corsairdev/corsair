@@ -282,7 +282,7 @@ const gagelistEndpointMeta = {
 	'customFields.list': {
 		riskLevel: 'read',
 		description:
-			'The account’s custom fields, with the `Id` and `RefType` a value needs',
+			'The account’s custom fields: each `Id` is the `FieldId` a value write takes, and `ForType` says whether it belongs on gages or calibrations',
 	},
 	'customFields.updateValues': {
 		riskLevel: 'write',

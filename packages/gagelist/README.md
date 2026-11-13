@@ -19,7 +19,7 @@ pnpm add @corsair-dev/gagelist
 | `calibrations.get` | `gagelist.api.calibrations.get` | `read` | One calibration record with its as-found and as-left readings |
 | `calibrations.list` | `gagelist.api.calibrations.list` | `read` | Calibration records, paged; each names the gage it was run on through `EquipmentRefId` |
 | `calibrations.update` | `gagelist.api.calibrations.update` | `write` | Update a calibration record |
-| `customFields.list` | `gagelist.api.customFields.list` | `read` | The account’s custom fields, with the `Id` and `RefType` a value needs |
+| `customFields.list` | `gagelist.api.customFields.list` | `read` | The account’s custom fields: each `Id` is the `FieldId` a value write takes, and `ForType` says whether it belongs on gages or calibrations |
 | `customFields.updateValues` | `gagelist.api.customFields.updateValues` | `write` | Create or update custom field values on a gage or a calibration. `RefType` is `1` for a gage and `2` for a calibration |
 | `gages.create` | `gagelist.api.gages.create` | `write` | Add a gage, with its serial and control numbers, calibration interval and responsible user |
 | `gages.delete` | `gagelist.api.gages.delete` | `destructive` | Delete a gage. GageList marks it deleted rather than erasing it, but it stops appearing in the active list |

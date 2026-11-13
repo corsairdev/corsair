@@ -119,21 +119,32 @@ export const manufacturers = {
 	message: null,
 };
 
+// The documented list shape: `ForType` is a string, and there is no `RefType`.
 export const customFields = {
+	total: 2,
+	count: 2,
 	data: [
 		{
 			Id: 3,
-			Name: 'Cost centre',
-			FieldName: 'cost_centre',
+			FieldName: 'Cost centre',
 			FieldType: 'Text',
-			RefType: 1,
+			FieldOptions: '',
+			Status: 'Active',
+			ForType: 'Gage',
+			GageRequired: 0,
+			CalibrationRequired: 0,
+			DisplayOrder: 1,
 		},
 		{
 			Id: 4,
-			Name: 'Witness',
-			FieldName: 'witness',
+			FieldName: 'Witness',
 			FieldType: 'Text',
-			RefType: 2,
+			FieldOptions: '',
+			Status: 'Active',
+			ForType: 'Calibration',
+			GageRequired: 0,
+			CalibrationRequired: 0,
+			DisplayOrder: 2,
 		},
 	],
 	success: true,
