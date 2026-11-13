@@ -265,7 +265,7 @@ export const operationDefinitions = {
 						.passthrough()
 						.optional(),
 					address1: z.string().optional(),
-					address2: z.string().optional(),
+					address2: z.string().nullable().optional(),
 					city: z.string().optional(),
 					countryId: z
 						.object({
@@ -275,16 +275,16 @@ export const operationDefinitions = {
 						.passthrough()
 						.optional(),
 					dateCreated: z.string().optional(),
-					dateDeleted: z.json().optional(),
-					dateUpdated: z.json().optional(),
+					dateDeleted: z.string().nullable().optional(),
+					dateUpdated: z.string().nullable().optional(),
 					deleted: z.boolean().optional(),
-					description: z.json().optional(),
+					description: z.string().nullable().optional(),
 					id: z.number().int().optional(),
 					postcode: z.string().optional(),
 					region: z.string().optional(),
 					salesRepIdCreated: z.number().int().optional(),
-					salesRepIdDeleted: z.json().optional(),
-					salesRepIdUpdated: z.json().optional(),
+					salesRepIdDeleted: z.number().int().nullable().optional(),
+					salesRepIdUpdated: z.number().int().nullable().optional(),
 				})
 				.passthrough(),
 		),
@@ -381,7 +381,7 @@ export const operationDefinitions = {
 					.passthrough()
 					.optional(),
 				address1: z.string().optional(),
-				address2: z.string().optional(),
+				address2: z.string().nullable().optional(),
 				city: z.string().optional(),
 				countryId: z
 					.object({
@@ -391,16 +391,16 @@ export const operationDefinitions = {
 					.passthrough()
 					.optional(),
 				dateCreated: z.string().optional(),
-				dateDeleted: z.json().optional(),
-				dateUpdated: z.json().optional(),
+				dateDeleted: z.string().nullable().optional(),
+				dateUpdated: z.string().nullable().optional(),
 				deleted: z.boolean().optional(),
-				description: z.json().optional(),
+				description: z.string().nullable().optional(),
 				id: z.number().int().optional(),
 				postcode: z.string().optional(),
 				region: z.string().optional(),
 				salesRepIdCreated: z.number().int().optional(),
-				salesRepIdDeleted: z.json().optional(),
-				salesRepIdUpdated: z.json().optional(),
+				salesRepIdDeleted: z.number().int().nullable().optional(),
+				salesRepIdUpdated: z.number().int().nullable().optional(),
 			})
 			.passthrough(),
 	},
@@ -27144,3 +27144,83 @@ export const operationTestOutputs = {
 		(typeof operationDefinitions)[K]['output']
 	>;
 };
+
+// Non-PII response fixtures exercise nested records and nullable fields documented by the provider.
+export const representativeResponseFixtures = {
+	listAccountAddresses: [
+		{
+			accountId: { id: 42, value: 'Sample account' },
+			address1: '1 Main Street',
+			address2: null,
+			city: 'Sample City',
+			countryId: { id: 1, value: 'US' },
+			dateCreated: '2024-01-02T03:04:05Z',
+			dateDeleted: null,
+			dateUpdated: null,
+			deleted: false,
+			description: null,
+			id: 7,
+			postcode: '10000',
+			region: 'CA',
+			salesRepIdCreated: 9,
+			salesRepIdDeleted: null,
+			salesRepIdUpdated: null,
+		},
+	],
+	getAccount: {
+		address1: '1 Main Street',
+		address2: null,
+		branchId: { id: 3, value: 'Headquarter' },
+		city: 'Sample City',
+		comment: null,
+		countryId: { id: 1, value: 'US' },
+		dateCreated: '2024-01-02T03:04:05Z',
+		dateDeleted: null,
+		dateGeocoded: null,
+		dateUpdated: '2024-01-03T03:04:05Z',
+		deleted: false,
+		geocoded: false,
+		id: 42,
+		latitude: 37.5,
+		longitude: -122.3,
+		name: 'Sample account',
+		permissionLevel: 1,
+		readOnly: false,
+		salesRepId1: { id: 9, value: 'Sales representative' },
+		salesRepIdCreated: 9,
+		salesRepIdUpdated: 9,
+		statusId: { id: 5, value: 'Customer' },
+		typeId: { id: 2, value: 'Distributor' },
+	},
+	getActivity: {
+		accountId: { id: 42, value: 'Sample account' },
+		checkin: false,
+		checkinTypeId: 1,
+		checkoutDate: null,
+		comment: 'Discussed next steps',
+		contactId: { id: 12, value: 'Sample contact' },
+		date: '2024-01-02T03:04:05Z',
+		dateCreated: '2024-01-02T03:04:05Z',
+		dateDeleted: null,
+		dateUpdated: '2024-01-03T03:04:05Z',
+		deleted: false,
+		extId: null,
+		geocoded: true,
+		geocodingAccuracy: 1,
+		id: 8,
+		latitude: 37.5,
+		longitude: -122.3,
+		opportunityId: { id: 2, value: 'Sample opportunity' },
+		permissionLevel: 1,
+		readOnly: false,
+		salesRepId: { id: 9, value: 'Sales representative' },
+		salesRepIdCreated: 9,
+		salesRepIdDeleted: null,
+		salesRepIdUpdated: 9,
+		typeId: { id: 4, value: 'Visit' },
+	},
+} as const satisfies Partial<{
+	[K in keyof typeof operationDefinitions]: z.infer<
+		(typeof operationDefinitions)[K]['output']
+	>;
+}>;

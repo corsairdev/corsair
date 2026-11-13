@@ -3,6 +3,7 @@ import {
 	operationDefinitions,
 	operationTestInputs,
 	operationTestOutputs,
+	representativeResponseFixtures,
 } from './endpoints/definitions';
 import {
 	assertForceManagerLoggingConfiguration,
@@ -120,7 +121,10 @@ describe('ForceManager operation registry and wire behavior', () => {
 			const input = recordOf(operationTestInputs[route.name]);
 			const query = recordOf(input.query);
 			const headers = recordOf(input.headers);
-			const output = operationTestOutputs[route.name];
+			const representativeOutput = Object.entries(
+				representativeResponseFixtures,
+			).find(([name]) => name === route.name)?.[1];
+			const output = representativeOutput ?? operationTestOutputs[route.name];
 			const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
 				new Response(JSON.stringify(output), {
 					status: 200,

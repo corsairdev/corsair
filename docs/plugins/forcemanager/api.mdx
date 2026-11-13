@@ -421,20 +421,20 @@ await corsair.forcemanager.api.accountAddresses.getAccountAddress({
 |------|------|----------|-------------|
 | `accountId` | `object` | No | — |
 | `address1` | `string` | No | — |
-| `address2` | `string` | No | — |
+| `address2` | `string \| null` | No | — |
 | `city` | `string` | No | — |
 | `countryId` | `object` | No | — |
 | `dateCreated` | `string` | No | — |
-| `dateDeleted` | `JsonValue` | No | — |
-| `dateUpdated` | `JsonValue` | No | — |
+| `dateDeleted` | `string \| null` | No | — |
+| `dateUpdated` | `string \| null` | No | — |
 | `deleted` | `boolean` | No | — |
-| `description` | `JsonValue` | No | — |
+| `description` | `string \| null` | No | — |
 | `id` | `number` | No | — |
 | `postcode` | `string` | No | — |
 | `region` | `string` | No | — |
 | `salesRepIdCreated` | `number` | No | — |
-| `salesRepIdDeleted` | `JsonValue` | No | — |
-| `salesRepIdUpdated` | `JsonValue` | No | — |
+| `salesRepIdDeleted` | `number \| null` | No | — |
+| `salesRepIdUpdated` | `number \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="accountId full type">
@@ -532,23 +532,23 @@ await corsair.forcemanager.api.accountAddresses.listAccountAddresses({
     value?: string
   },
   address1?: string,
-  address2?: string,
+  address2?: string | null,
   city?: string,
   countryId?: {
     id?: number,
     value?: string
   },
   dateCreated?: string,
-  dateDeleted?: JsonValue,
-  dateUpdated?: JsonValue,
+  dateDeleted?: string | null,
+  dateUpdated?: string | null,
   deleted?: boolean,
-  description?: JsonValue,
+  description?: string | null,
   id?: number,
   postcode?: string,
   region?: string,
   salesRepIdCreated?: number,
-  salesRepIdDeleted?: JsonValue,
-  salesRepIdUpdated?: JsonValue
+  salesRepIdDeleted?: number | null,
+  salesRepIdUpdated?: number | null
 }[]
 ```
 </Accordion>

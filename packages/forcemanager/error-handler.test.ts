@@ -66,8 +66,10 @@ describe('ForceManager error handling', () => {
 			429,
 			2000,
 		);
+		const firstMatchingHandler = Object.entries(errorHandlers).find(
+			([, handler]) => handler.match(error),
+		)?.[0];
 
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
-		expect(errorHandlers.DEFAULT.match(error)).toBe(true);
+		expect(firstMatchingHandler).toBe('RATE_LIMIT_ERROR');
 	});
 });
