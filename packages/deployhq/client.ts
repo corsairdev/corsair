@@ -162,6 +162,61 @@ function redactProviderText(
 	return safeText;
 }
 
+const MAX_PROVIDER_DETAIL_LENGTH = 300;
+
+// Builds a short reason from DeployHQ's JSON error body: `hint`, `error`, `message`,
+// an `errors` list, or Rails-style `{ field: [messages] }` validation errors.
+function providerErrorDetail(
+	// `unknown` because the provider error JSON is arbitrary until its documented fields are narrowed.
+	body: unknown,
+	credentials: DeployHQCredentials,
+): string | undefined {
+	if (typeof body !== 'object' || body === null || Array.isArray(body))
+		return undefined;
+	let detail: string | undefined;
+	for (const key of ['hint', 'error', 'message']) {
+		const value = readErrorField(body, key);
+		if (typeof value === 'string' && value.length > 0) {
+			detail = value;
+			break;
+		}
+	}
+	if (!detail) {
+		const errors = readErrorField(body, 'errors');
+		const messages: string[] = [];
+		if (Array.isArray(errors)) {
+			for (const item of errors)
+				if (typeof item === 'string') messages.push(item);
+		} else {
+			for (const [field, value] of Object.entries(body)) {
+				if (!Array.isArray(value)) continue;
+				for (const item of value)
+					if (typeof item === 'string') messages.push(`${field} ${item}`);
+			}
+		}
+		if (messages.length > 0) detail = messages.join('; ');
+	}
+	if (!detail) {
+		const errorCode = readErrorField(body, 'error_code');
+		if (typeof errorCode === 'string') detail = errorCode;
+	}
+	if (!detail) return undefined;
+	return redactProviderText(detail, credentials).slice(
+		0,
+		MAX_PROVIDER_DETAIL_LENGTH,
+	);
+}
+
+function failureMessage(
+	status: number,
+	detail: string | undefined,
+	subject = 'request',
+): string {
+	return detail
+		? `DeployHQ ${subject} failed with HTTP ${status}: ${detail}`
+		: `DeployHQ ${subject} failed with HTTP ${status}.`;
+}
+
 async function readProviderErrorHint(
 	response: Response,
 	credentials: DeployHQCredentials,
@@ -174,12 +229,7 @@ async function readProviderErrorHint(
 	try {
 		// `unknown` because the provider error JSON is arbitrary until its documented fields are narrowed.
 		const body: unknown = await response.json();
-		const hint = readErrorField(body, 'hint');
-		const errorCode = readErrorField(body, 'error_code');
-		if (typeof hint === 'string') return redactProviderText(hint, credentials);
-		if (typeof errorCode === 'string')
-			return redactProviderText(errorCode, credentials);
-		return undefined;
+		return providerErrorDetail(body, credentials);
 	} catch {
 		// Invalid or unreadable provider error bodies are not propagated to callers.
 		return undefined;
@@ -222,9 +272,7 @@ async function makeBinaryDeployHQRequest(
 				}
 				const hint = await readProviderErrorHint(response, credentials);
 				throw new DeployHQAPIError(
-					hint
-						? `DeployHQ invoice request failed with HTTP ${response.status}: ${hint}`
-						: `DeployHQ invoice request failed with HTTP ${response.status}.`,
+					failureMessage(response.status, hint, 'invoice request'),
 					response.status,
 					retryAfter,
 				);
@@ -318,11 +366,12 @@ export async function makeDeployHQRequest(
 				signal: AbortSignal.timeout(DEPLOYHQ_TIMEOUT_MS),
 			});
 			if (!response.ok) {
-				await response.body?.cancel().catch(() => undefined);
+				const retryAfter = parseRetryAfter(response);
+				const detail = await readProviderErrorHint(response, credentials);
 				throw new DeployHQAPIError(
-					`DeployHQ request failed with HTTP ${response.status}.`,
+					failureMessage(response.status, detail),
 					response.status,
-					parseRetryAfter(response),
+					retryAfter,
 				);
 			}
 			// `unknown` because parsed provider JSON is untrusted until the operation output schema validates it.
@@ -372,8 +421,12 @@ export async function makeDeployHQRequest(
 		// `unknown` because the shared HTTP transport may reject with arbitrary values.
 		if (error instanceof ApiError) {
 			// Do not rethrow ApiError: it retains the unsanitized request body and provider error body.
+			// Only a short, redacted reason from the error body is kept.
 			throw new DeployHQAPIError(
-				`DeployHQ request failed with HTTP ${error.status}.`,
+				failureMessage(
+					error.status,
+					providerErrorDetail(error.body, credentials),
+				),
 				error.status,
 				error.retryAfter,
 			);

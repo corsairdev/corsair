@@ -222,6 +222,46 @@ describe('DeployHQ client', () => {
 		}
 	});
 
+	it.each([
+		[
+			'a Rails field-error map',
+			422,
+			{
+				timing: ['is not included in the list'],
+				timeout: ['is not included in the list'],
+			},
+			'HTTP 422: timing is not included in the list; timeout is not included in the list',
+		],
+		[
+			'an errors list',
+			422,
+			{ errors: ['Timeout is not included in the list'] },
+			'HTTP 422: Timeout is not included in the list',
+		],
+		[
+			'a plan restriction',
+			403,
+			{ error: 'This feature is only available on paid accounts.' },
+			'HTTP 403: This feature is only available on paid accounts.',
+		],
+	])(
+		'keeps the reason from %s (live DeployHQ error bodies, 11-13)',
+		async (_kind, status, body, expected) => {
+			mockedFetch.mockResolvedValueOnce(jsonResponse(body, status));
+			await expect(
+				makeDeployHQRequest(
+					'/global_ssh_commands',
+					{
+						accountSubdomain: 'demo-account',
+						username: 'agent@example.com',
+						apiKey: 'secret-api-key',
+					},
+					{ method: 'POST', body: { command: { description: 'test' } } },
+				),
+			).rejects.toThrow(expected);
+		},
+	);
+
 	it('extracts Retry-After on 429 without retrying a non-idempotent write', async () => {
 		mockedFetch.mockResolvedValueOnce(
 			jsonResponse({ error_code: 'rate_limited' }, 429, { 'Retry-After': '4' }),
