@@ -1,4 +1,44 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Fireberry"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Fireberry
+description: Read, create, update, query, and batch-manage Fireberry CRM records with runtime-validated inputs and outputs.
+apiExamples:
+  records.list:
+    call: "{ object: 'account', pageSize: 50, pageNumber: 1 }"
+  records.get:
+    call: "{ object: 'account', id: '00000000-0000-0000-0000-000000000001' }"
+  records.create:
+    call: "{ object: 'account', data: { accountname: 'Example Company' } }"
+  records.update:
+    call: "{ object: 'account', id: '00000000-0000-0000-0000-000000000001', data: { accountname: 'Updated Example Company' } }"
+  records.delete:
+    call: "{ object: 'account', id: '00000000-0000-0000-0000-000000000001' }"
+  records.query:
+    call: "{ objectType: 1, fields: [{ name: 'accountname' }] }"
+  metadata.objects:
+    call: "{}"
+  metadata.object:
+    call: "{ id: 1 }"
+  metadata.fields:
+    call: "{ id: 1 }"
+  metadata.field:
+    call: "{ id: 1, fieldName: 'accountname' }"
+  metadata.picklist:
+    call: "{ id: 1, fieldName: 'industrycode' }"
+  batch.create:
+    call: "{ objectCode: '1', data: [{ accountname: 'Example Company' }] }"
+  batch.update:
+    call: "{ objectCode: '1', data: [{ id: '00000000-0000-0000-0000-000000000001', record: { accountname: 'Updated Example Company' } }] }"
+  batch.delete:
+    call: "{ objectCode: '1', ids: ['00000000-0000-0000-0000-000000000001'] }"
+apiNotes:
+  records.list: 'Use pageSize 1–50 and pageNumber 1–10; Fireberry spells the wire parameters pagesize and pagenumber.'
+  records.query: 'Query v3 supports pageSize up to 500. Aggregation requires groupBy; consult the query guide for the full structured filter semantics.'
+  metadata.objects: 'Metadata responses identify system object names and numeric object types for metadata and batch routes.'
+  batch.create: 'Batch create accepts an array of records under data. Invalid items may fail while valid records in the same request are still created.'
+  batch.update: 'Each batch update item requires an id and a record field map. Invalid items may fail while valid records continue.'
+  batch.delete: 'Deletion accepts at most 20 record GUIDs under data. Batch API availability depends on the Fireberry license.'
+overviewNote: >-
+  Configure an API key in Corsair. Fireberry REST and Batch endpoints send it
+  as the tokenid header; Metadata API calls follow the documented tokenid
+  query parameter. This package currently covers a selected 14-operation
+  slice, not the complete documented Fireberry API. No webhook or OAuth flow
+  is configured.
