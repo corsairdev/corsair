@@ -1,5 +1,5 @@
 import type { SquareEndpoints } from '../index';
-import { callSquare, decodeBase64 } from './shared';
+import { buildUploadForm, callSquare, decodeBase64 } from './shared';
 import {
 	SquareEndpointInputSchemas,
 	SquareEndpointOutputSchemas,
@@ -22,8 +22,8 @@ export const accept: SquareEndpoints['disputesAccept'] = async (
 
 /**
  * POST /v2/disputes/{dispute_id}/evidence-files (CreateDisputeEvidenceFile) as multipart/form-data: a JSON
- * `request` part and the file in `image_file`. The file arrives as base64 and
- * malformed base64 is refused before anything is sent.
+ * `request` form field and the file in `image_file`. The file arrives as base64
+ * and malformed base64 is refused before anything is sent.
  */
 export const createEvidenceFile: SquareEndpoints['disputesCreateEvidenceFile'] =
 	async (ctx, rawInput) => {
@@ -32,18 +32,11 @@ export const createEvidenceFile: SquareEndpoints['disputesCreateEvidenceFile'] =
 		const { dispute_id, file_base64, filename, ...request } = input;
 		const bytes = decodeBase64(file_base64, 'file_base64');
 
-		const formData = new FormData();
-		formData.append(
-			'request',
-			new Blob([JSON.stringify(request)], {
-				type: 'application/json; charset=utf-8',
-			}),
-		);
-		formData.append(
-			'image_file',
-			new Blob([bytes], { type: request.content_type }),
+		const formData = buildUploadForm(request, {
+			bytes,
+			contentType: request.content_type,
 			filename,
-		);
+		});
 
 		return callSquare(ctx, '/v2/disputes/{dispute_id}/evidence-files', {
 			method: 'POST',

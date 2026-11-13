@@ -2709,16 +2709,41 @@ describe('Square money safety', () => {
 describe('Square file uploads', () => {
 	const hello = Buffer.from('hello, world\n').toString('base64');
 
-	// unknown: the JSON the plugin put in the `request` part.
-	async function parts(): Promise<{ request: unknown; file: File }> {
-		const { body } = sentRequest(fetchMock);
+	// The header lines of one part as they go on the wire. Square treats a part
+	// that has a filename as the file, so what the request part carries matters.
+	async function wireHeaders(body: FormData, name: string): Promise<string[]> {
+		const res = new Response(body);
+		const boundary = /boundary=(.+)$/.exec(
+			res.headers.get('content-type') ?? '',
+		)?.[1];
+		if (!boundary) throw new Error('no multipart boundary');
+		const text = await res.text();
+		const part = text
+			.split('--' + boundary)
+			.find((p) => p.includes('name="' + name + '"'));
+		if (!part) throw new Error('no ' + name + ' part on the wire');
+		return (part.split('\r\n\r\n')[0] ?? '').split('\r\n').filter(Boolean);
+	}
+
+	// unknown: the JSON the plugin put in the `request` part (a plain form field).
+	async function parts(index = 0): Promise<{
+		body: FormData;
+		requestField: string | File | null;
+		request: unknown;
+		file: File;
+	}> {
+		const { body } = sentRequest(fetchMock, index);
 		if (!(body instanceof FormData)) throw new Error('expected FormData');
-		const request = body.get('request');
+		const requestField = body.get('request');
 		const file = body.get('image_file');
-		if (!(request instanceof Blob) || !(file instanceof File)) {
-			throw new Error('expected a request part and a file part');
-		}
-		return { request: JSON.parse(await request.text()), file };
+		if (!(file instanceof File)) throw new Error('expected a file part');
+		const text =
+			typeof requestField === 'string'
+				? requestField
+				: requestField instanceof Blob
+					? await requestField.text()
+					: 'null';
+		return { body, requestField, request: JSON.parse(text), file };
 	}
 
 	it('sends dispute evidence as a JSON request part and an image_file part', async () => {
@@ -2733,15 +2758,24 @@ describe('Square file uploads', () => {
 		});
 		const sent = sentRequest(fetchMock);
 		expect(sent.pathname).toBe('/v2/disputes/D1/evidence-files');
-		const { request, file } = await parts();
+		const { body, requestField, request, file } = await parts();
+		// A plain form field: no Blob, so no filename and no content type.
+		expect(typeof requestField).toBe('string');
 		expect(request).toEqual({
 			idempotency_key: 'evidence-1',
 			evidence_type: 'GENERIC_EVIDENCE',
 			content_type: 'image/png',
 		});
+		expect(await wireHeaders(body, 'request')).toEqual([
+			'Content-Disposition: form-data; name="request"',
+		]);
 		expect(file.name).toBe('receipt.png');
 		expect(file.type).toBe('image/png');
 		expect(await file.text()).toBe('hello, world\n');
+		expect(await wireHeaders(body, 'image_file')).toEqual([
+			'Content-Disposition: form-data; name="image_file"; filename="receipt.png"',
+			'Content-Type: image/png',
+		]);
 	});
 
 	it('sends an invoice attachment as image/jpeg unless told otherwise', async () => {
@@ -2754,7 +2788,12 @@ describe('Square file uploads', () => {
 			filename: 'terms.pdf',
 			description: 'Terms',
 		});
-		expect((await parts()).file.type).toBe('image/jpeg');
+		const first = await parts(0);
+		expect(first.file.type).toBe('image/jpeg');
+		expect(first.requestField).toBe('{"description":"Terms"}');
+		expect(await wireHeaders(first.body, 'request')).toEqual([
+			'Content-Disposition: form-data; name="request"',
+		]);
 
 		await api().invoices.createAttachment({
 			invoice_id: 'INV1',
@@ -2762,14 +2801,47 @@ describe('Square file uploads', () => {
 			filename: 'terms.pdf',
 			content_type: 'application/pdf',
 		});
-		const second = sentRequest(fetchMock, 1).body;
-		if (!(second instanceof FormData)) throw new Error('expected FormData');
-		const file = second.get('image_file');
-		expect(file).toBeInstanceOf(File);
-		expect(file instanceof File ? file.type : '').toBe('application/pdf');
+		const second = await parts(1);
+		expect(second.file.type).toBe('application/pdf');
+		expect(await wireHeaders(second.body, 'image_file')).toEqual([
+			'Content-Disposition: form-data; name="image_file"; filename="terms.pdf"',
+			'Content-Type: application/pdf',
+		]);
 		// The JSON part carries the spec's fields only, not the file's own.
-		const request = second.get('request');
-		expect(request instanceof Blob ? await request.text() : '').toBe('{}');
+		expect(second.requestField).toBe('{}');
+	});
+
+	it.each([
+		['image/jpeg', 'attachment.jpg'],
+		['image/png', 'attachment.png'],
+		['application/pdf', 'attachment.pdf'],
+		['image/tiff', 'attachment.tiff'],
+		['image/heic', 'attachment.heic'],
+		['application/octet-stream', 'attachment'],
+	])(
+		'names an upload without a filename after its type (%s)',
+		async (contentType, name) => {
+			fetchMock.mockResolvedValueOnce(
+				jsonResponse({ attachment: { id: 'A1' } }),
+			);
+			await api().invoices.createAttachment({
+				invoice_id: 'INV1',
+				file_base64: hello,
+				content_type: contentType,
+			});
+			expect((await parts()).file.name).toBe(name);
+		},
+	);
+
+	it('names a dispute evidence file without a filename after its type', async () => {
+		fetchMock.mockResolvedValueOnce(jsonResponse({ evidence: { id: 'E1' } }));
+		await api().disputes.createEvidenceFile({
+			dispute_id: 'D1',
+			idempotency_key: 'evidence-2',
+			content_type: 'image/png',
+			file_base64: hello,
+		});
+		expect((await parts()).file.name).toBe('attachment.png');
 	});
 
 	it.each([

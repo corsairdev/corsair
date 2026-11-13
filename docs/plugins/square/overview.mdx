@@ -16,7 +16,7 @@ Authentication is a Square access token, sent as a Bearer token: a personal acce
 
 **Pagination.** List and search operations take `cursor` and `limit` and return the next `cursor`; pass it back for the next page. It goes in the query string for `GET` lists and in the body for the `POST` searches.
 
-**Files.** `disputes.createEvidenceFile` and `invoices.createAttachment` take the file as base64 in `file_base64` with a `filename`; the plugin sends it to Square as multipart.
+**Files.** `disputes.createEvidenceFile` and `invoices.createAttachment` take the file as base64 in `file_base64`, with an optional `filename` (default: `attachment` plus the extension of its type); the plugin sends it to Square as multipart.
 
 **Not included yet:** Square's GraphQL endpoint, webhook triggers, and the other API families (bookings beyond the business profile, loyalty, gift cards, payouts, team, labor, terminal, subscriptions).
 

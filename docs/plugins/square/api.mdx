@@ -8709,9 +8709,9 @@ await corsair.square.api.disputes.createEvidenceFile({
 | `content_type` | `string` | No | The MIME type of the uploaded file. The type can be image/heic, image/heif, image/jpeg, application/pdf, image/png, or image/tiff. |
 | `dispute_id` | `string` | Yes | The ID of the dispute for which you want to upload evidence. |
 | `file_base64` | `string` | Yes | The file's bytes, base64-encoded (standard or URL-safe; a data: URL prefix is accepted). |
-| `filename` | `string` | Yes | File name sent with the upload, for example receipt.jpg. |
+| `filename` | `string` | No | File name sent with the upload, for example receipt.jpg. Defaults to attachment plus the extension of the content type. |
 
-`file_base64` is the file; `content_type` (in the JSON part) is its MIME type. Sent as multipart with the file in `image_file`.
+`file_base64` is the file; `content_type` (in the JSON `request` field) is its MIME type. Sent as multipart: `request` is a plain form field and the file is in `image_file`.
 
 
 
@@ -9812,10 +9812,10 @@ await corsair.square.api.invoices.createAttachment({ invoice_id: '<invoice id>',
 | `description` | `string` | No | The description of the attachment to display on the invoice. |
 | `invoice_id` | `string` | Yes | The ID of the invoice to attach the file to. |
 | `file_base64` | `string` | Yes | The file's bytes, base64-encoded (standard or URL-safe; a data: URL prefix is accepted). |
-| `filename` | `string` | Yes | File name sent with the upload, for example receipt.jpg. |
+| `filename` | `string` | No | File name sent with the upload, for example receipt.jpg. Defaults to attachment plus the extension of the content type. |
 | `content_type` | `string` | No | MIME type of the file, for example application/pdf or image/png. Defaults to the type Square's spec shows, image/jpeg. |
 
-`content_type` is the file's MIME type and defaults to `image/jpeg`. Sent as multipart with the file in `image_file`.
+`content_type` is the file's MIME type and defaults to `image/jpeg`. Sent as multipart: `request` is a plain form field and the file is in `image_file`.
 
 
 

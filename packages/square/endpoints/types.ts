@@ -244,7 +244,10 @@ export const SquareEndpointInputSchemas = {
 		filename: z
 			.string()
 			.min(1)
-			.describe('File name sent with the upload, for example receipt.jpg.'),
+			.optional()
+			.describe(
+				'File name sent with the upload, for example receipt.jpg. Defaults to attachment plus the extension of the content type.',
+			),
 	}),
 	disputesCreateEvidenceText: InCreateDisputeEvidenceTextRequestSchema.extend({
 		dispute_id: z
@@ -264,7 +267,10 @@ export const SquareEndpointInputSchemas = {
 		filename: z
 			.string()
 			.min(1)
-			.describe('File name sent with the upload, for example receipt.jpg.'),
+			.optional()
+			.describe(
+				'File name sent with the upload, for example receipt.jpg. Defaults to attachment plus the extension of the content type.',
+			),
 		content_type: z
 			.string()
 			.min(1)

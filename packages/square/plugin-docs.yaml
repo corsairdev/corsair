@@ -14,7 +14,7 @@ overviewNote: |-
 
   **Pagination.** List and search operations take `cursor` and `limit` and return the next `cursor`; pass it back for the next page. It goes in the query string for `GET` lists and in the body for the `POST` searches.
 
-  **Files.** `disputes.createEvidenceFile` and `invoices.createAttachment` take the file as base64 in `file_base64` with a `filename`; the plugin sends it to Square as multipart.
+  **Files.** `disputes.createEvidenceFile` and `invoices.createAttachment` take the file as base64 in `file_base64`, with an optional `filename` (default: `attachment` plus the extension of its type); the plugin sends it to Square as multipart.
 
   **Not included yet:** Square's GraphQL endpoint, webhook triggers, and the other API families (bookings beyond the business profile, loyalty, gift cards, payouts, team, labor, terminal, subscriptions).
 examples:
@@ -40,8 +40,8 @@ apiNotes:
   customers.removeGroup: "An HTTP `DELETE`, but classified as a write: `customers.addGroup` puts the customer back in the group."
   merchants.get: Pass `me` as `merchant_id` for the merchant that owns the access token.
   catalog.upsert: "Replaces the whole object: any field left out of the request is cleared, nested variations included. Read it with `catalog.get` first and send it back complete."
-  disputes.createEvidenceFile: "`file_base64` is the file; `content_type` (in the JSON part) is its MIME type. Sent as multipart with the file in `image_file`."
-  invoices.createAttachment: "`content_type` is the file's MIME type and defaults to `image/jpeg`. Sent as multipart with the file in `image_file`."
+  disputes.createEvidenceFile: "`file_base64` is the file; `content_type` (in the JSON `request` field) is its MIME type. Sent as multipart: `request` is a plain form field and the file is in `image_file`."
+  invoices.createAttachment: "`content_type` is the file's MIME type and defaults to `image/jpeg`. Sent as multipart: `request` is a plain form field and the file is in `image_file`."
   oauth.getTokenStatus: Reports the scopes and expiry of the access token the plugin is using.
 apiExamples:
   disputes.accept:
