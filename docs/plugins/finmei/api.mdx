@@ -47,295 +47,13 @@ await corsair.finmei.api.currencies.list({});
 
 ---
 
-## Customers
-
-### create
-
-`customers.create`
-
-Create a new customer profile
-
-**Risk:** `write`
-
-```ts
-await corsair.finmei.api.customers.create({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `name` | `string` | No | — |
-| `first_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `company_name` | `string` | No | — |
-| `company_code` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `address` | `string` | No | — |
-| `vat_code` | `string` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  name?: string | null,
-  first_name?: string | null,
-  last_name?: string | null,
-  company_name?: string | null,
-  company_code?: string | null,
-  email?: string | null,
-  phone?: string | null,
-  address?: string | Record<string, any> | null,
-  vat_code?: string | null,
-  created_at?: number | string | null,
-  updated_at?: number | string | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### delete
-
-`customers.delete`
-
-Delete a customer profile by ID
-
-**Risk:** `destructive`
-
-```ts
-await corsair.finmei.api.customers.delete({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-
-
-
-**Output:** `object \| null`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  success?: boolean
-} | null
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### get
-
-`customers.get`
-
-Retrieve a customer profile by ID
-
-**Risk:** `read`
-
-```ts
-await corsair.finmei.api.customers.get({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  name?: string | null,
-  first_name?: string | null,
-  last_name?: string | null,
-  company_name?: string | null,
-  company_code?: string | null,
-  email?: string | null,
-  phone?: string | null,
-  address?: string | Record<string, any> | null,
-  vat_code?: string | null,
-  created_at?: number | string | null,
-  updated_at?: number | string | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### list
-
-`customers.list`
-
-List customers with optional search and pagination
-
-**Risk:** `read`
-
-```ts
-await corsair.finmei.api.customers.list({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `page` | `number` | No | — |
-| `per_page` | `number` | No | — |
-| `search` | `string` | No | — |
-| `sort` | `string` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  name?: string | null,
-  first_name?: string | null,
-  last_name?: string | null,
-  company_name?: string | null,
-  company_code?: string | null,
-  email?: string | null,
-  phone?: string | null,
-  address?: string | Record<string, any> | null,
-  vat_code?: string | null,
-  created_at?: number | string | null,
-  updated_at?: number | string | null
-}[]
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-  current_page?: number | null,
-  from?: number | null,
-  last_page?: number | null,
-  path?: string | null,
-  per_page?: number | null,
-  to?: number | null,
-  total?: number | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### update
-
-`customers.update`
-
-Update an existing customer profile
-
-**Risk:** `write`
-
-```ts
-await corsair.finmei.api.customers.update({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `name` | `string` | No | — |
-| `first_name` | `string` | No | — |
-| `last_name` | `string` | No | — |
-| `company_name` | `string` | No | — |
-| `company_code` | `string` | No | — |
-| `email` | `string` | No | — |
-| `phone` | `string` | No | — |
-| `address` | `string` | No | — |
-| `vat_code` | `string` | No | — |
-| `id` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  name?: string | null,
-  first_name?: string | null,
-  last_name?: string | null,
-  company_name?: string | null,
-  company_code?: string | null,
-  email?: string | null,
-  phone?: string | null,
-  address?: string | Record<string, any> | null,
-  vat_code?: string | null,
-  created_at?: number | string | null,
-  updated_at?: number | string | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
 ## Expenses
 
 ### create
 
 `expenses.create`
 
-Create a new expense record with optional receipt file
+Create a new expense record with its bill file (base64 PDF or image, required)
 
 **Risk:** `write`
 
@@ -351,8 +69,9 @@ await corsair.finmei.api.expenses.create({});
 | `total` | `number` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `date` | `string` | Yes | — |
-| `file` | `string` | No | — |
+| `file` | `string` | Yes | — |
 | `fileType` | `string` | No | — |
+| `fileName` | `string` | No | — |
 
 
 
@@ -580,10 +299,10 @@ await corsair.finmei.api.expenses.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `seller` | `string` | No | — |
-| `total` | `number` | No | — |
-| `currency` | `string` | No | — |
-| `date` | `string` | No | — |
+| `seller` | `string` | Yes | — |
+| `total` | `number` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `date` | `string` | Yes | — |
 
 
 
@@ -633,6 +352,7 @@ await corsair.finmei.api.expenses.updateFile({});
 | `id` | `string` | Yes | — |
 | `file` | `string` | Yes | — |
 | `fileType` | `string` | No | — |
+| `fileName` | `string` | No | — |
 
 
 
@@ -681,18 +401,19 @@ await corsair.finmei.api.invoices.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `type` | `regular_invoice \| vat_invoice \| preliminary_invoice \| preliminary_vat_invoice \| credit_invoice \| credit_vat_invoice` | No | — |
-| `invoice_date` | `string` | No | — |
+| `type` | `regular_invoice \| vat_invoice \| preliminary_invoice \| preliminary_vat_invoice \| credit_invoice \| credit_vat_invoice` | Yes | — |
+| `invoice_date` | `string` | Yes | — |
 | `pay_until_date` | `string` | No | — |
-| `series` | `string` | No | — |
+| `series` | `string` | Yes | — |
+| `invoice_number` | `string \| number` | No | — |
 | `currency` | `string` | Yes | — |
 | `payment_status` | `paid \| not_paid` | No | — |
 | `language` | `string` | No | — |
 | `notes` | `string` | No | — |
 | `use_default_seller_info` | `boolean` | No | — |
 | `seller` | `object` | No | — |
-| `buyer` | `object` | No | — |
-| `products` | `object[]` | No | — |
+| `buyer` | `object` | Yes | — |
+| `products` | `object[]` | Yes | — |
 | `payment_options` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -702,6 +423,9 @@ await corsair.finmei.api.invoices.create({});
 {
   company_name?: string,
   company_code?: string,
+  first_name?: string,
+  last_name?: string,
+  individual_tax_id?: string,
   vat_code?: string,
   address?: string,
   email?: string,
@@ -718,11 +442,12 @@ await corsair.finmei.api.invoices.create({});
 
 ```ts
 {
-  type?: string,
+  type: company | individual,
   first_name?: string,
   last_name?: string,
   company_name?: string,
   company_code?: string,
+  individual_tax_id?: string,
   vat_code?: string,
   country?: string,
   address?: string,
@@ -1190,18 +915,19 @@ await corsair.finmei.api.invoices.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `type` | `regular_invoice \| vat_invoice \| preliminary_invoice \| preliminary_vat_invoice \| credit_invoice \| credit_vat_invoice` | No | — |
-| `invoice_date` | `string` | No | — |
+| `type` | `regular_invoice \| vat_invoice \| preliminary_invoice \| preliminary_vat_invoice \| credit_invoice \| credit_vat_invoice` | Yes | — |
+| `invoice_date` | `string` | Yes | — |
 | `pay_until_date` | `string` | No | — |
-| `series` | `string` | No | — |
+| `series` | `string` | Yes | — |
+| `invoice_number` | `string \| number` | No | — |
 | `currency` | `string` | Yes | — |
 | `payment_status` | `paid \| not_paid` | No | — |
 | `language` | `string` | No | — |
 | `notes` | `string` | No | — |
 | `use_default_seller_info` | `boolean` | No | — |
 | `seller` | `object` | No | — |
-| `buyer` | `object` | No | — |
-| `products` | `object[]` | No | — |
+| `buyer` | `object` | Yes | — |
+| `products` | `object[]` | Yes | — |
 | `payment_options` | `object[]` | No | — |
 | `id` | `string` | Yes | — |
 
@@ -1212,6 +938,9 @@ await corsair.finmei.api.invoices.update({});
 {
   company_name?: string,
   company_code?: string,
+  first_name?: string,
+  last_name?: string,
+  individual_tax_id?: string,
   vat_code?: string,
   address?: string,
   email?: string,
@@ -1228,11 +957,12 @@ await corsair.finmei.api.invoices.update({});
 
 ```ts
 {
-  type?: string,
+  type: company | individual,
   first_name?: string,
   last_name?: string,
   company_name?: string,
   company_code?: string,
+  individual_tax_id?: string,
   vat_code?: string,
   country?: string,
   address?: string,
@@ -1361,489 +1091,6 @@ await corsair.finmei.api.invoices.update({});
     account?: string | null,
     bank_name?: string | null
   }[],
-  created_at?: number | string | null,
-  updated_at?: number | string | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-## Payments
-
-### create
-
-`payments.create`
-
-Record a new payment for an invoice
-
-**Risk:** `write`
-
-```ts
-await corsair.finmei.api.payments.create({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `invoice_id` | `string` | No | — |
-| `amount` | `number` | Yes | — |
-| `currency` | `string` | Yes | — |
-| `payment_date` | `string` | No | — |
-| `payment_method` | `string` | No | — |
-| `status` | `pending \| completed \| failed` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  invoice_id?: string | null,
-  amount: number,
-  currency: string,
-  payment_date?: string | null,
-  payment_method?: string | null,
-  status?: string | null,
-  created_at?: number | string | null,
-  updated_at?: number | string | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### delete
-
-`payments.delete`
-
-Delete a payment record by ID
-
-**Risk:** `destructive`
-
-```ts
-await corsair.finmei.api.payments.delete({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-
-
-
-**Output:** `object \| null`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  success?: boolean
-} | null
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### get
-
-`payments.get`
-
-Retrieve a payment record by ID
-
-**Risk:** `read`
-
-```ts
-await corsair.finmei.api.payments.get({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  invoice_id?: string | null,
-  amount: number,
-  currency: string,
-  payment_date?: string | null,
-  payment_method?: string | null,
-  status?: string | null,
-  created_at?: number | string | null,
-  updated_at?: number | string | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### list
-
-`payments.list`
-
-List recorded payments with optional filters
-
-**Risk:** `read`
-
-```ts
-await corsair.finmei.api.payments.list({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `page` | `number` | No | — |
-| `per_page` | `number` | No | — |
-| `limit` | `number` | No | — |
-| `offset` | `number` | No | — |
-| `status` | `pending \| completed \| failed` | No | — |
-| `start_date` | `string` | No | — |
-| `end_date` | `string` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  invoice_id?: string | null,
-  amount: number,
-  currency: string,
-  payment_date?: string | null,
-  payment_method?: string | null,
-  status?: string | null,
-  created_at?: number | string | null,
-  updated_at?: number | string | null
-}[]
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-  current_page?: number | null,
-  from?: number | null,
-  last_page?: number | null,
-  path?: string | null,
-  per_page?: number | null,
-  to?: number | null,
-  total?: number | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-## Products
-
-### create
-
-`products.create`
-
-Create a new product in the catalog
-
-**Risk:** `write`
-
-```ts
-await corsair.finmei.api.products.create({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `name` | `string` | Yes | — |
-| `price` | `number` | Yes | — |
-| `currency` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `vat_percentage` | `number` | No | — |
-| `units` | `string` | No | — |
-| `status` | `active \| inactive` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  name: string,
-  description?: string | null,
-  price: number,
-  currency: string,
-  vat_percentage?: number | null,
-  units?: string | null,
-  status?: string | null,
-  created_at?: number | string | null,
-  updated_at?: number | string | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### delete
-
-`products.delete`
-
-Delete a product from the catalog
-
-**Risk:** `destructive`
-
-```ts
-await corsair.finmei.api.products.delete({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-
-
-
-**Output:** `object \| null`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  success?: boolean
-} | null
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
-### get
-
-`products.get`
-
-Retrieve a product by ID
-
-**Risk:** `read`
-
-```ts
-await corsair.finmei.api.products.get({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  name: string,
-  description?: string | null,
-  price: number,
-  currency: string,
-  vat_percentage?: number | null,
-  units?: string | null,
-  status?: string | null,
-  created_at?: number | string | null,
-  updated_at?: number | string | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### list
-
-`products.list`
-
-List products in catalog with optional filters and pagination
-
-**Risk:** `read`
-
-```ts
-await corsair.finmei.api.products.list({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `page` | `number` | No | — |
-| `per_page` | `number` | No | — |
-| `search` | `string` | No | — |
-| `name` | `string` | No | — |
-| `status` | `active \| inactive` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `meta` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  name: string,
-  description?: string | null,
-  price: number,
-  currency: string,
-  vat_percentage?: number | null,
-  units?: string | null,
-  status?: string | null,
-  created_at?: number | string | null,
-  updated_at?: number | string | null
-}[]
-```
-</Accordion>
-
-<Accordion title="meta full type">
-
-```ts
-{
-  current_page?: number | null,
-  from?: number | null,
-  last_page?: number | null,
-  path?: string | null,
-  per_page?: number | null,
-  to?: number | null,
-  total?: number | null
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### update
-
-`products.update`
-
-Update product details in the catalog
-
-**Risk:** `write`
-
-```ts
-await corsair.finmei.api.products.update({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `price` | `number` | No | — |
-| `currency` | `string` | No | — |
-| `description` | `string` | No | — |
-| `vat_percentage` | `number` | No | — |
-| `units` | `string` | No | — |
-| `status` | `active \| inactive` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  name: string,
-  description?: string | null,
-  price: number,
-  currency: string,
-  vat_percentage?: number | null,
-  units?: string | null,
-  status?: string | null,
   created_at?: number | string | null,
   updated_at?: number | string | null
 }
