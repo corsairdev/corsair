@@ -2,6 +2,8 @@ import { AuthMissingError } from 'corsair/core';
 import type { OpenAPIConfig, RateLimitConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import { ENDORSAL_API_BASE, makeEndorsalRequest } from './client';
+import type { EndorsalKeyBuilderContext } from './index';
+import { endorsal } from './index';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -144,5 +146,53 @@ describe('makeEndorsalRequest', () => {
 		} finally {
 			fetchMock.mockRestore();
 		}
+	});
+});
+
+describe('endorsal keyBuilder', () => {
+	it('uses a saved tenant key for key-optional GET operations', async () => {
+		const getApiKey = jest.fn().mockResolvedValue('saved-property-key');
+		const plugin = endorsal();
+		const keyBuilderContext = {
+			authType: 'api_key',
+			options: {},
+			tenantId: 'acme',
+			meteredOperationId: 'contacts.get',
+			keys: {
+				get_dek: async () => 'test-dek',
+				issue_new_dek: async () => 'test-dek',
+				get_api_key: getApiKey,
+				set_api_key: async () => undefined,
+				get_webhook_signature: async () => null,
+				set_webhook_signature: async () => undefined,
+			},
+		} satisfies EndorsalKeyBuilderContext;
+
+		await expect(
+			plugin.keyBuilder?.(keyBuilderContext, 'endpoint'),
+		).resolves.toBe('saved-property-key');
+		expect(getApiKey).toHaveBeenCalledTimes(1);
+	});
+
+	it('keeps GET operations keyless when no saved tenant key exists', async () => {
+		const plugin = endorsal();
+		const keyBuilderContext = {
+			authType: 'api_key',
+			options: {},
+			tenantId: 'acme',
+			meteredOperationId: 'contacts.get',
+			keys: {
+				get_dek: async () => 'test-dek',
+				issue_new_dek: async () => 'test-dek',
+				get_api_key: async () => null,
+				set_api_key: async () => undefined,
+				get_webhook_signature: async () => null,
+				set_webhook_signature: async () => undefined,
+			},
+		} satisfies EndorsalKeyBuilderContext;
+
+		await expect(
+			plugin.keyBuilder?.(keyBuilderContext, 'endpoint'),
+		).resolves.toBe('');
 	});
 });

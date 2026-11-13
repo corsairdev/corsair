@@ -180,10 +180,14 @@ export const WidgetSchema = z
 	})
 	.passthrough();
 
+const ComparisonOperatorSchema = z
+	.string()
+	.pipe(z.enum(['=', '>', '>=', '<', '<=', '!=', 'contains', 'in']));
+
 export const MatchSchema = z
 	.object({
 		field: z.string().min(1),
-		operator: z.enum(['=', '>', '>=', '<', '<=', '!=', 'contains', 'in']),
+		operator: ComparisonOperatorSchema,
 		value: z.union([
 			z.string(),
 			z.number(),

@@ -2,6 +2,15 @@ displayName: Endorsal
 description: Manage Endorsal contacts, testimonials, tags, widgets, Wall of Love, and AutoRequest campaigns.
 domain: endorsal.io
 recommendedAuth: api_key
+examples:
+  read:
+    path: autorequests.campaigns.byId.get
+    args:
+      id: campaign_123
+  write:
+    path: contacts.byId.delete
+    args:
+      id: contact_123
 overviewNote: |
   Generate a property-specific key at https://app.endorsal.io/account/api. Endorsal accepts `Authorization: Bearer <key>` for protected write operations; GET operations are documented as key-optional. The plugin uses the API host `https://api.endorsal.io` and never puts credentials in query parameters.
 
@@ -62,7 +71,7 @@ apiNotes:
   testimonials.post: "`approved` and `featured` use numeric provider states: approved is 0, 1, or 2; featured is 0 or 1."
   testimonials.byId.tag.post: "Each tag may be a new tag (`name` and `type`) or an existing tag reference (`_id`)."
   contacts.post: "At least one of `contact.email` or `contact.phone` is required. `campaignID` is a query parameter, not part of the JSON body."
-  contacts.search.post: "The `in` comparison operator requires an array value. Match objects are combined with AND."
-  testimonials.search.post: "The `in` comparison operator requires an array value. Match objects are combined with AND."
+  contacts.search.post: "`operator` accepts the TypeScript string-literal union `'=' | '>' | '>=' | '<' | '<=' | '!=' | 'contains' | 'in'`. The `in` comparison operator requires an array value. Match objects are combined with AND."
+  testimonials.search.post: "`operator` accepts the TypeScript string-literal union `'=' | '>' | '>=' | '<' | '<=' | '!=' | 'contains' | 'in'`. The `in` comparison operator requires an array value. Match objects are combined with AND."
   widgets.byId.get: "With `render: true`, Endorsal returns rendered HTML; otherwise it returns a JSON widget response."
   wallOfLove.get: "With `render: true`, Endorsal returns rendered HTML; otherwise it returns the Wall of Love JSON response."

@@ -3,6 +3,7 @@ title: "Endorsal API reference"
 sidebarTitle: "API"
 description: "API reference for the Endorsal plugin in Corsair: every `endorsal.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
+
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -150,6 +151,8 @@ await corsair.endorsal.api.contacts.byId.get({ id: 'contact_123' });
     added?: number | string | null,
     updated?: number | string | null,
     lastContacted?: number | string | null,
+    lastOpened?: number | string | null,
+    lastClicked?: number | string | null,
     lastEmailOpened?: number | string | null,
     lastEmailClicked?: number | string | null
   } | null
@@ -240,6 +243,8 @@ await corsair.endorsal.api.contacts.get({});
     added?: number | string | null,
     updated?: number | string | null,
     lastContacted?: number | string | null,
+    lastOpened?: number | string | null,
+    lastClicked?: number | string | null,
     lastEmailOpened?: number | string | null,
     lastEmailClicked?: number | string | null
   } | null
@@ -328,6 +333,8 @@ At least one of `contact.email` or `contact.phone` is required. `campaignID` is 
     added?: number | string | null,
     updated?: number | string | null,
     lastContacted?: number | string | null,
+    lastOpened?: number | string | null,
+    lastClicked?: number | string | null,
     lastEmailOpened?: number | string | null,
     lastEmailClicked?: number | string | null
   } | null
@@ -356,20 +363,19 @@ await corsair.endorsal.api.contacts.search.post({ query: [{ field: 'name', opera
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object \| < \| <= \| != \| contains \| in, value: string \| number \| null \| (string \| number)[] })[]` | Yes | — |
+| `query` | `object[]` | Yes | — |
 
-The `in` comparison operator requires an array value. Match objects are combined with AND.
+`operator` accepts the TypeScript string-literal union `'=' | '>' | '>=' | '<' | '<=' | '!=' | 'contains' | 'in'`. The `in` comparison operator requires an array value. Match objects are combined with AND.
 
 <AccordionGroup>
 <Accordion title="query full type">
 
 ```ts
-(
-  {
-    field: string,
-    operator: = |
-  > |
->= | < | <= | != | contains | in, value: string | number | null | (string | number)[]})[]
+{
+  field: string,
+  operator: string,
+  value: string | number | null | (string | number)[]
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -407,6 +413,8 @@ The `in` comparison operator requires an array value. Match objects are combined
     added?: number | string | null,
     updated?: number | string | null,
     lastContacted?: number | string | null,
+    lastOpened?: number | string | null,
+    lastClicked?: number | string | null,
     lastEmailOpened?: number | string | null,
     lastEmailClicked?: number | string | null
   } | null
@@ -1133,20 +1141,19 @@ await corsair.endorsal.api.testimonials.search.post({ query: [{ field: 'rating',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `object \| < \| <= \| != \| contains \| in, value: string \| number \| null \| (string \| number)[] })[]` | Yes | — |
+| `query` | `object[]` | Yes | — |
 
-The `in` comparison operator requires an array value. Match objects are combined with AND.
+`operator` accepts the TypeScript string-literal union `'=' | '>' | '>=' | '<' | '<=' | '!=' | 'contains' | 'in'`. The `in` comparison operator requires an array value. Match objects are combined with AND.
 
 <AccordionGroup>
 <Accordion title="query full type">
 
 ```ts
-(
-  {
-    field: string,
-    operator: = |
-  > |
->= | < | <= | != | contains | in, value: string | number | null | (string | number)[]})[]
+{
+  field: string,
+  operator: string,
+  value: string | number | null | (string | number)[]
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1282,7 +1289,7 @@ With `render: true`, Endorsal returns rendered HTML; otherwise it returns a JSON
     gridSettings?: Record<string, JsonValue> | null,
     source?: string | null,
     hideTestimonials?: boolean | null,
-    hiddenTestimonials?: string[] | null,
+    hiddenTestimonials?: string[] | Record<string, JsonValue> | null,
     onlyShowFeatured?: boolean | null,
     showSource?: boolean | null,
     showBranding?: boolean | null,
@@ -1361,7 +1368,7 @@ await corsair.endorsal.api.widgets.get({});
   gridSettings?: Record<string, JsonValue> | null,
   source?: string | null,
   hideTestimonials?: boolean | null,
-  hiddenTestimonials?: string[] | null,
+  hiddenTestimonials?: string[] | Record<string, JsonValue> | null,
   onlyShowFeatured?: boolean | null,
   showSource?: boolean | null,
   showBranding?: boolean | null,
@@ -1402,3 +1409,4 @@ await corsair.endorsal.api.widgets.get({});
 
 
 ---
+

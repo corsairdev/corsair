@@ -393,11 +393,10 @@ export function endorsal<const T extends EndorsalPluginOptions>(
 		keyBuilder: async (ctx: EndorsalKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
 			if (options.key !== undefined) return options.key;
+			const apiKey = ctx.keys ? await ctx.keys.get_api_key() : null;
+			if (apiKey) return apiKey;
 			if (PUBLIC_OPERATIONS.has(ctx.meteredOperationId ?? '')) return '';
-			if (!ctx.keys) throw new AuthMissingError('endorsal', 'api_key');
-			const apiKey = await ctx.keys.get_api_key();
-			if (!apiKey) throw new AuthMissingError('endorsal', 'api_key');
-			return apiKey;
+			throw new AuthMissingError('endorsal', 'api_key');
 		},
 	} satisfies InternalEndorsalPlugin;
 }

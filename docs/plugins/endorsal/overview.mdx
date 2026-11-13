@@ -104,7 +104,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.endorsal.api.autorequests.campaigns.byId.get({});
+await tenant.endorsal.api.autorequests.campaigns.byId.get({ id: 'campaign_123' });
 ```
 
 
@@ -112,7 +112,7 @@ await tenant.endorsal.api.autorequests.campaigns.byId.get({});
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.endorsal.api.contacts.byId.delete({});
+await tenant.endorsal.api.contacts.byId.delete({ id: 'contact_123' });
 ```
 
 
