@@ -404,7 +404,10 @@ describe('queries.run', () => {
 
 	it.each([
 		['eq with a boolean', { operator: 'eq', property_value: true }],
-		['contains with a list element', { operator: 'contains', property_value: 12 }],
+		[
+			'contains with a list element',
+			{ operator: 'contains', property_value: 12 },
+		],
 		[
 			'within with a geo point',
 			{
@@ -453,21 +456,21 @@ describe('queries.run', () => {
 		expect(lastRequest().body).toMatchObject({ filters });
 	});
 
-	it.each([
-		[[true, false]],
-		[null],
-		[['a', null]],
-	])('keeps a %j result, which select_unique or an empty average can return', async (value) => {
-		respond({ result: value });
+	it.each([[[true, false]], [null], [['a', null]]])(
+		'keeps a %j result, which select_unique or an empty average can return',
+		async (value) => {
+			respond({ result: value });
 
-		await expect(
-			invoke(Queries.run, {
-				analysis_type: 'select_unique',
-				event_collection: 'purchases',
-				target_property: 'item.on_sale',
-			}),
-		).resolves.toEqual({ result: value });
-	});
+			await expect(
+				invoke(Queries.run, {
+					analysis_type: 'select_unique',
+					event_collection: 'purchases',
+					target_property: 'item.on_sale',
+				}),
+			).resolves.toEqual({ result: value });
+		},
+	);
+
 
 	it.each([
 		[{ analysis_type: 'sum', event_collection: 'purchases' }],

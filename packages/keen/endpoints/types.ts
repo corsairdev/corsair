@@ -145,7 +145,10 @@ const SimpleFilterInputSchema = z
 				return;
 			case 'within': {
 				// Keen's geo filter: `{ coordinates: [longitude, latitude], max_distance_miles }`.
-				const geo = v as { coordinates?: unknown; max_distance_miles?: unknown };
+				const geo = v as {
+					coordinates?: unknown;
+					max_distance_miles?: unknown;
+				};
 				if (
 					typeof v !== 'object' ||
 					v === null ||
@@ -212,69 +215,69 @@ const FunnelStepSchema = z
 	.loose();
 
 const AnalysisFields = z.object({
-		analysis_type: z.enum(KEEN_ANALYSIS_TYPES),
-		event_collection: CollectionSchema.optional().describe(
-			'The collection to analyze. Required for every analysis but `funnel`, whose steps name their own; inside a multi-analysis it comes from the outer request.',
+	analysis_type: z.enum(KEEN_ANALYSIS_TYPES),
+	event_collection: CollectionSchema.optional().describe(
+		'The collection to analyze. Required for every analysis but `funnel`, whose steps name their own; inside a multi-analysis it comes from the outer request.',
+	),
+	steps: z
+		.array(FunnelStepSchema)
+		.min(1)
+		.optional()
+		.describe('Required for `funnel`: the steps, in order.'),
+	target_property: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('Required for every analysis except `count` and `funnel`.'),
+	timeframe: KeenTimeframeSchema.optional(),
+	interval: z
+		.enum(KEEN_INTERVALS)
+		.optional()
+		.describe('Split the result into one value per interval.'),
+	timezone: z
+		.string()
+		.optional()
+		.describe('IANA timezone for interval boundaries, such as `US/Pacific`.'),
+	filters: z.array(FilterInputSchema).min(1).optional(),
+	group_by: z
+		.array(
+			z.union([
+				z.string().min(1),
+				// unknown: the other group_by forms (buckets and ranges) have
+				// keys that change per form, so they pass through as Keen takes
+				// them rather than being typed twice.
+				z.record(z.string(), z.unknown()),
+			]),
+		)
+		.min(1)
+		.optional()
+		.describe(
+			'A property name, or a buckets or ranges object; all in Keen’s own shape.',
 		),
-		steps: z
-			.array(FunnelStepSchema)
-			.min(1)
-			.optional()
-			.describe('Required for `funnel`: the steps, in order.'),
-		target_property: z
-			.string()
-			.min(1)
-			.optional()
-			.describe('Required for every analysis except `count` and `funnel`.'),
-		timeframe: KeenTimeframeSchema.optional(),
-		interval: z
-			.enum(KEEN_INTERVALS)
-			.optional()
-			.describe('Split the result into one value per interval.'),
-		timezone: z
-			.string()
-			.optional()
-			.describe('IANA timezone for interval boundaries, such as `US/Pacific`.'),
-		filters: z.array(FilterInputSchema).min(1).optional(),
-		group_by: z
-			.array(
-				z.union([
-					z.string().min(1),
-					// unknown: the other group_by forms (buckets and ranges) have
-					// keys that change per form, so they pass through as Keen takes
-					// them rather than being typed twice.
-					z.record(z.string(), z.unknown()),
-				]),
-			)
-			.min(1)
-			.optional()
-			.describe(
-				'A property name, or a buckets or ranges object; all in Keen’s own shape.',
-			),
-		order_by: z
-			.array(
-				z.object({
-					property_name: z.string().min(1),
-					direction: z.enum(['ASC', 'DESC']),
-				}),
-			)
-			.min(1)
-			.optional(),
-		limit: z
-			.number()
-			.int()
-			.min(1)
-			.optional()
-			.describe('Maximum group rows to return.'),
-		percentile: z
-			.number()
-			.min(0)
-			.max(100)
-			.nullable()
-			.optional()
-			.describe('Required for `percentile`: the percentile to read, 0 to 100.'),
-		include_metadata: z.boolean().optional(),
-	});
+	order_by: z
+		.array(
+			z.object({
+				property_name: z.string().min(1),
+				direction: z.enum(['ASC', 'DESC']),
+			}),
+		)
+		.min(1)
+		.optional(),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Maximum group rows to return.'),
+	percentile: z
+		.number()
+		.min(0)
+		.max(100)
+		.nullable()
+		.optional()
+		.describe('Required for `percentile`: the percentile to read, 0 to 100.'),
+	include_metadata: z.boolean().optional(),
+});
 
 /**
  * The checks every analysis shares. A standalone query must name its
