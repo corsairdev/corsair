@@ -1,0 +1,1186 @@
+{
+  "id": "respondio",
+  "displayName": "respond.io",
+  "description": "Manage contacts, send and read messages, assign and close conversations, and read workspace channels, templates and custom fields with respond.io.",
+  "npmPackageName": "@corsair-dev/respondio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "respondio.api.contacts.addTags",
+      "shortPath": "contacts.addTags",
+      "description": "Add tags to a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]",
+            "description": "The tags to add or remove, 1 to 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ID of the contact the action was performed on."
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.contacts.channels",
+      "shortPath": "contacts.channels",
+      "description": "List the channels a contact has interacted on, whose IDs a custom-payload message needs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1 to 99. respond.io defaults to 10."
+          },
+          {
+            "key": "cursorId",
+            "optional": true,
+            "type": "string | number",
+            "description": "Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, source?: string | null, meta?: Record<string, JsonValue> | null, lastMessageTime?: number | null, lastIncomingMessageTime?: number | null, created_at?: number | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string | null, previous?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact at an identifier; respond.io needs processing time afterwards, so wait before acting on it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "In E.164 form, such as +60123456789."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null",
+            "description": "An ISO 639-1 language code, such as en or ms."
+          },
+          {
+            "key": "profilePic",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string | null",
+            "description": "An ISO 3166-1 alpha-2 country code, such as MY or US."
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{ name: string, value?: string | number | null }[] | null"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "The contact to create, such as id:123 or phone:+60123456789."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "200 on success."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact and its conversation history",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ID of the contact the action was performed on."
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.contacts.deleteTags",
+      "shortPath": "contacts.deleteTags",
+      "description": "Remove tags from a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]",
+            "description": "The tags to add or remove, 1 to 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ID of the contact the action was performed on."
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Read one contact by id:, email: or phone: identifier, with its fields, tags, assignee and lifecycle",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "id:123, email:a@b.com or phone:+60123456789. A bare value is treated as an ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "In E.164 form, such as +60123456789."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null",
+            "description": "An ISO 639-1 language code, such as en or ms."
+          },
+          {
+            "key": "profilePic",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string | null",
+            "description": "An ISO 3166-1 alpha-2 country code, such as MY or US."
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{ name: string, value?: string | number | null }[] | null"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The contact ID."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "The conversation status: open, closed or blocked."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Up to 10 tags."
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "{ id?: number | null, firstName?: string | null, lastName?: string | null, email?: string | null, role?: string | null, team?: { id?: number | null, name?: string | null } | null, restrictions?: string[] | null } | null"
+          },
+          {
+            "key": "lifecycle",
+            "optional": true,
+            "type": "string | null",
+            "description": "The lifecycle stage name, such as Hot Lead."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix timestamp in seconds."
+          },
+          {
+            "key": "isBlocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.contacts.lifecycle",
+      "shortPath": "contacts.lifecycle",
+      "description": "Move a contact to a lifecycle stage by name, or clear it with null",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string | null",
+            "description": "The lifecycle stage to move the contact to. null removes the stage."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "200 on success."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts with an $and or $or filter over fields, tags and lifecycle, a free-text search, and cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ $and?: { category: contactField | contactTag | lifecycle, field: string, operator: isEqualTo | isNotEqualTo | isTimestampAfter | isTimestampBefore | isTimestampBetween | exists | doesNotExist | isGreaterThan | isLessThan | isBetween | hasAnyOf | hasAllOf | hasNoneOf, value?: string | string[] | { from: string, to: string } }[], $or?: { category: contactField | contactTag | lifecycle, field: string, operator: isEqualTo | isNotEqualTo | isTimestampAfter | isTimestampBefore | isTimestampBetween | exists | doesNotExist | isGreaterThan | isLessThan | isBetween | hasAnyOf | hasAllOf | hasNoneOf, value?: string | string[] | { from: string, to: string } }[] }",
+            "description": "Every condition in $and must hold; any one in $or must. Defaults to no conditions."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "A free-text search across the contacts. Defaults to empty, which matches every contact."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "An IANA timezone used to interpret any timestamp condition, such as Asia/Kuala_Lumpur. Defaults to UTC."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1 to 99. respond.io defaults to 10."
+          },
+          {
+            "key": "cursorId",
+            "optional": true,
+            "type": "string | number",
+            "description": "Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ firstName: string, lastName?: string | null, phone?: string | null, email?: string | null, language?: string | null, profilePic?: string | null, countryCode?: string | null, custom_fields?: { name: string, value?: string | number | null }[] | null, id?: number | null, status?: string | null, tags?: string[] | null, assignee?: { id?: number | null, firstName?: string | null, lastName?: string | null, email?: string | null, role?: string | null, team?: { id?: number | null, name?: string | null } | null, restrictions?: string[] | null } | null, lifecycle?: string | null, created_at?: number | null, isBlocked?: boolean | null, locale?: string | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string | null, previous?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.contacts.merge",
+      "shortPath": "contacts.merge",
+      "description": "Merge two contacts by their IDs, setting the merged fields; the older contact stays and the other is removed",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "In E.164 form, such as +60123456789."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null",
+            "description": "An ISO 639-1 language code, such as en or ms."
+          },
+          {
+            "key": "profilePic",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string | null",
+            "description": "An ISO 3166-1 alpha-2 country code, such as MY or US."
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{ name: string, value?: string | number | null }[] | null"
+          },
+          {
+            "key": "contactIds",
+            "optional": false,
+            "type": "[number, number]",
+            "description": "The IDs of the two contacts to merge. The older one survives; the other is removed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ID of the contact the action was performed on."
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact's fields by identifier",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null",
+            "description": "An ISO 639-1 language code, such as en or ms."
+          },
+          {
+            "key": "profilePic",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string | null",
+            "description": "An ISO 3166-1 alpha-2 country code, such as MY or US."
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{ name: string, value?: string | number | null }[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ID of the contact the action was performed on."
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.contacts.upsert",
+      "shortPath": "contacts.upsert",
+      "description": "Create or update a contact in one call, which is the safe choice when you do not know whether it exists",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "In E.164 form, such as +60123456789."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null",
+            "description": "An ISO 639-1 language code, such as en or ms."
+          },
+          {
+            "key": "profilePic",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string | null",
+            "description": "An ISO 3166-1 alpha-2 country code, such as MY or US."
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "{ name: string, value?: string | number | null }[] | null"
+          },
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ID of the contact the action was performed on."
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.conversations.assign",
+      "shortPath": "conversations.assign",
+      "description": "Assign a contact to a user, or unassign it by sending a null assignee",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "assignee",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "A user ID (from space.listUsers) or a user email. Leave it out or send null to unassign the contact."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ID of the contact the action was performed on."
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.conversations.status",
+      "shortPath": "conversations.status",
+      "description": "Open or close a contact's conversation, optionally recording a closing note and summary when closing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "open | close",
+            "description": "The conversation status to set."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "The closing note name. Only meaningful when closing. Up to 128 characters."
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string",
+            "description": "A closing summary. Only used when a category is given."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The ID of the contact the action was performed on."
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.messages.comment",
+      "shortPath": "messages.comment",
+      "description": "Add an internal comment to a contact, which the customer never sees",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "Up to 1000 characters. Mention a user with {{@user.ID}}."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null",
+            "description": "Unix timestamp in seconds."
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Read one message by id, with its delivery status and sender",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "number",
+            "description": "The message id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "channelMessageId",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "The channel's own id: a string on some, a number on others."
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "channelId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "traffic",
+            "optional": true,
+            "type": "string | null",
+            "description": "incoming or outgoing."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "{ type?: string | null } | null",
+            "description": "The message body, whose shape follows its type."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "{ value?: string | null, timestamp?: number | null, message?: string | null }[] | null"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "{ source?: string | null } | null",
+            "description": "Who sent it."
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.messages.list",
+      "shortPath": "messages.list",
+      "description": "List a contact's messages, optionally mixing in its comments; keep paging until pagination.next is null, since a page can be empty with more to come",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cursorId",
+            "optional": true,
+            "type": "string | number",
+            "description": "Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it."
+          },
+          {
+            "key": "includeComments",
+            "optional": true,
+            "type": "boolean",
+            "description": "True mixes the contact's comments into the list, each item then carrying a type of message or comment. A page can be empty while pagination.next is still set, so keep paging until next is null."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, at most 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "Record<string, JsonValue>[] | null",
+            "description": "A message or, with includeComments, a comment. Each carries `type` only when includeComments was true."
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string | null, previous?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a message to a contact, on the last channel it used unless channelId is given; this reaches the customer",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "channelId",
+            "optional": true,
+            "type": "number | null",
+            "description": "The channel to send on. Omit it to use the last channel the contact interacted on; a custom_payload message requires it."
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "{ type: text | attachment | custom_payload | quick_reply | whatsapp_template | email | facebook_template, text?: string | null, messageTag?: ACCOUNT_UPDATE | POST_PURCHASE_UPDATE | CONFIRMED_EVENT_UPDATE | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "number",
+            "description": "The new message id, for tracking it later."
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.space.getUser",
+      "shortPath": "space.getUser",
+      "description": "Read one workspace user by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The user ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null",
+            "description": "owner, manager or agent."
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null } | null"
+          },
+          {
+            "key": "restrictions",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.space.listChannels",
+      "shortPath": "space.listChannels",
+      "description": "List the messaging channels connected in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1 to 99. respond.io defaults to 10."
+          },
+          {
+            "key": "cursorId",
+            "optional": true,
+            "type": "string | number",
+            "description": "Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, source?: string | null, created_at?: number | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string | null, previous?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.space.listClosingNotes",
+      "shortPath": "space.listClosingNotes",
+      "description": "List the closing notes a conversation can be closed with, sorted by category",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1 to 99. respond.io defaults to 10."
+          },
+          {
+            "key": "cursorId",
+            "optional": true,
+            "type": "string | number",
+            "description": "Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ category?: string | null, description?: string | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string | null, previous?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.space.listCustomFields",
+      "shortPath": "space.listCustomFields",
+      "description": "List the custom field definitions, whose types a contact write must match",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1 to 99. respond.io defaults to 10."
+          },
+          {
+            "key": "cursorId",
+            "optional": true,
+            "type": "string | number",
+            "description": "Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, dataType?: string | null, allowedValues?: string[] | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string | null, previous?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.space.listTemplates",
+      "shortPath": "space.listTemplates",
+      "description": "List the message templates of one connected channel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1 to 99. respond.io defaults to 10."
+          },
+          {
+            "key": "cursorId",
+            "optional": true,
+            "type": "string | number",
+            "description": "Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it."
+          },
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "number",
+            "description": "The channel whose templates to list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, languageCode?: string | null, category?: string | null, status?: string | null, channelId?: number | null, components?: Record<string, JsonValue>[] | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string | null, previous?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "respondio.api.space.listUsers",
+      "shortPath": "space.listUsers",
+      "description": "List the workspace users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, 1 to 99. respond.io defaults to 10."
+          },
+          {
+            "key": "cursorId",
+            "optional": true,
+            "type": "string | number",
+            "description": "Where the page starts: the previous pagination.next URL as it is, or the cursorId value from it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": true,
+            "type": "{ id?: number | null, firstName?: string | null, lastName?: string | null, email?: string | null, role?: string | null, team?: { id?: number | null, name?: string | null } | null, restrictions?: string[] | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: string | null, previous?: string | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

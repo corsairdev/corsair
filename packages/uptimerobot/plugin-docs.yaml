@@ -1,0 +1,89 @@
+displayName: UptimeRobot
+description: Website and API monitoring with UptimeRobot - create, update, pause and delete monitors of any type, read uptime and response-time statistics, triage incidents and their comments, and manage status pages, announcements, maintenance windows, groups and tags.
+domain: uptimerobot.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in UptimeRobot under Integrations & API, API keys. Calls go to `https://api.uptimerobot.com/v3` with the key as a Bearer token.
+
+  - **This is the v3 API.** The older v2 form-encoded API at `/v2` still exists but is not what this plugin wraps; v3 is JSON in and JSON out, with DELETE, PATCH and per-resource paths. The full contract is published as an OpenAPI document at `https://cdn.uptimerobot.com/api/openapi.yaml`.
+  - **A failure is always `{ code, message }`.** The `code` is stable and grouped by area — `003-*` is authentication, `009-*` is resources and validation, `026-*` is status pages. A wrong or revoked key answers `401` with `003-005`. A validation failure instead sends `message` as an *array* of per-field strings, and the plugin keeps them on `details`.
+  - **Creating a monitor depends on its type.** The input schema takes the union of all ten types and checks it against the one you chose: `HEARTBEAT` needs no `url` at all and rejects one, `THIRD_PARTY_SERVICE` needs only `config`, `PORT` and `UDP` need a `port`, `KEYWORD` needs `keywordType`, `keywordCaseType` and `keywordValue`, `HTTP`, `KEYWORD`, `PING`, `PORT`, `API` and `UDP` need a `timeout` (UptimeRobot answers 400 without one), `DNS`, `API`, `UDP` and `VISUAL_COMPARISON` need `config`, and everything else needs a `url`. A mismatch is reported before any request is made.
+  - **Pausing is not deleting.** `monitors.pause` stops the checks and the alerts and is reversible with `monitors.start`; UptimeRobot also pauses a monitor by itself after repeated failures, and `monitors.start` resumes that too. `monitors.delete` removes the monitor and its history for good.
+  - **`monitors.reset` discards history, not the monitor.** It clears the accumulated statistics and incident log while the monitor keeps checking, so it is marked destructive even though the monitor survives.
+  - **The interval floor is 30 seconds in the contract.** The free plan enforces a much higher floor (five minutes), and asking for less is refused by the API rather than silently raised.
+  - **Paging is a link, and a page can be empty.** Lists answer `nextLink`, which stays set while more pages remain. With a filter on `incidents.list`, a page can hold fewer items than `limit`, or none at all, while `nextLink` is still present — so page on the link, not on the item count. `tags.list` is the exception: it pages by `nextCursorId` instead.
+  - **A status page can show everything.** `monitorIds: [0]` on its own is the sentinel for every monitor in the account, and an empty array shows none. `autoAddMonitors` covers monitors created later, but an explicit `monitorIds` wins over it — including an empty one.
+  - **Rate limits are tight on the free plan.** It allows 10 requests a minute; paid plans allow twice the monitor limit, capped at 5,000. A `429` was refused before it ran, so the plugin retries it up to three times with backoff, honouring `Retry-After`.
+examples:
+  read:
+    path: monitors.list
+    title: List monitors that are down or look down
+    args:
+      status:
+        - DOWN
+        - LOOKS_DOWN
+  write:
+    path: monitors.update
+    title: Tighten a storefront check to every minute
+    args:
+      id: 778001
+      friendlyName: Acme storefront
+      interval: 60
+apiExamples:
+  monitors.list:
+    call: "{ status: ['UP', 'DOWN'], tags: ['production'], limit: 50 }"
+  monitors.get:
+    call: "{ id: 778001 }"
+  monitors.create:
+    call: "{ friendlyName: 'Acme storefront', type: 'HTTP', interval: 300, url: 'https://shop.acme.example', timeout: 30 }"
+  monitors.update:
+    call: "{ id: 778001, friendlyName: 'Storefront (prod)', interval: 60 }"
+  monitors.delete:
+    call: "{ id: 778001 }"
+  monitors.pause:
+    call: "{ id: 778001 }"
+  monitors.start:
+    call: "{ id: 778001 }"
+  monitors.reset:
+    call: "{ id: 778001 }"
+  stats.uptime:
+    call: "{ timeFrame: 'DAYS_30', logLimit: 100 }"
+  stats.monitorUptime:
+    call: "{ id: 778001, from: '2025-09-01T00:00:00Z', to: '2025-09-30T00:00:00Z' }"
+  stats.responseTime:
+    call: "{ id: 778001, includeTimeSeries: true }"
+  incidents.list:
+    call: "{ status: 'open', type: 'Downtime', cause: '5xx' }"
+  incidents.get:
+    call: "{ id: 'inc_778001' }"
+  incidents.comments:
+    call: "{ id: 'inc_778001' }"
+  incidents.addComment:
+    call: "{ id: 'inc_778001', content: 'Rolled back the deployment.', publishOnStatusPage: true }"
+  statusPages.list: {}
+  statusPages.get:
+    call: "{ id: 2214 }"
+  statusPages.create:
+    call: "{ friendlyName: 'Acme status', monitorIds: [778001, 778002] }"
+  statusPages.delete:
+    call: "{ id: 2214 }"
+  statusPages.announcements:
+    call: "{ pspId: 2214, status: 'PUBLISHED' }"
+  statusPages.createAnnouncement:
+    call: "{ pspId: 2214, title: 'Planned database maintenance', content: 'We will be performing scheduled maintenance.', status: 'Published', type: 'Maintenance', startDate: '2025-10-01T02:00:00Z' }"
+  maintenanceWindows.list: {}
+  maintenanceWindows.create:
+    call: "{ name: 'Sunday release window', interval: 'weekly', date: '2025-10-05', time: '02:00:00', duration: 120, days: [7], monitorIds: [778001] }"
+  maintenanceWindows.update:
+    call: "{ id: 3317, status: 'paused' }"
+  maintenanceWindows.delete:
+    call: "{ id: 3317 }"
+  monitorGroups.list: {}
+  monitorGroups.create:
+    call: "{ name: 'Storefront', monitorIds: [778001] }"
+  monitorGroups.delete:
+    call: "{ id: 1102 }"
+  tags.list: {}
+  tags.delete:
+    call: "{ id: 11 }"
+  account.me: {}

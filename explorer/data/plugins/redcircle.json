@@ -1,0 +1,365 @@
+{
+  "id": "redcircle",
+  "displayName": "RedCircle API",
+  "description": "Target product data with RedCircle API - read Target products, search results, customer reviews and category listings, and read the account's credit usage, through Traject Data's RedCircle API.",
+  "npmPackageName": "@corsair-dev/redcircle",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "redcircle.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read the account plan, credits used and remaining, and its per-resource limits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ name?: string | null, email?: string | null, plan?: string | null, timezone?: string | null, credits_used?: number | null, credits_remaining?: number | null, credits_limit?: number | null, credits_reset_at?: string | null, overage_enabled?: boolean | null, zipcodes_used?: number | null, zipcodes_limit?: number | null, zipcodes_available?: number | null, destinations_used?: number | null, destinations_limit?: number | null, destinations_available?: number | null, account_balance_usd?: number | null, account_balance_message?: string | null, usage_history?: { date?: string | null, requests?: number | null, credits?: number | null }[] | null }"
+          },
+          {
+            "key": "request_info",
+            "optional": true,
+            "type": "{ success?: boolean | null, demo?: boolean | null, message?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "redcircle.api.categories.list",
+      "shortPath": "categories.list",
+      "description": "List Target categories, their children by parent id, or the matches for a search term",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "string",
+            "description": "Return the children of this category."
+          },
+          {
+            "key": "search_term",
+            "optional": true,
+            "type": "string",
+            "description": "Search the whole hierarchy for this term."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, has_children?: boolean | null, is_root?: boolean | null, path?: string | null }[] | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, has_children?: boolean | null, is_root?: boolean | null, path?: string | null } | null"
+          },
+          {
+            "key": "current_category",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, has_children?: boolean | null, is_root?: boolean | null, path?: string | null } | null"
+          },
+          {
+            "key": "parent_category",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, has_children?: boolean | null, is_root?: boolean | null, path?: string | null } | null"
+          },
+          {
+            "key": "request_info",
+            "optional": true,
+            "type": "{ success?: boolean | null, demo?: boolean | null, message?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "redcircle.api.products.get",
+      "shortPath": "products.get",
+      "description": "Fetch one Target product by TCIN, DPCI, GTIN or URL, with its price, images and specifications",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tcin",
+            "optional": true,
+            "type": "string",
+            "description": "The Target TCIN (item id)."
+          },
+          {
+            "key": "dpci",
+            "optional": true,
+            "type": "string",
+            "description": "A DPCI code; it is searched first, then the first match read."
+          },
+          {
+            "key": "gtin",
+            "optional": true,
+            "type": "string",
+            "description": "A GTIN/ISBN/UPC; it overrides `tcin` and `dpci`."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "A Target product URL, which overrides every other selector."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "{ title?: string | null, link?: string | null, tcin?: string | null, dpci?: string | null, class_id?: string | number | null, department_id?: string | number | null, sponsored?: boolean | null, brand?: string | null, brand_link?: string | null, rating?: number | null, ratings_total?: number | null, main_image?: string | { link?: string | null, type?: string | null } | null, images?: (string | { link?: string | null, type?: string | null })[] | null, videos?: (string | { link?: string | null, type?: string | null })[] | null, price?: { value?: number | null, currency?: string | null, symbol?: string | null, raw?: string | null } | null, description?: string | null, feature_bullets?: string[] | null, specifications?: Record<string, string>[] | null, categories?: Record<string, string>[] | null, variants?: { tcin?: string | null, dpci?: string | null, title?: string | null, link?: string | null, swatch_image?: string | null, availability?: string | null, price?: number | { value?: number | null, currency?: string | null, symbol?: string | null, raw?: string | null } | null }[] | null }"
+          },
+          {
+            "key": "request_info",
+            "optional": true,
+            "type": "{ success?: boolean | null, demo?: boolean | null, message?: string | null } | null"
+          },
+          {
+            "key": "request_metadata",
+            "optional": true,
+            "type": "{ target_url?: string | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `page` to read the next page; null on the last."
+          },
+          {
+            "key": "current_page",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_results",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "redcircle.api.reviews.list",
+      "shortPath": "reviews.list",
+      "description": "List a Target product’s customer reviews with their ratings and sort order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tcin",
+            "optional": true,
+            "type": "string",
+            "description": "The Target TCIN (item id)."
+          },
+          {
+            "key": "dpci",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gtin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "most_recent | most_helpful | high_to_low_rating | low_to_high_rating"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page of results."
+          },
+          {
+            "key": "max_page",
+            "optional": true,
+            "type": "number",
+            "description": "Retrieve and concatenate this many pages in one request. Each page costs a credit, so the cap is 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reviews",
+            "optional": false,
+            "type": "{ id?: string | null, rating?: number | null, title?: string | null, body?: string | null, date?: string | null, source?: { author_name?: string | null, verified_purchase?: boolean | null } | null, helpful_votes?: number | null, recommended?: boolean | null }[]"
+          },
+          {
+            "key": "request_info",
+            "optional": true,
+            "type": "{ success?: boolean | null, demo?: boolean | null, message?: string | null } | null"
+          },
+          {
+            "key": "request_metadata",
+            "optional": true,
+            "type": "{ target_url?: string | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `page` to read the next page; null on the last."
+          },
+          {
+            "key": "current_page",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_results",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "redcircle.api.search.products",
+      "shortPath": "search.products",
+      "description": "Search Target products, filtered by category and delivery type and sorted, with page paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_term",
+            "optional": true,
+            "type": "string",
+            "description": "The term to search Target for; `url` is an alternative."
+          },
+          {
+            "key": "category_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "best_seller | price_high_to_low | price_low_to_high | best_match | highest_rating | newly_listed | featured"
+          },
+          {
+            "key": "delivery_type",
+            "optional": true,
+            "type": "in_store_pickup | same_day_delivery | buy_at_store | ship_to_home"
+          },
+          {
+            "key": "customer_zipcode",
+            "optional": true,
+            "type": "string",
+            "description": "The store to localise an in-store filter to."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "A Target search-results URL, which overrides every other parameter."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page of results."
+          },
+          {
+            "key": "max_page",
+            "optional": true,
+            "type": "number",
+            "description": "Retrieve and concatenate this many pages in one request. Each page costs a credit, so the cap is 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_results",
+            "optional": false,
+            "type": "{ position?: number | null, product?: { title?: string | null, link?: string | null, tcin?: string | null, dpci?: string | null, class_id?: string | number | null, department_id?: string | number | null, sponsored?: boolean | null, brand?: string | null, brand_link?: string | null, rating?: number | null, ratings_total?: number | null, main_image?: string | { link?: string | null, type?: string | null } | null, images?: (string | { link?: string | null, type?: string | null })[] | null, videos?: (string | { link?: string | null, type?: string | null })[] | null, price?: { value?: number | null, currency?: string | null, symbol?: string | null, raw?: string | null } | null, description?: string | null, feature_bullets?: string[] | null, specifications?: Record<string, string>[] | null, categories?: Record<string, string>[] | null, variants?: { tcin?: string | null, dpci?: string | null, title?: string | null, link?: string | null, swatch_image?: string | null, availability?: string | null, price?: number | { value?: number | null, currency?: string | null, symbol?: string | null, raw?: string | null } | null }[] | null } | null, offers?: { seller?: string | null, price?: number | null, currency?: string | null, link?: string | null, condition?: string | null }[] | { primary?: { seller?: string | null, price?: number | null, currency?: string | null, link?: string | null, condition?: string | null } | null, all_offers?: { seller?: string | null, price?: number | null, currency?: string | null, link?: string | null, condition?: string | null }[] | null } | null, fulfillment?: { in_store_pickup?: boolean | null, same_day_delivery?: boolean | null, buy_at_store?: boolean | null, ship_to_home?: boolean | null } | null }[]"
+          },
+          {
+            "key": "request_info",
+            "optional": true,
+            "type": "{ success?: boolean | null, demo?: boolean | null, message?: string | null } | null"
+          },
+          {
+            "key": "request_metadata",
+            "optional": true,
+            "type": "{ target_url?: string | null } | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "Pass as `page` to read the next page; null on the last."
+          },
+          {
+            "key": "current_page",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "total_results",
+            "optional": false,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
