@@ -67,7 +67,8 @@ export function redactMessage(message: string, apiKey?: string): string {
 		sanitized = sanitized.replaceAll(apiKey, '[REDACTED]');
 	}
 	sanitized = sanitized.replace(
-		/(?:Token|Bearer)\s+[A-Za-z0-9_\-.]+/gi,
+		// Skip plain words so Fomo's 401 body "Token is required." stays readable.
+		/(?:Token|Bearer)\s+(?!(?:is|was|has|not|required|missing|invalid|expired)\b)[A-Za-z0-9_\-.]+/gi,
 		'Token [REDACTED]',
 	);
 	sanitized = sanitized.replace(

@@ -243,6 +243,16 @@ describe('makeFomoRequest client', () => {
 		).toBe('Error accessing https://api.fomo.com?api_key=[REDACTED]&page=1');
 	});
 
+	it('redactMessage keeps plain words after "Token" (Fomo 401 body is "Token is required")', () => {
+		expect(redactMessage('body: "Token is required."')).toBe(
+			'body: "Token is required."',
+		);
+		expect(redactMessage('Bearer 9f8e7d6c5b4a3210')).toBe('Token [REDACTED]');
+		expect(redactMessage('Token token_abc is invalid')).toBe(
+			'Token [REDACTED] is invalid',
+		);
+	});
+
 	it('wraps non-ApiError in Error with redacted message', async () => {
 		mockRequest.mockRejectedValue(new Error('Network offline with my-token'));
 
