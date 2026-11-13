@@ -1,0 +1,118 @@
+---
+title: "Short.io database"
+sidebarTitle: "Database"
+description: "Short.io entity schemas and available local database search filters."
+---
+
+The plugin declares entity schemas, but its API operations do not automatically populate the local database. For data stored separately, use `corsair.shortio.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Domains
+
+Path: `shortio.db.domains.search`
+
+```ts
+const rows = await corsair.shortio.db.domains.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `number` | equals, gt, gte, lt, lte, in |
+| `hostname` | `string` | equals, contains, startsWith, endsWith, in |
+| `unicodeHostname` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `TeamId` | `number` | equals, gt, gte, lt, lte, in |
+| `hasFavicon` | `boolean` | equals |
+| `segmentKey` | `string` | equals, contains, startsWith, endsWith, in |
+| `hideReferer` | `boolean` | equals |
+| `linkType` | `string` | equals, contains, startsWith, endsWith, in |
+| `cloaking` | `boolean` | equals |
+| `hideVisitorIp` | `boolean` | equals |
+| `enableAI` | `boolean` | equals |
+| `httpsLevel` | `string` | equals, contains, startsWith, endsWith, in |
+| `httpsLinks` | `boolean` | equals |
+| `redirect404` | `string` | equals, contains, startsWith, endsWith, in |
+| `webhookURL` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationGA` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationFB` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationAdroll` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationGTM` | `string` | equals, contains, startsWith, endsWith, in |
+| `caseSensitive` | `boolean` | equals |
+| `incrementCounter` | `string` | equals, contains, startsWith, endsWith, in |
+| `robots` | `string` | equals, contains, startsWith, endsWith, in |
+| `sslCertExpirationDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `sslCertInstalledSuccess` | `boolean` | equals |
+| `domainRegistrationId` | `number` | equals, gt, gte, lt, lte, in |
+| `UserId` | `number` | equals, gt, gte, lt, lte, in |
+| `exportEnabled` | `boolean` | equals |
+| `userPlan` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Links
+
+Path: `shortio.db.links.search`
+
+```ts
+const rows = await corsair.shortio.db.links.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `cloaking` | `boolean` | equals |
+| `password` | `string` | equals, contains, startsWith, endsWith, in |
+| `expiredURL` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `utmSource` | `string` | equals, contains, startsWith, endsWith, in |
+| `utmMedium` | `string` | equals, contains, startsWith, endsWith, in |
+| `utmCampaign` | `string` | equals, contains, startsWith, endsWith, in |
+| `utmTerm` | `string` | equals, contains, startsWith, endsWith, in |
+| `utmContent` | `string` | equals, contains, startsWith, endsWith, in |
+| `path` | `string` | equals, contains, startsWith, endsWith, in |
+| `androidURL` | `string` | equals, contains, startsWith, endsWith, in |
+| `iphoneURL` | `string` | equals, contains, startsWith, endsWith, in |
+| `clicksLimit` | `number` | equals, gt, gte, lt, lte, in |
+| `passwordContact` | `boolean` | equals |
+| `skipQS` | `boolean` | equals |
+| `archived` | `boolean` | equals |
+| `splitURL` | `string` | equals, contains, startsWith, endsWith, in |
+| `splitPercent` | `number` | equals, gt, gte, lt, lte, in |
+| `integrationAdroll` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationFB` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationGA` | `string` | equals, contains, startsWith, endsWith, in |
+| `integrationGTM` | `string` | equals, contains, startsWith, endsWith, in |
+| `originalURL` | `string` | equals, contains, startsWith, endsWith, in |
+| `idString` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `shortURL` | `string` | equals, contains, startsWith, endsWith, in |
+| `secureShortURL` | `string` | equals, contains, startsWith, endsWith, in |
+| `redirectType` | `string` | equals, contains, startsWith, endsWith, in |
+| `FolderId` | `string` | equals, contains, startsWith, endsWith, in |
+| `DomainId` | `number` | equals, gt, gte, lt, lte, in |
+| `OwnerId` | `number` | equals, gt, gte, lt, lte, in |
+| `hasPassword` | `boolean` | equals |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
