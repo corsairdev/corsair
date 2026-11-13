@@ -265,15 +265,20 @@ const ScrapeCommandSchema = z.discriminatedUnion('action', [
 			.string()
 			.optional()
 			.describe('Read this attribute instead of the element text.'),
-		as: z.string().min(1).describe('Key this result is stored under.'),
+		as: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Key this result is stored under in `extractions`.'),
 	}),
 	z.object({
 		action: z.literal('screenshot'),
 		as: z
 			.string()
 			.min(1)
+			.optional()
 			.describe(
-				'Key this result is stored under. The value is an S3 URL kept for 30 days.',
+				'Key this result is stored under in `extractions`. The value is an S3 URL kept for 30 days.',
 			),
 	}),
 	z.object({
@@ -287,7 +292,11 @@ const ScrapeCommandSchema = z.discriminatedUnion('action', [
 			.string()
 			.min(1)
 			.describe('JavaScript run in the page context.'),
-		as: z.string().min(1).describe('Key this result is stored under.'),
+		as: z
+			.string()
+			.min(1)
+			.optional()
+			.describe('Key this result is stored under in `extractions`.'),
 	}),
 ]);
 

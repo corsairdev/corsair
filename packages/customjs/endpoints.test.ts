@@ -496,6 +496,30 @@ describe('scrape.page', () => {
 		expect(result).toEqual(scrapeCommandResponse);
 	});
 
+	// The docs mark `as` optional on extract, screenshot and evaluate.
+	it('accepts extract, screenshot and evaluate steps without `as`', async () => {
+		respondJson(scrapeCommandResponse);
+		const commands = [
+			{ action: 'extract', selector: 'h1' },
+			{ action: 'screenshot' },
+			{ action: 'evaluate', expression: 'document.title' },
+		];
+
+		await invoke(Scrape.page, {
+			url: 'https://example.com',
+			commands,
+			returnType: 'screenshot',
+		});
+
+		expect(lastRequest().body).toEqual({
+			input: {
+				url: 'https://example.com',
+				commands,
+				returnType: 'screenshot',
+			},
+		});
+	});
+
 	it('sends every step type the docs list', async () => {
 		respondJson(scrapeCommandResponse);
 
