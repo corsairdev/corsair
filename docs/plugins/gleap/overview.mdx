@@ -1,0 +1,132 @@
+---
+title: "Gleap plugin"
+sidebarTitle: "Overview"
+description: "Customer messaging, ticketing, feedback surveys, user sessions, and team collaboration platform."
+---
+
+Use **Gleap** through Corsair: one client, typed API calls.
+
+Authentication uses an API key generated in your Gleap dashboard under **Settings → Developer → API keys**.
+The API key is passed in the `Authorization: Bearer <key>` header.
+The default base URL is `https://api.gleap.io/v3` (EU region), and US-hosted projects can use `https://api.us.gleap.ai/v3` via the `baseUrl` option.
+Optionally specify your project ID from **Settings → Project → General** via `projectId`.
+
+**What you get:**
+
+- 42 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/gleap better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/gleap better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/gleap better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/gleap better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { gleap } from '@corsair-dev/gleap';
+
+export const corsair = createCorsair({
+	plugins: [
+		gleap(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Gleap API key before the first call: `pnpm corsair setup --plugin=gleap --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+gleap()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'gleap',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`boards.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gleap.api.boards.list({});
+```
+
+
+**`boards.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.gleap.api.boards.create({});
+```
+
+
+See the full list on the [API](/plugins/gleap/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/gleap/api">
+    Every `gleap.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

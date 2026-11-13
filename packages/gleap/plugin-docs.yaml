@@ -1,4 +1,79 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Gleap"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Gleap
+description: Customer messaging, ticketing, feedback surveys, user sessions, and team collaboration platform.
+domain: gleap.io
+recommendedAuth: api_key
+overviewNote: |
+  Authentication uses an API key generated in your Gleap dashboard under **Settings → Developer → API keys**.
+  The API key is passed in the `Authorization: Bearer <key>` header.
+  The default base URL is `https://api.gleap.io/v3` (EU region), and US-hosted projects can use `https://api.us.gleap.ai/v3` via the `baseUrl` option.
+  Optionally specify your project ID from **Settings → Project → General** via `projectId`.
+apiExamples:
+  tickets.get:
+    ticketId: "ticket_123"
+  tickets.update:
+    ticketId: "ticket_123"
+    status: "OPEN"
+  tickets.delete:
+    ticketId: "ticket_123"
+  tickets.search:
+    searchTerm: "checkout error"
+  messages.create:
+    ticket: "ticket_123"
+    content: "Hello from support"
+  messages.update:
+    messageId: "msg_123"
+    content: "Updated message"
+  messages.delete:
+    messageId: "msg_123"
+  messages.getThread:
+    messageId: "msg_123"
+  messages.createThread:
+    messageId: "msg_123"
+    content: "Follow-up reply"
+  sessions.get:
+    sessionId: "sess_123"
+  sessions.getByUserId:
+    userId: "usr_123"
+  sessions.update:
+    sessionId: "sess_123"
+    name: "Jane Doe"
+  sessions.delete:
+    sessionId: "sess_123"
+  sessions.activities:
+    sessionId: "sess_123"
+  users.update:
+    userId: "user_123"
+    name: "Alex Smith"
+  feedback.rateConversation:
+    conversationId: "conv_123"
+    rating: 10
+  feedback.rateMessage:
+    messageId: "msg_123"
+    rating: "up"
+  feedback.surveysGet:
+    surveyId: "survey_123"
+  feedback.surveysResponses:
+    surveyId: "survey_123"
+  feedback.surveysStats:
+    surveyId: "survey_123"
+  teams.create:
+    name: "Support Tier 1"
+  teams.update:
+    teamId: "team_123"
+    name: "Support Tier 2"
+  teams.delete:
+    teamId: "team_123"
+  boards.create:
+    name: "Bug Tracker"
+  boards.update:
+    type: "BUG"
+    name: "Software Bugs"
+  boards.delete:
+    type: "BUG"
+  companies.get:
+    companyId: "comp_123"
+  companies.createOrUpdate:
+    companyId: "comp_123"
+    name: "Acme Corp"
+  companies.delete:
+    companyId: "comp_123"
