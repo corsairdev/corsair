@@ -69,7 +69,7 @@ Spends one credit. Answers `result`, `reason`, the role, free and disposable fla
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `deliverable \| undeliverable \| risky \| unknown` | Yes | `deliverable`, `undeliverable`, `risky` or `unknown`. |
+| `result` | `deliverable \| undeliverable \| risky \| unknown \| string` | Yes | `deliverable`, `undeliverable`, `risky` or `unknown`. |
 | `reason` | `string \| null` | No | Why the result came out as it did, such as `accepted_email` or `rejected_email`. |
 | `role` | `boolean \| null` | No | True for a role address such as `support@example.com`. |
 | `free` | `boolean \| null` | No | True for a free provider such as gmail.com. |
