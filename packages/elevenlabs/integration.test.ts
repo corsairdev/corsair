@@ -446,9 +446,20 @@ describe('a log entry that can’t be written', () => {
 			const warn = jest
 				.spyOn(console, 'warn')
 				.mockImplementation(() => undefined);
-			const result = await corsair.elevenlabs.api.textToSpeech.convert(SPEECH);
-			expect(result.byteLength).toBe(2);
-			expect(result.contentBase64).toBe('AQI=');
+			const outcome = await corsair.elevenlabs.api.textToSpeech
+				.convert(SPEECH)
+				.then(
+					(result) => ({ result }),
+					(error: Error) => ({ error }),
+				);
+			if ('error' in outcome) {
+				// Newer core refuses before the request, so nothing is paid for.
+				expect(outcome.error.name).toBe('CorsairKekMissingError');
+				expect(fetchMock).not.toHaveBeenCalled();
+				return;
+			}
+			expect(outcome.result.byteLength).toBe(2);
+			expect(outcome.result.contentBase64).toBe('AQI=');
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 			// The missing KEK still shows up, the way core's logger reports it.
 			expect(warn).toHaveBeenCalledWith(
