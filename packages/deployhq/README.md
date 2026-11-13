@@ -240,11 +240,11 @@ All account requests use `https://<accountSubdomain>.deployhq.com/`. Public rout
 | DELETE | `/teams/{id}` | `teams.deleteTeam` | Basic | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1teams~1{id}/delete) |
 | GET | `/templates` | `templates.listTemplates` | Basic | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1templates/get) |
 | POST | `/templates` | `templates.createTemplate` | Basic | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1templates/post) |
-| GET | `/templates/public_templates` | `templates.publicTemplatesTemplate` | No (public) | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1templates~1public_templates/get) |
+| GET | `/templates/public_templates` | `templates.publicTemplatesTemplate` | Basic | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1templates~1public_templates/get) |
 | PUT | `/templates/{id}` | `templates.replaceTemplate` | Basic | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1templates~1{id}/put) |
 | PATCH | `/templates/{id}` | `templates.updateTemplate` | Basic | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1templates~1{id}/patch) |
 | DELETE | `/templates/{id}` | `templates.deleteTemplate` | Basic | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1templates~1{id}/delete) |
-| GET | `/templates/{id}/public/{id}` | `templates.showPublicTemplateTemplatePublic` | No (public) | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1templates~1{id}~1public~1{id}/get) |
+| GET | `/templates/{id}/public/{id}` | `templates.showPublicTemplateTemplatePublic` | Basic | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1templates~1{id}~1public~1{id}/get) |
 | GET | `/users` | `users.listUsers` | Basic | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1users/get) |
 | POST | `/users` | `users.createUser` | Basic | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1users/post) |
 | GET | `/users/{id}` | `users.getUser` | Basic | [OpenAPI](https://api.deployhq.com/docs.json#/paths/~1users~1{id}/get) |

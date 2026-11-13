@@ -3749,7 +3749,7 @@ export const deployHQOperations = {
 		queryParameters: ['framework_type'],
 		formParameters: [],
 		bodyKind: 'none',
-		public: true,
+		public: false,
 		riskLevel: 'read',
 		description: 'List public templates',
 		source:
@@ -3819,7 +3819,7 @@ export const deployHQOperations = {
 		queryParameters: [],
 		formParameters: [],
 		bodyKind: 'none',
-		public: true,
+		public: false,
 		riskLevel: 'read',
 		description: 'Get a public template',
 		source:

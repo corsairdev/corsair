@@ -137,6 +137,24 @@ describe('DeployHQ REST operations', () => {
 		},
 	);
 
+	it('sends credentials to every route DeployHQ does not serve anonymously', () => {
+		// Probed 11-13: /templates/public_templates and /templates/{id}/public/{id}
+		// answer 403 AccessDenied without Basic auth, so they are not public routes.
+		const publicOperations = deployHQOperationKeys.filter(
+			(key) => deployHQOperations[key].public,
+		);
+		expect(publicOperations.sort()).toEqual(
+			[
+				'account.resetPasswordSubmitReset',
+				'ipRanges.listIpRanges',
+				'packages.listPackages',
+				'projects.statusBadgeStatusBadge',
+				'projects.statusBadgeStatusBadgeByIdentifier',
+				'signup.createSignup',
+			].sort(),
+		);
+	});
+
 	it.each(['.', '..'])(
 		'rejects the %s path segment before a request is sent',
 		async (id) => {
