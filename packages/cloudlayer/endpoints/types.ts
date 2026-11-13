@@ -185,11 +185,14 @@ const imageFields = {
 /** Job statuses (https://cloudlayer.io/docs/jobs/#job-statuses). */
 export const JobStatusSchema = z.enum(['pending', 'success', 'error']);
 
+/** Output status: the documented values, or a status the provider adds later. */
+const JobStatusOutputSchema = z.union([JobStatusSchema, z.string()]);
+
 /** v2 generation routes return a job object as documented by each route. */
 export const GenerationJobSchema = z
 	.object({
 		id: z.string(),
-		status: JobStatusSchema,
+		status: JobStatusOutputSchema,
 		// Jobs can be created through other documented generation routes on the account.
 		type: z.string().optional(),
 		assetUrl: z.string().optional(),
@@ -587,7 +590,8 @@ export const AccountGetOutputSchema = z
 		email: z.string(),
 		uid: z.string(),
 		subscription: z.string(),
-		subType: z.enum(['limit', 'usage']),
+		// Documented values, or a billing model the provider adds later.
+		subType: z.union([z.enum(['limit', 'usage']), z.string()]),
 		subActive: z.boolean(),
 		calls: z.number(),
 		callsLimit: z.number(),
@@ -686,7 +690,7 @@ export const JobSchema = z
 		apiKeyUsed: z.string().optional(),
 		// Same open set as GenerationJobSchema.type.
 		type: z.string(),
-		status: JobStatusSchema,
+		status: JobStatusOutputSchema,
 		/** Request parameters minus the html/template body: caller-defined JSON. */
 		params: JsonObjectSchema.optional(),
 		size: z.number(),

@@ -412,6 +412,27 @@ describe('Cloudlayer schema', () => {
 });
 
 describe('Cloudlayer endpoint schemas', () => {
+	it('accepts a job status or billing model the provider adds later', () => {
+		expect(
+			CloudlayerEndpointOutputSchemas['jobs.get'].safeParse({
+				...listedJob,
+				status: 'processing',
+			}).success,
+		).toBe(true);
+		expect(
+			CloudlayerEndpointOutputSchemas['html.toPdf'].safeParse({
+				...job,
+				status: 'processing',
+			}).success,
+		).toBe(true);
+		expect(
+			CloudlayerEndpointOutputSchemas['account.get'].safeParse({
+				...outputFixtures['account.get'],
+				subType: 'trial',
+			}).success,
+		).toBe(true);
+	});
+
 	it('requires valid absolute URLs in URL generation and batch inputs', () => {
 		expect(
 			CloudlayerEndpointInputSchemas['url.toPdf'].safeParse({
