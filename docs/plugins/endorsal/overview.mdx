@@ -6,7 +6,7 @@ description: "Manage Endorsal contacts, testimonials, tags, widgets, Wall of Lov
 
 Use **Endorsal** through Corsair: one client, typed API calls.
 
-Generate a property-specific key at https://app.endorsal.io/account/api. Endorsal accepts `Authorization: Bearer <key>` for protected write operations; GET operations are documented as key-optional. The plugin uses the API host `https://api.endorsal.io` and never puts credentials in query parameters.
+Generate a property-specific key at https://app.endorsal.io/account/api. The plugin sends it as `Authorization: Bearer <key>` on every call. The reference marks GET keys as optional, but the API answers 401 to every route without one, so the plugin asks for a key before any call. The plugin uses the API host `https://api.endorsal.io` and never puts credentials in query parameters.
 
 The published OpenAPI document currently defines 25 REST operations. List routes return the complete collection and expose no page or cursor parameters. Search conditions are AND-combined; `in` requires an array. Testimonial status fields (`approved`, `featured`) are numeric. `widgets.byId.get` and `wallOfLove.get` support `render: true`, which returns rendered HTML rather than the normal JSON resource.
 
@@ -70,7 +70,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Endorsal API key before the first call: `pnpm corsair setup --plugin=endorsal --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 endorsal()
