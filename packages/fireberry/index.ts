@@ -252,7 +252,11 @@ export function fireberry<const T extends FireberryPluginOptions>(
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: FireberryKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
-			if (options.key !== undefined) return options.key;
+			if (options.key !== undefined) {
+				if (options.key.length === 0)
+					throw new AuthMissingError('fireberry', 'api_key');
+				return options.key;
+			}
 			if (!ctx.keys) throw new AuthMissingError('fireberry', 'api_key');
 			const key = await ctx.keys.get_api_key();
 			if (!key) throw new AuthMissingError('fireberry', 'api_key');
