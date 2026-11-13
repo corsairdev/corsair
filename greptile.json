@@ -34,6 +34,10 @@
       {
         "scope": ["packages/**"],
         "rule": "Flag `any` types on exported or public surfaces as P2, and every implemented endpoint lacking a corresponding test as P1. Skip this rule on documentation-only PRs (only packages/<plugin>/plugin-docs.yaml, docs/plugins/<that plugin>/**, and optional docs/docs.json)."
+      },
+      {
+        "scope": ["packages/**", "docs/plugins/**"],
+        "rule": "On a plugin PR (files under packages/<plugin>/ other than packages/corsair/, packages/cli/, packages/mcp/, packages/studio/, packages/ui/ and packages/app/, and that plugin's docs/plugins/<plugin>/), do not raise the settled decisions listed in R9 of .github/PLUGIN_PR_RULES.md as findings: retrying a write after a 429 (but a retry on a 429 that reports an exhausted daily or monthly quota is still a finding), optional or nullish response fields, a live suite that skips with a warning when its key is missing, generator-wide output in the generated docs/plugins/<plugin>/** pages (type strings shown without quotes or as any, the shared setup text and the shared example snippets; wrong content that comes from the plugin's own plugin-docs.yaml, descriptions or schemas is still a finding), the corsair peer range in package.json, risk levels per input, and core-wide checks (kek with encryptDataAtRest, root DEFAULT handler order, approval argument redaction). Changes to packages/corsair/, packages/cli/, packages/mcp/, packages/studio/, packages/ui/ or packages/app/ are reviewed on all of these as usual. Do check the R8 conventions in the same file."
       }
     ],
     "files": [
