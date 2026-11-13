@@ -2,6 +2,7 @@ import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { keyword } from './index';
 import {
+	KEYWORD_CONTENT_TYPE,
 	keywords,
 	notFound,
 	projects,
@@ -29,7 +30,7 @@ function respond(body: unknown, status = 200) {
 	fetchMock.mockResolvedValueOnce(
 		new Response(JSON.stringify(body), {
 			status,
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': KEYWORD_CONTENT_TYPE },
 		}),
 	);
 }
@@ -211,7 +212,10 @@ describe('retry behaviour', () => {
 					JSON.stringify({ errors: [{ code: '429', message: 'Slow' }] }),
 					{
 						status: 429,
-						headers: { 'Content-Type': 'application/json', 'Retry-After': '2' },
+						headers: {
+							'Content-Type': KEYWORD_CONTENT_TYPE,
+							'Retry-After': '2',
+						},
 					},
 				),
 			);

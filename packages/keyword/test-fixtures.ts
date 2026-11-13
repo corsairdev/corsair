@@ -1,6 +1,13 @@
 // Shapes taken from Keyword's SERP Tracker API reference
 // (https://keyword.com/docs/serp-api/) and its live 401 envelope.
 
+/**
+ * The media type Keyword sends on every answer, errors included (live run,
+ * 11-14). It is not `application/json`, so mocks use it to keep the client's
+ * parsing honest.
+ */
+export const KEYWORD_CONTENT_TYPE = 'application/vnd.api+json';
+
 const tag = {
 	id: 27727,
 	project_id: 3057417,
@@ -326,6 +333,17 @@ export const notFound = {
 			code: '404',
 			title: 'Not found',
 			message: 'The requested resource was not found',
+		},
+	],
+};
+
+/** A project lookup by a name that does not exist, as Keyword answered it live. */
+export const projectNotFound = {
+	errors: [
+		{
+			code: '1001',
+			title: 'The project not found',
+			message: 'The project not found',
 		},
 	],
 };

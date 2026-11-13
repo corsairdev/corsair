@@ -5,6 +5,7 @@ import {
 	readErrors,
 	stripProjectAuth,
 } from './client';
+import { KEYWORD_CONTENT_TYPE, projectNotFound } from './test-fixtures';
 
 const API_KEY = 'kw-test-token';
 
@@ -15,7 +16,7 @@ function respond(body: unknown, status = 200) {
 	fetchMock.mockResolvedValueOnce(
 		new Response(status === 204 ? null : JSON.stringify(body), {
 			status,
-			headers: status === 204 ? {} : { 'Content-Type': 'application/json' },
+			headers: status === 204 ? {} : { 'Content-Type': KEYWORD_CONTENT_TYPE },
 		}),
 	);
 }
@@ -33,7 +34,9 @@ function lastRequest() {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+		throw new Error('unmocked fetch: queue a response with respond first');
+	});
 });
 
 afterEach(() => {
@@ -134,6 +137,21 @@ describe('stripProjectAuth', () => {
 		});
 	});
 
+	it('removes the Intercom identity hash users/self returns (live, 11-14)', () => {
+		const cleaned = stripProjectAuth({
+			data: {
+				type: 'user',
+				attributes: {
+					user_id: 294208,
+					intercom_hash: 'INTERCOM-HMAC',
+					intercom_user_id: 'intercom-user',
+				},
+			},
+		});
+
+		expect(JSON.stringify(cleaned)).not.toContain('INTERCOM-HMAC');
+	});
+
 	it('leaves a value that is not a record alone', () => {
 		expect(stripProjectAuth('a string')).toBe('a string');
 		expect(stripProjectAuth(42)).toBe(42);
@@ -218,13 +236,52 @@ describe('makeKeywordRequest', () => {
 		});
 	});
 
+	it('parses a body Keyword sends as application/vnd.api+json', async () => {
+		respond({ data: [{ type: 'group', id: 'corsair.dev' }] });
+
+		await expect(
+			makeKeywordRequest(API_KEY, { method: 'GET', path: '/groups' }),
+		).resolves.toEqual({ data: [{ type: 'group', id: 'corsair.dev' }] });
+	});
+
+	it('reads the error envelope of a vnd.api+json error body', async () => {
+		respond(projectNotFound, 404);
+
+		await expect(
+			makeKeywordRequest(API_KEY, {
+				method: 'GET',
+				path: '/groups/missing/keywords',
+			}),
+		).rejects.toMatchObject({
+			status: 404,
+			code: '1001',
+			message: 'Keyword 404: The project not found',
+		});
+	});
+
+	it('fails clearly on a success body that is not JSON', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response('<html>maintenance</html>', {
+				status: 200,
+				headers: { 'Content-Type': 'text/html' },
+			}),
+		);
+
+		await expect(
+			makeKeywordRequest(API_KEY, { method: 'GET', path: '/groups' }),
+		).rejects.toMatchObject({
+			name: 'KeywordAPIError',
+			message: 'Keyword answered a body that is not JSON',
+		});
+	});
+
 	it('keeps a Retry-After header as milliseconds', async () => {
 		fetchMock.mockResolvedValueOnce(
 			new Response(
 				JSON.stringify({ errors: [{ code: '429', message: 'Slow' }] }),
 				{
 					status: 429,
-					headers: { 'Content-Type': 'application/json', 'Retry-After': '4' },
+					headers: { 'Content-Type': KEYWORD_CONTENT_TYPE, 'Retry-After': '4' },
 				},
 			),
 		);

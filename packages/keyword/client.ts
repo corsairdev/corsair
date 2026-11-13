@@ -176,15 +176,17 @@ export async function makeKeywordRequest(
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
+	let raw: unknown;
 	try {
-		return await request<unknown>(config, requestOptions, {
+		raw = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: KEYWORD_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const fields = readErrors(error.body);
+			const errorBody = parseJsonText(error.body) ?? error.body;
+			const fields = readErrors(errorBody);
 			throw new KeywordAPIError(
-				describeKeywordError(error.status, error.body, error.message),
+				describeKeywordError(error.status, errorBody, error.message),
 				{
 					status: error.status,
 					code: fields.code,
@@ -208,6 +210,32 @@ export async function makeKeywordRequest(
 			transport: true,
 		});
 	}
+
+	if (typeof raw !== 'string') return raw;
+	if (raw.trim() === '') return undefined;
+	const parsed = parseJsonText(raw);
+	if (parsed === undefined) {
+		throw new KeywordAPIError('Keyword answered a body that is not JSON', {
+			method,
+		});
+	}
+	return parsed;
+}
+
+/**
+ * Keyword sends every body, errors included, as `application/vnd.api+json`.
+ * corsair/http parses only `application/json`, so those bodies arrive as
+ * text and are parsed here. Text that is not JSON gives undefined.
+ */
+// unknown: the text is an arbitrary JSON:API document until a schema reads it.
+function parseJsonText(body: unknown): unknown {
+	if (typeof body !== 'string') return body;
+	try {
+		const parsed: unknown = JSON.parse(body);
+		return parsed;
+	} catch {
+		return undefined;
+	}
 }
 
 /** Drops the keys whose value is undefined, so a query carries only what was asked for. */
@@ -224,10 +252,10 @@ export function definedQuery(
 /**
  * The project's `auth` key is a credential that Keyword returns inside every
  * project and keyword resource, and `users/self` returns the account's master
- * `api_token`. Both are stripped before a result reaches a caller's log or
- * payload, because they are not theirs to pass on.
+ * `api_token` and its Intercom identity hash. All are stripped before a result
+ * reaches a caller's log or payload, because they are not theirs to pass on.
  */
-const SECRET_KEYS = new Set(['auth', 'api_token']);
+const SECRET_KEYS = new Set(['auth', 'api_token', 'intercom_hash']);
 
 // unknown: a resource is a JSON:API document whose attributes have no closed
 // shape per provider version, so the walk is over open records.
