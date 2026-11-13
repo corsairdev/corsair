@@ -39,13 +39,6 @@ const PredictInputSchema = z.object({
 	country_id: CountryCodeSchema.optional().describe(
 		'Scope the prediction to one country, which matters for names such as Kim or Andrea',
 	),
-	apikey: z
-		.string()
-		.min(1)
-		.optional()
-		.describe(
-			'Overrides the configured key for this call; without any key the IP-scoped allowance is used',
-		),
 });
 
 const BatchInputSchema = z.object({
@@ -59,13 +52,6 @@ const BatchInputSchema = z.object({
 	country_id: CountryCodeSchema.optional().describe(
 		'Applies to every name in the batch, not one of them',
 	),
-	apikey: z
-		.string()
-		.min(1)
-		.optional()
-		.describe(
-			'Overrides the configured key for this call; without any key the IP-scoped allowance is used',
-		),
 });
 
 const PredictResponseSchema = PredictionSchema;

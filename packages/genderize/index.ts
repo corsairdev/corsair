@@ -104,9 +104,10 @@ const genderizeEndpointMeta = {
 
 /**
  * Genderize takes its key as an `apikey` query parameter, so the key builder
- * returns the stored value and the client puts it in the query string. The
- * endpoints also accept a per-call `apikey`, which is why an empty key is
- * passed through rather than refused: the API then uses its IP allowance.
+ * returns the stored value and the client puts it in the query string. An
+ * empty key is passed through rather than refused: the API then uses its IP
+ * allowance. Endpoints take no key in their input, so it never reaches tool
+ * input, logs or events.
  */
 export const genderizeAuthConfig = {
 	api_key: {},

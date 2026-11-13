@@ -9,16 +9,14 @@ import {
 
 /**
  * Genderize authenticates with a query parameter, so the key is resolved here
- * rather than in a header. The per-call override wins, then the key the key
- * builder resolved (`ctx.key`, which a `before` hook may have replaced). An
- * empty key is dropped instead of sent, which lets the API fall back to its
+ * rather than in a header. It comes only from the key the key builder resolved
+ * (`ctx.key`, which a `before` hook may have replaced), never from tool input,
+ * so a key never lands in the model's context, tool logs or events. An empty
+ * key is dropped instead of sent, which lets the API fall back to its
  * IP-scoped allowance.
  */
-function resolveCredentials(
-	ctx: GenderizeContext,
-	override: string | undefined,
-): GenderizeCredentials {
-	return { apiKey: override || ctx.key || undefined };
+function resolveCredentials(ctx: GenderizeContext): GenderizeCredentials {
+	return { apiKey: ctx.key || undefined };
 }
 
 /** A name is personal data, so the log records the prediction, not the name. */
@@ -28,16 +26,13 @@ export const predict: GenderizeEndpoints['name']['predict'] = async (
 ) => {
 	const parsed = GenderizeEndpointInputSchemas.predict.parse(input ?? {});
 
-	const raw = await makeGenderizeRequest(
-		resolveCredentials(ctx, parsed.apikey),
-		{
-			path: '/',
-			query: definedQuery({
-				name: parsed.name,
-				country_id: parsed.country_id,
-			}),
-		},
-	);
+	const raw = await makeGenderizeRequest(resolveCredentials(ctx), {
+		path: '/',
+		query: definedQuery({
+			name: parsed.name,
+			country_id: parsed.country_id,
+		}),
+	});
 
 	const result = GenderizeEndpointOutputSchemas.predict.parse(raw);
 
@@ -58,8 +53,7 @@ export const predict: GenderizeEndpoints['name']['predict'] = async (
 /**
  * A batch sends repeated `name[]` parameters and answers an array in the same
  * order. The key is one `apikey` for the whole request, so it cannot vary per
- * name; the first name's override is the batch's, and it is read from the
- * dedicated field.
+ * name.
  */
 export const batch: GenderizeEndpoints['batch']['names'] = async (
 	ctx,
@@ -67,18 +61,15 @@ export const batch: GenderizeEndpoints['batch']['names'] = async (
 ) => {
 	const parsed = GenderizeEndpointInputSchemas.batch.parse(input ?? {});
 
-	const raw = await makeGenderizeRequest(
-		resolveCredentials(ctx, parsed.apikey),
-		{
-			path: '/',
-			// `name[]` is the documented spelling for a batch, and the query builder
-			// repeats an array key rather than joining it.
-			query: definedQuery({
-				'name[]': parsed.names,
-				country_id: parsed.country_id,
-			}),
-		},
-	);
+	const raw = await makeGenderizeRequest(resolveCredentials(ctx), {
+		path: '/',
+		// `name[]` is the documented spelling for a batch, and the query builder
+		// repeats an array key rather than joining it.
+		query: definedQuery({
+			'name[]': parsed.names,
+			country_id: parsed.country_id,
+		}),
+	});
 
 	const result = GenderizeEndpointOutputSchemas.batch.parse(raw);
 

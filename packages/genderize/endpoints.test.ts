@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { GenderizeAPIError } from './client';
 import { batch, predict } from './endpoints';
+import { GenderizeEndpointInputSchemas } from './endpoints/types';
 import {
 	batch as batchFixture,
 	invalidKey,
@@ -134,11 +135,22 @@ describe('Genderize client', () => {
 		expect(getStored).not.toHaveBeenCalled();
 	});
 
-	it('lets a per-call key override the configured one', async () => {
+	it('has no per-call key field, so a key never travels in tool input', async () => {
+		for (const schema of [
+			GenderizeEndpointInputSchemas.predict,
+			GenderizeEndpointInputSchemas.batch,
+		]) {
+			expect(Object.keys(schema.shape)).not.toContain('apikey');
+		}
+		const parsed = GenderizeEndpointInputSchemas.predict.parse({
+			name: 'Alice',
+			apikey: 'call-key',
+		});
+		expect(parsed).not.toHaveProperty('apikey');
+
 		respond(prediction);
 		await invoke(predict, { name: 'Alice', apikey: 'call-key' });
-
-		expect(lastRequest().query.apikey).toBe('call-key');
+		expect(lastRequest().query.apikey).toBe(API_KEY);
 	});
 
 	it('wraps a refused key in GenderizeAPIError with its reason', async () => {
