@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/gamma",
   "version": "0.1.0",
-  "description": "Gamma plugin for Corsair: generate presentations, documents, webpages and social posts from text, edit and read them, export to PDF, PPTX or PNG, and browse the workspace's themes and folders.",
+  "description": "Gamma plugin for Corsair: generate presentations, documents, webpages and social posts from text, read and search them, archive or delete them, export to PDF, PPTX or PNG, and browse the workspace's themes and folders.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
