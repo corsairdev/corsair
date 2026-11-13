@@ -12,7 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import {
 	collectionAdd,
 	collectionRemove,
@@ -452,17 +452,19 @@ export function fibery<const T extends FiberyPluginOptions>(
 		keyBuilder: async (ctx: FiberyKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
 			if (options.key) return options.key;
-			if (!ctx.keys)
-				throw new AuthMissingError('fibery', options.authType ?? 'api_key');
-			let credential: string | null | undefined;
 			if (ctx.authType === 'oauth_2') {
-				credential = await ctx.keys.get_access_token();
-			} else if (ctx.authType === 'api_key') {
-				credential = await ctx.keys.get_api_key();
+				return getOAuthAccessToken(ctx, {
+					plugin: 'fibery',
+					tokenUrl: 'https://auth.fibery.io/oauth2/token',
+					tokenAuthMethod: 'basic',
+				});
 			}
-			if (!credential)
-				throw new AuthMissingError('fibery', options.authType ?? 'api_key');
-			return credential;
+			if (ctx.authType === 'api_key') {
+				const credential = await ctx.keys.get_api_key();
+				if (!credential) throw new AuthMissingError('fibery', 'api_key');
+				return credential;
+			}
+			throw new AuthMissingError('fibery', 'api_key');
 		},
 	} satisfies InternalFiberyPlugin;
 }

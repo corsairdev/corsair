@@ -1,13 +1,30 @@
 displayName: Fibery
 description: Manage Fibery workspace schema, entities, documents, files, views, and paginated change history through the documented HTTP APIs.
 recommendedAuth: api_key
+factory:
+  note: Replace the sample workspaceUrl with your Fibery workspace's HTTPS origin.
+  options:
+    workspaceUrl: "https://acme.fibery.io"
+examples:
+  read:
+    path: document.get
+    title: Read a collaborative document
+    args:
+      secret: 019dcf9a-c5ab-7292-9bdb-8956eea1b532
+  write:
+    path: document.update
+    title: Update a collaborative document
+    args:
+      secret: 019dcf9a-c5ab-7292-9bdb-8956eea1b532
+      content: Sample document text
 overviewNote: >-
   Set workspaceUrl to the HTTPS origin of the Fibery workspace (such as
   https://acme.fibery.io). Static API tokens use Authorization: Token; OAuth
   access tokens use Authorization: Bearer. Fibery documents limits of 3
   requests per second per token and 7 per second per workspace. Register an
   OAuth app in the target workspace; its scopes are openid and offline, and
-  its token endpoint uses HTTP Basic client authentication. Entity-query
+  its token endpoint uses HTTP Basic client authentication. Corsair refreshes
+  expired OAuth access tokens using the documented refresh grant. Entity-query
   pagination uses the documented fibery/id cursor pattern; history uses
   nextPage.sinceItem. Webhook administration, API-token lifecycle endpoints,
   and URL-based file import are intentionally not exposed.

@@ -16,7 +16,7 @@ import { fibery } from '@corsair-dev/fibery';
 const plugin = fibery({ workspaceUrl: 'https://your-workspace.fibery.io' });
 ```
 
-Static API tokens are sent as `Authorization: Token …`; OAuth access tokens use `Authorization: Bearer …`. For OAuth, register an application in the target workspace and configure its client ID, secret, and redirect URI with Corsair; Fibery's documented scopes are `openid` and `offline`, and its token endpoint uses HTTP Basic client authentication. The registered app only authorizes users in that workspace. Fibery documents a limit of 3 requests per second per token and 7 per second per workspace. The plugin does not automatically retry writes; inspect `Retry-After` when provided before retrying.
+Static API tokens are sent as `Authorization: Token …`; OAuth access tokens use `Authorization: Bearer …`. For OAuth, register an application in the target workspace and configure its client ID, secret, and redirect URI with Corsair; Fibery's documented scopes are `openid` and `offline`, and its token endpoint uses HTTP Basic client authentication. The registered app only authorizes users in that workspace. Corsair refreshes expired OAuth access tokens through Fibery's documented token endpoint. Fibery documents a limit of 3 requests per second per token and 7 per second per workspace. The plugin does not automatically retry writes; inspect `Retry-After` when provided before retrying.
 
 ## Supported API areas
 

@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { getOAuthAccessToken, logEventFromContext } from 'corsair/core';
 import {
 	makeFiberyBinaryRequest,
 	makeFiberyCommand,
@@ -8,11 +8,16 @@ import {
 } from './client';
 import * as operations from './endpoints/operations';
 import type { FiberyJson } from './endpoints/types';
-import type { FiberyContext } from './index';
+import type { FiberyContext, FiberyKeyBuilderContext } from './index';
+import { fibery } from './index';
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
-	return { ...actual, logEventFromContext: jest.fn() };
+	return {
+		...actual,
+		getOAuthAccessToken: jest.fn(async () => 'fresh-fibery-oauth-token'),
+		logEventFromContext: jest.fn(),
+	};
 });
 
 jest.mock('./client', () => {
@@ -33,6 +38,7 @@ const mockRequest = jest.mocked(makeFiberyRequest);
 const mockBinary = jest.mocked(makeFiberyBinaryRequest);
 const mockUpload = jest.mocked(makeFiberyFileUpload);
 const mockLog = jest.mocked(logEventFromContext);
+const mockOAuthAccessToken = jest.mocked(getOAuthAccessToken);
 const id = '019dcf9a-c5ab-7292-9bdb-8956eea1b532';
 const otherId = '019dcf9a-c294-71cc-b740-ccdbd5722322';
 const url = 'https://acme.fibery.io';
@@ -63,6 +69,31 @@ const ctx: FiberyContext = {
 			client_id: null,
 			client_secret: null,
 			redirect_url: null,
+		}),
+	},
+};
+
+const oauthKeyBuilderContext: FiberyKeyBuilderContext = {
+	authType: 'oauth_2',
+	options: { workspaceUrl: url, authType: 'oauth_2' },
+	tenantId: 'fibery-oauth-tenant',
+	keys: {
+		get_dek: async () => 'dek',
+		issue_new_dek: async () => 'dek',
+		get_access_token: async () => 'expired-token',
+		set_access_token: async () => undefined,
+		get_refresh_token: async () => 'refresh-token',
+		set_refresh_token: async () => undefined,
+		get_expires_at: async () => '2000-01-01T00:00:00.000Z',
+		set_expires_at: async () => undefined,
+		get_scope: async () => 'openid offline',
+		set_scope: async () => undefined,
+		get_webhook_signature: async () => null,
+		set_webhook_signature: async () => undefined,
+		get_integration_credentials: async () => ({
+			client_id: 'fibery-client-id',
+			client_secret: 'fibery-client-secret',
+			redirect_url: 'https://app.invalid.test/oauth/callback',
 		}),
 	},
 };
@@ -553,6 +584,24 @@ beforeEach(() => {
 	mockBinary.mockReset();
 	mockUpload.mockReset();
 	mockLog.mockReset();
+	mockOAuthAccessToken.mockReset();
+	mockOAuthAccessToken.mockResolvedValue('fresh-fibery-oauth-token');
+});
+
+describe('OAuth key builder', () => {
+	it('uses Corsair refresh handling with Fibery Basic client authentication', async () => {
+		const plugin = fibery({ workspaceUrl: url, authType: 'oauth_2' });
+		if (!plugin.keyBuilder) throw new Error('Expected Fibery keyBuilder.');
+
+		await expect(
+			plugin.keyBuilder(oauthKeyBuilderContext, 'endpoint'),
+		).resolves.toBe('fresh-fibery-oauth-token');
+		expect(mockOAuthAccessToken).toHaveBeenCalledWith(oauthKeyBuilderContext, {
+			plugin: 'fibery',
+			tokenUrl: 'https://auth.fibery.io/oauth2/token',
+			tokenAuthMethod: 'basic',
+		});
+	});
 });
 
 describe.each(cases)('$name', (testCase) => {

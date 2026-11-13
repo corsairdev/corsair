@@ -1,4 +1,4 @@
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
 	FiberyAPIError,
@@ -14,6 +14,8 @@ jest.mock('corsair/http', () => {
 
 const mockRequest = jest.mocked(request);
 const workspaceUrl = 'https://acme.fibery.io';
+
+type OAuthAccessContext = Parameters<typeof getOAuthAccessToken>[0];
 
 beforeEach(() => mockRequest.mockReset());
 
@@ -50,6 +52,69 @@ describe('Fibery HTTP client', () => {
 		expect(mockRequest.mock.calls[0]?.[0]?.HEADERS).toMatchObject({
 			Authorization: 'Bearer oauth-secret',
 		});
+	});
+
+	it('refreshes an expired Fibery OAuth token using HTTP Basic client auth', async () => {
+		let accessToken = 'expired-access-token';
+		let refreshToken = 'stored-refresh-token';
+		let expiresAt = '946684800';
+		const keys: OAuthAccessContext['keys'] = {
+			get_dek: async () => 'dek',
+			issue_new_dek: async () => 'dek',
+			get_access_token: async () => accessToken,
+			set_access_token: async (value) => {
+				accessToken = value;
+			},
+			get_refresh_token: async () => refreshToken,
+			set_refresh_token: async (value) => {
+				refreshToken = value;
+			},
+			get_expires_at: async () => expiresAt,
+			set_expires_at: async (value) => {
+				expiresAt = value;
+			},
+			get_scope: async () => 'openid offline',
+			set_scope: async () => undefined,
+			get_webhook_signature: async () => null,
+			set_webhook_signature: async () => undefined,
+			get_integration_credentials: async () => ({
+				client_id: 'fibery-client-id',
+				client_secret: 'fibery-client-secret',
+				redirect_url: 'https://app.invalid.test/oauth/callback',
+			}),
+		};
+		const context: OAuthAccessContext = { keys, tenantId: 'fibery-tenant' };
+		const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					access_token: 'fresh-access-token',
+					refresh_token: 'rotated-refresh-token',
+					expires_in: 3600,
+				}),
+				{ headers: { 'content-type': 'application/json' } },
+			),
+		);
+
+		await expect(
+			getOAuthAccessToken(context, {
+				plugin: 'fibery',
+				tokenUrl: 'https://auth.fibery.io/oauth2/token',
+				tokenAuthMethod: 'basic',
+			}),
+		).resolves.toBe('fresh-access-token');
+
+		const requestOptions = fetchSpy.mock.calls[0]?.[1];
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
+		expect(fetchSpy.mock.calls[0]?.[0]).toBe(
+			'https://auth.fibery.io/oauth2/token',
+		);
+		expect(new Headers(requestOptions?.headers).get('authorization')).toBe(
+			`Basic ${btoa('fibery-client-id:fibery-client-secret')}`,
+		);
+		expect(String(requestOptions?.body)).toContain('grant_type=refresh_token');
+		expect(accessToken).toBe('fresh-access-token');
+		expect(refreshToken).toBe('rotated-refresh-token');
+		fetchSpy.mockRestore();
 	});
 
 	it('rejects empty credentials and unsafe workspace URLs before network I/O', async () => {
