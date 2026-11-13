@@ -1,0 +1,781 @@
+---
+title: "Nango API reference"
+sidebarTitle: "API"
+description: "API reference for the Nango plugin in Corsair: every `nango.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Connections
+
+### delete
+
+`connections.delete`
+
+Delete a connection
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nango.api.connections.delete({ connectionId: 'example', provider_config_key: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | Yes | — |
+| `provider_config_key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### get
+
+`connections.get`
+
+Get a connection and its credentials
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.connections.get({ connectionId: 'example', provider_config_key: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | Yes | — |
+| `provider_config_key` | `string` | Yes | — |
+| `force_refresh` | `boolean` | No | — |
+| `refresh_token` | `boolean` | No | — |
+| `refresh_github_app_jwt_token` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `connection_id` | `string` | Yes | — |
+| `provider_config_key` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
+| `errors` | `object[]` | Yes | — |
+| `metadata` | `Record<string, any> \| null` | Yes | — |
+| `connection_config` | `Record<string, any>` | Yes | — |
+| `tags` | `Record<string, string>` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `last_fetched_at` | `string \| null` | Yes | — |
+| `webhook_url_override` | `string \| null` | No | — |
+| `credentials` | `object` | Yes | — |
+| `end_user` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  type: auth | sync,
+  log_id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="credentials full type">
+
+```ts
+{
+  type?: string,
+  access_token?: string,
+  refresh_token?: string,
+  apiKey?: string,
+  username?: string,
+  password?: string,
+  token?: string,
+  expires_at?: string,
+  raw?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="end_user full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  display_name?: string | null,
+  tags?: Record<string, any> | null,
+  organization?: {
+    id: string,
+    display_name?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+### import
+
+`connections.import`
+
+Import or update a connection with existing credentials
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.connections.import({
+	provider_config_key: 'example',
+	credentials: { type: 'API_KEY', apiKey: 'placeholder' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider_config_key` | `string` | Yes | — |
+| `credentials` | `object` | Yes | — |
+| `connection_id` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `connection_config` | `Record<string, any>` | No | — |
+| `webhook_url_override` | `string` | No | — |
+| `tags` | `Record<string, string>` | No | — |
+| `end_user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="credentials full type">
+
+```ts
+{
+  type: OAUTH1,
+  oauth_token: string,
+  oauth_token_secret: string
+} | {
+  type: OAUTH2,
+  access_token: string,
+  config_override?: {
+    client_id?: string,
+    client_secret?: string
+  },
+  expires_at?: string,
+  refresh_token?: string
+} | {
+  type: BASIC,
+  username: string,
+  password: string
+} | {
+  type: API_KEY,
+  apiKey: string
+} | {
+  type: OAUTH2_CC,
+  client_id: string,
+  client_secret: string,
+  client_certificate?: string,
+  client_private_key?: string,
+  token: string,
+  expires_at?: string
+} | {
+  type: NONE
+} | {
+  type: TBA,
+  token_id: string,
+  token_secret: string,
+  config_override?: {
+    client_id?: string,
+    client_secret?: string
+  }
+} | {
+  type: APP,
+  app_id: string,
+  installation_id: string,
+  private_key?: string,
+  webhook_secret?: string
+} | {
+  type: CUSTOM,
+  app_id: string,
+  installation_id: string
+}
+```
+</Accordion>
+
+<Accordion title="end_user full type">
+
+```ts
+{
+  id: string,
+  email?: string,
+  display_name?: string,
+  tags?: Record<string, string>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `connection_id` | `string` | Yes | — |
+| `provider_config_key` | `string` | Yes | — |
+| `provider` | `string` | Yes | — |
+| `errors` | `object[]` | Yes | — |
+| `metadata` | `Record<string, any> \| null` | Yes | — |
+| `connection_config` | `Record<string, any>` | Yes | — |
+| `tags` | `Record<string, string>` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `last_fetched_at` | `string \| null` | Yes | — |
+| `webhook_url_override` | `string \| null` | No | — |
+| `credentials` | `object` | Yes | — |
+| `end_user` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  type: auth | sync,
+  log_id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="credentials full type">
+
+```ts
+{
+  type?: string,
+  access_token?: string,
+  refresh_token?: string,
+  apiKey?: string,
+  username?: string,
+  password?: string,
+  token?: string,
+  expires_at?: string,
+  raw?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="end_user full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  display_name?: string | null,
+  tags?: Record<string, any> | null,
+  organization?: {
+    id: string,
+    display_name?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`connections.list`
+
+List connections
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.connections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | No | — |
+| `integrationId` | `string` | No | — |
+| `search` | `string` | No | — |
+| `endUserId` | `string` | No | — |
+| `endUserOrganizationId` | `string` | No | — |
+| `tags` | `Record<string, string>` | No | — |
+| `limit` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connections` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="connections full type">
+
+```ts
+{
+  id: number,
+  connection_id: string,
+  provider: string,
+  provider_config_key: string,
+  created: string,
+  metadata: Record<string, any> | null,
+  tags: Record<string, string>,
+  errors: {
+    type: auth | sync,
+    log_id: string
+  }[],
+  end_user?: {
+    id: string,
+    email?: string | null,
+    display_name?: string | null,
+    tags?: Record<string, any> | null,
+    organization?: {
+      id: string,
+      display_name?: string | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`connections.patch`
+
+Edit a connection
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.connections.patch({
+	connectionId: 'example',
+	provider_config_key: 'example',
+	body: { webhook_url_override: '' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | Yes | — |
+| `provider_config_key` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  tags?: Record<string, string>,
+  webhook_url_override?: string,
+  end_user?: {
+    id: string,
+    email?: string,
+    display_name?: string,
+    tags?: Record<string, string>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### setMetadata
+
+`connections.setMetadata`
+
+Replace connection metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.connections.setMetadata({
+	connection_id: 'example',
+	provider_config_key: 'example',
+	metadata: { label: 'value' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string \| string[]` | Yes | — |
+| `provider_config_key` | `string` | Yes | — |
+| `metadata` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string \| string[]` | No | — |
+| `provider_config_key` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### updateMetadata
+
+`connections.updateMetadata`
+
+Update connection metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.connections.updateMetadata({
+	connection_id: 'example',
+	provider_config_key: 'example',
+	metadata: { label: 'value' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string \| string[]` | Yes | — |
+| `provider_config_key` | `string` | Yes | — |
+| `metadata` | `Record<string, any>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connection_id` | `string \| string[]` | No | — |
+| `provider_config_key` | `string` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+
+
+
+---
+
+## Sessions
+
+### create
+
+`sessions.create`
+
+Create a connect session
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.sessions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `Record<string, string>` | No | — |
+| `end_user` | `object` | No | — |
+| `organization` | `object` | No | — |
+| `integrations_config_defaults` | `object` | No | — |
+| `overrides` | `object` | No | — |
+| `webhook_url_override` | `string` | No | — |
+| `allowed_integrations` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+  id: string,
+  email?: string,
+  display_name?: string,
+  tags?: Record<string, string>
+}
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string,
+  display_name?: string
+}
+```
+</Accordion>
+
+<Accordion title="integrations_config_defaults full type">
+
+```ts
+Record<string, {
+  user_scopes?: string,
+  authorization_params?: Record<string, string>,
+  connection_config?: {
+    oauth_scopes_override?: string,
+    oauth_client_id_override?: string,
+    oauth_client_secret_override?: string
+  }
+}>
+```
+</Accordion>
+
+<Accordion title="overrides full type">
+
+```ts
+Record<string, {
+  docs_connect?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token: string,
+  expires_at: string,
+  connect_link?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sessions.delete`
+
+Delete a connect session using its token
+
+**Risk:** `destructive`
+
+```ts
+await corsair.nango.api.sessions.delete({ session_token: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_token` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`sessions.get`
+
+Get a connect session using its token
+
+**Risk:** `read`
+
+```ts
+await corsair.nango.api.sessions.get({ session_token: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_token` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  endUser: {
+    id: string,
+    email: string | null,
+    display_name: string | null,
+    tags: Record<string, any> | null,
+    organization: {
+      id: string,
+      display_name: string | null
+    } | null
+  } | null,
+  connectUISettings: {
+    showWatermark: boolean,
+    defaultTheme: string
+  },
+  allowed_integrations?: string[],
+  integrations_config_defaults?: Record<string, Record<string, any>>,
+  overrides?: Record<string, {
+    docs_connect?: string
+  }>,
+  isReconnecting?: boolean,
+  websocketsPath?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reconnect
+
+`sessions.reconnect`
+
+Create a reconnect session
+
+**Risk:** `write`
+
+```ts
+await corsair.nango.api.sessions.reconnect({ connection_id: 'example', integration_id: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `Record<string, string>` | No | — |
+| `end_user` | `object` | No | — |
+| `organization` | `object` | No | — |
+| `integrations_config_defaults` | `object` | No | — |
+| `overrides` | `object` | No | — |
+| `webhook_url_override` | `string` | No | — |
+| `connection_id` | `string` | Yes | — |
+| `integration_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+  id: string,
+  email?: string,
+  display_name?: string,
+  tags?: Record<string, string>
+}
+```
+</Accordion>
+
+<Accordion title="organization full type">
+
+```ts
+{
+  id: string,
+  display_name?: string
+}
+```
+</Accordion>
+
+<Accordion title="integrations_config_defaults full type">
+
+```ts
+Record<string, {
+  user_scopes?: string,
+  authorization_params?: Record<string, string>,
+  connection_config?: {
+    oauth_scopes_override?: string,
+    oauth_client_id_override?: string,
+    oauth_client_secret_override?: string
+  }
+}>
+```
+</Accordion>
+
+<Accordion title="overrides full type">
+
+```ts
+Record<string, {
+  docs_connect?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  token: string,
+  expires_at: string,
+  connect_link?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---

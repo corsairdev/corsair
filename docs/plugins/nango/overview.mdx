@@ -1,0 +1,135 @@
+---
+title: "Nango plugin"
+sidebarTitle: "Overview"
+description: "Manage Nango connections and Connect sessions."
+---
+
+Use **Nango** through Corsair: one client, typed API calls.
+
+The [Nango HTTP API](https://nango.dev/docs/llms.txt) uses an environment API key as a bearer token. The key must have the appropriate connection and Connect session scopes. This plugin covers 11 connection and session operations; Nango's other HTTP API families are not included.
+
+`sessions.get` and `sessions.delete` require a short-lived `session_token`, not the environment key. Nango's server implementation and tests show that session retrieval returns the session settings rather than the token shape described in its generated OpenAPI. Connection retrieval can return sensitive credentials; handle its result accordingly. List connections supports `page`, `limit`, and `tags`.
+
+No inbound webhook processing, webhook signing-key administration, or automatic retries are included. Environment, integration, function, sync, tool, proxy, and provider operations are deferred.
+
+**What you get:**
+
+- 11 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/nango better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/nango better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/nango better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/nango better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { nango } from '@corsair-dev/nango';
+
+export const corsair = createCorsair({
+	plugins: [
+		nango(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+nango()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'nango',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`connections.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.nango.api.connections.list({ page: 2, limit: 10 });
+```
+
+
+**`sessions.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.nango.api.sessions.create({
+	tags: { end_user_id: 'example' },
+});
+```
+
+
+See the full list on the [API](/plugins/nango/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/nango/api">
+    Every `nango.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
