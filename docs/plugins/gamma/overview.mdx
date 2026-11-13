@@ -11,11 +11,11 @@ Create an API key in Gamma under Account settings, API keys. It is sent in the `
 Things to know before you call:
 
 - **Two generation routes, and they are not interchangeable.** `agent.generate` runs Gamma 5 from a single brief and is the one to use for a new presentation, document or social post. `generations.create` is the Classic path: it is the only one that takes a `pages` array for a multi-page gamma or site, and the only one that publishes with `publish: true`. A Classic body carries either `inputText` or `pages`, never both, and the plugin refuses a body with neither.
-- **A generation is asynchronous.** Both creates return a `generationId` at once, and a poll answers `pending` until it is `completed` (which carries `gammaId` and `gammaUrl`) or `failed` (which carries an `error`). Spends credits.
+- **A generation is asynchronous.** Both creates return a `generationId` at once, and a poll answers `pending` until it is `completed` or `failed` (which carries an `error`). A completed Classic generation carries `gammaId` and `gammaUrl` at the top level; an agent generation nests them under `gamma`, next to the agent's `result.summary`. Spends credits.
 - **`exportUrl` is a credential.** The download link works for anyone holding it, for about a week, and Gamma's own docs say to treat it as a secret. The plugin never logs it; `generations.get` and `exports.get` report only whether one arrived.
 - **`png` exports are archives.** A PNG export is a zip of one image per card, not a single file, and `pptx` and `pdf` match their own formats.
 - **Archiving is not deleting.** `gammas.archive` is idempotent and reversible from the Gamma app, so it is a write rather than a destructive call. `gammas.delete` is permanent and needs a workspace admin role.
-- **A 403 has three meanings.** A web app URL slug sent where a file ID belongs, a workspace below Pro on the analytics routes, or a key owner without the permission. The `code` says which; `individual_analytics_required` is the analytics case.
+- **A 403 has several meanings.** A web app URL slug sent where a file ID belongs, a workspace below Pro on the analytics routes, a key owner without the permission, or, on the agent routes, a workspace out of credits (`code: insufficient_credits`, which the plugin reports as `isQuotaError`; Classic routes answer `402` for that). The `code` says which; `individual_analytics_required` is the analytics case.
 - **A 429 can be a job cap, not a rate.** Gamma adds `code: workspace_concurrency_limit_exceeded` when a Free workspace already has too many pending jobs started with an API key, and sends `Retry-After`. The plugin retries both, honouring the header.
 - **Credits are reported per generation.** A completed `generations.get` carries `credits.deducted` and `credits.remaining`, which is how you see what a run cost.
 - **No webhooks.** Gamma does not push; poll the generation until it is `completed` or `failed`.
@@ -78,7 +78,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-This plugin saves no credentials of its own. A call made without a stored key for the tenant throws `AuthMissingError`, which may carry a `connectUrl` to the page that collects one.
+Store the Gamma API key before the first call: `pnpm corsair setup --plugin=gamma --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 gamma()

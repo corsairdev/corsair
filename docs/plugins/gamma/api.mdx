@@ -28,7 +28,7 @@ await corsair.gamma.api.agent.generate({ prompt: 'A deck about solar power for a
 |------|------|----------|-------------|
 | `prompt` | `string` | Yes | The brief: what to generate. The only required field. |
 | `title` | `string` | No | — |
-| `format` | `presentation \| document \| social \| webpage` | No | Defaults to `presentation`. |
+| `format` | `presentation \| document \| social` | No | Defaults to `presentation`. A webpage needs `generations.create`. |
 | `numCards` | `number` | No | Target cards, capped by the plan’s maximum. |
 | `themeId` | `string` | No | — |
 | `templateId` | `string` | No | An accessible workspace template. |
@@ -64,9 +64,21 @@ The Gamma 5 route for a new presentation, document or social post. `prompt` is t
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `generationId` | `string \| null` | No | — |
-| `agentId` | `string \| null` | No | — |
+| `generationId` | `string` | Yes | — |
 | `status` | `string \| null` | No | — |
+| `warnings` | `object[] \| null` | No | Options Gamma ignored or could not apply. Keep them: the status read does not always repeat them. |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+{
+  code: string,
+  message?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -98,21 +110,65 @@ await corsair.gamma.api.agent.get({ generationId: 'gen_agent1' });
 |------|------|----------|-------------|
 | `generationId` | `string` | Yes | — |
 | `status` | `string` | Yes | `pending` is not final; `completed` and `failed` are. |
-| `gammaId` | `string \| null` | No | Set once the generation completes. |
-| `gammaUrl` | `string \| null` | No | — |
+| `gamma` | `object \| null` | No | The generated gamma. Can appear while pending, once the document exists. |
+| `result` | `object \| null` | No | The agent’s summary of what it made, once completed. |
+| `progress` | `object \| null` | No | — |
 | `error` | `object \| null` | No | — |
 | `exportUrl` | `string \| null` | No | A download link for the export, valid for about a week. Anyone holding it can download the file, so treat it as a secret and do not log it. |
+| `warnings` | `object[] \| null` | No | — |
 | `credits` | `object \| null` | No | — |
-| `pages` | `object[] \| null` | No | Per-page results, only for a multi-page generation. |
+| `updatedTime` | `string \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="gamma full type">
+
+```ts
+{
+  gammaId: string,
+  gammaUrl?: string | null,
+  title?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+  summary?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="progress full type">
+
+```ts
+{
+  done?: number | null,
+  total?: number | null,
+  percent?: number | null
+} | null
+```
+</Accordion>
+
 <Accordion title="error full type">
 
 ```ts
 {
   message?: string | null,
-  statusCode?: number | null
+  statusCode?: number | null,
+  reason?: string | null
 } | null
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  code: string,
+  message?: string | null
+}[] | null
 ```
 </Accordion>
 
@@ -123,18 +179,6 @@ await corsair.gamma.api.agent.get({ generationId: 'gen_agent1' });
   deducted?: number | null,
   remaining?: number | null
 } | null
-```
-</Accordion>
-
-<Accordion title="pages full type">
-
-```ts
-{
-  status?: string | null,
-  gammaId?: string | null,
-  gammaUrl?: string | null,
-  error?: Record<string, any> | null
-}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -172,6 +216,8 @@ await corsair.gamma.api.exports.get({ exportId: 'exp_1' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `exportId` | `string \| null` | No | — |
+| `gammaId` | `string \| null` | No | — |
+| `exportAs` | `string \| null` | No | — |
 | `status` | `string` | Yes | `pending` is not final; `completed` and `failed` are. |
 | `exportUrl` | `string \| null` | No | A download link valid about a week. Anyone holding it can download the file, so treat it as a secret and do not log it. |
 | `error` | `object \| null` | No | — |
@@ -209,7 +255,7 @@ await corsair.gamma.api.exports.start({ gammaId: 'gam_xyz789', format: 'pptx' })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `gammaId` | `string` | Yes | The Gamma file ID, or the doc ID from a `gamma.app/docs/...` URL. |
-| `format` | `pdf \| pptx \| png` | No | Defaults to Gamma’s own. A `png` export is a zip of one image per card. |
+| `format` | `pdf \| pptx \| png` | Yes | Sent as Gamma’s `exportAs`, which is required. A `png` export is a zip of one image per card. |
 
 
 
@@ -230,7 +276,7 @@ await corsair.gamma.api.exports.start({ gammaId: 'gam_xyz789', format: 'pptx' })
 
 `folders.list`
 
-The folders the caller can write a gamma into
+The folders the caller can see. Some are view-only, and placing a gamma with `folderId` needs edit access
 
 **Risk:** `read`
 
@@ -262,8 +308,7 @@ await corsair.gamma.api.folders.list({});
 ```ts
 {
   id: string,
-  name?: string | null,
-  parentId?: string | null
+  name?: string | null
 }[]
 ```
 </Accordion>
@@ -334,7 +379,8 @@ Permanent, and needs a workspace admin role.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean \| null` | No | — |
+| `status` | `string \| null` | No | `deleted` once Gamma removed it. |
+| `gammaId` | `string \| null` | No | — |
 | `message` | `string \| null` | No | — |
 
 
@@ -345,7 +391,7 @@ Permanent, and needs a workspace admin role.
 
 `gammas.get`
 
-One gamma’s title, author, folder, archive state and thumbnail
+One gamma’s title, author, folder, theme, archive state and thumbnail
 
 **Risk:** `read`
 
@@ -374,6 +420,7 @@ await corsair.gamma.api.gammas.get({ gammaId: 'gam_xyz789' });
 | `author` | `object \| null` | No | — |
 | `createdTime` | `string \| null` | No | — |
 | `updatedTime` | `string \| null` | No | — |
+| `themeId` | `string \| null` | No | — |
 | `archived` | `boolean \| null` | No | — |
 | `folderId` | `string \| null` | No | — |
 
@@ -382,9 +429,8 @@ await corsair.gamma.api.gammas.get({ gammaId: 'gam_xyz789' });
 
 ```ts
 {
-  id?: string | null,
   name?: string | null,
-  email?: string | null
+  avatarUrl?: string | null
 } | null
 ```
 </Accordion>
@@ -398,7 +444,7 @@ await corsair.gamma.api.gammas.get({ gammaId: 'gam_xyz789' });
 
 `gammas.search`
 
-Full-text search over the gammas the caller can read
+Full-text search over the gammas the caller can read. Needs `q` or a filter (`createdBy`, `updatedAfter`, `updatedBefore`)
 
 **Risk:** `read`
 
@@ -410,8 +456,8 @@ await corsair.gamma.api.gammas.search({ q: 'quarterly review', limit: 10, includ
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `q` | `string` | No | Full-text query over titles and body text. |
-| `createdBy` | `string` | No | Only gammas this user created. |
+| `q` | `string` | No | Full-text query over titles and body text. Optional only when `createdBy`, `updatedAfter` or `updatedBefore` is set. |
+| `createdBy` | `string` | No | Only gammas this user created: `me`, an email address or a user ID. |
 | `updatedAfter` | `string` | No | ISO 8601. |
 | `updatedBefore` | `string` | No | ISO 8601. |
 | `includeArchived` | `boolean` | No | — |
@@ -432,9 +478,9 @@ await corsair.gamma.api.gammas.search({ q: 'quarterly review', limit: 10, includ
 {
   id: string,
   title?: string | null,
-  type?: string | null,
   url?: string | null,
-  thumbnailUrl?: string | null,
+  highlight?: string | null,
+  createdBy?: string | null,
   updatedTime?: string | null,
   archived?: boolean | null
 }[]
@@ -681,7 +727,11 @@ Poll until `status` is `completed` or `failed`. The `exportUrl` it may carry is 
   status?: string | null,
   gammaId?: string | null,
   gammaUrl?: string | null,
-  error?: Record<string, any> | null
+  error?: {
+    message?: string | null,
+    statusCode?: number | null
+  } | null,
+  exportUrl?: string | null
 }[] | null
 ```
 </Accordion>
@@ -702,7 +752,7 @@ Workspace and official themes, with the ID a generation takes
 **Risk:** `read`
 
 ```ts
-await corsair.gamma.api.themes.list({ type: 'custom', limit: 10 });
+await corsair.gamma.api.themes.list({ type: 'standard', limit: 10 });
 ```
 
 **Input**
@@ -712,7 +762,7 @@ await corsair.gamma.api.themes.list({ type: 'custom', limit: 10 });
 | `query` | `string` | No | Filter by name. |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | The `nextCursor` of the page before. |
-| `type` | `custom \| official \| all` | No | Only this kind of theme. |
+| `type` | `standard \| custom` | No | `standard` for Gamma’s own themes, `custom` for the workspace’s. |
 
 
 
