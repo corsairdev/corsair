@@ -1,0 +1,1753 @@
+{
+  "id": "googleslides",
+  "displayName": "Google Slides",
+  "description": "Presentation editor for building and sharing slide decks, with slides, text, shapes, images, tables and speaker notes.",
+  "npmPackageName": "@corsair-dev/googleslides",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 31,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googleslides.api.batch.update",
+      "shortPath": "batch.update",
+      "description": "Apply raw Slides batchUpdate requests atomically, for operations without a typed endpoint. Deletions are refused; use the typed operation.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "requests",
+            "optional": false,
+            "type": "{ insertText?: {} }[]",
+            "description": "Raw Slides batchUpdate requests, applied atomically. Use the typed groups where they exist."
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string }",
+            "description": "Fails the batch when the presentation moved past this revision"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replies",
+            "optional": false,
+            "type": "Record<string, {}>[]"
+          },
+          {
+            "key": "writeControl",
+            "optional": true,
+            "type": "{ requiredRevisionId?: string | null } | null"
+          },
+          {
+            "key": "commentUpdateState",
+            "optional": true,
+            "type": "string | null",
+            "description": "Whether comment requests in the batch were saved: NO_UPDATES_REQUESTED, ALL_SAVED or ALL_FAILED_UNKNOWN_REASON"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.elements.createImage",
+      "shortPath": "elements.createImage",
+      "description": "Add an image to a slide from a public URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Publicly readable image URL, under 50 MB and 25 megapixels. PNG, JPEG or GIF only."
+          },
+          {
+            "key": "elementProperties",
+            "optional": false,
+            "type": "{ pageObjectId: string, size?: { width?: { magnitude?: number, unit?: EMU | PT }, height?: { magnitude?: number, unit?: EMU | PT } }, transform?: { scaleX?: number, scaleY?: number, shearX?: number, shearY?: number, translateX?: number, translateY?: number, unit?: UNIT_UNSPECIFIED | EMU | PT } }"
+          },
+          {
+            "key": "objectId",
+            "optional": true,
+            "type": "string",
+            "description": "5 to 50 characters, starting alphanumeric or underscore"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.elements.createShape",
+      "shortPath": "elements.createShape",
+      "description": "Add a shape or text box to a slide",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shapeType",
+            "optional": false,
+            "type": "TEXT_BOX | RECTANGLE | ROUND_RECTANGLE | ELLIPSE | TRIANGLE | DIAMOND | STAR_5 | CLOUD | CHEVRON | ARROW_EAST",
+            "description": "A subset of the full shape list; any ECMA-376 shape works via batch.update"
+          },
+          {
+            "key": "elementProperties",
+            "optional": false,
+            "type": "{ pageObjectId: string, size?: { width?: { magnitude?: number, unit?: EMU | PT }, height?: { magnitude?: number, unit?: EMU | PT } }, transform?: { scaleX?: number, scaleY?: number, shearX?: number, shearY?: number, translateX?: number, translateY?: number, unit?: UNIT_UNSPECIFIED | EMU | PT } }"
+          },
+          {
+            "key": "objectId",
+            "optional": true,
+            "type": "string",
+            "description": "5 to 50 characters, starting alphanumeric or underscore"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.elements.createTable",
+      "shortPath": "elements.createTable",
+      "description": "Add an empty table to a slide",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "rows",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "columns",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "elementProperties",
+            "optional": false,
+            "type": "{ pageObjectId: string, size?: { width?: { magnitude?: number, unit?: EMU | PT }, height?: { magnitude?: number, unit?: EMU | PT } }, transform?: { scaleX?: number, scaleY?: number, shearX?: number, shearY?: number, translateX?: number, translateY?: number, unit?: UNIT_UNSPECIFIED | EMU | PT } }"
+          },
+          {
+            "key": "objectId",
+            "optional": true,
+            "type": "string",
+            "description": "5 to 50 characters, starting alphanumeric or underscore"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.elements.group",
+      "shortPath": "elements.group",
+      "description": "Group page elements into one object",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "At least two ungrouped elements on the same slide"
+          },
+          {
+            "key": "groupObjectId",
+            "optional": true,
+            "type": "string",
+            "description": "5 to 50 characters, starting alphanumeric or underscore"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "groupObjectId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.elements.setAltText",
+      "shortPath": "elements.setAltText",
+      "description": "Set the alt text on a page element",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string",
+            "description": "Page element, not a slide"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Short alt text read by screen readers"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.elements.ungroup",
+      "shortPath": "elements.ungroup",
+      "description": "Ungroup previously grouped page elements",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Group ids, at most one level deep"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.elements.updateTransform",
+      "shortPath": "elements.updateTransform",
+      "description": "Move, scale or rotate a page element",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "transform",
+            "optional": false,
+            "type": "{ scaleX?: number, scaleY?: number, shearX?: number, shearY?: number, translateX?: number, translateY?: number, unit?: UNIT_UNSPECIFIED | EMU | PT }"
+          },
+          {
+            "key": "applyMode",
+            "optional": true,
+            "type": "RELATIVE | ABSOLUTE",
+            "description": "RELATIVE (default) multiplies into the current transform, ABSOLUTE replaces it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.elements.zOrder",
+      "shortPath": "elements.zOrder",
+      "description": "Change which elements sit in front of others",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Elements on one slide, not grouped"
+          },
+          {
+            "key": "operation",
+            "optional": false,
+            "type": "BRING_TO_FRONT | BRING_FORWARD | SEND_BACKWARD | SEND_TO_BACK"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyCount",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.presentations.copy",
+      "shortPath": "presentations.copy",
+      "description": "Copy a presentation to a new file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name for the copy"
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]",
+            "description": "Folders to place the copy in"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "revisionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideCount",
+            "optional": true,
+            "type": "number",
+            "description": "Absent when the copy could not be read back"
+          },
+          {
+            "key": "layoutCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "masterCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pageWidthEmu",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pageHeightEmu",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "{}[] | null",
+            "description": "Comment threads, when comment viewing was requested"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.presentations.create",
+      "shortPath": "presentations.create",
+      "description": "Create a blank presentation",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "Presentation title"
+          },
+          {
+            "key": "presentationId",
+            "optional": true,
+            "type": "string",
+            "description": "Optional caller-chosen id. A random one is generated when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "revisionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "layoutCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "masterCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageWidthEmu",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pageHeightEmu",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "{}[] | null",
+            "description": "Comment threads, when comment viewing was requested"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.presentations.delete",
+      "shortPath": "presentations.delete",
+      "description": "Permanently delete a presentation from Drive, without using the trash; refuses any file that is not a presentation [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string",
+            "description": "Drive files.delete removes the file permanently; it does not move it to the trash"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.presentations.exportPdf",
+      "shortPath": "presentations.exportPdf",
+      "description": "Export a presentation to PDF or PPTX as base64",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "pdf | pptx",
+            "description": "pdf by default; pptx needs the same Drive export scope"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": false,
+            "type": "pdf | pptx"
+          },
+          {
+            "key": "mimeType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded file"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.presentations.get",
+      "shortPath": "presentations.get",
+      "description": "Read a presentation with slide and layout counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "commentsViewMode",
+            "optional": true,
+            "type": "COMMENTS_VIEW_MODE_UNSPECIFIED | COMMENTS_VIEW_MODE_DEFAULT_FOR_CURRENT_ACCESS | COMMENTS_VIEW_MODE_OMITTED | COMMENTS_VIEW_MODE_INCLUDED",
+            "description": "INCLUDED needs comment access; otherwise the call answers 403"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "revisionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "layoutCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "masterCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "pageWidthEmu",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pageHeightEmu",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "{}[] | null",
+            "description": "Comment threads, when comment viewing was requested"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.presentations.list",
+      "shortPath": "presentations.list",
+      "description": "List presentations in Drive, filtered and paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Drive query appended with `and mimeType = application/vnd.google-apps.presentation`"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Drive caps this at 1000; the API default is 100"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous page"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string",
+            "description": "Drive sort, e.g. modifiedTime desc or name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": false,
+            "type": "{ presentationId: string, name?: string | null, mimeType?: string | null, createdTime?: string | null, modifiedTime?: string | null, webViewLink?: string | null, owners?: { displayName?: string | null, emailAddress?: string | null }[] | null }[]"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.slides.create",
+      "shortPath": "slides.create",
+      "description": "Add a slide from a predefined or named layout",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "insertionIndex",
+            "optional": true,
+            "type": "number",
+            "description": "0-based position; omitted appends to the end"
+          },
+          {
+            "key": "layout",
+            "optional": true,
+            "type": "BLANK | CAPTION_ONLY | TITLE | TITLE_AND_BODY | TITLE_AND_TWO_COLUMNS | TITLE_ONLY | SECTION_HEADER | SECTION_TITLE_AND_DESCRIPTION | ONE_COLUMN_TEXT | MAIN_POINT | BIG_NUMBER",
+            "description": "Predefined layout; BLANK when omitted"
+          },
+          {
+            "key": "layoutId",
+            "optional": true,
+            "type": "string",
+            "description": "Layout object id from the presentation, when it is not predefined"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": true,
+            "type": "string",
+            "description": "Optional caller-chosen id for the new slide"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "insertionIndex",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "layoutObjectId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.slides.duplicate",
+      "shortPath": "slides.duplicate",
+      "description": "Duplicate a slide",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectIds",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Optional map of source object id to the id its copy receives"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.slides.get",
+      "shortPath": "slides.get",
+      "description": "Read one slide with its page elements",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pageElements",
+            "optional": true,
+            "type": "{ objectId?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.slides.getNotes",
+      "shortPath": "slides.getNotes",
+      "description": "Read the speaker notes on a slide",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notesObjectId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.slides.getThumbnail",
+      "shortPath": "slides.getThumbnail",
+      "description": "Get a signed thumbnail URL for a slide, valid 30 minutes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "SMALL | MEDIUM | LARGE | WIDTH2000_PX",
+            "description": "SMALL 200px, MEDIUM 800px, LARGE 1600px, WIDTH2000_PX 2000px"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "expiresInMinutes",
+            "optional": false,
+            "type": "number",
+            "description": "contentUrl stops working after 30 minutes"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.slides.list",
+      "shortPath": "slides.list",
+      "description": "List the slides in a presentation, in order",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slides",
+            "optional": false,
+            "type": "{ objectId: string, index: number, layoutObjectId?: string | null, isSkipped?: boolean | null, elementCount: number, notesObjectId?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.slides.move",
+      "shortPath": "slides.move",
+      "description": "Move slides to a new position",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Slides in their current order"
+          },
+          {
+            "key": "insertionIndex",
+            "optional": false,
+            "type": "number",
+            "description": "Position measured before the move takes place"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectIds",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "insertionIndex",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.slides.remove",
+      "shortPath": "slides.remove",
+      "description": "Delete a slide from a presentation [DESTRUCTIVE · IRREVERSIBLE]",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "removed",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.slides.setNotes",
+      "shortPath": "slides.setNotes",
+      "description": "Replace the speaker notes on a slide",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": false,
+            "type": "string",
+            "description": "Replaces the existing speaker notes. An empty string clears them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notes",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "notesObjectId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.slides.setSkipped",
+      "shortPath": "slides.setSkipped",
+      "description": "Mark a slide skipped or unskipped in presentation mode",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isSkipped",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slideObjectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "isSkipped",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.text.createBullets",
+      "shortPath": "text.createBullets",
+      "description": "Turn paragraphs into a bulleted or numbered list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "textRange",
+            "optional": false,
+            "type": "{ type: FIXED_RANGE | FROM_START_INDEX | ALL, startIndex?: number, endIndex?: number }"
+          },
+          {
+            "key": "bulletPreset",
+            "optional": true,
+            "type": "BULLET_DISC_CIRCLE_SQUARE | BULLET_DIAMONDX_ARROW3D_SQUARE | BULLET_CHECKBOX | BULLET_ARROW_DIAMOND_DISC | BULLET_STAR_CIRCLE_SQUARE | BULLET_ARROW3D_CIRCLE_SQUARE | BULLET_LEFTTRIANGLE_DIAMOND_DISC | BULLET_DIAMONDX_HOLLOWDIAMOND_SQUARE | BULLET_DIAMOND_CIRCLE_SQUARE | NUMBERED_DIGIT_ALPHA_ROMAN | NUMBERED_DIGIT_ALPHA_ROMAN_PARENS | NUMBERED_DIGIT_NESTED | NUMBERED_UPPERALPHA_ALPHA_ROMAN | NUMBERED_UPPERROMAN_UPPERALPHA_DIGIT | NUMBERED_ZERODIGIT_ALPHA_ROMAN",
+            "description": "Defaults to BULLET_DISC_CIRCLE_SQUARE"
+          },
+          {
+            "key": "cellLocation",
+            "optional": true,
+            "type": "{ rowIndex: number, columnIndex: number }",
+            "description": "0-based cell position; required when the target is a table"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurrencesChanged",
+            "optional": true,
+            "type": "number | null",
+            "description": "Set by replace operations, absent otherwise"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.text.delete",
+      "shortPath": "text.delete",
+      "description": "Delete a range of text from a shape or table cell",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "textRange",
+            "optional": false,
+            "type": "{ type: FIXED_RANGE | FROM_START_INDEX | ALL, startIndex?: number, endIndex?: number }"
+          },
+          {
+            "key": "cellLocation",
+            "optional": true,
+            "type": "{ rowIndex: number, columnIndex: number }",
+            "description": "0-based cell position; required when the target is a table"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurrencesChanged",
+            "optional": true,
+            "type": "number | null",
+            "description": "Set by replace operations, absent otherwise"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.text.insert",
+      "shortPath": "text.insert",
+      "description": "Insert text into a shape or table cell",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string",
+            "description": "Shape or table that receives the text"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "insertionIndex",
+            "optional": true,
+            "type": "number",
+            "description": "Unicode code-unit offset into the existing text. Omitted means 0, the start of the text"
+          },
+          {
+            "key": "cellLocation",
+            "optional": true,
+            "type": "{ rowIndex: number, columnIndex: number }",
+            "description": "0-based cell position; required when the target is a table"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurrencesChanged",
+            "optional": true,
+            "type": "number | null",
+            "description": "Set by replace operations, absent otherwise"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.text.removeBullets",
+      "shortPath": "text.removeBullets",
+      "description": "Remove list formatting from paragraphs",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "textRange",
+            "optional": false,
+            "type": "{ type: FIXED_RANGE | FROM_START_INDEX | ALL, startIndex?: number, endIndex?: number }"
+          },
+          {
+            "key": "cellLocation",
+            "optional": true,
+            "type": "{ rowIndex: number, columnIndex: number }",
+            "description": "0-based cell position; required when the target is a table"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurrencesChanged",
+            "optional": true,
+            "type": "number | null",
+            "description": "Set by replace operations, absent otherwise"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.text.replaceAll",
+      "shortPath": "text.replaceAll",
+      "description": "Find and replace text across slides, by string or regex",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "find",
+            "optional": false,
+            "type": "string",
+            "description": "Text to find, or a pattern with searchByRegex"
+          },
+          {
+            "key": "replace",
+            "optional": false,
+            "type": "string",
+            "description": "Replacement text; empty string deletes matches"
+          },
+          {
+            "key": "matchCase",
+            "optional": true,
+            "type": "boolean",
+            "description": "Case sensitive search when true"
+          },
+          {
+            "key": "searchByRegex",
+            "optional": true,
+            "type": "boolean",
+            "description": "Treat find as a regular expression; backslashes must be escaped"
+          },
+          {
+            "key": "pageObjectIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Limits matches to these slides; omitted searches every slide"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurrencesChanged",
+            "optional": true,
+            "type": "number | null",
+            "description": "Set by replace operations, absent otherwise"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleslides.api.text.updateStyle",
+      "shortPath": "text.updateStyle",
+      "description": "Apply text styling such as bold, size or colour",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "objectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "textRange",
+            "optional": false,
+            "type": "{ type: FIXED_RANGE | FROM_START_INDEX | ALL, startIndex?: number, endIndex?: number }"
+          },
+          {
+            "key": "style",
+            "optional": false,
+            "type": "{ bold?: boolean, italic?: boolean, underline?: boolean, strikethrough?: boolean, smallCaps?: boolean, fontFamily?: string, fontSize?: { magnitude?: number, unit?: EMU | PT }, foregroundColor?: { opaqueColor?: { rgbColor?: { red?: number, green?: number, blue?: number }, themeColor?: THEME_COLOR_TYPE_UNSPECIFIED | DARK1 | LIGHT1 | DARK2 | LIGHT2 | ACCENT1 | ACCENT2 | ACCENT3 | ACCENT4 | ACCENT5 | ACCENT6 | HYPERLINK | FOLLOWED_HYPERLINK | TEXT1 | BACKGROUND1 | TEXT2 | BACKGROUND2 } }, backgroundColor?: { opaqueColor?: { rgbColor?: { red?: number, green?: number, blue?: number }, themeColor?: THEME_COLOR_TYPE_UNSPECIFIED | DARK1 | LIGHT1 | DARK2 | LIGHT2 | ACCENT1 | ACCENT2 | ACCENT3 | ACCENT4 | ACCENT5 | ACCENT6 | HYPERLINK | FOLLOWED_HYPERLINK | TEXT1 | BACKGROUND1 | TEXT2 | BACKGROUND2 } }, baselineOffset?: NONE | SUPERSCRIPT | SUBSCRIPT }",
+            "description": "Properties to set; name them in fields"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "(bold | italic | underline | strikethrough | smallCaps | fontFamily | fontSize | foregroundColor | backgroundColor | baselineOffset)[]",
+            "description": "Properties the write applies; others are left untouched"
+          },
+          {
+            "key": "cellLocation",
+            "optional": true,
+            "type": "{ rowIndex: number, columnIndex: number }",
+            "description": "0-based cell position; required when the target is a table"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "replyCount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "occurrencesChanged",
+            "optional": true,
+            "type": "number | null",
+            "description": "Set by replace operations, absent otherwise"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "googleslides.db.presentations.search",
+      "entityName": "presentations",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "presentationId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "revisionId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "slideCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "layoutCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "masterCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastSyncedAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        },
+        {
+          "field": "createdAt",
+          "type": "date",
+          "operators": ["equals", "before", "after", "between"]
+        }
+      ]
+    }
+  ]
+}

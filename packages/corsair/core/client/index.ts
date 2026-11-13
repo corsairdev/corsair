@@ -547,10 +547,16 @@ export function buildCorsairClient<
 		const endpoints = plugin.endpoints ?? {};
 		const hooks = plugin.hooks;
 
-		// Combine plugin and root error handlers, plugin handlers first for priority
+		// Combine plugin and root error handlers, plugin handlers first for
+		// priority. Spreading root first would put root-only keys ahead of the
+		// plugin's own, so a root handler would win over the plugin's match.
 		const allErrorHandlers = {
-			...rootErrorHandlers,
 			...plugin.errorHandlers,
+			...Object.fromEntries(
+				Object.entries(rootErrorHandlers ?? {}).filter(
+					([name]) => !(name in (plugin.errorHandlers ?? {})),
+				),
+			),
 		};
 
 		// Create bound endpoints under `api` (supports nested structures)

@@ -1,0 +1,140 @@
+---
+title: "Roam HQ plugin"
+sidebarTitle: "Overview"
+description: "Virtual office with Roam HQ - read the token's own identity, directory users, chats, groups and meetings, read a chat history and a meeting transcript, and post or edit a message and add a reaction."
+---
+
+Use **Roam HQ** through Corsair: one client, typed API calls.
+
+Create an API client in **Roam Administration → Developer** to get your credentials. Send the key as `Authorization: Bearer <key>`. Things to know before you call:
+
+- **The version header matters.** Every response is rendered against a dated API version, and the plugin pins `Roam-Version: 2026-08-25` on every request so a body's shape cannot change under it. Omitting the header would use the integration's default, which Roam moves between releases.
+- **Errors are labelled `text/plain`.** Roam's error envelope is JSON but the response's content type makes generic clients hand it over as a raw string. The plugin parses it, so `RoamAPIError.code` is the catalog code such as `invalid_token` — not a string containing the whole body.
+- **Branch on the code, not the status.** A 401 can be `not_authed`, `invalid_token` or `token_revoked`, and a 403 can be `missing_scope` or `approval_pending`. A revoked token is permanent: discard it rather than retrying. A `missing_scope` body names the scopes that would work in `needed`, any one of which is enough.
+- **`chat.post` content rules.** `text`, `items` and `asset_ids` combine; `blocks` and `poll` each stand alone. A body with no content, or `blocks`/`poll` mixed with anything else, is refused before the request.
+- **Pass `sync: true` to get the message `timestamp`.** Without it Roam posts in the background and the answer has only `chatId`, so there is nothing to hand to `chat.update`, `reactions.add` or a thread reply.
+- **A post needs one destination.** Exactly one of `chat_id`, `group_id` or `user_ids`: the last one opens a direct conversation.
+- **Scheduling a post returns a different shape.** Passing `send_at` returns `scheduledMessageId` instead of a `timestamp`. The time must be in the future, within 30 days and on a 15-minute UTC boundary, and cannot be combined with `sync`, `poll`, `thread_key` or `reply_timestamp`.
+- **`chat.history` needs one target.** Exactly one of `chat_id`, `group_id` or `user_ids` (the direct chat with those people); Roam refuses none or more than one.
+- **Messages are edited, not replaced.** `chat.update` takes the chat and the message `timestamp`, and needs `text` (with optional `items` or `asset_ids`) or `blocks`. A bot can edit only its own messages.
+- **Paging is a cursor.** `users.list`, `chat.list`, `chat.history`, `groups.list` and `meetings.list` answer Roam's `nextCursor`, which the plugin returns as `next_cursor` with `has_more`. Pass it back as `cursor` for the next page; `next_cursor: null` is the last page, and a call without a cursor starts at the first. `reactions.list` is not paged, and `users.list` with `ids` returns every match in one answer.
+
+**What you get:**
+
+- 12 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/roam better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/roam better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/roam better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/roam better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { roam } from '@corsair-dev/roam';
+
+export const corsair = createCorsair({
+	plugins: [
+		roam(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+roam()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'roam',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the last messages in a chat**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.roam.api.chat.history({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', limit: 50 });
+```
+
+
+**Post a message to a chat**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.roam.api.chat.post({ chat_id: '757dfe66-37b4-4772-baa5-8c86ec68c176', text: 'Standup in five', sync: true });
+```
+
+
+See the full list on the [API](/plugins/roam/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/roam/api">
+    Every `roam.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

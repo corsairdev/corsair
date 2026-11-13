@@ -1,0 +1,1652 @@
+---
+title: "Revolt (Stoat) API reference"
+sidebarTitle: "API"
+description: "API reference for the Revolt (Stoat) plugin in Corsair: every `revolt.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Channels
+
+### delete
+
+`channels.delete`
+
+Delete a server channel and its messages, leave a group, or close a direct message (its messages stay)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.revolt.api.channels.delete({ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### edit
+
+`channels.edit`
+
+Rename or redescribe a group or server channel
+
+**Risk:** `write`
+
+```ts
+await corsair.revolt.api.channels.edit({ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', name: 'announcements' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `icon` | `string` | No | An attachment id returned by the Autumn upload service. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  _id?: string | null,
+  channel_type?: string | null,
+  name?: string | null,
+  description?: string | null,
+  server?: string | null,
+  owner?: string | null,
+  recipients?: string[] | null,
+  active?: boolean | null,
+  last_message_id?: string | null,
+  permissions?: number | null,
+  default_permissions?: number | {
+    a?: number | null,
+    d?: number | null
+  } | null,
+  role_permissions?: Record<string, {
+    a?: number | null,
+    d?: number | null
+  }> | null,
+  nsfw?: boolean | null,
+  icon?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    content_type?: string | null,
+    size?: number | null,
+    deleted?: boolean | null,
+    reported?: boolean | null,
+    message_id?: string | null,
+    user_id?: string | null,
+    server_id?: string | null,
+    object_id?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`channels.get`
+
+Fetch one channel with its type, name and permissions
+
+**Risk:** `read`
+
+```ts
+await corsair.revolt.api.channels.get({ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | A channel id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="channel full type">
+
+```ts
+{
+  _id?: string | null,
+  channel_type?: string | null,
+  name?: string | null,
+  description?: string | null,
+  server?: string | null,
+  owner?: string | null,
+  recipients?: string[] | null,
+  active?: boolean | null,
+  last_message_id?: string | null,
+  permissions?: number | null,
+  default_permissions?: number | {
+    a?: number | null,
+    d?: number | null
+  } | null,
+  role_permissions?: Record<string, {
+    a?: number | null,
+    d?: number | null
+  }> | null,
+  nsfw?: boolean | null,
+  icon?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    content_type?: string | null,
+    size?: number | null,
+    deleted?: boolean | null,
+    reported?: boolean | null,
+    message_id?: string | null,
+    user_id?: string | null,
+    server_id?: string | null,
+    object_id?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### delete
+
+`messages.delete`
+
+Delete a message permanently
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.revolt.api.messages.delete({ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', message_id: '01F8Z2B3C4D5E6F7G8H9J0K1L2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | A message id, such as `01F8Z0T8Y4W4Z8X3K5M2N1P0Q9`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### edit
+
+`messages.edit`
+
+Edit a message the account posted, replacing its content
+
+**Risk:** `write`
+
+```ts
+await corsair.revolt.api.messages.edit({ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', message_id: '01F8Z2B3C4D5E6F7G8H9J0K1L2', content: 'Standup in ten' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | A message id, such as `01F8Z0T8Y4W4Z8X3K5M2N1P0Q9`. |
+| `content` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  _id?: string | null,
+  channel?: string | null,
+  author?: string | null,
+  content?: string | null,
+  nonce?: string | null,
+  edited?: string | null,
+  pinned?: boolean | null,
+  flags?: number | null,
+  attachments?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null,
+    content_type?: string | null,
+    size?: number | null
+  }[] | null,
+  mentions?: string[] | null,
+  role_mentions?: string[] | null,
+  replies?: string[] | null,
+  reactions?: Record<string, string[]> | null,
+  embeds?: {
+    type?: string | null,
+    url?: string | null,
+    original_url?: string | null,
+    special?: Record<string, string> | null,
+    title?: string | null,
+    description?: string | null,
+    site_name?: string | null,
+    icon_url?: string | null,
+    colour?: string | null,
+    image?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    video?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null
+  }[] | null,
+  user?: {
+    _id?: string | null,
+    username?: string | null,
+    discriminator?: string | null,
+    display_name?: string | null,
+    pronouns?: string | null,
+    online?: boolean | null,
+    badges?: number | null,
+    flags?: number | null,
+    privileged?: boolean | null,
+    avatar?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    bot?: {
+      _id?: string | null,
+      owner?: string | null,
+      public?: boolean | null,
+      analytics?: boolean | null,
+      discoverable?: boolean | null,
+      interactions_url?: string | null,
+      terms_of_service_url?: string | null,
+      privacy_policy_url?: string | null,
+      flags?: number | null
+    } | null,
+    relationship?: string | null,
+    status?: {
+      text?: string | null,
+      presence?: string | null
+    } | null
+  } | null,
+  member?: {
+    _id?: {
+      server?: string | null,
+      user?: string | null
+    } | null,
+    nickname?: string | null,
+    joined_at?: string | null,
+    roles?: string[] | null,
+    avatar?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    timeout?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`messages.get`
+
+Fetch one message by id
+
+**Risk:** `read`
+
+```ts
+await corsair.revolt.api.messages.get({ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', message_id: '01F8Z2B3C4D5E6F7G8H9J0K1L2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | A message id, such as `01F8Z0T8Y4W4Z8X3K5M2N1P0Q9`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  _id?: string | null,
+  channel?: string | null,
+  author?: string | null,
+  content?: string | null,
+  nonce?: string | null,
+  edited?: string | null,
+  pinned?: boolean | null,
+  flags?: number | null,
+  attachments?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null,
+    content_type?: string | null,
+    size?: number | null
+  }[] | null,
+  mentions?: string[] | null,
+  role_mentions?: string[] | null,
+  replies?: string[] | null,
+  reactions?: Record<string, string[]> | null,
+  embeds?: {
+    type?: string | null,
+    url?: string | null,
+    original_url?: string | null,
+    special?: Record<string, string> | null,
+    title?: string | null,
+    description?: string | null,
+    site_name?: string | null,
+    icon_url?: string | null,
+    colour?: string | null,
+    image?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    video?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null
+  }[] | null,
+  user?: {
+    _id?: string | null,
+    username?: string | null,
+    discriminator?: string | null,
+    display_name?: string | null,
+    pronouns?: string | null,
+    online?: boolean | null,
+    badges?: number | null,
+    flags?: number | null,
+    privileged?: boolean | null,
+    avatar?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    bot?: {
+      _id?: string | null,
+      owner?: string | null,
+      public?: boolean | null,
+      analytics?: boolean | null,
+      discoverable?: boolean | null,
+      interactions_url?: string | null,
+      terms_of_service_url?: string | null,
+      privacy_policy_url?: string | null,
+      flags?: number | null
+    } | null,
+    relationship?: string | null,
+    status?: {
+      text?: string | null,
+      presence?: string | null
+    } | null
+  } | null,
+  member?: {
+    _id?: {
+      server?: string | null,
+      user?: string | null
+    } | null,
+    nickname?: string | null,
+    joined_at?: string | null,
+    roles?: string[] | null,
+    avatar?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    timeout?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`messages.list`
+
+Read a channel’s messages with time cursors, already carrying their authors
+
+**Risk:** `read`
+
+```ts
+await corsair.revolt.api.messages.list({ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `limit` | `number` | No | Messages to return, up to 100. |
+| `before` | `string` | No | A message id, such as `01F8Z0T8Y4W4Z8X3K5M2N1P0Q9`. |
+| `after` | `string` | No | A message id, such as `01F8Z0T8Y4W4Z8X3K5M2N1P0Q9`. |
+| `nearby` | `string` | No | A message id, such as `01F8Z0T8Y4W4Z8X3K5M2N1P0Q9`. |
+| `sort` | `Oldest \| Latest \| Relevance` | No | Message order, `Latest` by default. Stoat ignores it when `nearby` is set. |
+| `include_users` | `boolean` | No | Return the authors as `users` and `members` beside the messages. Defaults to true. |
+
+The response carries `users` and `members` beside the messages, so authors resolve without a second call.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+| `users` | `object[] \| null` | No | — |
+| `members` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  _id?: string | null,
+  channel?: string | null,
+  author?: string | null,
+  content?: string | null,
+  nonce?: string | null,
+  edited?: string | null,
+  pinned?: boolean | null,
+  flags?: number | null,
+  attachments?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null,
+    content_type?: string | null,
+    size?: number | null
+  }[] | null,
+  mentions?: string[] | null,
+  role_mentions?: string[] | null,
+  replies?: string[] | null,
+  reactions?: Record<string, string[]> | null,
+  embeds?: {
+    type?: string | null,
+    url?: string | null,
+    original_url?: string | null,
+    special?: Record<string, string> | null,
+    title?: string | null,
+    description?: string | null,
+    site_name?: string | null,
+    icon_url?: string | null,
+    colour?: string | null,
+    image?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    video?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null
+  }[] | null,
+  user?: {
+    _id?: string | null,
+    username?: string | null,
+    discriminator?: string | null,
+    display_name?: string | null,
+    pronouns?: string | null,
+    online?: boolean | null,
+    badges?: number | null,
+    flags?: number | null,
+    privileged?: boolean | null,
+    avatar?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    bot?: {
+      _id?: string | null,
+      owner?: string | null,
+      public?: boolean | null,
+      analytics?: boolean | null,
+      discoverable?: boolean | null,
+      interactions_url?: string | null,
+      terms_of_service_url?: string | null,
+      privacy_policy_url?: string | null,
+      flags?: number | null
+    } | null,
+    relationship?: string | null,
+    status?: {
+      text?: string | null,
+      presence?: string | null
+    } | null
+  } | null,
+  member?: {
+    _id?: {
+      server?: string | null,
+      user?: string | null
+    } | null,
+    nickname?: string | null,
+    joined_at?: string | null,
+    roles?: string[] | null,
+    avatar?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    timeout?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="users full type">
+
+```ts
+{
+  _id?: string | null,
+  username?: string | null,
+  discriminator?: string | null,
+  display_name?: string | null,
+  pronouns?: string | null,
+  online?: boolean | null,
+  badges?: number | null,
+  flags?: number | null,
+  privileged?: boolean | null,
+  avatar?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    content_type?: string | null,
+    size?: number | null,
+    deleted?: boolean | null,
+    reported?: boolean | null,
+    message_id?: string | null,
+    user_id?: string | null,
+    server_id?: string | null,
+    object_id?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null,
+  bot?: {
+    _id?: string | null,
+    owner?: string | null,
+    public?: boolean | null,
+    analytics?: boolean | null,
+    discoverable?: boolean | null,
+    interactions_url?: string | null,
+    terms_of_service_url?: string | null,
+    privacy_policy_url?: string | null,
+    flags?: number | null
+  } | null,
+  relationship?: string | null,
+  status?: {
+    text?: string | null,
+    presence?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="members full type">
+
+```ts
+{
+  _id?: {
+    server?: string | null,
+    user?: string | null
+  } | null,
+  nickname?: string | null,
+  joined_at?: string | null,
+  roles?: string[] | null,
+  avatar?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    content_type?: string | null,
+    size?: number | null,
+    deleted?: boolean | null,
+    reported?: boolean | null,
+    message_id?: string | null,
+    user_id?: string | null,
+    server_id?: string | null,
+    object_id?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null,
+  timeout?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Send a message to a channel, optionally replying or attaching files
+
+**Risk:** `write`
+
+```ts
+await corsair.revolt.api.messages.send({ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', content: 'Standup in five' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `content` | `string` | No | — |
+| `nonce` | `string` | No | A client id that makes a retry idempotent. |
+| `replies` | `object[]` | No | — |
+| `attachments` | `string[]` | No | Ids returned from the autumn upload service. |
+
+Provide `content` or an attachment id; `nonce` makes a retry idempotent.
+
+<AccordionGroup>
+<Accordion title="replies full type">
+
+```ts
+{
+  id: string,
+  mention: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  _id?: string | null,
+  channel?: string | null,
+  author?: string | null,
+  content?: string | null,
+  nonce?: string | null,
+  edited?: string | null,
+  pinned?: boolean | null,
+  flags?: number | null,
+  attachments?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null,
+    content_type?: string | null,
+    size?: number | null
+  }[] | null,
+  mentions?: string[] | null,
+  role_mentions?: string[] | null,
+  replies?: string[] | null,
+  reactions?: Record<string, string[]> | null,
+  embeds?: {
+    type?: string | null,
+    url?: string | null,
+    original_url?: string | null,
+    special?: Record<string, string> | null,
+    title?: string | null,
+    description?: string | null,
+    site_name?: string | null,
+    icon_url?: string | null,
+    colour?: string | null,
+    image?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    video?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null
+  }[] | null,
+  user?: {
+    _id?: string | null,
+    username?: string | null,
+    discriminator?: string | null,
+    display_name?: string | null,
+    pronouns?: string | null,
+    online?: boolean | null,
+    badges?: number | null,
+    flags?: number | null,
+    privileged?: boolean | null,
+    avatar?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    bot?: {
+      _id?: string | null,
+      owner?: string | null,
+      public?: boolean | null,
+      analytics?: boolean | null,
+      discoverable?: boolean | null,
+      interactions_url?: string | null,
+      terms_of_service_url?: string | null,
+      privacy_policy_url?: string | null,
+      flags?: number | null
+    } | null,
+    relationship?: string | null,
+    status?: {
+      text?: string | null,
+      presence?: string | null
+    } | null
+  } | null,
+  member?: {
+    _id?: {
+      server?: string | null,
+      user?: string | null
+    } | null,
+    nickname?: string | null,
+    joined_at?: string | null,
+    roles?: string[] | null,
+    avatar?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null,
+    timeout?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reactions
+
+### add
+
+`reactions.add`
+
+Add an emoji reaction to a message
+
+**Risk:** `write`
+
+```ts
+await corsair.revolt.api.reactions.add({ channel_id: '01F8Z1A2B3C4D5E6F7G8H9J0K1', message_id: '01F8Z2B3C4D5E6F7G8H9J0K1L2', emoji: '👍' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel_id` | `string` | Yes | — |
+| `message_id` | `string` | Yes | A message id, such as `01F8Z0T8Y4W4Z8X3K5M2N1P0Q9`. |
+| `emoji` | `string` | Yes | A unicode emoji, or a custom emoji id as it is, without colons. |
+
+The emoji is a unicode character or a bare custom emoji id, without colons.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Servers
+
+### get
+
+`servers.get`
+
+Fetch one server with its channels, roles and default permissions
+
+**Risk:** `read`
+
+```ts
+await corsair.revolt.api.servers.get({ server_id: '01F8Z3C4D5E6F7G8H9J0K1L2M3', include_channels: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_id` | `string` | Yes | — |
+| `include_channels` | `boolean` | No | Return `channels` as channel objects instead of ids. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="server full type">
+
+```ts
+{
+  _id?: string | null,
+  name?: string | null,
+  owner?: string | null,
+  description?: string | null,
+  channels?: (string | {
+    _id?: string | null,
+    channel_type?: string | null,
+    name?: string | null,
+    description?: string | null,
+    server?: string | null,
+    owner?: string | null,
+    recipients?: string[] | null,
+    active?: boolean | null,
+    last_message_id?: string | null,
+    permissions?: number | null,
+    default_permissions?: number | {
+      a?: number | null,
+      d?: number | null
+    } | null,
+    role_permissions?: Record<string, {
+      a?: number | null,
+      d?: number | null
+    }> | null,
+    nsfw?: boolean | null,
+    icon?: {
+      _id?: string | null,
+      tag?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null,
+      deleted?: boolean | null,
+      reported?: boolean | null,
+      message_id?: string | null,
+      user_id?: string | null,
+      server_id?: string | null,
+      object_id?: string | null,
+      metadata?: {
+        type?: string | null,
+        size?: number | null,
+        width?: number | null,
+        height?: number | null
+      } | null
+    } | null
+  })[] | null,
+  categories?: {
+    id?: string | null,
+    title?: string | null,
+    channels?: string[] | null
+  }[] | null,
+  roles?: Record<string, {
+    _id?: string | null,
+    name?: string | null,
+    permissions?: {
+      a?: number | null,
+      d?: number | null
+    } | null,
+    colour?: string | null,
+    hoist?: boolean | null,
+    rank?: number | null
+  }> | null,
+  default_permissions?: number | null,
+  approximate_member_count?: number | null,
+  nsfw?: boolean | null,
+  icon?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    content_type?: string | null,
+    size?: number | null,
+    deleted?: boolean | null,
+    reported?: boolean | null,
+    message_id?: string | null,
+    user_id?: string | null,
+    server_id?: string | null,
+    object_id?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null,
+  banner?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    content_type?: string | null,
+    size?: number | null,
+    deleted?: boolean | null,
+    reported?: boolean | null,
+    message_id?: string | null,
+    user_id?: string | null,
+    server_id?: string | null,
+    object_id?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null,
+  flags?: number | null,
+  analytics?: boolean | null,
+  discoverable?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### members
+
+`servers.members`
+
+List a server’s members with their users, optionally excluding offline ones
+
+**Risk:** `read`
+
+```ts
+await corsair.revolt.api.servers.members({ server_id: '01F8Z3C4D5E6F7G8H9J0K1L2M3', exclude_offline: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `server_id` | `string` | Yes | — |
+| `exclude_offline` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `members` | `object[]` | Yes | — |
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  _id?: {
+    server?: string | null,
+    user?: string | null
+  } | null,
+  nickname?: string | null,
+  joined_at?: string | null,
+  roles?: string[] | null,
+  avatar?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    content_type?: string | null,
+    size?: number | null,
+    deleted?: boolean | null,
+    reported?: boolean | null,
+    message_id?: string | null,
+    user_id?: string | null,
+    server_id?: string | null,
+    object_id?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null,
+  timeout?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="users full type">
+
+```ts
+{
+  _id?: string | null,
+  username?: string | null,
+  discriminator?: string | null,
+  display_name?: string | null,
+  pronouns?: string | null,
+  online?: boolean | null,
+  badges?: number | null,
+  flags?: number | null,
+  privileged?: boolean | null,
+  avatar?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    content_type?: string | null,
+    size?: number | null,
+    deleted?: boolean | null,
+    reported?: boolean | null,
+    message_id?: string | null,
+    user_id?: string | null,
+    server_id?: string | null,
+    object_id?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null,
+  bot?: {
+    _id?: string | null,
+    owner?: string | null,
+    public?: boolean | null,
+    analytics?: boolean | null,
+    discoverable?: boolean | null,
+    interactions_url?: string | null,
+    terms_of_service_url?: string | null,
+    privacy_policy_url?: string | null,
+    flags?: number | null
+  } | null,
+  relationship?: string | null,
+  status?: {
+    text?: string | null,
+    presence?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### dms
+
+`users.dms`
+
+List the direct-message and group channels the account is in, with their recipient ids
+
+**Risk:** `read`
+
+```ts
+await corsair.revolt.api.users.dms({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channels` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="channels full type">
+
+```ts
+{
+  _id?: string | null,
+  channel_type?: string | null,
+  name?: string | null,
+  description?: string | null,
+  server?: string | null,
+  owner?: string | null,
+  recipients?: string[] | null,
+  active?: boolean | null,
+  last_message_id?: string | null,
+  permissions?: number | null,
+  default_permissions?: number | {
+    a?: number | null,
+    d?: number | null
+  } | null,
+  role_permissions?: Record<string, {
+    a?: number | null,
+    d?: number | null
+  }> | null,
+  nsfw?: boolean | null,
+  icon?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    content_type?: string | null,
+    size?: number | null,
+    deleted?: boolean | null,
+    reported?: boolean | null,
+    message_id?: string | null,
+    user_id?: string | null,
+    server_id?: string | null,
+    object_id?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`users.get`
+
+Fetch one user by id with their profile and presence
+
+**Risk:** `read`
+
+```ts
+await corsair.revolt.api.users.get({ user_id: '01F8Z0T8Y4W4Z8X3K5M2N1P0Q9' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | A user id, or `@me` for yourself. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  _id?: string | null,
+  username?: string | null,
+  discriminator?: string | null,
+  display_name?: string | null,
+  pronouns?: string | null,
+  online?: boolean | null,
+  badges?: number | null,
+  flags?: number | null,
+  privileged?: boolean | null,
+  avatar?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    content_type?: string | null,
+    size?: number | null,
+    deleted?: boolean | null,
+    reported?: boolean | null,
+    message_id?: string | null,
+    user_id?: string | null,
+    server_id?: string | null,
+    object_id?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null,
+  bot?: {
+    _id?: string | null,
+    owner?: string | null,
+    public?: boolean | null,
+    analytics?: boolean | null,
+    discoverable?: boolean | null,
+    interactions_url?: string | null,
+    terms_of_service_url?: string | null,
+    privacy_policy_url?: string | null,
+    flags?: number | null
+  } | null,
+  relationship?: string | null,
+  status?: {
+    text?: string | null,
+    presence?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### me
+
+`users.me`
+
+Read the account behind the token: its id, username, discriminator and status
+
+**Risk:** `read`
+
+```ts
+await corsair.revolt.api.users.me({});
+```
+
+**Input:** _empty object_
+
+The default credential is a bot, so the token goes in X-Bot-Token; set `credential: user` for a session token.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  _id?: string | null,
+  username?: string | null,
+  discriminator?: string | null,
+  display_name?: string | null,
+  pronouns?: string | null,
+  online?: boolean | null,
+  badges?: number | null,
+  flags?: number | null,
+  privileged?: boolean | null,
+  avatar?: {
+    _id?: string | null,
+    tag?: string | null,
+    filename?: string | null,
+    content_type?: string | null,
+    size?: number | null,
+    deleted?: boolean | null,
+    reported?: boolean | null,
+    message_id?: string | null,
+    user_id?: string | null,
+    server_id?: string | null,
+    object_id?: string | null,
+    metadata?: {
+      type?: string | null,
+      size?: number | null,
+      width?: number | null,
+      height?: number | null
+    } | null
+  } | null,
+  bot?: {
+    _id?: string | null,
+    owner?: string | null,
+    public?: boolean | null,
+    analytics?: boolean | null,
+    discoverable?: boolean | null,
+    interactions_url?: string | null,
+    terms_of_service_url?: string | null,
+    privacy_policy_url?: string | null,
+    flags?: number | null
+  } | null,
+  relationship?: string | null,
+  status?: {
+    text?: string | null,
+    presence?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
