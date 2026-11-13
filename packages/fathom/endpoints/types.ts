@@ -20,6 +20,7 @@ export type Currency = z.infer<typeof CurrencyEnum>;
 export const DateGroupingEnum = z.enum(['hour', 'day', 'month', 'year']);
 export type DateGrouping = z.infer<typeof DateGroupingEnum>;
 
+// Response objects use passthrough: a field Fathom adds later must not fail a call that succeeded.
 export const AccountSchema = z
 	.object({
 		id: z.union([z.number(), z.string()]),
@@ -27,7 +28,7 @@ export const AccountSchema = z
 		name: z.string(),
 		email: z.string(),
 	})
-	.strict();
+	.passthrough();
 export type Account = z.infer<typeof AccountSchema>;
 
 export const TokenSchema = z
@@ -40,7 +41,7 @@ export const TokenSchema = z
 		created_at: z.string(),
 		updated_at: z.string(),
 	})
-	.strict();
+	.passthrough();
 export type Token = z.infer<typeof TokenSchema>;
 
 export const SiteSchema = z
@@ -48,11 +49,12 @@ export const SiteSchema = z
 		id: z.string(),
 		object: z.literal('site'),
 		name: z.string(),
-		sharing: z.enum(['none', 'private', 'public']),
+		// Documented values are none, private and public; a value Fathom adds later must not fail the call.
+		sharing: z.string(),
 		created_at: z.string(),
 		timezone: z.string(),
 	})
-	.strict();
+	.passthrough();
 export type Site = z.infer<typeof SiteSchema>;
 
 export const SiteListResponseSchema = z
@@ -62,7 +64,7 @@ export const SiteListResponseSchema = z
 		has_more: z.boolean(),
 		data: z.array(SiteSchema),
 	})
-	.strict();
+	.passthrough();
 export type SiteListResponse = z.infer<typeof SiteListResponseSchema>;
 
 export const SiteDeleteResponseSchema = z
@@ -71,7 +73,7 @@ export const SiteDeleteResponseSchema = z
 		object: z.literal('site'),
 		deleted: z.literal(true),
 	})
-	.strict();
+	.passthrough();
 export type SiteDeleteResponse = z.infer<typeof SiteDeleteResponseSchema>;
 
 // `passthrough` because the retired endpoint returns 410 Gone with dynamic provider error payload.
@@ -94,7 +96,7 @@ export const EventItemSchema = z
 		currency: z.string().nullable().optional(),
 		created_at: z.string().nullable().optional(),
 	})
-	.strict();
+	.passthrough();
 export type EventItem = z.infer<typeof EventItemSchema>;
 
 export const EventListResponseSchema = z
@@ -104,7 +106,7 @@ export const EventListResponseSchema = z
 		has_more: z.boolean(),
 		data: z.array(EventItemSchema),
 	})
-	.strict();
+	.passthrough();
 export type EventListResponse = z.infer<typeof EventListResponseSchema>;
 
 export const EventSetCurrencyResponseSchema = z
@@ -114,7 +116,7 @@ export const EventSetCurrencyResponseSchema = z
 		currency: z.string(),
 		updated: z.literal(true),
 	})
-	.strict();
+	.passthrough();
 export type EventSetCurrencyResponse = z.infer<
 	typeof EventSetCurrencyResponseSchema
 >;
@@ -125,7 +127,7 @@ export const EventDeleteResponseSchema = z
 		name: z.string(),
 		deleted: z.literal(true),
 	})
-	.strict();
+	.passthrough();
 export type EventDeleteResponse = z.infer<typeof EventDeleteResponseSchema>;
 
 // `passthrough` because retired event endpoints return 410 Gone with dynamic provider message.
@@ -153,7 +155,7 @@ export const MilestoneSchema = z
 		created_at: z.string(),
 		updated_at: z.string(),
 	})
-	.strict();
+	.passthrough();
 export type Milestone = z.infer<typeof MilestoneSchema>;
 
 export const MilestoneListResponseSchema = z
@@ -163,7 +165,7 @@ export const MilestoneListResponseSchema = z
 		has_more: z.boolean(),
 		data: z.array(MilestoneSchema),
 	})
-	.strict();
+	.passthrough();
 export type MilestoneListResponse = z.infer<typeof MilestoneListResponseSchema>;
 
 export const MilestoneDeleteResponseSchema = z
@@ -172,7 +174,7 @@ export const MilestoneDeleteResponseSchema = z
 		object: z.literal('milestone'),
 		deleted: z.literal(true),
 	})
-	.strict();
+	.passthrough();
 export type MilestoneDeleteResponse = z.infer<
 	typeof MilestoneDeleteResponseSchema
 >;
@@ -205,7 +207,7 @@ export const CurrentVisitorsSimpleSchema = z
 	.object({
 		total: z.number(),
 	})
-	.strict();
+	.passthrough();
 
 export const CurrentVisitorsDetailedSchema = z
 	.object({
@@ -218,7 +220,7 @@ export const CurrentVisitorsDetailedSchema = z
 						pathname: z.string(),
 						total: z.number(),
 					})
-					.strict(),
+					.passthrough(),
 			)
 			.optional(),
 		referrers: z
@@ -229,11 +231,11 @@ export const CurrentVisitorsDetailedSchema = z
 						referrer_pathname: z.string(),
 						total: z.number(),
 					})
-					.strict(),
+					.passthrough(),
 			)
 			.optional(),
 	})
-	.strict();
+	.passthrough();
 
 export const CurrentVisitorsResponseSchema = z.union([
 	CurrentVisitorsDetailedSchema,
@@ -242,6 +244,15 @@ export const CurrentVisitorsResponseSchema = z.union([
 export type CurrentVisitorsResponse = z.infer<
 	typeof CurrentVisitorsResponseSchema
 >;
+
+// Ids go into the URL path. `.` and `..` survive encodeURIComponent and the URL parser
+// resolves them, so `milestones/..` would address the site itself; reject both.
+const PathIdSchema = z
+	.string()
+	.min(1)
+	.refine((value) => value !== '.' && value !== '..', {
+		message: 'Id cannot be "." or ".."',
+	});
 
 export const FathomEndpointInputSchemas = {
 	'account.get': z.object({}).strict().optional(),
@@ -266,12 +277,12 @@ export const FathomEndpointInputSchemas = {
 		.strict(),
 	'sites.get': z
 		.object({
-			site_id: z.string().min(1),
+			site_id: PathIdSchema,
 		})
 		.strict(),
 	'sites.update': z
 		.object({
-			site_id: z.string().min(1),
+			site_id: PathIdSchema,
 			name: z.string().min(1).max(255).optional(),
 			sharing: z.enum(['none', 'private', 'public']).optional(),
 			share_password: z.string().max(255).optional(),
@@ -282,17 +293,17 @@ export const FathomEndpointInputSchemas = {
 		.strict(),
 	'sites.delete': z
 		.object({
-			site_id: z.string().min(1),
+			site_id: PathIdSchema,
 		})
 		.strict(),
 	'sites.wipe': z
 		.object({
-			site_id: z.string().min(1),
+			site_id: PathIdSchema,
 		})
 		.strict(),
 	'events.list': z
 		.object({
-			site_id: z.string().min(1),
+			site_id: PathIdSchema,
 			limit: z.number().int().min(1).max(100).optional(),
 			starting_after: z.string().optional(),
 			ending_before: z.string().optional(),
@@ -300,53 +311,53 @@ export const FathomEndpointInputSchemas = {
 		.strict(),
 	'events.setCurrency': z
 		.object({
-			site_id: z.string().min(1),
+			site_id: PathIdSchema,
 			name: z.string().min(1).max(255),
 			currency: CurrencyEnum,
 		})
 		.strict(),
 	'events.deleteByName': z
 		.object({
-			site_id: z.string().min(1),
+			site_id: PathIdSchema,
 			name: z.string().min(1),
 		})
 		.strict(),
 	'events.create': z
 		.object({
-			site_id: z.string().min(1),
+			site_id: PathIdSchema,
 			name: z.string().min(1).max(255),
 			currency: CurrencyEnum.optional(),
 		})
 		.strict(),
 	'events.get': z
 		.object({
-			site_id: z.string().min(1),
-			event_id: z.string().min(1),
+			site_id: PathIdSchema,
+			event_id: PathIdSchema,
 		})
 		.strict(),
 	'events.update': z
 		.object({
-			site_id: z.string().min(1),
-			event_id: z.string().min(1),
+			site_id: PathIdSchema,
+			event_id: PathIdSchema,
 			name: z.string().min(1).max(255).optional(),
 			currency: CurrencyEnum.optional(),
 		})
 		.strict(),
 	'events.delete': z
 		.object({
-			site_id: z.string().min(1),
-			event_id: z.string().min(1),
+			site_id: PathIdSchema,
+			event_id: PathIdSchema,
 		})
 		.strict(),
 	'events.wipe': z
 		.object({
-			site_id: z.string().min(1),
-			event_id: z.string().min(1),
+			site_id: PathIdSchema,
+			event_id: PathIdSchema,
 		})
 		.strict(),
 	'milestones.list': z
 		.object({
-			site_id: z.string().min(1),
+			site_id: PathIdSchema,
 			limit: z.number().int().min(1).max(100).optional(),
 			starting_after: z.string().optional(),
 			ending_before: z.string().optional(),
@@ -354,7 +365,7 @@ export const FathomEndpointInputSchemas = {
 		.strict(),
 	'milestones.create': z
 		.object({
-			site_id: z.string().min(1),
+			site_id: PathIdSchema,
 			name: z.string().min(1).max(30),
 			milestone_date: z
 				.string()
@@ -363,14 +374,14 @@ export const FathomEndpointInputSchemas = {
 		.strict(),
 	'milestones.get': z
 		.object({
-			site_id: z.string().min(1),
-			milestone_id: z.string().min(1),
+			site_id: PathIdSchema,
+			milestone_id: PathIdSchema,
 		})
 		.strict(),
 	'milestones.update': z
 		.object({
-			site_id: z.string().min(1),
-			milestone_id: z.string().min(1),
+			site_id: PathIdSchema,
+			milestone_id: PathIdSchema,
 			name: z.string().min(1).max(30),
 			milestone_date: z
 				.string()
@@ -379,8 +390,8 @@ export const FathomEndpointInputSchemas = {
 		.strict(),
 	'milestones.delete': z
 		.object({
-			site_id: z.string().min(1),
-			milestone_id: z.string().min(1),
+			site_id: PathIdSchema,
+			milestone_id: PathIdSchema,
 		})
 		.strict(),
 	'reports.aggregation': z

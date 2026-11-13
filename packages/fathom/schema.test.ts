@@ -92,8 +92,8 @@ describe('Fathom schemas', () => {
 			expect(SiteSchema.parse(valid)).toEqual(valid);
 		});
 
-		it('rejects SiteSchema with invalid sharing enum', () => {
-			expect(() =>
+		it('accepts a sharing value the spec does not list yet', () => {
+			expect(
 				SiteSchema.parse({
 					id: 'CDBUGS',
 					object: 'site',
@@ -101,8 +101,8 @@ describe('Fathom schemas', () => {
 					sharing: 'all',
 					created_at: '2020-07-27 12:01:01',
 					timezone: 'America/New_York',
-				}),
-			).toThrow(ZodError);
+				}).sharing,
+			).toBe('all');
 		});
 
 		it('validates SiteListResponseSchema', () => {
