@@ -71,8 +71,12 @@ export class CustomjsAPIError extends Error {
 		this.providerMessage = options.providerMessage;
 		this.isTransportError = options.status === undefined;
 		const text = options.providerMessage ?? '';
+		// The body is read only on a 403, the one status CustomJS overloads. A 5xx
+		// whose text mentions a rate limit (a script that threw one, say) is a
+		// server failure: matching it here would retry a non-replayable call.
 		this.isRateLimit =
-			options.status === 429 || /too many requests|rate limit/i.test(text);
+			options.status === 429 ||
+			(options.status === 403 && /too many requests|rate limit/i.test(text));
 		this.isAuthError =
 			options.status === 401 || (options.status === 403 && !this.isRateLimit);
 	}

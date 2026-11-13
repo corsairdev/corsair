@@ -58,6 +58,20 @@ describe('CustomjsAPIError', () => {
 		expect(error.isAuthError).toBe(false);
 	});
 
+	// A script that throws "rate limit exceeded" comes back as a 5xx. Reading that
+	// as a rate limit would retry a call that must not be replayed.
+	it('does not read rate-limit text on a 5xx as a rate limit', () => {
+		const error = new CustomjsAPIError('CustomJS 500: rate limit exceeded', {
+			method: 'POST',
+			replayable: false,
+			status: 500,
+			providerMessage: 'rate limit exceeded',
+		});
+
+		expect(error.isRateLimit).toBe(false);
+		expect(error.isAuthError).toBe(false);
+	});
+
 	it('treats a 401 as an auth failure', () => {
 		const error = new CustomjsAPIError('CustomJS 401: Unauthorized', {
 			method: 'GET',
