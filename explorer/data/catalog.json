@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-12T18:43:49.660Z",
-  "corsairVersion": "0.1.179",
+  "generatedAt": "2026-11-12T21:06:23.717Z",
+  "corsairVersion": "0.1.180",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -268,7 +268,7 @@
       ],
       "defaultAuthType": "api_key",
       "counts": {
-        "api": 9,
+        "api": 154,
         "webhooks": 0,
         "db": 7
       }
@@ -5393,7 +5393,7 @@
       ],
       "defaultAuthType": "api_key",
       "counts": {
-        "api": 5,
+        "api": 71,
         "webhooks": 1,
         "db": 1
       }
@@ -13079,8 +13079,452 @@
     {
       "pluginId": "ahrefs",
       "kind": "api",
+      "shortPath": "batchAnalysis.analyze",
+      "haystack": "batchanalysis.analyze ahrefs.api.batchanalysis.analyze get seo metrics for up to 200 targets in one request read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.aiResponses",
+      "haystack": "brandradar.airesponses ahrefs.api.brandradar.airesponses brand radar: get ai assistant answers that mention the brand or competitors read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.aiResponsesEntities",
+      "haystack": "brandradar.airesponsesentities ahrefs.api.brandradar.airesponsesentities brand radar: get ai assistant answers that mention the brand or competitors, with brands and competitors given as names or url groups read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.citationsHistoryEntities",
+      "haystack": "brandradar.citationshistoryentities ahrefs.api.brandradar.citationshistoryentities brand radar: get citation counts over time, with brands and competitors given as names or url groups read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.citationsOverviewEntities",
+      "haystack": "brandradar.citationsoverviewentities ahrefs.api.brandradar.citationsoverviewentities brand radar: get citation counts per brand, with brands and competitors given as names or url groups read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.citedDomains",
+      "haystack": "brandradar.citeddomains ahrefs.api.brandradar.citeddomains brand radar: get domains ai assistants cite in answers about the brand read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.citedDomainsEntities",
+      "haystack": "brandradar.citeddomainsentities ahrefs.api.brandradar.citeddomainsentities brand radar: get domains ai assistants cite in answers about the brand, with brands and competitors given as names or url groups read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.citedPages",
+      "haystack": "brandradar.citedpages ahrefs.api.brandradar.citedpages brand radar: get pages ai assistants cite in answers about the brand read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.citedPagesEntities",
+      "haystack": "brandradar.citedpagesentities ahrefs.api.brandradar.citedpagesentities brand radar: get pages ai assistants cite in answers about the brand, with brands and competitors given as names or url groups read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.impressionsHistory",
+      "haystack": "brandradar.impressionshistory ahrefs.api.brandradar.impressionshistory brand radar: get ai answer impressions over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.impressionsHistoryEntities",
+      "haystack": "brandradar.impressionshistoryentities ahrefs.api.brandradar.impressionshistoryentities brand radar: get ai answer impressions over time, with brands and competitors given as names or url groups read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.impressionsOverview",
+      "haystack": "brandradar.impressionsoverview ahrefs.api.brandradar.impressionsoverview brand radar: get ai answer impressions per brand read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.impressionsOverviewEntities",
+      "haystack": "brandradar.impressionsoverviewentities ahrefs.api.brandradar.impressionsoverviewentities brand radar: get ai answer impressions per brand, with brands and competitors given as names or url groups read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.mentionsHistory",
+      "haystack": "brandradar.mentionshistory ahrefs.api.brandradar.mentionshistory brand radar: get brand mentions in ai answers over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.mentionsHistoryEntities",
+      "haystack": "brandradar.mentionshistoryentities ahrefs.api.brandradar.mentionshistoryentities brand radar: get brand mentions in ai answers over time, with brands and competitors given as names or url groups read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.mentionsOverview",
+      "haystack": "brandradar.mentionsoverview ahrefs.api.brandradar.mentionsoverview brand radar: get brand mentions in ai answers per brand read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.mentionsOverviewEntities",
+      "haystack": "brandradar.mentionsoverviewentities ahrefs.api.brandradar.mentionsoverviewentities brand radar: get brand mentions in ai answers per brand, with brands and competitors given as names or url groups read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.sovHistory",
+      "haystack": "brandradar.sovhistory ahrefs.api.brandradar.sovhistory brand radar: get ai share of voice over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.sovHistoryEntities",
+      "haystack": "brandradar.sovhistoryentities ahrefs.api.brandradar.sovhistoryentities brand radar: get ai share of voice over time, with brands and competitors given as names or url groups read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.sovOverview",
+      "haystack": "brandradar.sovoverview ahrefs.api.brandradar.sovoverview brand radar: get ai share of voice per brand read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "brandRadar.sovOverviewEntities",
+      "haystack": "brandradar.sovoverviewentities ahrefs.api.brandradar.sovoverviewentities brand radar: get ai share of voice per brand, with brands and competitors given as names or url groups read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "contentHelper.topics",
+      "haystack": "contenthelper.topics ahrefs.api.contenthelper.topics get the topics top-ranking pages cover for a keyword, with coverage scores read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "gsc.anonymousQueries",
+      "haystack": "gsc.anonymousqueries ahrefs.api.gsc.anonymousqueries estimate the queries search console hides as anonymous for a project read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "gsc.ctrByPosition",
+      "haystack": "gsc.ctrbyposition ahrefs.api.gsc.ctrbyposition get average search console ctr for each ranking position read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "gsc.keywordHistory",
+      "haystack": "gsc.keywordhistory ahrefs.api.gsc.keywordhistory get search console history for specific queries read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "gsc.keywords",
+      "haystack": "gsc.keywords ahrefs.api.gsc.keywords list search console queries for a project with clicks, impressions, ctr and average position read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "gsc.metricsByCountry",
+      "haystack": "gsc.metricsbycountry ahrefs.api.gsc.metricsbycountry get search console clicks by country read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "gsc.pageHistory",
+      "haystack": "gsc.pagehistory ahrefs.api.gsc.pagehistory get search console history for specific pages read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "gsc.pages",
+      "haystack": "gsc.pages ahrefs.api.gsc.pages list search console pages for a project with clicks, impressions, ctr and average position read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "gsc.pagesHistory",
+      "haystack": "gsc.pageshistory ahrefs.api.gsc.pageshistory get the number of pages with search console impressions over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "gsc.performanceByDevice",
+      "haystack": "gsc.performancebydevice ahrefs.api.gsc.performancebydevice get search console performance split by device read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "gsc.performanceByPosition",
+      "haystack": "gsc.performancebyposition ahrefs.api.gsc.performancebyposition get search console clicks and impressions split by position range read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "gsc.performanceHistory",
+      "haystack": "gsc.performancehistory ahrefs.api.gsc.performancehistory get search console clicks, impressions, ctr and position over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "gsc.positionsHistory",
+      "haystack": "gsc.positionshistory ahrefs.api.gsc.positionshistory get how many queries rank in each position bucket over time in search console read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "keywordsExplorer.matchingTerms",
+      "haystack": "keywordsexplorer.matchingterms ahrefs.api.keywordsexplorer.matchingterms find keyword ideas that contain the seed keywords read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
       "shortPath": "keywordsExplorer.overview",
       "haystack": "keywordsexplorer.overview ahrefs.api.keywordsexplorer.overview get keyword metrics such as volume, difficulty, cpc, clicks, and traffic potential read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "keywordsExplorer.relatedTerms",
+      "haystack": "keywordsexplorer.relatedterms ahrefs.api.keywordsexplorer.relatedterms find related keyword ideas that top pages also rank for or talk about read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "keywordsExplorer.searchSuggestions",
+      "haystack": "keywordsexplorer.searchsuggestions ahrefs.api.keywordsexplorer.searchsuggestions get search autocomplete suggestions for seed keywords read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "keywordsExplorer.volumeByCountry",
+      "haystack": "keywordsexplorer.volumebycountry ahrefs.api.keywordsexplorer.volumebycountry get search volume for keywords in each country read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "keywordsExplorer.volumeHistory",
+      "haystack": "keywordsexplorer.volumehistory ahrefs.api.keywordsexplorer.volumehistory get monthly search volume history for a keyword read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.addBrandRadarPrompts",
+      "haystack": "management.addbrandradarprompts ahrefs.api.management.addbrandradarprompts add custom prompts to a brand radar report write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.addKeywordListKeywords",
+      "haystack": "management.addkeywordlistkeywords ahrefs.api.management.addkeywordlistkeywords add keywords to a keyword list write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.addProjectCompetitors",
+      "haystack": "management.addprojectcompetitors ahrefs.api.management.addprojectcompetitors add competitors to a rank tracker project write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.addProjectKeywords",
+      "haystack": "management.addprojectkeywords ahrefs.api.management.addprojectkeywords add tracked keywords to a rank tracker project write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.addProjectKeywordTags",
+      "haystack": "management.addprojectkeywordtags ahrefs.api.management.addprojectkeywordtags add or replace tags on tracked keywords write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.brandRadarPrompts",
+      "haystack": "management.brandradarprompts ahrefs.api.management.brandradarprompts list custom prompts of a brand radar report read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.brandRadarReports",
+      "haystack": "management.brandradarreports ahrefs.api.management.brandradarreports list brand radar reports read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.createBrandRadarReport",
+      "haystack": "management.createbrandradarreport ahrefs.api.management.createbrandradarreport create a brand radar report for a brand and its competitors write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.createKeywordList",
+      "haystack": "management.createkeywordlist ahrefs.api.management.createkeywordlist create a keywords explorer keyword list write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.createProject",
+      "haystack": "management.createproject ahrefs.api.management.createproject create an ahrefs project for a target write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.deleteBrandRadarPrompts",
+      "haystack": "management.deletebrandradarprompts ahrefs.api.management.deletebrandradarprompts remove custom prompts from a brand radar report destructive"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.deleteKeywordListKeywords",
+      "haystack": "management.deletekeywordlistkeywords ahrefs.api.management.deletekeywordlistkeywords remove keywords from a keyword list destructive"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.deleteKeywordLists",
+      "haystack": "management.deletekeywordlists ahrefs.api.management.deletekeywordlists delete keywords explorer keyword lists destructive"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.deleteProjectCompetitors",
+      "haystack": "management.deleteprojectcompetitors ahrefs.api.management.deleteprojectcompetitors remove competitors from a rank tracker project destructive"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.deleteProjectKeywords",
+      "haystack": "management.deleteprojectkeywords ahrefs.api.management.deleteprojectkeywords remove tracked keywords from a rank tracker project destructive"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.deleteProjectKeywordTags",
+      "haystack": "management.deleteprojectkeywordtags ahrefs.api.management.deleteprojectkeywordtags remove tags from tracked keywords destructive"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.deleteProjects",
+      "haystack": "management.deleteprojects ahrefs.api.management.deleteprojects delete ahrefs projects destructive"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.keywordListKeywords",
+      "haystack": "management.keywordlistkeywords ahrefs.api.management.keywordlistkeywords list keywords in a saved keyword list read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.keywordLists",
+      "haystack": "management.keywordlists ahrefs.api.management.keywordlists list saved keywords explorer keyword lists read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.locations",
+      "haystack": "management.locations ahrefs.api.management.locations look up rank tracker location ids for a country read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.projectCompetitors",
+      "haystack": "management.projectcompetitors ahrefs.api.management.projectcompetitors list competitors of a rank tracker project read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.projectKeywords",
+      "haystack": "management.projectkeywords ahrefs.api.management.projectkeywords list keywords tracked in a rank tracker project read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.projects",
+      "haystack": "management.projects ahrefs.api.management.projects list ahrefs projects in the workspace read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.updateBrandRadarPrompts",
+      "haystack": "management.updatebrandradarprompts ahrefs.api.management.updatebrandradarprompts change countries or tags of brand radar prompts write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.updateBrandRadarReport",
+      "haystack": "management.updatebrandradarreport ahrefs.api.management.updatebrandradarreport update a brand radar report's brands, countries or filters write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "management.updateProject",
+      "haystack": "management.updateproject ahrefs.api.management.updateproject change a project's access or folder write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "public.crawlerIpRanges",
+      "haystack": "public.crawleripranges ahrefs.api.public.crawleripranges list the ip ranges ahrefs crawlers use read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "public.crawlerIps",
+      "haystack": "public.crawlerips ahrefs.api.public.crawlerips list the ip addresses ahrefs crawlers use read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "public.domainRatingFree",
+      "haystack": "public.domainratingfree ahrefs.api.public.domainratingfree get the free domain rating for one domain read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "public.domainRatingFreeBatch",
+      "haystack": "public.domainratingfreebatch ahrefs.api.public.domainratingfreebatch get the free domain rating for several domains read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "public.domainRatingTopDomains",
+      "haystack": "public.domainratingtopdomains ahrefs.api.public.domainratingtopdomains list domains ranked by domain rating read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "rankTracker.competitorsDomains",
+      "haystack": "ranktracker.competitorsdomains ahrefs.api.ranktracker.competitorsdomains compare traffic and share of voice of competitor domains in a rank tracker project read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "rankTracker.competitorsOverview",
+      "haystack": "ranktracker.competitorsoverview ahrefs.api.ranktracker.competitorsoverview compare positions of tracked keywords against project competitors read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "rankTracker.competitorsPages",
+      "haystack": "ranktracker.competitorspages ahrefs.api.ranktracker.competitorspages list competitor pages ranking for a rank tracker project's keywords read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "rankTracker.competitorsStats",
+      "haystack": "ranktracker.competitorsstats ahrefs.api.ranktracker.competitorsstats get position distribution and serp feature counts for project competitors read"
     },
     {
       "pluginId": "ahrefs",
@@ -13091,8 +13535,56 @@
     {
       "pluginId": "ahrefs",
       "kind": "api",
+      "shortPath": "rankTracker.serpOverview",
+      "haystack": "ranktracker.serpoverview ahrefs.api.ranktracker.serpoverview get the latest search results for a tracked keyword in a rank tracker project read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
       "shortPath": "serp.overview",
       "haystack": "serp.overview ahrefs.api.serp.overview get serp positions for a keyword and country, including ranking page metrics read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteAudit.issues",
+      "haystack": "siteaudit.issues ahrefs.api.siteaudit.issues list site audit issues for a project with affected url counts read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteAudit.pageContent",
+      "haystack": "siteaudit.pagecontent ahrefs.api.siteaudit.pagecontent get the crawled content of one page from a site audit project read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteAudit.pageExplorer",
+      "haystack": "siteaudit.pageexplorer ahrefs.api.siteaudit.pageexplorer list crawled pages from a site audit project, optionally only those with a given issue read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteAudit.projects",
+      "haystack": "siteaudit.projects ahrefs.api.siteaudit.projects list site audit projects with health scores and issue counts read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.aiResponsesCount",
+      "haystack": "siteexplorer.airesponsescount ahrefs.api.siteexplorer.airesponsescount count ai assistant answers that cite a target, per platform read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.allBacklinks",
+      "haystack": "siteexplorer.allbacklinks ahrefs.api.siteexplorer.allbacklinks list backlinks pointing to a target read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.anchors",
+      "haystack": "siteexplorer.anchors ahrefs.api.siteexplorer.anchors list anchor texts of backlinks pointing to a target read"
     },
     {
       "pluginId": "ahrefs",
@@ -13103,8 +13595,74 @@
     {
       "pluginId": "ahrefs",
       "kind": "api",
+      "shortPath": "siteExplorer.brokenBacklinks",
+      "haystack": "siteexplorer.brokenbacklinks ahrefs.api.siteexplorer.brokenbacklinks list backlinks pointing to broken pages on a target read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.crawledPages",
+      "haystack": "siteexplorer.crawledpages ahrefs.api.siteexplorer.crawledpages list pages of a target that ahrefs has crawled, with status and type read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.domainRatingHistory",
+      "haystack": "siteexplorer.domainratinghistory ahrefs.api.siteexplorer.domainratinghistory get domain rating history for a target read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
       "shortPath": "siteExplorer.getDomainRating",
       "haystack": "siteexplorer.getdomainrating ahrefs.api.siteexplorer.getdomainrating get ahrefs domain rating and ahrefs rank for a target read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.keywordsHistory",
+      "haystack": "siteexplorer.keywordshistory ahrefs.api.siteexplorer.keywordshistory get organic keyword counts by position bucket over time for a target read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.linkedAnchorsExternal",
+      "haystack": "siteexplorer.linkedanchorsexternal ahrefs.api.siteexplorer.linkedanchorsexternal list anchor texts a target uses in its outgoing external links read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.linkedAnchorsInternal",
+      "haystack": "siteexplorer.linkedanchorsinternal ahrefs.api.siteexplorer.linkedanchorsinternal list anchor texts a target uses in its internal links read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.linkedDomains",
+      "haystack": "siteexplorer.linkeddomains ahrefs.api.siteexplorer.linkeddomains list external domains a target links to read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.metrics",
+      "haystack": "siteexplorer.metrics ahrefs.api.siteexplorer.metrics get organic and paid traffic, keyword and value metrics for a target read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.metricsByCountry",
+      "haystack": "siteexplorer.metricsbycountry ahrefs.api.siteexplorer.metricsbycountry get organic and paid traffic metrics for a target split by country read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.metricsHistory",
+      "haystack": "siteexplorer.metricshistory ahrefs.api.siteexplorer.metricshistory get organic and paid traffic and value history for a target read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.organicCompetitors",
+      "haystack": "siteexplorer.organiccompetitors ahrefs.api.siteexplorer.organiccompetitors list sites that compete with a target for the same organic keywords read"
     },
     {
       "pluginId": "ahrefs",
@@ -13115,8 +13673,50 @@
     {
       "pluginId": "ahrefs",
       "kind": "api",
+      "shortPath": "siteExplorer.outlinksStats",
+      "haystack": "siteexplorer.outlinksstats ahrefs.api.siteexplorer.outlinksstats get counts of outgoing links and linked domains for a target read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.pagesByBacklinks",
+      "haystack": "siteexplorer.pagesbybacklinks ahrefs.api.siteexplorer.pagesbybacklinks list pages of a target ranked by backlinks and referring domains read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.pagesByInternalLinks",
+      "haystack": "siteexplorer.pagesbyinternallinks ahrefs.api.siteexplorer.pagesbyinternallinks list pages of a target ranked by internal links pointing to them read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.pagesByTraffic",
+      "haystack": "siteexplorer.pagesbytraffic ahrefs.api.siteexplorer.pagesbytraffic get how many pages of a target fall into each organic traffic range read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.pagesHistory",
+      "haystack": "siteexplorer.pageshistory ahrefs.api.siteexplorer.pageshistory get the number of ranking pages of a target over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.paidPages",
+      "haystack": "siteexplorer.paidpages ahrefs.api.siteexplorer.paidpages list pages of a target that get paid search traffic read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
       "shortPath": "siteExplorer.refdomains",
       "haystack": "siteexplorer.refdomains ahrefs.api.siteexplorer.refdomains list referring domains linking to a target read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.refdomainsHistory",
+      "haystack": "siteexplorer.refdomainshistory ahrefs.api.siteexplorer.refdomainshistory get referring domains count history for a target read"
     },
     {
       "pluginId": "ahrefs",
@@ -13127,8 +13727,278 @@
     {
       "pluginId": "ahrefs",
       "kind": "api",
+      "shortPath": "siteExplorer.totalSearchVolumeHistory",
+      "haystack": "siteexplorer.totalsearchvolumehistory ahrefs.api.siteexplorer.totalsearchvolumehistory get the total search volume of keywords a target ranks for over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "siteExplorer.urlRatingHistory",
+      "haystack": "siteexplorer.urlratinghistory ahrefs.api.siteexplorer.urlratinghistory get url rating history for a page read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "socialMedia.activityHistory",
+      "haystack": "socialmedia.activityhistory ahrefs.api.socialmedia.activityhistory list the activity log of a social media post read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "socialMedia.authors",
+      "haystack": "socialmedia.authors ahrefs.api.socialmedia.authors list social media post authors in the workspace read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "socialMedia.channelMetrics",
+      "haystack": "socialmedia.channelmetrics ahrefs.api.socialmedia.channelmetrics get follower count history for a social media channel read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "socialMedia.channels",
+      "haystack": "socialmedia.channels ahrefs.api.socialmedia.channels list connected social media channels read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "socialMedia.createPost",
+      "haystack": "socialmedia.createpost ahrefs.api.socialmedia.createpost create a social media post: publish now, schedule it or save a draft write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "socialMedia.deletePost",
+      "haystack": "socialmedia.deletepost ahrefs.api.socialmedia.deletepost delete a social media post destructive"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "socialMedia.postMetrics",
+      "haystack": "socialmedia.postmetrics ahrefs.api.socialmedia.postmetrics get views, likes and platform metrics for a published post read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "socialMedia.posts",
+      "haystack": "socialmedia.posts ahrefs.api.socialmedia.posts list social media posts by status, channel or author read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "socialMedia.updatePost",
+      "haystack": "socialmedia.updatepost ahrefs.api.socialmedia.updatepost update a social media post's text, channels or timing write"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
       "shortPath": "subscriptionInfo.limitsAndUsage",
       "haystack": "subscriptioninfo.limitsandusage ahrefs.api.subscriptioninfo.limitsandusage get ahrefs subscription limits and api unit usage read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.browsers",
+      "haystack": "webanalytics.browsers ahrefs.api.webanalytics.browsers web analytics: list visitors by browser read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.browsersChart",
+      "haystack": "webanalytics.browserschart ahrefs.api.webanalytics.browserschart web analytics: chart visitors by browser over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.browserVersions",
+      "haystack": "webanalytics.browserversions ahrefs.api.webanalytics.browserversions web analytics: list visitors by browser version read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.browserVersionsChart",
+      "haystack": "webanalytics.browserversionschart ahrefs.api.webanalytics.browserversionschart web analytics: chart visitors by browser version over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.chart",
+      "haystack": "webanalytics.chart ahrefs.api.webanalytics.chart web analytics: chart visitors, visits and pageviews over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.cities",
+      "haystack": "webanalytics.cities ahrefs.api.webanalytics.cities web analytics: list visitors by city read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.citiesChart",
+      "haystack": "webanalytics.citieschart ahrefs.api.webanalytics.citieschart web analytics: chart visitors by city over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.continents",
+      "haystack": "webanalytics.continents ahrefs.api.webanalytics.continents web analytics: list visitors by continent read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.continentsChart",
+      "haystack": "webanalytics.continentschart ahrefs.api.webanalytics.continentschart web analytics: chart visitors by continent over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.countries",
+      "haystack": "webanalytics.countries ahrefs.api.webanalytics.countries web analytics: list visitors by country read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.countriesChart",
+      "haystack": "webanalytics.countrieschart ahrefs.api.webanalytics.countrieschart web analytics: chart visitors by country over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.devices",
+      "haystack": "webanalytics.devices ahrefs.api.webanalytics.devices web analytics: list visitors by device type read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.devicesChart",
+      "haystack": "webanalytics.deviceschart ahrefs.api.webanalytics.deviceschart web analytics: chart visitors by device type over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.entryPages",
+      "haystack": "webanalytics.entrypages ahrefs.api.webanalytics.entrypages web analytics: list visitors by entry page read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.entryPagesChart",
+      "haystack": "webanalytics.entrypageschart ahrefs.api.webanalytics.entrypageschart web analytics: chart visitors by entry page over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.exitPages",
+      "haystack": "webanalytics.exitpages ahrefs.api.webanalytics.exitpages web analytics: list visitors by exit page read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.exitPagesChart",
+      "haystack": "webanalytics.exitpageschart ahrefs.api.webanalytics.exitpageschart web analytics: chart visitors by exit page over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.languages",
+      "haystack": "webanalytics.languages ahrefs.api.webanalytics.languages web analytics: list visitors by browser language read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.languagesChart",
+      "haystack": "webanalytics.languageschart ahrefs.api.webanalytics.languageschart web analytics: chart visitors by browser language over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.operatingSystems",
+      "haystack": "webanalytics.operatingsystems ahrefs.api.webanalytics.operatingsystems web analytics: list visitors by operating system read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.operatingSystemsChart",
+      "haystack": "webanalytics.operatingsystemschart ahrefs.api.webanalytics.operatingsystemschart web analytics: chart visitors by operating system over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.operatingSystemsVersions",
+      "haystack": "webanalytics.operatingsystemsversions ahrefs.api.webanalytics.operatingsystemsversions web analytics: list visitors by operating system version read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.operatingSystemsVersionsChart",
+      "haystack": "webanalytics.operatingsystemsversionschart ahrefs.api.webanalytics.operatingsystemsversionschart web analytics: chart visitors by operating system version over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.referrers",
+      "haystack": "webanalytics.referrers ahrefs.api.webanalytics.referrers web analytics: list visitors by referrer read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.referrersChart",
+      "haystack": "webanalytics.referrerschart ahrefs.api.webanalytics.referrerschart web analytics: chart visitors by referrer over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.sourceChannels",
+      "haystack": "webanalytics.sourcechannels ahrefs.api.webanalytics.sourcechannels web analytics: list visitors by source channel read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.sourceChannelsChart",
+      "haystack": "webanalytics.sourcechannelschart ahrefs.api.webanalytics.sourcechannelschart web analytics: chart visitors by source channel over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.sources",
+      "haystack": "webanalytics.sources ahrefs.api.webanalytics.sources web analytics: list visitors by traffic source read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.sourcesChart",
+      "haystack": "webanalytics.sourceschart ahrefs.api.webanalytics.sourceschart web analytics: chart visitors by traffic source over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.stats",
+      "haystack": "webanalytics.stats ahrefs.api.webanalytics.stats web analytics: get visitors, visits, pageviews, bounce rate and session length for a period read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.topPages",
+      "haystack": "webanalytics.toppages ahrefs.api.webanalytics.toppages web analytics: list visitors by page read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.topPagesChart",
+      "haystack": "webanalytics.toppageschart ahrefs.api.webanalytics.toppageschart web analytics: chart visitors by page over time read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.utmParams",
+      "haystack": "webanalytics.utmparams ahrefs.api.webanalytics.utmparams web analytics: list visitors by utm parameter value read"
+    },
+    {
+      "pluginId": "ahrefs",
+      "kind": "api",
+      "shortPath": "webAnalytics.utmParamsChart",
+      "haystack": "webanalytics.utmparamschart ahrefs.api.webanalytics.utmparamschart web analytics: chart visitors by utm parameter value over time read"
     },
     {
       "pluginId": "aimlapi",
@@ -91067,6 +91937,138 @@
     {
       "pluginId": "posthog",
       "kind": "api",
+      "shortPath": "actions.create",
+      "haystack": "actions.create posthog.api.actions.create create an action from event, url or element steps write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "actions.get",
+      "haystack": "actions.get posthog.api.actions.get get an action with its steps read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "actions.list",
+      "haystack": "actions.list posthog.api.actions.list list actions read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "alerts.get",
+      "haystack": "alerts.get posthog.api.alerts.get get an insight alert read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "alerts.list",
+      "haystack": "alerts.list posthog.api.alerts.list list insight alerts read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "annotations.create",
+      "haystack": "annotations.create posthog.api.annotations.create create an annotation on charts write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "annotations.delete",
+      "haystack": "annotations.delete posthog.api.annotations.delete delete an annotation destructive"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "annotations.list",
+      "haystack": "annotations.list posthog.api.annotations.list list annotations read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "annotations.update",
+      "haystack": "annotations.update posthog.api.annotations.update update an annotation write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "batchExports.list",
+      "haystack": "batchexports.list posthog.api.batchexports.list list batch exports read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "cohorts.create",
+      "haystack": "cohorts.create posthog.api.cohorts.create create a cohort write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "cohorts.get",
+      "haystack": "cohorts.get posthog.api.cohorts.get get a cohort with its matching rules read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "cohorts.list",
+      "haystack": "cohorts.list posthog.api.cohorts.list list cohorts read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "cohorts.update",
+      "haystack": "cohorts.update posthog.api.cohorts.update update a cohort (name, description, rules) write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "dashboards.create",
+      "haystack": "dashboards.create posthog.api.dashboards.create create a dashboard write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "dashboards.delete",
+      "haystack": "dashboards.delete posthog.api.dashboards.delete delete a dashboard (posthog keeps it restorable) destructive"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "dashboards.get",
+      "haystack": "dashboards.get posthog.api.dashboards.get get a dashboard with its tiles read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "dashboards.list",
+      "haystack": "dashboards.list posthog.api.dashboards.list list dashboards read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "dashboards.update",
+      "haystack": "dashboards.update posthog.api.dashboards.update update a dashboard (name, description, pinned, tags) write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "earlyAccessFeatures.list",
+      "haystack": "earlyaccessfeatures.list posthog.api.earlyaccessfeatures.list list early access features read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "errorTracking.issuesList",
+      "haystack": "errortracking.issueslist posthog.api.errortracking.issueslist list error tracking issues with occurrence, user and session counts read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "eventDefinitions.list",
+      "haystack": "eventdefinitions.list posthog.api.eventdefinitions.list list event names seen in the project read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
       "shortPath": "events.aliasCreate",
       "haystack": "events.aliascreate posthog.api.events.aliascreate create an alias linking two distinct user ids write"
     },
@@ -91085,6 +92087,12 @@
     {
       "pluginId": "posthog",
       "kind": "api",
+      "shortPath": "events.list",
+      "haystack": "events.list posthog.api.events.list list recent events with chosen columns and filters read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
       "shortPath": "events.trackPage",
       "haystack": "events.trackpage posthog.api.events.trackpage track a page view event write"
     },
@@ -91093,6 +92101,264 @@
       "kind": "api",
       "shortPath": "events.trackScreen",
       "haystack": "events.trackscreen posthog.api.events.trackscreen track a screen view event write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "experiments.create",
+      "haystack": "experiments.create posthog.api.experiments.create create a draft experiment and its feature flag write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "experiments.get",
+      "haystack": "experiments.get posthog.api.experiments.get get an experiment read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "experiments.list",
+      "haystack": "experiments.list posthog.api.experiments.list list experiments read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "experiments.update",
+      "haystack": "experiments.update posthog.api.experiments.update update an experiment (name, description, variants, metrics, archived) write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "featureFlags.create",
+      "haystack": "featureflags.create posthog.api.featureflags.create create a feature flag write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "featureFlags.delete",
+      "haystack": "featureflags.delete posthog.api.featureflags.delete delete a feature flag (posthog keeps it restorable) destructive"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "featureFlags.get",
+      "haystack": "featureflags.get posthog.api.featureflags.get get a feature flag with its release conditions read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "featureFlags.list",
+      "haystack": "featureflags.list posthog.api.featureflags.list list feature flags read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "featureFlags.update",
+      "haystack": "featureflags.update posthog.api.featureflags.update update a feature flag (name, active, release conditions, tags) write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "hogFunctions.get",
+      "haystack": "hogfunctions.get posthog.api.hogfunctions.get get a hog function with its code, inputs and filters read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "hogFunctions.list",
+      "haystack": "hogfunctions.list posthog.api.hogfunctions.list list destinations, transformations and other hog functions read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "insights.create",
+      "haystack": "insights.create posthog.api.insights.create save a new insight from a query write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "insights.delete",
+      "haystack": "insights.delete posthog.api.insights.delete delete an insight (posthog keeps it restorable) destructive"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "insights.get",
+      "haystack": "insights.get posthog.api.insights.get get a saved insight with its query and result read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "insights.list",
+      "haystack": "insights.list posthog.api.insights.list list saved insights read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "insights.update",
+      "haystack": "insights.update posthog.api.insights.update update an insight (name, query, description, dashboards, tags) write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "llmAnalytics.costs",
+      "haystack": "llmanalytics.costs posthog.api.llmanalytics.costs get llm generation counts and cost per model read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "llmAnalytics.traces",
+      "haystack": "llmanalytics.traces posthog.api.llmanalytics.traces list llm traces with latency, tokens and cost read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "logs.query",
+      "haystack": "logs.query posthog.api.logs.query search logs by service, severity, text or attributes read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "notebooks.create",
+      "haystack": "notebooks.create posthog.api.notebooks.create create a notebook from a title and text write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "notebooks.get",
+      "haystack": "notebooks.get posthog.api.notebooks.get get a notebook with its content read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "notebooks.list",
+      "haystack": "notebooks.list posthog.api.notebooks.list list notebooks read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "organizations.get",
+      "haystack": "organizations.get posthog.api.organizations.get get an organization (defaults to the current one) read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "organizations.list",
+      "haystack": "organizations.list posthog.api.organizations.list list the organizations the key can access read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "persons.deleteProperty",
+      "haystack": "persons.deleteproperty posthog.api.persons.deleteproperty remove one property from a person destructive"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "persons.get",
+      "haystack": "persons.get posthog.api.persons.get get a person by id read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "persons.list",
+      "haystack": "persons.list posthog.api.persons.list list or search persons read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "persons.updateProperty",
+      "haystack": "persons.updateproperty posthog.api.persons.updateproperty set one property on a person write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get posthog.api.projects.get get the project settings (timezone, name, project token) read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list posthog.api.projects.list list the projects of an organization read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "propertyDefinitions.list",
+      "haystack": "propertydefinitions.list posthog.api.propertydefinitions.list list event, person, group or session property names read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "query.run",
+      "haystack": "query.run posthog.api.query.run run a hogql (sql) query or any posthog query kind (trends, funnels and others) read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "sessionRecordingPlaylists.list",
+      "haystack": "sessionrecordingplaylists.list posthog.api.sessionrecordingplaylists.list list saved recording playlists and collections read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "sessionRecordings.get",
+      "haystack": "sessionrecordings.get posthog.api.sessionrecordings.get get session recording metadata read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "sessionRecordings.list",
+      "haystack": "sessionrecordings.list posthog.api.sessionrecordings.list list session recordings read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "surveys.create",
+      "haystack": "surveys.create posthog.api.surveys.create create a draft survey write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "surveys.delete",
+      "haystack": "surveys.delete posthog.api.surveys.delete delete a survey and its settings destructive"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "surveys.get",
+      "haystack": "surveys.get posthog.api.surveys.get get a survey with its questions read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "surveys.list",
+      "haystack": "surveys.list posthog.api.surveys.list list surveys read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "surveys.update",
+      "haystack": "surveys.update posthog.api.surveys.update update a survey (name, description, questions, archived) write"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "warehouseTables.list",
+      "haystack": "warehousetables.list posthog.api.warehousetables.list list data warehouse tables read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "webAnalytics.overview",
+      "haystack": "webanalytics.overview posthog.api.webanalytics.overview get web analytics totals (visitors, views, sessions, bounce rate, duration) read"
+    },
+    {
+      "pluginId": "posthog",
+      "kind": "api",
+      "shortPath": "webAnalytics.stats",
+      "haystack": "webanalytics.stats posthog.api.webanalytics.stats get web analytics by page, source, utm, device, browser or country read"
     },
     {
       "pluginId": "posthog",
