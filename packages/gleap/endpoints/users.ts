@@ -18,6 +18,7 @@ export const getMe: GleapEndpoints['usersGetMe'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.usersGetMe.parse(response);
@@ -32,7 +33,8 @@ export const list: GleapEndpoints['usersList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.usersList.parse(response);
@@ -54,13 +56,14 @@ export const update: GleapEndpoints['usersUpdate'] = async (ctx, input) => {
 		{
 			method: 'PUT',
 			body,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.usersUpdate.parse(response);
 	await logEventFromContext(
 		ctx,
 		'gleap.users.update',
-		{ userId },
+		{ completed: true },
 		'completed',
 	);
 	return output;

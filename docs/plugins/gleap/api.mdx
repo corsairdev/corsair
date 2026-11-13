@@ -575,7 +575,7 @@ await corsair.gleap.api.feedback.surveysStats({ surveyId: 'survey_123' });
 
 Create a new message or internal note in a ticket
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.gleap.api.messages.create({ ticket: 'ticket_123', content: 'Hello from support' });
@@ -637,7 +637,7 @@ await corsair.gleap.api.messages.create({ ticket: 'ticket_123', content: 'Hello 
 
 Create a thread reply for a specific message
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.gleap.api.messages.createThread({ messageId: 'msg_123', content: 'Follow-up reply' });

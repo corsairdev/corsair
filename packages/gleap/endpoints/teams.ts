@@ -19,7 +19,8 @@ export const list: GleapEndpoints['teamsList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.teamsList.parse(response);
@@ -41,14 +42,15 @@ export const create: GleapEndpoints['teamsCreate'] = async (ctx, input) => {
 		{
 			method: 'POST',
 			body,
-			projectId: project,
+			projectId: project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.teamsCreate.parse(response);
 	await logEventFromContext(
 		ctx,
 		'gleap.teams.create',
-		{ name: parsed.name },
+		{ completed: true },
 		'completed',
 	);
 	return output;
@@ -63,7 +65,8 @@ export const update: GleapEndpoints['teamsUpdate'] = async (ctx, input) => {
 		{
 			method: 'PUT',
 			body,
-			projectId: project,
+			projectId: project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.teamsUpdate.parse(response);
@@ -83,7 +86,8 @@ export const del: GleapEndpoints['teamsDelete'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'DELETE',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.teamsDelete.parse(response);

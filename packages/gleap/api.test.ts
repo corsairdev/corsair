@@ -20,6 +20,9 @@ import {
 } from './endpoints/types';
 
 const LIVE_KEY = process.env.GLEAP_API_KEY ?? '';
+if (!LIVE_KEY) {
+	console.warn('Skipping Gleap live API tests: GLEAP_API_KEY is not set');
+}
 const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
 
 describeLive('Gleap live API (env-gated)', () => {

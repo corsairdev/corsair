@@ -231,7 +231,7 @@ export const gleapEndpointMeta = {
 		description: 'Find messages in a ticket with filtering and pagination',
 	},
 	'messages.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a new message or internal note in a ticket',
 	},
 	'messages.update': {
@@ -247,7 +247,7 @@ export const gleapEndpointMeta = {
 		description: 'Get thread messages for a specific parent message',
 	},
 	'messages.createThread': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a thread reply for a specific message',
 	},
 

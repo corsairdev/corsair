@@ -29,7 +29,8 @@ export const list: GleapEndpoints['sessionsList'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsList.parse(response);
@@ -52,7 +53,8 @@ export const get: GleapEndpoints['sessionsGet'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsGet.parse(response);
@@ -75,7 +77,8 @@ export const getByUserId: GleapEndpoints['sessionsGetByUserId'] = async (
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output =
@@ -83,7 +86,7 @@ export const getByUserId: GleapEndpoints['sessionsGetByUserId'] = async (
 	await logEventFromContext(
 		ctx,
 		'gleap.sessions.getByUserId',
-		{ userId: parsed.userId },
+		{ completed: true },
 		'completed',
 	);
 	return output;
@@ -98,7 +101,8 @@ export const create: GleapEndpoints['sessionsCreate'] = async (ctx, input) => {
 		{
 			method: 'POST',
 			body,
-			projectId: project,
+			projectId: project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsCreate.parse(response);
@@ -120,7 +124,8 @@ export const update: GleapEndpoints['sessionsUpdate'] = async (ctx, input) => {
 		{
 			method: 'PUT',
 			body,
-			projectId: project,
+			projectId: project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsUpdate.parse(response);
@@ -140,7 +145,8 @@ export const del: GleapEndpoints['sessionsDelete'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'DELETE',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsDelete.parse(response);
@@ -167,7 +173,8 @@ export const search: GleapEndpoints['sessionsSearch'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsSearch.parse(response);
@@ -193,7 +200,8 @@ export const activities: GleapEndpoints['sessionsActivities'] = async (
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output =

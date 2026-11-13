@@ -39,7 +39,8 @@ export const list: GleapEndpoints['ticketsList'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsList.parse(response);
@@ -60,7 +61,8 @@ export const get: GleapEndpoints['ticketsGet'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsGet.parse(response);
@@ -82,7 +84,8 @@ export const create: GleapEndpoints['ticketsCreate'] = async (ctx, input) => {
 		{
 			method: 'POST',
 			body,
-			projectId: project,
+			projectId: project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsCreate.parse(response);
@@ -104,7 +107,8 @@ export const update: GleapEndpoints['ticketsUpdate'] = async (ctx, input) => {
 		{
 			method: 'PUT',
 			body,
-			projectId: project,
+			projectId: project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsUpdate.parse(response);
@@ -124,7 +128,8 @@ export const del: GleapEndpoints['ticketsDelete'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'DELETE',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsDelete.parse(response);
@@ -152,7 +157,8 @@ export const search: GleapEndpoints['ticketsSearch'] = async (ctx, input) => {
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsSearch.parse(response);
@@ -173,7 +179,8 @@ export const counts: GleapEndpoints['ticketsCounts'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.ticketsCounts.parse(response);

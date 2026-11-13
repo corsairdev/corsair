@@ -24,6 +24,8 @@ export const rateConversation: GleapEndpoints['feedbackRateConversation'] =
 			{
 				method: 'POST',
 				body: { rating: parsed.rating },
+				projectId: ctx.options?.projectId,
+				baseUrl: ctx.options?.baseUrl,
 			},
 		);
 		const output =
@@ -48,6 +50,8 @@ export const rateMessage: GleapEndpoints['feedbackRateMessage'] = async (
 		{
 			method: 'POST',
 			body: { rating: parsed.rating },
+			projectId: ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output =
@@ -77,7 +81,8 @@ export const surveysList: GleapEndpoints['feedbackSurveysList'] = async (
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output =
@@ -102,7 +107,8 @@ export const surveysGet: GleapEndpoints['feedbackSurveysGet'] = async (
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output =
@@ -131,7 +137,8 @@ export const surveysResponses: GleapEndpoints['feedbackSurveysResponses'] =
 				{
 					method: 'GET',
 					query,
-					projectId: parsed.project,
+					projectId: parsed.project ?? ctx.options?.projectId,
+					baseUrl: ctx.options?.baseUrl,
 				},
 			);
 		const output =
@@ -164,7 +171,8 @@ export const surveysStats: GleapEndpoints['feedbackSurveysStats'] = async (
 		{
 			method: 'GET',
 			query,
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output =

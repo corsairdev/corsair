@@ -51,39 +51,19 @@ export function redactSensitiveData(value: unknown): unknown {
 export function sanitizeApiError(error: unknown): unknown {
 	if (!(error instanceof ApiError)) return error;
 
-	const requestBody =
-		error.request.body !== undefined
-			? // unknown because request body may be any serialized JSON payload
-				(redactSensitiveData(error.request.body) as
-					| Record<string, unknown>
-					| undefined)
-			: undefined;
+	if (error.request && error.request.body !== undefined) {
+		// unknown because request body may be any serialized JSON payload
+		(error.request as { body?: unknown }).body = redactSensitiveData(
+			error.request.body,
+		);
+	}
 
-	const sanitized = new ApiError(
-		{
-			...error.request,
-			body: requestBody,
-		},
-		{
-			url: error.url,
-			ok: false,
-			status: error.status,
-			statusText: error.statusText,
-			// unknown because API error responses can be structured JSON or error text
-			body: redactSensitiveData(error.body),
-		},
-		typeof error.message === 'string'
-			? (redactSensitiveData(error.message) as string)
-			: error.message,
-		{
-			retryAfter: error.retryAfter,
-			rateLimitReset: error.rateLimitReset,
-			rateLimitRemaining: error.rateLimitRemaining,
-			rateLimitLimit: error.rateLimitLimit,
-		},
-	);
-	sanitized.stack = error.stack;
-	return sanitized;
+	if (error.body !== undefined) {
+		// unknown because API error responses can be structured JSON or error text
+		(error as { body?: unknown }).body = redactSensitiveData(error.body);
+	}
+
+	return error;
 }
 
 export async function makeGleapRequest<T>(

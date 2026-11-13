@@ -17,10 +17,10 @@ Generate an API key in your Gleap dashboard under **Settings → Developer → A
 Pass your API key to the plugin:
 
 ```typescript
-import { corsair } from 'corsair';
+import { createCorsair } from 'corsair';
 import { gleap } from '@corsair-dev/gleap';
 
-const app = corsair({
+const app = createCorsair({
   plugins: [
     gleap({
       key: process.env.GLEAP_API_KEY,
@@ -53,11 +53,11 @@ gleap({
 | `tickets.search` | `GET /tickets/search` | `read` | Full-text search across tickets and comments |
 | `tickets.counts` | `GET /tickets/ticketscount` | `read` | Get ticket counts grouped by board and status |
 | `messages.list` | `GET /messages` | `read` | List messages in a ticket |
-| `messages.create` | `POST /messages` | `write` | Create a message or internal note |
+| `messages.create` | `POST /messages` | `destructive` | Create a message or internal note |
 | `messages.update` | `PUT /messages/{messageId}` | `write` | Update an existing message |
 | `messages.delete` | `DELETE /messages/{messageId}` | `destructive` | Delete a message |
 | `messages.getThread` | `GET /messages/{messageId}/thread` | `read` | Get thread messages for a parent message |
-| `messages.createThread` | `POST /messages/{messageId}/thread` | `write` | Create a thread reply |
+| `messages.createThread` | `POST /messages/{messageId}/thread` | `destructive` | Create a thread reply |
 | `sessions.list` | `GET /sessions` | `read` | List contact sessions |
 | `sessions.get` | `GET /sessions/{sessionId}` | `read` | Get session details by ID |
 | `sessions.getByUserId` | `GET /sessions/by-user-id/{userId}` | `read` | Get session by end-user ID |

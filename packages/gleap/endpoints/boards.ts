@@ -19,7 +19,8 @@ export const list: GleapEndpoints['boardsList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.boardsList.parse(response);
@@ -41,14 +42,15 @@ export const create: GleapEndpoints['boardsCreate'] = async (ctx, input) => {
 		{
 			method: 'POST',
 			body,
-			projectId: project,
+			projectId: project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.boardsCreate.parse(response);
 	await logEventFromContext(
 		ctx,
 		'gleap.boards.create',
-		{ name: parsed.name },
+		{ completed: true },
 		'completed',
 	);
 	return output;
@@ -63,7 +65,8 @@ export const update: GleapEndpoints['boardsUpdate'] = async (ctx, input) => {
 		{
 			method: 'PUT',
 			body,
-			projectId: project,
+			projectId: project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.boardsUpdate.parse(response);
@@ -83,7 +86,8 @@ export const del: GleapEndpoints['boardsDelete'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'DELETE',
-			projectId: parsed.project,
+			projectId: parsed.project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
 		},
 	);
 	const output = GleapEndpointOutputSchemas.boardsDelete.parse(response);
