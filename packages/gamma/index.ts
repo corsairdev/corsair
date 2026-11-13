@@ -165,11 +165,12 @@ const gammaEndpointMeta = {
 	'gammas.get': {
 		riskLevel: 'read',
 		description:
-			'One gamma’s title, author, folder, archive state and thumbnail',
+			'One gamma’s title, author, theme, archive state and thumbnail',
 	},
 	'gammas.search': {
 		riskLevel: 'read',
-		description: 'Full-text search over the gammas the caller can read',
+		description:
+			'Full-text search over the gammas the caller can read. Needs `q` or a filter (`createdBy`, `updatedAfter`, `updatedBefore`)',
 	},
 	'gammas.archive': {
 		riskLevel: 'write',
@@ -198,7 +199,8 @@ const gammaEndpointMeta = {
 	},
 	'folders.list': {
 		riskLevel: 'read',
-		description: 'The folders the caller can write a gamma into',
+		description:
+			'The folders the caller can see. Some are view-only, and placing a gamma with `folderId` needs edit access',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof gammaEndpointsNested>;
 

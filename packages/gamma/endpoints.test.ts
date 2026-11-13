@@ -3,13 +3,17 @@ import { GammaAPIError } from './client';
 import { Gammas, Generations, Workspace } from './endpoints';
 import {
 	agentCompleted,
+	agentFailed,
+	agentNoCredits,
 	agentStarted,
 	analyticsForbidden,
+	archived,
 	completed,
 	completedWithPages,
 	concurrencyLimited,
 	created,
 	createdWithWarnings,
+	deleted,
 	editInProgress,
 	exportCompleted,
 	exportStarted,
@@ -55,9 +59,6 @@ function respond(body: unknown, status = 200) {
 	);
 }
 
-function respondEmpty(status = 204) {
-	fetchMock.mockResolvedValueOnce(new Response(null, { status }));
-}
 
 function lastRequest() {
 	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
@@ -346,6 +347,9 @@ describe('agent.generate', () => {
 		[{}],
 		[{ prompt: '' }],
 		[{ prompt: 'x', quality: 'ultra' }],
+		// The agent makes presentations, documents and social posts; a webpage
+		// is Classic only.
+		[{ prompt: 'x', format: 'webpage' }],
 		[{ prompt: 'x', sourceUrls: ['not-a-url'] }],
 		[
 			{
@@ -360,24 +364,76 @@ describe('agent.generate', () => {
 		await expect(invoke(Generations.agentCreate, input)).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
+
+	it('refuses a 202 without the generationId it needs to poll', async () => {
+		respond({ status: 'pending', warnings: [] }, 202);
+
+		await expect(
+			invoke(Generations.agentCreate, { prompt: 'x' }),
+		).rejects.toThrow();
+	});
+
+	it('keeps the warnings Gamma returns on create', async () => {
+		respond(
+			{
+				...agentStarted,
+				warnings: [{ code: 'ignored_folder_id', message: 'Folder ignored' }],
+			},
+			202,
+		);
+
+		await expect(
+			invoke(Generations.agentCreate, { prompt: 'x', folderId: 'fld_9' }),
+		).resolves.toMatchObject({
+			warnings: [{ code: 'ignored_folder_id' }],
+		});
+	});
 });
 
 describe('agent.get', () => {
-	it('reads the agent status', async () => {
+	it('reads the agent status with the gamma nested under `gamma`', async () => {
 		respond(agentCompleted);
 
 		await expect(
 			invoke(Generations.agentGet, { generationId: 'gen_agent1' }),
-		).resolves.toMatchObject({ status: 'completed', gammaId: 'gam_agent1' });
+		).resolves.toMatchObject({
+			status: 'completed',
+			gamma: {
+				gammaId: 'gam_agent1',
+				gammaUrl: 'https://gamma.app/docs/agent1',
+			},
+			result: { summary: 'A five-card deck on solar power.' },
+		});
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',
 			path: '/v1.0/agent/generations/gen_agent1',
 		});
 	});
+
+	it('logs the gamma ID from the nested object', async () => {
+		respond(agentCompleted);
+
+		await invoke(Generations.agentGet, { generationId: 'gen_agent1' });
+
+		expect(mockLog.mock.calls.at(-1)?.[2]).toMatchObject({
+			gammaId: 'gam_agent1',
+		});
+	});
+
+	it('keeps the reason of a failed agent run', async () => {
+		respond(agentFailed);
+
+		await expect(
+			invoke(Generations.agentGet, { generationId: 'gen_agent1' }),
+		).resolves.toMatchObject({
+			status: 'failed',
+			error: { reason: 'insufficient_credits' },
+		});
+	});
 });
 
 describe('gammas.get', () => {
-	it('reads one gamma with its author and folder', async () => {
+	it('reads one gamma with its author and theme', async () => {
 		respond(gamma);
 
 		await expect(
@@ -385,7 +441,7 @@ describe('gammas.get', () => {
 		).resolves.toMatchObject({
 			id: 'gam_xyz789',
 			author: { name: 'Priya Raman' },
-			folderId: 'fld_1',
+			themeId: 'thm_1',
 		});
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',
@@ -404,18 +460,39 @@ describe('gammas.search', () => {
 				includeArchived: true,
 				limit: 10,
 			}),
-		).resolves.toMatchObject({ hits: [{ id: 'gam_xyz789' }] });
+		).resolves.toMatchObject({
+			hits: [{ id: 'gam_xyz789', highlight: expect.any(String) }],
+		});
 		expect(lastRequest().query).toEqual({
 			q: 'renewable',
 			includeArchived: 'true',
 			limit: '10',
 		});
 	});
+
+	it('searches by a filter alone, with no query', async () => {
+		respond(searchResults);
+
+		await invoke(Gammas.search, { createdBy: 'me' });
+
+		expect(lastRequest().query).toEqual({ createdBy: 'me' });
+	});
+
+	// Gamma takes no `q` only when a filter narrows the search, and caps
+	// `limit` at 25.
+	it.each([
+		[{}],
+		[{ includeArchived: true, limit: 10 }],
+		[{ q: 'x', limit: 26 }],
+	])('rejects %j before calling Gamma', async (input) => {
+		await expect(invoke(Gammas.search, input)).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });
 
 describe('gammas.archive', () => {
-	it('POSTs the archive and reports it, since the call is idempotent', async () => {
-		respondEmpty(204);
+	it('POSTs the archive and reports what Gamma confirmed', async () => {
+		respond(archived);
 
 		await expect(
 			invoke(Gammas.archive, { gammaId: 'gam_xyz789' }),
@@ -424,6 +501,14 @@ describe('gammas.archive', () => {
 			method: 'POST',
 			path: '/v1.0/gammas/gam_xyz789/archive',
 		});
+	});
+
+	it('does not report an archive Gamma did not confirm', async () => {
+		respond({ gammaId: 'gam_xyz789', archived: false });
+
+		await expect(
+			invoke(Gammas.archive, { gammaId: 'gam_xyz789' }),
+		).rejects.toThrow();
 	});
 
 	it('surfaces a web app slug sent where a file ID belongs', async () => {
@@ -441,9 +526,11 @@ describe('gammas.archive', () => {
 
 describe('gammas.delete', () => {
 	it('DELETEs the gamma', async () => {
-		respond({ success: true, message: 'Gamma deleted' });
+		respond(deleted);
 
-		await invoke(Gammas.remove, { gammaId: 'gam_xyz789' });
+		await expect(
+			invoke(Gammas.remove, { gammaId: 'gam_xyz789' }),
+		).resolves.toMatchObject({ status: 'deleted', gammaId: 'gam_xyz789' });
 
 		expect(lastRequest()).toMatchObject({
 			method: 'DELETE',
@@ -462,16 +549,9 @@ describe('exports', () => {
 		expect(lastRequest()).toMatchObject({
 			method: 'POST',
 			path: '/v1.0/gammas/gam_xyz789/export',
-			body: { format: 'pptx' },
+			// Gamma's body field is `exportAs`, and it is required.
+			body: { exportAs: 'pptx' },
 		});
-	});
-
-	it('sends no body when no format is chosen', async () => {
-		respond(exportStarted);
-
-		await invoke(Gammas.exportGamma, { gammaId: 'gam_xyz789' });
-
-		expect(lastRequest().body).toBeUndefined();
 	});
 
 	it('reads a completed export with its download link', async () => {
@@ -493,13 +573,14 @@ describe('exports', () => {
 		}
 	});
 
-	it.each([[{ gammaId: 'gam', format: 'docx' }], [{ format: 'pdf' }]])(
-		'rejects %j before calling Gamma',
-		async (input) => {
-			await expect(invoke(Gammas.exportGamma, input)).rejects.toThrow();
-			expect(fetchMock).not.toHaveBeenCalled();
-		},
-	);
+	it.each([
+		[{ gammaId: 'gam', format: 'docx' }],
+		[{ format: 'pdf' }],
+		[{ gammaId: 'gam' }],
+	])('rejects %j before calling Gamma', async (input) => {
+		await expect(invoke(Gammas.exportGamma, input)).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });
 
 describe('workspace', () => {
@@ -507,7 +588,7 @@ describe('workspace', () => {
 		respond(themes);
 
 		await expect(
-			invoke(Workspace.themes, { type: 'custom', limit: 10 }),
+			invoke(Workspace.themes, { type: 'standard', limit: 10 }),
 		).resolves.toMatchObject({
 			data: [{ id: 'thm_1' }, { id: 'thm_2' }],
 			hasMore: false,
@@ -516,16 +597,25 @@ describe('workspace', () => {
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',
 			path: '/v1.0/themes',
-			query: { type: 'custom', limit: '10' },
+			query: { type: 'standard', limit: '10' },
 		});
 	});
+
+	// Gamma filters themes by `standard` or `custom` and pages at most 50.
+	it.each([[{ type: 'official' }], [{ type: 'all' }], [{ limit: 51 }]])(
+		'rejects the theme filter %j before calling Gamma',
+		async (input) => {
+			await expect(invoke(Workspace.themes, input)).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 
 	it('lists the folders', async () => {
 		respond(folders);
 
 		const result = (await invoke(Workspace.folders, {})) as typeof folders;
 
-		expect(result.data[1]?.parentId).toBe('fld_1');
+		expect(result.data[1]?.name).toBe('Q4');
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',
 			path: '/v1.0/folders',
@@ -555,6 +645,19 @@ describe('error envelopes', () => {
 			status: 402,
 			isQuotaError: true,
 			isRateLimit: false,
+		});
+	});
+
+	it('reads an agent route out of credits as a quota error, not a permission one', async () => {
+		respond(agentNoCredits, 403);
+
+		await expect(
+			invoke(Generations.agentCreate, { prompt: 'x' }),
+		).rejects.toMatchObject({
+			status: 403,
+			code: 'insufficient_credits',
+			isQuotaError: true,
+			isPermissionError: false,
 		});
 	});
 

@@ -16,7 +16,8 @@ const GAMMA_TIMEOUT_MS = 60_000;
  * Gamma answers a failure as `{ message, statusCode }`, and adds a `code` on
  * the cases a caller can act on:
  *
- * - `402` with `Insufficient credits remaining` means the workspace is out.
+ * - `402` with `Insufficient credits remaining` means the workspace is out; the
+ *   agent routes say the same with `403` and `code: insufficient_credits`.
  * - `403` with `code: individual_analytics_required` means the plan or a
  *   permission is short.
  * - `429` with `code: workspace_concurrency_limit_exceeded` means either the
@@ -104,14 +105,20 @@ export class GammaAPIError extends Error {
 		return this.status === 401;
 	}
 
-	/** The workspace has no credits, which no retry fixes. */
+	/**
+	 * The workspace has no credits, which no retry fixes. Classic routes answer
+	 * 402; the agent routes answer 403 with `code: insufficient_credits`.
+	 */
 	get isQuotaError(): boolean {
-		return this.status === 402;
+		return (
+			this.status === 402 ||
+			(this.status === 403 && this.code === 'insufficient_credits')
+		);
 	}
 
 	/** Short plan, wrong permissions, or the wrong kind of gamma ID. */
 	get isPermissionError(): boolean {
-		return this.status === 403;
+		return this.status === 403 && !this.isQuotaError;
 	}
 
 	/** Another edit is running on this Gamma. */

@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 import type { GammaEndpoints } from '..';
 import { definedQuery, segment } from '../client';
 import { call } from './call';
@@ -45,8 +46,8 @@ export const search: GammaEndpoints['gammasSearch'] = (ctx, input) =>
 		{ log: (_, result) => ({ hits: result.hits.length }) },
 	);
 
-// Archiving is idempotent, so the answer states what was asked rather than
-// relying on an empty body.
+// Archiving is idempotent. Gamma confirms with `{ gammaId, archived: true }`,
+// and the output schema refuses anything that does not confirm it.
 export const archive: GammaEndpoints['gammasArchive'] = (ctx, input) =>
 	call(
 		ctx,
@@ -61,10 +62,13 @@ export const archive: GammaEndpoints['gammasArchive'] = (ctx, input) =>
 			path: `/v1.0/gammas/${segment(gammaId)}/archive`,
 		}),
 		{
-			shape: (_, { gammaId }) => ({
-				success: true as const,
-				gamma_id: gammaId,
-			}),
+			shape: (raw, { gammaId }) => {
+				const body = asRecord(raw);
+				return {
+					success: body?.archived === true ? true : body?.archived,
+					gamma_id: typeof body?.gammaId === 'string' ? body.gammaId : gammaId,
+				};
+			},
 			log: ({ gammaId }) => ({ gammaId }),
 		},
 	);
@@ -97,12 +101,12 @@ export const exportGamma: GammaEndpoints['exportsStart'] = (ctx, input) =>
 		({ gammaId, format }) => ({
 			method: 'POST',
 			path: `/v1.0/gammas/${segment(gammaId)}/export`,
-			body: format === undefined ? undefined : { format },
+			body: { exportAs: format },
 		}),
 		{
 			log: ({ gammaId, format }) => ({
 				gammaId,
-				format: format ?? undefined,
+				format,
 			}),
 		},
 	);

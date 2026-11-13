@@ -23,6 +23,12 @@ export const GAMMA_FORMATS = [
 	'social',
 	'webpage',
 ] as const;
+// The agent route makes the first three; a webpage is Classic only.
+export const GAMMA_AGENT_FORMATS = [
+	'presentation',
+	'document',
+	'social',
+] as const;
 export const GAMMA_TEXT_MODES = ['generate', 'condense', 'preserve'] as const;
 export const GAMMA_EXPORT_FORMATS = ['pdf', 'pptx', 'png'] as const;
 
@@ -242,12 +248,21 @@ const CreditsSchema = z
 	})
 	.loose();
 
+// Gamma's documented error object, on a failed job or a failed page.
+const JobErrorSchema = z
+	.object({
+		message: z.string().nullish(),
+		statusCode: z.number().nullish(),
+	})
+	.loose();
+
 const PageResultSchema = z
 	.object({
 		status: z.string().nullish(),
 		gammaId: z.string().nullish(),
 		gammaUrl: z.string().nullish(),
-		error: z.record(z.string(), z.unknown()).nullish(),
+		error: JobErrorSchema.nullish(),
+		exportUrl: z.string().nullish(),
 	})
 	.loose();
 
@@ -262,13 +277,7 @@ const GenerationStatusResponseSchema = z
 			.nullish()
 			.describe('Set once the generation completes.'),
 		gammaUrl: z.string().nullish(),
-		error: z
-			.object({
-				message: z.string().nullish(),
-				statusCode: z.number().nullish(),
-			})
-			.loose()
-			.nullish(),
+		error: JobErrorSchema.nullish(),
 		exportUrl: z
 			.string()
 			.nullish()
@@ -298,9 +307,11 @@ const AgentGenerateInputSchema = z.object({
 		.describe('The brief: what to generate. The only required field.'),
 	title: z.string().optional(),
 	format: z
-		.enum(GAMMA_FORMATS)
+		.enum(GAMMA_AGENT_FORMATS)
 		.optional()
-		.describe('Defaults to `presentation`.'),
+		.describe(
+			'Defaults to `presentation`. A webpage needs `generations.create`.',
+		),
 	numCards: z
 		.number()
 		.min(1)
@@ -332,11 +343,26 @@ const AgentGenerateInputSchema = z.object({
 
 export type AgentGenerateInput = z.input<typeof AgentGenerateInputSchema>;
 
+const AgentWarningSchema = z
+	.object({
+		code: z
+			.string()
+			.describe('Such as `ignored_folder_id` or `export_failed`.'),
+		message: z.string().nullish(),
+	})
+	.loose();
+
+// A 202 without the ID leaves a started job nobody can poll, so it is required.
 const AgentGenerationResponseSchema = z
 	.object({
-		generationId: z.string().nullish(),
-		agentId: z.string().nullish(),
+		generationId: z.string().min(1),
 		status: z.string().nullish(),
+		warnings: z
+			.array(AgentWarningSchema)
+			.nullish()
+			.describe(
+				'Options Gamma ignored or could not apply. Keep them: the status read does not always repeat them.',
+			),
 	})
 	.loose();
 
@@ -348,8 +374,60 @@ const AgentGetInputSchema = z.object({ generationId: GenerationIdSchema });
 
 export type AgentGetInput = z.input<typeof AgentGetInputSchema>;
 
-// The agent status carries the same terminal states and the same download link.
-const AgentStatusResponseSchema = GenerationStatusResponseSchema.loose();
+// The agent status has the same terminal states as a Classic one, but nests the
+// gamma under `gamma` (which can appear while still pending) and adds the
+// agent's own summary, progress and a machine-readable failure reason.
+const AgentStatusResponseSchema = z
+	.object({
+		generationId: z.string(),
+		status: z
+			.string()
+			.describe('`pending` is not final; `completed` and `failed` are.'),
+		gamma: z
+			.object({
+				gammaId: z.string(),
+				gammaUrl: z.string().nullish(),
+				title: z.string().nullish(),
+			})
+			.loose()
+			.nullish()
+			.describe(
+				'The generated gamma. Can appear while pending, once the document exists.',
+			),
+		result: z
+			.object({ summary: z.string().nullish() })
+			.loose()
+			.nullish()
+			.describe('The agent’s summary of what it made, once completed.'),
+		progress: z
+			.object({
+				done: z.number().nullish(),
+				total: z.number().nullish(),
+				percent: z.number().nullish().describe('0 to 99 until completed.'),
+			})
+			.loose()
+			.nullish(),
+		error: JobErrorSchema.extend({
+			reason: z
+				.string()
+				.nullish()
+				.describe(
+					'Such as `insufficient_credits`, `timeout` or `generation_failed`.',
+				),
+		})
+			.loose()
+			.nullish(),
+		exportUrl: z
+			.string()
+			.nullish()
+			.describe(
+				'A download link for the export, valid for about a week. Anyone holding it can download the file, so treat it as a secret and do not log it.',
+			),
+		warnings: z.array(AgentWarningSchema).nullish(),
+		credits: CreditsSchema.nullish(),
+		updatedTime: z.string().nullish(),
+	})
+	.loose();
 
 export type AgentStatusResponse = z.infer<typeof AgentStatusResponseSchema>;
 
@@ -357,9 +435,8 @@ export type AgentStatusResponse = z.infer<typeof AgentStatusResponseSchema>;
 
 const AuthorSchema = z
 	.object({
-		id: z.string().nullish(),
 		name: z.string().nullish(),
-		email: z.string().nullish(),
+		avatarUrl: z.string().nullish(),
 	})
 	.loose();
 
@@ -379,8 +456,8 @@ export const GammaSchema = z
 		author: AuthorSchema.nullish(),
 		createdTime: z.string().nullish(),
 		updatedTime: z.string().nullish(),
+		themeId: z.string().nullish(),
 		archived: z.boolean().nullish(),
-		folderId: z.string().nullish(),
 	})
 	.loose();
 
@@ -398,8 +475,8 @@ const GammaArchiveInputSchema = z.object({ gammaId: GammaIdSchema });
 
 export type GammaArchiveInput = z.input<typeof GammaArchiveInputSchema>;
 
-// Archiving is idempotent, so the result states what was asked rather than
-// depending on an empty body.
+// Gamma answers `{ gammaId, archived: true }`; the endpoint maps that to this,
+// so a body that does not confirm the archive fails here.
 const ArchivedResponseSchema = z.object({
 	success: z.literal(true),
 	gamma_id: z.string(),
@@ -413,24 +490,45 @@ export type GammaRemoveInput = z.input<typeof GammaRemoveInputSchema>;
 
 const GammaRemoveResponseSchema = z
 	.object({
-		success: z.boolean().nullish(),
+		status: z.string().nullish().describe('`deleted` once Gamma removed it.'),
+		gammaId: z.string().nullish(),
 		message: z.string().nullish(),
 	})
 	.loose();
 
 export type GammaRemoveResponse = z.infer<typeof GammaRemoveResponseSchema>;
 
-const GammasSearchInputSchema = z.object({
-	q: z
-		.string()
-		.optional()
-		.describe('Full-text query over titles and body text.'),
-	createdBy: z.string().optional().describe('Only gammas this user created.'),
-	updatedAfter: z.string().optional().describe('ISO 8601.'),
-	updatedBefore: z.string().optional().describe('ISO 8601.'),
-	includeArchived: z.boolean().optional(),
-	limit: z.number().int().min(1).optional(),
-});
+const GammasSearchInputSchema = z
+	.object({
+		q: z
+			.string()
+			.optional()
+			.describe(
+				'Full-text query over titles and body text. Optional only when `createdBy`, `updatedAfter` or `updatedBefore` is set.',
+			),
+		createdBy: z
+			.string()
+			.optional()
+			.describe(
+				'Only gammas this user created: `me`, an email address or a user ID.',
+			),
+		updatedAfter: z.string().optional().describe('ISO 8601.'),
+		updatedBefore: z.string().optional().describe('ISO 8601.'),
+		includeArchived: z.boolean().optional(),
+		limit: z.number().int().min(1).max(25).optional(),
+	})
+	.refine(
+		(value) =>
+			(value.q !== undefined && value.q.length > 0) ||
+			value.createdBy !== undefined ||
+			value.updatedAfter !== undefined ||
+			value.updatedBefore !== undefined,
+		{
+			message:
+				'Send `q`, or at least one of `createdBy`, `updatedAfter` or `updatedBefore`.',
+			path: ['q'],
+		},
+	);
 
 export type GammasSearchInput = z.input<typeof GammasSearchInputSchema>;
 
@@ -438,9 +536,12 @@ const SearchHitSchema = z
 	.object({
 		id: z.string(),
 		title: z.string().nullish(),
-		type: z.string().nullish(),
 		url: z.string().nullish(),
-		thumbnailUrl: z.string().nullish(),
+		highlight: z
+			.string()
+			.nullish()
+			.describe('The matching passage, when `q` was sent.'),
+		createdBy: z.string().nullish(),
 		updatedTime: z.string().nullish(),
 		archived: z.boolean().nullish(),
 	})
@@ -460,9 +561,8 @@ const GammaExportInputSchema = z.object({
 	gammaId: GammaIdSchema,
 	format: z
 		.enum(GAMMA_EXPORT_FORMATS)
-		.optional()
 		.describe(
-			'Defaults to Gamma’s own. A `png` export is a zip of one image per card.',
+			'Sent as Gamma’s `exportAs`, which is required. A `png` export is a zip of one image per card.',
 		),
 });
 
@@ -486,6 +586,8 @@ export type ExportGetInput = z.input<typeof ExportGetInputSchema>;
 const ExportStatusResponseSchema = z
 	.object({
 		exportId: z.string().nullish(),
+		gammaId: z.string().nullish(),
+		exportAs: z.string().nullish(),
 		status: z
 			.string()
 			.describe('`pending` is not final; `completed` and `failed` are.'),
@@ -495,13 +597,7 @@ const ExportStatusResponseSchema = z
 			.describe(
 				'A download link valid about a week. Anyone holding it can download the file, so treat it as a secret and do not log it.',
 			),
-		error: z
-			.object({
-				message: z.string().nullish(),
-				statusCode: z.number().nullish(),
-			})
-			.loose()
-			.nullish(),
+		error: JobErrorSchema.nullish(),
 	})
 	.loose();
 
@@ -511,7 +607,7 @@ export type ExportStatusResponse = z.infer<typeof ExportStatusResponseSchema>;
 
 const ListCursorInputSchema = z.object({
 	query: z.string().optional().describe('Filter by name.'),
-	limit: z.number().int().min(1).optional(),
+	limit: z.number().int().min(1).max(50).optional(),
 	after: z
 		.string()
 		.min(1)
@@ -521,9 +617,11 @@ const ListCursorInputSchema = z.object({
 
 const ThemesListInputSchema = ListCursorInputSchema.extend({
 	type: z
-		.enum(['custom', 'official', 'all'])
+		.enum(['standard', 'custom'])
 		.optional()
-		.describe('Only this kind of theme.'),
+		.describe(
+			'`standard` for Gamma’s own themes, `custom` for the workspace’s.',
+		),
 });
 
 export type ThemesListInput = z.input<typeof ThemesListInputSchema>;
@@ -532,7 +630,7 @@ const ThemeSchema = z
 	.object({
 		id: z.string(),
 		name: z.string().nullish(),
-		type: z.string().nullish(),
+		type: z.string().nullish().describe('`standard` or `custom`.'),
 	})
 	.loose();
 
@@ -559,7 +657,6 @@ const FolderSchema = z
 	.object({
 		id: z.string(),
 		name: z.string().nullish(),
-		parentId: z.string().nullish(),
 	})
 	.loose();
 

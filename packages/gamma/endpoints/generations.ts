@@ -76,7 +76,7 @@ export const agentCreate: GammaEndpoints['agentGenerate'] = (ctx, input) =>
 		}),
 		{
 			log: (parsed, result) => ({
-				generationId: result.generationId ?? undefined,
+				generationId: result.generationId,
 				format: parsed.format ?? 'presentation',
 				quality: parsed.quality ?? undefined,
 			}),
@@ -99,8 +99,9 @@ export const agentGet: GammaEndpoints['agentGet'] = (ctx, input) =>
 		{
 			log: (_, result) => ({
 				status: result.status,
-				gammaId: result.gammaId ?? undefined,
+				gammaId: result.gamma?.gammaId ?? undefined,
 				exported: result.exportUrl ? 1 : 0,
+				credits: result.credits?.deducted ?? undefined,
 			}),
 		},
 	);
