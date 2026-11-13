@@ -79,7 +79,7 @@ describe('DeployHQ REST operations', () => {
 			const url = new URL(String(requestUrl));
 			expect(url.origin).toBe(
 				operationKey === 'signup.createSignup'
-					? 'https://deployhq.com'
+					? 'https://api.deployhq.com'
 					: 'https://demo-account.deployhq.com',
 			);
 			expect(url.pathname).toBe(expectedPath(operation, input));

@@ -265,7 +265,7 @@ export async function makeDeployHQRequest(
 	const method = options.method ?? 'GET';
 	const isPublic = options.public === true;
 	const baseUrl = options.signup
-		? 'https://deployhq.com'
+		? 'https://api.deployhq.com'
 		: `https://${resolveAccountSubdomain(credentials.accountSubdomain)}.deployhq.com`;
 	let headers: Record<string, string> = {
 		Accept: 'application/json',

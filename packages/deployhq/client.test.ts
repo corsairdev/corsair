@@ -78,7 +78,7 @@ describe('DeployHQ client', () => {
 		const call = mockedFetch.mock.calls[0];
 		expect(call).toBeDefined();
 		if (!call) return;
-		expect(new URL(String(call[0])).origin).toBe('https://deployhq.com');
+		expect(new URL(String(call[0])).origin).toBe('https://api.deployhq.com');
 		expect(call[1]?.method).toBe('POST');
 		expect(new Headers(call[1]?.headers).has('authorization')).toBe(false);
 		expect(JSON.parse(String(call[1]?.body))).toEqual({

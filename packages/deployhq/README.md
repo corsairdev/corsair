@@ -25,7 +25,7 @@ All account requests use `https://<accountSubdomain>.deployhq.com/`. Public rout
 - Public routes include account signup, password reset, deployment IP ranges, packages/prices, public templates, and status badges.
 - The API reference does not define an inbound webhook contract; this plugin exposes no webhooks.
 - The OpenAPI document has inconsistent path parameter declarations for several routes. The URL template is used as the path source of truth: the build-language routes put `override_build_configuration_id` in the path but describe it as an optional query parameter; `/projects/{id}/insights` declares both `project_id` and `id` as path parameters; `/projects/{project_id}/build_configuration` and `/security/api_keys/{id}` declare extra path parameters absent from their URL templates; and `/templates/{id}/public/{id}` repeats the `id` placeholder. Confirm these conflicts with DeployHQ before relying on the affected operations.
-- Account operations use the configured account subdomain. The official [signup guide](https://www.deployhq.com/support/api/signup) specifies `https://deployhq.com/api/v1/signup`, so account creation is public and does not require an existing permalink.
+- Account operations use the configured account subdomain. Account creation posts to `https://api.deployhq.com/api/v1/signup`, so it is public and does not require an existing permalink. The [signup guide](https://www.deployhq.com/support/api/signup) shows `https://deployhq.com/api/v1/signup`, but that host redirects to a 404.
 - Status-badge routes are documented as returning SVG source. The transport handles non-JSON response content as text and the operation output schema is a string; no binary envelope or byte decoding is used.
 
 ## Official documentation
