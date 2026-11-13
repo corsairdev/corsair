@@ -4275,5 +4275,14 @@
     "version": "0.1.53",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-13",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.34",
+    "isNew": false,
+    "changes": []
   }
 ]
