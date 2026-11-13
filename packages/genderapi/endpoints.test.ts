@@ -114,6 +114,28 @@ describe('Gender API client', () => {
 		expect(sent.query.key).toBe(API_KEY);
 	});
 
+	it('sends the key Corsair resolved for the call, not a fresh store read', async () => {
+		respond(alice);
+		const getStored = jest.fn().mockResolvedValue('stored-key');
+		const ctx = {
+			key: 'key-set-by-a-before-hook',
+			options: {},
+			keys: { get_api_key: getStored },
+		};
+		await name(ctx as never, { name: 'Alice' } as never);
+
+		expect(lastRequest().query.key).toBe('key-set-by-a-before-hook');
+		expect(getStored).not.toHaveBeenCalled();
+	});
+
+	it('raises AuthMissingError before any request when no key was resolved', async () => {
+		const ctx = { key: '', options: {}, keys: {} };
+		const error = await failure(name(ctx as never, { name: 'Alice' } as never));
+
+		expect(error.name).toBe('AuthMissingError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('throws on a refused key even though the status was 200', async () => {
 		respond(invalidKeyOn200);
 		const error = await failure(invoke(name, { name: 'Alice' }));
@@ -241,6 +263,13 @@ describe('genderapi.lookup.name', () => {
 });
 
 describe('genderapi.lookup.multi', () => {
+	it('rejects a name holding a semicolon, which Gender API would split into two rows', async () => {
+		const error = await failure(invoke(multi, { names: ['Alice;Bob', 'Kim'] }));
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('joins the names with semicolons and asks for multi', async () => {
 		respond(multiFixture);
 		await invoke(multi, { names: ['lisa', 'jess', 'thomas'] });
@@ -417,6 +446,14 @@ describe('genderapi.countryOfOrigin.get', () => {
 });
 
 describe('genderapi.account.stats', () => {
+	it('does not hand the account key back to the caller', async () => {
+		respond(statsFixture);
+		const result = (await invoke(stats, {})) as Record<string, unknown>;
+
+		expect(result).not.toHaveProperty('key');
+		expect(JSON.stringify(result)).not.toContain(statsFixture.key);
+	});
+
 	it('reads the remaining count from the documented route', async () => {
 		respond(statsFixture);
 		await invoke(stats, {});

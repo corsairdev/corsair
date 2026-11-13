@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { GenderApiContext, GenderApiEndpoints } from '..';
 import type { GenderApiCredentials } from '../client';
 import { definedQuery, makeGenderApiRequest } from '../client';
@@ -8,16 +8,13 @@ import {
 } from './types';
 
 /**
- * The key resolves from the option first, then from the stored account key.
- * Gender API has no keyless mode, so an empty key is sent as-is and the API
- * answers `errno: 40`, which the auth handler reads.
+ * Corsair resolves the key through the keyBuilder (the option first, then the
+ * stored account key) and hands it to the endpoint as `ctx.key`, after any
+ * `before` hook had its say. Reading it again here would skip a key a hook set.
  */
-async function resolveCredentials(
-	ctx: GenderApiContext,
-): Promise<GenderApiCredentials> {
-	if (ctx.options.key) return { apiKey: ctx.options.key };
-	const stored = await ctx.keys.get_api_key();
-	return { apiKey: stored ?? undefined };
+function resolveCredentials(ctx: GenderApiContext): GenderApiCredentials {
+	if (!ctx.key) throw new AuthMissingError('genderapi', 'api_key');
+	return { apiKey: ctx.key };
 }
 
 export const name: GenderApiEndpoints['lookup']['name'] = async (
@@ -26,7 +23,7 @@ export const name: GenderApiEndpoints['lookup']['name'] = async (
 ) => {
 	const parsed = GenderApiEndpointInputSchemas.name.parse(input ?? {});
 
-	const raw = await makeGenderApiRequest(await resolveCredentials(ctx), {
+	const raw = await makeGenderApiRequest(resolveCredentials(ctx), {
 		path: '/get',
 		query: definedQuery({
 			name: parsed.name,
@@ -63,7 +60,7 @@ export const multi: GenderApiEndpoints['lookup']['multi'] = async (
 ) => {
 	const parsed = GenderApiEndpointInputSchemas.multi.parse(input ?? {});
 
-	const raw = await makeGenderApiRequest(await resolveCredentials(ctx), {
+	const raw = await makeGenderApiRequest(resolveCredentials(ctx), {
 		path: '/get',
 		query: definedQuery({
 			name: parsed.names.join(';'),
@@ -93,7 +90,7 @@ export const email: GenderApiEndpoints['email']['lookup'] = async (
 ) => {
 	const parsed = GenderApiEndpointInputSchemas.email.parse(input ?? {});
 
-	const raw = await makeGenderApiRequest(await resolveCredentials(ctx), {
+	const raw = await makeGenderApiRequest(resolveCredentials(ctx), {
 		path: '/get',
 		query: definedQuery({
 			email: parsed.email,
@@ -123,7 +120,7 @@ export const fullName: GenderApiEndpoints['fullName']['split'] = async (
 ) => {
 	const parsed = GenderApiEndpointInputSchemas.fullName.parse(input ?? {});
 
-	const raw = await makeGenderApiRequest(await resolveCredentials(ctx), {
+	const raw = await makeGenderApiRequest(resolveCredentials(ctx), {
 		path: '/get',
 		query: definedQuery({
 			split: parsed.split,
@@ -154,7 +151,7 @@ export const countryOfOrigin: GenderApiEndpoints['countryOfOrigin']['get'] =
 			input ?? {},
 		);
 
-		const raw = await makeGenderApiRequest(await resolveCredentials(ctx), {
+		const raw = await makeGenderApiRequest(resolveCredentials(ctx), {
 			path: '/get-country-of-origin',
 			query: definedQuery({ name: parsed.name }),
 		});
@@ -181,7 +178,7 @@ export const stats: GenderApiEndpoints['account']['stats'] = async (
 ) => {
 	GenderApiEndpointInputSchemas.stats.parse(input ?? {});
 
-	const raw = await makeGenderApiRequest(await resolveCredentials(ctx), {
+	const raw = await makeGenderApiRequest(resolveCredentials(ctx), {
 		path: '/get-stats',
 	});
 

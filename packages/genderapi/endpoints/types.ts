@@ -62,7 +62,16 @@ const NameInputSchema = z.object({
 
 const MultiInputSchema = z.object({
 	names: z
-		.array(z.string().min(1, 'A name cannot be empty'))
+		.array(
+			z
+				.string()
+				.min(1, 'A name cannot be empty')
+				// Gender API splits the batch on semicolons, so one name holding one
+				// would come back as several rows and shift every answer after it.
+				.refine((value) => !value.includes(';'), {
+					message: 'A name cannot contain a semicolon',
+				}),
+		)
 		.min(1, 'Send at least one name')
 		.max(100, 'Gender API accepts at most 100 names at once')
 		.describe('Names to look up together, answered in the same order'),
@@ -152,8 +161,9 @@ const CountryOfOriginResponseSchema = z.object({
 	duration: z.string().optional(),
 });
 
+// The route also echoes the account's server key as `key`. It is left out so
+// the secret never reaches an agent through a read operation; zod drops it.
 const StatsResponseSchema = z.object({
-	key: z.string(),
 	/** True when no requests are left. */
 	is_limit_reached: z.boolean(),
 	remaining_requests: z.number(),
