@@ -2816,6 +2816,14 @@
                 ]
               },
               {
+                "group": "Mistral AI",
+                "pages": [
+                  "plugins/mistralai/overview",
+                  "plugins/mistralai/api",
+                  "plugins/mistralai/database"
+                ]
+              },
+              {
                 "group": "Mixmax",
                 "pages": [
                   "plugins/mixmax/overview",

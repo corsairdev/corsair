@@ -1,0 +1,4029 @@
+---
+title: API
+description: "API reference for Mistral AI: every `mistralai.api.*` operation with input and output types."
+---
+
+Every `mistralai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agents
+
+### complete
+
+`agents.complete`
+
+Run an agent on a list of messages with the agent's instructions and tools; spends Mistral credits
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.agents.complete({ agent_id: '<agent id>', messages: [{ role: 'user', content: 'Summarize ticket #4521' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Id of the agent to run. |
+| `max_tokens` | `number` | No | — |
+| `min_tokens` | `number` | No | — |
+| `stop` | `string \| string[]` | No | — |
+| `random_seed` | `number` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `messages` | `object[]` | Yes | Conversation so far: &#123; role: "system" \| "user" \| "assistant" \| "tool", content &#125;. |
+| `response_format` | `object` | No | — |
+| `tools` | `object[]` | No | — |
+| `tool_choice` | `auto \| none \| any \| required \| object` | No | — |
+| `presence_penalty` | `number` | No | — |
+| `frequency_penalty` | `number` | No | — |
+| `repetition_penalty` | `number` | No | — |
+| `top_k` | `number` | No | — |
+| `n` | `number` | No | — |
+| `logprobs` | `boolean` | No | — |
+| `top_logprobs` | `number` | No | — |
+| `prediction` | `object` | No | — |
+| `parallel_tool_calls` | `boolean` | No | — |
+| `reasoning_effort` | `none \| minimal \| low \| medium \| high \| xhigh \| max` | No | — |
+| `prompt_mode` | `reasoning` | No | — |
+| `guardrails` | `object[]` | No | — |
+| `prompt_cache_key` | `string` | No | — |
+| `service_tier` | `auto \| standard_only` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+(
+  {
+    role: system,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[]
+  } | {
+    role: user,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[] | null
+  } | {
+    role: assistant,
+    content?: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[] | null,
+    tool_calls?: {
+      id?: string,
+      type?: function,
+      function: {
+        name: string,
+        arguments: string | Record<string, any>
+      },
+      index?: number
+    }[] | null,
+    prefix?: boolean | null
+  } | {
+    role: tool,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[] | null,
+    tool_call_id?: string | null,
+    name?: string | null
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="response_format full type">
+
+```ts
+{
+  type: text | json_object | json_schema,
+  json_schema?: {
+    name: string,
+    description?: string,
+    schema: Record<string, any>,
+    strict?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+(
+  {
+    type: function,
+    function: {
+      name: string,
+      description?: string,
+      strict?: boolean,
+      parameters: Record<string, any>
+    }
+  } | {
+    type: image_generation,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: document_library,
+    library_ids: string[],
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: connector,
+    connector_id: string,
+    authorization?: Record<string, any>,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="tool_choice full type">
+
+```ts
+auto | none | any | required | {
+  type: function,
+  function: {
+    name: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="prediction full type">
+
+```ts
+{
+  type: content,
+  content: string
+}
+```
+</Accordion>
+
+<Accordion title="guardrails full type">
+
+```ts
+{
+  block_on_error?: boolean,
+  moderation_llm_v1?: Record<string, any>,
+  moderation_llm_v2?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `model` | `string` | Yes | — |
+| `created` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `choices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens?: number | null,
+  completion_tokens?: number | null,
+  total_tokens?: number | null,
+  prompt_audio_seconds?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="choices full type">
+
+```ts
+{
+  index: number,
+  message?: {
+    role?: string | null,
+    content?: string | any[] | null,
+    tool_calls?: {
+      id?: string,
+      type?: function,
+      function: {
+        name: string,
+        arguments: string | Record<string, any>
+      },
+      index?: number
+    }[] | null,
+    prefix?: boolean | null
+  } | null,
+  finish_reason?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`agents.create`
+
+Create an agent: a model with instructions, tools and default settings (beta). Mistral refuses agent creation for some organizations with 403 "Use Managed Agents instead"; existing agents can still be listed, read, versioned and deleted
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.agents.create({ model: 'mistral-medium-latest', name: 'Support triage', instructions: 'Classify each ticket and answer in one sentence.', tools: [{ type: 'web_search' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Model id, for example mistral-small-latest. models.list lists the ones this key can use. |
+| `name` | `string` | Yes | — |
+| `instructions` | `string` | No | — |
+| `tools` | `object[]` | No | — |
+| `completion_args` | `object` | No | — |
+| `guardrails` | `object[]` | No | — |
+| `description` | `string` | No | — |
+| `handoffs` | `string[]` | No | Ids of agents this one can hand the conversation to. |
+| `metadata` | `Record<string, any>` | No | — |
+| `version_message` | `string` | No | — |
+
+Mistral refuses agent creation for some organizations with 403 "Use Managed Agents instead"; existing agents can still be listed, read, versioned and deleted.
+
+<AccordionGroup>
+<Accordion title="tools full type">
+
+```ts
+(
+  {
+    type: function,
+    function: {
+      name: string,
+      description?: string,
+      strict?: boolean,
+      parameters: Record<string, any>
+    }
+  } | {
+    type: web_search,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: web_search_premium,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: code_interpreter,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: image_generation,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: document_library,
+    library_ids: string[],
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: connector,
+    connector_id: string,
+    authorization?: Record<string, any>,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="completion_args full type">
+
+```ts
+{
+  stop?: string | string[],
+  presence_penalty?: number,
+  frequency_penalty?: number,
+  temperature?: number,
+  top_p?: number,
+  max_tokens?: number,
+  random_seed?: number,
+  prediction?: {
+    type: content,
+    content: string
+  },
+  response_format?: {
+    type: text | json_object | json_schema,
+    json_schema?: {
+      name: string,
+      description?: string,
+      schema: Record<string, any>,
+      strict?: boolean
+    }
+  },
+  tool_choice?: auto | none | any | required,
+  reasoning_effort?: none | minimal | low | medium | high | xhigh | max
+}
+```
+</Accordion>
+
+<Accordion title="guardrails full type">
+
+```ts
+{
+  block_on_error?: boolean,
+  moderation_llm_v1?: Record<string, any>,
+  moderation_llm_v2?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `tools` | `Record<string, any>[] \| null` | No | — |
+| `completion_args` | `Record<string, any> \| null` | No | — |
+| `handoffs` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `version` | `number` | Yes | — |
+| `versions` | `number[] \| null` | No | — |
+| `version_message` | `string \| null` | No | — |
+| `owner_id` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `deployment_chat` | `boolean \| null` | No | — |
+| `source` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`agents.delete`
+
+Delete an agent; cannot be undone (beta)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mistralai.api.agents.delete({ agent_id: '<agent id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Agent id, from agents.create or agents.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### deleteAlias
+
+`agents.deleteAlias`
+
+Remove a version alias from an agent; the version itself stays (beta)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mistralai.api.agents.deleteAlias({ agent_id: '<agent id>', alias: 'staging' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Agent id, from agents.create or agents.list. |
+| `alias` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`agents.get`
+
+Get an agent, at its current version or at a given version or alias (beta)
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.agents.get({ agent_id: '<agent id>', agent_version: 'production' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Agent id, from agents.create or agents.list. |
+| `agent_version` | `number \| string` | No | A version number or an alias; the current version if omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `tools` | `Record<string, any>[] \| null` | No | — |
+| `completion_args` | `Record<string, any> \| null` | No | — |
+| `handoffs` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `version` | `number` | Yes | — |
+| `versions` | `number[] \| null` | No | — |
+| `version_message` | `string \| null` | No | — |
+| `owner_id` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `deployment_chat` | `boolean \| null` | No | — |
+| `source` | `string \| null` | No | — |
+
+
+
+---
+
+### getVersion
+
+`agents.getVersion`
+
+Get one version of an agent by number or alias (beta)
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.agents.getVersion({ agent_id: '<agent id>', version: '2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Agent id, from agents.create or agents.list. |
+| `version` | `string` | Yes | A version number or an alias, as a string. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `tools` | `Record<string, any>[] \| null` | No | — |
+| `completion_args` | `Record<string, any> \| null` | No | — |
+| `handoffs` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `version` | `number` | Yes | — |
+| `versions` | `number[] \| null` | No | — |
+| `version_message` | `string \| null` | No | — |
+| `owner_id` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `deployment_chat` | `boolean \| null` | No | — |
+| `source` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`agents.list`
+
+List agents, filtered by name, search text or metadata; page with page_token (beta)
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.agents.list({ page_size: 20, search: 'support' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | — |
+| `page_token` | `string` | No | next_page_token from the previous page. |
+| `name` | `string` | No | — |
+| `search` | `string` | No | — |
+| `id` | `string` | No | — |
+| `deployment_chat` | `boolean` | No | — |
+| `sources` | `(api \| playground \| agent_builder_v1)[]` | No | — |
+| `metadata` | `Record<string, any>` | No | Only agents whose metadata has these key/values. |
+
+Page with `page_token`, the `next_page_token` of the previous page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+| `next_page_token` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object?: string | null,
+  name: string,
+  model: string,
+  description?: string | null,
+  instructions?: string | null,
+  tools?: Record<string, any>[] | null,
+  completion_args?: Record<string, any> | null,
+  handoffs?: string[] | null,
+  metadata?: Record<string, any> | null,
+  version: number,
+  versions?: number[] | null,
+  version_message?: string | null,
+  owner_id?: string | null,
+  created_at: string,
+  updated_at: string,
+  deployment_chat?: boolean | null,
+  source?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAliases
+
+`agents.listAliases`
+
+List an agent's version aliases (beta)
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.agents.listAliases({ agent_id: '<agent id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Agent id, from agents.create or agents.list. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  alias: string,
+  version: number,
+  created_at: string,
+  updated_at: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listVersions
+
+`agents.listVersions`
+
+List an agent's versions; page with page and page_size (beta)
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.agents.listVersions({ agent_id: '<agent id>', page: 0, page_size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Agent id, from agents.create or agents.list. |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  object?: string | null,
+  name: string,
+  model: string,
+  description?: string | null,
+  instructions?: string | null,
+  tools?: Record<string, any>[] | null,
+  completion_args?: Record<string, any> | null,
+  handoffs?: string[] | null,
+  metadata?: Record<string, any> | null,
+  version: number,
+  versions?: number[] | null,
+  version_message?: string | null,
+  owner_id?: string | null,
+  created_at: string,
+  updated_at: string,
+  deployment_chat?: boolean | null,
+  source?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### setVersion
+
+`agents.setVersion`
+
+Switch an agent to another of its versions (beta)
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.agents.setVersion({ agent_id: '<agent id>', version: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Agent id, from agents.create or agents.list. |
+| `version` | `number` | Yes | The version to make current. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `tools` | `Record<string, any>[] \| null` | No | — |
+| `completion_args` | `Record<string, any> \| null` | No | — |
+| `handoffs` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `version` | `number` | Yes | — |
+| `versions` | `number[] \| null` | No | — |
+| `version_message` | `string \| null` | No | — |
+| `owner_id` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `deployment_chat` | `boolean \| null` | No | — |
+| `source` | `string \| null` | No | — |
+
+
+
+---
+
+### update
+
+`agents.update`
+
+Change an agent; each update creates a new version (beta)
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.agents.update({ agent_id: '<agent id>', instructions: 'Answer in two sentences at most.', version_message: 'Shorter answers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Agent id, from agents.create or agents.list. |
+| `model` | `string` | No | — |
+| `name` | `string` | No | — |
+| `deployment_chat` | `boolean` | No | — |
+| `instructions` | `string` | No | — |
+| `tools` | `object[]` | No | — |
+| `completion_args` | `object` | No | — |
+| `guardrails` | `object[]` | No | — |
+| `description` | `string` | No | — |
+| `handoffs` | `string[]` | No | Ids of agents this one can hand the conversation to. |
+| `metadata` | `Record<string, any>` | No | — |
+| `version_message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tools full type">
+
+```ts
+(
+  {
+    type: function,
+    function: {
+      name: string,
+      description?: string,
+      strict?: boolean,
+      parameters: Record<string, any>
+    }
+  } | {
+    type: web_search,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: web_search_premium,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: code_interpreter,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: image_generation,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: document_library,
+    library_ids: string[],
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: connector,
+    connector_id: string,
+    authorization?: Record<string, any>,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="completion_args full type">
+
+```ts
+{
+  stop?: string | string[],
+  presence_penalty?: number,
+  frequency_penalty?: number,
+  temperature?: number,
+  top_p?: number,
+  max_tokens?: number,
+  random_seed?: number,
+  prediction?: {
+    type: content,
+    content: string
+  },
+  response_format?: {
+    type: text | json_object | json_schema,
+    json_schema?: {
+      name: string,
+      description?: string,
+      schema: Record<string, any>,
+      strict?: boolean
+    }
+  },
+  tool_choice?: auto | none | any | required,
+  reasoning_effort?: none | minimal | low | medium | high | xhigh | max
+}
+```
+</Accordion>
+
+<Accordion title="guardrails full type">
+
+```ts
+{
+  block_on_error?: boolean,
+  moderation_llm_v1?: Record<string, any>,
+  moderation_llm_v2?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `name` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `instructions` | `string \| null` | No | — |
+| `tools` | `Record<string, any>[] \| null` | No | — |
+| `completion_args` | `Record<string, any> \| null` | No | — |
+| `handoffs` | `string[] \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `version` | `number` | Yes | — |
+| `versions` | `number[] \| null` | No | — |
+| `version_message` | `string \| null` | No | — |
+| `owner_id` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `deployment_chat` | `boolean \| null` | No | — |
+| `source` | `string \| null` | No | — |
+
+
+
+---
+
+### upsertAlias
+
+`agents.upsertAlias`
+
+Point a version alias such as production at an agent version, creating it if needed (beta)
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.agents.upsertAlias({ agent_id: '<agent id>', alias: 'production', version: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Agent id, from agents.create or agents.list. |
+| `alias` | `string` | Yes | Alias name, for example production. |
+| `version` | `number` | Yes | The version the alias points to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `alias` | `string` | Yes | — |
+| `version` | `number` | Yes | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+
+
+
+---
+
+## Audio
+
+### speech
+
+`audio.speech`
+
+Turn text into speech; returns base64 audio (mp3 by default); spends Mistral credits
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.audio.speech({ input: 'Your order has shipped.', voice_id: '<voice id>', response_format: 'mp3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | Text to speak. |
+| `model` | `string` | No | — |
+| `voice_id` | `string` | No | A voice from voices.list. |
+| `ref_audio` | `string` | No | Base64 reference audio to clone, instead of voice_id. |
+| `response_format` | `pcm \| wav \| mp3 \| flac \| opus` | No | — |
+| `expressiveness` | `number` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+
+`audio_data` is base64 audio in `response_format` (mp3 by default).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audio_data` | `string` | Yes | The audio, base64, in response_format (mp3 by default). |
+
+
+
+---
+
+### transcribe
+
+`audio.transcribe`
+
+Transcribe audio from base64 content, a URL or an uploaded file, optionally with speakers and timestamps; spends Mistral credits
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.audio.transcribe({ model: 'voxtral-mini-latest', file_url: 'https://example.com/call.mp3', timestamp_granularities: ['segment'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | A transcription model, for example voxtral-mini-latest. |
+| `content_base64` | `string` | No | File content, base64 (a data: URL prefix is accepted). |
+| `filename` | `string` | No | Name of the audio file, with content_base64. |
+| `file_url` | `string` | No | Public URL of the audio. |
+| `file_id` | `string` | No | An uploaded file id. |
+| `language` | `string` | No | — |
+| `temperature` | `number` | No | — |
+| `diarize` | `boolean` | No | — |
+| `context_bias` | `string[]` | No | — |
+| `timestamp_granularities` | `(segment \| word)[]` | No | — |
+
+Pass exactly one of `content_base64` (with `filename`), `file_url` or `file_id`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `language` | `string \| null` | No | — |
+| `segments` | `object[] \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="segments full type">
+
+```ts
+{
+  text: string,
+  start?: number | null,
+  end?: number | null,
+  speaker_id?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens?: number | null,
+  completion_tokens?: number | null,
+  total_tokens?: number | null,
+  prompt_audio_seconds?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audio Agents
+
+### create
+
+`audioAgents.create`
+
+Create a voice agent: speech-to-text, LLM and text-to-speech settings, instructions and tools
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.audioAgents.create({ name: 'Receptionist', configuration: { llm: { model: 'mistral-small-latest' }, tts: { voice_id: '<voice id>' }, instructions: 'Greet callers and take a message.' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `configuration` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="configuration full type">
+
+```ts
+{
+  llm?: {
+    model?: string
+  },
+  tts?: {
+    model?: string,
+    voice_id?: string,
+    expressiveness?: number
+  },
+  stt?: Record<string, any>,
+  turn?: Record<string, any>,
+  instructions?: string,
+  tools?: Record<string, any>[],
+  welcome_message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `owner_id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `version` | `number \| null` | No | — |
+| `configuration` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`audioAgents.delete`
+
+Delete a voice agent; cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mistralai.api.audioAgents.delete({ agent_id: '<audio agent id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Audio agent id (uuid), from audioAgents.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`audioAgents.get`
+
+Get a voice agent, optionally at a given version
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.audioAgents.get({ agent_id: '<audio agent id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Audio agent id (uuid), from audioAgents.list. |
+| `version` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `owner_id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `version` | `number \| null` | No | — |
+| `configuration` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### list
+
+`audioAgents.list`
+
+List voice agents; page with page_token
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.audioAgents.list({ page_size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | — |
+| `page_token` | `string` | No | next_page_token from the previous page. |
+| `search` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `next_page_token` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  owner_id: string,
+  name?: string | null,
+  description?: string | null,
+  created_at: string,
+  updated_at: string,
+  version?: number | null,
+  configuration?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSessions
+
+`audioAgents.listSessions`
+
+List a voice agent's sessions; page with page_token
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.audioAgents.listSessions({ agent_id: '<audio agent id>', page_size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Audio agent id (uuid), from audioAgents.list. |
+| `page_size` | `number` | No | — |
+| `page_token` | `string` | No | next_page_token from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `next_page_token` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  agent_id: string,
+  started_at?: string | null,
+  duration?: number | null,
+  phone_number_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listVersions
+
+`audioAgents.listVersions`
+
+List a voice agent's versions; page with page_token
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.audioAgents.listVersions({ agent_id: '<audio agent id>', page_size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Audio agent id (uuid), from audioAgents.list. |
+| `page_size` | `number` | No | — |
+| `page_token` | `string` | No | next_page_token from the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `next_page_token` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  owner_id: string,
+  name?: string | null,
+  description?: string | null,
+  created_at: string,
+  updated_at: string,
+  version?: number | null,
+  configuration?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`audioAgents.update`
+
+Replace a voice agent's name, description and configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.audioAgents.update({ agent_id: '<audio agent id>', name: 'Receptionist', configuration: { welcome_message: 'Hello, how can I help?' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agent_id` | `string` | Yes | Audio agent id (uuid), from audioAgents.list. |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `configuration` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="configuration full type">
+
+```ts
+{
+  llm?: {
+    model?: string
+  },
+  tts?: {
+    model?: string,
+    voice_id?: string,
+    expressiveness?: number
+  },
+  stt?: Record<string, any>,
+  turn?: Record<string, any>,
+  instructions?: string,
+  tools?: Record<string, any>[],
+  welcome_message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `owner_id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `updated_at` | `string` | Yes | — |
+| `version` | `number \| null` | No | — |
+| `configuration` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+## Batch
+
+### cancel
+
+`batch.cancel`
+
+Ask Mistral to cancel a batch job: status goes to CANCELLATION_REQUESTED, then CANCELLED; there is no way to resume it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mistralai.api.batch.cancel({ job_id: '<batch job id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | Batch job id (uuid), from batch.create or batch.list. |
+
+Cancellation is a request; `batch.get` shows CANCELLATION_REQUESTED until the job reaches CANCELLED. There is no operation to resume a cancelled job.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `input_files` | `string[]` | Yes | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `endpoint` | `string` | Yes | — |
+| `model` | `string \| null` | No | — |
+| `agent_id` | `string \| null` | No | — |
+| `output_file` | `string \| null` | No | File id of the results; read it with files.getSignedUrl. |
+| `error_file` | `string \| null` | No | — |
+| `errors` | `object[]` | Yes | — |
+| `outputs` | `Record<string, any>[] \| null` | No | — |
+| `status` | `QUEUED \| RUNNING \| SUCCESS \| FAILED \| TIMEOUT_EXCEEDED \| CANCELLATION_REQUESTED \| CANCELLED` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `total_requests` | `number` | Yes | — |
+| `completed_requests` | `number` | Yes | — |
+| `succeeded_requests` | `number` | Yes | — |
+| `failed_requests` | `number` | Yes | — |
+| `started_at` | `number \| null` | No | — |
+| `completed_at` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  message: string,
+  count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`batch.create`
+
+Start a batch job that runs many requests to one endpoint, from uploaded .jsonl files or inline; spends Mistral credits and needs a Mistral plan with billing enabled (402 otherwise). Follow it with batch.get until status is SUCCESS, FAILED, TIMEOUT_EXCEEDED or CANCELLED
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.batch.create({ endpoint: '/v1/chat/completions', model: 'mistral-small-latest', input_files: ['<file id>'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `/v1/chat/completions \| /v1/embeddings \| /v1/fim/completions \| /v1/moderations \| /v1/chat/moderations \| /v1/ocr \| /v1/classifications \| /v1/chat/classifications \| /v1/conversations \| /v1/audio/transcriptions` | Yes | The API every request in the batch calls. |
+| `input_files` | `string[]` | No | Ids of .jsonl files uploaded with purpose batch, one request per line. |
+| `requests` | `object[]` | No | Requests inline, instead of input_files. |
+| `model` | `string` | No | — |
+| `agent_id` | `string` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `timeout_hours` | `number` | No | — |
+
+Pass exactly one of `input_files` (ids of `.jsonl` files uploaded with purpose `batch`, one request per line) or `requests` inline. Every request goes to `endpoint`. Batch jobs need a Mistral plan with billing enabled; without it Mistral returns 402.
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  custom_id?: string,
+  body: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `input_files` | `string[]` | Yes | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `endpoint` | `string` | Yes | — |
+| `model` | `string \| null` | No | — |
+| `agent_id` | `string \| null` | No | — |
+| `output_file` | `string \| null` | No | File id of the results; read it with files.getSignedUrl. |
+| `error_file` | `string \| null` | No | — |
+| `errors` | `object[]` | Yes | — |
+| `outputs` | `Record<string, any>[] \| null` | No | — |
+| `status` | `QUEUED \| RUNNING \| SUCCESS \| FAILED \| TIMEOUT_EXCEEDED \| CANCELLATION_REQUESTED \| CANCELLED` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `total_requests` | `number` | Yes | — |
+| `completed_requests` | `number` | Yes | — |
+| `succeeded_requests` | `number` | Yes | — |
+| `failed_requests` | `number` | Yes | — |
+| `started_at` | `number \| null` | No | — |
+| `completed_at` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  message: string,
+  count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`batch.delete`
+
+Ask Mistral to delete a batch job; cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mistralai.api.batch.delete({ job_id: '<batch job id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | Batch job id (uuid), from batch.create or batch.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`batch.get`
+
+Where a batch job stands: status, request counts, and output_file once it's done
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.batch.get({ job_id: '<batch job id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | Batch job id (uuid), from batch.create or batch.list. |
+| `inline` | `boolean` | No | Include the results in outputs (small batches only). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `input_files` | `string[]` | Yes | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `endpoint` | `string` | Yes | — |
+| `model` | `string \| null` | No | — |
+| `agent_id` | `string \| null` | No | — |
+| `output_file` | `string \| null` | No | File id of the results; read it with files.getSignedUrl. |
+| `error_file` | `string \| null` | No | — |
+| `errors` | `object[]` | Yes | — |
+| `outputs` | `Record<string, any>[] \| null` | No | — |
+| `status` | `QUEUED \| RUNNING \| SUCCESS \| FAILED \| TIMEOUT_EXCEEDED \| CANCELLATION_REQUESTED \| CANCELLED` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `total_requests` | `number` | Yes | — |
+| `completed_requests` | `number` | Yes | — |
+| `succeeded_requests` | `number` | Yes | — |
+| `failed_requests` | `number` | Yes | — |
+| `started_at` | `number \| null` | No | — |
+| `completed_at` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  message: string,
+  count?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`batch.list`
+
+List batch jobs, filtered by status, model or date; page with page and page_size
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.batch.list({ status: ['RUNNING', 'QUEUED'], page_size: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `model` | `string` | No | — |
+| `agent_id` | `string` | No | — |
+| `created_after` | `string` | No | ISO 8601 date-time, for example 2026-11-01T00:00:00Z. |
+| `created_by_me` | `boolean` | No | — |
+| `status` | `(QUEUED \| RUNNING \| SUCCESS \| FAILED \| TIMEOUT_EXCEEDED \| CANCELLATION_REQUESTED \| CANCELLED)[]` | No | — |
+| `order_by` | `created \| -created` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `total` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object?: string | null,
+  input_files: string[],
+  metadata?: Record<string, any> | null,
+  endpoint: string,
+  model?: string | null,
+  agent_id?: string | null,
+  output_file?: string | null,
+  error_file?: string | null,
+  errors: {
+    message: string,
+    count?: number | null
+  }[],
+  outputs?: Record<string, any>[] | null,
+  status: QUEUED | RUNNING | SUCCESS | FAILED | TIMEOUT_EXCEEDED | CANCELLATION_REQUESTED | CANCELLED,
+  created_at: number,
+  total_requests: number,
+  completed_requests: number,
+  succeeded_requests: number,
+  failed_requests: number,
+  started_at?: number | null,
+  completed_at?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Chat
+
+### complete
+
+`chat.complete`
+
+Generate a chat answer from a list of messages, with optional tools and JSON output; spends Mistral credits
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.chat.complete({ model: 'mistral-small-latest', messages: [{ role: 'system', content: 'Answer briefly.' }, { role: 'user', content: 'Capital of France?' }], temperature: 0.2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Model id, for example mistral-small-latest. models.list lists the ones this key can use. |
+| `temperature` | `number` | No | — |
+| `top_p` | `number` | No | — |
+| `safe_prompt` | `boolean` | No | Prepend Mistral's safety system prompt. |
+| `max_tokens` | `number` | No | — |
+| `min_tokens` | `number` | No | — |
+| `stop` | `string \| string[]` | No | — |
+| `random_seed` | `number` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `messages` | `object[]` | Yes | Conversation so far: &#123; role: "system" \| "user" \| "assistant" \| "tool", content &#125;. |
+| `response_format` | `object` | No | — |
+| `tools` | `object[]` | No | — |
+| `tool_choice` | `auto \| none \| any \| required \| object` | No | — |
+| `presence_penalty` | `number` | No | — |
+| `frequency_penalty` | `number` | No | — |
+| `repetition_penalty` | `number` | No | — |
+| `top_k` | `number` | No | — |
+| `n` | `number` | No | — |
+| `logprobs` | `boolean` | No | — |
+| `top_logprobs` | `number` | No | — |
+| `prediction` | `object` | No | — |
+| `parallel_tool_calls` | `boolean` | No | — |
+| `reasoning_effort` | `none \| minimal \| low \| medium \| high \| xhigh \| max` | No | — |
+| `prompt_mode` | `reasoning` | No | — |
+| `guardrails` | `object[]` | No | — |
+| `prompt_cache_key` | `string` | No | — |
+| `service_tier` | `auto \| standard_only` | No | — |
+
+`stream` is always false; the answer is in `choices[0].message.content`. Pass `response_format: { type: "json_schema", json_schema: { name, schema } }` for structured output.
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+(
+  {
+    role: system,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[]
+  } | {
+    role: user,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[] | null
+  } | {
+    role: assistant,
+    content?: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[] | null,
+    tool_calls?: {
+      id?: string,
+      type?: function,
+      function: {
+        name: string,
+        arguments: string | Record<string, any>
+      },
+      index?: number
+    }[] | null,
+    prefix?: boolean | null
+  } | {
+    role: tool,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[] | null,
+    tool_call_id?: string | null,
+    name?: string | null
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="response_format full type">
+
+```ts
+{
+  type: text | json_object | json_schema,
+  json_schema?: {
+    name: string,
+    description?: string,
+    schema: Record<string, any>,
+    strict?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+(
+  {
+    type: function,
+    function: {
+      name: string,
+      description?: string,
+      strict?: boolean,
+      parameters: Record<string, any>
+    }
+  } | {
+    type: image_generation,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: document_library,
+    library_ids: string[],
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  } | {
+    type: connector,
+    connector_id: string,
+    authorization?: Record<string, any>,
+    tool_configuration?: {
+      exclude?: string[],
+      include?: string[],
+      requires_confirmation?: string[]
+    }
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="tool_choice full type">
+
+```ts
+auto | none | any | required | {
+  type: function,
+  function: {
+    name: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="prediction full type">
+
+```ts
+{
+  type: content,
+  content: string
+}
+```
+</Accordion>
+
+<Accordion title="guardrails full type">
+
+```ts
+{
+  block_on_error?: boolean,
+  moderation_llm_v1?: Record<string, any>,
+  moderation_llm_v2?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `model` | `string` | Yes | — |
+| `created` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `choices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens?: number | null,
+  completion_tokens?: number | null,
+  total_tokens?: number | null,
+  prompt_audio_seconds?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="choices full type">
+
+```ts
+{
+  index: number,
+  message?: {
+    role?: string | null,
+    content?: string | any[] | null,
+    tool_calls?: {
+      id?: string,
+      type?: function,
+      function: {
+        name: string,
+        arguments: string | Record<string, any>
+      },
+      index?: number
+    }[] | null,
+    prefix?: boolean | null
+  } | null,
+  finish_reason?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Classifiers
+
+### classify
+
+`classifiers.classify`
+
+Classify texts with a fine-tuned classifier model; spends Mistral credits
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.classifiers.classify({ model: '<fine-tuned classifier id>', input: ['I want a refund for my order'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | A moderation or classifier model, for example mistral-moderation-latest. |
+| `input` | `string \| string[]` | Yes | One text or a list of texts. |
+| `metadata` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+Record<string, {
+  scores: Record<string, number>
+}>[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### classifyChat
+
+`classifiers.classifyChat`
+
+Classify conversations with a fine-tuned classifier model; spends Mistral credits
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.classifiers.classifyChat({ model: '<fine-tuned classifier id>', input: { messages: [{ role: 'user', content: 'I want a refund' }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | A fine-tuned classifier model id. |
+| `input` | `object \| object[]` | Yes | &#123; messages &#125; or a list of them. |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+  messages: (
+    {
+      role: system,
+      content: string | (
+        {
+          type: text,
+          text: string
+        } | {
+          type: image_url,
+          image_url: string | {
+            url: string,
+            detail?: string
+          }
+        } | {
+          type: document_url,
+          document_url: string,
+          document_name?: string
+        } | {
+          type: file,
+          file_id: string
+        } | {
+          type: input_audio,
+          input_audio: string
+        } | {
+          type: string
+        }
+      )[]
+    } | {
+      role: user,
+      content: string | (
+        {
+          type: text,
+          text: string
+        } | {
+          type: image_url,
+          image_url: string | {
+            url: string,
+            detail?: string
+          }
+        } | {
+          type: document_url,
+          document_url: string,
+          document_name?: string
+        } | {
+          type: file,
+          file_id: string
+        } | {
+          type: input_audio,
+          input_audio: string
+        } | {
+          type: string
+        }
+      )[] | null
+    } | {
+      role: assistant,
+      content?: string | (
+        {
+          type: text,
+          text: string
+        } | {
+          type: image_url,
+          image_url: string | {
+            url: string,
+            detail?: string
+          }
+        } | {
+          type: document_url,
+          document_url: string,
+          document_name?: string
+        } | {
+          type: file,
+          file_id: string
+        } | {
+          type: input_audio,
+          input_audio: string
+        } | {
+          type: string
+        }
+      )[] | null,
+      tool_calls?: {
+        id?: string,
+        type?: function,
+        function: {
+          name: string,
+          arguments: string | Record<string, any>
+        },
+        index?: number
+      }[] | null,
+      prefix?: boolean | null
+    } | {
+      role: tool,
+      content: string | (
+        {
+          type: text,
+          text: string
+        } | {
+          type: image_url,
+          image_url: string | {
+            url: string,
+            detail?: string
+          }
+        } | {
+          type: document_url,
+          document_url: string,
+          document_name?: string
+        } | {
+          type: file,
+          file_id: string
+        } | {
+          type: input_audio,
+          input_audio: string
+        } | {
+          type: string
+        }
+      )[] | null,
+      tool_call_id?: string | null,
+      name?: string | null
+    }
+  )[]
+} | {
+  messages: (
+    {
+      role: system,
+      content: string | (
+        {
+          type: text,
+          text: string
+        } | {
+          type: image_url,
+          image_url: string | {
+            url: string,
+            detail?: string
+          }
+        } | {
+          type: document_url,
+          document_url: string,
+          document_name?: string
+        } | {
+          type: file,
+          file_id: string
+        } | {
+          type: input_audio,
+          input_audio: string
+        } | {
+          type: string
+        }
+      )[]
+    } | {
+      role: user,
+      content: string | (
+        {
+          type: text,
+          text: string
+        } | {
+          type: image_url,
+          image_url: string | {
+            url: string,
+            detail?: string
+          }
+        } | {
+          type: document_url,
+          document_url: string,
+          document_name?: string
+        } | {
+          type: file,
+          file_id: string
+        } | {
+          type: input_audio,
+          input_audio: string
+        } | {
+          type: string
+        }
+      )[] | null
+    } | {
+      role: assistant,
+      content?: string | (
+        {
+          type: text,
+          text: string
+        } | {
+          type: image_url,
+          image_url: string | {
+            url: string,
+            detail?: string
+          }
+        } | {
+          type: document_url,
+          document_url: string,
+          document_name?: string
+        } | {
+          type: file,
+          file_id: string
+        } | {
+          type: input_audio,
+          input_audio: string
+        } | {
+          type: string
+        }
+      )[] | null,
+      tool_calls?: {
+        id?: string,
+        type?: function,
+        function: {
+          name: string,
+          arguments: string | Record<string, any>
+        },
+        index?: number
+      }[] | null,
+      prefix?: boolean | null
+    } | {
+      role: tool,
+      content: string | (
+        {
+          type: text,
+          text: string
+        } | {
+          type: image_url,
+          image_url: string | {
+            url: string,
+            detail?: string
+          }
+        } | {
+          type: document_url,
+          document_url: string,
+          document_name?: string
+        } | {
+          type: file,
+          file_id: string
+        } | {
+          type: input_audio,
+          input_audio: string
+        } | {
+          type: string
+        }
+      )[] | null,
+      tool_call_id?: string | null,
+      name?: string | null
+    }
+  )[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+Record<string, {
+  scores: Record<string, number>
+}>[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### moderate
+
+`classifiers.moderate`
+
+Score texts against moderation categories (sexual, hate, violence, self-harm…); spends Mistral credits
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.classifiers.moderate({ model: 'mistral-moderation-latest', input: ['Text to check'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | A moderation or classifier model, for example mistral-moderation-latest. |
+| `input` | `string \| string[]` | Yes | One text or a list of texts. |
+| `metadata` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  categories?: Record<string, boolean> | null,
+  category_scores?: Record<string, number> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### moderateChat
+
+`classifiers.moderateChat`
+
+Score a conversation against moderation categories; spends Mistral credits
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.classifiers.moderateChat({ model: 'mistral-moderation-latest', input: [{ role: 'user', content: 'Message to check' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | A moderation model, for example mistral-moderation-latest. |
+| `input` | `object[]` | Yes | One conversation, or a list of conversations. |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+(
+  {
+    role: system,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[]
+  } | {
+    role: user,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[] | null
+  } | {
+    role: assistant,
+    content?: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[] | null,
+    tool_calls?: {
+      id?: string,
+      type?: function,
+      function: {
+        name: string,
+        arguments: string | Record<string, any>
+      },
+      index?: number
+    }[] | null,
+    prefix?: boolean | null
+  } | {
+    role: tool,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[] | null,
+    tool_call_id?: string | null,
+    name?: string | null
+  }
+)[] | (
+  {
+    role: system,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[]
+  } | {
+    role: user,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[] | null
+  } | {
+    role: assistant,
+    content?: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[] | null,
+    tool_calls?: {
+      id?: string,
+      type?: function,
+      function: {
+        name: string,
+        arguments: string | Record<string, any>
+      },
+      index?: number
+    }[] | null,
+    prefix?: boolean | null
+  } | {
+    role: tool,
+    content: string | (
+      {
+        type: text,
+        text: string
+      } | {
+        type: image_url,
+        image_url: string | {
+          url: string,
+          detail?: string
+        }
+      } | {
+        type: document_url,
+        document_url: string,
+        document_name?: string
+      } | {
+        type: file,
+        file_id: string
+      } | {
+        type: input_audio,
+        input_audio: string
+      } | {
+        type: string
+      }
+    )[] | null,
+    tool_call_id?: string | null,
+    name?: string | null
+  }
+)[][]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `model` | `string` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  categories?: Record<string, boolean> | null,
+  category_scores?: Record<string, number> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Embeddings
+
+### create
+
+`embeddings.create`
+
+Turn one or more texts into embedding vectors; spends Mistral credits
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.embeddings.create({ model: 'mistral-embed', input: ['How do I reset my password?', 'Billing questions'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | An embedding model, for example mistral-embed. |
+| `input` | `string \| string[]` | Yes | One text or a list of texts. |
+| `output_dimension` | `number` | No | — |
+| `output_dtype` | `float \| int8 \| uint8 \| binary \| ubinary` | No | — |
+| `encoding_format` | `float \| base64` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+| `model` | `string \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens?: number | null,
+  completion_tokens?: number | null,
+  total_tokens?: number | null,
+  prompt_audio_seconds?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string | null,
+  embedding?: number[] | string | null,
+  index?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### delete
+
+`files.delete`
+
+Delete an uploaded file; cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mistralai.api.files.delete({ file_id: '<file id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | File id (uuid), from files.upload or files.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`files.get`
+
+Get a file's details
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.files.get({ file_id: '<file id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | File id (uuid), from files.upload or files.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | Yes | — |
+| `bytes` | `number` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `filename` | `string` | Yes | — |
+| `purpose` | `string` | Yes | — |
+| `sample_type` | `string \| null` | No | — |
+| `num_lines` | `number \| null` | No | — |
+| `mimetype` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `signature` | `string \| null` | No | — |
+| `expires_at` | `number \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### getSignedUrl
+
+`files.getSignedUrl`
+
+A temporary download URL for a file's content, such as a batch job's output_file
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.files.getSignedUrl({ file_id: '<file id>', expiry: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file_id` | `string` | Yes | File id (uuid), from files.upload or files.list. |
+| `expiry` | `number` | No | Hours the URL stays valid (Mistral default 24). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`files.list`
+
+List uploaded files, filtered by purpose or name; page with page and page_size
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.files.list({ purpose: 'batch', page: 0, page_size: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `include_total` | `boolean` | No | — |
+| `purpose` | `fine-tune \| batch \| ocr \| agentic_safety` | No | — |
+| `search` | `string` | No | — |
+| `sample_type` | `(pretrain \| instruct \| batch_request \| batch_result \| batch_error)[]` | No | — |
+| `source` | `(upload \| repository \| mistral)[]` | No | — |
+| `mimetypes` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `object` | `string` | Yes | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: string,
+  bytes: number,
+  created_at: number,
+  filename: string,
+  purpose: string,
+  sample_type?: string | null,
+  num_lines?: number | null,
+  mimetype?: string | null,
+  source?: string | null,
+  signature?: string | null,
+  expires_at?: number | null,
+  visibility?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a file (base64, up to 512 MB) for batch jobs, fine-tuning or OCR; returns its id
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.files.upload({ filename: 'requests.jsonl', content_base64: '<base64 .jsonl>', purpose: 'batch' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | Name to store the file under, for example requests.jsonl. |
+| `content_base64` | `string` | Yes | File content, base64 (a data: URL prefix is accepted). |
+| `purpose` | `fine-tune \| batch \| ocr \| agentic_safety` | No | fine-tune, batch (a .jsonl of requests for batch.create), ocr or agentic_safety. |
+| `visibility` | `workspace \| user` | No | — |
+| `expiry` | `number` | No | Hours until Mistral deletes the file. |
+
+`content_base64` is the file content; a `data:` URL prefix is accepted. Use purpose `batch` for batch input, `fine-tune` for training data, `ocr` for documents.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | Yes | — |
+| `bytes` | `number` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `filename` | `string` | Yes | — |
+| `purpose` | `string` | Yes | — |
+| `sample_type` | `string \| null` | No | — |
+| `num_lines` | `number \| null` | No | — |
+| `mimetype` | `string \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `signature` | `string \| null` | No | — |
+| `expires_at` | `number \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+
+
+
+---
+
+## Fim
+
+### complete
+
+`fim.complete`
+
+Fill in code between a prompt and a suffix with a Codestral model; spends Mistral credits
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.fim.complete({ model: 'codestral-latest', prompt: 'def fibonacci(n):', suffix: 'print(fibonacci(10))', max_tokens: 64 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | A code model, for example codestral-latest. |
+| `prompt` | `string` | Yes | Code before the gap. |
+| `suffix` | `string` | No | Code after the gap. |
+| `temperature` | `number` | No | — |
+| `top_p` | `number` | No | — |
+| `max_tokens` | `number` | No | — |
+| `min_tokens` | `number` | No | — |
+| `stop` | `string \| string[]` | No | — |
+| `random_seed` | `number` | No | — |
+| `metadata` | `Record<string, any>` | No | — |
+| `prompt_cache_key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `model` | `string` | Yes | — |
+| `created` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `choices` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens?: number | null,
+  completion_tokens?: number | null,
+  total_tokens?: number | null,
+  prompt_audio_seconds?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="choices full type">
+
+```ts
+{
+  index: number,
+  message?: {
+    role?: string | null,
+    content?: string | any[] | null,
+    tool_calls?: {
+      id?: string,
+      type?: function,
+      function: {
+        name: string,
+        arguments: string | Record<string, any>
+      },
+      index?: number
+    }[] | null,
+    prefix?: boolean | null
+  } | null,
+  finish_reason?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### archive
+
+`models.archive`
+
+Archive a fine-tuned model; models.unarchive restores it
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.models.archive({ model_id: 'ft:open-mistral-7b:<org>:<date>:<id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | Model id, for example mistral-small-latest or ft:… for a fine-tune. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`models.delete`
+
+Delete a fine-tuned model; cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mistralai.api.models.delete({ model_id: 'ft:open-mistral-7b:<org>:<date>:<id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | Model id, for example mistral-small-latest or ft:… for a fine-tune. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`models.get`
+
+Get a model's details and capabilities
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.models.get({ model_id: 'mistral-small-latest' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | Model id, for example mistral-small-latest or ft:… for a fine-tune. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `created` | `number \| null` | No | — |
+| `owned_by` | `string \| null` | No | — |
+| `capabilities` | `Record<string, any> \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `max_context_length` | `number \| null` | No | — |
+| `aliases` | `string[] \| null` | No | — |
+| `deprecation` | `string \| null` | No | — |
+| `deprecation_replacement_model` | `string \| null` | No | — |
+| `default_model_temperature` | `number \| null` | No | — |
+| `type` | `string \| null` | No | base or fine-tuned. |
+| `job` | `string \| null` | No | — |
+| `root` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`models.list`
+
+List the base and fine-tuned models this key can use, with their capabilities
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.models.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | No | — |
+| `model` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object?: string | null,
+  created?: number | null,
+  owned_by?: string | null,
+  capabilities?: Record<string, any> | null,
+  name?: string | null,
+  description?: string | null,
+  max_context_length?: number | null,
+  aliases?: string[] | null,
+  deprecation?: string | null,
+  deprecation_replacement_model?: string | null,
+  default_model_temperature?: number | null,
+  type?: string | null,
+  job?: string | null,
+  root?: string | null,
+  archived?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unarchive
+
+`models.unarchive`
+
+Restore an archived fine-tuned model
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.models.unarchive({ model_id: 'ft:open-mistral-7b:<org>:<date>:<id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | Model id, for example mistral-small-latest or ft:… for a fine-tune. |
+
+Uses HTTP DELETE on the archive route, but only undoes `models.archive`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+
+
+
+---
+
+### update
+
+`models.update`
+
+Rename a fine-tuned model or change its description
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.models.update({ model_id: 'ft:open-mistral-7b:<org>:<date>:<id>', name: 'Support tone v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model_id` | `string` | Yes | Model id, for example mistral-small-latest or ft:… for a fine-tune. |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string \| null` | No | — |
+| `created` | `number \| null` | No | — |
+| `owned_by` | `string \| null` | No | — |
+| `workspace_id` | `string \| null` | No | — |
+| `root` | `string \| null` | No | — |
+| `root_version` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `capabilities` | `Record<string, any> \| null` | No | — |
+| `max_context_length` | `number \| null` | No | — |
+| `aliases` | `string[] \| null` | No | — |
+| `job` | `string \| null` | No | — |
+| `model_type` | `string \| null` | No | completion or classifier. |
+
+
+
+---
+
+## Ocr
+
+### process
+
+`ocr.process`
+
+Read a PDF or image (URL or uploaded file) into markdown per page, with optional structured annotations; spends Mistral credits
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.ocr.process({ model: 'mistral-ocr-latest', document: { type: 'document_url', document_url: 'https://arxiv.org/pdf/2201.04234' }, pages: [0, 1] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | An OCR model, for example mistral-ocr-latest. |
+| `document` | `object` | Yes | &#123; type: "document_url", document_url &#125; for a PDF, &#123; type: "image_url", image_url &#125; for an image, or &#123; type: "file", file_id &#125; for an uploaded file. document_url and image_url take a URL or a base64 data URL, for example "data:application/pdf;base64,..." or "data:image/png;base64,...". |
+| `pages` | `string \| number[]` | No | Pages to read, 0-based, for example [0, 1] or "0-3". |
+| `include_image_base64` | `boolean` | No | — |
+| `image_limit` | `number` | No | — |
+| `image_min_size` | `number` | No | — |
+| `bbox_annotation_format` | `object` | No | — |
+| `document_annotation_format` | `object` | No | — |
+| `document_annotation_prompt` | `string` | No | — |
+| `table_format` | `markdown \| html` | No | — |
+| `extract_header` | `boolean` | No | — |
+| `extract_footer` | `boolean` | No | — |
+| `include_blocks` | `boolean` | No | — |
+| `confidence_scores_granularity` | `word \| page \| block` | No | — |
+
+<AccordionGroup>
+<Accordion title="document full type">
+
+```ts
+{
+  type: document_url,
+  document_url: string,
+  document_name?: string
+} | {
+  type: image_url,
+  image_url: string | {
+    url: string,
+    detail?: string
+  }
+} | {
+  type: file,
+  file_id: string
+}
+```
+</Accordion>
+
+<Accordion title="bbox_annotation_format full type">
+
+```ts
+{
+  type: text | json_object | json_schema,
+  json_schema?: {
+    name: string,
+    description?: string,
+    schema: Record<string, any>,
+    strict?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="document_annotation_format full type">
+
+```ts
+{
+  type: text | json_object | json_schema,
+  json_schema?: {
+    name: string,
+    description?: string,
+    schema: Record<string, any>,
+    strict?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | — |
+| `pages` | `object[]` | Yes | — |
+| `document_annotation` | `string \| null` | No | — |
+| `usage_info` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  index: number,
+  markdown: string,
+  images?: {
+    id: string,
+    image_base64?: string | null,
+    image_annotation?: string | null
+  }[] | null,
+  header?: string | null,
+  footer?: string | null,
+  dimensions?: {
+    dpi: number,
+    height: number,
+    width: number
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="usage_info full type">
+
+```ts
+{
+  pages_processed: number,
+  doc_size_bytes?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Responses
+
+### countInputTokens
+
+`responses.countInputTokens`
+
+Count the input tokens a responses.create call would use, without running it
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.responses.countInputTokens({ model: 'mistral-medium-latest', input: 'Draft a two-line release note for v2.1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Model id, for example mistral-small-latest. models.list lists the ones this key can use. |
+| `input` | `string \| Record<string, any>[]` | Yes | A prompt, or a list of items such as &#123; role: "user", content: "…" &#125;. |
+| `instructions` | `string` | No | — |
+| `tools` | `object[]` | No | — |
+| `tool_choice` | `none \| auto \| required \| object` | No | — |
+| `parallel_tool_calls` | `boolean` | No | — |
+| `reasoning` | `object` | No | — |
+| `text` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tools full type">
+
+```ts
+{
+  type: function | namespace,
+  name: string,
+  description?: string,
+  parameters?: Record<string, any>,
+  strict?: boolean,
+  tools?: Record<string, any>[]
+}[]
+```
+</Accordion>
+
+<Accordion title="tool_choice full type">
+
+```ts
+none | auto | required | {
+  type: function,
+  name: string
+}
+```
+</Accordion>
+
+<Accordion title="reasoning full type">
+
+```ts
+{
+  effort?: none | minimal | low | medium | high | xhigh | max
+}
+```
+</Accordion>
+
+<Accordion title="text full type">
+
+```ts
+{
+  format?: Record<string, any>,
+  verbosity?: low | medium | high
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input_tokens` | `number` | Yes | — |
+| `object` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`responses.create`
+
+Generate a response with the Responses API (input items, tools, reasoning); spends Mistral credits
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.responses.create({ model: 'mistral-medium-latest', input: 'Draft a two-line release note for v2.1', max_output_tokens: 120 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Model id, for example mistral-small-latest. models.list lists the ones this key can use. |
+| `input` | `string \| Record<string, any>[]` | Yes | A prompt, or a list of items such as &#123; role: "user", content: "…" &#125;. |
+| `instructions` | `string` | No | — |
+| `tools` | `object[]` | No | — |
+| `tool_choice` | `none \| auto \| required \| object` | No | — |
+| `parallel_tool_calls` | `boolean` | No | — |
+| `reasoning` | `object` | No | — |
+| `text` | `object` | No | — |
+| `max_output_tokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `top_p` | `number` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `max_tool_calls` | `number` | No | — |
+| `prompt_cache_key` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tools full type">
+
+```ts
+{
+  type: function | namespace,
+  name: string,
+  description?: string,
+  parameters?: Record<string, any>,
+  strict?: boolean,
+  tools?: Record<string, any>[]
+}[]
+```
+</Accordion>
+
+<Accordion title="tool_choice full type">
+
+```ts
+none | auto | required | {
+  type: function,
+  name: string
+}
+```
+</Accordion>
+
+<Accordion title="reasoning full type">
+
+```ts
+{
+  effort?: none | minimal | low | medium | high | xhigh | max
+}
+```
+</Accordion>
+
+<Accordion title="text full type">
+
+```ts
+{
+  format?: Record<string, any>,
+  verbosity?: low | medium | high
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `string` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `model` | `string` | Yes | — |
+| `status` | `string \| null` | No | — |
+| `output` | `Record<string, any>[]` | Yes | — |
+| `error` | `object \| null` | No | — |
+| `incomplete_details` | `object \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code: string,
+  message: string
+} | null
+```
+</Accordion>
+
+<Accordion title="incomplete_details full type">
+
+```ts
+{
+  reason?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  input_tokens: number,
+  output_tokens: number,
+  total_tokens: number
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Voices
+
+### create
+
+`voices.create`
+
+Create a custom voice from a base64 audio sample
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.voices.create({ name: 'Narrator', languages: ['en'], sample_audio: '<base64 audio>', sample_filename: 'sample.wav' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `languages` | `string[]` | No | — |
+| `gender` | `female \| male \| neutral` | No | — |
+| `age` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `description` | `string` | No | — |
+| `retention_notice` | `number` | No | — |
+| `color` | `string` | No | — |
+| `sample_audio` | `string` | No | Base64 audio sample of the voice to clone. |
+| `sample_filename` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string \| null` | No | — |
+| `languages` | `string[] \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `age` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `retention_notice` | `number \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `user_id` | `string \| null` | No | — |
+| `kind` | `string \| null` | No | — |
+| `type` | `string` | Yes | preset or custom. |
+
+
+
+---
+
+### delete
+
+`voices.delete`
+
+Delete a custom voice; cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mistralai.api.voices.delete({ voice_id: '<voice id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_id` | `string` | Yes | Voice id, from voices.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string \| null` | No | — |
+| `languages` | `string[] \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `age` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `retention_notice` | `number \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `user_id` | `string \| null` | No | — |
+| `kind` | `string \| null` | No | — |
+| `type` | `string` | Yes | preset or custom. |
+
+
+
+---
+
+### get
+
+`voices.get`
+
+Get a voice
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.voices.get({ voice_id: '<voice id>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_id` | `string` | Yes | Voice id, from voices.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string \| null` | No | — |
+| `languages` | `string[] \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `age` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `retention_notice` | `number \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `user_id` | `string \| null` | No | — |
+| `kind` | `string \| null` | No | — |
+| `type` | `string` | Yes | preset or custom. |
+
+
+
+---
+
+### list
+
+`voices.list`
+
+List preset and custom voices for audio.speech; page with page_token
+
+**Risk:** `read`
+
+```ts
+await corsair.mistralai.api.voices.list({ type: 'preset', page_size: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_size` | `number` | No | — |
+| `page_token` | `string` | No | next_page_token from the previous page. |
+| `type` | `all \| custom \| preset` | No | — |
+| `gender` | `(female \| male \| neutral)[]` | No | — |
+| `language` | `string[]` | No | — |
+| `query` | `string` | No | — |
+| `kind` | `ivc \| pvc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `next_page_token` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  slug?: string | null,
+  languages?: string[] | null,
+  gender?: string | null,
+  age?: number | null,
+  tags?: string[] | null,
+  color?: string | null,
+  description?: string | null,
+  retention_notice?: number | null,
+  created_at: string,
+  user_id?: string | null,
+  kind?: string | null,
+  type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`voices.update`
+
+Change a custom voice's name, languages, tags or details
+
+**Risk:** `write`
+
+```ts
+await corsair.mistralai.api.voices.update({ voice_id: '<voice id>', tags: ['calm', 'narration'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_id` | `string` | Yes | Voice id, from voices.list. |
+| `name` | `string` | No | — |
+| `languages` | `string[]` | No | — |
+| `gender` | `female \| male \| neutral` | No | — |
+| `age` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `description` | `string` | No | — |
+| `retention_notice` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `slug` | `string \| null` | No | — |
+| `languages` | `string[] \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `age` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `retention_notice` | `number \| null` | No | — |
+| `created_at` | `string` | Yes | — |
+| `user_id` | `string \| null` | No | — |
+| `kind` | `string \| null` | No | — |
+| `type` | `string` | Yes | preset or custom. |
+
+
+
+---
+
