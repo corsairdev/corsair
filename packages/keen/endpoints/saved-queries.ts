@@ -16,7 +16,12 @@ export const list: KeenEndpoints['savedQueriesList'] = (ctx, input) =>
 		},
 		input,
 		() => ({ method: 'GET', path: '/queries/saved' }),
-		{ log: (_, result) => ({ count: result.queries.length }) },
+		{
+			// Keen answers a bare array of definitions; it is wrapped as
+			// `{ queries }` so the output can grow fields later.
+			shape: (raw) => (Array.isArray(raw) ? { queries: raw } : raw),
+			log: (_, result) => ({ count: result.queries.length }),
+		},
 	);
 
 export const get: KeenEndpoints['savedQueriesGet'] = (ctx, input) =>

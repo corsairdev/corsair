@@ -74,8 +74,9 @@ export const get: KeenEndpoints['datasetsGet'] = (ctx, input) =>
 		{ log: (_, result) => ({ datasetName: result.dataset_name }) },
 	);
 
-// Reading a dataset's rows is a GET whose parameters are the index values, so
-// the index map and the timeframe travel as query parameters.
+// Reading a dataset's rows is a GET with two required parameters: `index_by`
+// and `timeframe`. A single string index value goes as it is; several values,
+// or a value that is not a string, go as one JSON object, as Keen documents.
 export const result: KeenEndpoints['datasetsResult'] = (ctx, input) =>
 	call(
 		ctx,
@@ -88,19 +89,14 @@ export const result: KeenEndpoints['datasetsResult'] = (ctx, input) =>
 		({ datasetName, index_by, timeframe }) => ({
 			method: 'GET',
 			path: `/datasets/${segment(datasetName)}/results`,
-			query: Object.fromEntries(
-				Object.entries({
-					...index_by,
-					// A relative timeframe is a string; an absolute one is an
-					// object, which this header-free API takes JSON-encoded.
-					timeframe:
-						timeframe === undefined
-							? undefined
-							: typeof timeframe === 'string'
-								? timeframe
-								: JSON.stringify(timeframe),
-				}).filter(([, value]) => value !== undefined),
-			),
+			query: {
+				index_by:
+					typeof index_by === 'string' ? index_by : JSON.stringify(index_by),
+				// A relative timeframe is a string; an absolute one is an object,
+				// which Keen takes JSON-encoded in the query string.
+				timeframe:
+					typeof timeframe === 'string' ? timeframe : JSON.stringify(timeframe),
+			},
 		}),
 		{ log: ({ datasetName }) => ({ datasetName }) },
 	);

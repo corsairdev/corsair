@@ -9,6 +9,8 @@ import {
 // key in it is one the input schema has already checked. `percentile` is the
 // one exception, because Keen wants it beside `target_property` rather than
 // nested, which is already where the input puts it.
+// unknown: the parsed analysis is already validated; only undefined keys are
+// dropped, so the values' types do not matter here.
 function analysisBody(parsed: Record<string, unknown>) {
 	return Object.fromEntries(
 		Object.entries(parsed).filter(([, value]) => value !== undefined),

@@ -91,9 +91,11 @@ export const savedQuery = {
 	},
 };
 
-export const savedQueries = {
-	queries: [savedQuery, { ...savedQuery, query_name: 'daily-signups' }],
-};
+// Keen answers GET /queries/saved with a bare array of definitions.
+export const savedQueries = [
+	savedQuery,
+	{ ...savedQuery, query_name: 'daily-signups' },
+];
 
 export const savedQueryResult = {
 	...savedQuery,

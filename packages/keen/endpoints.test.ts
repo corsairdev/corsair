@@ -378,9 +378,125 @@ describe('queries.run', () => {
 		).resolves.toEqual(intervalResult);
 	});
 
+	it('sends a funnel with its steps and no top-level collection', async () => {
+		respond({ result: [3, 1], steps: [] });
+
+		const steps = [
+			{
+				event_collection: 'signed up',
+				actor_property: 'visitor.guid',
+				timeframe: 'this_7_days',
+			},
+			{
+				event_collection: 'completed profile',
+				actor_property: 'user.guid',
+				timeframe: 'this_7_days',
+			},
+		];
+		await expect(
+			invoke(Queries.run, { analysis_type: 'funnel', steps }),
+		).resolves.toMatchObject({ result: [3, 1] });
+		expect(lastRequest()).toMatchObject({
+			path: `/3.0/projects/${PROJECT_ID}/queries/funnel`,
+			body: { analysis_type: 'funnel', steps },
+		});
+	});
+
+	it.each([
+		['eq with a boolean', { operator: 'eq', property_value: true }],
+		['contains with a list element', { operator: 'contains', property_value: 12 }],
+		[
+			'within with a geo point',
+			{
+				operator: 'within',
+				property_value: {
+					coordinates: [-122.42005, 37.77479],
+					max_distance_miles: 30,
+				},
+			},
+		],
+	])('accepts a filter: %s', async (_, filter) => {
+		respond(countResult);
+
+		const filters = [{ property_name: 'item.on_sale', ...filter }];
+		await invoke(Queries.run, {
+			analysis_type: 'count',
+			event_collection: 'purchases',
+			filters,
+		});
+
+		expect(lastRequest().body).toMatchObject({ filters });
+	});
+
+	it('accepts an or filter with its operands', async () => {
+		respond(countResult);
+
+		const filters = [
+			{
+				operator: 'or',
+				operands: [
+					{ property_name: 'price', operator: 'gte', property_value: 9.99 },
+					{
+						property_name: 'customer.tier',
+						operator: 'eq',
+						property_value: 'premium',
+					},
+				],
+			},
+		];
+		await invoke(Queries.run, {
+			analysis_type: 'count',
+			event_collection: 'purchases',
+			filters,
+		});
+
+		expect(lastRequest().body).toMatchObject({ filters });
+	});
+
+	it.each([
+		[[true, false]],
+		[null],
+		[['a', null]],
+	])('keeps a %j result, which select_unique or an empty average can return', async (value) => {
+		respond({ result: value });
+
+		await expect(
+			invoke(Queries.run, {
+				analysis_type: 'select_unique',
+				event_collection: 'purchases',
+				target_property: 'item.on_sale',
+			}),
+		).resolves.toEqual({ result: value });
+	});
+
 	it.each([
 		[{ analysis_type: 'sum', event_collection: 'purchases' }],
 		[{ analysis_type: 'count' }],
+		[{ analysis_type: 'funnel' }],
+		[
+			{
+				analysis_type: 'count',
+				event_collection: 'purchases',
+				steps: [{ event_collection: 'a', actor_property: 'b' }],
+			},
+		],
+		[
+			{
+				analysis_type: 'percentile',
+				event_collection: 'purchases',
+				target_property: 'price',
+				percentile: 101,
+			},
+		],
+		[
+			{
+				analysis_type: 'count',
+				event_collection: 'purchases',
+				filters: [
+					{ property_name: 'a', operator: 'within', property_value: 'x' },
+				],
+			},
+		],
 		[
 			{
 				analysis_type: 'percentile',
@@ -436,6 +552,28 @@ describe('queries.run', () => {
 });
 
 describe('queries.multiAnalysis', () => {
+	it('takes entries without their own collection, as Keen documents them', async () => {
+		respond(multiAnalysisResult);
+
+		await invoke(Queries.multiAnalysis, {
+			event_collection: 'purchases',
+			analyses: {
+				purchases: { analysis_type: 'count' },
+				revenue: { analysis_type: 'sum', target_property: 'price' },
+			},
+			timeframe: 'this_7_days',
+		});
+
+		expect(lastRequest().body).toEqual({
+			event_collection: 'purchases',
+			analyses: {
+				purchases: { analysis_type: 'count' },
+				revenue: { analysis_type: 'sum', target_property: 'price' },
+			},
+			timeframe: 'this_7_days',
+		});
+	});
+
 	it('POSTs labelled analyses to the multi_analysis endpoint', async () => {
 		respond(multiAnalysisResult);
 
@@ -494,7 +632,9 @@ describe('savedQueries.list', () => {
 	it('GETs every saved query', async () => {
 		respond(savedQueries);
 
-		const result = (await invoke(SavedQueries.list, {})) as typeof savedQueries;
+		const result = (await invoke(SavedQueries.list, {})) as {
+			queries: unknown[];
+		};
 
 		expect(result.queries).toHaveLength(2);
 		expect(lastRequest()).toMatchObject({
@@ -587,6 +727,20 @@ describe('savedQueries.create', () => {
 		[
 			{
 				queryName: 'x',
+				refresh_rate: 60,
+				query: { analysis_type: 'count', event_collection: 'p' },
+			},
+		],
+		[
+			{
+				queryName: 'x',
+				refresh_rate: 86401,
+				query: { analysis_type: 'count', event_collection: 'p' },
+			},
+		],
+		[
+			{
+				queryName: 'x',
 				refresh_rate: 0,
 				query: { analysis_type: 'sum', event_collection: 'p' },
 			},
@@ -614,6 +768,17 @@ describe('savedQueries.result', () => {
 			method: 'GET',
 			path: `/3.0/projects/${PROJECT_ID}/queries/saved/weekly-purchases/result`,
 		});
+	});
+
+	it('keeps a cached multi-analysis result keyed by label', async () => {
+		respond({
+			...savedQueryResult,
+			result: { purchases: 42, revenue: 1283.04 },
+		});
+
+		await expect(
+			invoke(SavedQueries.result, { queryName: 'weekly-purchases' }),
+		).resolves.toMatchObject({ result: { purchases: 42, revenue: 1283.04 } });
 	});
 });
 
@@ -732,10 +897,49 @@ describe('datasets.result', () => {
 				timeframe: 'this_7_days',
 			}),
 		).resolves.toEqual(datasetResult);
+		// Keen reads the index from one `index_by` parameter, JSON-encoded when it
+		// is an object.
 		expect(lastRequest().query).toEqual({
-			country: 'US',
+			index_by: '{"country":"US"}',
 			timeframe: 'this_7_days',
 		});
+	});
+
+	it('sends a single string index value as it is', async () => {
+		respond(datasetResult);
+
+		await invoke(Datasets.result, {
+			datasetName: 'count-purchases-by-country-daily',
+			index_by: 'US',
+			timeframe: 'this_7_days',
+		});
+
+		expect(lastRequest().query).toEqual({
+			index_by: 'US',
+			timeframe: 'this_7_days',
+		});
+	});
+
+	it('takes number and boolean index values', async () => {
+		respond(datasetResult);
+
+		await invoke(Datasets.result, {
+			datasetName: 'by-store',
+			index_by: { 'store.id': 5, 'store.open': true },
+			timeframe: 'this_7_days',
+		});
+
+		expect(lastRequest().query.index_by).toBe(
+			'{"store.id":5,"store.open":true}',
+		);
+	});
+
+	it.each([
+		[{ datasetName: 'd', timeframe: 'this_7_days' }],
+		[{ datasetName: 'd', index_by: 'US' }],
+	])('rejects %j, which lacks a required parameter', async (input) => {
+		await expect(invoke(Datasets.result, input)).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('sends an absolute timeframe JSON-encoded', async () => {
@@ -743,6 +947,7 @@ describe('datasets.result', () => {
 
 		await invoke(Datasets.result, {
 			datasetName: 'count-purchases-by-country-daily',
+			index_by: 'US',
 			timeframe: {
 				start: '2026-11-01T00:00:00.000Z',
 				end: '2026-11-08T00:00:00.000Z',

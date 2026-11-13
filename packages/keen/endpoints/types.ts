@@ -80,34 +80,48 @@ export const KeenTimeframeSchema = z
 	.describe('A relative name, or an object with `start` and `end`.');
 
 /**
- * A query result is a number for the scalar analyses, an array of values for
- * `select_unique`, and an array of objects for `group_by` or `interval`. Naming
- * all three keeps the docs honest instead of printing `any`.
+ * A query result is a number for the scalar analyses (null when no event
+ * matched an average, minimum or the like), an array of values for
+ * `select_unique` (which can be booleans), an array of objects for `group_by`
+ * or `interval`, and an object keyed by label for a multi-analysis saved query.
+ * Naming the forms keeps the docs honest instead of printing `any`.
  */
 export const KeenResultSchema = z.union([
 	z.number(),
 	z.string(),
-	z.array(z.union([z.number(), z.string(), z.record(z.string(), z.unknown())])),
+	z.boolean(),
+	z.null(),
+	z.array(
+		z.union([
+			z.number(),
+			z.string(),
+			z.boolean(),
+			z.null(),
+			// unknown: a group or interval row carries the grouped property names
+			// as keys, so its shape follows the query.
+			z.record(z.string(), z.unknown()),
+		]),
+	),
+	// unknown: a multi-analysis result is keyed by the caller's labels, and each
+	// value takes the shape of its own analysis.
+	z.record(z.string(), z.unknown()),
 ]);
 
-const FilterSchema = z
-	.object({
-		property_name: z.string().min(1).describe('The event property to test.'),
-		operator: z.enum(KEEN_FILTER_OPERATORS),
-		property_value: z
-			.unknown()
-			.describe(
-				'The value to compare. An array for `in`, a boolean for `exists`, and a string for `regex`.',
-			),
-	})
-	.loose();
+const SIMPLE_FILTER_OPERATORS = KEEN_FILTER_OPERATORS;
 
-const FilterInputSchema = z
+// A scalar Keen can compare: strings, numbers and booleans are the property
+// types it infers.
+const isScalar = (value: unknown) =>
+	typeof value === 'string' ||
+	typeof value === 'number' ||
+	typeof value === 'boolean';
+
+const SimpleFilterInputSchema = z
 	.object({
 		property_name: z.string().min(1),
-		operator: z.enum(KEEN_FILTER_OPERATORS),
+		operator: z.enum(SIMPLE_FILTER_OPERATORS),
 		// unknown: the comparison value's type follows the operator, which the
-		// input schema checks below rather than typing eight separate cases.
+		// refinement below checks rather than typing each operator separately.
 		property_value: z.unknown(),
 	})
 	.superRefine((value, ctx) => {
@@ -118,30 +132,59 @@ const FilterInputSchema = z
 				message: `\`${value.operator}\` takes ${kind}.`,
 			});
 		};
-		if (value.operator === 'exists') {
-			if (typeof value.property_value !== 'boolean') expected('a boolean');
-			return;
-		}
-		if (value.operator === 'in') {
-			if (!Array.isArray(value.property_value)) expected('an array');
-			return;
-		}
-		if (
-			value.operator === 'contains' ||
-			value.operator === 'not_contains' ||
-			value.operator === 'regex'
-		) {
-			if (typeof value.property_value !== 'string') expected('a string');
-			return;
-		}
-		// `eq`, `ne`, and the four comparisons take a number or a string.
-		if (
-			typeof value.property_value !== 'number' &&
-			typeof value.property_value !== 'string'
-		) {
-			expected('a number or a string');
+		const v = value.property_value;
+		switch (value.operator) {
+			case 'exists':
+				if (typeof v !== 'boolean') expected('a boolean');
+				return;
+			case 'in':
+				if (!Array.isArray(v)) expected('an array');
+				return;
+			case 'regex':
+				if (typeof v !== 'string') expected('a string');
+				return;
+			case 'within': {
+				// Keen's geo filter: `{ coordinates: [longitude, latitude], max_distance_miles }`.
+				const geo = v as { coordinates?: unknown; max_distance_miles?: unknown };
+				if (
+					typeof v !== 'object' ||
+					v === null ||
+					!Array.isArray(geo.coordinates) ||
+					geo.coordinates.length !== 2 ||
+					!geo.coordinates.every((n) => typeof n === 'number') ||
+					typeof geo.max_distance_miles !== 'number'
+				) {
+					expected(
+						'an object with `coordinates` ([longitude, latitude]) and `max_distance_miles`',
+					);
+				}
+				return;
+			}
+			case 'lt':
+			case 'lte':
+			case 'gt':
+			case 'gte':
+				if (typeof v !== 'number' && typeof v !== 'string') {
+					expected('a number or a string');
+				}
+				return;
+			default:
+				// `eq`, `ne`, `contains` and `not_contains` compare against a string,
+				// a number or a boolean, including one element of a list property.
+				if (!isScalar(v)) expected('a string, a number or a boolean');
 		}
 	});
+
+// An or filter matches an event when any of its operands match.
+const OrFilterInputSchema = z.object({
+	operator: z.literal('or'),
+	operands: z.array(SimpleFilterInputSchema).min(1),
+});
+
+const FilterInputSchema = z.union([
+	OrFilterInputSchema,
+	SimpleFilterInputSchema,
+]);
 
 /**
  * A query names its target property, and the analysis types that need one say
@@ -150,10 +193,34 @@ const FilterInputSchema = z
 const analysisNeedsTarget = (analysisType: string) =>
 	analysisType !== 'count' && analysisType !== 'funnel';
 
-const AnalysisSchema = z
+// A funnel step names its own collection and the actor to follow through it.
+// Steps inherit `timeframe` and `timezone` from the funnel when they omit them.
+const FunnelStepSchema = z
 	.object({
-		analysis_type: z.enum(KEEN_ANALYSIS_TYPES),
 		event_collection: CollectionSchema,
+		actor_property: z
+			.string()
+			.min(1)
+			.describe('The property that identifies an actor, such as `user.id`.'),
+		timeframe: KeenTimeframeSchema.optional(),
+		timezone: z.string().optional(),
+		filters: z.array(FilterInputSchema).min(1).optional(),
+		optional: z.boolean().optional(),
+		inverted: z.boolean().optional(),
+		with_actors: z.boolean().optional(),
+	})
+	.loose();
+
+const AnalysisFields = z.object({
+		analysis_type: z.enum(KEEN_ANALYSIS_TYPES),
+		event_collection: CollectionSchema.optional().describe(
+			'The collection to analyze. Required for every analysis but `funnel`, whose steps name their own; inside a multi-analysis it comes from the outer request.',
+		),
+		steps: z
+			.array(FunnelStepSchema)
+			.min(1)
+			.optional()
+			.describe('Required for `funnel`: the steps, in order.'),
 		target_property: z
 			.string()
 			.min(1)
@@ -201,12 +268,44 @@ const AnalysisSchema = z
 			.describe('Maximum group rows to return.'),
 		percentile: z
 			.number()
+			.min(0)
+			.max(100)
 			.nullable()
 			.optional()
 			.describe('Required for `percentile`: the percentile to read, 0 to 100.'),
 		include_metadata: z.boolean().optional(),
-	})
-	.superRefine((value, ctx) => {
+	});
+
+/**
+ * The checks every analysis shares. A standalone query must name its
+ * collection; an entry in a multi-analysis takes it from the outer request.
+ */
+function refineAnalysis(requireCollection: boolean) {
+	return (value: z.output<typeof AnalysisFields>, ctx: z.RefinementCtx) => {
+		if (value.analysis_type === 'funnel') {
+			if (!value.steps) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['steps'],
+					message: '`funnel` needs `steps`.',
+				});
+			}
+		} else {
+			if (value.steps !== undefined) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['steps'],
+					message: 'Only a `funnel` analysis takes `steps`.',
+				});
+			}
+			if (requireCollection && !value.event_collection) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['event_collection'],
+					message: `\`${value.analysis_type}\` needs an \`event_collection\`.`,
+				});
+			}
+		}
 		if (analysisNeedsTarget(value.analysis_type) && !value.target_property) {
 			ctx.addIssue({
 				code: 'custom',
@@ -231,7 +330,15 @@ const AnalysisSchema = z
 				message: 'Only a `percentile` analysis takes `percentile`.',
 			});
 		}
-	});
+	};
+}
+
+const AnalysisSchema = AnalysisFields.superRefine(refineAnalysis(true));
+
+// An entry in a multi-analysis: the outer request carries the collection.
+const MultiAnalysisEntrySchema = AnalysisFields.superRefine(
+	refineAnalysis(false),
+);
 
 export type KeenAnalysisInput = z.input<typeof AnalysisSchema>;
 
@@ -246,6 +353,7 @@ export const KeenScalarResultSchema = z
 
 const EventsRecordInputSchema = z.object({
 	collection: CollectionSchema,
+	// unknown: an event is the caller's own data; Keen infers each property's type.
 	event: z
 		.record(z.string(), z.unknown())
 		.describe(
@@ -263,6 +371,7 @@ export type EventsRecordResponse = z.infer<typeof EventsRecordResponseSchema>;
 
 const EventsRecordManyInputSchema = z
 	.object({
+		// unknown: each event is the caller's own data, as in events.record.
 		events: z
 			.record(z.string(), z.array(z.record(z.string(), z.unknown())).min(1))
 			.describe(
@@ -375,7 +484,7 @@ export type QueriesRunResponse = z.infer<typeof QueriesRunResponseSchema>;
 const QueriesMultiAnalysisInputSchema = z.object({
 	event_collection: CollectionSchema,
 	analyses: z
-		.record(z.string(), AnalysisSchema)
+		.record(z.string(), MultiAnalysisEntrySchema)
 		.describe(
 			'Label to analysis. Each label becomes a key in the result. Keen allows at most 10 analyses per request.',
 		),
@@ -384,7 +493,14 @@ const QueriesMultiAnalysisInputSchema = z.object({
 	timezone: z.string().optional(),
 	filters: z.array(FilterInputSchema).min(1).optional(),
 	group_by: z
-		.array(z.union([z.string().min(1), z.record(z.string(), z.unknown())]))
+		.array(
+			z.union([
+				z.string().min(1),
+				// unknown: buckets and ranges pass through in Keen's own shape, as in
+				// a single analysis.
+				z.record(z.string(), z.unknown()),
+			]),
+		)
 		.min(1)
 		.optional(),
 });
@@ -397,6 +513,7 @@ export type QueriesMultiAnalysisInput = z.input<
 // scalar run answers an object of numbers and an interval run an object of
 // arrays. Both are records, which is what this keeps.
 const QueriesMultiAnalysisResponseSchema = z
+	// unknown: each label's value takes the shape of its own analysis.
 	.object({ result: z.record(z.string(), z.unknown()) })
 	.loose();
 
@@ -414,6 +531,8 @@ const SavedQuerySchema = z
 	.object({
 		query_name: z.string(),
 		refresh_rate: z.number().nullish(),
+		// unknown: the stored analysis document, whose keys follow its analysis
+		// type; the metadata and run information are Keen's free-form objects.
 		query: z.record(z.string(), z.unknown()).nullish(),
 		metadata: z.record(z.string(), z.unknown()).nullish(),
 		created_date: z.string().nullish(),
@@ -448,15 +567,24 @@ const SavedQueryResponseSchema = SavedQuerySchema.loose();
 
 export type SavedQueryResponse = z.infer<typeof SavedQueryResponseSchema>;
 
+// Keen caches a saved query only between four and 24 hours apart.
+const MIN_REFRESH_SECONDS = 4 * 60 * 60;
+const MAX_REFRESH_SECONDS = 24 * 60 * 60;
+
 const SavedQueryCreateInputSchema = z.object({
 	queryName: SavedQueryNameSchema,
 	query: AnalysisSchema,
 	refresh_rate: z
 		.number()
 		.int()
-		.min(0)
+		.refine(
+			(value) =>
+				value === 0 ||
+				(value >= MIN_REFRESH_SECONDS && value <= MAX_REFRESH_SECONDS),
+			'`refresh_rate` is 0, or between 14400 (four hours) and 86400 (24 hours).',
+		)
 		.describe(
-			'Seconds between refreshes. `0` caches nothing; anything above 0 must be at least four hours.',
+			'Seconds between refreshes. `0` caches nothing; a cached query refreshes every 14400 (four hours) to 86400 (24 hours) seconds.',
 		),
 	metadata: z
 		.object({ display_name: z.string().min(1) })
@@ -477,6 +605,7 @@ const SavedQueryResultResponseSchema = z
 		query_name: z.string(),
 		result: KeenResultSchema,
 		refresh_rate: z.number().nullish(),
+		// unknown: the stored analysis document, as on the definition.
 		query: z.record(z.string(), z.unknown()).nullish(),
 		created_date: z.string().nullish(),
 		last_modified_date: z.string().nullish(),
@@ -536,8 +665,11 @@ const DatasetSchema = z
 		organization_id: z.string().nullish(),
 		dataset_name: z.string(),
 		display_name: z.string().nullish(),
+		// unknown: the cached analysis document, whose keys follow its type.
 		query: z.record(z.string(), z.unknown()).nullish(),
-		index_by: z.array(z.string()).nullish(),
+		// Keen echoes a single index property as a string on create and lists
+		// them as an array elsewhere.
+		index_by: z.union([z.string(), z.array(z.string())]).nullish(),
 		last_scheduled_date: z.string().nullish(),
 		latest_subtimeframe_available: z.string().nullish(),
 		milliseconds_behind: z.number().nullish(),
@@ -576,12 +708,16 @@ export type DatasetGetResponse = z.infer<typeof DatasetGetResponseSchema>;
 const DatasetResultInputSchema = z.object({
 	datasetName: DatasetNameSchema,
 	index_by: z
-		.record(z.string(), z.string())
-		.optional()
+		.union([
+			z.string().min(1),
+			z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
+		])
 		.describe(
-			'Values for the dataset’s `index_by` properties, which select the rows to return.',
+			'The index value that selects the rows: a string for a single string index property, or an object of property name to value when there are several or the value is not a string.',
 		),
-	timeframe: KeenTimeframeSchema.optional(),
+	timeframe: KeenTimeframeSchema.describe(
+		'A relative timeframe in the dataset’s own unit, or an absolute window that lines up with its intervals.',
+	),
 });
 
 export type DatasetResultInput = z.input<typeof DatasetResultInputSchema>;
