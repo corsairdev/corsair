@@ -140,7 +140,7 @@ await corsair.eventee.api.attendees.delete({ email: 'jane.doe@example.com' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `email` | `string` | Yes | — |
+| `email` | `string` | Yes | Plain email address; the plugin URL-encodes it for Eventee. |
 
 
 
@@ -277,7 +277,7 @@ Output type note: Eventee's OpenAPI omits item schemas for session fields `files
   created_at?: string,
   updated_at?: string,
   discussion?: boolean,
-  panel_discussion?: boolean,
+  panel_discussion?: boolean | number,
   code?: string,
   moderating?: boolean,
   polling?: boolean,
@@ -336,7 +336,7 @@ Output type note: Eventee's OpenAPI omits item schemas for session fields `files
   created_at?: string,
   updated_at?: string,
   discussion?: boolean,
-  panel_discussion?: boolean,
+  panel_discussion?: boolean | number,
   code?: string,
   moderating?: boolean,
   polling?: boolean,
@@ -419,8 +419,8 @@ Output type note: Eventee's OpenAPI omits item schemas for session fields `files
   language?: string,
   event_id?: number,
   order?: number,
-  photo?: string,
-  thumbnail?: string,
+  photo?: string | null,
+  thumbnail?: string | null,
   bio?: string
 }[]
 ```
@@ -812,7 +812,7 @@ Eventee returns all partners in one response; no pagination is documented.
       thumbnail?: string,
       giphy_id?: string | null
     }
-  },
+  } | null,
   sponsor_info?: {
     order?: number,
     sponsor_category_id?: string | null,
@@ -825,7 +825,7 @@ Eventee returns all partners in one response; no pagination is documented.
       thumbnail?: string,
       giphy_id?: string | null
     }
-  },
+  } | null,
   logo?: {
     id?: number,
     width?: number,
@@ -834,7 +834,7 @@ Eventee returns all partners in one response; no pagination is documented.
     url?: string,
     thumbnail?: string,
     giphy_id?: string | null
-  },
+  } | null,
   photo?: {
     id?: number,
     width?: number,
@@ -843,7 +843,7 @@ Eventee returns all partners in one response; no pagination is documented.
     url?: string,
     thumbnail?: string,
     giphy_id?: string | null
-  },
+  } | null,
   qr_code_url?: string
 }[]
 ```
@@ -901,10 +901,10 @@ This is a replacement update: omitted text fields are cleared, and omitted logo_
 | `sections` | `object[]` | No | — |
 | `exhibitor` | `boolean` | No | — |
 | `sponsor` | `boolean` | No | — |
-| `exhibitor_info` | `object` | No | — |
-| `sponsor_info` | `object` | No | — |
-| `logo` | `object` | No | — |
-| `photo` | `object` | No | — |
+| `exhibitor_info` | `object \| null` | No | — |
+| `sponsor_info` | `object \| null` | No | — |
+| `logo` | `object \| null` | No | — |
+| `photo` | `object \| null` | No | — |
 | `qr_code_url` | `string` | No | — |
 
 <AccordionGroup>
@@ -935,7 +935,7 @@ This is a replacement update: omitted text fields are cleared, and omitted logo_
     thumbnail?: string,
     giphy_id?: string | null
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -954,7 +954,7 @@ This is a replacement update: omitted text fields are cleared, and omitted logo_
     thumbnail?: string,
     giphy_id?: string | null
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -969,7 +969,7 @@ This is a replacement update: omitted text fields are cleared, and omitted logo_
   url?: string,
   thumbnail?: string,
   giphy_id?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -984,7 +984,7 @@ This is a replacement update: omitted text fields are cleared, and omitted logo_
   url?: string,
   thumbnail?: string,
   giphy_id?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1040,10 +1040,10 @@ At least one of logo_url or photo_url is required. logo_url lists the partner as
 | `sections` | `object[]` | No | — |
 | `exhibitor` | `boolean` | No | — |
 | `sponsor` | `boolean` | No | — |
-| `exhibitor_info` | `object` | No | — |
-| `sponsor_info` | `object` | No | — |
-| `logo` | `object` | No | — |
-| `photo` | `object` | No | — |
+| `exhibitor_info` | `object \| null` | No | — |
+| `sponsor_info` | `object \| null` | No | — |
+| `logo` | `object \| null` | No | — |
+| `photo` | `object \| null` | No | — |
 | `qr_code_url` | `string` | No | — |
 
 <AccordionGroup>
@@ -1074,7 +1074,7 @@ At least one of logo_url or photo_url is required. logo_url lists the partner as
     thumbnail?: string,
     giphy_id?: string | null
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -1093,7 +1093,7 @@ At least one of logo_url or photo_url is required. logo_url lists the partner as
     thumbnail?: string,
     giphy_id?: string | null
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -1108,7 +1108,7 @@ At least one of logo_url or photo_url is required. logo_url lists the partner as
   url?: string,
   thumbnail?: string,
   giphy_id?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1123,7 +1123,7 @@ At least one of logo_url or photo_url is required. logo_url lists the partner as
   url?: string,
   thumbnail?: string,
   giphy_id?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1219,10 +1219,10 @@ Replaces the full ordered section list; omitted sections are deleted. Types 0-5 
 | `sections` | `object[]` | No | — |
 | `exhibitor` | `boolean` | No | — |
 | `sponsor` | `boolean` | No | — |
-| `exhibitor_info` | `object` | No | — |
-| `sponsor_info` | `object` | No | — |
-| `logo` | `object` | No | — |
-| `photo` | `object` | No | — |
+| `exhibitor_info` | `object \| null` | No | — |
+| `sponsor_info` | `object \| null` | No | — |
+| `logo` | `object \| null` | No | — |
+| `photo` | `object \| null` | No | — |
 | `qr_code_url` | `string` | No | — |
 
 <AccordionGroup>
@@ -1253,7 +1253,7 @@ Replaces the full ordered section list; omitted sections are deleted. Types 0-5 
     thumbnail?: string,
     giphy_id?: string | null
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -1272,7 +1272,7 @@ Replaces the full ordered section list; omitted sections are deleted. Types 0-5 
     thumbnail?: string,
     giphy_id?: string | null
   }
-}
+} | null
 ```
 </Accordion>
 
@@ -1287,7 +1287,7 @@ Replaces the full ordered section list; omitted sections are deleted. Types 0-5 
   url?: string,
   thumbnail?: string,
   giphy_id?: string | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1302,7 +1302,7 @@ Replaces the full ordered section list; omitted sections are deleted. Types 0-5 
   url?: string,
   thumbnail?: string,
   giphy_id?: string | null
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1498,7 +1498,7 @@ await corsair.eventee.api.registrations.delete({ email: 'jane.doe@example.com' }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `email` | `string` | Yes | — |
+| `email` | `string` | Yes | Plain email address; the plugin URL-encodes it for Eventee. |
 
 
 
@@ -1533,8 +1533,8 @@ Eventee returns all registrations in one response with no pagination. Status val
 {
   id: number,
   email?: string,
-  email_valid?: boolean,
-  status?: 0 | 1 | 2,
+  email_valid?: boolean | null,
+  status?: 0 | 1 | 2 | null,
   first_name?: string,
   last_name?: string,
   photo?: string | null,
@@ -1609,7 +1609,7 @@ Eventee returns all session reviews in one response; no pagination is documented
     created_at?: string,
     updated_at?: string,
     discussion?: boolean,
-    panel_discussion?: boolean,
+    panel_discussion?: boolean | number,
     code?: string,
     moderating?: boolean,
     polling?: boolean,
@@ -1736,7 +1736,7 @@ Omitted speakers and tracks are removed and omitted type/capacity reset, while h
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 | `discussion` | `boolean` | No | — |
-| `panel_discussion` | `boolean` | No | — |
+| `panel_discussion` | `boolean \| number` | No | — |
 | `code` | `string` | No | — |
 | `moderating` | `boolean` | No | — |
 | `polling` | `boolean` | No | — |
@@ -1848,7 +1848,7 @@ Output type note: Eventee's OpenAPI omits item schemas for session fields `files
 | `created_at` | `string` | No | — |
 | `updated_at` | `string` | No | — |
 | `discussion` | `boolean` | No | — |
-| `panel_discussion` | `boolean` | No | — |
+| `panel_discussion` | `boolean \| number` | No | — |
 | `code` | `string` | No | — |
 | `moderating` | `boolean` | No | — |
 | `polling` | `boolean` | No | — |
@@ -1992,8 +1992,8 @@ await corsair.eventee.api.speaker.patch({ speakerTmp_id: 1, position: 'CTO' });
 | `language` | `string` | No | — |
 | `event_id` | `number` | No | — |
 | `order` | `number` | No | — |
-| `photo` | `string` | No | — |
-| `thumbnail` | `string` | No | — |
+| `photo` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
 | `bio` | `string` | No | — |
 
 
@@ -2053,8 +2053,8 @@ await corsair.eventee.api.speaker.post({ name: 'Jane Doe', email: 'jane.doe@exam
 | `language` | `string` | No | — |
 | `event_id` | `number` | No | — |
 | `order` | `number` | No | — |
-| `photo` | `string` | No | — |
-| `thumbnail` | `string` | No | — |
+| `photo` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
 | `bio` | `string` | No | — |
 
 
