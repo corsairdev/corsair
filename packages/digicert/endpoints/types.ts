@@ -6,7 +6,7 @@ const PageSchema = z
 		limit: z.number(),
 		offset: z.number(),
 	})
-	.strict();
+	.passthrough();
 
 // CertCentral documents additive response fields; validate known keys and retain provider additions.
 const UserSchema = z
@@ -35,7 +35,7 @@ const UserSchema = z
 			.passthrough()
 			.optional(),
 		access_roles: z.array(
-			z.object({ id: z.number(), name: z.string() }).strict(),
+			z.object({ id: z.number(), name: z.string() }).passthrough(),
 		),
 		type: z.string(),
 		has_container_assignments: z.boolean(),
@@ -48,7 +48,7 @@ const UserSchema = z
 						name: z.string(),
 						is_active: z.boolean(),
 					})
-					.strict(),
+					.passthrough(),
 			)
 			.optional(),
 	})
@@ -236,10 +236,10 @@ const IntermediatesResponseSchema = z
 					is_root: z.string(),
 					pem: z.string(),
 				})
-				.strict(),
+				.passthrough(),
 		),
 	})
-	.strict();
+	.passthrough();
 
 const AccountManagerLocalesResponseSchema = z.array(
 	z
@@ -258,6 +258,8 @@ const AccountManagerLocalesResponseSchema = z.array(
 					'zh_CN',
 					'zh_TW',
 				])
+				// DigiCert adds locales over time (the live list has nl_NL, which the reference omits).
+				.or(z.string())
 				.optional(),
 			language: z
 				.enum([
@@ -273,18 +275,19 @@ const AccountManagerLocalesResponseSchema = z.array(
 					'简体中文',
 					'繁體中文',
 				])
+				.or(z.string())
 				.optional(),
 		})
-		.strict(),
+		.passthrough(),
 );
 
 const PrivateCAHelperResponseSchema = z
 	.object({ version: z.string() })
-	.strict();
+	.passthrough();
 
 const TrustLifecycleVersionResponseSchema = z
 	.object({ version: z.string() })
-	.strict();
+	.passthrough();
 const ContentTrustInfoResponseSchema = z
 	.object({
 		lang: z.string().optional(),
@@ -297,7 +300,7 @@ const ContentTrustInfoResponseSchema = z
 		methods: z.array(z.string()).optional(),
 		authType: z.array(z.string()).optional(),
 	})
-	.strict();
+	.passthrough();
 
 const ReportNamesInputSchema = z
 	.object({ report_display_name: z.string().optional() })
@@ -348,7 +351,7 @@ const ReportTypeSchema = z
 		is_customizable: z.boolean().optional(),
 		is_customisable: z.boolean().optional(),
 	})
-	.strict();
+	.passthrough();
 const ReportHistoryItemSchema = z
 	.object({
 		report_display_name: z.string(),
@@ -369,7 +372,7 @@ const ReportHistoryItemSchema = z
 		data_from_date: z.string().optional(),
 		data_to_date: z.string().optional(),
 	})
-	.strict();
+	.passthrough();
 const ReportDetailsSchema = z
 	.object({
 		report: z
@@ -382,7 +385,9 @@ const ReportDetailsSchema = z
 				report_metadata: z
 					.object({
 						report_type: z.string(),
-						columns: z.array(z.object({ identifier: z.string() }).strict()),
+						columns: z.array(
+							z.object({ identifier: z.string() }).passthrough(),
+						),
 						filters: z
 							.array(
 								z
@@ -391,7 +396,7 @@ const ReportDetailsSchema = z
 										column_identifier: z.string(),
 										values: z.array(z.string()).optional(),
 									})
-									.strict(),
+									.passthrough(),
 							)
 							.optional(),
 						sources: z
@@ -401,10 +406,10 @@ const ReportDetailsSchema = z
 								divisions: z.array(z.number()).nullable().optional(),
 								sub_accounts: z.array(z.number()).nullable().optional(),
 							})
-							.strict()
+							.passthrough()
 							.optional(),
 					})
-					.strict(),
+					.passthrough(),
 				schedule: z
 					.object({
 						frequency: z.string(),
@@ -418,10 +423,10 @@ const ReportDetailsSchema = z
 								date: z.number().optional(),
 								last_day_of_the_month: z.boolean().optional(),
 							})
-							.strict()
+							.passthrough()
 							.optional(),
 					})
-					.strict(),
+					.passthrough(),
 				next_run_date: z.string().optional(),
 				format: z.array(z.string()),
 				status: z.string(),
@@ -434,14 +439,14 @@ const ReportDetailsSchema = z
 								last_name: z.string(),
 								email: z.string(),
 							})
-							.strict(),
+							.passthrough(),
 					)
 					.nullable()
 					.optional(),
 			})
-			.strict(),
+			.passthrough(),
 	})
-	.strict();
+	.passthrough();
 
 const CustomReportFields = [
 	'account_id',
@@ -575,9 +580,9 @@ const CustomReportOrdersResponseSchema = z
 			.object({
 				order_details: z.array(z.record(z.string(), GraphQLValueSchema)),
 			})
-			.strict(),
+			.passthrough(),
 	})
-	.strict();
+	.passthrough();
 const CustomReportByIdResponseSchema = z
 	.object({
 		data: z
@@ -586,9 +591,9 @@ const CustomReportByIdResponseSchema = z
 					.record(z.string(), GraphQLValueSchema)
 					.nullable(),
 			})
-			.strict(),
+			.passthrough(),
 	})
-	.strict();
+	.passthrough();
 
 export type UsersListInput = z.infer<typeof UsersListInputSchema>;
 export type UsersListResponse = {
@@ -717,13 +722,13 @@ export const DigicertEndpointInputSchemas = {
 export const DigicertEndpointOutputSchemas = {
 	usersList: z
 		.object({ users: z.array(UserSchema), page: PageSchema })
-		.strict(),
+		.passthrough(),
 	ordersList: z
 		.object({ orders: z.array(OrderSchema), page: PageSchema })
-		.strict(),
+		.passthrough(),
 	organizationsList: z
 		.object({ organizations: z.array(OrganizationSchema), page: PageSchema })
-		.strict(),
+		.passthrough(),
 	intermediatesList: IntermediatesResponseSchema,
 	accountManagerLocales: AccountManagerLocalesResponseSchema,
 	privateCAHelper: PrivateCAHelperResponseSchema,
@@ -732,14 +737,16 @@ export const DigicertEndpointOutputSchemas = {
 	trustLifecycleVersion: TrustLifecycleVersionResponseSchema,
 	contentTrustInfoV0: ContentTrustInfoResponseSchema,
 	contentTrustInfoV1: ContentTrustInfoResponseSchema,
-	reportNames: z.object({ report_names: z.array(z.string()) }).strict(),
-	reportTypes: z.object({ report_types: z.array(ReportTypeSchema) }).strict(),
+	reportNames: z.object({ report_names: z.array(z.string()) }).passthrough(),
+	reportTypes: z
+		.object({ report_types: z.array(ReportTypeSchema) })
+		.passthrough(),
 	reportHistory: z
 		.object({
 			page: PageSchema,
 			report_history: z.array(ReportHistoryItemSchema),
 		})
-		.strict(),
+		.passthrough(),
 	reportDetails: ReportDetailsSchema,
 	customReportQuery: CustomReportOrdersResponseSchema,
 	customReportById: CustomReportByIdResponseSchema,

@@ -221,7 +221,7 @@ describe('DigiCert endpoint schemas', () => {
 		[
 			'accountManagerLocales',
 			[{ code: 'en_US', language: 'English' }],
-			[{ code: 'xx_XX', language: 'English' }],
+			[{ code: 5, language: 'English' }],
 		],
 		['privateCAHelper', { version: '1.2.3' }, {}],
 		['certificateTags', undefined, {}],
@@ -496,6 +496,37 @@ describe('DigiCert endpoint schemas', () => {
 				'trustLifecycleApi.getCertificateCountsBySourceTypes'
 			].riskLevel,
 		).toBe('read');
+	});
+
+	it('accepts the live Account Manager locale list, including locales the reference omits', () => {
+		// Trimmed from GET /account/api/v1/locales on one.digicert.com (11-13).
+		const live = [
+			{ code: 'de_DE', language: 'Deutsch' },
+			{ code: 'en_US', language: 'English' },
+			{ code: 'nl_NL', language: 'Nederlands' },
+		];
+		expect(
+			DigicertEndpointOutputSchemas.accountManagerLocales.parse(live),
+		).toEqual(live);
+	});
+
+	it('accepts response fields and enum values DigiCert adds later', () => {
+		const accounts = [
+			{
+				id: 'a1',
+				type: 'enterprise',
+				sign_in_methods: [{ signInMethod: 'passkey', status: 'pending' }],
+			},
+		];
+		expect(
+			generatedOpenApiEndpointSchemas[
+				'accountManagerApi.listAccounts'
+			].output.parse(accounts),
+		).toEqual(accounts);
+		const version = { version: '1.6522.0', build: 'abc' };
+		expect(
+			DigicertEndpointOutputSchemas.trustLifecycleVersion.parse(version),
+		).toEqual(version);
 	});
 
 	it('infers required arguments and result fields from operation schemas', () => {

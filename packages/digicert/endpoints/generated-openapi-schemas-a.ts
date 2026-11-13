@@ -166,9 +166,15 @@ const r_0e428a8d097bOutput = z.array(
 				.array(
 					z
 						.object({
-							mfaStatus: z.enum(['enabled', 'disabled']).optional(),
-							signInMethod: z.enum(['standard', 'sso']).optional(),
-							status: z.enum(['enabled', 'disabled']).optional(),
+							mfaStatus: z
+								.enum(['enabled', 'disabled'])
+								.or(z.string())
+								.optional(),
+							signInMethod: z
+								.enum(['standard', 'sso'])
+								.or(z.string())
+								.optional(),
+							status: z.enum(['enabled', 'disabled']).or(z.string()).optional(),
 							clientAuthCertLoginEnabled: z.boolean().optional(),
 						})
 						.passthrough(),
@@ -180,7 +186,7 @@ const r_0e428a8d097bOutput = z.array(
 						.object({
 							id: z.string().optional(),
 							name: z.string().optional(),
-							status: z.enum(['ENABLED', 'DISABLED']).optional(),
+							status: z.enum(['ENABLED', 'DISABLED']).or(z.string()).optional(),
 							oauthClientId: z.string().optional(),
 							oauthClientAccountId: z.string().optional(),
 						})
@@ -188,7 +194,7 @@ const r_0e428a8d097bOutput = z.array(
 				)
 				.optional(),
 			locale: z.string().optional(),
-			type: z.enum(['standard', 'partner']).optional(),
+			type: z.enum(['standard', 'partner']).or(z.string()).optional(),
 			federated_account_id: z.string().optional(),
 			packages: z
 				.array(
@@ -270,9 +276,12 @@ const r_e9990a55db83Output = z
 			.array(
 				z
 					.object({
-						mfaStatus: z.enum(['enabled', 'disabled']).optional(),
-						signInMethod: z.enum(['standard', 'sso']).optional(),
-						status: z.enum(['enabled', 'disabled']).optional(),
+						mfaStatus: z
+							.enum(['enabled', 'disabled'])
+							.or(z.string())
+							.optional(),
+						signInMethod: z.enum(['standard', 'sso']).or(z.string()).optional(),
+						status: z.enum(['enabled', 'disabled']).or(z.string()).optional(),
 						clientAuthCertLoginEnabled: z.boolean().optional(),
 					})
 					.passthrough(),
@@ -284,7 +293,7 @@ const r_e9990a55db83Output = z
 					.object({
 						id: z.string().optional(),
 						name: z.string().optional(),
-						status: z.enum(['ENABLED', 'DISABLED']).optional(),
+						status: z.enum(['ENABLED', 'DISABLED']).or(z.string()).optional(),
 						oauthClientId: z.string().optional(),
 						oauthClientAccountId: z.string().optional(),
 					})
@@ -292,7 +301,7 @@ const r_e9990a55db83Output = z
 			)
 			.optional(),
 		locale: z.string().optional(),
-		type: z.enum(['standard', 'partner']).optional(),
+		type: z.enum(['standard', 'partner']).or(z.string()).optional(),
 		federated_account_id: z.string().optional(),
 		packages: z
 			.array(
@@ -359,9 +368,12 @@ const r_15fb6b740e87Output = z
 			.array(
 				z
 					.object({
-						mfaStatus: z.enum(['enabled', 'disabled']).optional(),
-						signInMethod: z.enum(['standard', 'sso']).optional(),
-						status: z.enum(['enabled', 'disabled']).optional(),
+						mfaStatus: z
+							.enum(['enabled', 'disabled'])
+							.or(z.string())
+							.optional(),
+						signInMethod: z.enum(['standard', 'sso']).or(z.string()).optional(),
+						status: z.enum(['enabled', 'disabled']).or(z.string()).optional(),
 						clientAuthCertLoginEnabled: z.boolean().optional(),
 					})
 					.passthrough(),
@@ -373,7 +385,7 @@ const r_15fb6b740e87Output = z
 					.object({
 						id: z.string().optional(),
 						name: z.string().optional(),
-						status: z.enum(['ENABLED', 'DISABLED']).optional(),
+						status: z.enum(['ENABLED', 'DISABLED']).or(z.string()).optional(),
 						oauthClientId: z.string().optional(),
 						oauthClientAccountId: z.string().optional(),
 					})
@@ -381,7 +393,7 @@ const r_15fb6b740e87Output = z
 			)
 			.optional(),
 		locale: z.string().optional(),
-		type: z.enum(['standard', 'partner']).optional(),
+		type: z.enum(['standard', 'partner']).or(z.string()).optional(),
 		federated_account_id: z.string().optional(),
 		packages: z
 			.array(
@@ -508,7 +520,7 @@ const r_a85d7ecc25d2Output = z
 							.optional(),
 						timestamp: z.string().optional(),
 						description: z.string().optional(),
-						status: z.enum(['success', 'failure']).optional(),
+						status: z.enum(['success', 'failure']).or(z.string()).optional(),
 						client_ip: z.string().optional(),
 					})
 					.passthrough(),
@@ -683,13 +695,16 @@ const r_f05dba0a427dOutput = z
 		last_name: z.string().optional(),
 		email: z.string().optional(),
 		phone: z.string().optional(),
-		status: z.enum(['ACTIVE', 'DELETED', 'PENDING', 'LOCKED']).optional(),
-		access_scope: z.enum(['account']).optional(),
+		status: z
+			.enum(['ACTIVE', 'DELETED', 'PENDING', 'LOCKED'])
+			.or(z.string())
+			.optional(),
+		access_scope: z.enum(['account']).or(z.string()).optional(),
 		active: z.boolean().optional(),
 		primary_account_id: z.string().optional(),
 		created_at: z.string().optional(),
 		created_by: z.string().optional(),
-		user_type: z.enum(['standard', 'service']).optional(),
+		user_type: z.enum(['standard', 'service']).or(z.string()).optional(),
 		friendly_name: z.string().optional(),
 		description: z.string().optional(),
 		end_date: z.string().optional(),
@@ -738,9 +753,18 @@ const r_f05dba0a427dOutput = z
 							.array(
 								z
 									.object({
-										mfaStatus: z.enum(['enabled', 'disabled']).optional(),
-										signInMethod: z.enum(['standard', 'sso']).optional(),
-										status: z.enum(['enabled', 'disabled']).optional(),
+										mfaStatus: z
+											.enum(['enabled', 'disabled'])
+											.or(z.string())
+											.optional(),
+										signInMethod: z
+											.enum(['standard', 'sso'])
+											.or(z.string())
+											.optional(),
+										status: z
+											.enum(['enabled', 'disabled'])
+											.or(z.string())
+											.optional(),
 										clientAuthCertLoginEnabled: z.boolean().optional(),
 									})
 									.passthrough(),
@@ -752,7 +776,10 @@ const r_f05dba0a427dOutput = z
 									.object({
 										id: z.string().optional(),
 										name: z.string().optional(),
-										status: z.enum(['ENABLED', 'DISABLED']).optional(),
+										status: z
+											.enum(['ENABLED', 'DISABLED'])
+											.or(z.string())
+											.optional(),
 										oauthClientId: z.string().optional(),
 										oauthClientAccountId: z.string().optional(),
 									})
@@ -760,7 +787,7 @@ const r_f05dba0a427dOutput = z
 							)
 							.optional(),
 						locale: z.string().optional(),
-						type: z.enum(['standard', 'partner']).optional(),
+						type: z.enum(['standard', 'partner']).or(z.string()).optional(),
 						federated_account_id: z.string().optional(),
 						packages: z
 							.array(
@@ -818,8 +845,11 @@ const r_bcad0157f637Output = z
 	.object({
 		id: z.string().optional(),
 		email: z.string().optional(),
-		status: z.enum(['ACTIVE', 'DELETED', 'PENDING', 'LOCKED']).optional(),
-		access_scope: z.enum(['account']).optional(),
+		status: z
+			.enum(['ACTIVE', 'DELETED', 'PENDING', 'LOCKED'])
+			.or(z.string())
+			.optional(),
+		access_scope: z.enum(['account']).or(z.string()).optional(),
 		primary_account_id: z.string().optional(),
 		created_at: z.string().optional(),
 		friendly_name: z.string().optional(),
@@ -879,9 +909,18 @@ const r_bcad0157f637Output = z
 							.array(
 								z
 									.object({
-										mfaStatus: z.enum(['enabled', 'disabled']).optional(),
-										signInMethod: z.enum(['standard', 'sso']).optional(),
-										status: z.enum(['enabled', 'disabled']).optional(),
+										mfaStatus: z
+											.enum(['enabled', 'disabled'])
+											.or(z.string())
+											.optional(),
+										signInMethod: z
+											.enum(['standard', 'sso'])
+											.or(z.string())
+											.optional(),
+										status: z
+											.enum(['enabled', 'disabled'])
+											.or(z.string())
+											.optional(),
 										clientAuthCertLoginEnabled: z.boolean().optional(),
 									})
 									.passthrough(),
@@ -893,7 +932,10 @@ const r_bcad0157f637Output = z
 									.object({
 										id: z.string().optional(),
 										name: z.string().optional(),
-										status: z.enum(['ENABLED', 'DISABLED']).optional(),
+										status: z
+											.enum(['ENABLED', 'DISABLED'])
+											.or(z.string())
+											.optional(),
 										oauthClientId: z.string().optional(),
 										oauthClientAccountId: z.string().optional(),
 									})
@@ -901,7 +943,7 @@ const r_bcad0157f637Output = z
 							)
 							.optional(),
 						locale: z.string().optional(),
-						type: z.enum(['standard', 'partner']).optional(),
+						type: z.enum(['standard', 'partner']).or(z.string()).optional(),
 						federated_account_id: z.string().optional(),
 						packages: z
 							.array(
@@ -976,13 +1018,16 @@ const r_fbfdfcedaba1Output = z.array(
 			last_name: z.string().optional(),
 			email: z.string().optional(),
 			phone: z.string().optional(),
-			status: z.enum(['ACTIVE', 'DELETED', 'PENDING', 'LOCKED']).optional(),
-			access_scope: z.enum(['account']).optional(),
+			status: z
+				.enum(['ACTIVE', 'DELETED', 'PENDING', 'LOCKED'])
+				.or(z.string())
+				.optional(),
+			access_scope: z.enum(['account']).or(z.string()).optional(),
 			active: z.boolean().optional(),
 			primary_account_id: z.string().optional(),
 			created_at: z.string().optional(),
 			created_by: z.string().optional(),
-			user_type: z.enum(['standard', 'service']).optional(),
+			user_type: z.enum(['standard', 'service']).or(z.string()).optional(),
 			friendly_name: z.string().optional(),
 			description: z.string().optional(),
 			end_date: z.string().optional(),
@@ -1031,9 +1076,18 @@ const r_fbfdfcedaba1Output = z.array(
 								.array(
 									z
 										.object({
-											mfaStatus: z.enum(['enabled', 'disabled']).optional(),
-											signInMethod: z.enum(['standard', 'sso']).optional(),
-											status: z.enum(['enabled', 'disabled']).optional(),
+											mfaStatus: z
+												.enum(['enabled', 'disabled'])
+												.or(z.string())
+												.optional(),
+											signInMethod: z
+												.enum(['standard', 'sso'])
+												.or(z.string())
+												.optional(),
+											status: z
+												.enum(['enabled', 'disabled'])
+												.or(z.string())
+												.optional(),
 											clientAuthCertLoginEnabled: z.boolean().optional(),
 										})
 										.passthrough(),
@@ -1045,7 +1099,10 @@ const r_fbfdfcedaba1Output = z.array(
 										.object({
 											id: z.string().optional(),
 											name: z.string().optional(),
-											status: z.enum(['ENABLED', 'DISABLED']).optional(),
+											status: z
+												.enum(['ENABLED', 'DISABLED'])
+												.or(z.string())
+												.optional(),
 											oauthClientId: z.string().optional(),
 											oauthClientAccountId: z.string().optional(),
 										})
@@ -1053,7 +1110,7 @@ const r_fbfdfcedaba1Output = z.array(
 								)
 								.optional(),
 							locale: z.string().optional(),
-							type: z.enum(['standard', 'partner']).optional(),
+							type: z.enum(['standard', 'partner']).or(z.string()).optional(),
 							federated_account_id: z.string().optional(),
 							packages: z
 								.array(
@@ -1102,13 +1159,16 @@ const r_97a1d92f48f0Output = z.array(
 			last_name: z.string().optional(),
 			email: z.string().optional(),
 			phone: z.string().optional(),
-			status: z.enum(['ACTIVE', 'DELETED', 'PENDING', 'LOCKED']).optional(),
-			access_scope: z.enum(['account']).optional(),
+			status: z
+				.enum(['ACTIVE', 'DELETED', 'PENDING', 'LOCKED'])
+				.or(z.string())
+				.optional(),
+			access_scope: z.enum(['account']).or(z.string()).optional(),
 			active: z.boolean().optional(),
 			primary_account_id: z.string().optional(),
 			created_at: z.string().optional(),
 			created_by: z.string().optional(),
-			user_type: z.enum(['standard', 'service']).optional(),
+			user_type: z.enum(['standard', 'service']).or(z.string()).optional(),
 			friendly_name: z.string().optional(),
 			description: z.string().optional(),
 			end_date: z.string().optional(),
@@ -1157,9 +1217,18 @@ const r_97a1d92f48f0Output = z.array(
 								.array(
 									z
 										.object({
-											mfaStatus: z.enum(['enabled', 'disabled']).optional(),
-											signInMethod: z.enum(['standard', 'sso']).optional(),
-											status: z.enum(['enabled', 'disabled']).optional(),
+											mfaStatus: z
+												.enum(['enabled', 'disabled'])
+												.or(z.string())
+												.optional(),
+											signInMethod: z
+												.enum(['standard', 'sso'])
+												.or(z.string())
+												.optional(),
+											status: z
+												.enum(['enabled', 'disabled'])
+												.or(z.string())
+												.optional(),
 											clientAuthCertLoginEnabled: z.boolean().optional(),
 										})
 										.passthrough(),
@@ -1171,7 +1240,10 @@ const r_97a1d92f48f0Output = z.array(
 										.object({
 											id: z.string().optional(),
 											name: z.string().optional(),
-											status: z.enum(['ENABLED', 'DISABLED']).optional(),
+											status: z
+												.enum(['ENABLED', 'DISABLED'])
+												.or(z.string())
+												.optional(),
 											oauthClientId: z.string().optional(),
 											oauthClientAccountId: z.string().optional(),
 										})
@@ -1179,7 +1251,7 @@ const r_97a1d92f48f0Output = z.array(
 								)
 								.optional(),
 							locale: z.string().optional(),
-							type: z.enum(['standard', 'partner']).optional(),
+							type: z.enum(['standard', 'partner']).or(z.string()).optional(),
 							federated_account_id: z.string().optional(),
 							packages: z
 								.array(
@@ -1229,8 +1301,11 @@ const r_40f39944750fOutput = z
 	.object({
 		id: z.string().optional(),
 		email: z.string().optional(),
-		status: z.enum(['ACTIVE', 'DELETED', 'PENDING', 'LOCKED']).optional(),
-		access_scope: z.enum(['account']).optional(),
+		status: z
+			.enum(['ACTIVE', 'DELETED', 'PENDING', 'LOCKED'])
+			.or(z.string())
+			.optional(),
+		access_scope: z.enum(['account']).or(z.string()).optional(),
 		primary_account_id: z.string().optional(),
 		created_at: z.string().optional(),
 		friendly_name: z.string().optional(),
@@ -1290,9 +1365,18 @@ const r_40f39944750fOutput = z
 							.array(
 								z
 									.object({
-										mfaStatus: z.enum(['enabled', 'disabled']).optional(),
-										signInMethod: z.enum(['standard', 'sso']).optional(),
-										status: z.enum(['enabled', 'disabled']).optional(),
+										mfaStatus: z
+											.enum(['enabled', 'disabled'])
+											.or(z.string())
+											.optional(),
+										signInMethod: z
+											.enum(['standard', 'sso'])
+											.or(z.string())
+											.optional(),
+										status: z
+											.enum(['enabled', 'disabled'])
+											.or(z.string())
+											.optional(),
 										clientAuthCertLoginEnabled: z.boolean().optional(),
 									})
 									.passthrough(),
@@ -1304,7 +1388,10 @@ const r_40f39944750fOutput = z
 									.object({
 										id: z.string().optional(),
 										name: z.string().optional(),
-										status: z.enum(['ENABLED', 'DISABLED']).optional(),
+										status: z
+											.enum(['ENABLED', 'DISABLED'])
+											.or(z.string())
+											.optional(),
 										oauthClientId: z.string().optional(),
 										oauthClientAccountId: z.string().optional(),
 									})
@@ -1312,7 +1399,7 @@ const r_40f39944750fOutput = z
 							)
 							.optional(),
 						locale: z.string().optional(),
-						type: z.enum(['standard', 'partner']).optional(),
+						type: z.enum(['standard', 'partner']).or(z.string()).optional(),
 						federated_account_id: z.string().optional(),
 						packages: z
 							.array(
@@ -1401,8 +1488,8 @@ const r_b224a0eca017Output = z
 						display_name: z.string().optional(),
 						description: z.string().optional(),
 						type: z.string().optional(),
-						status: z.enum(['ACTIVE', 'ARCHIVED']).optional(),
-						access_scope: z.enum(['account']).optional(),
+						status: z.enum(['ACTIVE', 'ARCHIVED']).or(z.string()).optional(),
+						access_scope: z.enum(['account']).or(z.string()).optional(),
 					})
 					.passthrough(),
 			)
@@ -1416,8 +1503,8 @@ const r_b224a0eca017Output = z
 						display_name: z.string().optional(),
 						description: z.string().optional(),
 						type: z.string().optional(),
-						status: z.enum(['ACTIVE', 'ARCHIVED']).optional(),
-						access_scope: z.enum(['account']).optional(),
+						status: z.enum(['ACTIVE', 'ARCHIVED']).or(z.string()).optional(),
+						access_scope: z.enum(['account']).or(z.string()).optional(),
 					})
 					.passthrough(),
 			)
@@ -1431,8 +1518,8 @@ const r_b224a0eca017Output = z
 						display_name: z.string().optional(),
 						description: z.string().optional(),
 						type: z.string().optional(),
-						status: z.enum(['ACTIVE', 'ARCHIVED']).optional(),
-						access_scope: z.enum(['account']).optional(),
+						status: z.enum(['ACTIVE', 'ARCHIVED']).or(z.string()).optional(),
+						access_scope: z.enum(['account']).or(z.string()).optional(),
 					})
 					.passthrough(),
 			)
@@ -1446,8 +1533,8 @@ const r_b224a0eca017Output = z
 						display_name: z.string().optional(),
 						description: z.string().optional(),
 						type: z.string().optional(),
-						status: z.enum(['ACTIVE', 'ARCHIVED']).optional(),
-						access_scope: z.enum(['account']).optional(),
+						status: z.enum(['ACTIVE', 'ARCHIVED']).or(z.string()).optional(),
+						access_scope: z.enum(['account']).or(z.string()).optional(),
 					})
 					.passthrough(),
 			)
@@ -1461,8 +1548,8 @@ const r_b224a0eca017Output = z
 						display_name: z.string().optional(),
 						description: z.string().optional(),
 						type: z.string().optional(),
-						status: z.enum(['ACTIVE', 'ARCHIVED']).optional(),
-						access_scope: z.enum(['account']).optional(),
+						status: z.enum(['ACTIVE', 'ARCHIVED']).or(z.string()).optional(),
+						access_scope: z.enum(['account']).or(z.string()).optional(),
 					})
 					.passthrough(),
 			)
@@ -1476,8 +1563,8 @@ const r_b224a0eca017Output = z
 						display_name: z.string().optional(),
 						description: z.string().optional(),
 						type: z.string().optional(),
-						status: z.enum(['ACTIVE', 'ARCHIVED']).optional(),
-						access_scope: z.enum(['account']).optional(),
+						status: z.enum(['ACTIVE', 'ARCHIVED']).or(z.string()).optional(),
+						access_scope: z.enum(['account']).or(z.string()).optional(),
 					})
 					.passthrough(),
 			)
@@ -1491,8 +1578,8 @@ const r_b224a0eca017Output = z
 						display_name: z.string().optional(),
 						description: z.string().optional(),
 						type: z.string().optional(),
-						status: z.enum(['ACTIVE', 'ARCHIVED']).optional(),
-						access_scope: z.enum(['account']).optional(),
+						status: z.enum(['ACTIVE', 'ARCHIVED']).or(z.string()).optional(),
+						access_scope: z.enum(['account']).or(z.string()).optional(),
 					})
 					.passthrough(),
 			)
@@ -2572,7 +2659,7 @@ const r_419129d1877aOutput = z.intersection(
 								})
 								.passthrough()
 								.optional(),
-							key_type: z.enum(['rsa', 'ecc']).optional(),
+							key_type: z.enum(['rsa', 'ecc']).or(z.string()).optional(),
 							name: z.string().optional(),
 							notification: z
 								.object({
@@ -2642,7 +2729,10 @@ const r_419129d1877aOutput = z.intersection(
 								.optional(),
 							serial_number: z.string().optional(),
 							signature_algorithm: z.string().optional(),
-							status: z.enum(['active', 'pending_sign', 'disabled']).optional(),
+							status: z
+								.enum(['active', 'pending_sign', 'disabled'])
+								.or(z.string())
+								.optional(),
 							subject: z
 								.object({
 									common_name: z.string().optional(),
@@ -3595,7 +3685,10 @@ const r_bb6316690c68Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -3719,7 +3812,10 @@ const r_bb6316690c68Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -3756,7 +3852,10 @@ const r_bb6316690c68Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -4181,7 +4280,10 @@ const r_bb6316690c68Output = z
 		issue_types: z.array(z.string()).optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),
@@ -4201,7 +4303,7 @@ const r_bb6316690c68Output = z
 			})
 			.passthrough()
 			.optional(),
-		key_type: z.enum(['rsa', 'ecc']).optional(),
+		key_type: z.enum(['rsa', 'ecc']).or(z.string()).optional(),
 		name: z.string().optional(),
 		notification: z
 			.object({
@@ -4271,7 +4373,10 @@ const r_bb6316690c68Output = z
 			.optional(),
 		serial_number: z.string().optional(),
 		signature_algorithm: z.string().optional(),
-		status: z.enum(['active', 'pending_sign', 'disabled']).optional(),
+		status: z
+			.enum(['active', 'pending_sign', 'disabled'])
+			.or(z.string())
+			.optional(),
 		subject: z
 			.object({
 				common_name: z.string().optional(),
@@ -4413,7 +4518,10 @@ const r_e2d08c123889Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -4537,7 +4645,10 @@ const r_e2d08c123889Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -4574,7 +4685,10 @@ const r_e2d08c123889Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -4999,7 +5113,10 @@ const r_e2d08c123889Output = z
 		issue_types: z.array(z.string()).optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),
@@ -5019,7 +5136,7 @@ const r_e2d08c123889Output = z
 			})
 			.passthrough()
 			.optional(),
-		key_type: z.enum(['rsa', 'ecc']).optional(),
+		key_type: z.enum(['rsa', 'ecc']).or(z.string()).optional(),
 		name: z.string().optional(),
 		notification: z
 			.object({
@@ -5089,7 +5206,10 @@ const r_e2d08c123889Output = z
 			.optional(),
 		serial_number: z.string().optional(),
 		signature_algorithm: z.string().optional(),
-		status: z.enum(['active', 'pending_sign', 'disabled']).optional(),
+		status: z
+			.enum(['active', 'pending_sign', 'disabled'])
+			.or(z.string())
+			.optional(),
 		subject: z
 			.object({
 				common_name: z.string().optional(),
@@ -5243,7 +5363,7 @@ const r_aa5e92b5e9cdOutput = z
 						created_date: z.string().optional(),
 						id: z.string().optional(),
 						name: z.string().optional(),
-						scheme: z.enum(['http', 'https', 'ldap']).optional(),
+						scheme: z.enum(['http', 'https', 'ldap']).or(z.string()).optional(),
 						type: z.array(z.string()).optional(),
 					})
 					.passthrough(),
@@ -5775,7 +5895,7 @@ const r_fbe03c239006Output = z
 						created_date: z.string().optional(),
 						id: z.string().optional(),
 						name: z.string().optional(),
-						scheme: z.enum(['http', 'https', 'ldap']).optional(),
+						scheme: z.enum(['http', 'https', 'ldap']).or(z.string()).optional(),
 						type: z.array(z.string()).optional(),
 					})
 					.passthrough(),
@@ -5923,7 +6043,7 @@ const r_efc423513ee6Output = z
 						created_date: z.string().optional(),
 						id: z.string().optional(),
 						name: z.string().optional(),
-						scheme: z.enum(['http', 'https', 'ldap']).optional(),
+						scheme: z.enum(['http', 'https', 'ldap']).or(z.string()).optional(),
 						type: z.array(z.string()).optional(),
 					})
 					.passthrough(),
@@ -6010,7 +6130,10 @@ const r_09525a87a3feOutput = z
 					.optional(),
 				active: z.boolean().optional(),
 				category: z.string().optional(),
-				cert_type: z.enum(['root', 'intermediate', 'end_entity']).optional(),
+				cert_type: z
+					.enum(['root', 'intermediate', 'end_entity'])
+					.or(z.string())
+					.optional(),
 				created_date: z.string().optional(),
 				id: z.string().optional(),
 				install_type: z.string().optional(),
@@ -6348,7 +6471,7 @@ const r_c91c378818a5Output = z
 						created_date: z.string().optional(),
 						id: z.string().optional(),
 						name: z.string().optional(),
-						scheme: z.enum(['http', 'https', 'ldap']).optional(),
+						scheme: z.enum(['http', 'https', 'ldap']).or(z.string()).optional(),
 						type: z.array(z.string()).optional(),
 					})
 					.passthrough(),
@@ -6447,7 +6570,10 @@ const r_47971e5aadf2Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -6571,7 +6697,10 @@ const r_47971e5aadf2Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -6608,7 +6737,10 @@ const r_47971e5aadf2Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -7033,7 +7165,10 @@ const r_47971e5aadf2Output = z
 		issue_types: z.array(z.string()).optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),
@@ -7053,7 +7188,7 @@ const r_47971e5aadf2Output = z
 			})
 			.passthrough()
 			.optional(),
-		key_type: z.enum(['rsa', 'ecc']).optional(),
+		key_type: z.enum(['rsa', 'ecc']).or(z.string()).optional(),
 		name: z.string().optional(),
 		notification: z
 			.object({
@@ -7123,7 +7258,10 @@ const r_47971e5aadf2Output = z
 			.optional(),
 		serial_number: z.string().optional(),
 		signature_algorithm: z.string().optional(),
-		status: z.enum(['active', 'pending_sign', 'disabled']).optional(),
+		status: z
+			.enum(['active', 'pending_sign', 'disabled'])
+			.or(z.string())
+			.optional(),
 		subject: z
 			.object({
 				common_name: z.string().optional(),
@@ -7257,7 +7395,10 @@ const r_81b7e6e852baOutput = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -7381,7 +7522,10 @@ const r_81b7e6e852baOutput = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -7418,7 +7562,10 @@ const r_81b7e6e852baOutput = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -7843,7 +7990,10 @@ const r_81b7e6e852baOutput = z
 		issue_types: z.array(z.string()).optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),
@@ -7863,7 +8013,7 @@ const r_81b7e6e852baOutput = z
 			})
 			.passthrough()
 			.optional(),
-		key_type: z.enum(['rsa', 'ecc']).optional(),
+		key_type: z.enum(['rsa', 'ecc']).or(z.string()).optional(),
 		name: z.string().optional(),
 		notification: z
 			.object({
@@ -7933,7 +8083,10 @@ const r_81b7e6e852baOutput = z
 			.optional(),
 		serial_number: z.string().optional(),
 		signature_algorithm: z.string().optional(),
-		status: z.enum(['active', 'pending_sign', 'disabled']).optional(),
+		status: z
+			.enum(['active', 'pending_sign', 'disabled'])
+			.or(z.string())
+			.optional(),
 		subject: z
 			.object({
 				common_name: z.string().optional(),
@@ -9130,7 +9283,10 @@ const r_2e0b14749b40Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -9254,7 +9410,10 @@ const r_2e0b14749b40Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -9291,7 +9450,10 @@ const r_2e0b14749b40Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -9716,7 +9878,10 @@ const r_2e0b14749b40Output = z
 		issue_types: z.array(z.string()).optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),
@@ -9736,7 +9901,7 @@ const r_2e0b14749b40Output = z
 			})
 			.passthrough()
 			.optional(),
-		key_type: z.enum(['rsa', 'ecc']).optional(),
+		key_type: z.enum(['rsa', 'ecc']).or(z.string()).optional(),
 		name: z.string().optional(),
 		notification: z
 			.object({
@@ -9806,7 +9971,10 @@ const r_2e0b14749b40Output = z
 			.optional(),
 		serial_number: z.string().optional(),
 		signature_algorithm: z.string().optional(),
-		status: z.enum(['active', 'pending_sign', 'disabled']).optional(),
+		status: z
+			.enum(['active', 'pending_sign', 'disabled'])
+			.or(z.string())
+			.optional(),
 		subject: z
 			.object({
 				common_name: z.string().optional(),
@@ -10754,7 +10922,10 @@ const r_bed51bae8a4dOutput = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -10878,7 +11049,10 @@ const r_bed51bae8a4dOutput = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -10915,7 +11089,10 @@ const r_bed51bae8a4dOutput = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -11340,7 +11517,10 @@ const r_bed51bae8a4dOutput = z
 		issue_types: z.array(z.string()).optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),
@@ -11360,7 +11540,7 @@ const r_bed51bae8a4dOutput = z
 			})
 			.passthrough()
 			.optional(),
-		key_type: z.enum(['rsa', 'ecc']).optional(),
+		key_type: z.enum(['rsa', 'ecc']).or(z.string()).optional(),
 		name: z.string().optional(),
 		notification: z
 			.object({
@@ -11430,7 +11610,10 @@ const r_bed51bae8a4dOutput = z
 			.optional(),
 		serial_number: z.string().optional(),
 		signature_algorithm: z.string().optional(),
-		status: z.enum(['active', 'pending_sign', 'disabled']).optional(),
+		status: z
+			.enum(['active', 'pending_sign', 'disabled'])
+			.or(z.string())
+			.optional(),
 		subject: z
 			.object({
 				common_name: z.string().optional(),
@@ -12378,7 +12561,10 @@ const r_9a3dba0916b3Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -12502,7 +12688,10 @@ const r_9a3dba0916b3Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -12539,7 +12728,10 @@ const r_9a3dba0916b3Output = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -12964,7 +13156,10 @@ const r_9a3dba0916b3Output = z
 		issue_types: z.array(z.string()).optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),
@@ -12984,7 +13179,7 @@ const r_9a3dba0916b3Output = z
 			})
 			.passthrough()
 			.optional(),
-		key_type: z.enum(['rsa', 'ecc']).optional(),
+		key_type: z.enum(['rsa', 'ecc']).or(z.string()).optional(),
 		name: z.string().optional(),
 		notification: z
 			.object({
@@ -13054,7 +13249,10 @@ const r_9a3dba0916b3Output = z
 			.optional(),
 		serial_number: z.string().optional(),
 		signature_algorithm: z.string().optional(),
-		status: z.enum(['active', 'pending_sign', 'disabled']).optional(),
+		status: z
+			.enum(['active', 'pending_sign', 'disabled'])
+			.or(z.string())
+			.optional(),
 		subject: z
 			.object({
 				common_name: z.string().optional(),
@@ -14002,7 +14200,10 @@ const r_39765268d88fOutput = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -14126,7 +14327,10 @@ const r_39765268d88fOutput = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -14163,7 +14367,10 @@ const r_39765268d88fOutput = z
 										created_date: z.string().optional(),
 										id: z.string().optional(),
 										name: z.string().optional(),
-										scheme: z.enum(['http', 'https', 'ldap']).optional(),
+										scheme: z
+											.enum(['http', 'https', 'ldap'])
+											.or(z.string())
+											.optional(),
 										type: z.array(z.string()).optional(),
 									})
 									.passthrough(),
@@ -14588,7 +14795,10 @@ const r_39765268d88fOutput = z
 		issue_types: z.array(z.string()).optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),
@@ -14608,7 +14818,7 @@ const r_39765268d88fOutput = z
 			})
 			.passthrough()
 			.optional(),
-		key_type: z.enum(['rsa', 'ecc']).optional(),
+		key_type: z.enum(['rsa', 'ecc']).or(z.string()).optional(),
 		name: z.string().optional(),
 		notification: z
 			.object({
@@ -14678,7 +14888,10 @@ const r_39765268d88fOutput = z
 			.optional(),
 		serial_number: z.string().optional(),
 		signature_algorithm: z.string().optional(),
-		status: z.enum(['active', 'pending_sign', 'disabled']).optional(),
+		status: z
+			.enum(['active', 'pending_sign', 'disabled'])
+			.or(z.string())
+			.optional(),
 		subject: z
 			.object({
 				common_name: z.string().optional(),
@@ -15517,7 +15730,10 @@ const r_96e6bdf242a9Output = z
 		id: z.string().optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),

@@ -2522,7 +2522,10 @@ const r_07af58d0eb37Output = z
 		id: z.string().optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),
@@ -2943,7 +2946,10 @@ const r_aaa0dcb230feOutput = z
 		id: z.string().optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),
@@ -3809,7 +3815,10 @@ const r_8c26364ba4e1Output = z
 		id: z.string().optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),
@@ -4645,7 +4654,10 @@ const r_8fc8acf59dceOutput = z
 		id: z.string().optional(),
 		issuer: z
 			.object({
-				hosted_type: z.enum(['online', 'offline', 'third_party']).optional(),
+				hosted_type: z
+					.enum(['online', 'offline', 'third_party'])
+					.or(z.string())
+					.optional(),
 				id: z.string().optional(),
 				name: z.string().optional(),
 				valid_from: z.string().optional(),
@@ -5295,7 +5307,10 @@ const r_14f3953c0d38Output = z
 			.optional(),
 		active: z.boolean().optional(),
 		category: z.string().optional(),
-		cert_type: z.enum(['root', 'intermediate', 'end_entity']).optional(),
+		cert_type: z
+			.enum(['root', 'intermediate', 'end_entity'])
+			.or(z.string())
+			.optional(),
 		created_date: z.string().optional(),
 		id: z.string().optional(),
 		install_type: z.string().optional(),
@@ -5327,7 +5342,10 @@ const r_2a9e994a5917Output = z
 			.optional(),
 		active: z.boolean().optional(),
 		category: z.string().optional(),
-		cert_type: z.enum(['root', 'intermediate', 'end_entity']).optional(),
+		cert_type: z
+			.enum(['root', 'intermediate', 'end_entity'])
+			.or(z.string())
+			.optional(),
 		created_date: z.string().optional(),
 		id: z.string().optional(),
 		install_type: z.string().optional(),
@@ -5386,7 +5404,10 @@ const r_e631ae341675Output = z
 			.optional(),
 		active: z.boolean().optional(),
 		category: z.string().optional(),
-		cert_type: z.enum(['root', 'intermediate', 'end_entity']).optional(),
+		cert_type: z
+			.enum(['root', 'intermediate', 'end_entity'])
+			.or(z.string())
+			.optional(),
 		created_date: z.string().optional(),
 		id: z.string().optional(),
 		install_type: z.string().optional(),
@@ -5429,7 +5450,10 @@ const r_198e7a38a10cOutput = z
 			.optional(),
 		active: z.boolean().optional(),
 		category: z.string().optional(),
-		cert_type: z.enum(['root', 'intermediate', 'end_entity']).optional(),
+		cert_type: z
+			.enum(['root', 'intermediate', 'end_entity'])
+			.or(z.string())
+			.optional(),
 		created_date: z.string().optional(),
 		id: z.string().optional(),
 		install_type: z.string().optional(),
@@ -5461,7 +5485,10 @@ const r_3de0b5e30515Output = z
 			.optional(),
 		active: z.boolean().optional(),
 		category: z.string().optional(),
-		cert_type: z.enum(['root', 'intermediate', 'end_entity']).optional(),
+		cert_type: z
+			.enum(['root', 'intermediate', 'end_entity'])
+			.or(z.string())
+			.optional(),
 		created_date: z.string().optional(),
 		id: z.string().optional(),
 		install_type: z.string().optional(),
@@ -5516,7 +5543,10 @@ const r_908be7c77f53Output = z
 			.optional(),
 		active: z.boolean().optional(),
 		category: z.string().optional(),
-		cert_type: z.enum(['root', 'intermediate', 'end_entity']).optional(),
+		cert_type: z
+			.enum(['root', 'intermediate', 'end_entity'])
+			.or(z.string())
+			.optional(),
 		created_date: z.string().optional(),
 		id: z.string().optional(),
 		install_type: z.string().optional(),
@@ -5548,7 +5578,10 @@ const r_5ba49344c30fOutput = z
 			.optional(),
 		active: z.boolean().optional(),
 		category: z.string().optional(),
-		cert_type: z.enum(['root', 'intermediate', 'end_entity']).optional(),
+		cert_type: z
+			.enum(['root', 'intermediate', 'end_entity'])
+			.or(z.string())
+			.optional(),
 		created_date: z.string().optional(),
 		id: z.string().optional(),
 		install_type: z.string().optional(),
@@ -6437,47 +6470,49 @@ const r_710554dcec90Output = z
 			.optional(),
 		automation_status: z
 			.intersection(
-				z.enum([
-					'ACME_ACCOUNT_CREATED',
-					'ACME_CLIENT_APP_UPGRADE_IN_PROGRESS',
-					'ACTION_REQUIRED',
-					'AGENT_ERROR',
-					'AUTOMATED_BY_AGENT',
-					'AUTOMATED_BY_AGENTLESS',
-					'AUTOMATION_AT_RISK',
-					'AUTOMATION_FAILED',
-					'AUTOMATION_PROFILE_BLOCKED',
-					'AUTOMATION_REQUESTED',
-					'AUTOMATION_SCHEDULED',
-					'AUTOMATION_SUCCESSFUL',
-					'AUTO_RENEW_SCHEDULED',
-					'CERT_PENDING_APPROVAL',
-					'CERT_READY_TO_INSTALL',
-					'CERT_REQ_DENIED_BY_CIS',
-					'CONFIGURATION_ERROR',
-					'CONFIGURATION_IN_PROGRESS',
-					'CONFIGURED',
-					'CONFLICTED',
-					'CSR_GENERATION_FAILED',
-					'CSR_GENERATION_IN_PROGRESS',
-					'CSR_GENERATION_SUCCEEDED',
-					'DELETED',
-					'DISABLED_FOR_AUTOMATION',
-					'DNS_INTEGRATION_FAILED',
-					'IGNORED',
-					'INSTALL_FAILED',
-					'INSTALL_IN_PROGRESS',
-					'INSTALL_SUCCEEDED',
-					'INSTALL_VALIDATED',
-					'INSTALL_VALIDATION_FAILED',
-					'INSTALL_VALIDATION_IN_PROGRESS',
-					'IS_UPGRADE',
-					'NOT_CONFIGURED',
-					'NOT_SCANNED',
-					'POST_CSR_FAILED',
-					'REMOVED',
-					'SCAN_IN_PROGRESS',
-				]),
+				z
+					.enum([
+						'ACME_ACCOUNT_CREATED',
+						'ACME_CLIENT_APP_UPGRADE_IN_PROGRESS',
+						'ACTION_REQUIRED',
+						'AGENT_ERROR',
+						'AUTOMATED_BY_AGENT',
+						'AUTOMATED_BY_AGENTLESS',
+						'AUTOMATION_AT_RISK',
+						'AUTOMATION_FAILED',
+						'AUTOMATION_PROFILE_BLOCKED',
+						'AUTOMATION_REQUESTED',
+						'AUTOMATION_SCHEDULED',
+						'AUTOMATION_SUCCESSFUL',
+						'AUTO_RENEW_SCHEDULED',
+						'CERT_PENDING_APPROVAL',
+						'CERT_READY_TO_INSTALL',
+						'CERT_REQ_DENIED_BY_CIS',
+						'CONFIGURATION_ERROR',
+						'CONFIGURATION_IN_PROGRESS',
+						'CONFIGURED',
+						'CONFLICTED',
+						'CSR_GENERATION_FAILED',
+						'CSR_GENERATION_IN_PROGRESS',
+						'CSR_GENERATION_SUCCEEDED',
+						'DELETED',
+						'DISABLED_FOR_AUTOMATION',
+						'DNS_INTEGRATION_FAILED',
+						'IGNORED',
+						'INSTALL_FAILED',
+						'INSTALL_IN_PROGRESS',
+						'INSTALL_SUCCEEDED',
+						'INSTALL_VALIDATED',
+						'INSTALL_VALIDATION_FAILED',
+						'INSTALL_VALIDATION_IN_PROGRESS',
+						'IS_UPGRADE',
+						'NOT_CONFIGURED',
+						'NOT_SCANNED',
+						'POST_CSR_FAILED',
+						'REMOVED',
+						'SCAN_IN_PROGRESS',
+					])
+					.or(z.string()),
 				unspecifiedProviderValue(),
 			)
 			.optional(),
@@ -6800,47 +6835,49 @@ const r_ef7eddd600a0Output = z
 							.optional(),
 						automation_status: z
 							.intersection(
-								z.enum([
-									'ACME_ACCOUNT_CREATED',
-									'ACME_CLIENT_APP_UPGRADE_IN_PROGRESS',
-									'ACTION_REQUIRED',
-									'AGENT_ERROR',
-									'AUTOMATED_BY_AGENT',
-									'AUTOMATED_BY_AGENTLESS',
-									'AUTOMATION_AT_RISK',
-									'AUTOMATION_FAILED',
-									'AUTOMATION_PROFILE_BLOCKED',
-									'AUTOMATION_REQUESTED',
-									'AUTOMATION_SCHEDULED',
-									'AUTOMATION_SUCCESSFUL',
-									'AUTO_RENEW_SCHEDULED',
-									'CERT_PENDING_APPROVAL',
-									'CERT_READY_TO_INSTALL',
-									'CERT_REQ_DENIED_BY_CIS',
-									'CONFIGURATION_ERROR',
-									'CONFIGURATION_IN_PROGRESS',
-									'CONFIGURED',
-									'CONFLICTED',
-									'CSR_GENERATION_FAILED',
-									'CSR_GENERATION_IN_PROGRESS',
-									'CSR_GENERATION_SUCCEEDED',
-									'DELETED',
-									'DISABLED_FOR_AUTOMATION',
-									'DNS_INTEGRATION_FAILED',
-									'IGNORED',
-									'INSTALL_FAILED',
-									'INSTALL_IN_PROGRESS',
-									'INSTALL_SUCCEEDED',
-									'INSTALL_VALIDATED',
-									'INSTALL_VALIDATION_FAILED',
-									'INSTALL_VALIDATION_IN_PROGRESS',
-									'IS_UPGRADE',
-									'NOT_CONFIGURED',
-									'NOT_SCANNED',
-									'POST_CSR_FAILED',
-									'REMOVED',
-									'SCAN_IN_PROGRESS',
-								]),
+								z
+									.enum([
+										'ACME_ACCOUNT_CREATED',
+										'ACME_CLIENT_APP_UPGRADE_IN_PROGRESS',
+										'ACTION_REQUIRED',
+										'AGENT_ERROR',
+										'AUTOMATED_BY_AGENT',
+										'AUTOMATED_BY_AGENTLESS',
+										'AUTOMATION_AT_RISK',
+										'AUTOMATION_FAILED',
+										'AUTOMATION_PROFILE_BLOCKED',
+										'AUTOMATION_REQUESTED',
+										'AUTOMATION_SCHEDULED',
+										'AUTOMATION_SUCCESSFUL',
+										'AUTO_RENEW_SCHEDULED',
+										'CERT_PENDING_APPROVAL',
+										'CERT_READY_TO_INSTALL',
+										'CERT_REQ_DENIED_BY_CIS',
+										'CONFIGURATION_ERROR',
+										'CONFIGURATION_IN_PROGRESS',
+										'CONFIGURED',
+										'CONFLICTED',
+										'CSR_GENERATION_FAILED',
+										'CSR_GENERATION_IN_PROGRESS',
+										'CSR_GENERATION_SUCCEEDED',
+										'DELETED',
+										'DISABLED_FOR_AUTOMATION',
+										'DNS_INTEGRATION_FAILED',
+										'IGNORED',
+										'INSTALL_FAILED',
+										'INSTALL_IN_PROGRESS',
+										'INSTALL_SUCCEEDED',
+										'INSTALL_VALIDATED',
+										'INSTALL_VALIDATION_FAILED',
+										'INSTALL_VALIDATION_IN_PROGRESS',
+										'IS_UPGRADE',
+										'NOT_CONFIGURED',
+										'NOT_SCANNED',
+										'POST_CSR_FAILED',
+										'REMOVED',
+										'SCAN_IN_PROGRESS',
+									])
+									.or(z.string()),
 								unspecifiedProviderValue(),
 							)
 							.optional(),
@@ -6895,50 +6932,54 @@ const r_ef7eddd600a0Output = z
 									.object({
 										id: unspecifiedProviderValue(),
 										name: unspecifiedProviderValue(),
-										contact_type: z.enum([
-											'organization_contact',
-											'technical_contact',
-											'verified_contact',
-										]),
+										contact_type: z
+											.enum([
+												'organization_contact',
+												'technical_contact',
+												'verified_contact',
+											])
+											.or(z.string()),
 									})
 									.passthrough()
 									.optional(),
-								product_type: z.enum([
-									'cloud_dv_geotrust',
-									'code_signing',
-									'code_signing_ev',
-									'private_ssl_flex',
-									'private_ssl_multi_domain',
-									'private_ssl_plus',
-									'private_ssl_wildcard',
-									'ssl_basic',
-									'ssl_cloud_wildcard',
-									'ssl_dv_geotrust',
-									'ssl_dv_geotrust_flex',
-									'ssl_dv_rapidssl',
-									'ssl_dv_thawte',
-									'ssl_ev_basic',
-									'ssl_ev_geotrust_truebizid',
-									'ssl_ev_multi_domain',
-									'ssl_ev_plus',
-									'ssl_ev_securesite',
-									'ssl_ev_securesite_flex',
-									'ssl_ev_securesite_multi_domain',
-									'ssl_ev_securesite_pro',
-									'ssl_ev_thawte_webserver',
-									'ssl_geotrust_truebizid',
-									'ssl_multi_domain',
-									'ssl_plus',
-									'ssl_securesite',
-									'ssl_securesite_flex',
-									'ssl_securesite_multi_domain',
-									'ssl_securesite_pro',
-									'ssl_securesite_wildcard',
-									'ssl_thawte_webserver',
-									'ssl_wildcard',
-									'wildcard_dv_geotrust',
-									'wildcard_dv_rapidssl',
-								]),
+								product_type: z
+									.enum([
+										'cloud_dv_geotrust',
+										'code_signing',
+										'code_signing_ev',
+										'private_ssl_flex',
+										'private_ssl_multi_domain',
+										'private_ssl_plus',
+										'private_ssl_wildcard',
+										'ssl_basic',
+										'ssl_cloud_wildcard',
+										'ssl_dv_geotrust',
+										'ssl_dv_geotrust_flex',
+										'ssl_dv_rapidssl',
+										'ssl_dv_thawte',
+										'ssl_ev_basic',
+										'ssl_ev_geotrust_truebizid',
+										'ssl_ev_multi_domain',
+										'ssl_ev_plus',
+										'ssl_ev_securesite',
+										'ssl_ev_securesite_flex',
+										'ssl_ev_securesite_multi_domain',
+										'ssl_ev_securesite_pro',
+										'ssl_ev_thawte_webserver',
+										'ssl_geotrust_truebizid',
+										'ssl_multi_domain',
+										'ssl_plus',
+										'ssl_securesite',
+										'ssl_securesite_flex',
+										'ssl_securesite_multi_domain',
+										'ssl_securesite_pro',
+										'ssl_securesite_wildcard',
+										'ssl_thawte_webserver',
+										'ssl_wildcard',
+										'wildcard_dv_geotrust',
+										'wildcard_dv_rapidssl',
+									])
+									.or(z.string()),
 								signature_algorithm: z
 									.object({
 										id: unspecifiedProviderValue().optional(),
@@ -7030,15 +7071,17 @@ const r_ef7eddd600a0Output = z
 										name: z
 											.intersection(
 												z.intersection(
-													z.enum([
-														'USER_SEAT',
-														'DISCOVERY_SEAT',
-														'SERVER_SEAT',
-														'DEVICE_SEAT',
-														'IMPORTED_SEAT',
-														'ORGANIZATION_SEAT',
-														'CERTIFICATE_MANAGEMENT_SEAT',
-													]),
+													z
+														.enum([
+															'USER_SEAT',
+															'DISCOVERY_SEAT',
+															'SERVER_SEAT',
+															'DEVICE_SEAT',
+															'IMPORTED_SEAT',
+															'ORGANIZATION_SEAT',
+															'CERTIFICATE_MANAGEMENT_SEAT',
+														])
+														.or(z.string()),
 													unspecifiedProviderValue(),
 												),
 												unspecifiedProviderValue(),
@@ -7596,7 +7639,7 @@ const r_aba4f70417deOutput = z
 			.enum(['x509', 'pkcs7', 'pkcs12', 'pkcs12_pem'])
 			.optional(),
 		certificate: unspecifiedProviderValue().optional(),
-		status: z.enum(['ISSUED', 'PENDING', 'REJECTED']).optional(),
+		status: z.enum(['ISSUED', 'PENDING', 'REJECTED']).or(z.string()).optional(),
 	})
 	.passthrough();
 const r_ef37eb3829e2Input = z
@@ -7722,42 +7765,44 @@ const r_b8f4fd999e91Output = z
 					})
 					.passthrough()
 					.optional(),
-				product_type: z.enum([
-					'cloud_dv_geotrust',
-					'code_signing',
-					'code_signing_ev',
-					'private_ssl_flex',
-					'private_ssl_multi_domain',
-					'private_ssl_plus',
-					'private_ssl_wildcard',
-					'ssl_basic',
-					'ssl_cloud_wildcard',
-					'ssl_dv_geotrust',
-					'ssl_dv_geotrust_flex',
-					'ssl_dv_rapidssl',
-					'ssl_dv_thawte',
-					'ssl_ev_basic',
-					'ssl_ev_geotrust_truebizid',
-					'ssl_ev_multi_domain',
-					'ssl_ev_plus',
-					'ssl_ev_securesite',
-					'ssl_ev_securesite_flex',
-					'ssl_ev_securesite_multi_domain',
-					'ssl_ev_securesite_pro',
-					'ssl_ev_thawte_webserver',
-					'ssl_geotrust_truebizid',
-					'ssl_multi_domain',
-					'ssl_plus',
-					'ssl_securesite',
-					'ssl_securesite_flex',
-					'ssl_securesite_multi_domain',
-					'ssl_securesite_pro',
-					'ssl_securesite_wildcard',
-					'ssl_thawte_webserver',
-					'ssl_wildcard',
-					'wildcard_dv_geotrust',
-					'wildcard_dv_rapidssl',
-				]),
+				product_type: z
+					.enum([
+						'cloud_dv_geotrust',
+						'code_signing',
+						'code_signing_ev',
+						'private_ssl_flex',
+						'private_ssl_multi_domain',
+						'private_ssl_plus',
+						'private_ssl_wildcard',
+						'ssl_basic',
+						'ssl_cloud_wildcard',
+						'ssl_dv_geotrust',
+						'ssl_dv_geotrust_flex',
+						'ssl_dv_rapidssl',
+						'ssl_dv_thawte',
+						'ssl_ev_basic',
+						'ssl_ev_geotrust_truebizid',
+						'ssl_ev_multi_domain',
+						'ssl_ev_plus',
+						'ssl_ev_securesite',
+						'ssl_ev_securesite_flex',
+						'ssl_ev_securesite_multi_domain',
+						'ssl_ev_securesite_pro',
+						'ssl_ev_thawte_webserver',
+						'ssl_geotrust_truebizid',
+						'ssl_multi_domain',
+						'ssl_plus',
+						'ssl_securesite',
+						'ssl_securesite_flex',
+						'ssl_securesite_multi_domain',
+						'ssl_securesite_pro',
+						'ssl_securesite_wildcard',
+						'ssl_thawte_webserver',
+						'ssl_wildcard',
+						'wildcard_dv_geotrust',
+						'wildcard_dv_rapidssl',
+					])
+					.or(z.string()),
 				signature_algorithm: z
 					.object({
 						id: unspecifiedProviderValue(),
@@ -7810,8 +7855,11 @@ const r_b8f4fd999e91Output = z
 				enrollment_method: unspecifiedProviderValue().optional(),
 				id: unspecifiedProviderValue(),
 				name: unspecifiedProviderValue().optional(),
-				status: z.enum(['action_needed', 'active', 'suspended']).optional(),
-				trust_type: z.enum(['private', 'public']).optional(),
+				status: z
+					.enum(['action_needed', 'active', 'suspended'])
+					.or(z.string())
+					.optional(),
+				trust_type: z.enum(['private', 'public']).or(z.string()).optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -8207,7 +8255,10 @@ const r_c1e6841c6826Output = z
 		certificate: unspecifiedProviderValue().optional(),
 		ica: z.object({ id: unspecifiedProviderValue() }).passthrough().optional(),
 		common_name: unspecifiedProviderValue().optional(),
-		status: z.enum(['issued', 'revoked', 'expired', 'suspended']).optional(),
+		status: z
+			.enum(['issued', 'revoked', 'expired', 'suspended'])
+			.or(z.string())
+			.optional(),
 		serial_number: unspecifiedProviderValue().optional(),
 		thumbprint: unspecifiedProviderValue().optional(),
 		valid_from: unspecifiedProviderValue().optional(),
@@ -8347,7 +8398,7 @@ const r_b85de13db956Input = z
 	.strict();
 const r_b85de13db956Output = z
 	.object({
-		delivery_format: z.enum(['pkcs12']).optional(),
+		delivery_format: z.enum(['pkcs12']).or(z.string()).optional(),
 		certificate: unspecifiedProviderValue().optional(),
 		pkcs12_password: unspecifiedProviderValue().optional(),
 	})
@@ -9309,7 +9360,7 @@ const r_db452f94fae3Output = z
 		deviceName: unspecifiedProviderValue().optional(),
 		serialNumber: unspecifiedProviderValue().optional(),
 		udid: unspecifiedProviderValue().optional(),
-		status: z.enum(['ACTIVE', 'INACTIVE']).optional(),
+		status: z.enum(['ACTIVE', 'INACTIVE']).or(z.string()).optional(),
 		profileIds: unspecifiedProviderValue().optional(),
 		profiles: unspecifiedProviderValue().optional(),
 		createdAt: unspecifiedProviderValue().optional(),
@@ -9353,7 +9404,7 @@ const r_38524550bc70Output = z
 		deviceName: unspecifiedProviderValue().optional(),
 		serialNumber: unspecifiedProviderValue().optional(),
 		udid: unspecifiedProviderValue().optional(),
-		status: z.enum(['ACTIVE', 'INACTIVE']).optional(),
+		status: z.enum(['ACTIVE', 'INACTIVE']).or(z.string()).optional(),
 		profileIds: unspecifiedProviderValue().optional(),
 		profiles: unspecifiedProviderValue().optional(),
 		createdAt: unspecifiedProviderValue().optional(),
@@ -10468,7 +10519,10 @@ const r_2b49885a43e5Output = z
 				key_escrow_policy: z
 					.object({
 						dual_admin_recovery: unspecifiedProviderValue().optional(),
-						key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
+						key_escrow_deployment_mode: z
+							.enum(['CLOUD', 'LOCAL'])
+							.or(z.string())
+							.optional(),
 						key_escrow_enabled: unspecifiedProviderValue().optional(),
 					})
 					.passthrough()
@@ -10483,13 +10537,16 @@ const r_2b49885a43e5Output = z
 							})
 							.passthrough()
 							.optional(),
-						end_entity_type: z.enum(['machine', 'user']).optional(),
+						end_entity_type: z
+							.enum(['machine', 'user'])
+							.or(z.string())
+							.optional(),
 						enroll_on_behalf_of: unspecifiedProviderValue().optional(),
 						enroll_on_behalf_of_modifiable:
 							unspecifiedProviderValue().optional(),
 						enrollment_mode: z
 							.object({
-								mode: z.enum(['inform_user', 'silent']),
+								mode: z.enum(['inform_user', 'silent']).or(z.string()),
 								modifiable: unspecifiedProviderValue().optional(),
 							})
 							.passthrough()
@@ -10535,18 +10592,19 @@ const r_2b49885a43e5Output = z
 					.optional(),
 				scep_settings: z
 					.object({
-						encryption_algorithm: z.enum([
-							'aes128WithCBC',
-							'aes128WithGCM',
-							'aes256WithCBC',
-							'aes256WithGCM',
-							'desEDEWith3CBC',
-							'desWithCBC',
-						]),
-						standard: z.enum([
-							'DRAFT_NOURSE_SCEP_23',
-							'RFC_8894_DRAFT_GUTMANN_SCEP_16',
-						]),
+						encryption_algorithm: z
+							.enum([
+								'aes128WithCBC',
+								'aes128WithGCM',
+								'aes256WithCBC',
+								'aes256WithGCM',
+								'desEDEWith3CBC',
+								'desWithCBC',
+							])
+							.or(z.string()),
+						standard: z
+							.enum(['DRAFT_NOURSE_SCEP_23', 'RFC_8894_DRAFT_GUTMANN_SCEP_16'])
+							.or(z.string()),
 					})
 					.passthrough()
 					.optional(),
@@ -10571,7 +10629,7 @@ const r_2b49885a43e5Output = z
 					.object({
 						id: unspecifiedProviderValue(),
 						name: unspecifiedProviderValue().optional(),
-						trust_type: z.enum(['private', 'public']).optional(),
+						trust_type: z.enum(['private', 'public']).or(z.string()).optional(),
 					})
 					.passthrough()
 					.optional(),
@@ -11113,7 +11171,10 @@ const r_cd234014f0ffOutput = z
 		renewal_period_days: unspecifiedProviderValue().optional(),
 		duplicate_cert_policy: unspecifiedProviderValue().optional(),
 		override_cert_validity_via_api: unspecifiedProviderValue().optional(),
-		certificate_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
+		certificate_delivery_format: z
+			.enum(['x509', 'pkcs7', 'pkcs12'])
+			.or(z.string())
+			.optional(),
 		account_id: unspecifiedProviderValue().optional(),
 		business_unit_id: unspecifiedProviderValue().optional(),
 		business_unit_name: unspecifiedProviderValue().optional(),
@@ -11160,7 +11221,10 @@ const r_cd234014f0ffOutput = z
 		key_escrow_policy: z
 			.object({
 				key_escrow_enabled: unspecifiedProviderValue(),
-				key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
+				key_escrow_deployment_mode: z
+					.enum(['CLOUD', 'LOCAL'])
+					.or(z.string())
+					.optional(),
 				dual_admin_recovery: unspecifiedProviderValue(),
 			})
 			.passthrough()
@@ -11184,7 +11248,10 @@ const r_cd234014f0ffOutput = z
 		tags: unspecifiedProviderValue().optional(),
 		useCustomContact: unspecifiedProviderValue().optional(),
 		duplicate_certificate_allowed: unspecifiedProviderValue().optional(),
-		cert_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
+		cert_delivery_format: z
+			.enum(['x509', 'pkcs7', 'pkcs12'])
+			.or(z.string())
+			.optional(),
 		notifyRequestor: unspecifiedProviderValue().optional(),
 		custom_extended_key_usages: unspecifiedProviderValue().optional(),
 		certificate: z
@@ -11244,7 +11311,7 @@ const r_cd234014f0ffOutput = z
 			.object({
 				id: unspecifiedProviderValue().optional(),
 				name: unspecifiedProviderValue().optional(),
-				trust_type: z.enum(['private', 'public']).optional(),
+				trust_type: z.enum(['private', 'public']).or(z.string()).optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -11517,7 +11584,10 @@ const r_9a2ea6339160Output = z
 		renewal_period_days: unspecifiedProviderValue().optional(),
 		duplicate_cert_policy: unspecifiedProviderValue().optional(),
 		override_cert_validity_via_api: unspecifiedProviderValue().optional(),
-		certificate_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
+		certificate_delivery_format: z
+			.enum(['x509', 'pkcs7', 'pkcs12'])
+			.or(z.string())
+			.optional(),
 		business_unit_id: unspecifiedProviderValue().optional(),
 		account_id: unspecifiedProviderValue().optional(),
 		enrollment_method: z
@@ -11551,7 +11621,10 @@ const r_9a2ea6339160Output = z
 		key_escrow_policy: z
 			.object({
 				key_escrow_enabled: unspecifiedProviderValue(),
-				key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
+				key_escrow_deployment_mode: z
+					.enum(['CLOUD', 'LOCAL'])
+					.or(z.string())
+					.optional(),
 				dual_admin_recovery: unspecifiedProviderValue(),
 			})
 			.passthrough()
@@ -11625,7 +11698,7 @@ const r_9a2ea6339160Output = z
 			.object({
 				id: unspecifiedProviderValue().optional(),
 				name: unspecifiedProviderValue().optional(),
-				trust_type: z.enum(['private', 'public']).optional(),
+				trust_type: z.enum(['private', 'public']).or(z.string()).optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -11688,7 +11761,10 @@ const r_9cd9f0927b03Output = z
 		renewal_period_days: unspecifiedProviderValue().optional(),
 		duplicate_cert_policy: unspecifiedProviderValue().optional(),
 		override_cert_validity_via_api: unspecifiedProviderValue().optional(),
-		certificate_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
+		certificate_delivery_format: z
+			.enum(['x509', 'pkcs7', 'pkcs12'])
+			.or(z.string())
+			.optional(),
 		account_id: unspecifiedProviderValue().optional(),
 		business_unit_id: unspecifiedProviderValue().optional(),
 		business_unit_name: unspecifiedProviderValue().optional(),
@@ -11735,7 +11811,10 @@ const r_9cd9f0927b03Output = z
 		key_escrow_policy: z
 			.object({
 				key_escrow_enabled: unspecifiedProviderValue(),
-				key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
+				key_escrow_deployment_mode: z
+					.enum(['CLOUD', 'LOCAL'])
+					.or(z.string())
+					.optional(),
 				dual_admin_recovery: unspecifiedProviderValue(),
 			})
 			.passthrough()
@@ -11759,7 +11838,10 @@ const r_9cd9f0927b03Output = z
 		tags: unspecifiedProviderValue().optional(),
 		useCustomContact: unspecifiedProviderValue().optional(),
 		duplicate_certificate_allowed: unspecifiedProviderValue().optional(),
-		cert_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
+		cert_delivery_format: z
+			.enum(['x509', 'pkcs7', 'pkcs12'])
+			.or(z.string())
+			.optional(),
 		notifyRequestor: unspecifiedProviderValue().optional(),
 		custom_extended_key_usages: unspecifiedProviderValue().optional(),
 		certificate: z
@@ -11819,7 +11901,7 @@ const r_9cd9f0927b03Output = z
 			.object({
 				id: unspecifiedProviderValue().optional(),
 				name: unspecifiedProviderValue().optional(),
-				trust_type: z.enum(['private', 'public']).optional(),
+				trust_type: z.enum(['private', 'public']).or(z.string()).optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -11952,7 +12034,10 @@ const r_beff76538781Output = z.union([
 			key_escrow_policy: z
 				.object({
 					key_escrow_enabled: unspecifiedProviderValue(),
-					key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
+					key_escrow_deployment_mode: z
+						.enum(['CLOUD', 'LOCAL'])
+						.or(z.string())
+						.optional(),
 					dual_admin_recovery: unspecifiedProviderValue(),
 				})
 				.passthrough()
@@ -11968,7 +12053,10 @@ const r_beff76538781Output = z.union([
 			tags: unspecifiedProviderValue().optional(),
 			useCustomContact: unspecifiedProviderValue().optional(),
 			duplicate_certificate_allowed: unspecifiedProviderValue().optional(),
-			cert_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
+			cert_delivery_format: z
+				.enum(['x509', 'pkcs7', 'pkcs12'])
+				.or(z.string())
+				.optional(),
 			notifyRequestor: unspecifiedProviderValue().optional(),
 			custom_extended_key_usages: unspecifiedProviderValue().optional(),
 			certificate: z
@@ -12028,7 +12116,7 @@ const r_beff76538781Output = z.union([
 				.object({
 					id: unspecifiedProviderValue().optional(),
 					name: unspecifiedProviderValue().optional(),
-					trust_type: z.enum(['private', 'public']).optional(),
+					trust_type: z.enum(['private', 'public']).or(z.string()).optional(),
 				})
 				.passthrough()
 				.optional(),
@@ -12131,7 +12219,10 @@ const r_beff76538781Output = z.union([
 			key_escrow_policy: z
 				.object({
 					key_escrow_enabled: unspecifiedProviderValue(),
-					key_escrow_deployment_mode: z.enum(['CLOUD', 'LOCAL']).optional(),
+					key_escrow_deployment_mode: z
+						.enum(['CLOUD', 'LOCAL'])
+						.or(z.string())
+						.optional(),
 					dual_admin_recovery: unspecifiedProviderValue(),
 				})
 				.passthrough()
@@ -12155,7 +12246,10 @@ const r_beff76538781Output = z.union([
 			tags: unspecifiedProviderValue().optional(),
 			useCustomContact: unspecifiedProviderValue().optional(),
 			duplicate_certificate_allowed: unspecifiedProviderValue().optional(),
-			cert_delivery_format: z.enum(['x509', 'pkcs7', 'pkcs12']).optional(),
+			cert_delivery_format: z
+				.enum(['x509', 'pkcs7', 'pkcs12'])
+				.or(z.string())
+				.optional(),
 			notifyRequestor: unspecifiedProviderValue().optional(),
 			custom_extended_key_usages: unspecifiedProviderValue().optional(),
 			certificate: z
@@ -12215,7 +12309,7 @@ const r_beff76538781Output = z.union([
 				.object({
 					id: unspecifiedProviderValue().optional(),
 					name: unspecifiedProviderValue().optional(),
-					trust_type: z.enum(['private', 'public']).optional(),
+					trust_type: z.enum(['private', 'public']).or(z.string()).optional(),
 				})
 				.passthrough()
 				.optional(),
@@ -12480,7 +12574,7 @@ const r_fb0b80993f03Output = z
 			.optional(),
 		timestamp: unspecifiedProviderValue().optional(),
 		description: unspecifiedProviderValue().optional(),
-		status: z.enum(['success', 'warning', 'failure']).optional(),
+		status: z.enum(['success', 'warning', 'failure']).or(z.string()).optional(),
 		error_message: unspecifiedProviderValue().optional(),
 		detailed_error_message: unspecifiedProviderValue().optional(),
 		data: unspecifiedProviderValue().optional(),
@@ -12652,7 +12746,7 @@ const r_39fd79124781Output = z
 		name: unspecifiedProviderValue(),
 		account_id: unspecifiedProviderValue(),
 		rule_id: unspecifiedProviderValue().optional(),
-		type: z.enum(['certificate', 'asset']).optional(),
+		type: z.enum(['certificate', 'asset']).or(z.string()).optional(),
 		description: unspecifiedProviderValue().optional(),
 		status: unspecifiedProviderValue().optional(),
 		created_at: unspecifiedProviderValue().optional(),
@@ -13350,7 +13444,10 @@ const r_ba846e3e9a98Output = z
 			.object({
 				db_service: z
 					.object({
-						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
+						status: z
+							.enum(['UP', 'DOWN', 'NOT_AVAILABLE'])
+							.or(z.string())
+							.optional(),
 						details: z
 							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
@@ -13360,7 +13457,10 @@ const r_ba846e3e9a98Output = z
 					.optional(),
 				am_service: z
 					.object({
-						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
+						status: z
+							.enum(['UP', 'DOWN', 'NOT_AVAILABLE'])
+							.or(z.string())
+							.optional(),
 						details: z
 							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
@@ -13370,7 +13470,10 @@ const r_ba846e3e9a98Output = z
 					.optional(),
 				ca_service: z
 					.object({
-						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
+						status: z
+							.enum(['UP', 'DOWN', 'NOT_AVAILABLE'])
+							.or(z.string())
+							.optional(),
 						details: z
 							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
@@ -13380,7 +13483,10 @@ const r_ba846e3e9a98Output = z
 					.optional(),
 				smtp_service: z
 					.object({
-						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
+						status: z
+							.enum(['UP', 'DOWN', 'NOT_AVAILABLE'])
+							.or(z.string())
+							.optional(),
 						details: z
 							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
@@ -13390,7 +13496,10 @@ const r_ba846e3e9a98Output = z
 					.optional(),
 				ldap_service: z
 					.object({
-						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
+						status: z
+							.enum(['UP', 'DOWN', 'NOT_AVAILABLE'])
+							.or(z.string())
+							.optional(),
 						details: z
 							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
@@ -13400,7 +13509,10 @@ const r_ba846e3e9a98Output = z
 					.optional(),
 				dta_web_service: z
 					.object({
-						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
+						status: z
+							.enum(['UP', 'DOWN', 'NOT_AVAILABLE'])
+							.or(z.string())
+							.optional(),
 						details: z
 							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
@@ -13410,7 +13522,10 @@ const r_ba846e3e9a98Output = z
 					.optional(),
 				scheduled_jobs: z
 					.object({
-						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
+						status: z
+							.enum(['UP', 'DOWN', 'NOT_AVAILABLE'])
+							.or(z.string())
+							.optional(),
 						details: z
 							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
@@ -13420,7 +13535,10 @@ const r_ba846e3e9a98Output = z
 					.optional(),
 				ticket_service: z
 					.object({
-						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
+						status: z
+							.enum(['UP', 'DOWN', 'NOT_AVAILABLE'])
+							.or(z.string())
+							.optional(),
 						details: z
 							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
@@ -13430,7 +13548,10 @@ const r_ba846e3e9a98Output = z
 					.optional(),
 				ticket_service_heart_beat: z
 					.object({
-						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
+						status: z
+							.enum(['UP', 'DOWN', 'NOT_AVAILABLE'])
+							.or(z.string())
+							.optional(),
 						details: z
 							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
@@ -13440,7 +13561,10 @@ const r_ba846e3e9a98Output = z
 					.optional(),
 				ts_upload_ticket_job: z
 					.object({
-						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
+						status: z
+							.enum(['UP', 'DOWN', 'NOT_AVAILABLE'])
+							.or(z.string())
+							.optional(),
 						details: z
 							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
@@ -13450,7 +13574,10 @@ const r_ba846e3e9a98Output = z
 					.optional(),
 				critical_services_overall_status: z
 					.object({
-						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
+						status: z
+							.enum(['UP', 'DOWN', 'NOT_AVAILABLE'])
+							.or(z.string())
+							.optional(),
 						details: z
 							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
@@ -13460,7 +13587,10 @@ const r_ba846e3e9a98Output = z
 					.optional(),
 				non_critical_service_overall_status: z
 					.object({
-						status: z.enum(['UP', 'DOWN', 'NOT_AVAILABLE']).optional(),
+						status: z
+							.enum(['UP', 'DOWN', 'NOT_AVAILABLE'])
+							.or(z.string())
+							.optional(),
 						details: z
 							.object({ error: unspecifiedProviderValue().optional() })
 							.passthrough()
@@ -13612,10 +13742,13 @@ const r_f3162c793b3cOutput = z
 								'SIGNATURE_ENHANCEMENT',
 							])
 							.optional(),
-						auth_type: z.enum(['BASIC', 'API_TOKEN', 'INTERNAL']).optional(),
+						auth_type: z
+							.enum(['BASIC', 'API_TOKEN', 'INTERNAL'])
+							.or(z.string())
+							.optional(),
 						timestamp: z.string().optional(),
 						description: z.string().optional(),
-						status: z.enum(['SUCCESS', 'FAILURE']).optional(),
+						status: z.enum(['SUCCESS', 'FAILURE']).or(z.string()).optional(),
 						error_message: z.string().optional(),
 						data: z.string().optional(),
 						userId: z.string().optional(),
@@ -13666,7 +13799,7 @@ const r_496bcb0a0fcaOutput = z
 	.object({
 		calculated_hash: z.string().optional(),
 		stored_hash: z.string().optional(),
-		status: z.enum(['SUCCESS', 'FAILURE']).optional(),
+		status: z.enum(['SUCCESS', 'FAILURE']).or(z.string()).optional(),
 	})
 	.passthrough();
 const r_67bf21878ca5Input = z
@@ -13726,10 +13859,13 @@ const r_67bf21878ca5Output = z
 				'SIGNATURE_ENHANCEMENT',
 			])
 			.optional(),
-		auth_type: z.enum(['BASIC', 'API_TOKEN', 'INTERNAL']).optional(),
+		auth_type: z
+			.enum(['BASIC', 'API_TOKEN', 'INTERNAL'])
+			.or(z.string())
+			.optional(),
 		timestamp: z.string().optional(),
 		description: z.string().optional(),
-		status: z.enum(['SUCCESS', 'FAILURE']).optional(),
+		status: z.enum(['SUCCESS', 'FAILURE']).or(z.string()).optional(),
 		error_message: z.string().optional(),
 		data: z.string().optional(),
 		userId: z.string().optional(),
@@ -14473,7 +14609,7 @@ const r_6618ac8ee70fOutput = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -14503,7 +14639,10 @@ const r_6618ac8ee70fOutput = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -14528,7 +14667,7 @@ const r_6618ac8ee70fOutput = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -14749,7 +14888,7 @@ const r_53dc0f0c10e0Output = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -14779,7 +14918,10 @@ const r_53dc0f0c10e0Output = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -14804,7 +14946,7 @@ const r_53dc0f0c10e0Output = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -14989,7 +15131,7 @@ const r_d3443d50d56fOutput = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -15019,7 +15161,10 @@ const r_d3443d50d56fOutput = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -15044,7 +15189,7 @@ const r_d3443d50d56fOutput = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -15235,7 +15380,10 @@ const r_5246dd4ce6efOutput = z
 												'CANCELLED',
 											])
 											.optional(),
-										status: z.enum(['APPROVED', 'REJECTED']).optional(),
+										status: z
+											.enum(['APPROVED', 'REJECTED'])
+											.or(z.string())
+											.optional(),
 										reason: z.string().optional(),
 										reason_code: z
 											.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -15292,7 +15440,10 @@ const r_5246dd4ce6efOutput = z
 											.passthrough(),
 									)
 									.optional(),
-								status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+								status: z
+									.enum(['ACTIVE', 'DISABLED'])
+									.or(z.string())
+									.optional(),
 								modified_on: z.string().optional(),
 								created_by: z.string().optional(),
 								created_on: z.string().optional(),
@@ -15480,7 +15631,7 @@ const r_8ee4f85d366dOutput = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -15510,7 +15661,10 @@ const r_8ee4f85d366dOutput = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -15535,7 +15689,7 @@ const r_8ee4f85d366dOutput = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -15684,7 +15838,7 @@ const r_a15028cb4d8cOutput = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -15714,7 +15868,10 @@ const r_a15028cb4d8cOutput = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -15739,7 +15896,7 @@ const r_a15028cb4d8cOutput = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -15890,7 +16047,7 @@ const r_e6736eb32525Output = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -15920,7 +16077,10 @@ const r_e6736eb32525Output = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -15945,7 +16105,7 @@ const r_e6736eb32525Output = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -16084,7 +16244,7 @@ const r_d52a0423fb82Output = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -16114,7 +16274,10 @@ const r_d52a0423fb82Output = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -16139,7 +16302,7 @@ const r_d52a0423fb82Output = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -16296,7 +16459,7 @@ const r_5506f0d0c709Output = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -16326,7 +16489,10 @@ const r_5506f0d0c709Output = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -16351,7 +16517,7 @@ const r_5506f0d0c709Output = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -16499,7 +16665,7 @@ const r_fa557bf6435eOutput = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -16529,7 +16695,10 @@ const r_fa557bf6435eOutput = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -16554,7 +16723,7 @@ const r_fa557bf6435eOutput = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -16709,7 +16878,7 @@ const r_fdcd632d15c3Output = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -16739,7 +16908,10 @@ const r_fdcd632d15c3Output = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -16764,7 +16936,7 @@ const r_fdcd632d15c3Output = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -16903,7 +17075,7 @@ const r_cdc09308beb2Output = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -16933,7 +17105,10 @@ const r_cdc09308beb2Output = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -16958,7 +17133,7 @@ const r_cdc09308beb2Output = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -17106,7 +17281,7 @@ const r_715ac3807e24Output = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -17136,7 +17311,10 @@ const r_715ac3807e24Output = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -17161,7 +17339,7 @@ const r_715ac3807e24Output = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -17300,7 +17478,7 @@ const r_9082880056c2Output = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -17330,7 +17508,10 @@ const r_9082880056c2Output = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -17355,7 +17536,7 @@ const r_9082880056c2Output = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
@@ -17531,7 +17712,7 @@ const r_537bfeb702eeOutput = z
 								'CANCELLED',
 							])
 							.optional(),
-						status: z.enum(['APPROVED', 'REJECTED']).optional(),
+						status: z.enum(['APPROVED', 'REJECTED']).or(z.string()).optional(),
 						reason: z.string().optional(),
 						reason_code: z
 							.enum(['VALIDATION_IN_PROCESS', 'VALIDATION_COMPLETED'])
@@ -17561,7 +17742,10 @@ const r_537bfeb702eeOutput = z
 				validation_method: z
 					.enum(['f2f', 'remote', 'RA', 'manual', 'remote_manual'])
 					.optional(),
-				validation_type: z.enum(['advanced+', 'qualified', 'basic']).optional(),
+				validation_type: z
+					.enum(['advanced+', 'qualified', 'basic'])
+					.or(z.string())
+					.optional(),
 				nickname: z.string().optional(),
 				policies: z
 					.array(
@@ -17586,7 +17770,7 @@ const r_537bfeb702eeOutput = z
 							.passthrough(),
 					)
 					.optional(),
-				status: z.enum(['ACTIVE', 'DISABLED']).optional(),
+				status: z.enum(['ACTIVE', 'DISABLED']).or(z.string()).optional(),
 				modified_on: z.string().optional(),
 				created_by: z.string().optional(),
 				created_on: z.string().optional(),
