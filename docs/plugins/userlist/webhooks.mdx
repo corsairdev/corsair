@@ -1,0 +1,423 @@
+---
+title: "Userlist webhooks"
+sidebarTitle: "Webhooks"
+description: "Userlist incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Userlist plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/userlist/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `companyCreated` (`companyCreated`)
+- `companyUpdated` (`companyUpdated`)
+- `formSubmitted` (`formSubmitted`)
+- `messageBounced` (`messageBounced`)
+- `messageClicked` (`messageClicked`)
+- `messageEnqueued` (`messageEnqueued`)
+- `messageOpened` (`messageOpened`)
+- `messageReported` (`messageReported`)
+- `relationshipCreated` (`relationshipCreated`)
+- `relationshipUpdated` (`relationshipUpdated`)
+- `userCreated` (`userCreated`)
+- `userSubscribed` (`userSubscribed`)
+- `userUnsubscribed` (`userUnsubscribed`)
+- `userUpdated` (`userUpdated`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Company Created
+
+### Company Created
+
+`companyCreated`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        companyCreated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Company Updated
+
+### Company Updated
+
+`companyUpdated`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        companyUpdated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Form Submitted
+
+### Form Submitted
+
+`formSubmitted`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        formSubmitted: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Message Bounced
+
+### Message Bounced
+
+`messageBounced`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        messageBounced: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Message Clicked
+
+### Message Clicked
+
+`messageClicked`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        messageClicked: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Message Enqueued
+
+### Message Enqueued
+
+`messageEnqueued`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        messageEnqueued: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Message Opened
+
+### Message Opened
+
+`messageOpened`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        messageOpened: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Message Reported
+
+### Message Reported
+
+`messageReported`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        messageReported: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Relationship Created
+
+### Relationship Created
+
+`relationshipCreated`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        relationshipCreated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Relationship Updated
+
+### Relationship Updated
+
+`relationshipUpdated`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        relationshipUpdated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## User Created
+
+### User Created
+
+`userCreated`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        userCreated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## User Subscribed
+
+### User Subscribed
+
+`userSubscribed`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        userSubscribed: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## User Unsubscribed
+
+### User Unsubscribed
+
+`userUnsubscribed`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        userUnsubscribed: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## User Updated
+
+### User Updated
+
+`userUpdated`
+
+**Payload:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+userlist({
+    webhookHooks: {
+        userUpdated: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

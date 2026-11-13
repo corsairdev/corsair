@@ -1,0 +1,942 @@
+{
+  "id": "renderform",
+  "displayName": "Renderform",
+  "description": "Render templates to images, PDFs and video, manage templates and their html-editor content, capture screenshots and PDFs, and read usage and fonts with Renderform.",
+  "npmPackageName": "@corsair-dev/renderform",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "renderform.api.fonts",
+      "shortPath": "fonts",
+      "description": "List the fonts available to a template, with their variants and whether each is Google or custom",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ originalName?: string | null, family?: string | null, variants?: string[] | null, defaultVariant?: string | null, subsets?: string[] | null, category?: string | null, source?: string | null, size?: number | null, createdAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "renderform.api.pdf",
+      "shortPath": "pdf",
+      "description": "Capture a URL as a PDF in a chosen page format, optionally self-deleting after a set time; costs a credit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to capture."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "A5 | A4 | A3 | LETTER | LEGAL",
+            "description": "Defaults to A4."
+          },
+          {
+            "key": "expires",
+            "optional": true,
+            "type": "number",
+            "description": "Delete the PDF after this many seconds, at most 604800 (7 days)."
+          },
+          {
+            "key": "waitTime",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "renderform.api.render",
+      "shortPath": "render",
+      "description": "Render a template to an image, PDF or video, merging your data into its fields; costs a credit unless the answer is served from the cache, and a video render is asynchronous",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": false,
+            "type": "string",
+            "description": "The template identifier, such as template_1234."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, JsonValue>",
+            "description": "Values keyed by the template's merge fields, such as {\"my-text.text\": \"John\"}. A component's own defaults fill anything omitted."
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string",
+            "description": "The output file name, without an extension."
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Called when the render finishes, which suits a video render."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "The cache key. The same version with the same data returns the cached file and costs no credits."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, JsonValue>",
+            "description": "Extra data passed through to the webhook."
+          },
+          {
+            "key": "batchName",
+            "optional": true,
+            "type": "string",
+            "description": "Groups renders together, and can be filtered on in results.list."
+          },
+          {
+            "key": "cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true. False forces a fresh render and skips the cache, which costs credits."
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number",
+            "description": "Output width in pixels. Renderform crops the image to it from the top left corner."
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number",
+            "description": "Output height in pixels. Renderform crops the image to it from the top left corner."
+          },
+          {
+            "key": "waitTime",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds to wait before rendering. At most 5000."
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "jpeg | png | webp | pdf | mp4 | webm",
+            "description": "Overrides the template's format. A video format needs a template made in the Advanced Editor and always renders asynchronously."
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number",
+            "description": "Video renders only: length in milliseconds. Every started second costs 5 credits."
+          },
+          {
+            "key": "fps",
+            "optional": true,
+            "type": "24 | 25 | 30",
+            "description": "Video renders only, and sent as a string: 24, 25 or 30."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Identifies the render, and is what results.get takes."
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null",
+            "description": "The rendered file. Not usable yet when status is pending."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "pending, done or failed. Present only for an asynchronous video render."
+          },
+          {
+            "key": "cached",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when the file came from the cache, which costs no credits."
+          }
+        ]
+      }
+    },
+    {
+      "path": "renderform.api.results.delete",
+      "shortPath": "results.delete",
+      "description": "Delete one render result",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "renderform.api.results.get",
+      "shortPath": "results.get",
+      "description": "Read one render result; this is how an asynchronous video render is polled until it is done or failed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string",
+            "description": "The requestId a render answered with."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "pending, done or failed."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "image, video, screenshot or preview."
+          },
+          {
+            "key": "thumbnailHref",
+            "optional": true,
+            "type": "string | null",
+            "description": "A video's JPEG poster frame, null otherwise."
+          }
+        ]
+      }
+    },
+    {
+      "path": "renderform.api.results.list",
+      "shortPath": "results.list",
+      "description": "List render history, optionally filtered to one template or batch",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string",
+            "description": "Only renders of this template."
+          },
+          {
+            "key": "batch",
+            "optional": true,
+            "type": "string",
+            "description": "Only renders in this batch."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "At most 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ identifier?: string | null, href?: string | null, width?: number | null, height?: number | null, templateName?: string | null, templateIdentifier?: string | null, createdAt?: string | null }[] | null"
+          },
+          {
+            "key": "totalElements",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "numberOfElements",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "first",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "last",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "empty",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "renderform.api.screenshot",
+      "shortPath": "screenshot",
+      "description": "Capture a URL as a screenshot at a chosen size; costs a credit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to capture."
+          },
+          {
+            "key": "width",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "waitTime",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds to wait before capturing. At most 5000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "href",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "renderform.api.templates.content",
+      "shortPath": "templates.content",
+      "description": "Read an html-editor template's raw HTML, CSS and sample data, which lists the merge fields a render should fill",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "css",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sampleData",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "renderform.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a template in the html-editor, canvas-editor or canvas-html editor, with a size, tags and an output format",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": false,
+            "type": "number",
+            "description": "Pixels."
+          },
+          {
+            "key": "height",
+            "optional": false,
+            "type": "number",
+            "description": "Pixels."
+          },
+          {
+            "key": "editor",
+            "optional": false,
+            "type": "html-editor | canvas-editor | canvas-html"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Created automatically when a tag does not exist yet."
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "jpeg | png | webp | pdf | mp4 | webm",
+            "description": "Defaults to jpeg. A video format needs the canvas-html editor."
+          },
+          {
+            "key": "recordDuration",
+            "optional": true,
+            "type": "number",
+            "description": "Video templates only: timeline length in milliseconds. Defaults to 5000."
+          },
+          {
+            "key": "fps",
+            "optional": true,
+            "type": "24 | 25 | 30",
+            "description": "Video templates only, sent as a string. Defaults to 30."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string | null",
+            "description": "The last rendered preview image."
+          },
+          {
+            "key": "scaleFactor",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outputExtension",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "editor",
+            "optional": true,
+            "type": "string | null",
+            "description": "html-editor, canvas-editor or canvas-html."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "renderform.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "renderform.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Read one template's metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string | null",
+            "description": "The last rendered preview image."
+          },
+          {
+            "key": "scaleFactor",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outputExtension",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "editor",
+            "optional": true,
+            "type": "string | null",
+            "description": "html-editor, canvas-editor or canvas-html."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "renderform.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List your templates with their preview, format, size and tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Only templates whose name matches."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only templates with these tags."
+          },
+          {
+            "key": "sourceTemplateId",
+            "optional": true,
+            "type": "string",
+            "description": "Only templates created from this source template."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "0-based page number."
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, at most 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ identifier?: string | null, name?: string | null, preview?: string | null, scaleFactor?: number | null, outputFormat?: string | null, outputExtension?: string | null, quality?: number | null, width?: number | null, height?: number | null, tags?: string[] | null, editor?: string | null, createdAt?: string | null, updatedAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "renderform.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Update a template's metadata; tags replace the whole set rather than merging",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Replaces the whole set of tags, it does not merge into it."
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "jpeg | png | webp | pdf | mp4 | webm"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "preview",
+            "optional": true,
+            "type": "string | null",
+            "description": "The last rendered preview image."
+          },
+          {
+            "key": "scaleFactor",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "outputFormat",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "outputExtension",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "quality",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "editor",
+            "optional": true,
+            "type": "string | null",
+            "description": "html-editor, canvas-editor or canvas-html."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "renderform.api.templates.updateContent",
+      "shortPath": "templates.updateContent",
+      "description": "Replace an html-editor template's raw HTML, CSS and sample data",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string",
+            "description": "Only supported for a template using the html-editor."
+          },
+          {
+            "key": "css",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sampleData",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "css",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sampleData",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "renderform.api.usage",
+      "shortPath": "usage",
+      "description": "Read the plan, the credits used against the total, and the next renewal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "{ used?: number | null, total?: number | null, nextRenewalAt?: string | null, renewalAmount?: number | null } | null"
+          },
+          {
+            "key": "uploads",
+            "optional": true,
+            "type": "{ used?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "{ name?: string | null, status?: string | null, nextBillingAt?: string | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

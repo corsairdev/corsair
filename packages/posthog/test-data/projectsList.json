@@ -1,0 +1,16 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 309833,
+      "uuid": "019c4574-8197-0000-9da4-20df023ec2d0",
+      "organization": "019c4574-818b-0000-9a04-748335a0596a",
+      "api_token": "phc_test_token",
+      "name": "Default project",
+      "is_demo": false,
+      "timezone": "UTC"
+    }
+  ]
+}

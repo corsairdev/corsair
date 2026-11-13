@@ -565,6 +565,14 @@ export type CorsairPlugin<
 	 */
 	keyBuilder?: CorsairKeyBuilder<Options, AuthConfig>;
 	/**
+	 * When an endpoint fails with HTTP 401 and does not refresh the token
+	 * itself, core refreshes it once (through the keyBuilder's `_refreshAuth`)
+	 * and calls the endpoint again. Set false for a plugin whose endpoints
+	 * decide on their own which 401s are worth a refresh.
+	 * @default true
+	 */
+	refreshOnUnauthorized?: boolean;
+	/**
 	 * @internal Type-only field for inference. Do not set at runtime.
 	 * Specifies the default auth type when authType is optional and not provided.
 	 */
