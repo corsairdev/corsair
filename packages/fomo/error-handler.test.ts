@@ -93,7 +93,7 @@ describe('Fomo errorHandlers', () => {
 		});
 	});
 
-	it('prioritizes caller-supplied handlers before built-ins and places DEFAULT last', () => {
+	it('preserves caller-supplied handlers and places DEFAULT last', () => {
 		const customRateLimitHandler = {
 			match: (e: Error) => e.message.includes('custom_rate_limit'),
 			handler: async () => ({ maxRetries: 2 }),
@@ -114,8 +114,23 @@ describe('Fomo errorHandlers', () => {
 		if (!plugin.errorHandlers) throw new Error('errorHandlers missing');
 
 		const keys = Object.keys(plugin.errorHandlers);
-		expect(keys[0]).toBe('CUSTOM_RATE');
+		expect(plugin.errorHandlers.CUSTOM_RATE).toBe(customRateLimitHandler);
 		expect(keys[keys.length - 1]).toBe('DEFAULT');
 		expect(plugin.errorHandlers.DEFAULT).toBe(customDefaultHandler);
+	});
+
+	it('preserves caller-supplied handler when overriding a built-in handler name like RATE_LIMIT_ERROR', () => {
+		const customRateLimitHandler = {
+			match: (e: Error) => e.message.includes('custom_429'),
+			handler: async () => ({ maxRetries: 7 }),
+		};
+
+		const plugin = fomo({
+			errorHandlers: {
+				RATE_LIMIT_ERROR: customRateLimitHandler,
+			},
+		});
+
+		expect(plugin.errorHandlers?.RATE_LIMIT_ERROR).toBe(customRateLimitHandler);
 	});
 });

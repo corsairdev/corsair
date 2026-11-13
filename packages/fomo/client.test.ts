@@ -22,9 +22,9 @@ function apiError(
 	message: string,
 	retryAfter?: number,
 	// `unknown` because error response bodies can contain arbitrary JSON fields.
-	body?: Record<string, unknown>,
+	body?: unknown,
 	// `unknown` because request bodies can contain arbitrary JSON fields.
-	requestBody?: Record<string, unknown>,
+	requestBody?: unknown,
 ) {
 	return new ApiError(
 		{ method: 'POST', url: '/applications/me/events', body: requestBody },
@@ -161,6 +161,46 @@ describe('makeFomoRequest client', () => {
 			const reqRecord = caught.request.body as Record<string, unknown>;
 			expect(reqRecord.auth_token).toBe('[REDACTED]');
 			expect(reqRecord.normal_field).toBe('safe');
+		}
+	});
+
+	it('sanitizes sensitive fields in array error bodies and request payloads', async () => {
+		const arrayError = apiError(
+			422,
+			'Unprocessable Entity',
+			undefined,
+			[
+				{ token: 'secret-array-token', message: 'error 1' },
+				{ apiKey: 'secret-array-key', field: 'name' },
+			],
+			[{ token: 'request-array-token', value: 123 }],
+		);
+		mockRequest.mockRejectedValue(arrayError);
+
+		// `unknown` because caught rejection value has no static type before runtime assertion.
+		const caught = await makeFomoRequest(
+			'/applications/me/events',
+			'my-token',
+			{
+				method: 'POST',
+			},
+		).catch((e: unknown) => e);
+
+		expect(caught).toBeInstanceOf(ApiError);
+		if (caught instanceof ApiError) {
+			// `unknown` because body property is an untyped JSON array on ApiError.
+			const bodyArray = caught.body as Array<Record<string, unknown>>;
+			expect(Array.isArray(bodyArray)).toBe(true);
+			expect(bodyArray[0]?.token).toBe('[REDACTED]');
+			expect(bodyArray[0]?.message).toBe('error 1');
+			expect(bodyArray[1]?.apiKey).toBe('[REDACTED]');
+			expect(bodyArray[1]?.field).toBe('name');
+
+			// `unknown` because request body property is untyped JSON on ApiRequestOptions.
+			const reqArray = caught.request.body as Array<Record<string, unknown>>;
+			expect(Array.isArray(reqArray)).toBe(true);
+			expect(reqArray[0]?.token).toBe('[REDACTED]');
+			expect(reqArray[0]?.value).toBe(123);
 		}
 	});
 

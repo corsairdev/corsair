@@ -236,8 +236,8 @@ export function fomo<const T extends FomoPluginOptions>(
 	const { DEFAULT: builtInDefault, ...builtIns } = errorHandlers;
 	const { DEFAULT: callerDefault, ...callers } = options.errorHandlers ?? {};
 	const mergedErrorHandlers = {
-		...callers,
 		...builtIns,
+		...callers,
 		DEFAULT: callerDefault ?? builtInDefault,
 	};
 

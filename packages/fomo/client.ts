@@ -127,13 +127,9 @@ export async function makeFomoRequest<T>(
 		if (error instanceof ApiError) {
 			const sanitizedMessage = redactMessage(error.message, apiKey);
 			// `unknown` because request body contains arbitrary JSON that must be sanitized.
-			const sanitizedRequestBody: unknown = isRecord(error.request?.body)
-				? redactValue(error.request.body)
-				: error.request?.body;
+			const sanitizedRequestBody: unknown = redactValue(error.request?.body);
 			// `unknown` because error response body contains arbitrary JSON that must be sanitized.
-			const sanitizedResponseBody: unknown = isRecord(error.body)
-				? redactValue(error.body)
-				: error.body;
+			const sanitizedResponseBody: unknown = redactValue(error.body);
 
 			const sanitizedError = new ApiError(
 				{
