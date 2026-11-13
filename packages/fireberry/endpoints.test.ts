@@ -5,6 +5,7 @@ import {
 	Batch,
 	CustomFields,
 	CustomObjects,
+	Files,
 	Metadata,
 	Records,
 } from './endpoints';
@@ -619,4 +620,17 @@ describe('registered Fireberry operations and route semantics', () => {
 		);
 	});
 
+	it('accepts the bare `true` body the live file upload returns', async () => {
+		const fetchSpy = jest
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(new Response('true', { status: 200 }));
+		const result = await Files.create(endpointContext, {
+			objectId: '1',
+			recordId: 'record-id',
+			fileName: 'readme.txt',
+			fileBase64: 'SGVsbG8=',
+		});
+		expect(result).toBe(true);
+		fetchSpy.mockRestore();
+	});
 });

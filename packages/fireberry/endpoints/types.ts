@@ -40,6 +40,11 @@ const RecordUpdateResponseSchema = z.object({
 	message: z.string(),
 	record: FieldMapSchema,
 });
+// The live file upload answers with a bare `true`; the reference shows `{}`.
+const FileUploadResponseSchema = z.union([
+	z.boolean(),
+	z.object({}).passthrough(),
+]);
 const QueryResponseSchema = z.object({
 	success: z.boolean(),
 	data: z.array(FieldMapSchema),
@@ -1124,7 +1129,10 @@ const endpointSchemas = {
 		input: CustomObjectDeleteInputSchema,
 		output: EmptyResponseSchema,
 	},
-	fileUpload: { input: FileUploadInputSchema, output: EmptyResponseSchema },
+	fileUpload: {
+		input: FileUploadInputSchema,
+		output: FileUploadResponseSchema,
+	},
 	batchCreate: { input: BatchInputSchema, output: BatchResponseSchema },
 	batchUpdate: { input: BatchUpdateInputSchema, output: BatchResponseSchema },
 	batchDelete: {
