@@ -1882,13 +1882,19 @@ import { corsair } from "@/server/corsair";
 
 export async function POST(request: Request) {
     const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
     // The raw text, not request.json(): signatures are checked over the exact bytes sent.
     const body = await request.text();
-    const result = await processWebhook(corsair, headers, body);
+    const result = await processWebhook(corsair, headers, body, query);
     if (!result.plugin) {
         return Response.json({ success: false }, { status: 404 });
     }
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
     return Response.json(result.response ?? { success: true }, {
+        status,
         headers: result.responseHeaders,
     });
 }
