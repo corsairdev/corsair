@@ -97,16 +97,24 @@ export const deleted = { meta: { title: 'Keywords have been deleted' } };
 export const refreshed = { message: 'You have 3934 keyword refreshes left.' };
 
 export const sharing = {
-	data: {
-		type: 'sharing-setting',
-		id: '3057417',
-		attributes: {
-			project_id: 3057417,
-			is_public: true,
-			password: null,
-			sov_view_key: false,
-		},
+	project_id: 3057417,
+	share_hash: 'HUPjoqIyYIoYwlaf',
+	is_active: true,
+	is_password_protected: false,
+	visibility: {
+		hide_overview: false,
+		hide_top_pages: false,
+		hide_share_options: false,
+		hide_keyword_actions: false,
+		show_rank_verification: false,
 	},
+	keyword_columns: {
+		inherit_account: true,
+		columns: [{ name: 'rank', visible: true, order: 0 }],
+	},
+	keyword_charts: { enabled: true, mode: 'match_overview', charts: [] },
+	overview_charts: { mode: 'match_overview', charts: [] },
+	branding: { override_account_branding: false, company_name: null },
 };
 
 export const metrics = {

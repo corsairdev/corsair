@@ -1,6 +1,6 @@
 import type { KeywordEndpoints } from '..';
 import { segment } from '../client';
-import { call, dropUndefined, resourceBody } from './call';
+import { call, dropUndefined } from './call';
 import {
 	KeywordEndpointInputSchemas as Inputs,
 	KeywordEndpointOutputSchemas as Outputs,
@@ -31,10 +31,12 @@ export const update: KeywordEndpoints['sharingUpdate'] = (ctx, input) =>
 			output: Outputs.sharingUpdate,
 		},
 		input,
-		({ projectId, ...attributes }) => ({
+		// The settings go at the top level of the body, not in a JSON:API
+		// resource. A null password is kept: it removes the protection.
+		({ projectId, ...settings }) => ({
 			method: 'PATCH',
 			path: `/projects/${segment(projectId)}/sharing-settings`,
-			body: resourceBody('sharing-setting', dropUndefined(attributes)),
+			body: dropUndefined(settings),
 		}),
 		{ log: ({ projectId }) => ({ projectId }) },
 	);

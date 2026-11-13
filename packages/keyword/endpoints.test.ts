@@ -309,13 +309,16 @@ describe('projects.restore', () => {
 });
 
 describe('sharing', () => {
-	it('GETs the sharing settings', async () => {
+	it('GETs the sharing settings, which sit at the root of the body', async () => {
 		respond(sharing);
 
 		await expect(
 			invoke(Sharing.get, { projectId: 3057417 }),
 		).resolves.toMatchObject({
-			data: { attributes: { is_public: true, password: null } },
+			project_id: 3057417,
+			is_active: true,
+			share_hash: 'HUPjoqIyYIoYwlaf',
+			visibility: { hide_overview: false },
 		});
 		expect(lastRequest()).toMatchObject({
 			method: 'GET',
@@ -323,27 +326,42 @@ describe('sharing', () => {
 		});
 	});
 
-	it('PATCHes the settings', async () => {
-		respond(sharing);
+	it('PATCHes the settings as top-level fields', async () => {
+		respond({ ...sharing, is_active: false, share_hash: null });
 
-		await invoke(Sharing.update, { projectId: 3057417, is_public: false });
-
+		await expect(
+			invoke(Sharing.update, { projectId: 3057417, is_active: false }),
+		).resolves.toMatchObject({ is_active: false, share_hash: null });
 		expect(lastRequest()).toMatchObject({
 			method: 'PATCH',
 			path: '/api/v2/projects/3057417/sharing-settings',
-			body: {
-				data: { type: 'sharing-setting', attributes: { is_public: false } },
-			},
+		});
+		expect(lastRequest().body).toEqual({ is_active: false });
+	});
+
+	it('keeps a null password, which removes the protection', async () => {
+		respond(sharing);
+
+		await invoke(Sharing.update, {
+			projectId: 3057417,
+			password: null,
+			visibility: { hide_overview: true },
+		});
+
+		expect(lastRequest().body).toEqual({
+			password: null,
+			visibility: { hide_overview: true },
 		});
 	});
 
-	it.each([[{ projectId: 3057417 }], [{ projectId: 0 }]])(
-		'rejects %j before calling Keyword',
-		async (input) => {
-			await expect(invoke(Sharing.update, input)).rejects.toThrow();
-			expect(fetchMock).not.toHaveBeenCalled();
-		},
-	);
+	it.each([
+		[{ projectId: 3057417 }],
+		[{ projectId: 0, is_active: true }],
+		[{ projectId: 3057417, is_public: true }],
+	])('rejects %j before calling Keyword', async (input) => {
+		await expect(invoke(Sharing.update, input)).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });
 
 describe('keywords.list', () => {

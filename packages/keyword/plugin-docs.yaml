@@ -48,7 +48,7 @@ apiExamples:
   sharing.get:
     call: "{ projectId: 3057417 }"
   sharing.update:
-    call: "{ projectId: 3057417, is_public: true }"
+    call: "{ projectId: 3057417, is_active: true }"
   keywords.list:
     call: "{ projectName: 'Disney', page: 1, per_page: 250 }"
   keywords.get:

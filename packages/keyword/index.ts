@@ -271,12 +271,12 @@ const keywordEndpointMeta = {
 	'sharing.get': {
 		riskLevel: 'read',
 		description:
-			'A project’s sharing settings: whether the public link is on and whether it needs a password',
+			'A project’s shared-report settings: whether the share link is on, its hash, whether it needs a password, and what the report shows',
 	},
 	'sharing.update': {
 		riskLevel: 'write',
 		description:
-			'Turn a project’s public share link on or off, and set or clear its password',
+			'Turn a project’s share link on or off, set or clear its password, or toggle what the shared report shows. Everything except the on/off switch needs Keyword’s white-label permission',
 	},
 	'keywords.list': {
 		riskLevel: 'read',

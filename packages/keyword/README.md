@@ -35,8 +35,8 @@ pnpm add @corsair-dev/keyword
 | `rankChart.get` | `keyword.api.rankChart.get` | `read` | Daily rank history for a set of keywords over up to 180 days; Keyword refuses a call covering more than 400,000 keyword-days |
 | `rankingUrls.list` | `keyword.api.rankingUrls.list` | `read` | The pages that rank best for a project, with their average position and total search volume |
 | `regions.list` | `keyword.api.regions.list` | `read` | The Google regions a project tracks, with each one’s language and keyword count |
-| `sharing.get` | `keyword.api.sharing.get` | `read` | A project’s sharing settings: whether the public link is on and whether it needs a password |
-| `sharing.update` | `keyword.api.sharing.update` | `write` | Turn a project’s public share link on or off, and set or clear its password |
+| `sharing.get` | `keyword.api.sharing.get` | `read` | A project’s shared-report settings: whether the share link is on, its hash, whether it needs a password, and what the report shows |
+| `sharing.update` | `keyword.api.sharing.update` | `write` | Turn a project’s share link on or off, set or clear its password, or toggle what the shared report shows. Everything except the on/off switch needs Keyword’s white-label permission |
 
 ## Auth
 

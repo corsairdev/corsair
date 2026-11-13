@@ -153,22 +153,32 @@ const SharingGetInputSchema = z.object({ projectId: ProjectIdSchema });
 
 export type SharingGetInput = z.input<typeof SharingGetInputSchema>;
 
+// Sharing settings are a plain object at the root, not a JSON:API resource.
+// The column and chart sections are passed through as Keyword sends them.
+const SharingVisibilitySchema = z
+	.object({
+		hide_overview: z.boolean().nullish(),
+		hide_top_pages: z.boolean().nullish(),
+		hide_share_options: z.boolean().nullish(),
+		hide_keyword_actions: z.boolean().nullish(),
+		show_rank_verification: z.boolean().nullish(),
+	})
+	.loose();
+
 const SharingSettingsSchema = z
 	.object({
-		data: z
-			.object({
-				type: z.string().nullish(),
-				id: z.string().nullish(),
-				attributes: z
-					.object({
-						project_id: z.number().nullish(),
-						is_public: z.boolean().nullish(),
-						password: z.string().nullish(),
-						sov_view_key: z.boolean().nullish(),
-					})
-					.loose(),
-			})
-			.loose(),
+		project_id: z.number().nullish(),
+		share_hash: z
+			.string()
+			.nullish()
+			.describe('The share link’s hash; null while sharing is off.'),
+		is_active: z.boolean().nullish(),
+		is_password_protected: z.boolean().nullish(),
+		visibility: SharingVisibilitySchema.nullish(),
+		keyword_columns: z.object({}).loose().nullish(),
+		keyword_charts: z.object({}).loose().nullish(),
+		overview_charts: z.object({}).loose().nullish(),
+		branding: z.object({}).loose().nullish(),
 	})
 	.loose();
 
@@ -177,17 +187,28 @@ export type SharingSettings = z.infer<typeof SharingSettingsSchema>;
 const SharingUpdateInputSchema = z
 	.object({
 		projectId: ProjectIdSchema,
-		is_public: z
+		is_active: z
 			.boolean()
 			.optional()
-			.describe('Turn the public share link on or off.'),
+			.describe('Turn the share link on or off.'),
 		password: z
 			.string()
+			.max(255)
+			.nullable()
 			.optional()
 			.describe(
-				'Protect the share link with this password. Send an empty string to remove it.',
+				'Protect the share link with this password; null or an empty string removes it. Setting one needs the white-label plan.',
 			),
-		sov_view_key: z.boolean().optional(),
+		visibility: z
+			.object({
+				hide_overview: z.boolean().optional(),
+				hide_top_pages: z.boolean().optional(),
+				hide_share_options: z.boolean().optional(),
+				hide_keyword_actions: z.boolean().optional(),
+				show_rank_verification: z.boolean().optional(),
+			})
+			.optional()
+			.describe('Toggles merged key by key; omitted ones keep their value.'),
 	})
 	.superRefine((value, ctx) => {
 		const { projectId: _projectId, ...changes } = value;
@@ -195,7 +216,7 @@ const SharingUpdateInputSchema = z
 			ctx.addIssue({
 				code: 'custom',
 				path: ['projectId'],
-				message: 'Send `is_public`, `password` or `sov_view_key`.',
+				message: 'Send `is_active`, `password` or `visibility`.',
 			});
 		}
 	});
