@@ -10,6 +10,7 @@ import {
 import type { EncodianOperationId } from './types';
 
 type ParsedOperationInput = {
+	// `unknown` because operation bodies differ; operation schemas validate each body before use.
 	body?: unknown;
 	query?: Record<string, string | number | boolean | undefined>;
 	path?: Record<string, string | number>;

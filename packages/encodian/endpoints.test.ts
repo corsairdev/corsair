@@ -77,6 +77,17 @@ describe('Encodian operation requests', () => {
 				}
 			}
 			expect(result).toEqual(EncodianOutputFixtures[operationId]);
+			if (operationId === 'conversion.basicConversion') {
+				expect(result).toMatchObject({
+					Filename: 'converted.pdf',
+					FileContent: 'SGVsbG8=',
+				});
+			}
+			if (operationId === 'conversion.convertPdfToImages') {
+				expect(result).toMatchObject({
+					documents: [{ fileName: 'page-1.png', fileContent: 'SGVsbG8=' }],
+				});
+			}
 		},
 	);
 

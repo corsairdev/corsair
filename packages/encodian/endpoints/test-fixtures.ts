@@ -657,7 +657,10 @@ export const EncodianOutputFixtures = {
 	'conversion.convertCad': {},
 	'conversion.convertMailMessage': {},
 	'conversion.convertExcel': {},
-	'conversion.basicConversion': {},
+	'conversion.basicConversion': {
+		Filename: 'converted.pdf',
+		FileContent: 'SGVsbG8=',
+	},
 	'conversion.convertHeicToPdf': {},
 	'conversion.htmlToImage': {},
 	'conversion.htmlToPdf': {},
@@ -666,7 +669,9 @@ export const EncodianOutputFixtures = {
 	'conversion.convertImageToPdf': {},
 	'conversion.convertJsonToExcel': {},
 	'conversion.convertPdfToExcel': {},
-	'conversion.convertPdfToImages': { documents: [] },
+	'conversion.convertPdfToImages': {
+		documents: [{ fileName: 'page-1.png', fileContent: 'SGVsbG8=' }],
+	},
 	'conversion.convertPdfToJpg': {},
 	'conversion.convertToPdfA': {},
 	'conversion.convertPdfToPng': {},

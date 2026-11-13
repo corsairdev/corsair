@@ -109,8 +109,13 @@ await tenant.encodian.api.general.getSubscriptionStatus({});
 **`barcodes.aiBarcodeRead`**
 
 ```ts
+import { readFile } from 'node:fs/promises';
+
 const tenant = corsair.withTenant('acme');
-await tenant.encodian.api.barcodes.aiBarcodeRead({});
+const fileContent = await readFile('./barcode.pdf', 'base64');
+await tenant.encodian.api.barcodes.aiBarcodeRead({
+  body: { FileContent: fileContent },
+});
 ```
 
 
