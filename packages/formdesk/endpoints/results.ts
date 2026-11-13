@@ -1,5 +1,9 @@
-import { z } from 'zod';
-import { defineOperation, encodePathSegment, tenantPlan } from './runtime';
+import {
+	defineOperation,
+	encodePathSegment,
+	jsonBody,
+	tenantPlan,
+} from './runtime';
 import {
 	FormdeskEndpointInputSchemas,
 	FormdeskEndpointOutputSchemas,
@@ -137,7 +141,7 @@ const pdf = defineOperation(
 			'POST',
 			`/formresults/${encodePathSegment(input.entryId)}/pdf`,
 			{
-				body: z.json().parse(input.settings ?? {}),
+				body: jsonBody(input.settings ?? {}),
 				binary: true,
 				retryable: false,
 			},

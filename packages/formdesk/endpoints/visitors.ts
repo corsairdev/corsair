@@ -1,5 +1,9 @@
-import { z } from 'zod';
-import { defineOperation, encodePathSegment, tenantPlan } from './runtime';
+import {
+	defineOperation,
+	encodePathSegment,
+	jsonBody,
+	tenantPlan,
+} from './runtime';
 import {
 	FormdeskEndpointInputSchemas,
 	FormdeskEndpointOutputSchemas,
@@ -50,7 +54,7 @@ const add = defineOperation(
 	FormdeskEndpointOutputSchemas.visitorsAdd,
 	(input) =>
 		tenantPlan(input, 'POST', '/visitors', {
-			body: z.json().parse(input.visitor),
+			body: jsonBody(input.visitor),
 			retryable: false,
 		}),
 );
@@ -65,7 +69,7 @@ const update = defineOperation(
 			'PUT',
 			`/visitors/${encodePathSegment(input.visitorId)}`,
 			{
-				body: z.json().parse(input.visitor),
+				body: jsonBody(input.visitor),
 				retryable: false,
 			},
 		),
@@ -96,7 +100,7 @@ const signOn = defineOperation(
 			'POST',
 			`/forms/${encodePathSegment(input.form)}/signon`,
 			{
-				body: z.json().parse(input.credentials),
+				body: jsonBody(input.credentials),
 				retryable: false,
 			},
 		),

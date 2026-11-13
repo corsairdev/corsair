@@ -1,9 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
-import type { z } from 'zod';
+import { z } from 'zod';
 import type { FormdeskEndpoint } from '..';
 import type { FormdeskRequestOptions } from '../client';
 import { FORMDESK_API_HOST, makeFormdeskRequest } from '../client';
-import type { FormdeskEndpointInputs, FormdeskEndpointOutputs } from './types';
+import type {
+	FormdeskEndpointInputs,
+	FormdeskEndpointOutputs,
+	FormdeskJson,
+} from './types';
 
 export type FormdeskRequestPlan = Omit<FormdeskRequestOptions, 'apiKey'> & {
 	host: string;
@@ -51,6 +55,23 @@ export function tenantPlan(
 		retryable: method === 'GET',
 		...options,
 	};
+}
+
+/**
+ * Builds a JSON request body from a flat input object. TypeScript callers can
+ * pass an optional field as `undefined`; JSON has no such value, so the field is
+ * left out rather than failing JSON validation.
+ */
+export function jsonBody(value: Record<string, unknown>): FormdeskJson {
+	// `unknown` because the callers' field schemas already validated each value;
+	// z.json() below re-checks that what remains is plain JSON.
+	return z
+		.json()
+		.parse(
+			Object.fromEntries(
+				Object.entries(value).filter(([, entry]) => entry !== undefined),
+			),
+		);
 }
 
 export function encodePathSegment(value: string | number): string {

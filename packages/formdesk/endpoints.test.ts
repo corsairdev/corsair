@@ -813,6 +813,48 @@ describe('REST v1 operation matrix', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
+	it('drops optional fields passed as undefined instead of rejecting the body', async () => {
+		mockedRequest.mockResolvedValue({
+			payload: { id: 7, name: 'Ada' },
+			creditsRemaining: 5,
+		});
+		await Users.update(context, {
+			...TENANT,
+			userId: 7,
+			user: { name: 'Ada', email: undefined },
+		});
+		await Visitors.update(context, {
+			...TENANT,
+			visitorId: 7,
+			visitor: { name: 'Ada', email: undefined },
+		});
+		mockedRequest.mockResolvedValue({
+			payload: { id: 'abc', url: 'https://www.formdesk.com/apitest/' },
+			creditsRemaining: 5,
+		});
+		await Users.signOn(context, {
+			...TENANT,
+			credentials: { username: 'ada', password: undefined },
+		});
+		mockedRequest.mockResolvedValue({
+			payload: fileContent,
+			creditsRemaining: 5,
+		});
+		await Results.pdf(context, {
+			...TENANT,
+			entryId: 17,
+			settings: { papersize: 'A4', scaling: undefined },
+		});
+		expect(mockedRequest.mock.calls.map(([, options]) => options.body)).toEqual(
+			[
+				{ name: 'Ada' },
+				{ name: 'Ada' },
+				{ username: 'ada' },
+				{ papersize: 'A4' },
+			],
+		);
+	});
+
 	it('rejects invalid provider output before logging completion', async () => {
 		mockedRequest.mockResolvedValue({
 			payload: [{ id: 1 }],
