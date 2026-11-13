@@ -42,8 +42,8 @@ on the overview's description; GoDial does not publish per-field validation
 constraints in that overview.
 
 ```ts
-const lists = await corsair.godial.lists.list({});
-const result = await corsair.godial.contacts.add({
+const lists = await corsair.godial.api.lists.list({});
+const result = await corsair.godial.api.contacts.add({
 	listId: 'list-id-from-lists-list',
 	name: 'Ada Lovelace',
 	phone: '+15555550123',
