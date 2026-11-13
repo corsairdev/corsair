@@ -341,6 +341,13 @@ describe('genderapiio.gender.infer', () => {
 	});
 });
 
+// The parsed batch result, typed from the plugin's own output.
+async function genderBatchResult() {
+	return (await invoke(genderBatch, {
+		items: [{ type: 'name', value: 'Sophia' }],
+	})) as Awaited<ReturnType<typeof genderBatch>>;
+}
+
 describe('genderapiio.gender.batch', () => {
 	it('posts the items and returns one entry per item', async () => {
 		respond(batch);
@@ -422,6 +429,18 @@ describe('genderapiio.gender.batch', () => {
 
 		expect(result.data[1]?.error?.code).toBe('validation_error');
 		expect(result.meta.summary?.failed).toBe(1);
+	});
+
+	it("keeps a failed item's detail and field errors, which is the reason it failed", async () => {
+		respond(batchWithFailure);
+		const result = await genderBatchResult();
+
+		expect(result.data[1]?.error).toMatchObject({
+			status: 422,
+			detail: 'The request does not match the schema.',
+			action: 'correct_request',
+			errors: [{ pointer: '/value' }],
+		});
 	});
 
 	it('caps a batch at 50 items', async () => {

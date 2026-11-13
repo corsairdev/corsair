@@ -159,7 +159,18 @@ export const batchWithFailure = {
 		{ index: 0, charged_credits: 1, data: sophia },
 		{
 			index: 1,
-			error: { code: 'validation_error', message: 'value is too long' },
+			// An ItemProblem, as the OpenAPI document defines it.
+			error: {
+				type: 'urn:genderapi:problem:validation_error',
+				title: 'validation error',
+				status: 422,
+				detail: 'The request does not match the schema.',
+				instance: 'urn:uuid:00000000-0000-4000-8000-000000000001',
+				code: 'validation_error',
+				request_id: '00000000-0000-4000-8000-000000000001',
+				action: 'correct_request',
+				errors: [{ pointer: '/value', message: 'must match pattern "\\S"' }],
+			},
 		},
 	],
 	meta: {

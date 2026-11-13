@@ -84,11 +84,26 @@ const BatchItemSchema = z.object({
 	id: z.string().optional(),
 	charged_credits: z.number().optional(),
 	data: PredictionSchema.optional(),
-	/** Present instead of `data` when this one item failed. */
+	/**
+	 * Present instead of `data` when this one item failed: a problem document
+	 * like a whole-request failure (`code`, `status`, `title`, `detail`,
+	 * `action`, field `errors`), not a bare message.
+	 */
 	error: z
 		.object({
 			code: z.string().optional(),
-			message: z.string().optional(),
+			status: z.number().optional(),
+			title: z.string().optional(),
+			detail: z.string().optional(),
+			action: z.string().optional(),
+			errors: z
+				.array(
+					z.object({
+						pointer: z.string().optional(),
+						message: z.string().optional(),
+					}),
+				)
+				.optional(),
 		})
 		.optional(),
 });
