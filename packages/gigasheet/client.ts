@@ -104,16 +104,10 @@ export async function makeGigasheetRequest<T>(
 		},
 	};
 
-	// `unknown` is needed because the helper also accepts arbitrary JSON values.
-	// This assertion is safe because an object body remains an object after redaction.
-	const sanitizedRequestBody = body
-		? (redactSensitiveData(body) as Record<string, unknown>)
-		: undefined;
-
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body: method !== 'GET' ? sanitizedRequestBody : undefined,
+		body: method !== 'GET' ? body : undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query,
 	};
@@ -126,7 +120,9 @@ export async function makeGigasheetRequest<T>(
 			// to preserve the original error instance, stack, status, and retryAfter per R8.
 			(error as { body: unknown }).body = redactSensitiveData(error.body);
 			if (error.request) {
-				(error.request as { body?: unknown }).body = sanitizedRequestBody;
+				(error.request as { body?: unknown }).body = body
+					? redactSensitiveData(body)
+					: undefined;
 			}
 			throw error;
 		}

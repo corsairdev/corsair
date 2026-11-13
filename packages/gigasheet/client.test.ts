@@ -104,6 +104,24 @@ describe('makeGigasheetRequest', () => {
 		});
 	});
 
+	it('sends caller request body unchanged over the wire without redaction', async () => {
+		mockRequest.mockResolvedValue({ Success: true });
+
+		await makeGigasheetRequest('/upload/url', 'test-key-123', {
+			method: 'POST',
+			body: {
+				token: 'valid-column-token',
+				name: 'Test_Dataset',
+			},
+		});
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(mockRequest.mock.calls[0]?.[1]?.body).toEqual({
+			token: 'valid-column-token',
+			name: 'Test_Dataset',
+		});
+	});
+
 	it('makes unauthenticated requests without X-GIGASHEET-TOKEN when key is undefined', async () => {
 		mockRequest.mockResolvedValue({ username: '', authenticated: false });
 
@@ -158,6 +176,9 @@ describe('makeGigasheetRequest', () => {
 			apiKey: '[REDACTED]',
 			token: '[REDACTED]',
 			message: 'Rate limit exceeded',
+		});
+		expect(apiErr.request?.body).toEqual({
+			apiKey: '[REDACTED]',
 		});
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(apiErr)).toBe(true);
 		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
