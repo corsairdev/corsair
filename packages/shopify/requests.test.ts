@@ -446,6 +446,25 @@ describe('customers', () => {
 		).toBe('jenny@example.com');
 	});
 
+	// Verified against a live store: selecting `displayName` on the Customer
+	// object returns `data: null` when the plan cannot read PII, which loses the
+	// whole page. Every other denied field is nulled individually.
+	it('customers.list never selects the fatal displayName field', async () => {
+		const ctx = createContext();
+		harness.respond({
+			data: {
+				customers: { edges: [{ node: customer, cursor: 'c1' }], pageInfo },
+			},
+		});
+
+		await Shopify.customers.list(ctx, {});
+
+		const { query } = sentGraphql();
+		expect(query).not.toContain('displayName');
+		expect(query).toContain('firstName');
+		expect(query).toContain('defaultEmailAddress');
+	});
+
 	it('customers.get asks for one customer', async () => {
 		const ctx = createContext();
 		harness.respond({ data: { customer } });

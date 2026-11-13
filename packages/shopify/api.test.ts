@@ -83,24 +83,40 @@ describeLive('Shopify live reads', () => {
 		}
 	});
 
-	it('lists customers and never reads a top-level email field', async () => {
+	// A plan that cannot read customer PII (Basic App Development, for one)
+	// nulls the denied fields and returns the rows anyway, with an
+	// ACCESS_DENIED entry beside the data. The call must succeed and hand back
+	// what it was allowed to read.
+	it('lists customers with PII nulled when the plan cannot read it', async () => {
 		const result = await Shopify.customers.list(ctx, { first: 5 });
 
 		for (const edge of result.customers.edges) {
 			// numberOfOrders is an UnsignedInt64, serialised as a string.
 			expect(typeof edge.node.numberOfOrders).toBe('string');
-			// The address, when present, sits under defaultEmailAddress.
+			// PII is null when the plan denies it, never absent. The query
+			// deliberately omits the Customer object's `displayName`, which
+			// returns `data: null` rather than a nulled field.
+			expect(edge.node.firstName ?? null).toBeNull();
 			const address = edge.node.defaultEmailAddress?.emailAddress;
 			expect(address === undefined || typeof address === 'string').toBe(true);
 		}
 	});
 
-	it('lists locations, which inventory.adjust needs', async () => {
+	it('lists locations with a nested address, which inventory.adjust needs', async () => {
 		const result = await Shopify.shop.listLocations(ctx, { first: 5 });
 
 		for (const edge of result.locations.edges) {
 			expect(typeof edge.node.id).toBe('string');
 			expect(typeof edge.node.isActive).toBe('boolean');
+			// Every location has an `address` object; a location with no street
+			// address has null members, not a null address.
+			const { address } = edge.node;
+			expect(address).toBeDefined();
+			expect(
+				address.address1 === null ||
+					address.address1 === undefined ||
+					typeof address.address1 === 'string',
+			).toBe(true);
 		}
 	});
 

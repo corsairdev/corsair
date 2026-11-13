@@ -212,6 +212,79 @@ describe('makeShopifyGraphqlRequest', () => {
 		expect(error.message).toContain('no data and no errors');
 	});
 
+	// Verified against a live store: a plan that cannot read customer PII
+	// answers with the rows present and the denied fields nulled, plus an
+	// ACCESS_DENIED entry. Throwing discards data the caller is allowed to see.
+	it('returns the data beside a field-level ACCESS_DENIED', async () => {
+		harness.respond({
+			data: { customers: { edges: [{ node: { id: 'c1', firstName: null } }] } },
+			errors: [
+				{
+					message: 'This app is not approved to access the Customer object.',
+					extensions: { code: 'ACCESS_DENIED' },
+				},
+			],
+		});
+		const onPartial = jest.fn();
+
+		const result = await makeShopifyGraphqlRequest<{
+			customers: { edges: unknown[] };
+		}>({
+			shopDomain: SHOP_DOMAIN,
+			accessToken: ACCESS_TOKEN,
+			query: '{ customers { edges { node { id } } } }',
+			replaySafe: true,
+			onPartial,
+		});
+
+		expect(result.data.customers.edges).toHaveLength(1);
+		expect(onPartial).toHaveBeenCalledWith(
+			expect.stringContaining('not approved'),
+		);
+	});
+
+	// The other side of that rule: an access denial with no data means nothing
+	// ran, so it still throws.
+	it('throws on an ACCESS_DENIED with no data', async () => {
+		harness.respond({
+			errors: [
+				{
+					message: 'Access denied for customer field',
+					extensions: { code: 'ACCESS_DENIED' },
+				},
+			],
+		});
+
+		const error = await harness.expectRejection<ShopifyAPIError>(
+			makeShopifyGraphqlRequest({
+				shopDomain: SHOP_DOMAIN,
+				accessToken: ACCESS_TOKEN,
+				query: '{ customers { edges { node { id } } } }',
+			}),
+		);
+
+		expect(error.code).toBe('ACCESS_DENIED');
+	});
+
+	// A throttled response can also carry data, and it must still fail: the
+	// operation did not run, so retrying is the point.
+	it('throws on a THROTTLED body even when data is present', async () => {
+		harness.respond({
+			...throttledBody,
+			data: { shop: { name: 'Test' } },
+		});
+
+		const error = await harness.expectRejection<ShopifyAPIError>(
+			makeShopifyGraphqlRequest({
+				shopDomain: SHOP_DOMAIN,
+				accessToken: ACCESS_TOKEN,
+				query: '{ shop { name } }',
+			}),
+		);
+
+		expect(error.code).toBe('THROTTLED');
+	});
+
 	it('does not leak the token into the error message', async () => {
 		harness.respond(authFailureBody);
 
