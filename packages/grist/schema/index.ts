@@ -1,4 +1,6 @@
+import { gristEntities } from './database';
+
 export const GristSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: gristEntities,
 } as const;

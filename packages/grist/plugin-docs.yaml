@@ -1,4 +1,163 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Grist"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Grist
+description: Relational spreadsheet-database platform combining the flexibility of a spreadsheet with the robustness of a relational database.
+recommendedAuth: api_key
+overviewNote: |
+  Grist API calls authenticate with an API key via the `Authorization: Bearer <api_key>` header.
+  By default requests target `https://docs.getgrist.com/api`. For team sites or self-hosted instances, configure `baseUrl` (e.g. `https://<team>.getgrist.com/api` or `https://<host>/api`).
+examples:
+  read:
+    path: orgs.list
+    title: List organizations
+  write:
+    path: records.add
+    title: Add records to a table
+    args:
+      docId: doc123example
+      tableId: Table1
+      records:
+        - fields:
+            Name: Alice
+            Role: Admin
+apiExamples:
+  orgs.get:
+    call: "{ orgId: 'current' }"
+  orgs.update:
+    call: "{ orgId: 'current', name: 'My Team' }"
+  orgs.delete:
+    call: "{ orgId: 'current', name: 'My Team' }"
+  orgs.listAccess:
+    call: "{ orgId: 'current' }"
+  orgs.modifyAccess:
+    call: "{ orgId: 'current', users: { 'user@example.com': 'editors' } }"
+  orgs.getUsage:
+    call: "{ orgId: 'current' }"
+
+  workspaces.list:
+    call: "{ orgId: 'current' }"
+  workspaces.create:
+    call: "{ orgId: 'current', name: 'Operations' }"
+  workspaces.get:
+    call: "{ workspaceId: 1 }"
+  workspaces.update:
+    call: "{ workspaceId: 1, name: 'Operations Hub' }"
+  workspaces.delete:
+    call: "{ workspaceId: 1 }"
+  workspaces.remove:
+    call: "{ workspaceId: 1 }"
+  workspaces.unremove:
+    call: "{ workspaceId: 1 }"
+  workspaces.listAccess:
+    call: "{ workspaceId: 1 }"
+  workspaces.modifyAccess:
+    call: "{ workspaceId: 1, users: { 'user@example.com': 'viewers' } }"
+
+  docs.create:
+    call: "{ workspaceId: 1, documentName: 'Inventory' }"
+  docs.createInWorkspace:
+    call: "{ workspaceId: 1, name: 'Inventory' }"
+  docs.get:
+    call: "{ docId: 'doc123example' }"
+  docs.update:
+    call: "{ docId: 'doc123example', name: 'Inventory 2026' }"
+  docs.delete:
+    call: "{ docId: 'doc123example' }"
+  docs.remove:
+    call: "{ docId: 'doc123example' }"
+  docs.unremove:
+    call: "{ docId: 'doc123example' }"
+  docs.move:
+    call: "{ docId: 'doc123example', workspace: 2 }"
+  docs.pin:
+    call: "{ docId: 'doc123example' }"
+  docs.unpin:
+    call: "{ docId: 'doc123example' }"
+  docs.copy:
+    call: "{ docId: 'doc123example', workspaceId: 1, documentName: 'Inventory Copy' }"
+  docs.fork:
+    call: "{ docId: 'doc123example' }"
+  docs.listAccess:
+    call: "{ docId: 'doc123example' }"
+  docs.modifyAccess:
+    call: "{ docId: 'doc123example', users: { 'user@example.com': 'owners' } }"
+  docs.listSnapshots:
+    call: "{ docId: 'doc123example' }"
+  docs.removeSnapshots:
+    call: "{ docId: 'doc123example', snapshotIds: ['snap123'] }"
+
+  tables.list:
+    call: "{ docId: 'doc123example' }"
+  tables.create:
+    call: "{ docId: 'doc123example', tables: [{ id: 'Products', columns: [{ id: 'title', fields: { label: 'Title' } }] }] }"
+  tables.update:
+    call: "{ docId: 'doc123example', tables: [{ id: 'Products', fields: { tableId: 'Items' } }] }"
+
+  records.list:
+    call: "{ docId: 'doc123example', tableId: 'Table1' }"
+  records.add:
+    call: "{ docId: 'doc123example', tableId: 'Table1', records: [{ fields: { pet: 'cat', popularity: 67 } }] }"
+  records.update:
+    call: "{ docId: 'doc123example', tableId: 'Table1', records: [{ id: 1, fields: { popularity: 80 } }] }"
+  records.replace:
+    call: "{ docId: 'doc123example', tableId: 'Table1', records: [{ require: { pet: 'cat' }, fields: { popularity: 85 } }] }"
+  records.delete:
+    call: "{ docId: 'doc123example', tableId: 'Table1', recordIds: [1] }"
+
+  columns.list:
+    call: "{ docId: 'doc123example', tableId: 'Table1' }"
+  columns.add:
+    call: "{ docId: 'doc123example', tableId: 'Table1', columns: [{ id: 'category', fields: { label: 'Category' } }] }"
+  columns.update:
+    call: "{ docId: 'doc123example', tableId: 'Table1', columns: [{ id: 'category', fields: { label: 'Product Category' } }] }"
+  columns.replace:
+    call: "{ docId: 'doc123example', tableId: 'Table1', columns: [{ id: 'category', fields: { label: 'Category' } }] }"
+  columns.delete:
+    call: "{ docId: 'doc123example', tableId: 'Table1', colId: 'category' }"
+
+  sql.query:
+    call: "{ docId: 'doc123example', sql: 'SELECT * FROM Table1 WHERE popularity >= ?', args: [50] }"
+  sql.queryGet:
+    call: "{ docId: 'doc123example', q: 'SELECT * FROM Table1' }"
+
+  attachments.list:
+    call: "{ docId: 'doc123example' }"
+  attachments.get:
+    call: "{ docId: 'doc123example', attachmentId: 1 }"
+  attachments.removeUnused:
+    call: "{ docId: 'doc123example' }"
+  attachments.updateUsed:
+    call: "{ docId: 'doc123example' }"
+  attachments.verifyFiles:
+    call: "{ docId: 'doc123example' }"
+  attachments.getTransferStatus:
+    call: "{ docId: 'doc123example' }"
+
+  profile.updateName:
+    call: "{ name: 'Jane Doe' }"
+  profile.updateLocale:
+    call: "{ locale: 'en-US' }"
+
+  serviceAccounts.create:
+    call: "{ name: 'CI Service Account' }"
+  serviceAccounts.get:
+    call: "{ saId: 'sa_1' }"
+  serviceAccounts.update:
+    call: "{ saId: 'sa_1', name: 'Updated CI Service Account' }"
+  serviceAccounts.delete:
+    call: "{ saId: 'sa_1' }"
+  serviceAccounts.regenerateApiKey:
+    call: "{ saId: 'sa_1' }"
+  serviceAccounts.deleteApiKey:
+    call: "{ saId: 'sa_1' }"
+
+  templates.get:
+    call: "{ templateId: 1 }"
+
+  users.disable:
+    call: "{ userId: 1 }"
+  users.enable:
+    call: "{ userId: 1 }"
+  users.delete:
+    call: "{ userId: 1 }"
+
+  session.setActive:
+    call: "{ email: 'user@example.com' }"

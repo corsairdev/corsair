@@ -1,9 +1,1 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const GristExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type GristExample = z.infer<typeof GristExample>;
+export const gristEntities = {} as const;
