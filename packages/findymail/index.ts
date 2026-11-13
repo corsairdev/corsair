@@ -388,6 +388,10 @@ export function findymail<const T extends FindymailPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? ('api_key' as const),
 	};
+	const { DEFAULT, ...specificHandlers } = {
+		...errorHandlers,
+		...options.errorHandlers,
+	};
 	return {
 		id: 'findymail',
 		authConfig: findymailAuthConfig,
@@ -400,7 +404,7 @@ export function findymail<const T extends FindymailPluginOptions>(
 		endpointSchemas: findymailEndpointSchemas,
 		webhookSchemas: {},
 		pluginWebhookMatcher: () => false,
-		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
+		errorHandlers: { ...specificHandlers, DEFAULT },
 		keyBuilder: async (ctx: FindymailKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key?.trim()) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {

@@ -755,8 +755,8 @@ export const technologies_searchOutput = z
 				z
 					.object({
 						name: z.string().optional(),
-						category: z.string().optional(),
-						subcategory: z.string().optional(),
+						category: z.string().nullable().optional(),
+						subcategory: z.string().nullable().optional(),
 					})
 					.loose(),
 			)
@@ -776,8 +776,8 @@ export const technologies_lookupOutput = z
 				z
 					.object({
 						name: z.string().optional(),
-						category: z.string().optional(),
-						subcategory: z.string().optional(),
+						category: z.string().nullable().optional(),
+						subcategory: z.string().nullable().optional(),
 						last_detected_at: z.string().optional(),
 					})
 					.loose(),

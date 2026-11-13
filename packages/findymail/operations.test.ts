@@ -512,6 +512,54 @@ it('accepts documented synchronous and callback name search responses', async ()
 	}
 });
 
+it.each([
+	{
+		name: 'search',
+		call: () => api.technologies.search({ q: 'CRM' }),
+		response: {
+			data: [{ name: 'Example', category: null, subcategory: null }],
+		},
+	},
+	{
+		name: 'lookup',
+		call: () => api.technologies.lookup({ domain: 'example.com' }),
+		response: {
+			domain: 'example.com',
+			technologies: [{ name: 'Example', category: null, subcategory: null }],
+		},
+	},
+])(
+	'accepts nullable classifications in technology $name responses',
+	async ({ call, response }) => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify(response), {
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await expect(call()).resolves.toEqual(response);
+	},
+);
+
+it('runs a caller-provided specific error handler before the default handler', async () => {
+	const handler = jest.fn(async () => ({ maxRetries: 0 }));
+	const customApi = createCorsair({
+		plugins: [
+			findymail({
+				key: 'test-token',
+				errorHandlers: {
+					SERVER_ERROR: {
+						match: (error: Error) => error.message.includes('provider failed'),
+						handler,
+					},
+				},
+			}),
+		],
+	}).findymail.api;
+	fetchMock.mockRejectedValueOnce(new Error('provider failed'));
+	await expect(customApi.usage.credits({})).rejects.toThrow('provider failed');
+	expect(handler).toHaveBeenCalledTimes(1);
+});
+
 it.each(cases)(
 	'$name sends the documented request and parses the response',
 	async ({ call, method, path, body, status = 200, response }) => {

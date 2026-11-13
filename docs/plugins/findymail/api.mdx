@@ -1560,8 +1560,8 @@ await corsair.findymail.api.technologies.lookup({ domain: 'example.com' });
 ```ts
 {
   name?: string,
-  category?: string,
-  subcategory?: string,
+  category?: string | null,
+  subcategory?: string | null,
   last_detected_at?: string
 }[]
 ```
@@ -1604,8 +1604,8 @@ await corsair.findymail.api.technologies.search({ q: 'CRM' });
 ```ts
 {
   name?: string,
-  category?: string,
-  subcategory?: string
+  category?: string | null,
+  subcategory?: string | null
 }[]
 ```
 </Accordion>
