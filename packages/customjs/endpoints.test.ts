@@ -701,6 +701,14 @@ describe('pages.list', () => {
 		await expect(invoke(Pages.list, {})).resolves.toEqual({ pages: [] });
 	});
 
+	it('rejects a null body instead of reporting an empty workspace', async () => {
+		respondJson(null);
+
+		await expect(invoke(Pages.list, {})).rejects.toMatchObject({
+			name: 'ZodError',
+		});
+	});
+
 	it('rejects a body that is not a page list', async () => {
 		respondJson({ pages: [] });
 

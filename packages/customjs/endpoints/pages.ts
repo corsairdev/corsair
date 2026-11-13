@@ -19,9 +19,10 @@ export const list: CustomjsEndpoints['pagesList'] = (ctx, input) =>
 		input,
 		() => ({ method: 'GET', path: '/pages/api/page' }),
 		{
-			// A workspace with no pages answers 200 with `[]`. Nothing else can be
-			// an empty array, so an absent body is the only case this fills in.
-			shape: (raw) => ({ pages: raw ?? [] }),
+			// A workspace with no pages answers 200 with `[]`. Anything that is not
+			// an array (`null` included) fails the output schema rather than reading
+			// as an empty workspace.
+			shape: (raw) => ({ pages: raw }),
 			log: (_, result) => ({ count: result.pages.length }),
 		},
 	);
