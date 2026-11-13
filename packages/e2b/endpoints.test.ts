@@ -291,7 +291,7 @@ const INPUT_FIXTURES: Record<string, unknown> = {
 			connectTimeoutMs: 1,
 			e2bAccessToken: 'test-sandbox-access-token',
 		},
-		body: {},
+		body: { path: '/tmp', recursive: true, includeEntry: true },
 	},
 	'filesystem.getWatcherEvents': {
 		headers: {
@@ -300,7 +300,7 @@ const INPUT_FIXTURES: Record<string, unknown> = {
 			connectTimeoutMs: 1,
 			e2bAccessToken: 'test-sandbox-access-token',
 		},
-		body: {},
+		body: { watcherId: 'watcher-test' },
 	},
 	'filesystem.listDir': {
 		headers: {
@@ -309,7 +309,7 @@ const INPUT_FIXTURES: Record<string, unknown> = {
 			connectTimeoutMs: 1,
 			e2bAccessToken: 'test-sandbox-access-token',
 		},
-		body: {},
+		body: { path: '/tmp', depth: 2 },
 	},
 	'filesystem.createDir': {
 		headers: {
@@ -318,7 +318,7 @@ const INPUT_FIXTURES: Record<string, unknown> = {
 			connectTimeoutMs: 1,
 			e2bAccessToken: 'test-sandbox-access-token',
 		},
-		body: {},
+		body: { path: '/tmp/corsair-e2b' },
 	},
 	'filesystem.move': {
 		headers: {
@@ -327,7 +327,10 @@ const INPUT_FIXTURES: Record<string, unknown> = {
 			connectTimeoutMs: 1,
 			e2bAccessToken: 'test-sandbox-access-token',
 		},
-		body: {},
+		body: {
+			source: '/tmp/source.txt',
+			destination: '/tmp/destination.txt',
+		},
 	},
 	'filesystem.remove': {
 		headers: {
@@ -336,7 +339,7 @@ const INPUT_FIXTURES: Record<string, unknown> = {
 			connectTimeoutMs: 1,
 			e2bAccessToken: 'test-sandbox-access-token',
 		},
-		body: {},
+		body: { path: '/tmp/obsolete.txt' },
 	},
 	'filesystem.removeWatcher': {
 		headers: {
@@ -345,7 +348,7 @@ const INPUT_FIXTURES: Record<string, unknown> = {
 			connectTimeoutMs: 1,
 			e2bAccessToken: 'test-sandbox-access-token',
 		},
-		body: {},
+		body: { watcherId: 'watcher-test' },
 	},
 	'filesystem.stat': {
 		headers: {
@@ -354,7 +357,7 @@ const INPUT_FIXTURES: Record<string, unknown> = {
 			connectTimeoutMs: 1,
 			e2bAccessToken: 'test-sandbox-access-token',
 		},
-		body: {},
+		body: { path: '/tmp/corsair-e2b' },
 	},
 	'process.closeStdin': {
 		headers: {
@@ -363,7 +366,7 @@ const INPUT_FIXTURES: Record<string, unknown> = {
 			connectTimeoutMs: 1,
 			e2bAccessToken: 'test-sandbox-access-token',
 		},
-		body: {},
+		body: { process: { pid: 101 } },
 	},
 	'process.list': {
 		headers: {
@@ -381,7 +384,7 @@ const INPUT_FIXTURES: Record<string, unknown> = {
 			connectTimeoutMs: 1,
 			e2bAccessToken: 'test-sandbox-access-token',
 		},
-		body: {},
+		body: { process: { pid: 101 }, input: { stdin: 'aGVsbG8=' } },
 	},
 	'process.sendSignal': {
 		headers: {
@@ -390,7 +393,7 @@ const INPUT_FIXTURES: Record<string, unknown> = {
 			connectTimeoutMs: 1,
 			e2bAccessToken: 'test-sandbox-access-token',
 		},
-		body: {},
+		body: { process: { pid: 101 }, signal: 'SIGNAL_SIGTERM' },
 	},
 	'process.update': {
 		headers: {
@@ -399,7 +402,7 @@ const INPUT_FIXTURES: Record<string, unknown> = {
 			connectTimeoutMs: 1,
 			e2bAccessToken: 'test-sandbox-access-token',
 		},
-		body: {},
+		body: { process: { tag: 'agent' }, pty: { size: { cols: 80, rows: 24 } } },
 	},
 	'teams.getMetrics': {
 		path: {
@@ -478,20 +481,24 @@ const OUTPUT_FIXTURES: Record<string, unknown> = {
 		clientID: 'test',
 		envdVersion: 'test',
 	},
-	'sandboxes.list': [
-		{
-			templateID: 'test',
-			sandboxID: 'test',
-			clientID: 'test',
-			startedAt: '2026-01-01T00:00:00Z',
-			cpuCount: 1,
-			memoryMB: 128,
-			diskSizeMB: 0,
-			endAt: '2026-01-01T00:00:00Z',
-			state: 'running',
-			envdVersion: 'test',
-		},
-	],
+	'sandboxes.list': {
+		items: [
+			{
+				templateID: 'template-test',
+				sandboxID: 'sandbox-test',
+				clientID: 'client-test',
+				startedAt: '2026-01-01T00:00:00Z',
+				cpuCount: 1,
+				memoryMB: 128,
+				diskSizeMB: 0,
+				endAt: '2026-01-01T00:05:00Z',
+				state: 'running',
+				envdVersion: 'test',
+			},
+		],
+		nextToken: 'next-page',
+		totalRunning: 1,
+	},
 	'sandboxes.listMetrics': {
 		sandboxes: {},
 	},
@@ -534,12 +541,12 @@ const OUTPUT_FIXTURES: Record<string, unknown> = {
 		snapshotID: 'test',
 		names: ['test'],
 	},
-	'sandboxes.listSnapshots': [
-		{
-			snapshotID: 'test',
-			names: ['test'],
-		},
-	],
+	'sandboxes.listSnapshots': {
+		items: [
+			{ snapshotID: 'snapshot-test', names: ['team/snapshot-test:default'] },
+		],
+		nextToken: 'next-page',
+	},
 	'templates.create': {
 		templateID: 'test',
 		buildID: 'test',
@@ -548,29 +555,32 @@ const OUTPUT_FIXTURES: Record<string, unknown> = {
 		names: ['test'],
 		tags: ['test'],
 	},
-	'templates.list': [
-		{
-			templateID: 'test',
-			buildID: 'test',
-			cpuCount: 1,
-			memoryMB: 128,
-			diskSizeMB: 0,
-			public: false,
-			createdAt: '2026-01-01T00:00:00Z',
-			updatedAt: '2026-01-01T00:00:00Z',
-			createdBy: {
-				id: '00000000-0000-4000-8000-000000000001',
-				email: null,
+	'templates.list': {
+		items: [
+			{
+				templateID: 'test',
+				buildID: 'test',
+				cpuCount: 1,
+				memoryMB: 128,
+				diskSizeMB: 0,
+				public: false,
+				createdAt: '2026-01-01T00:00:00Z',
+				updatedAt: '2026-01-01T00:00:00Z',
+				createdBy: {
+					id: '00000000-0000-4000-8000-000000000001',
+					email: null,
+				},
+				lastSpawnedAt: '2026-01-01T00:00:00Z',
+				spawnCount: 1,
+				buildCount: 1,
+				envdVersion: 'test',
+				aliases: ['test'],
+				names: ['test'],
+				buildStatus: 'building',
 			},
-			lastSpawnedAt: '2026-01-01T00:00:00Z',
-			spawnCount: 1,
-			buildCount: 1,
-			envdVersion: 'test',
-			aliases: ['test'],
-			names: ['test'],
-			buildStatus: 'building',
-		},
-	],
+		],
+		nextToken: 'next-page',
+	},
 	'templates.getBuildUploadLink': {
 		present: false,
 	},
@@ -627,6 +637,7 @@ const OUTPUT_FIXTURES: Record<string, unknown> = {
 				memoryMB: 128,
 			},
 		],
+		nextToken: 'next-page',
 	},
 	'templates.update': {
 		names: ['test'],
@@ -711,16 +722,104 @@ const OUTPUT_FIXTURES: Record<string, unknown> = {
 	},
 	'envd.metrics': {},
 	'envd.getEnvironmentVariables': {},
-	'filesystem.createWatcher': {},
-	'filesystem.getWatcherEvents': {},
-	'filesystem.listDir': {},
-	'filesystem.createDir': {},
-	'filesystem.move': {},
+	'filesystem.createWatcher': { watcherId: 'watcher-test' },
+	'filesystem.getWatcherEvents': {
+		events: [
+			{
+				name: 'report.txt',
+				type: 'EVENT_TYPE_CREATE',
+				entry: {
+					name: 'report.txt',
+					type: 'FILE_TYPE_FILE',
+					path: '/tmp/report.txt',
+					size: '9007199254740993',
+					mode: 420,
+					permissions: 'rw-r--r--',
+					owner: 'user',
+					group: 'user',
+					modifiedTime: '2026-01-01T00:00:00Z',
+					metadata: { source: 'agent' },
+					isSymlink: false,
+				},
+			},
+		],
+	},
+	'filesystem.listDir': {
+		entries: [
+			{
+				name: 'report.txt',
+				type: 'FILE_TYPE_FILE',
+				path: '/tmp/report.txt',
+				size: 12,
+				mode: 420,
+				permissions: 'rw-r--r--',
+				owner: 'user',
+				group: 'user',
+				modifiedTime: '2026-01-01T00:00:00Z',
+				metadata: { source: 'agent' },
+				isSymlink: false,
+			},
+		],
+	},
+	'filesystem.createDir': {
+		entry: {
+			name: 'corsair-e2b',
+			type: 'FILE_TYPE_DIRECTORY',
+			path: '/tmp/corsair-e2b',
+			mode: 493,
+			permissions: 'rwxr-xr-x',
+			owner: 'user',
+			group: 'user',
+			modifiedTime: '2026-01-01T00:00:00Z',
+			isSymlink: false,
+		},
+	},
+	'filesystem.move': {
+		entry: {
+			name: 'destination.txt',
+			type: 'FILE_TYPE_FILE',
+			path: '/tmp/destination.txt',
+			size: 12,
+			mode: 420,
+			permissions: 'rw-r--r--',
+			owner: 'user',
+			group: 'user',
+			modifiedTime: '2026-01-01T00:00:00Z',
+			isSymlink: false,
+		},
+	},
 	'filesystem.remove': {},
 	'filesystem.removeWatcher': {},
-	'filesystem.stat': {},
+	'filesystem.stat': {
+		entry: {
+			name: 'report.txt',
+			type: 'FILE_TYPE_FILE',
+			path: '/tmp/report.txt',
+			size: 12,
+			mode: 420,
+			permissions: 'rw-r--r--',
+			owner: 'user',
+			group: 'user',
+			modifiedTime: '2026-01-01T00:00:00Z',
+			metadata: { source: 'agent' },
+			isSymlink: false,
+		},
+	},
 	'process.closeStdin': {},
-	'process.list': {},
+	'process.list': {
+		processes: [
+			{
+				config: {
+					cmd: 'python',
+					args: ['-c', 'print(1)'],
+					envs: { MODE: 'test' },
+					cwd: '/home/user',
+				},
+				pid: 101,
+				tag: 'agent',
+			},
+		],
+	},
 	'process.sendInput': {},
 	'process.sendSignal': {},
 	'process.update': {},
@@ -737,16 +836,19 @@ const OUTPUT_FIXTURES: Record<string, unknown> = {
 		timestampUnix: 1,
 		value: 1,
 	},
-	'secrets.list': [
-		{
-			secretID: 'test',
-			name: 'test',
-			currentVersion: 1,
-			metadata: {},
-			createdAt: '2026-01-01T00:00:00Z',
-			updatedAt: '2026-01-01T00:00:00Z',
-		},
-	],
+	'secrets.list': {
+		items: [
+			{
+				secretID: 'secret-test',
+				name: 'test',
+				currentVersion: 1,
+				metadata: {},
+				createdAt: '2026-01-01T00:00:00Z',
+				updatedAt: '2026-01-01T00:00:00Z',
+			},
+		],
+		nextToken: 'next-page',
+	},
 	'secrets.create': {
 		secretID: 'test',
 		name: 'test',
@@ -798,6 +900,20 @@ const OUTPUT_FIXTURES: Record<string, unknown> = {
 		},
 	],
 };
+
+const PAGINATED_ROUTE_IDS = new Set([
+	'sandboxes.list',
+	'sandboxes.listSnapshots',
+	'templates.list',
+	'templates.get',
+	'secrets.list',
+]);
+const PAGINATED_LIST_ROUTE_IDS = new Set([
+	'sandboxes.list',
+	'sandboxes.listSnapshots',
+	'templates.list',
+	'secrets.list',
+]);
 
 // Test fixtures are untrusted JSON values until narrowed for assertions.
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -873,10 +989,34 @@ describe('E2B REST operation coverage', () => {
 			const responseBody = OUTPUT_FIXTURES[route.id];
 			globalThis.fetch = async (url, init) => {
 				calls.push({ url: String(url), init });
+				const isPaginated = PAGINATED_ROUTE_IDS.has(route.id);
+				const paginatedFixture =
+					isPaginated && isRecord(responseBody) ? responseBody : {};
+				let providerBody = responseBody;
+				if (PAGINATED_LIST_ROUTE_IDS.has(route.id)) {
+					providerBody = paginatedFixture.items;
+				} else if (route.id === 'templates.get' && isRecord(responseBody)) {
+					providerBody = Object.fromEntries(
+						Object.entries(responseBody).filter(
+							([name]) => name !== 'nextToken',
+						),
+					);
+				}
+				const responseHeaders: Record<string, string> = {
+					'Content-Type': 'application/json',
+				};
+				if (typeof paginatedFixture.nextToken === 'string') {
+					responseHeaders['X-Next-Token'] = paginatedFixture.nextToken;
+				}
+				if (typeof paginatedFixture.totalRunning === 'number') {
+					responseHeaders['X-Total-Running'] = String(
+						paginatedFixture.totalRunning,
+					);
+				}
 				return hasResponseBody
-					? new Response(JSON.stringify(responseBody), {
+					? new Response(JSON.stringify(providerBody), {
 							status: 200,
-							headers: { 'Content-Type': 'application/json' },
+							headers: responseHeaders,
 						})
 					: new Response(null, { status: 204 });
 			};

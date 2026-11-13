@@ -8,7 +8,7 @@ Use **E2B** through Corsair: one client, typed API calls.
 
 Platform operations use the project API key in the X-API-Key header. Sandbox envd and unary filesystem/process operations target the shared sandbox host and require e2bSandboxId, e2bSandboxPort (49983 for envd), and an e2bAccessToken where the official OpenAPI security scheme requires it. envd.health is keyless. The documented file upload/download routes are not included because they require raw file bodies or binary responses.
 
-List endpoints forward E2B's documented cursor or limit parameters; sandbox listing uses the v2 next-token pagination API. Secret values are write-only and are redacted from errors and never included in event logs.
+Four cursor-paginated collection-list operations return `{ items, nextToken? }`; pass the returned token as `query.nextToken` to fetch the next page. `templates.get` returns its build cursor beside the template data. Sandbox listing also returns `totalRunning` when E2B supplies it. Secret values are write-only and are redacted from errors and never included in event logs.
 
 **What you get:**
 
@@ -98,19 +98,24 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`envd.getEnvironmentVariables`**
+**Read the environment of a sandbox**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.e2b.api.envd.getEnvironmentVariables({});
+await tenant.e2b.api.envd.getEnvironmentVariables({
+	headers: { e2bSandboxId: 'sandbox-test', e2bSandboxPort: 49983, e2bAccessToken: 'sandbox-access-token' },
+});
 ```
 
 
-**`filesystem.createDir`**
+**Create a directory inside a sandbox**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.e2b.api.filesystem.createDir({});
+await tenant.e2b.api.filesystem.createDir({
+	headers: { e2bSandboxId: 'sandbox-test', e2bSandboxPort: 49983, e2bAccessToken: 'sandbox-access-token' },
+	body: { path: '/tmp/corsair-e2b' },
+});
 ```
 
 

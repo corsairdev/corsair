@@ -2,6 +2,7 @@ import { AuthMissingError } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { makeE2bRequest } from './client';
 import { e2bOperationRoutes } from './endpoints/routes';
+import { E2bEndpointOutputSchemas } from './endpoints/types';
 
 describe('E2B API client', () => {
 	const originalFetch = globalThis.fetch;
@@ -38,6 +39,71 @@ describe('E2B API client', () => {
 			'project-api-key',
 		);
 		expect(new Headers(call?.init?.headers).get('Authorization')).toBeNull();
+	});
+
+	it('returns E2B header cursors and forwards them to the next page', async () => {
+		const listedSandbox = {
+			templateID: 'template-test',
+			sandboxID: 'sandbox-test',
+			clientID: 'client-test',
+			startedAt: '2026-01-01T00:00:00Z',
+			endAt: '2026-01-01T00:05:00Z',
+			cpuCount: 1,
+			memoryMB: 128,
+			diskSizeMB: 0,
+			state: 'running',
+			envdVersion: 'test',
+		};
+		let page = 0;
+		globalThis.fetch = async (url, init) => {
+			calls.push({ url: String(url), init });
+			page += 1;
+			return page === 1
+				? new Response(JSON.stringify([listedSandbox]), {
+						status: 200,
+						headers: {
+							'Content-Type': 'application/json',
+							'X-Next-Token': 'next-page',
+							'X-Total-Running': '1',
+						},
+					})
+				: new Response('[]', {
+						status: 200,
+						headers: { 'Content-Type': 'application/json' },
+					});
+		};
+
+		const firstResult = await makeE2bRequest(
+			e2bOperationRoutes['sandboxes.list'],
+			'project-api-key',
+			{ query: { limit: 1 } },
+		);
+		const firstPage =
+			E2bEndpointOutputSchemas['sandboxes.list'].parse(firstResult);
+		expect(firstPage.items).toEqual([listedSandbox]);
+		expect(firstPage.nextToken).toBe('next-page');
+		expect(firstPage.totalRunning).toBe(1);
+
+		const secondResult = await makeE2bRequest(
+			e2bOperationRoutes['sandboxes.list'],
+			'project-api-key',
+			{ query: { limit: 1, nextToken: firstPage.nextToken } },
+		);
+		const secondPage =
+			E2bEndpointOutputSchemas['sandboxes.list'].parse(secondResult);
+		expect(secondPage.items).toEqual([]);
+		expect(secondPage.nextToken).toBeUndefined();
+		expect(calls).toHaveLength(2);
+		expect(
+			new URL(calls[0]?.url ?? 'https://api.e2b.app').searchParams.get(
+				'nextToken',
+			),
+		).toBeNull();
+		expect(
+			new URL(calls[1]?.url ?? 'https://api.e2b.app').searchParams.get(
+				'nextToken',
+			),
+		).toBe('next-page');
 	});
 
 	it('fails before fetch when a platform API key is missing', async () => {
@@ -133,7 +199,7 @@ describe('E2B API client', () => {
 	});
 
 	it('redacts secret request fields from propagated provider errors', async () => {
-		const secretValue = 'fixture-secret-value';
+		const secretValue = 'xy';
 		globalThis.fetch = async (url, init) => {
 			calls.push({ url: String(url), init });
 			return new Response(

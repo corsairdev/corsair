@@ -51,13 +51,41 @@ describe('E2B operation schemas', () => {
 		).toBe(false);
 	});
 
-	it('validates representative response and no-content shapes', () => {
+	it('validates base64 process input and int64 filesystem sizes', () => {
+		const sandboxHeaders = {
+			e2bSandboxId: 'sandbox-test',
+			e2bSandboxPort: 49983,
+			e2bAccessToken: 'sandbox-access-token',
+		};
 		expect(
-			E2bEndpointOutputSchemas['sandboxes.list'].safeParse([]).success,
+			E2bEndpointInputSchemas['process.sendInput'].safeParse({
+				headers: sandboxHeaders,
+				body: { process: { pid: 101 }, input: { stdin: 'aGVsbG8=' } },
+			}).success,
 		).toBe(true);
 		expect(
-			E2bEndpointOutputSchemas['sandboxes.list'].safeParse({ sandboxes: [] })
-				.success,
+			E2bEndpointInputSchemas['process.sendInput'].safeParse({
+				headers: sandboxHeaders,
+				body: { process: { pid: 101 }, input: { stdin: 'hello' } },
+			}).success,
+		).toBe(false);
+		expect(
+			E2bEndpointOutputSchemas['filesystem.listDir'].safeParse({
+				entries: [{ name: 'large.bin', size: '9007199254740993' }],
+			}).success,
+		).toBe(true);
+	});
+
+	it('validates representative response and no-content shapes', () => {
+		expect(
+			E2bEndpointOutputSchemas['sandboxes.list'].safeParse({
+				items: [],
+				nextToken: 'next-page',
+				totalRunning: 1,
+			}).success,
+		).toBe(true);
+		expect(
+			E2bEndpointOutputSchemas['sandboxes.list'].safeParse([]).success,
 		).toBe(false);
 		expect(
 			E2bEndpointOutputSchemas['sandboxes.kill'].safeParse(undefined).success,

@@ -1,6 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
 import type {
 	ApiRequestOptions,
+	ApiResult,
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
@@ -17,6 +18,14 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
 	backoffMultiplier: 1,
 	headerNames: { retryAfter: 'retry-after' },
 };
+
+const PAGINATED_OPERATION_IDS = new Set([
+	'sandboxes.list',
+	'sandboxes.listSnapshots',
+	'templates.list',
+	'templates.get',
+	'secrets.list',
+]);
 
 const SENSITIVE_FIELD_NAMES = new Set([
 	'accesskeyid',
@@ -78,7 +87,7 @@ function collectSensitiveValues(value: unknown): string[] {
 	if (!isRecord(value)) return [];
 	return Object.entries(value).flatMap(([key, item]) => {
 		if (SENSITIVE_FIELD_NAMES.has(normalizedFieldName(key))) {
-			return typeof item === 'string' && item.length > 3 ? [item] : [];
+			return typeof item === 'string' && item.length > 0 ? [item] : [];
 		}
 		return collectSensitiveValues(item);
 	});
@@ -145,6 +154,130 @@ function serializeQuery(
 	);
 }
 
+function buildUrl(base: string, options: ApiRequestOptions): URL {
+	const pathParams = isRecord(options.path) ? options.path : {};
+	const path = options.url.replace(/\{([^}]+)\}/g, (_match, name: string) => {
+		const value = pathParams[name];
+		return encodeURIComponent(isScalar(value) ? String(value) : '');
+	});
+	const url = new URL(path, base);
+	const query = isRecord(options.query) ? options.query : {};
+	for (const [name, value] of Object.entries(query)) {
+		appendQueryValue(url.searchParams, name, value);
+	}
+	return url;
+}
+
+// Query schema variants are narrowed recursively before URL serialization.
+function appendQueryValue(
+	params: URLSearchParams,
+	name: string,
+	value: unknown,
+): void {
+	if (value === undefined || value === null) return;
+	if (Array.isArray(value)) {
+		for (const item of value) appendQueryValue(params, name, item);
+		return;
+	}
+	if (isRecord(value)) {
+		for (const [key, nestedValue] of Object.entries(value)) {
+			appendQueryValue(params, `${name}[${key}]`, nestedValue);
+		}
+		return;
+	}
+	if (isScalar(value)) params.append(name, String(value));
+}
+
+function responseNumberHeader(
+	response: Response,
+	name: string,
+): number | undefined {
+	const header = response.headers.get(name);
+	if (!header) return undefined;
+	const value = Number(header);
+	return Number.isFinite(value) ? value : undefined;
+}
+
+// Error response bodies vary by status and remain unknown until field checks below.
+function responseErrorMessage(
+	body: unknown,
+	status: number,
+	statusText: string,
+): string {
+	if (isRecord(body) && typeof body.message === 'string') return body.message;
+	return `E2B API returned HTTP ${status}${statusText ? ` ${statusText}` : ''}`;
+}
+
+// Page output is unknown until route.output validates the body and cursor wrapper.
+async function requestPaginatedPage(
+	route: E2bOperationRoute,
+	config: OpenAPIConfig,
+	options: ApiRequestOptions,
+	baseHeaders: Record<string, string>,
+): Promise<unknown> {
+	const url = buildUrl(config.BASE, options);
+	const headers = new Headers(baseHeaders);
+	if (isRecord(options.headers)) {
+		for (const [name, value] of Object.entries(options.headers)) {
+			if (isScalar(value)) headers.set(name, String(value));
+		}
+	}
+	const response = await fetch(url, {
+		method: options.method,
+		headers,
+		...(options.body === undefined
+			? {}
+			: { body: JSON.stringify(options.body) }),
+		credentials: config.CREDENTIALS,
+		signal: AbortSignal.timeout(config.TIMEOUT ?? 20_000),
+	});
+	const contentType = response.headers.get('content-type')?.toLowerCase() ?? '';
+	// Paginated response JSON is untrusted until the operation output schema parses it.
+	const responseBody: unknown =
+		response.status === 204
+			? undefined
+			: contentType.includes('json')
+				? await response.json()
+				: await response.text();
+	const retryAfterSeconds = responseNumberHeader(response, 'Retry-After');
+	const rateLimitInfo = {
+		retryAfter:
+			retryAfterSeconds === undefined ? undefined : retryAfterSeconds * 1000,
+		rateLimitRemaining: responseNumberHeader(response, 'RateLimit-Remaining'),
+		rateLimitLimit: responseNumberHeader(response, 'RateLimit-Limit'),
+	};
+	if (!response.ok) {
+		const result: ApiResult = {
+			url: url.toString(),
+			ok: false,
+			status: response.status,
+			statusText: response.statusText,
+			body: responseBody,
+		};
+		throw new ApiError(
+			options,
+			result,
+			responseErrorMessage(responseBody, response.status, response.statusText),
+			rateLimitInfo,
+		);
+	}
+
+	const nextToken = response.headers.get('X-Next-Token') ?? undefined;
+	const totalRunning = responseNumberHeader(response, 'X-Total-Running');
+	if (route.id === 'templates.get') {
+		if (!isRecord(responseBody)) return responseBody;
+		return {
+			...responseBody,
+			...(nextToken === undefined ? {} : { nextToken }),
+		};
+	}
+	return {
+		items: responseBody,
+		...(nextToken === undefined ? {} : { nextToken }),
+		...(totalRunning === undefined ? {} : { totalRunning }),
+	};
+}
+
 /** Execute one OpenAPI-backed operation; output is unknown because the route union varies by operation. */
 export async function makeE2bRequest(
 	route: E2bOperationRoute,
@@ -184,16 +317,17 @@ export async function makeE2bRequest(
 		headers['X-Access-Token'] = accessToken;
 	}
 
+	const baseHeaders: Record<string, string> = {
+		Accept: 'application/json',
+		'Content-Type': 'application/json',
+		...(route.auth === 'apiKey' && apiKey ? { 'X-API-Key': apiKey } : {}),
+	};
 	const config: OpenAPIConfig = {
 		BASE: route.host === 'api' ? E2B_API_BASE : E2B_SANDBOX_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		HEADERS: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json',
-			...(route.auth === 'apiKey' && apiKey ? { 'X-API-Key': apiKey } : {}),
-		},
+		HEADERS: baseHeaders,
 	};
 	const requestOptions: ApiRequestOptions = {
 		method: route.method,
@@ -207,9 +341,11 @@ export async function makeE2bRequest(
 
 	try {
 		// The E2B response is untrusted JSON; the route's output schema narrows it.
-		const response: unknown = await request<unknown>(config, requestOptions, {
-			rateLimitConfig: RATE_LIMIT_CONFIG,
-		});
+		const response: unknown = PAGINATED_OPERATION_IDS.has(route.id)
+			? await requestPaginatedPage(route, config, requestOptions, baseHeaders)
+			: await request<unknown>(config, requestOptions, {
+					rateLimitConfig: RATE_LIMIT_CONFIG,
+				});
 		return route.output.parse(response);
 	} catch (error: unknown) {
 		// A caught rejection has no static type; only ApiError carries provider details to sanitize.

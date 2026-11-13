@@ -2,10 +2,29 @@ displayName: "E2B"
 description: "Run isolated sandboxes and manage E2B sandbox, template, volume, secret, filesystem, process, and event APIs from Corsair."
 domain: e2b.dev
 recommendedAuth: api_key
+examples:
+  read:
+    path: envd.getEnvironmentVariables
+    title: Read the environment of a sandbox
+    args:
+      headers:
+        e2bSandboxId: sandbox-test
+        e2bSandboxPort: 49983
+        e2bAccessToken: sandbox-access-token
+  write:
+    path: filesystem.createDir
+    title: Create a directory inside a sandbox
+    args:
+      headers:
+        e2bSandboxId: sandbox-test
+        e2bSandboxPort: 49983
+        e2bAccessToken: sandbox-access-token
+      body:
+        path: /tmp/corsair-e2b
 overviewNote: |
   Platform operations use the project API key in the X-API-Key header. Sandbox envd and unary filesystem/process operations target the shared sandbox host and require e2bSandboxId, e2bSandboxPort (49983 for envd), and an e2bAccessToken where the official OpenAPI security scheme requires it. envd.health is keyless. The documented file upload/download routes are not included because they require raw file bodies or binary responses.
 
-  List endpoints forward E2B's documented cursor or limit parameters; sandbox listing uses the v2 next-token pagination API. Secret values are write-only and are redacted from errors and never included in event logs.
+  Four cursor-paginated collection-list operations return `{ items, nextToken? }`; pass the returned token as `query.nextToken` to fetch the next page. `templates.get` returns its build cursor beside the template data. Sandbox listing also returns `totalRunning` when E2B supplies it. Secret values are write-only and are redacted from errors and never included in event logs.
 apiExamples:
   sandboxes.create:
     call: '{"headers":{"idempotencyKey":"test"},"body":{"templateID":"test"}}'
@@ -108,7 +127,7 @@ apiExamples:
   process.list:
     call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
   process.sendInput:
-    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
+    call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"input":{"stdin":"aGVsbG8="}}}'
   process.sendSignal:
     call: '{"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}}'
   process.update:
@@ -132,8 +151,13 @@ apiExamples:
   events.list:
     call: '{"query":{"offset":0,"limit":10,"orderAsc":false,"types":["test"]}}'
 apiNotes:
-  sandboxes.list: "The v2 list operation accepts state as a comma-separated array and returns the paginated sandbox list; pass the documented next token to continue."
+  sandboxes.list: "The v2 list operation accepts state as a comma-separated array and returns `{ items, nextToken?, totalRunning? }`; pass nextToken as query.nextToken to continue."
+  sandboxes.listSnapshots: "Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue."
+  templates.list: "Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue."
+  templates.get: "Returns the template and its build page, including nextToken from X-Next-Token; pass it as query.nextToken to continue."
+  secrets.list: "Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue. The response never includes secret values."
   templates.getBuildUploadLink: "Returns an upload URL and headers for a template build file. Treat the response as a short-lived capability; avoid logging it."
   envd.getEnvironmentVariables: "Requires an E2B sandbox access token; the response contains environment values and should be handled as sensitive data."
   secrets.create: "Secret values are accepted only on create/update and are never returned by list/get operations."
+  process.sendInput: "stdin and pty bytes use the Connect JSON base64 representation; encode the bytes before passing the string."
   filesystem.createWatcher: "This is the unary watcher-creation operation; streaming WatchDir remains out of scope."

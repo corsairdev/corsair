@@ -351,7 +351,7 @@ await corsair.e2b.api.filesystem.createDir({"headers":{"e2bSandboxId":"test","e2
   name?: string,
   type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK,
   path?: string,
-  size?: number,
+  size?: number | string,
   mode?: number,
   permissions?: string,
   owner?: string,
@@ -490,7 +490,7 @@ await corsair.e2b.api.filesystem.getWatcherEvents({"headers":{"e2bSandboxId":"te
     name?: string,
     type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK,
     path?: string,
-    size?: number,
+    size?: number | string,
     mode?: number,
     permissions?: string,
     owner?: string,
@@ -569,7 +569,7 @@ await corsair.e2b.api.filesystem.listDir({"headers":{"e2bSandboxId":"test","e2bS
   name?: string,
   type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK,
   path?: string,
-  size?: number,
+  size?: number | string,
   mode?: number,
   permissions?: string,
   owner?: string,
@@ -647,7 +647,7 @@ await corsair.e2b.api.filesystem.move({"headers":{"e2bSandboxId":"test","e2bSand
   name?: string,
   type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK,
   path?: string,
-  size?: number,
+  size?: number | string,
   mode?: number,
   permissions?: string,
   owner?: string,
@@ -822,7 +822,7 @@ await corsair.e2b.api.filesystem.stat({"headers":{"e2bSandboxId":"test","e2bSand
   name?: string,
   type?: FILE_TYPE_UNSPECIFIED | FILE_TYPE_FILE | FILE_TYPE_DIRECTORY | FILE_TYPE_SYMLINK,
   path?: string,
-  size?: number,
+  size?: number | string,
   mode?: number,
   permissions?: string,
   owner?: string,
@@ -977,7 +977,7 @@ SendInput
 **Risk:** `write`
 
 ```ts
-await corsair.e2b.api.process.sendInput({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{}});
+await corsair.e2b.api.process.sendInput({"headers":{"e2bSandboxId":"test","e2bSandboxPort":49983,"connectTimeoutMs":1,"e2bAccessToken":"test-sandbox-access-token"},"body":{"process":{"pid":101},"input":{"stdin":"aGVsbG8="}}});
 ```
 
 **Input**
@@ -986,6 +986,8 @@ await corsair.e2b.api.process.sendInput({"headers":{"e2bSandboxId":"test","e2bSa
 |------|------|----------|-------------|
 | `headers` | `object` | Yes | — |
 | `body` | `object` | Yes | — |
+
+stdin and pty bytes use the Connect JSON base64 representation; encode the bytes before passing the string.
 
 <AccordionGroup>
 <Accordion title="headers full type">
@@ -1741,7 +1743,7 @@ await corsair.e2b.api.sandboxes.list({"query":{"metadata":"test","state":["runni
 |------|------|----------|-------------|
 | `query` | `object` | No | — |
 
-The v2 list operation accepts state as a comma-separated array and returns the paginated sandbox list; pass the documented next token to continue.
+The v2 list operation accepts state as a comma-separated array and returns `{ items, nextToken?, totalRunning? }`; pass nextToken as query.nextToken to continue.
 
 <AccordionGroup>
 <Accordion title="query full type">
@@ -1762,10 +1764,16 @@ The v2 list operation accepts state as a comma-separated array and returns the p
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `nextToken` | `string` | No | — |
+| `totalRunning` | `number` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="items full type">
 
 ```ts
 {
@@ -1791,6 +1799,7 @@ The v2 list operation accepts state as a comma-separated array and returns the p
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -1864,6 +1873,8 @@ await corsair.e2b.api.sandboxes.listSnapshots({"query":{"sandboxID":"test","name
 |------|------|----------|-------------|
 | `query` | `object` | No | — |
 
+Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue.
+
 <AccordionGroup>
 <Accordion title="query full type">
 
@@ -1880,10 +1891,15 @@ await corsair.e2b.api.sandboxes.listSnapshots({"query":{"sandboxID":"test","name
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `nextToken` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="items full type">
 
 ```ts
 {
@@ -1893,6 +1909,7 @@ await corsair.e2b.api.sandboxes.listSnapshots({"query":{"sandboxID":"test","name
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -2270,6 +2287,8 @@ await corsair.e2b.api.secrets.list({"query":{"nextToken":"test","limit":100}});
 |------|------|----------|-------------|
 | `query` | `object` | No | — |
 
+Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue. The response never includes secret values.
+
 <AccordionGroup>
 <Accordion title="query full type">
 
@@ -2284,10 +2303,15 @@ await corsair.e2b.api.secrets.list({"query":{"nextToken":"test","limit":100}});
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `nextToken` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="items full type">
 
 ```ts
 {
@@ -2302,6 +2326,7 @@ await corsair.e2b.api.secrets.list({"query":{"nextToken":"test","limit":100}});
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -2980,6 +3005,8 @@ await corsair.e2b.api.templates.get({"path":{"templateID":"test"},"query":{"next
 | `path` | `object` | Yes | — |
 | `query` | `object` | No | — |
 
+Returns the template and its build page, including nextToken from X-Next-Token; pass it as query.nextToken to continue.
+
 <AccordionGroup>
 <Accordion title="path full type">
 
@@ -3044,7 +3071,8 @@ await corsair.e2b.api.templates.get({"path":{"templateID":"test"},"query":{"next
     memoryMB: number,
     diskSizeMB?: number,
     envdVersion?: string
-  }[]
+  }[],
+  nextToken?: string
 }
 ```
 </Accordion>
@@ -3328,6 +3356,8 @@ await corsair.e2b.api.templates.list({"query":{"teamID":"test","nextToken":"test
 |------|------|----------|-------------|
 | `query` | `object` | No | — |
 
+Returns `{ items, nextToken? }`; pass X-Next-Token as query.nextToken to continue.
+
 <AccordionGroup>
 <Accordion title="query full type">
 
@@ -3343,10 +3373,15 @@ await corsair.e2b.api.templates.list({"query":{"teamID":"test","nextToken":"test
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `nextToken` | `string` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="items full type">
 
 ```ts
 {
@@ -3376,6 +3411,7 @@ await corsair.e2b.api.templates.list({"query":{"teamID":"test","nextToken":"test
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---

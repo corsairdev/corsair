@@ -44,11 +44,16 @@ The plugin registers **62 request/response operations**:
 
 Each operation has strict Zod input validation, an OpenAPI-derived response
 schema, and a declared risk level. List operations preserve E2B's documented
-pagination inputs: v2 sandboxes/templates and secrets use next tokens, tag
-assignments use cursors, and sandbox events use offset/limit. The transport
+pagination inputs: v2 sandboxes/templates, snapshots, and secrets use next
+tokens, tag assignments use cursors, and sandbox events use offset/limit. The transport
 extracts `Retry-After`; 429 retries are handled once by the plugin, while other
 errors and writes are not automatically retried. Secret request values are
 redacted from propagated API errors and are never included in event logs.
+
+The four `X-Next-Token` collection-list operations return `{ items, nextToken? }`
+so the cursor can be forwarded as `query.nextToken`. `templates.get` returns the
+template/build data with its `nextToken`. Sandbox listing may also include
+`totalRunning` from E2B's `X-Total-Running` header.
 
 Template build upload-link responses contain a capability URL and headers;
 handle them as sensitive values and do not log them. Environment-variable

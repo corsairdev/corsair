@@ -244,8 +244,24 @@ const C_process_CloseStdinRequestInputSchema = z
 	.strict();
 const C_process_ListRequestInputSchema = z.object({}).strict();
 const C_process_ProcessInputInputSchema = z.union([
-	z.object({ pty: z.string() }).strict(),
-	z.object({ stdin: z.string() }).strict(),
+	z
+		.object({
+			pty: z
+				.string()
+				.regex(
+					/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/,
+				),
+		})
+		.strict(),
+	z
+		.object({
+			stdin: z
+				.string()
+				.regex(
+					/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/,
+				),
+		})
+		.strict(),
 ]);
 const C_process_SendInputRequestInputSchema = z
 	.object({
@@ -529,7 +545,12 @@ const C_TemplateBuildOutputSchema = z
 	})
 	.passthrough();
 const C_TemplateWithBuildsOutputSchema = C_TemplateOutputSchema.and(
-	z.object({ builds: z.array(C_TemplateBuildOutputSchema) }).passthrough(),
+	z
+		.object({
+			builds: z.array(C_TemplateBuildOutputSchema),
+			nextToken: z.string().optional(),
+		})
+		.passthrough(),
 );
 const C_TemplateUpdateResponseOutputSchema = z
 	.object({ names: z.array(z.string()) })
@@ -666,7 +687,7 @@ const C_filesystem_EntryInfoOutputSchema = z
 		name: z.string().optional(),
 		type: C_filesystem_FileTypeOutputSchema.optional(),
 		path: z.string().optional(),
-		size: z.number().int().optional(),
+		size: z.union([z.number().int(), z.string()]).optional(),
 		mode: z.number().int().optional(),
 		permissions: z.string().optional(),
 		owner: z.string().optional(),
@@ -758,6 +779,31 @@ const C_SecretOutputSchema = z
 		updatedAt: z.string().datetime(),
 	})
 	.passthrough();
+const C_SandboxPageOutputSchema = z
+	.object({
+		items: z.array(C_ListedSandboxOutputSchema),
+		nextToken: z.string().optional(),
+		totalRunning: z.number().int().optional(),
+	})
+	.strict();
+const C_SnapshotPageOutputSchema = z
+	.object({
+		items: z.array(C_SnapshotInfoOutputSchema),
+		nextToken: z.string().optional(),
+	})
+	.strict();
+const C_TemplatePageOutputSchema = z
+	.object({
+		items: z.array(C_TemplateOutputSchema),
+		nextToken: z.string().optional(),
+	})
+	.strict();
+const C_SecretPageOutputSchema = z
+	.object({
+		items: z.array(C_SecretOutputSchema),
+		nextToken: z.string().optional(),
+	})
+	.strict();
 const C_SandboxEventOutputSchema = z
 	.object({
 		id: z.string().uuid(),
@@ -1367,7 +1413,7 @@ export const E2bEndpointInputSchemas = {
 
 export const E2bEndpointOutputSchemas = {
 	'sandboxes.create': C_SandboxOutputSchema,
-	'sandboxes.list': z.array(C_ListedSandboxOutputSchema),
+	'sandboxes.list': C_SandboxPageOutputSchema,
 	'sandboxes.listMetrics': C_SandboxesWithMetricsOutputSchema,
 	'sandboxes.getLogs': C_SandboxLogsV2ResponseOutputSchema,
 	'sandboxes.get': C_SandboxDetailOutputSchema,
@@ -1380,9 +1426,9 @@ export const E2bEndpointOutputSchemas = {
 	'sandboxes.updateNetwork': z.void(),
 	'sandboxes.refresh': z.void(),
 	'sandboxes.createSnapshot': C_SnapshotInfoOutputSchema,
-	'sandboxes.listSnapshots': z.array(C_SnapshotInfoOutputSchema),
+	'sandboxes.listSnapshots': C_SnapshotPageOutputSchema,
 	'templates.create': C_TemplateRequestResponseV3OutputSchema,
-	'templates.list': z.array(C_TemplateOutputSchema),
+	'templates.list': C_TemplatePageOutputSchema,
 	'templates.getBuildUploadLink': C_TemplateBuildFileUploadOutputSchema,
 	'templates.listDefault': z.array(C_TemplateOutputSchema),
 	'templates.get': C_TemplateWithBuildsOutputSchema,
@@ -1422,7 +1468,7 @@ export const E2bEndpointOutputSchemas = {
 	'process.update': C_process_UpdateResponseOutputSchema,
 	'teams.getMetrics': z.array(C_TeamMetricOutputSchema),
 	'teams.getMaxMetrics': C_MaxTeamMetricOutputSchema,
-	'secrets.list': z.array(C_SecretOutputSchema),
+	'secrets.list': C_SecretPageOutputSchema,
 	'secrets.create': C_SecretOutputSchema,
 	'secrets.get': C_SecretOutputSchema,
 	'secrets.update': C_SecretOutputSchema,
