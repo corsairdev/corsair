@@ -1,0 +1,70 @@
+---
+title: "GoDial API reference"
+sidebarTitle: "API"
+description: "API reference for the GoDial plugin in Corsair: every `godial.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contacts
+
+### add
+
+`contacts.add`
+
+Add a contact to a GoDial list
+
+**Risk:** `write`
+
+```ts
+await corsair.godial.api.contacts.add({ listId: 'list-123', name: 'Ada Lovelace', phone: '+15555550123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `secondPhone` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `note` | `string` | No | — |
+| `remarks` | `string` | No | — |
+| `extra` | `string` | No | — |
+| `assignmentMode` | `string` | No | — |
+| `listId` | `string` | Yes | — |
+
+The official overview documents this route but does not publish its response envelope or fields. Only this route and lists.list are verified; other GoDial operations are excluded until their API contract is available.
+
+
+
+**Output:** `custom`
+
+
+---
+
+## Lists
+
+### list
+
+`lists.list`
+
+List the authenticated GoDial account’s lists
+
+**Risk:** `read`
+
+```ts
+await corsair.godial.api.lists.list({});
+```
+
+**Input:** _empty object_
+
+The official overview documents this route but does not publish its response envelope or fields. Only this route and contacts.add are verified; other GoDial operations are excluded until their API contract is available.
+
+
+**Output:** `custom`
+
+
+---
