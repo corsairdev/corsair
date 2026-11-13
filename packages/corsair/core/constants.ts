@@ -726,7 +726,7 @@ export const ProviderDisplayNames = {
 	cursor: 'Cursor',
 	customerio: 'Customer.io',
 	customgpt: 'CustomGPT',
-	customjs: 'Customjs',
+	customjs: 'CustomJS',
 	cuttly: 'Cutt.ly',
 	dadataru: 'Dadataru',
 	daffy: 'Daffy',

@@ -528,7 +528,11 @@ export type PagesDeleteInput = z.input<typeof PagesDeleteInputSchema>;
 
 const PagesDeleteResponseSchema = z
 	.object({
-		success: z.literal(true).describe('The page was removed.'),
+		success: z
+			.literal(true)
+			.describe(
+				'CustomJS accepted the delete. It answers the same for an unknown page ID, so read `pages.list` to confirm the page is gone.',
+			),
 		pageId: z.string(),
 	})
 	.loose();
