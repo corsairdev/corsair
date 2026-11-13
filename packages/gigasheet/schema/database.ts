@@ -1,9 +1,1 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const GigasheetExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type GigasheetExample = z.infer<typeof GigasheetExample>;
+export const gigasheetEntities = {} as const;

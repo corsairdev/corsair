@@ -1,0 +1,650 @@
+---
+title: "Gigasheet API reference"
+sidebarTitle: "API"
+description: "API reference for the Gigasheet plugin in Corsair: every `gigasheet.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Datasets
+
+### delete
+
+`datasets.delete`
+
+Permanently delete a sheet or folder by handle, optionally deleting child files
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gigasheet.api.datasets.delete({ handle: '6030253a_ffd2_42b5_b1a2_fe914d4e7db7' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+| `recursive` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Success` | `boolean` | No | — |
+| `Message` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`datasets.get`
+
+Retrieve metadata, column names, types, and processing status of a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.gigasheet.api.datasets.get({ handle: '6030253a_ffd2_42b5_b1a2_fe914d4e7db7' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `FileUuid` | `string` | No | — |
+| `FileName` | `string` | No | — |
+| `FileSize` | `string` | No | — |
+| `FileRows` | `number` | No | — |
+| `Status` | `uploading \| loading \| processing \| processed \| error` | No | — |
+| `DetailedStatus` | `string` | No | — |
+| `Headers` | `string[]` | No | — |
+| `FieldsTypes` | `string[]` | No | — |
+| `IsDirectory` | `boolean` | No | — |
+| `Owner` | `string` | No | — |
+| `ParentDirectory` | `string` | No | — |
+| `CreatedAt` | `string` | No | — |
+| `LastUpdated` | `string` | No | — |
+| `Note` | `string` | No | — |
+
+
+
+---
+
+### getColumns
+
+`datasets.getColumns`
+
+Retrieve column IDs, headers, and data types for a given sheet
+
+**Risk:** `read`
+
+```ts
+await corsair.gigasheet.api.datasets.getColumns({ handle: '6030253a_ffd2_42b5_b1a2_fe914d4e7db7' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+| `showHidden` | `boolean` | No | — |
+| `type` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  Id: string,
+  Name: string,
+  FieldType?: string,
+  Origin?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getOperationStatus
+
+`datasets.getOperationStatus`
+
+Retrieve operation status for an asynchronous dataset task (Working, Done, Error)
+
+**Risk:** `read`
+
+```ts
+await corsair.gigasheet.api.datasets.getOperationStatus({ handle: '6030253a_ffd2_42b5_b1a2_fe914d4e7db7' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Status` | `Working \| Done \| Error \| ""` | No | — |
+| `Message` | `string` | No | — |
+| `Owner` | `string` | No | — |
+| `UpdatedAt` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`datasets.list`
+
+List files and directories in root library or specified folder handle
+
+**Risk:** `read`
+
+```ts
+await corsair.gigasheet.api.datasets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  metadata?: {
+    FileUuid?: string,
+    FileName?: string,
+    FileRows?: number,
+    FileSize?: string,
+    Status?: string,
+    IsDirectory?: boolean,
+    Owner?: string,
+    ParentDirectory?: string,
+    CreatedAt?: string,
+    LastUpdated?: string
+  },
+  permissions?: number[],
+  within_quota?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Exports
+
+### create
+
+`exports.create`
+
+Queue an asynchronous export job with optional AgGrid filter and sort state
+
+**Risk:** `write`
+
+```ts
+await corsair.gigasheet.api.exports.create({ handle: '6030253a_ffd2_42b5_b1a2_fe914d4e7db7', filename: 'filtered_export.csv' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+| `filename` | `string` | No | — |
+| `folderHandle` | `string` | No | — |
+| `compressionType` | `zip \| gzip` | No | — |
+| `decompress` | `boolean` | No | — |
+| `recordsPerFile` | `number` | No | — |
+| `row_limit_from_head` | `number` | No | — |
+| `skipNotification` | `boolean` | No | — |
+| `useClientState` | `boolean` | No | — |
+| `gridState` | `Record<string, any>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+
+
+
+---
+
+### download
+
+`exports.download`
+
+Retrieve a temporary presigned S3 download URL for a completed export
+
+**Risk:** `read`
+
+```ts
+await corsair.gigasheet.api.exports.download({ handle: 'ef52f6f1_2cf6_4eb3_ba3e_2221020ad380' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presignedUrl` | `string` | Yes | — |
+| `error` | `string` | No | — |
+
+
+
+---
+
+## Rows
+
+### appendByName
+
+`rows.appendByName`
+
+Append new records to an existing sheet matching columns by name
+
+**Risk:** `write`
+
+```ts
+await corsair.gigasheet.api.rows.appendByName({
+	handle: '6030253a_ffd2_42b5_b1a2_fe914d4e7db7',
+	records: [{ first_name: 'Jane', last_name: 'Doe', email: 'jane.doe@example.com' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+| `records` | `Record<string, any>[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Success` | `boolean` | No | — |
+| `Message` | `string` | No | — |
+
+
+
+---
+
+### deleteRows
+
+`rows.deleteRows`
+
+Permanently delete specified rows from a dataset by iterator number
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gigasheet.api.rows.deleteRows({
+	handle: '6030253a_ffd2_42b5_b1a2_fe914d4e7db7',
+	rows: [1, 2],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+| `rows` | `number[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Success` | `boolean` | No | — |
+| `Message` | `string` | No | — |
+
+
+
+---
+
+### insertBlankRow
+
+`rows.insertBlankRow`
+
+Insert one or more blank rows with null values at a given row index
+
+**Risk:** `write`
+
+```ts
+await corsair.gigasheet.api.rows.insertBlankRow({ handle: '6030253a_ffd2_42b5_b1a2_fe914d4e7db7', index: 0, num_rows: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+| `index` | `number` | Yes | — |
+| `num_rows` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Success` | `boolean` | No | — |
+| `Message` | `string` | No | — |
+
+
+
+---
+
+## Upload
+
+### direct
+
+`upload.direct`
+
+Upload raw file contents or byte array directly into Gigasheet
+
+**Risk:** `write`
+
+```ts
+await corsair.gigasheet.api.upload.direct({ name: 'direct_upload.csv', contents: 'SVRFTSxDT1VOWAoxLDEwMAoyLDIwMA==' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `contents` | `string \| number[]` | Yes | — |
+| `parentDirectory` | `string` | No | — |
+| `targetHandle` | `string` | No | — |
+| `skipNotification` | `boolean` | No | — |
+| `skipTypeInference` | `boolean` | No | — |
+| `callbackUrl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Handle` | `string` | Yes | — |
+| `Message` | `string` | No | — |
+| `Success` | `boolean` | No | — |
+| `Error` | `string \| null` | No | — |
+
+
+
+---
+
+### fromUrl
+
+`upload.fromUrl`
+
+Upload a dataset into Gigasheet from a publicly accessible or presigned URL
+
+**Risk:** `write`
+
+```ts
+await corsair.gigasheet.api.upload.fromUrl({ url: 'https://example.com/data.csv', name: 'Sales_Data_2024' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `folderHandle` | `string` | No | — |
+| `targetHandle` | `string` | No | — |
+| `skipNotification` | `boolean` | No | — |
+| `skipTypeInference` | `boolean` | No | — |
+| `callbackUrl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Handle` | `string` | Yes | — |
+| `Message` | `string` | No | — |
+| `Success` | `boolean` | No | — |
+| `Error` | `string \| null` | No | — |
+
+
+
+---
+
+## User
+
+### getDetails
+
+`user.getDetails`
+
+Retrieve detailed account and profile information for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.gigasheet.api.user.getDetails({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | No | — |
+| `email` | `string` | No | — |
+| `name` | `string` | No | — |
+| `id` | `string` | No | — |
+
+
+
+---
+
+### getEnrichmentCredits
+
+`user.getEnrichmentCredits`
+
+Retrieve enrichment credit limit and used credit balance for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.gigasheet.api.user.getEnrichmentCredits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Limit` | `number` | Yes | — |
+| `Used` | `number` | Yes | — |
+
+
+
+---
+
+### getSpaceUsed
+
+`user.getSpaceUsed`
+
+Retrieve total storage space used by the authenticated user in bytes
+
+**Risk:** `read`
+
+```ts
+await corsair.gigasheet.api.user.getSpaceUsed({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bytesUsed` | `number` | Yes | — |
+
+
+
+---
+
+### whoami
+
+`user.whoami`
+
+Check authentication status and retrieve username of the current request
+
+**Risk:** `read`
+
+```ts
+await corsair.gigasheet.api.user.whoami({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `authenticated` | `boolean` | Yes | — |
+
+
+
+---
+
+## Views
+
+### get
+
+`views.get`
+
+Retrieve metadata and client state identifier for a specific saved view
+
+**Risk:** `read`
+
+```ts
+await corsair.gigasheet.api.views.get({ handle: '6030253a_ffd2_42b5_b1a2_fe914d4e7db7', view: '1374a9c9_f514_4204_b416_1ac9acacc40e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+| `view` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `file` | `string` | No | — |
+| `owner` | `string` | No | — |
+| `client_state` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`views.list`
+
+Retrieve all saved views and configurations associated with a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.gigasheet.api.views.list({ handle: '6030253a_ffd2_42b5_b1a2_fe914d4e7db7' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  file?: string,
+  owner?: string,
+  client_state?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---

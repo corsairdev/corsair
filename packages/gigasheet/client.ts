@@ -1,43 +1,112 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
+export const GIGASHEET_API_BASE = 'https://api.gigasheet.com';
+
+const SENSITIVE_KEY_NAMES = new Set([
+	'accesskeyid',
+	'apikey',
+	'authorization',
+	'clientemail',
+	'password',
+	'privatekey',
+	'projectid',
+	'sastoken',
+	'secret',
+	'secretaccesskey',
+	'sessiontoken',
+	'storageaccesskey',
+	'token',
+	'xgigasheettoken',
+]);
+
+function normalizeKeyName(key: string): string {
+	return key.toLowerCase().replace(/[-_]/g, '');
+}
+
+/**
+ * Deeply redacts sensitive keys from objects and error payloads.
+ */
+// `unknown` because provider response bodies or request payloads can be arbitrary JSON values.
+export function redactSensitiveData(data: unknown): unknown {
+	if (data === null || data === undefined) return data;
+	if (typeof data !== 'object') return data;
+	if (Array.isArray(data)) {
+		// `unknown` because array elements may be arbitrary untrusted JSON structures.
+		return data.map((item: unknown) => redactSensitiveData(item));
+	}
+	// `unknown` because record values are untrusted and need recursive checking.
+	const record = data as Record<string, unknown>;
+	const result: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(record)) {
+		if (SENSITIVE_KEY_NAMES.has(normalizeKeyName(key))) {
+			result[key] = '[REDACTED]';
+		} else {
+			result[key] = redactSensitiveData(value);
+		}
+	}
+	return result;
+}
+
 export class GigasheetAPIError extends Error {
+	readonly status?: number;
+	readonly retryAfter?: number;
+	// `unknown` because error payload from provider can take varying shapes.
+	readonly body?: unknown;
+
 	constructor(
 		message: string,
-		public readonly code?: string,
+		options: {
+			status?: number;
+			retryAfter?: number;
+			// `unknown` because error response payload from provider is untyped until inspected.
+			body?: unknown;
+		} = {},
 	) {
 		super(message);
 		this.name = 'GigasheetAPIError';
+		this.status = options.status;
+		this.retryAfter = options.retryAfter;
+		this.body = options.body;
 	}
 }
 
-// TODO: Update with your API base URL
-const GIGASHEET_API_BASE = 'https://api.example.com';
-
 export async function makeGigasheetRequest<T>(
 	endpoint: string,
-	apiKey: string,
+	apiKey?: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		// `unknown` because request bodies are validated by Zod per-endpoint before reaching transport.
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
+	// Fail fast when an explicitly empty key is provided for authenticated requests
+	if (apiKey !== undefined && apiKey.length === 0) {
+		throw new AuthMissingError('gigasheet', 'api_key');
+	}
+
+	const authHeaders: Record<string, string> = apiKey
+		? { 'X-GIGASHEET-TOKEN': apiKey }
+		: {};
+
 	const config: OpenAPIConfig = {
 		BASE: GIGASHEET_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			...authHeaders,
 		},
 	};
+
+	const sanitizedRequestBody = body
+		? (redactSensitiveData(body) as Record<string, unknown>)
+		: undefined;
 
 	const requestOptions: ApiRequestOptions = {
 		method,
@@ -47,19 +116,39 @@ export async function makeGigasheetRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		// Rethrow core's ApiError as is: its status and retryAfter are what the
-		// error handlers match (429 retries) and what core reads to refresh an
-		// OAuth token after a 401. Wrapping it in a new error loses both.
-		if (error instanceof ApiError) throw error;
-		if (error instanceof Error) {
-			throw new GigasheetAPIError(error.message);
+		if (error instanceof ApiError) {
+			const sanitizedErrorBody = redactSensitiveData(error.body);
+			const sanitizedRequestOptions: ApiRequestOptions = {
+				...error.request,
+				body: sanitizedRequestBody,
+			};
+			throw new ApiError(
+				sanitizedRequestOptions,
+				{
+					url: error.url,
+					status: error.status,
+					statusText: error.statusText,
+					body: sanitizedErrorBody,
+					ok: false,
+				},
+				error.message,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
 		}
-		throw new GigasheetAPIError('Unknown error');
+		if (error instanceof Error) {
+			throw error;
+		}
+		throw new GigasheetAPIError('Unknown error occurred');
 	}
 }
