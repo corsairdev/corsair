@@ -216,7 +216,7 @@ await corsair.gigasheet.api.datasets.list({});
 
 Queue an asynchronous export job with optional AgGrid filter and sort state
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.gigasheet.api.exports.create({ handle: '6030253a_ffd2_42b5_b1a2_fe914d4e7db7', filename: 'filtered_export.csv' });
@@ -235,6 +235,7 @@ await corsair.gigasheet.api.exports.create({ handle: '6030253a_ffd2_42b5_b1a2_fe
 | `row_limit_from_head` | `number` | No | — |
 | `skipNotification` | `boolean` | No | — |
 | `useClientState` | `boolean` | No | — |
+| `clientState` | `Record<string, any>` | No | — |
 | `gridState` | `Record<string, any>` | No | — |
 
 
@@ -288,7 +289,7 @@ await corsair.gigasheet.api.exports.download({ handle: 'ef52f6f1_2cf6_4eb3_ba3e_
 
 Append new records to an existing sheet matching columns by name
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.gigasheet.api.rows.appendByName({
@@ -358,7 +359,7 @@ await corsair.gigasheet.api.rows.deleteRows({
 
 Insert one or more blank rows with null values at a given row index
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.gigasheet.api.rows.insertBlankRow({ handle: '6030253a_ffd2_42b5_b1a2_fe914d4e7db7', index: 0, num_rows: 1 });
@@ -393,7 +394,7 @@ await corsair.gigasheet.api.rows.insertBlankRow({ handle: '6030253a_ffd2_42b5_b1
 
 Upload raw file contents or byte array directly into Gigasheet
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.gigasheet.api.upload.direct({ name: 'direct_upload.csv', contents: 'SVRFTSxDT1VOWAoxLDEwMAoyLDIwMA==' });
@@ -432,7 +433,7 @@ await corsair.gigasheet.api.upload.direct({ name: 'direct_upload.csv', contents:
 
 Upload a dataset into Gigasheet from a publicly accessible or presigned URL
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.gigasheet.api.upload.fromUrl({ url: 'https://example.com/data.csv', name: 'Sales_Data_2024' });

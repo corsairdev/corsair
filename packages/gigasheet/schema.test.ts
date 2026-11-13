@@ -398,6 +398,8 @@ describe('Gigasheet Schema & Types', () => {
 					handle: 'h_export',
 					filename: 'export.csv',
 					compressionType: 'zip',
+					useClientState: true,
+					clientState: { filterModel: { col1: { type: 'equals', filter: 'val' } } },
 				}).success,
 			).toBe(true);
 			expect(

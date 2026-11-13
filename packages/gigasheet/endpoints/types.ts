@@ -330,6 +330,8 @@ export const ExportsCreateInputSchema = z
 		row_limit_from_head: z.number().int().positive().optional(),
 		skipNotification: z.boolean().optional(),
 		useClientState: z.boolean().optional(),
+		// `unknown` because clientState accepts arbitrary AgGrid client state objects.
+		clientState: z.record(z.string(), z.unknown()).optional(),
 		// `unknown` because gridState accepts complex AgGrid filter models and sort specifications.
 		gridState: z.record(z.string(), z.unknown()).optional(),
 	})

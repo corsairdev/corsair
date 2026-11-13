@@ -205,12 +205,12 @@ const gigasheetEndpointMeta = {
 			'Retrieve enrichment credit limit and used credit balance for the authenticated user',
 	},
 	'upload.fromUrl': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Upload a dataset into Gigasheet from a publicly accessible or presigned URL',
 	},
 	'upload.direct': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Upload raw file contents or byte array directly into Gigasheet',
 	},
@@ -240,12 +240,12 @@ const gigasheetEndpointMeta = {
 			'Retrieve operation status for an asynchronous dataset task (Working, Done, Error)',
 	},
 	'rows.appendByName': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Append new records to an existing sheet matching columns by name',
 	},
 	'rows.insertBlankRow': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Insert one or more blank rows with null values at a given row index',
 	},
@@ -265,7 +265,7 @@ const gigasheetEndpointMeta = {
 			'Retrieve metadata and client state identifier for a specific saved view',
 	},
 	'exports.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Queue an asynchronous export job with optional AgGrid filter and sort state',
 	},
