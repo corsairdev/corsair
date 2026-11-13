@@ -2140,19 +2140,19 @@
                 ]
               },
               {
-                "group": "Genderize",
-                "pages": [
-                  "plugins/genderize/overview",
-                  "plugins/genderize/api",
-                  "plugins/genderize/database"
-                ]
-              },
-              {
                 "group": "Gemini",
                 "pages": [
                   "plugins/gemini/overview",
                   "plugins/gemini/api",
                   "plugins/gemini/database"
+                ]
+              },
+              {
+                "group": "Genderize",
+                "pages": [
+                  "plugins/genderize/overview",
+                  "plugins/genderize/api",
+                  "plugins/genderize/database"
                 ]
               },
               {

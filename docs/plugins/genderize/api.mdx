@@ -26,7 +26,7 @@ await corsair.genderize.api.batch.names({ names: ['peter', 'lois', 'stewie'] });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `names` | `string[]` | Yes | Names to predict, answered in the same order. A batch is charged per name |
+| `names` | `string[]` | Yes | Up to 100 names to predict, answered in the same order. A batch is charged per name |
 | `country_id` | `string` | No | Applies to every name in the batch, not one of them |
 | `apikey` | `string` | No | Overrides the configured key for this call; without any key the IP-scoped allowance is used |
 
