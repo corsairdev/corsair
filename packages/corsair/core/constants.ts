@@ -374,6 +374,7 @@ export const BaseProviders = [
 	'postman',
 	'prisma',
 	'pushbullet',
+	'pushover',
 	'qdrant',
 	'quaderno',
 	'radar',
@@ -909,6 +910,7 @@ export const ProviderDisplayNames = {
 	postman: 'Postman',
 	prisma: 'Prisma',
 	pushbullet: 'Pushbullet',
+	pushover: 'Pushover',
 	qdrant: 'Qdrant',
 	quaderno: 'Quaderno',
 	radar: 'Radar',
@@ -1451,6 +1453,7 @@ export type AllProviders =
 	| 'postman'
 	| 'prisma'
 	| 'pushbullet'
+	| 'pushover'
 	| 'qdrant'
 	| 'quaderno'
 	| 'radar'

@@ -3144,6 +3144,14 @@
                 ]
               },
               {
+                "group": "Pushover",
+                "pages": [
+                  "plugins/pushover/overview",
+                  "plugins/pushover/api",
+                  "plugins/pushover/database"
+                ]
+              },
+              {
                 "group": "Qdrant",
                 "pages": [
                   "plugins/qdrant/overview",
