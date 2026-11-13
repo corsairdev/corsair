@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 import type { GatherupEndpoints } from '..';
 import { definedQuery, segment } from '../client';
 import { call, listShape } from './call';
@@ -5,6 +6,9 @@ import {
 	GatherupEndpointInputSchemas as Inputs,
 	GatherupEndpointOutputSchemas as Outputs,
 } from './types';
+
+// GatherUp's default `limit` for a business list.
+const BUSINESSES_PAGE_SIZE = 100;
 
 export const list: GatherupEndpoints['businessesList'] = (ctx, input) =>
 	call(
@@ -15,13 +19,14 @@ export const list: GatherupEndpoints['businessesList'] = (ctx, input) =>
 			output: Outputs.businessesList,
 		},
 		input,
-		(parsed) => ({
+		// GatherUp names the page size `limit` on this route.
+		({ page, perPage }) => ({
 			method: 'GET',
 			path: '/api/v2/businesses/get',
-			query: definedQuery({ ...parsed }),
+			query: definedQuery({ page, limit: perPage }),
 		}),
 		{
-			shape: (raw, parsed) => listShape(raw, parsed),
+			shape: (raw, parsed) => listShape(raw, parsed, BUSINESSES_PAGE_SIZE),
 			log: (_, result) => ({
 				count: result.data.length,
 				total: result.count ?? undefined,
@@ -55,12 +60,17 @@ export const search: GatherupEndpoints['businessesSearch'] = (ctx, input) =>
 			output: Outputs.businessesSearch,
 		},
 		input,
-		({ search: term }) => ({
+		({ by, search: term }) => ({
 			method: 'GET',
 			path: '/api/v2/business/search',
-			query: definedQuery({ search: term }),
+			query: definedQuery({ by, search: term }),
 		}),
-		{ log: (_, result) => ({ hits: result.data?.length ?? 0 }) },
+		{
+			log: (_, result) => ({
+				businessId:
+					result.businessId == null ? undefined : String(result.businessId),
+			}),
+		},
 	);
 
 export const types: GatherupEndpoints['businessesTypes'] = (ctx, input) =>
@@ -77,8 +87,31 @@ export const types: GatherupEndpoints['businessesTypes'] = (ctx, input) =>
 			path: '/api/v2/business/types',
 			query: definedQuery({ search: parsed.search }),
 		}),
-		{ log: (_, result) => ({ count: result.data?.length ?? 0 }) },
+		{
+			shape: typesShape,
+			log: (_, result) => ({ count: result.data.length }),
+		},
 	);
+
+/**
+ * GatherUp answers the types as numbered keys beside `errorCode`:
+ * `{ "0": "Bar", "1": "Pub", "errorCode": 0 }`. They are gathered, in order,
+ * into `data`.
+ */
+// unknown: the raw body is an untyped object until the output schema runs.
+export function typesShape(raw: unknown) {
+	const record = asRecord(raw) ?? {};
+	const data = Object.keys(record)
+		.filter((key) => /^\d+$/.test(key))
+		.sort((a, b) => Number(a) - Number(b))
+		.map((key) => record[key])
+		.filter((value): value is string => typeof value === 'string');
+	return {
+		data,
+		errorCode: record.errorCode,
+		errorMessage: record.errorMessage,
+	};
+}
 
 export const create: GatherupEndpoints['businessesCreate'] = (ctx, input) =>
 	call(
@@ -96,7 +129,12 @@ export const create: GatherupEndpoints['businessesCreate'] = (ctx, input) =>
 				Object.entries(parsed).filter(([, value]) => value !== undefined),
 			),
 		}),
-		{ log: (_, result) => ({ businessId: result.data?.id ?? undefined }) },
+		{
+			log: (_, result) => ({
+				businessId:
+					result.businessId == null ? undefined : String(result.businessId),
+			}),
+		},
 	);
 
 export const update: GatherupEndpoints['businessesUpdate'] = (ctx, input) =>

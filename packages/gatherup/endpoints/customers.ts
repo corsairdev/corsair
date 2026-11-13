@@ -43,7 +43,8 @@ export const get: GatherupEndpoints['customersGet'] = (ctx, input) =>
 			path: '/api/v2/customer/get',
 			query: definedQuery({ businessId, customerId: String(customerId) }),
 		}),
-		{ log: (_, result) => ({ customerId: result.id ?? undefined }) },
+		// The answer carries no `id`, so the ID asked for is logged.
+		{ log: ({ customerId }) => ({ customerId: String(customerId) }) },
 	);
 
 // The create body uses `customer…` names, which is what the route binds.
@@ -56,16 +57,24 @@ export const create: GatherupEndpoints['customersCreate'] = (ctx, input) =>
 			output: Outputs.customersCreate,
 		},
 		input,
-		(parsed) => ({
+		// GatherUp takes `sendFeedbackRequest` as 0 or 1. It is always sent, as 0
+		// unless asked for, so creating a customer never messages them by default.
+		({ sendFeedbackRequest, ...fields }) => ({
 			method: 'POST',
 			path: '/api/v2/customer/create',
-			body: Object.fromEntries(
-				Object.entries(parsed).filter(([, value]) => value !== undefined),
-			),
+			body: {
+				...Object.fromEntries(
+					Object.entries(fields).filter(([, value]) => value !== undefined),
+				),
+				sendFeedbackRequest: sendFeedbackRequest ? 1 : 0,
+			},
 		}),
 		{
 			// The address and phone are personal data, so only the ID is logged.
-			log: (_, result) => ({ customerId: result.id ?? undefined }),
+			log: (_, result) => ({
+				customerId:
+					result.customerId == null ? undefined : String(result.customerId),
+			}),
 		},
 	);
 
@@ -121,10 +130,12 @@ export const requestFeedback: GatherupEndpoints['feedbackRequest'] = (
 			output: Outputs.feedbackRequest,
 		},
 		input,
-		({ customerId }) => ({
+		// GatherUp defaults `ratingRevision` to 1, a revision of an earlier rating,
+		// so a new request is asked for explicitly unless a revision was wanted.
+		({ customerId, ratingRevision }) => ({
 			method: 'POST',
 			path: '/api/v2/customer/feedback/send',
-			body: { customerId },
+			body: { customerId, ratingRevision: ratingRevision ? 1 : 0 },
 		}),
 		{ log: ({ customerId }) => ({ customerId: String(customerId) }) },
 	);

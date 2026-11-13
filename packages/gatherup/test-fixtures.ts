@@ -30,12 +30,29 @@ export const business = {
 	errorMessage: 'Success',
 };
 
+/** A list row uses `business…` names, unlike the single read (reference example). */
+export const businessRow = {
+	businessId: 33733,
+	businessDeleted: 0,
+	businessName: 'ApiTest',
+	businessPhone: '2345345345',
+	businessCity: 'Los Angeles',
+	businessState: 'LA',
+	businessZip: '23434',
+	businessCountry: 'United States',
+	businessStreetAddress: 'Street',
+	businessOrganisationType: 'company',
+	customField: '12345',
+	businessPackage: 'basic',
+	extraField: 'extra123-example',
+};
+
 export const businesses = {
 	page: 1,
+	perPage: 2,
 	pages: 2,
 	count: 2,
-	perPage: 2,
-	data: [business, { ...business, id: 34292, name: 'Second Site' }],
+	data: [businessRow, { ...businessRow, businessId: 33734 }],
 	errorCode: 0,
 	errorMessage: 'Success',
 };
@@ -43,39 +60,44 @@ export const businesses = {
 /** A single page, which is where `next_page` must be null. */
 export const lastBusinessPage = {
 	page: 1,
+	perPage: 100,
 	pages: 1,
 	count: 1,
-	perPage: 500,
-	data: [business],
+	data: [businessRow],
 	errorCode: 0,
 	errorMessage: 'Success',
 };
 
+/** Create answers the new ID at the top level. */
 export const businessCreated = {
-	data: { id: 34300 },
+	businessId: 34298,
 	errorCode: 0,
 	errorMessage: 'Success',
 };
 
 export const success = { errorCode: 0, errorMessage: 'Success' };
 
+/** Types come back as numbered keys beside the error fields. */
 export const businessTypes = {
-	data: [
-		{ id: 1, name: 'Insurance Agency' },
-		{ id: 2, name: 'Restaurant' },
-	],
+	'0': 'Alternative Medicine Practitioner',
+	'1': 'Chinese Medicine Clinic',
+	'2': 'Sports Medicine Clinic',
 	errorCode: 0,
 	errorMessage: 'Success',
 };
 
+/** A search answers one business ID. */
 export const businessSearch = {
-	data: [
-		{
-			id: 34291,
-			name: 'Peach Trees Intl.',
-			website: 'https://peachtreeintl.example',
-		},
-	],
+	businessId: 34292,
+	errorCode: 0,
+	errorMessage: 'Success',
+};
+
+/** Create answers the new customer ID, not the record. */
+export const customerCreated = {
+	customerId: 80717046,
+	feedbackRequestErrorCode: 0,
+	feedbackRequestErrorMessage: 'Success',
 	errorCode: 0,
 	errorMessage: 'Success',
 };

@@ -69,15 +69,46 @@ export type GatherupBusiness = z.infer<typeof GatherupBusinessSchema>;
 
 const BusinessesListInputSchema = z.object({
 	page: z.number().int().min(1).optional().describe('1-based page.'),
-	perPage: z.number().int().min(1).optional(),
+	perPage: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Rows per page, sent as `limit`. GatherUp defaults to 100.'),
 });
 
 export type BusinessesListInput = z.input<typeof BusinessesListInputSchema>;
 
+// A list row uses `business…` names, unlike the single read's `id` and `name`.
+export const GatherupBusinessListRowSchema = z
+	.object({
+		businessId: z.union([z.number(), z.string()]),
+		businessDeleted: z
+			.number()
+			.nullish()
+			.describe('`1` for a deleted business.'),
+		businessName: z.string().nullish(),
+		businessPhone: z.string().nullish(),
+		businessCity: z.string().nullish(),
+		businessState: z.string().nullish(),
+		businessZip: z.string().nullish(),
+		businessCountry: z.string().nullish(),
+		businessStreetAddress: z.string().nullish(),
+		businessOrganisationType: z.string().nullish(),
+		customField: z.string().nullish(),
+		businessPackage: z.string().nullish(),
+		extraField: z.string().nullish(),
+	})
+	.loose();
+
+export type GatherupBusinessListRow = z.infer<
+	typeof GatherupBusinessListRowSchema
+>;
+
 const BusinessesListResponseSchema = z
 	.object({
 		...pageFields,
-		data: z.array(GatherupBusinessSchema),
+		data: z.array(GatherupBusinessListRowSchema),
 		...errorFields,
 		next_page: z
 			.number()
@@ -101,27 +132,21 @@ const BusinessResponseSchema =
 export type BusinessResponse = z.infer<typeof BusinessResponseSchema>;
 
 const BusinessSearchInputSchema = z.object({
+	by: z
+		.enum(['customField', 'extraField'])
+		.describe('Which of the business’s own IDs to match.'),
 	search: z
 		.string()
 		.min(1)
-		.describe('A name or domain to search the business directory for.'),
+		.describe('The `customField` or `extraField` value to look up.'),
 });
 
 export type BusinessSearchInput = z.input<typeof BusinessSearchInputSchema>;
 
+// A match answers one ID, and no match a 404 with `errorCode` 25.
 const BusinessSearchResponseSchema = z
 	.object({
-		data: z
-			.array(
-				z
-					.object({
-						id: z.number().nullish(),
-						name: z.string().nullish(),
-						website: z.string().nullish(),
-					})
-					.loose(),
-			)
-			.nullish(),
+		businessId: z.union([z.number(), z.string()]).nullish(),
 		...errorFields,
 	})
 	.loose();
@@ -136,18 +161,13 @@ const BusinessTypesInputSchema = z.object({
 
 export type BusinessTypesInput = z.input<typeof BusinessTypesInputSchema>;
 
-const BusinessTypeSchema = z
-	.object({
-		id: z.number().nullish(),
-		name: z.string().nullish(),
-	})
-	.loose();
+export type GatherupBusinessType = string;
 
-export type GatherupBusinessType = z.infer<typeof BusinessTypeSchema>;
-
+// GatherUp answers the types as numbered keys (`"0": "Bar"`) beside
+// `errorCode`; the endpoint gathers them into `data`.
 const BusinessTypesResponseSchema = z
 	.object({
-		data: z.array(BusinessTypeSchema).nullish(),
+		data: z.array(z.string()),
 		...errorFields,
 	})
 	.loose();
@@ -167,10 +187,10 @@ const BusinessCreateInputSchema = z.object({
 		),
 	city: z.string().min(1),
 	country: z.string().min(1).describe('A country code or full name.'),
-	streetAddress: z.string().optional(),
-	state: z.string().optional(),
-	zip: z.string().optional(),
-	phone: z.string().optional(),
+	streetAddress: z.string().min(1),
+	state: z.string().min(1).describe('A state code or full name.'),
+	zip: z.string().min(1),
+	phone: z.string().min(1),
 	// GatherUp spells this one with a lower-case `rl`, unlike the read's `websiteURL`.
 	websiteUrl: z.url().optional(),
 	organisationType: z.string().optional().describe('Defaults to `company`.'),
@@ -181,9 +201,10 @@ const BusinessCreateInputSchema = z.object({
 
 export type BusinessCreateInput = z.input<typeof BusinessCreateInputSchema>;
 
+// Create answers the new `businessId`; update answers only the error fields.
 const BusinessWriteResponseSchema = z
 	.object({
-		data: z.object({ id: z.number().nullish() }).loose().nullish(),
+		businessId: z.union([z.number(), z.string()]).nullish(),
 		...errorFields,
 	})
 	.loose();
@@ -294,7 +315,9 @@ const CustomerCreateInputSchema = z
 		sendFeedbackRequest: z
 			.boolean()
 			.optional()
-			.describe('Send the request as soon as the customer is created.'),
+			.describe(
+				'Send a feedback request to the customer as soon as they are created. Defaults to false; a business in automatic mode still sends on its own schedule.',
+			),
 	})
 	.superRefine((value, ctx) => {
 		if (
@@ -311,6 +334,24 @@ const CustomerCreateInputSchema = z
 	});
 
 export type CustomerCreateInput = z.input<typeof CustomerCreateInputSchema>;
+
+// Create answers the new ID and how the optional feedback request went, not
+// the customer record.
+const CustomerCreateResponseSchema = z
+	.object({
+		customerId: z.union([z.string(), z.number()]).nullish(),
+		feedbackRequestErrorCode: z
+			.number()
+			.nullish()
+			.describe('`0` when the requested feedback request went out.'),
+		feedbackRequestErrorMessage: z.string().nullish(),
+		...errorFields,
+	})
+	.loose();
+
+export type CustomerCreateResponse = z.infer<
+	typeof CustomerCreateResponseSchema
+>;
 
 // The update route spells the phone field `customerPhoneNumber`, where create
 // spells it `customerPhone`, so each keeps its own documented name.
@@ -338,6 +379,12 @@ export type CustomerRemoveInput = z.input<typeof CustomerRemoveInputSchema>;
 const FeedbackRequestInputSchema = z.object({
 	businessId: BusinessIdSchema,
 	customerId: CustomerIdSchema,
+	ratingRevision: z
+		.boolean()
+		.optional()
+		.describe(
+			'Ask the customer to revise an earlier rating instead of sending a new request. Defaults to false; GatherUp’s own default is a revision.',
+		),
 });
 
 export type FeedbackRequestInput = z.input<typeof FeedbackRequestInputSchema>;
@@ -422,7 +469,7 @@ export type GatherupEndpointOutputs = {
 	businessesRemove: SuccessResponse;
 	customersList: CustomersListResponse;
 	customersGet: CustomerResponse;
-	customersCreate: CustomerResponse;
+	customersCreate: CustomerCreateResponse;
 	customersUpdate: CustomerResponse;
 	customersRemove: SuccessResponse;
 	feedbackRequest: SuccessResponse;
@@ -460,7 +507,7 @@ export const GatherupEndpointOutputSchemas = {
 	businessesRemove: SuccessResponseSchema,
 	customersList: CustomersListResponseSchema,
 	customersGet: CustomerResponseSchema,
-	customersCreate: CustomerResponseSchema,
+	customersCreate: CustomerCreateResponseSchema,
 	customersUpdate: CustomerResponseSchema,
 	customersRemove: SuccessResponseSchema,
 	feedbackRequest: SuccessResponseSchema,

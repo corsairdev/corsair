@@ -1,13 +1,15 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { GatherupAPIError } from './client';
 import { Businesses, Customers } from './endpoints';
 import {
 	business,
 	businessCreated,
 	businesses,
+	businessRow,
 	businessSearch,
 	businessTypes,
 	customer,
+	customerCreated,
 	customers,
 	feedbacks,
 	invalidClientOn200,
@@ -111,12 +113,18 @@ describe('businesses.list', () => {
 			method: 'GET',
 			path: '/api/v2/businesses/get',
 		});
+		// GatherUp names the page size `limit` on this route.
 		expect(lastRequest().query).toEqual({
 			clientId: CLIENT_ID,
 			page: '1',
-			perPage: '2',
+			limit: '2',
 		});
 		expect(result.data).toHaveLength(2);
+		// A list row uses `business…` names, not the single read's `id`.
+		expect(result.data[0]).toMatchObject({
+			businessId: 33733,
+			businessName: 'ApiTest',
+		});
 		// 2 pages, so another exists.
 		expect(result.next_page).toBe(2);
 		expect(mockLog).toHaveBeenCalledWith(
@@ -132,6 +140,18 @@ describe('businesses.list', () => {
 
 		await expect(invoke(Businesses.list, {})).resolves.toMatchObject({
 			next_page: null,
+		});
+	});
+
+	it('counts a full page of 100 as more to come when pages is missing', async () => {
+		const rows = Array.from({ length: 100 }, (_, i) => ({
+			...businessRow,
+			businessId: i + 1,
+		}));
+		respond({ data: rows, errorCode: 0, errorMessage: 'Success' });
+
+		await expect(invoke(Businesses.list, {})).resolves.toMatchObject({
+			next_page: 2,
 		});
 	});
 });
@@ -168,26 +188,52 @@ describe('businesses.get', () => {
 });
 
 describe('businesses.search and types', () => {
-	it('searches by name', async () => {
+	it('searches by the required `by` field and reads the one ID back', async () => {
 		respond(businessSearch);
 
 		await expect(
-			invoke(Businesses.search, { search: 'peach' }),
-		).resolves.toMatchObject({ data: [{ id: 34291 }] });
+			invoke(Businesses.search, { by: 'extraField', search: 'my-custom-123' }),
+		).resolves.toMatchObject({ businessId: 34292 });
 		expect(lastRequest()).toMatchObject({ path: '/api/v2/business/search' });
-		expect(lastRequest().query.search).toBe('peach');
+		expect(lastRequest().query).toMatchObject({
+			by: 'extraField',
+			search: 'my-custom-123',
+		});
 	});
 
-	it('lists the business types', async () => {
+	it('refuses a search without `by`, which GatherUp requires', async () => {
+		await expect(
+			invoke(Businesses.search, { search: 'peach' }),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('gathers the numbered keys of the types answer into data', async () => {
 		respond(businessTypes);
 
-		const result = (await invoke(Businesses.types, {})) as typeof businessTypes;
+		const result = (await invoke(Businesses.types, {
+			search: 'Medicine',
+		})) as { data: string[] };
 
-		expect(result.data).toHaveLength(2);
-		expect(result.data[0]?.name).toBe('Insurance Agency');
+		expect(result.data).toEqual([
+			'Alternative Medicine Practitioner',
+			'Chinese Medicine Clinic',
+			'Sports Medicine Clinic',
+		]);
 		expect(lastRequest()).toMatchObject({ path: '/api/v2/business/types' });
+		expect(lastRequest().query.search).toBe('Medicine');
 	});
 });
+
+const ADDRESS = {
+	businessType: 'Insurance Agency',
+	city: 'Haiku',
+	country: 'US',
+	streetAddress: '4150 Hana Hwy',
+	state: 'HI',
+	zip: '96708',
+	phone: '808-333-3334',
+};
 
 describe('businesses.create', () => {
 	it('POSTs the prefixed body names the route binds', async () => {
@@ -195,12 +241,10 @@ describe('businesses.create', () => {
 
 		await expect(
 			invoke(Businesses.create, {
+				...ADDRESS,
 				businessName: 'Peach Trees Intl.',
-				businessType: 'Insurance Agency',
-				city: 'Haiku',
-				country: 'US',
 			}),
-		).resolves.toMatchObject({ data: { id: 34300 } });
+		).resolves.toMatchObject({ businessId: 34298 });
 		expect(lastRequest()).toMatchObject({
 			method: 'POST',
 			path: '/api/v2/business/create',
@@ -209,6 +253,8 @@ describe('businesses.create', () => {
 				businessType: 'Insurance Agency',
 				city: 'Haiku',
 				country: 'US',
+				// GatherUp reads the client ID from the body on a write.
+				clientId: CLIENT_ID,
 			},
 		});
 	});
@@ -217,10 +263,8 @@ describe('businesses.create', () => {
 		respond(businessCreated);
 
 		await invoke(Businesses.create, {
+			...ADDRESS,
 			businessName: 'Peach Trees',
-			businessType: 'Restaurant',
-			city: 'Haiku',
-			country: 'US',
 			websiteUrl: 'https://peachtree.example',
 		});
 
@@ -234,23 +278,18 @@ describe('businesses.create', () => {
 		[{ businessName: 'x' }],
 		[{ businessName: 'x', businessType: 'Restaurant' }],
 		[{ businessName: 'x', businessType: 'Restaurant', city: 'Haiku' }],
-		[
-			{
-				businessName: '',
-				businessType: 'Restaurant',
-				city: 'Haiku',
-				country: 'US',
-			},
-		],
+		[{ ...ADDRESS, businessName: '' }],
+		[{ ...ADDRESS, businessName: 'x', websiteUrl: 'not-a-url' }],
+		// GatherUp lists the street, state, zip and phone as required.
 		[
 			{
 				businessName: 'x',
 				businessType: 'Restaurant',
 				city: 'Haiku',
 				country: 'US',
-				websiteUrl: 'not-a-url',
 			},
 		],
+		[{ ...ADDRESS, businessName: 'x', zip: undefined }],
 	])('rejects %j before calling GatherUp', async (input) => {
 		await expect(invoke(Businesses.create, input)).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
@@ -299,7 +338,7 @@ describe('businesses.delete', () => {
 		expect(lastRequest()).toMatchObject({
 			method: 'DELETE',
 			path: '/api/v2/business/delete',
-			body: { businessId: 34291 },
+			body: { businessId: 34291, clientId: CLIENT_ID },
 		});
 	});
 });
@@ -331,15 +370,24 @@ describe('customers', () => {
 	});
 
 	it('POSTs a customer with the `customer…` names the route binds', async () => {
-		respond(customer);
+		respond(customerCreated);
 
-		await invoke(Customers.create, {
+		const result = await invoke(Customers.create, {
 			businessId: 34291,
 			customerFirstName: 'John',
 			customerLastName: 'Smith',
 			customerEmail: 'john.smith@app.gatherup.com',
 			customerTags: 'brakes,tires',
 		});
+
+		// Create answers the new ID, not the record.
+		expect(result).toMatchObject({ customerId: 80717046 });
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'gatherup.customers.create',
+			{ customerId: '80717046' },
+			'completed',
+		);
 
 		expect(lastRequest()).toMatchObject({
 			method: 'POST',
@@ -350,12 +398,29 @@ describe('customers', () => {
 				customerLastName: 'Smith',
 				customerEmail: 'john.smith@app.gatherup.com',
 				customerTags: 'brakes,tires',
+				// Sent as 0 unless asked for, so a create never messages anyone.
+				sendFeedbackRequest: 0,
+				clientId: CLIENT_ID,
 			},
 		});
 	});
 
+	it('sends sendFeedbackRequest as 1 only when asked', async () => {
+		respond(customerCreated);
+
+		await invoke(Customers.create, {
+			businessId: 34291,
+			customerFirstName: 'John',
+			customerLastName: 'Smith',
+			customerEmail: 'john.smith@app.gatherup.com',
+			sendFeedbackRequest: true,
+		});
+
+		expect(lastRequest().body).toMatchObject({ sendFeedbackRequest: 1 });
+	});
+
 	it('logs the customer ID and never the address', async () => {
-		respond(customer);
+		respond(customerCreated);
 
 		await invoke(Customers.create, {
 			businessId: 34291,
@@ -433,7 +498,7 @@ describe('customers', () => {
 	});
 
 	it('accepts a customer with a phone and no email, which a higher plan allows', async () => {
-		respond(customer);
+		respond(customerCreated);
 
 		await invoke(Customers.create, {
 			businessId: 34291,
@@ -455,11 +520,24 @@ describe('customers.requestFeedback', () => {
 			customerId: 80717046,
 		});
 
+		// GatherUp's default is a rating revision, so a new request asks for 0.
 		expect(lastRequest()).toMatchObject({
 			method: 'POST',
 			path: '/api/v2/customer/feedback/send',
-			body: { customerId: 80717046 },
+			body: { customerId: 80717046, ratingRevision: 0, clientId: CLIENT_ID },
 		});
+	});
+
+	it('asks for a rating revision only when told to', async () => {
+		respond(success);
+
+		await invoke(Customers.requestFeedback, {
+			businessId: 34291,
+			customerId: 80717046,
+			ratingRevision: true,
+		});
+
+		expect(lastRequest().body).toMatchObject({ ratingRevision: 1 });
 	});
 });
 
@@ -486,6 +564,57 @@ describe('feedbacks.list', () => {
 		for (const payload of payloads) {
 			expect(payload).not.toContain('amazing');
 		}
+	});
+});
+
+describe('credentials', () => {
+	// unknown: each case swaps in its own context.
+	function invokeWith(ctx: unknown) {
+		return Businesses.get(ctx as never, { businessId: 1 } as never);
+	}
+
+	it('uses the stored token and never the client ID as the bearer', async () => {
+		respond(business);
+
+		await invokeWith({
+			key: CLIENT_ID,
+			options: {},
+			keys: { get_api_secret: jest.fn().mockResolvedValue(API_KEY) },
+		});
+
+		expectAuthenticated();
+	});
+
+	it('uses the apiKey option even when only the key option names the client', async () => {
+		respond(business);
+
+		await invokeWith({
+			key: CLIENT_ID,
+			options: { key: CLIENT_ID, apiKey: API_KEY },
+			keys: { get_api_secret: jest.fn().mockResolvedValue(null) },
+		});
+
+		expectAuthenticated();
+	});
+
+	it('raises AuthMissingError instead of sending the client ID as the token', async () => {
+		await expect(
+			invokeWith({
+				key: CLIENT_ID,
+				options: {},
+				keys: { get_api_secret: jest.fn().mockResolvedValue(null) },
+			}),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('keeps the client ID on the query of a GET and adds no body', async () => {
+		respond(business);
+
+		await invoke(Businesses.get, { businessId: 1 });
+
+		expect(lastRequest().body).toBeUndefined();
+		expect(lastRequest().query.clientId).toBe(CLIENT_ID);
 	});
 });
 
@@ -527,12 +656,7 @@ describe('error envelopes', () => {
 		respond(invalidField, 400);
 
 		await expect(
-			invoke(Businesses.create, {
-				businessName: 'x',
-				businessType: 'Restaurant',
-				city: 'Haiku',
-				country: 'US',
-			}),
+			invoke(Businesses.create, { ...ADDRESS, businessName: 'x' }),
 		).rejects.toMatchObject({
 			status: 400,
 			errorCode: 11,
