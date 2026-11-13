@@ -1,0 +1,1512 @@
+---
+title: "GoSquared API reference"
+sidebarTitle: "API"
+description: "API reference for the GoSquared plugin in Corsair: every `gosquared.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### createSite
+
+`account.createSite`
+
+Create and provision a new site for tracking in GoSquared
+
+**Risk:** `write`
+
+```ts
+await corsair.gosquared.api.account.createSite({ domain_name: 'example.com', name: 'Example Site' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain_name` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `domain_name` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `created` | `string` | No | — |
+| `user_id` | `number \| string` | No | — |
+| `plan_name` | `string` | No | — |
+
+
+
+---
+
+### getBlocked
+
+`account.getBlocked`
+
+Retrieve blocked IP addresses and bot settings for a site
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.account.getBlocked({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `presenter` | `plain \| tags \| indexedTags` | No | — |
+
+
+
+**Output:** `string[] \| object[] \| Record<string, string>`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+string[] | {
+  id: string,
+  tag?: string
+}[] | Record<string, string>
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSharedUsers
+
+`account.getSharedUsers`
+
+Retrieve team members with access to a GoSquared project
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.account.getSharedUsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  email?: string,
+  role?: string,
+  status?: string,
+  id?: string | number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSite
+
+`account.getSite`
+
+Retrieve configuration and details for a specific site
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.account.getSite({ site_token: 'GSN-123456-X' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `domain_name` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `created` | `string` | No | — |
+| `user_id` | `number \| string` | No | — |
+| `plan_name` | `string` | No | — |
+
+
+
+---
+
+### getSites
+
+`account.getSites`
+
+Retrieve all sites accessible by the GoSquared account
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.account.getSites({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presenter` | `grouped \| flat` | No | — |
+
+
+
+**Output:** `object[] \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  site_token: string,
+  name?: string | null,
+  domain_name?: string,
+  timezone?: string,
+  created?: string,
+  user_id?: number | string,
+  plan_name?: string
+}[] | Record<string, {
+  site_token: string,
+  name?: string | null,
+  domain_name?: string,
+  timezone?: string,
+  created?: string,
+  user_id?: number | string,
+  plan_name?: string
+}[]>
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Auth
+
+### getTokenInfo
+
+`auth.getTokenInfo`
+
+Validate API key and retrieve associated scopes and token info
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.auth.getTokenInfo({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scopes` | `string[]` | No | — |
+| `user_id` | `string \| number` | No | — |
+| `site_token` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+---
+
+## Chat
+
+### archiveChat
+
+`chat.archiveChat`
+
+Archive an active chat conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.gosquared.api.chat.archiveChat({ chat_id: 'chat_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chat_id` | `string` | Yes | — |
+| `site_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### getChat
+
+`chat.getChat`
+
+Retrieve a specific live chat conversation by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.chat.getChat({ chat_id: 'chat_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chat_id` | `string` | Yes | — |
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### getChatFeed
+
+`chat.getChatFeed`
+
+Retrieve message history and event feed for a chat
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.chat.getChatFeed({ chat_id: 'chat_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chat_id` | `string` | Yes | — |
+| `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>[] \| Record<string, any>`
+
+
+---
+
+### getChats
+
+`chat.getChats`
+
+Retrieve active conversation threads in GoSquared Live Chat
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.chat.getChats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>[] \| Record<string, any>`
+
+
+---
+
+### sendMessage
+
+`chat.sendMessage`
+
+Send a message in a chat conversation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.gosquared.api.chat.sendMessage({ chat_id: 'chat_123', content: 'Hello customer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chat_id` | `string` | Yes | — |
+| `site_token` | `string` | No | — |
+| `content` | `string` | Yes | — |
+| `from` | `agent \| client` | No | — |
+| `auth` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `message_id` | `string` | No | — |
+
+
+
+---
+
+### unarchiveChat
+
+`chat.unarchiveChat`
+
+Unarchive a previously archived chat conversation
+
+**Risk:** `write`
+
+```ts
+await corsair.gosquared.api.chat.unarchiveChat({ chat_id: 'chat_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chat_id` | `string` | Yes | — |
+| `site_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+## Now
+
+### getBrowsers
+
+`now.getBrowsers`
+
+Retrieve browsers currently in use by active visitors
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.now.getBrowsers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getCampaigns
+
+`now.getCampaigns`
+
+Retrieve active marketing campaigns driving current traffic
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.now.getCampaigns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getConcurrents
+
+`now.getConcurrents`
+
+Retrieve current count of concurrent visitors online
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.now.getConcurrents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `concurrents` | `number` | No | — |
+| `online` | `number` | No | — |
+
+
+
+---
+
+### getCountries
+
+`now.getCountries`
+
+Retrieve countries of origin for active online visitors
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.now.getCountries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getGeo
+
+`now.getGeo`
+
+Retrieve real-time visitor geographic coordinate clusters
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.now.getGeo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getOverview
+
+`now.getOverview`
+
+Retrieve real-time summary of concurrent visitors and traffic
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.now.getOverview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `minimal` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `visitors` | `number` | No | — |
+| `pages` | `number` | No | — |
+| `pageviews` | `number` | No | — |
+| `visitors_direct` | `number` | No | — |
+| `visitors_search` | `number` | No | — |
+| `visitors_referral` | `number` | No | — |
+| `visitors_campaign` | `number` | No | — |
+
+
+
+---
+
+### getPages
+
+`now.getPages`
+
+Retrieve top active pages viewed right now
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.now.getPages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getPlatforms
+
+`now.getPlatforms`
+
+Retrieve operating platforms used by active online visitors
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.now.getPlatforms({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getSources
+
+`now.getSources`
+
+Retrieve current traffic sources referring active visitors
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.now.getSources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getTimeSeries
+
+`now.getTimeSeries`
+
+Retrieve recent time series of concurrent visitor activity
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.now.getTimeSeries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getVisitors
+
+`now.getVisitors`
+
+Retrieve detailed list of active concurrent visitors
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.now.getVisitors({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+## People
+
+### getDevice
+
+`people.getDevice`
+
+Retrieve technical specifications for a single device
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.people.getDevice({ device_id: 'dev_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `device_id` | `string` | Yes | — |
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### getDevices
+
+`people.getDevices`
+
+Retrieve paginated list of all tracked user devices
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.people.getDevices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
+
+
+
+**Output:** `Record<string, any>[] \| Record<string, any>`
+
+
+---
+
+### getEventTypes
+
+`people.getEventTypes`
+
+Retrieve custom event type definitions in People CRM
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.people.getEventTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `string[] \| Record<string, any>`
+
+
+---
+
+### getPeople
+
+`people.getPeople`
+
+Search and query customer profiles in People CRM
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.people.getPeople({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `sort` | `string` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `filters` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>[] \| Record<string, any>`
+
+
+---
+
+### getPerson
+
+`people.getPerson`
+
+Retrieve a specific person profile by ID or email
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.people.getPerson({ person_id: 'person_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person_id` | `string` | Yes | — |
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### getPersonDevices
+
+`people.getPersonDevices`
+
+Retrieve devices associated with a person in People CRM
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.people.getPersonDevices({ person_id: 'person_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person_id` | `string` | Yes | — |
+| `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
+
+
+
+**Output:** `Record<string, any>[] \| Record<string, any>`
+
+
+---
+
+### getPersonFeed
+
+`people.getPersonFeed`
+
+Retrieve chronological interaction feed for a person
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.people.getPersonFeed({ person_id: 'person_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `person_id` | `string` | Yes | — |
+| `site_token` | `string` | No | — |
+| `limit` | `number \| string` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>[] \| Record<string, any>`
+
+
+---
+
+### getPropertyTypes
+
+`people.getPropertyTypes`
+
+Retrieve user property type definitions in People CRM
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.people.getPropertyTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `string[] \| Record<string, any>`
+
+
+---
+
+### getSmartGroups
+
+`people.getSmartGroups`
+
+Retrieve saved smart groups and segment criteria
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.people.getSmartGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any>[] \| Record<string, any>`
+
+
+---
+
+## Tracking
+
+### identify
+
+`tracking.identify`
+
+Identify or update user profile traits in People CRM
+
+**Risk:** `write`
+
+```ts
+await corsair.gosquared.api.tracking.identify({
+	properties: { email: 'user@example.com' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `person_id` | `string` | No | — |
+| `visitor_id` | `string` | No | — |
+| `properties` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+{
+  email?: string,
+  name?: string,
+  first_name?: string,
+  last_name?: string,
+  phone?: string,
+  created_at?: string,
+  company?: Record<string, any>,
+  custom?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### trackEvent
+
+`tracking.trackEvent`
+
+Track a custom user event with optional event data
+
+**Risk:** `write`
+
+```ts
+await corsair.gosquared.api.tracking.trackEvent({
+	event: { name: 'Signed Up' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `event` | `object` | Yes | — |
+| `person_id` | `string` | No | — |
+| `visitor_id` | `string` | No | — |
+| `timestamp` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  name: string,
+  data?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### trackPageview
+
+`tracking.trackPageview`
+
+Track a pageview with URL and page title
+
+**Risk:** `write`
+
+```ts
+await corsair.gosquared.api.tracking.trackPageview({
+	page: { url: 'https://example.com' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `page` | `object` | Yes | — |
+| `person_id` | `string` | No | — |
+| `visitor_id` | `string` | No | — |
+| `timestamp` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  url: string,
+  title?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### trackTransaction
+
+`tracking.trackTransaction`
+
+Track an e-commerce purchase transaction with line items
+
+**Risk:** `write`
+
+```ts
+await corsair.gosquared.api.tracking.trackTransaction({
+	transaction: { id: 'tx_123' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `transaction` | `object` | Yes | — |
+| `person_id` | `string` | No | — |
+| `visitor_id` | `string` | No | — |
+| `timestamp` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="transaction full type">
+
+```ts
+{
+  id: string,
+  revenue?: number,
+  quantity?: number,
+  items?: {
+    name: string,
+    price?: number,
+    quantity?: number,
+    revenue?: number,
+    categories?: string[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+## Trends
+
+### getAggregate
+
+`trends.getAggregate`
+
+Retrieve aggregate historical trends and total metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.trends.getAggregate({ from: '2026-01-01', to: '2026-01-07' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `interval` | `hour \| day \| month` | No | — |
+| `limit` | `number \| string` | No | — |
+| `format` | `json \| csv` | No | — |
+| `dateFormat` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getBrowser
+
+`trends.getBrowser`
+
+Retrieve historical traffic breakdown by browser
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.trends.getBrowser({ from: '2026-01-01', to: '2026-01-07' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `interval` | `hour \| day \| month` | No | — |
+| `limit` | `number \| string` | No | — |
+| `format` | `json \| csv` | No | — |
+| `dateFormat` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getCountry
+
+`trends.getCountry`
+
+Retrieve historical traffic breakdown by country
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.trends.getCountry({ from: '2026-01-01', to: '2026-01-07' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `interval` | `hour \| day \| month` | No | — |
+| `limit` | `number \| string` | No | — |
+| `format` | `json \| csv` | No | — |
+| `dateFormat` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getEvent
+
+`trends.getEvent`
+
+Retrieve historical custom event tracking metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.trends.getEvent({ from: '2026-01-01', to: '2026-01-07' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `interval` | `hour \| day \| month` | No | — |
+| `limit` | `number \| string` | No | — |
+| `format` | `json \| csv` | No | — |
+| `dateFormat` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getLanguage
+
+`trends.getLanguage`
+
+Retrieve historical traffic breakdown by visitor language
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.trends.getLanguage({ from: '2026-01-01', to: '2026-01-07' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `interval` | `hour \| day \| month` | No | — |
+| `limit` | `number \| string` | No | — |
+| `format` | `json \| csv` | No | — |
+| `dateFormat` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getOrganisation
+
+`trends.getOrganisation`
+
+Retrieve historical traffic by visiting organization/ISP
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.trends.getOrganisation({ from: '2026-01-01', to: '2026-01-07' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `interval` | `hour \| day \| month` | No | — |
+| `limit` | `number \| string` | No | — |
+| `format` | `json \| csv` | No | — |
+| `dateFormat` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getOs
+
+`trends.getOs`
+
+Retrieve historical traffic breakdown by operating system
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.trends.getOs({ from: '2026-01-01', to: '2026-01-07' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `interval` | `hour \| day \| month` | No | — |
+| `limit` | `number \| string` | No | — |
+| `format` | `json \| csv` | No | — |
+| `dateFormat` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getPage
+
+`trends.getPage`
+
+Retrieve historical pageview and URL performance metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.trends.getPage({ from: '2026-01-01', to: '2026-01-07' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `interval` | `hour \| day \| month` | No | — |
+| `limit` | `number \| string` | No | — |
+| `format` | `json \| csv` | No | — |
+| `dateFormat` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getPath1
+
+`trends.getPath1`
+
+Retrieve historical top-level URL path segment metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.trends.getPath1({ from: '2026-01-01', to: '2026-01-07' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `interval` | `hour \| day \| month` | No | — |
+| `limit` | `number \| string` | No | — |
+| `format` | `json \| csv` | No | — |
+| `dateFormat` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getScreenDimensions
+
+`trends.getScreenDimensions`
+
+Retrieve historical screen resolution metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.trends.getScreenDimensions({ from: '2026-01-01', to: '2026-01-07' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `interval` | `hour \| day \| month` | No | — |
+| `limit` | `number \| string` | No | — |
+| `format` | `json \| csv` | No | — |
+| `dateFormat` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+
+### getSources
+
+`trends.getSources`
+
+Retrieve historical traffic sources and referral channels
+
+**Risk:** `read`
+
+```ts
+await corsair.gosquared.api.trends.getSources({ from: '2026-01-01', to: '2026-01-07' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_token` | `string` | No | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `interval` | `hour \| day \| month` | No | — |
+| `limit` | `number \| string` | No | — |
+| `format` | `json \| csv` | No | — |
+| `dateFormat` | `string` | No | — |
+
+
+
+**Output:** `Record<string, any> \| Record<string, any>[]`
+
+
+---
+

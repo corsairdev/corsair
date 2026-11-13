@@ -1,4 +1,6 @@
-export const GoSquaredSchema = {
+import { gosquaredEntities } from './database';
+
+export const GosquaredSchema = {
 	version: '1.0.0',
-	entities: {},
+	entities: gosquaredEntities,
 } as const;
