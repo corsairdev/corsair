@@ -9,7 +9,7 @@ overviewNote: |
 
   Things to know:
   - **Rate limits:** Fathom enforces both an hourly volume limit and a concurrency limit per account. When exceeded, the API returns HTTP 429 with a `Retry-After` header.
-  - **Deprecated endpoints:** Fathom retired legacy Wipe endpoints and individual event ID endpoints, returning HTTP 410 Gone. Use `events.deleteByName` with the event name instead of ID-based event operations.
+  - **Retired endpoints:** Fathom retired the Wipe endpoints and the event-by-ID endpoints (`events.create`, `events.get`, `events.update`, `events.delete`, `events.wipe`, `sites.wipe`); they return HTTP 410 Gone. Events now appear once your site tracks them: read them with `events.list` and set their currency with `events.setCurrency`. `events.deleteByName` only removes an event's currency setting; it does not delete the event or its completions. Wiping data is no longer possible through the API.
   - **Aggregation filtering:** Use `reports.aggregation` to query pageview or event analytics with flexible grouping and date ranges. Filters are structured objects matching supported operators (`is`, `is not`, `is like`, `is not like`, `matching`, `not matching`).
 references:
   - title: Fathom API Reference

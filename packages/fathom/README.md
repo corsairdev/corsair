@@ -22,7 +22,7 @@ pnpm add @corsair-dev/fathom
 | `sites.wipe` | `fathom.api.sites.wipe` | `DELETE /sites/:id/data` | `destructive` | Wipe all data from a site (deprecated: returns 410 Gone) |
 | `events.list` | `fathom.api.events.list` | `GET /sites/:site_id/events` | `read` | List all events tracked by a site with pagination |
 | `events.setCurrency` | `fathom.api.events.setCurrency` | `POST /sites/:site_id/events/currency` | `write` | Set or update the currency for an event by name |
-| `events.deleteByName` | `fathom.api.events.deleteByName` | `DELETE /sites/:site_id/events` | `destructive` | Reset or remove the currency configuration for an event by name |
+| `events.deleteByName` | `fathom.api.events.deleteByName` | `DELETE /sites/:site_id/events` | `write` | Remove an event's currency setting by name (the event and its completions stay; set it again with events.setCurrency) |
 | `events.create` | `fathom.api.events.create` | `POST /sites/:site_id/events` | `write` | Create an event (deprecated: returns 410 Gone; track directly on site) |
 | `events.get` | `fathom.api.events.get` | `GET /sites/:site_id/events/:id` | `read` | Retrieve a single event by ID (deprecated: returns 410 Gone) |
 | `events.update` | `fathom.api.events.update` | `POST /sites/:site_id/events/:id` | `write` | Update an event by ID (deprecated: returns 410 Gone) |

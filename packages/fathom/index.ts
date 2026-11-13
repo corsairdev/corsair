@@ -230,9 +230,9 @@ export const fathomEndpointMeta = {
 		description: 'Set or update the currency for an event by name',
 	},
 	'events.deleteByName': {
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description:
-			'Reset or remove the currency configuration for an event by name',
+			"Remove an event's currency setting by name (the event and its completions stay; set it again with events.setCurrency)",
 	},
 	'events.create': {
 		riskLevel: 'write',

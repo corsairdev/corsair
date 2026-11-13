@@ -105,7 +105,10 @@ await corsair.fathom.api.events.create({ site_id: 'CDBUGS', name: 'Purchase earl
 | `message` | `string` | No | — |
 | `error` | `string` | No | — |
 
+
+
 ---
+
 ### delete
 
 `events.delete`
@@ -139,14 +142,17 @@ await corsair.fathom.api.events.delete({ site_id: 'CDBUGS', event_id: 'IJKLMNOP'
 | `message` | `string` | No | — |
 | `error` | `string` | No | — |
 
+
+
 ---
+
 ### deleteByName
 
 `events.deleteByName`
 
-Reset or remove the currency configuration for an event by name
+Remove an event's currency setting by name (the event and its completions stay; set it again with events.setCurrency)
 
-**Risk:** `destructive`
+**Risk:** `write`
 
 ```ts
 await corsair.fathom.api.events.deleteByName({ site_id: 'CDBUGS', name: 'Purchase early access' });
@@ -206,7 +212,10 @@ await corsair.fathom.api.events.get({ site_id: 'CDBUGS', event_id: 'IJKLMNOP' })
 | `message` | `string` | No | — |
 | `error` | `string` | No | — |
 
+
+
 ---
+
 ### list
 
 `events.list`
@@ -328,7 +337,10 @@ await corsair.fathom.api.events.update({ site_id: 'CDBUGS', event_id: 'IJKLMNOP'
 | `message` | `string` | No | — |
 | `error` | `string` | No | — |
 
+
+
 ---
+
 ### wipe
 
 `events.wipe`
@@ -362,7 +374,10 @@ await corsair.fathom.api.events.wipe({ site_id: 'CDBUGS', event_id: 'IJKLMNOP' }
 | `message` | `string` | No | — |
 | `error` | `string` | No | — |
 
+
+
 ---
+
 ## Milestones
 
 ### create
@@ -696,7 +711,7 @@ await corsair.fathom.api.sites.create({ name: 'My Website', sharing: 'none' });
 | `id` | `string` | Yes | — |
 | `object` | `site` | Yes | — |
 | `name` | `string` | Yes | — |
-| `sharing` | `none \| private \| public` | Yes | — |
+| `sharing` | `string` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `timezone` | `string` | Yes | — |
 
@@ -763,7 +778,7 @@ await corsair.fathom.api.sites.get({ site_id: 'CDBUGS' });
 | `id` | `string` | Yes | — |
 | `object` | `site` | Yes | — |
 | `name` | `string` | Yes | — |
-| `sharing` | `none \| private \| public` | Yes | — |
+| `sharing` | `string` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `timezone` | `string` | Yes | — |
 
@@ -810,7 +825,7 @@ await corsair.fathom.api.sites.list({ limit: 10 });
   id: string,
   object: site,
   name: string,
-  sharing: none | private | public,
+  sharing: string,
   created_at: string,
   timezone: string
 }[]
@@ -855,7 +870,7 @@ await corsair.fathom.api.sites.update({ site_id: 'CDBUGS', name: 'Updated Portfo
 | `id` | `string` | Yes | — |
 | `object` | `site` | Yes | — |
 | `name` | `string` | Yes | — |
-| `sharing` | `none \| private \| public` | Yes | — |
+| `sharing` | `string` | Yes | — |
 | `created_at` | `string` | Yes | — |
 | `timezone` | `string` | Yes | — |
 
@@ -893,4 +908,7 @@ await corsair.fathom.api.sites.wipe({ site_id: 'CDBUGS' });
 | `message` | `string` | No | — |
 | `error` | `string` | No | — |
 
+
+
 ---
+
