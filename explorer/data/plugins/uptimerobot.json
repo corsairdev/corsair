@@ -1,0 +1,2341 @@
+{
+  "id": "uptimerobot",
+  "displayName": "UptimeRobot",
+  "description": "Website and API monitoring with UptimeRobot - create, update, pause and delete monitors of any type, read uptime and response-time statistics, triage incidents and their comments, and manage status pages, announcements, maintenance windows, groups and tags.",
+  "npmPackageName": "@corsair-dev/uptimerobot",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 31,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "uptimerobot.api.account.me",
+      "shortPath": "account.me",
+      "description": "Read the account plan, monitor allowance and monitors in use; the cheapest way to check a key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "monitorsCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "monitorLimit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "dependencyMonitorsCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "dependencyMonitorLimit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "smsCredits",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "activeSubscription",
+            "optional": true,
+            "type": "{ plan?: string | null, monitorLimit?: number | null, expirationDate?: string | null, status?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.incidents.addComment",
+      "shortPath": "incidents.addComment",
+      "description": "Add a comment to an incident, optionally publishing it to the status page at the same time",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "publishOnStatusPage",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also show the comment on the status pages. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "publishOnStatusPage",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number | null, fullName?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.incidents.comments",
+      "shortPath": "incidents.comments",
+      "description": "List the comments on an incident, with who wrote each one",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 200. UptimeRobot defaults to 50."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, comment?: string | null, publishOnStatusPage?: boolean | null, created?: string | null, user?: { id?: number | null, fullName?: string | null } | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.incidents.get",
+      "shortPath": "incidents.get",
+      "description": "Read one incident with its root cause: the failing URL, HTTP status and headers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The incident id, as a string."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cause",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resolvedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rootCause",
+            "optional": true,
+            "type": "{ url?: string | null, httpResponseCode?: number | null, responseDownloadUrl?: string | null, requestHeaders?: Record<string, any> | null, responseHeaders?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.incidents.list",
+      "shortPath": "incidents.list",
+      "description": "List incidents newest first, filtered by monitor, date range, type or root-cause group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 200. UptimeRobot defaults to 50."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`."
+          },
+          {
+            "key": "monitor_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "monitor_name",
+            "optional": true,
+            "type": "string",
+            "description": "A partial, case-insensitive match on the monitor name."
+          },
+          {
+            "key": "started_after",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "started_before",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open",
+            "description": "Only ongoing incidents, whatever started_after and started_before say."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "Downtime | SlowResponse | VisualChange"
+          },
+          {
+            "key": "cause",
+            "optional": true,
+            "type": "Timeout | 2xx | 3xx | 4xx | 5xx | DNS | AssertionFailed | InvalidJSON | ConfigError",
+            "description": "The root-cause group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, status?: string | null, cause?: number | null, reason?: string | null, duration?: number | null, startedAt?: string | null, resolvedAt?: string | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.maintenanceWindows.create",
+      "shortPath": "maintenanceWindows.create",
+      "description": "Create a maintenance window that suppresses alerts once, daily, weekly or monthly for a set duration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": false,
+            "type": "once | daily | weekly | monthly",
+            "description": "weekly and monthly also take `days`."
+          },
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "YYYY-MM-DD. Required on create; the window starts repeating from it."
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "string",
+            "description": "HH:mm:ss."
+          },
+          {
+            "key": "duration",
+            "optional": false,
+            "type": "number",
+            "description": "Minutes the window lasts."
+          },
+          {
+            "key": "days",
+            "optional": true,
+            "type": "number[]",
+            "description": "Weekly: 1 to 7. Monthly: days of the month, or -1 for the last day."
+          },
+          {
+            "key": "monitorIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "autoAddMonitors",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also cover monitors created later."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "days",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "monitorIds",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "autoAddMonitors",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.maintenanceWindows.delete",
+      "shortPath": "maintenanceWindows.delete",
+      "description": "Permanently delete a maintenance window, so its monitors start alerting again during that period",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.maintenanceWindows.list",
+      "shortPath": "maintenanceWindows.list",
+      "description": "List maintenance windows with their schedule and monitors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 200. UptimeRobot defaults to 50."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, interval?: string | null, date?: string | null, time?: string | null, duration?: number | null, days?: number[] | null, monitorIds?: number[] | null, autoAddMonitors?: boolean | null, status?: string | null, created?: string | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.maintenanceWindows.update",
+      "shortPath": "maintenanceWindows.update",
+      "description": "Change a window its schedule, monitors or status; paused stops it suppressing alerts",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "once | daily | weekly | monthly"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "days",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "monitorIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | paused",
+            "description": "paused stops the window suppressing alerts; active restores it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "days",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "monitorIds",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "autoAddMonitors",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.monitorGroups.create",
+      "shortPath": "monitorGroups.create",
+      "description": "Create a monitor group, filling it with monitors by id or by moving another group whole",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "monitorIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Monitors to put in the new group."
+          },
+          {
+            "key": "groupIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Move every monitor of these groups into the new one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.monitorGroups.delete",
+      "shortPath": "monitorGroups.delete",
+      "description": "Delete a monitor group; its monitors are kept and become ungrouped",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.monitorGroups.list",
+      "shortPath": "monitorGroups.list",
+      "description": "List monitor groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 200. UptimeRobot defaults to 50."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.monitors.create",
+      "shortPath": "monitors.create",
+      "description": "Create a monitor of any type; the body is checked against the type, so a PORT monitor needs a port and a HEARTBEAT one takes no URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "HTTP | KEYWORD | PING | PORT | HEARTBEAT | DNS | API | UDP | VISUAL_COMPARISON | THIRD_PARTY_SERVICE"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds between checks. The free plan allows no less than 300."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The URL, hostname or IP to check; for DNS the resolver. Omitted only for HEARTBEAT."
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number",
+            "description": "Required for PORT and UDP monitors, rejected otherwise."
+          },
+          {
+            "key": "portAlertCondition",
+            "optional": true,
+            "type": "CLOSED | OPEN",
+            "description": "PORT only. Whether a closed port or an open one is the alert."
+          },
+          {
+            "key": "keywordType",
+            "optional": true,
+            "type": "ALERT_EXISTS | ALERT_NOT_EXISTS",
+            "description": "KEYWORD only. Alert when the keyword is present or absent."
+          },
+          {
+            "key": "keywordCaseType",
+            "optional": true,
+            "type": "CaseSensitive | CaseInsensitive",
+            "description": "KEYWORD only."
+          },
+          {
+            "key": "keywordValue",
+            "optional": true,
+            "type": "string",
+            "description": "KEYWORD only. Text to look for in the response body."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds to wait, at most 60. Required for HTTP, KEYWORD, PING, PORT, API and UDP monitors."
+          },
+          {
+            "key": "gracePeriod",
+            "optional": true,
+            "type": "number",
+            "description": "HEARTBEAT only. Seconds of lateness allowed before alerting."
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tagNames",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "maintenanceWindowsIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "assignedAlertContacts",
+            "optional": true,
+            "type": "{ alertContactId: number, threshold: number, recurrence: number }[]",
+            "description": "Who is alerted; an empty list alerts nobody. Threshold and recurrence are required; values above 0 need a paid plan."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Up to 20 key/value pairs. Paid plans only."
+          },
+          {
+            "key": "responseTimeThreshold",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Type-specific configuration. API monitors need `apiAssertions`; THIRD_PARTY_SERVICE needs `thirdPartyService.providerId`."
+          },
+          {
+            "key": "httpMethodType",
+            "optional": true,
+            "type": "GET | POST | PUT | PATCH | DELETE | HEAD | OPTIONS",
+            "description": "HTTP monitors only."
+          },
+          {
+            "key": "authType",
+            "optional": true,
+            "type": "string",
+            "description": "HTTP monitors only. The authentication scheme the check uses."
+          },
+          {
+            "key": "customHttpHeaders",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "HTTP monitors only. Headers sent with the check."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createDateTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "keywordValue",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "keywordType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gracePeriod",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "heartbeatUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "responseTimeThreshold",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, color?: string | null }[] | null"
+          },
+          {
+            "key": "assignedAlertContacts",
+            "optional": true,
+            "type": "{ alertContactId?: number | null, threshold?: number | null, recurrence?: number | null }[] | null"
+          },
+          {
+            "key": "lastIncident",
+            "optional": true,
+            "type": "{ id?: string | null, status?: string | null, cause?: number | null, reason?: string | null, startedAt?: string | null, duration?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.monitors.delete",
+      "shortPath": "monitors.delete",
+      "description": "Permanently delete a monitor and its check history; this cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.monitors.get",
+      "shortPath": "monitors.get",
+      "description": "Read one monitor with its current status, interval, tags and last incident",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createDateTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "keywordValue",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "keywordType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gracePeriod",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "heartbeatUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "responseTimeThreshold",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, color?: string | null }[] | null"
+          },
+          {
+            "key": "assignedAlertContacts",
+            "optional": true,
+            "type": "{ alertContactId?: number | null, threshold?: number | null, recurrence?: number | null }[] | null"
+          },
+          {
+            "key": "lastIncident",
+            "optional": true,
+            "type": "{ id?: string | null, status?: string | null, cause?: number | null, reason?: string | null, startedAt?: string | null, duration?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.monitors.list",
+      "shortPath": "monitors.list",
+      "description": "List monitors, filtered by name, URL, status, tag, group or custom field, with cursor paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 200. UptimeRobot defaults to 50."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "A case-insensitive substring of the monitor name."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "A case-insensitive substring of the monitor URL."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(PAUSED | STARTED | UP | LOOKS_DOWN | DOWN)[]",
+            "description": "Only monitors in any of these states."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only monitors carrying any of these tag names. Case-sensitive."
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "number",
+            "description": "Only monitors in this group; 0 is the ungrouped default group."
+          },
+          {
+            "key": "customField",
+            "optional": true,
+            "type": "string[]",
+            "description": "`key:value` pairs, all of which must match."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, friendlyName?: string | null, url?: string | null, type?: string | null, status?: string | null, interval?: number | null, timeout?: number | null, createDateTime?: string | null, groupId?: number | null, port?: number | null, keywordValue?: string | null, keywordType?: string | null, gracePeriod?: number | null, heartbeatUrl?: string | null, responseTimeThreshold?: number | null, customFields?: Record<string, string> | null, tags?: { id?: number | null, name?: string | null, color?: string | null }[] | null, assignedAlertContacts?: { alertContactId?: number | null, threshold?: number | null, recurrence?: number | null }[] | null, lastIncident?: { id?: string | null, status?: string | null, cause?: number | null, reason?: string | null, startedAt?: string | null, duration?: number | null } | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.monitors.pause",
+      "shortPath": "monitors.pause",
+      "description": "Pause a monitor so it stops checking and stops alerting until monitors.start is called",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createDateTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "keywordValue",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "keywordType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gracePeriod",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "heartbeatUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "responseTimeThreshold",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, color?: string | null }[] | null"
+          },
+          {
+            "key": "assignedAlertContacts",
+            "optional": true,
+            "type": "{ alertContactId?: number | null, threshold?: number | null, recurrence?: number | null }[] | null"
+          },
+          {
+            "key": "lastIncident",
+            "optional": true,
+            "type": "{ id?: string | null, status?: string | null, cause?: number | null, reason?: string | null, startedAt?: string | null, duration?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.monitors.reset",
+      "shortPath": "monitors.reset",
+      "description": "Discard a monitor's accumulated statistics and incident history; the monitor itself keeps running",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "reset",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.monitors.start",
+      "shortPath": "monitors.start",
+      "description": "Start a paused monitor, or resume one that was paused by UptimeRobot itself after repeated failures",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createDateTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "keywordValue",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "keywordType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gracePeriod",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "heartbeatUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "responseTimeThreshold",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, color?: string | null }[] | null"
+          },
+          {
+            "key": "assignedAlertContacts",
+            "optional": true,
+            "type": "{ alertContactId?: number | null, threshold?: number | null, recurrence?: number | null }[] | null"
+          },
+          {
+            "key": "lastIncident",
+            "optional": true,
+            "type": "{ id?: string | null, status?: string | null, cause?: number | null, reason?: string | null, startedAt?: string | null, duration?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.monitors.update",
+      "shortPath": "monitors.update",
+      "description": "Change a monitor: its name, URL, interval, tags, group, custom fields or credentials; omitted fields keep their value",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "gracePeriod",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "portAlertCondition",
+            "optional": true,
+            "type": "CLOSED | OPEN"
+          },
+          {
+            "key": "keywordType",
+            "optional": true,
+            "type": "ALERT_EXISTS | ALERT_NOT_EXISTS"
+          },
+          {
+            "key": "keywordCaseType",
+            "optional": true,
+            "type": "0 | 1"
+          },
+          {
+            "key": "keywordValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "PAUSED | STARTED | UP | LOOKS_DOWN | DOWN",
+            "description": "PAUSED stops the checks, STARTED resumes them. Prefer monitors.pause and monitors.start."
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tagNames",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "maintenanceWindowsIds",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "responseTimeThreshold",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "createDateTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "keywordValue",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "keywordType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gracePeriod",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "heartbeatUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "responseTimeThreshold",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, color?: string | null }[] | null"
+          },
+          {
+            "key": "assignedAlertContacts",
+            "optional": true,
+            "type": "{ alertContactId?: number | null, threshold?: number | null, recurrence?: number | null }[] | null"
+          },
+          {
+            "key": "lastIncident",
+            "optional": true,
+            "type": "{ id?: string | null, status?: string | null, cause?: number | null, reason?: string | null, startedAt?: string | null, duration?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.stats.monitorUptime",
+      "shortPath": "stats.monitorUptime",
+      "description": "Uptime percentage and downtime for one monitor over a range of up to 90 days",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 start. Defaults to 24 hours ago."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 end. Defaults to now."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uptime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total_downtime_seconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "incident_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mtbf",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.stats.responseTime",
+      "shortPath": "stats.responseTime",
+      "description": "Response-time minimum, maximum and average for one monitor, optionally with the full time series",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 start. Defaults to 24 hours ago."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 end. Defaults to now."
+          },
+          {
+            "key": "includeTimeSeries",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return `time_series`, which a long range makes large."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{ min?: number | null, max?: number | null, avg?: number | null } | null"
+          },
+          {
+            "key": "data_points",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "time_series",
+            "optional": true,
+            "type": "{ timestamp?: string | null, value?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.stats.uptime",
+      "shortPath": "stats.uptime",
+      "description": "Aggregate uptime across every monitor for a timeframe, with incident totals, MTBF and a log of entries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeFrame",
+            "optional": false,
+            "type": "DAY | WEEK | MONTH | DAYS_30 | YEAR | ALL | CUSTOM",
+            "description": "CUSTOM needs both `start` and `end`."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds. Required when timeFrame is CUSTOM."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds, after start. Required when timeFrame is CUSTOM."
+          },
+          {
+            "key": "logLimit",
+            "optional": true,
+            "type": "number",
+            "description": "How many log entries to return."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "overallUptime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalIncidents",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalTimeWithoutIncidents",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "affectedMonitors",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "mtbf",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ type?: string | null, datetime?: string | null, duration?: number | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.statusPages.announcements",
+      "shortPath": "statusPages.announcements",
+      "description": "List a status page announcements, filtered by OFFLINE, PENDING, PUBLISHED or ARCHIVED",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pspId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 200. UptimeRobot defaults to 50."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "OFFLINE | PENDING | PUBLISHED | ARCHIVED",
+            "description": "OFFLINE is a draft, PENDING is scheduled, PUBLISHED is live, ARCHIVED is history."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, pspId?: number | null, title?: string | null, content?: string | null, status?: string | null, type?: string | null, deliveryStatus?: string | null, startDate?: string | null, endDate?: string | null, creationDate?: string | null, submitDate?: string | null, sentCount?: number | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.statusPages.create",
+      "shortPath": "statusPages.create",
+      "description": "Create a public status page showing chosen monitors or tags, optionally behind a password and on a custom domain",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "friendlyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "monitorIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "The monitors to show. `[0]` alone means every monitor in the account; an empty array shows none."
+          },
+          {
+            "key": "tagIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Show every monitor carrying one of these tags."
+          },
+          {
+            "key": "autoAddMonitors",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also show monitors created later. An explicit monitorIds wins over this, including an empty one."
+          },
+          {
+            "key": "customDomain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Visitors must enter this to see the page."
+          },
+          {
+            "key": "hideUrlLinks",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "noIndex",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "FriendlyNameAsc | FriendlyNameDesc | StatusUpDownPaused | StatusDownUpPaused"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customDomain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "urlKey",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isPasswordSet",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "monitorIds",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "tagIds",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "monitorsCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pinnedAnnouncementId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.statusPages.createAnnouncement",
+      "shortPath": "statusPages.createAnnouncement",
+      "description": "Post an announcement to a status page: Info, Maintenance or Issue, as a draft, scheduled or published now",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pspId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "Offline | Pending | Published | Archived",
+            "description": "Offline is a draft, Pending is scheduled, Published is visible now, Archived is history."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "Info | Maintenance | Issue"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601. Omit it on a Published announcement to publish immediately."
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601, after startDate."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pspId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deliveryStatus",
+            "optional": true,
+            "type": "string | null",
+            "description": "CantSend, InQueue or Sent."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creationDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "submitDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sentCount",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.statusPages.delete",
+      "shortPath": "statusPages.delete",
+      "description": "Permanently delete a status page; the monitors it showed keep running",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.statusPages.get",
+      "shortPath": "statusPages.get",
+      "description": "Read one status page with its monitors, custom domain and settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "friendlyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "customDomain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "urlKey",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isPasswordSet",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "monitorIds",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "tagIds",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "monitorsCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "pinnedAnnouncementId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.statusPages.list",
+      "shortPath": "statusPages.list",
+      "description": "List the public status pages in the account, with paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 200. UptimeRobot defaults to 50."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Where to resume. It is the opaque value after `cursor=` in the previous page's `nextLink`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, friendlyName?: string | null, customDomain?: string | null, urlKey?: string | null, isPasswordSet?: boolean | null, monitorIds?: number[] | null, tagIds?: number[] | null, monitorsCount?: number | null, pinnedAnnouncementId?: number | null, status?: string | null }[] | null"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete a tag, also removing it from every monitor that carried it; the monitors stay",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "uptimerobot.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List tags, paging by nextCursorId",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, 1 to 200. UptimeRobot defaults to 50."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number",
+            "description": "Where to resume. Take it from the previous page's `nextCursorId`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null }[] | null"
+          },
+          {
+            "key": "nextCursorId",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

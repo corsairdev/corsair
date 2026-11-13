@@ -716,7 +716,7 @@ export type { ${pascal}EndpointInputs, ${pascal}EndpointOutputs } from './endpoi
 
 function buildClientTs(pascal: string, lower: string): string {
 	return `import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class ${pascal}APIError extends Error {
 \tconstructor(
@@ -771,6 +771,8 @@ export async function make${pascal}Request<T>(
 \ttry {
 \t\treturn await request<T>(config, requestOptions);
 \t} catch (error) {
+\t\t// Keep core's ApiError: its status drives 429 retries and the OAuth refresh after a 401.
+\t\tif (error instanceof ApiError) throw error;
 \t\tif (error instanceof Error) throw new ${pascal}APIError(error.message);
 \t\tthrow new ${pascal}APIError('Unknown error');
 \t}
@@ -1131,13 +1133,10 @@ export const errorHandlers = {
 \t\t\tconst msg = error.message.toLowerCase();
 \t\t\treturn msg.includes('rate_limited') || msg.includes('429');
 \t\t},
-\t\thandler: async (error: Error) => {
-\t\t\tlet retryAfterMs: number | undefined;
-\t\t\tif (error instanceof ApiError && error.retryAfter !== undefined) {
-\t\t\t\tretryAfterMs = error.retryAfter;
-\t\t\t}
-\t\t\treturn { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-\t\t},
+\t\t// Core's request() has already retried this 429 (three times, honouring
+\t\t// Retry-After) before it reaches a handler. Retrying the endpoint again
+\t\t// here would multiply the attempts and the wait.
+\t\thandler: async () => ({ maxRetries: 0 }),
 \t},
 \tAUTH_ERROR: {
 \t\tmatch: (error: Error) => {

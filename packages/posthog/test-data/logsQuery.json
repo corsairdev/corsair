@@ -1,0 +1,40 @@
+{
+  "query": [
+    ["after", null],
+    ["customColumns", []],
+    [
+      "dateRange",
+      [
+        ["date_from", "-1h"],
+        ["date_to", null],
+        ["daysOfWeek", null],
+        ["excludeIncompletePeriods", false],
+        ["explicitDate", false]
+      ]
+    ],
+    ["excludeAttributes", false],
+    ["filterGroup", [["type", "AND"], ["values", []]]],
+    ["kind", "LogsQuery"],
+    ["limit", 3],
+    ["liveLogsCheckpoint", null],
+    ["modifiers", null],
+    ["offset", null],
+    ["orderBy", "latest"],
+    ["personId", null],
+    ["resourceFingerprint", null],
+    ["response", null],
+    ["searchTerm", null],
+    ["serviceNames", []],
+    ["sessionId", null],
+    ["severityLevels", ["error"]],
+    ["sparklineBreakdownBy", null],
+    ["sparklineRankBy", null],
+    ["tags", null],
+    ["version", null]
+  ],
+  "results": [],
+  "hasMore": false,
+  "nextCursor": null,
+  "maxExportableLogs": 10000,
+  "columns": null
+}
