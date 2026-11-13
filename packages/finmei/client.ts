@@ -34,18 +34,46 @@ function isSensitiveKey(key: string): boolean {
 	return SENSITIVE_KEY_SUBSTRINGS.some((sub) => normalized.includes(sub));
 }
 
+// `unknown` because provider error details are untrusted JSON with dynamic nesting.
+function collectSensitiveValues(
+	data: unknown,
+	values = new Set<string>(),
+): string[] {
+	if (Array.isArray(data)) {
+		for (const item of data) collectSensitiveValues(item, values);
+	} else if (isRecord(data)) {
+		for (const [key, value] of Object.entries(data)) {
+			if (
+				isSensitiveKey(key) &&
+				typeof value === 'string' &&
+				value.length > 0
+			) {
+				values.add(value);
+			} else {
+				collectSensitiveValues(value, values);
+			}
+		}
+	}
+	return [...values].sort((a, b) => b.length - a.length);
+}
+
 // `unknown` because untrusted value requires runtime type narrowing before record inspection.
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 // `unknown` because untrusted error payload or JSON data must be deeply sanitized before inspection.
-export function redactSensitiveData(data: unknown): unknown {
+export function redactSensitiveData(
+	data: unknown,
+	knownCredentials: readonly string[] = [],
+): unknown {
 	if (data === null || data === undefined) return data;
-	if (typeof data === 'string') return data;
+	if (typeof data === 'string') {
+		return redactKnownCredentialValues(data, knownCredentials);
+	}
 	if (typeof data === 'number' || typeof data === 'boolean') return data;
 	if (Array.isArray(data)) {
-		return data.map((item) => redactSensitiveData(item));
+		return data.map((item) => redactSensitiveData(item, knownCredentials));
 	}
 	if (isRecord(data)) {
 		const sanitized: Record<string, unknown> = {};
@@ -53,12 +81,27 @@ export function redactSensitiveData(data: unknown): unknown {
 			if (isSensitiveKey(key)) {
 				sanitized[key] = '[REDACTED]';
 			} else {
-				sanitized[key] = redactSensitiveData(val);
+				sanitized[key] = redactSensitiveData(val, knownCredentials);
 			}
 		}
 		return sanitized;
 	}
 	return data;
+}
+
+function redactKnownCredentialValues(
+	text: string,
+	knownCredentials: readonly string[],
+): string {
+	let sanitized = text;
+	for (const credential of [...new Set(knownCredentials)].sort(
+		(a, b) => b.length - a.length,
+	)) {
+		if (credential.length > 0) {
+			sanitized = sanitized.split(credential).join('[REDACTED]');
+		}
+	}
+	return sanitized;
 }
 
 export class FinmeiAPIError extends Error {
@@ -131,7 +174,11 @@ export function parseRetryAfterMs(
 /**
  * Redacts tokens, passwords, and sensitive strings from error messages.
  */
-export function sanitizeErrorMessage(message: string, apiKey?: string): string {
+export function sanitizeErrorMessage(
+	message: string,
+	apiKey?: string,
+	knownCredentials: readonly string[] = [],
+): string {
 	let sanitized = message
 		.replace(/Bearer\s+[^\s"',]+/gi, 'Bearer [REDACTED]')
 		.replace(
@@ -143,9 +190,8 @@ export function sanitizeErrorMessage(message: string, apiKey?: string): string {
 			'$1[REDACTED]',
 		);
 
-	if (apiKey && apiKey.length > 0) {
-		sanitized = sanitized.split(apiKey).join('[REDACTED]');
-	}
+	const credentials = [...knownCredentials, ...(apiKey ? [apiKey] : [])];
+	sanitized = redactKnownCredentialValues(sanitized, credentials);
 
 	return sanitized;
 }
@@ -153,8 +199,14 @@ export function sanitizeErrorMessage(message: string, apiKey?: string): string {
 // `unknown` because caught exceptions in JavaScript have no static type.
 function wrapError(error: unknown, apiKey?: string): FinmeiAPIError {
 	if (error instanceof FinmeiAPIError) {
-		const safeMessage = sanitizeErrorMessage(error.message, apiKey);
-		const safeDetails = redactSensitiveData(error.details);
+		const knownCredentials = collectSensitiveValues(error.details);
+		if (apiKey) knownCredentials.push(apiKey);
+		const safeMessage = sanitizeErrorMessage(
+			error.message,
+			apiKey,
+			knownCredentials,
+		);
+		const safeDetails = redactSensitiveData(error.details, knownCredentials);
 		if (safeMessage === error.message && safeDetails === error.details) {
 			return error;
 		}
@@ -169,8 +221,16 @@ function wrapError(error: unknown, apiKey?: string): FinmeiAPIError {
 	if (error instanceof ApiError) {
 		// `unknown` because response body on ApiError is untrusted and can be any JSON or text.
 		const rawBody: unknown = error.body;
-		const safeDetails = redactSensitiveData(rawBody);
-		const safeMessage = sanitizeErrorMessage(error.message, apiKey);
+		const knownCredentials = collectSensitiveValues(rawBody);
+		const safeDetails = redactSensitiveData(rawBody, [
+			...knownCredentials,
+			...(apiKey ? [apiKey] : []),
+		]);
+		const safeMessage = sanitizeErrorMessage(
+			error.message,
+			apiKey,
+			knownCredentials,
+		);
 		return new FinmeiAPIError(
 			safeMessage,
 			error.status,

@@ -345,6 +345,33 @@ describe('makeFinmeiBinaryRequest', () => {
 		expect(err.message).toContain('[REDACTED]');
 	});
 
+	it('redacts credentials echoed in provider messages and response details', async () => {
+		const credential = 'finmei-live-secret-credential-42';
+		const apiErr = makeApiError(
+			422,
+			`Validation failed for credential ${credential}`,
+			2500,
+			{
+				message: `The credential ${credential} is invalid`,
+				api_key: credential,
+			},
+		);
+		mockRequest.mockRejectedValue(apiErr);
+
+		// `unknown` because rejection from makeFinmeiRequest has no static type.
+		const caught: unknown = await makeFinmeiRequest('/invoices').catch(
+			(err: unknown) => err,
+		);
+
+		expect(caught).toBeInstanceOf(FinmeiAPIError);
+		const err = caught as FinmeiAPIError;
+		expect(err.status).toBe(422);
+		expect(err.retryAfter).toBe(2500);
+		expect(err.message).not.toContain(credential);
+		expect(JSON.stringify(err.details)).not.toContain(credential);
+		expect(err.details).toMatchObject({ api_key: '[REDACTED]' });
+	});
+
 	it('parseRetryAfterMs converts retry-after header to milliseconds', () => {
 		const res = new Response(null, { headers: { 'retry-after': '5' } });
 		expect(parseRetryAfterMs(res)).toBe(5000);
