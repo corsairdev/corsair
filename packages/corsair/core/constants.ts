@@ -846,7 +846,7 @@ export const ProviderDisplayNames = {
 	klazify: 'Klazify',
 	kling: 'Kling',
 	knack: 'Knack',
-	krakenio: 'Krakenio',
+	krakenio: 'Kraken.io',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
 	lemonsqueezy: 'Lemon Squeezy',
