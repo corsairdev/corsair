@@ -17,9 +17,9 @@ reviews:
         missing, the corsair peer range in package.json, risk levels per input,
         and core-wide checks (kek with encryptDataAtRest, root DEFAULT handler
         order, approval argument redaction).
-    - path: "packages/corsair/**"
+    - path: "packages/{corsair,cli,mcp,studio,ui,app}/**"
       instructions: >-
-        This is core, not a plugin: the R9 exclusions in
+        This is core or a core package, not a plugin: the R9 exclusions in
         .github/PLUGIN_PR_RULES.md do not apply here. Review changes to the
         kek and encryptDataAtRest checks, error-handler order, approval
         argument redaction, retries and webhook routing in full.
