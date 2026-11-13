@@ -71,5 +71,4 @@ describeLive('Finmei live API (env-gated smoke tests)', () => {
 		const parsed = FinmeiListExpensesOutputSchema.parse(res);
 		expect(Array.isArray(parsed.data)).toBe(true);
 	});
-
 });

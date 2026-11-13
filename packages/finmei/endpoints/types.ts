@@ -214,15 +214,14 @@ export const FinmeiListInvoicesInputSchema = z
 
 export const FinmeiCreateInvoiceInputSchema = z
 	.object({
-		type: z
-			.enum([
-				'regular_invoice',
-				'vat_invoice',
-				'preliminary_invoice',
-				'preliminary_vat_invoice',
-				'credit_invoice',
-				'credit_vat_invoice',
-			])
+		type: z.enum([
+			'regular_invoice',
+			'vat_invoice',
+			'preliminary_invoice',
+			'preliminary_vat_invoice',
+			'credit_invoice',
+			'credit_vat_invoice',
+		]),
 		invoice_date: z.string().min(1),
 		pay_until_date: z.string().optional(),
 		series: z.string().min(1),
@@ -253,28 +252,27 @@ export const FinmeiCreateInvoiceInputSchema = z
 					.optional(),
 			})
 			.optional(),
-		buyer: z
-			.object({
-				type: z.enum(['company', 'individual']),
-				first_name: z.string().optional(),
-				last_name: z.string().optional(),
-				company_name: z.string().optional(),
-				company_code: z.string().optional(),
-				individual_tax_id: z.string().optional(),
-				vat_code: z.string().optional(),
-				country: z.string().optional(),
-				address: z.string().optional(),
-				email: z.string().optional(),
-				phone: z.string().optional(),
-				custom_fields: z
-					.array(
-						z.object({
-							label: z.string(),
-							value: z.string(),
-						}),
-					)
-					.optional(),
-			}),
+		buyer: z.object({
+			type: z.enum(['company', 'individual']),
+			first_name: z.string().optional(),
+			last_name: z.string().optional(),
+			company_name: z.string().optional(),
+			company_code: z.string().optional(),
+			individual_tax_id: z.string().optional(),
+			vat_code: z.string().optional(),
+			country: z.string().optional(),
+			address: z.string().optional(),
+			email: z.string().optional(),
+			phone: z.string().optional(),
+			custom_fields: z
+				.array(
+					z.object({
+						label: z.string(),
+						value: z.string(),
+					}),
+				)
+				.optional(),
+		}),
 		products: z
 			.array(
 				z.object({
@@ -315,11 +313,12 @@ export const FinmeiGetInvoiceInputSchema = z
 	.strict();
 
 // Update takes the create fields; all optional so a caller can send only what changes.
-export const FinmeiUpdateInvoiceInputSchema = FinmeiCreateInvoiceInputSchema.partial()
-	.extend({
-		id: z.string().min(1),
-	})
-	.strict();
+export const FinmeiUpdateInvoiceInputSchema =
+	FinmeiCreateInvoiceInputSchema.partial()
+		.extend({
+			id: z.string().min(1),
+		})
+		.strict();
 
 export const FinmeiDeleteInvoiceInputSchema = z
 	.object({
@@ -388,6 +387,7 @@ export const FinmeiDownloadExpenseInputSchema = z
 	})
 	.strict();
 
+export const FinmeiListCurrenciesInputSchema = z.object({}).strict();
 export const FinmeiGetProfileInputSchema = z.object({}).strict();
 
 export type FinmeiCreateExpenseInput = z.infer<

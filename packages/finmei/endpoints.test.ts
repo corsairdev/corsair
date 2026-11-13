@@ -1,11 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
-import {
-	Currencies,
-	Expenses,
-	Invoices,
-	Profile,
-} from './endpoints';
+import { Currencies, Expenses, Invoices, Profile } from './endpoints';
 import type { FinmeiContext } from './index';
 import { finmei, finmeiEndpointSchemas } from './index';
 
@@ -68,9 +63,9 @@ describe('Finmei plugin structure and registration', () => {
 
 	it('exposes only the resources the Finmei API serves', () => {
 		// app.finmei.com/api answers 404 "route could not be found" for
-		// /customers, /products and /payments; these resources exist.
+		// /customers, /products and /payments, so the plugin must not offer them.
 		const plugin = finmei({ key: 'test-key' });
-		expect(Object.keys(plugin.endpoints).sort()).toEqual([
+		expect(Object.keys(plugin.endpoints ?? {}).sort()).toEqual([
 			'currencies',
 			'expenses',
 			'invoices',
@@ -122,7 +117,9 @@ describe('Invoices endpoints', () => {
 			invoice_date: '2024-05-01',
 			series: 'FIN',
 			buyer: { type: 'company' as const, company_name: 'Acme Corp' },
-			products: [{ name: 'Consulting', units: 'hours', quantity: 2, price: 50 }],
+			products: [
+				{ name: 'Consulting', units: 'hours', quantity: 2, price: 50 },
+			],
 		};
 		const created = { id: 'inv-99', currency: 'USD' };
 		mockRequest.mockResolvedValue({ data: created });

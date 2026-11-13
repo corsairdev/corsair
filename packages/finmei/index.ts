@@ -13,12 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import {
-	Currencies,
-	Expenses,
-	Invoices,
-	Profile,
-} from './endpoints';
+import { Currencies, Expenses, Invoices, Profile } from './endpoints';
 import type {
 	FinmeiEndpointInputs,
 	FinmeiEndpointOutputs,
@@ -243,7 +238,8 @@ const finmeiEndpointMeta = {
 	},
 	'expenses.create': {
 		riskLevel: 'write',
-		description: 'Create a new expense record with its bill file (base64 PDF or image, required)',
+		description:
+			'Create a new expense record with its bill file (base64 PDF or image, required)',
 	},
 	'expenses.get': {
 		riskLevel: 'read',
