@@ -191,6 +191,7 @@ export const BaseProviders = [
 	'customerio',
 	'customgpt',
 	'cuttly',
+	'd2lbrightspace',
 	'dadataru',
 	'daffy',
 	'databox',
@@ -726,6 +727,7 @@ export const ProviderDisplayNames = {
 	customerio: 'Customer.io',
 	customgpt: 'CustomGPT',
 	cuttly: 'Cutt.ly',
+	d2lbrightspace: 'D2L Brightspace',
 	dadataru: 'Dadataru',
 	daffy: 'Daffy',
 	databox: 'Databox',
@@ -1268,6 +1270,7 @@ export type AllProviders =
 	| 'customerio'
 	| 'customgpt'
 	| 'cuttly'
+	| 'd2lbrightspace'
 	| 'dadataru'
 	| 'daffy'
 	| 'databox'
