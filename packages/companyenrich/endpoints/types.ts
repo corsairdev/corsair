@@ -26,7 +26,7 @@ export const CompanyExpandSchema = z.enum([
 export type CompanyExpand = z.infer<typeof CompanyExpandSchema>;
 
 /** Person expansion flags accepted by `expand` on person reads. */
-export const PersonExpandSchema = z.enum(['education']);
+export const PersonExpandSchema = z.enum(['education', 'company']);
 
 export type PersonExpand = z.infer<typeof PersonExpandSchema>;
 
@@ -454,7 +454,7 @@ const CursorSchema = z.string().max(1024);
 // ── Company search request shapes ───────────────────────────────────────────
 
 export const CompanySearchFilterSchema = z.object({
-	query: z.string().max(250).optional(),
+	query: valueFilter(z.string().max(250)).optional(),
 	id: valueFilter(CompanyIdSchema).optional(),
 	domain: valueFilter(z.string()).optional(),
 	keywords: collectionFilter(z.string()).optional(),
@@ -756,7 +756,7 @@ export const PersonPastExperienceSearchFilterSchema = z.object({
 });
 
 export const PersonSearchFilterSchema = z.object({
-	query: z.string().max(250).optional(),
+	query: valueFilter(z.string().max(250)).optional(),
 	companyId: valueFilter(CompanyIdSchema).optional(),
 	domain: valueFilter(z.string()).optional(),
 	companyLinkedinHandle: valueFilter(z.string()).optional(),
@@ -772,11 +772,20 @@ export const PersonSearchFilterSchema = z.object({
 
 export type PersonSearchFilter = z.infer<typeof PersonSearchFilterSchema>;
 
+/**
+ * Natural-language people query: CompanyEnrich infers person filters and a
+ * semantic company query from it and reports them in `interpretation`.
+ */
+export const PersonSemanticQuerySchema = z.object({
+	query: z.string().max(500),
+});
+
 export const PersonSearchRequestSchema = z.object({
 	pageSize: z.number().int().min(1).max(100).optional(),
 	cursor: CursorSchema.optional(),
 	expand: z.array(PersonExpandSchema).optional(),
 	filter: PersonSearchFilterSchema.optional(),
+	semantic: PersonSemanticQuerySchema.optional(),
 	company: CompanySearchQuerySchema.optional(),
 });
 
@@ -1112,6 +1121,7 @@ export type PeopleSearchInput = z.infer<typeof PeopleSearchInputSchema>;
 
 export const PeopleSearchCountInputSchema = z.object({
 	filter: PersonSearchFilterSchema.optional(),
+	semantic: PersonSemanticQuerySchema.optional(),
 	company: CompanySearchQuerySchema.optional(),
 });
 
@@ -1125,9 +1135,30 @@ export type PeopleSearchPreviewInput = z.infer<
 	typeof PeopleSearchPreviewInputSchema
 >;
 
+// What CompanyEnrich inferred from `semantic.query`; present only on semantic
+// people searches. The inferred filters echo the request filter vocabulary and
+// are kept loose (unvalidated records) so a newly inferred field never fails
+// the search itself.
+const PersonSemanticInterpretationSchema = z
+	.object({
+		companyNames: z.array(z.string()).nullish(),
+		filter: z.record(z.string(), z.unknown()).nullish(),
+		company: z
+			.object({
+				query: z.string(),
+				filter: z.record(z.string(), z.unknown()).nullish(),
+				boost: z.record(z.string(), z.unknown()).nullish(),
+			})
+			.loose()
+			.nullish(),
+	})
+	.loose()
+	.nullish();
+
 export const PeopleSearchResponseSchema = z.object({
 	items: z.array(PersonResponseSchema),
 	nextCursor: z.string().nullish(),
+	interpretation: PersonSemanticInterpretationSchema,
 });
 
 export type PeopleSearchResponse = z.infer<typeof PeopleSearchResponseSchema>;
@@ -1135,6 +1166,7 @@ export type PeopleSearchResponse = z.infer<typeof PeopleSearchResponseSchema>;
 export const PeopleSearchCountResponseSchema = z.object({
 	count: z.number().int(),
 	total: z.number().int(),
+	interpretation: PersonSemanticInterpretationSchema,
 });
 
 export type PeopleSearchCountResponse = z.infer<
@@ -1170,6 +1202,7 @@ export const PersonSearchPreviewItemSchema = z
 export const PeopleSearchPreviewResponseSchema = z.object({
 	items: z.array(PersonSearchPreviewItemSchema),
 	total: z.number().int(),
+	interpretation: PersonSemanticInterpretationSchema,
 });
 
 export type PeopleSearchPreviewResponse = z.infer<

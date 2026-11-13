@@ -406,6 +406,62 @@ describe('People endpoints', () => {
 		expectLogged('people.search', { count: 1 });
 	});
 
+	it('people.search forwards a semantic query, company expansion and name rules, and keeps the interpretation', async () => {
+		const input = {
+			semantic: { query: 'marketing leaders at fintech startups in London' },
+			expand: ['company' as const],
+			filter: { query: { in: ['Ada', 'Grace'], notIn: ['Bob'] } },
+		};
+		const response = {
+			items: [person],
+			nextCursor: null,
+			interpretation: {
+				companyNames: [],
+				filter: { seniority: ['head', 'vp'], country: 'GB' },
+				company: { query: 'fintech startups', filter: { country: 'GB' } },
+			},
+		};
+		mockedRequest.mockResolvedValue(response);
+		const result = await People.search(ctx, input);
+
+		expect(result).toEqual(response);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/v2/people/search',
+			'test-api-key',
+			{ method: 'POST', body: input },
+		);
+	});
+
+	it('people.searchCount forwards a semantic query', async () => {
+		const input = { semantic: { query: 'founders in Berlin' } };
+		const response = {
+			count: 3,
+			total: 3,
+			interpretation: { filter: { seniority: 'founder' } },
+		};
+		mockedRequest.mockResolvedValue(response);
+		const result = await People.searchCount(ctx, input);
+
+		expect(result).toEqual(response);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/v2/people/search/count',
+			'test-api-key',
+			{ method: 'POST', body: input },
+		);
+	});
+
+	it('companies.searchCount accepts several name queries', async () => {
+		const input = { filter: { query: ['stripe', 'adyen'] } };
+		mockedRequest.mockResolvedValue({ count: 2, total: 2 });
+		await Companies.searchCount(ctx, input);
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/v2/companies/search/count',
+			'test-api-key',
+			{ method: 'POST', body: input },
+		);
+	});
+
 	it('people.searchCount sends filters without pagination', async () => {
 		const input = { filter: { country: 'US' } };
 		const response = { count: 1, total: 1 };
