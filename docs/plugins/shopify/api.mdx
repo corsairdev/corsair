@@ -527,6 +527,7 @@ await corsair.shopify.api.inventory.adjust({ inventoryItemId: 'gid://shopify/Inv
 | `delta` | `number` | Yes | Signed change: positive adds stock, negative removes it. |
 | `reason` | `string` | Yes | Inventory change reason, e.g. "correction" or "received". |
 | `changeFromQuantity` | `number \| null` | No | Expected quantity before the change. Set it to turn the write into a compare-and-swap, which fails when the current quantity differs. Omit it to skip that check. |
+| `idempotencyKey` | `string` | No | Key that makes this adjustment safe to repeat. Generated per call when omitted; supply your own to make a retry of the same logical adjustment reuse it. |
 
 Adjusts the available quantity by a signed delta at one location. A positive delta adds stock and a negative one removes it.
 
@@ -726,7 +727,6 @@ Cancels the order without refunding. Cancelling and refunding are separate decis
   } | null,
   customer?: {
     id: string,
-    displayName: string,
     defaultEmailAddress?: {
       emailAddress: string
     } | null
@@ -858,7 +858,6 @@ await corsair.shopify.api.orders.close({ id: 'gid://shopify/Order/1' });
   } | null,
   customer?: {
     id: string,
-    displayName: string,
     defaultEmailAddress?: {
       emailAddress: string
     } | null
@@ -992,7 +991,6 @@ await corsair.shopify.api.orders.get({ id: 'gid://shopify/Order/1' });
   } | null,
   customer?: {
     id: string,
-    displayName: string,
     defaultEmailAddress?: {
       emailAddress: string
     } | null
@@ -1130,7 +1128,6 @@ await corsair.shopify.api.orders.list({ first: 10, query: 'financial_status:paid
       } | null,
       customer?: {
         id: string,
-        displayName: string,
         defaultEmailAddress?: {
           emailAddress: string
         } | null
@@ -1341,7 +1338,6 @@ await corsair.shopify.api.orders.markAsPaid({ id: 'gid://shopify/Order/1' });
   } | null,
   customer?: {
     id: string,
-    displayName: string,
     defaultEmailAddress?: {
       emailAddress: string
     } | null
