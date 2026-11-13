@@ -13,6 +13,7 @@ import {
 	andreaGermany,
 	andreaItaly,
 	countryOfOrigin as countryOfOriginFixture,
+	countryOfOriginLive,
 	emailLookup,
 	internalError,
 	invalidCountry,
@@ -23,6 +24,7 @@ import {
 	nameNotSet,
 	splitName,
 	splitNameStrict,
+	splitNameStrictLive,
 	stats as statsFixture,
 	tooManyNames,
 	unknownGender,
@@ -183,6 +185,24 @@ describe('Gender API client', () => {
 });
 
 describe('genderapi.lookup.name', () => {
+	it('rejects an ip that is not an address, which Gender API would silently ignore', async () => {
+		const error = await failure(
+			invoke(name, { name: 'Anna', ip: 'not-an-ip' }),
+		);
+
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts an IPv4 and an IPv6 address', async () => {
+		respond(alice);
+		await invoke(name, { name: 'Anna', ip: '178.27.177.23' });
+		respond(alice);
+		await invoke(name, { name: 'Anna', ip: '2001:db8::1' });
+
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
 	it('returns the gender with its sample count and accuracy', async () => {
 		respond(alice);
 		const result = await invoke(name, { name: 'Alice' });
@@ -397,6 +417,16 @@ describe('genderapi.fullName.split', () => {
 		expect(lastRequest().query.strict).toBe('true');
 	});
 
+	it('turns the empty last name strict mode really returns into null', async () => {
+		respond(splitNameStrictLive);
+		const result = (await invoke(fullName, {
+			split: 'Markus Zzqxvarn',
+			strict: true,
+		})) as { last_name: string | null };
+
+		expect(result.last_name).toBeNull();
+	});
+
 	it('logs strict mode without the name', async () => {
 		respond(splitName);
 		await invoke(fullName, { split: 'theresa miller', strict: true });
@@ -408,6 +438,21 @@ describe('genderapi.fullName.split', () => {
 });
 
 describe('genderapi.countryOfOrigin.get', () => {
+	it('parses the snake_case entries the live route returns', async () => {
+		respond(countryOfOriginLive);
+		const result = (await invoke(countryOfOrigin, {
+			name: 'Markus',
+		})) as typeof countryOfOriginLive;
+
+		expect(result.country_of_origin[0]).toEqual({
+			country_name: 'Germany',
+			country: 'DE',
+			probability: 0.32,
+			continental_region: 'Europe',
+			statistical_region: 'Western Europe',
+		});
+	});
+
 	it('returns the ranked countries', async () => {
 		respond(countryOfOriginFixture);
 		const result = (await invoke(countryOfOrigin, {

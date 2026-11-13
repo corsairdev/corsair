@@ -6,7 +6,7 @@ import { z } from 'zod';
  * `unknown`, and `errno` is 0 on a good answer.
  */
 const ResultSchema = z.object({
-	/** The submitted name, lower case. */
+	/** The submitted name: lower case for one name, as sent inside a multi result. */
 	name: z.string(),
 	/** The name after Gender API's normalizer ran. */
 	name_sanitized: z.string().optional(),
@@ -39,9 +39,10 @@ const LocaleSchema = z
 		'Browser locale such as en_US, which Gender API turns into a country',
 	);
 
+// Gender API ignores an address it cannot read and answers unlocalized, so a
+// typo would come back as a plain answer that looks localized.
 const IpSchema = z
-	.string()
-	.min(7)
+	.union([z.ipv4(), z.ipv6()])
 	.describe('A valid IPv4 or IPv6 address, used to infer the country');
 
 const NameInputSchema = z.object({
@@ -134,16 +135,28 @@ const EmailResultSchema = ResultSchema.extend({
 
 const FullNameResultSchema = ResultSchema.extend({
 	first_name: z.string(),
-	/** Null when `strict` is true and the last name is not in the database. */
+	/**
+	 * Null when `strict` is true and the last name is not in the database. The
+	 * API itself sends an empty string; the endpoint turns that into null.
+	 */
 	last_name: z.string().nullable().optional(),
 	strict: z.boolean().optional(),
 });
 
+/**
+ * The live route answers these in snake_case (`country_name`,
+ * `continental_region`, `statistical_region`), while the reference shows them
+ * in camelCase. Both spellings are optional so either one parses.
+ */
 const CountryOfOriginEntrySchema = z.object({
-	countryName: z.string(),
+	country_name: z.string().optional(),
 	/** `--` for the catch-all entry. */
 	country: z.string(),
 	probability: z.number(),
+	continental_region: z.string().optional(),
+	statistical_region: z.string().optional(),
+	/** The reference's spelling of `country_name`. */
+	countryName: z.string().optional(),
 	continentalRegion: z.string().optional(),
 	statisticalRegion: z.string().optional(),
 });

@@ -156,6 +156,56 @@ export const countryOfOrigin = {
 	duration: '165ms',
 };
 
+/**
+ * The live route (11-14) answers the entries in snake_case, not the camelCase
+ * its documentation shows. Trimmed from a real response for "Markus".
+ */
+export const countryOfOriginLive = {
+	name: 'markus',
+	country_of_origin: [
+		{
+			country_name: 'Germany',
+			country: 'DE',
+			probability: 0.32,
+			continental_region: 'Europe',
+			statistical_region: 'Western Europe',
+		},
+		{
+			country_name: 'Austria',
+			country: 'AT',
+			probability: 0.19,
+			continental_region: 'Europe',
+			statistical_region: 'Western Europe',
+		},
+	],
+	name_sanitized: 'Markus',
+	gender: 'male',
+	samples: 30782,
+	accuracy: 99,
+	country_of_origin_map_url:
+		'https://gender-api.com/en/map/203768901/2aa9ab16aa5d2edf',
+	credits_used: 2,
+	duration: '79ms',
+};
+
+/**
+ * What the live route (11-14) answers under `strict` for a last name it does
+ * not know: an empty string, as in the documented example, not null.
+ */
+export const splitNameStrictLive = {
+	last_name: '',
+	first_name: 'Markus',
+	strict: true,
+	name: 'markus',
+	name_sanitized: 'Markus',
+	country: '',
+	gender: 'male',
+	samples: 30782,
+	accuracy: 99,
+	duration: '83ms',
+	credits_used: 1,
+};
+
 export const stats = {
 	key: 'yourkey',
 	is_limit_reached: false,

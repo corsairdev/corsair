@@ -129,7 +129,13 @@ export const fullName: GenderApiEndpoints['fullName']['split'] = async (
 		}),
 	});
 
-	const result = GenderApiEndpointOutputSchemas.fullName.parse(raw);
+	const parsedResult = GenderApiEndpointOutputSchemas.fullName.parse(raw);
+	// Strict mode answers an empty string for a last name it does not know; the
+	// plugin documents that as null, so callers can test for it.
+	const result = {
+		...parsedResult,
+		last_name: parsedResult.last_name === '' ? null : parsedResult.last_name,
+	};
 
 	await logEventFromContext(
 		ctx,
