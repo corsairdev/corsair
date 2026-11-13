@@ -59,7 +59,7 @@ export const createSite: GosquaredEndpoints['account.createSite'] = async (
 	await logEventFromContext(
 		ctx,
 		'gosquared.account.createSite',
-		{ siteToken: parsedResponse.site_token },
+		{ success: true },
 		'completed',
 	);
 
@@ -85,7 +85,7 @@ export const getSite: GosquaredEndpoints['account.getSite'] = async (
 	await logEventFromContext(
 		ctx,
 		'gosquared.account.getSite',
-		{ siteToken: parsed.site_token },
+		{ success: true },
 		'completed',
 	);
 

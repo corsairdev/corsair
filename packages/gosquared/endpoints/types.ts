@@ -150,7 +150,7 @@ export const TrendsQueryInputSchema = z
 		to: z.string().min(1),
 		interval: z.enum(['hour', 'day', 'month']).optional(),
 		limit: z.union([z.number(), z.string()]).optional(),
-		format: z.enum(['json', 'csv']).optional(),
+		format: z.literal('json').optional(),
 		dateFormat: z.string().optional(),
 	})
 	.strict();

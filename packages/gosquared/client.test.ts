@@ -235,6 +235,85 @@ describe('GoSquared client tests', () => {
 			expect(sanitized.retryAfter).toBe(4000);
 			expect(sanitized.body).toEqual({ token: '[REDACTED]' });
 		});
+
+		it('scrubs site_token and api_key from error url and request query', () => {
+			const apiErr = new ApiError(
+				{
+					method: 'GET',
+					url: 'https://api.gosquared.com/account/v1/sites?api_key=secret-key&site_token=GSN-111',
+					query: {
+						api_key: 'secret-key',
+						site_token: 'GSN-111',
+						safe_filter: 'active',
+					},
+				},
+				{
+					url: 'https://api.gosquared.com/account/v1/sites?api_key=secret-key&site_token=GSN-111',
+					ok: false,
+					status: 401,
+					statusText: 'Unauthorized',
+					body: {
+						message: 'Failed on https://api.gosquared.com?api_key=secret-key',
+					},
+				},
+				'Failed request with api_key=secret-key',
+			);
+
+			const sanitized = sanitizeError(apiErr) as ApiError;
+			expect(sanitized.url).not.toContain('secret-key');
+			expect(sanitized.url).not.toContain('GSN-111');
+			expect(sanitized.url).toContain('api_key=%5BREDACTED%5D');
+			expect(sanitized.url).toContain('site_token=%5BREDACTED%5D');
+
+			expect(sanitized.request.query).toEqual({
+				api_key: '[REDACTED]',
+				site_token: '[REDACTED]',
+				safe_filter: 'active',
+			});
+
+			expect(sanitized.message).not.toContain('secret-key');
+			expect(sanitized.message).toContain('api_key=[REDACTED]');
+		});
+
+		it('scrubs customer data such as email and nested properties in failed identify body', () => {
+			const apiErr = new ApiError(
+				{
+					method: 'POST',
+					url: 'https://api.gosquared.com/tracking/v1/properties',
+					body: {
+						person_id: 'usr_123',
+						properties: {
+							email: 'customer@example.com',
+							plan: 'pro',
+						},
+					},
+				},
+				{
+					url: 'https://api.gosquared.com/tracking/v1/properties',
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: {
+						error: 'Invalid customer email customer@example.com',
+					},
+				},
+				'Failed for customer@example.com',
+			);
+
+			const sanitized = sanitizeError(apiErr) as ApiError;
+			// `unknown` because sanitized request body retains dynamic json shape.
+			const reqBody = sanitized.request.body as Record<string, unknown>;
+			expect(reqBody.person_id).toBe('[REDACTED]');
+			// `unknown` because properties object retains dynamic json shape.
+			const props = reqBody.properties as Record<string, unknown>;
+			expect(props.email).toBe('[REDACTED]');
+			expect(props.plan).toBe('pro');
+
+			// `unknown` because sanitized response body retains dynamic json shape.
+			const resBody = sanitized.body as Record<string, unknown>;
+			expect(resBody.error).toBe('Invalid customer email [REDACTED]');
+			expect(sanitized.message).toBe('Failed for [REDACTED]');
+		});
 	});
 
 	describe('real transport rate-limit retryAfter parsing', () => {

@@ -25,7 +25,7 @@ export const getTokenInfo: GosquaredEndpoints['auth.getTokenInfo'] = async (
 	await logEventFromContext(
 		ctx,
 		'gosquared.auth.getTokenInfo',
-		{ scopes: parsedResponse.scopes },
+		{ success: true },
 		'completed',
 	);
 

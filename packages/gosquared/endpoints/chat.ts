@@ -60,7 +60,7 @@ export const getChat: GosquaredEndpoints['chat.getChat'] = async (
 	await logEventFromContext(
 		ctx,
 		'gosquared.chat.getChat',
-		{ chatId: parsed.chat_id },
+		{ success: true },
 		'completed',
 	);
 
@@ -93,7 +93,7 @@ export const getChatFeed: GosquaredEndpoints['chat.getChatFeed'] = async (
 	await logEventFromContext(
 		ctx,
 		'gosquared.chat.getChatFeed',
-		{ chatId: parsed.chat_id },
+		{ success: true },
 		'completed',
 	);
 
@@ -120,7 +120,7 @@ export const archiveChat: GosquaredEndpoints['chat.archiveChat'] = async (
 	await logEventFromContext(
 		ctx,
 		'gosquared.chat.archiveChat',
-		{ chatId: parsed.chat_id },
+		{ success: true },
 		'completed',
 	);
 
@@ -148,7 +148,7 @@ export const unarchiveChat: GosquaredEndpoints['chat.unarchiveChat'] = async (
 	await logEventFromContext(
 		ctx,
 		'gosquared.chat.unarchiveChat',
-		{ chatId: parsed.chat_id },
+		{ success: true },
 		'completed',
 	);
 
@@ -185,7 +185,7 @@ export const sendMessage: GosquaredEndpoints['chat.sendMessage'] = async (
 	await logEventFromContext(
 		ctx,
 		'gosquared.chat.sendMessage',
-		{ chatId: parsed.chat_id },
+		{ success: true },
 		'completed',
 	);
 

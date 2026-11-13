@@ -110,7 +110,7 @@ describe('GoSquared endpoints test suite', () => {
 			expect(mockLogEvent).toHaveBeenCalledWith(
 				mockCtx,
 				'gosquared.account.createSite',
-				{ siteToken: 'GSN-222' },
+				{ success: true },
 				'completed',
 			);
 		});

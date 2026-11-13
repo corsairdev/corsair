@@ -29,7 +29,45 @@ const SENSITIVE_FIELD_NAMES = new Set([
 	'token',
 	'secret',
 	'sitetoken',
+	'email',
+	'customer',
+	'person',
+	'personid',
+	'phone',
+	'phonenumber',
+	'ip',
+	'ipaddress',
+	'creditcard',
 ]);
+
+/**
+ * Scrubs credentials and personal identifiers from raw URLs and message strings.
+ */
+export function scrubUrl(rawUrl: string): string {
+	try {
+		const parsed = new URL(rawUrl);
+		for (const [key] of parsed.searchParams) {
+			const normalized = key.toLowerCase().replace(/[-_]/g, '');
+			if (
+				SENSITIVE_FIELD_NAMES.has(normalized) ||
+				/key|token|secret|email|auth|credential/i.test(key)
+			) {
+				parsed.searchParams.set(key, '[REDACTED]');
+			}
+		}
+		return parsed.toString();
+	} catch {
+		return rawUrl
+			.replace(
+				/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g,
+				'[REDACTED]',
+			)
+			.replace(
+				/([?&]|\b)(api_key|site_token|token|key|secret|email)=[^&\s]+/gi,
+				'$1$2=[REDACTED]',
+			);
+	}
+}
 
 /**
  * Normalizes and redacts credentials from objects and error payloads.
@@ -37,7 +75,15 @@ const SENSITIVE_FIELD_NAMES = new Set([
 // `unknown` because response bodies and error payloads can be arbitrary JSON.
 export function redactSensitiveData(value: unknown): unknown {
 	if (typeof value === 'string') {
-		return value;
+		return value
+			.replace(
+				/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g,
+				'[REDACTED]',
+			)
+			.replace(
+				/([?&]|\b)(api_key|site_token|token|key|secret|email)=[^&\s]+/gi,
+				'$1$2=[REDACTED]',
+			);
 	}
 	if (Array.isArray(value)) {
 		// `unknown` because arrays can contain arbitrary nested JSON values.
@@ -50,7 +96,10 @@ export function redactSensitiveData(value: unknown): unknown {
 		const redacted: Record<string, unknown> = {};
 		for (const [key, val] of Object.entries(record)) {
 			const normalizedKey = key.toLowerCase().replace(/[-_]/g, '');
-			if (SENSITIVE_FIELD_NAMES.has(normalizedKey)) {
+			if (
+				SENSITIVE_FIELD_NAMES.has(normalizedKey) ||
+				/key|token|secret|password|auth|credential|email/i.test(key)
+			) {
 				redacted[key] = '[REDACTED]';
 			} else {
 				redacted[key] = redactSensitiveData(val);
@@ -72,6 +121,17 @@ export function sanitizeError(error: unknown): Error {
 		const sanitized = new ApiError(
 			{
 				...error.request,
+				url: error.request.url
+					? scrubUrl(error.request.url)
+					: error.request.url,
+				query:
+					error.request.query !== undefined
+						? (redactSensitiveData(error.request.query) as Record<
+								string,
+								// `unknown` because query parameter values can be strings, numbers, or boolean values.
+								unknown
+							>)
+						: undefined,
 				body:
 					error.request.body !== undefined
 						? redactSensitiveData(error.request.body)
@@ -80,14 +140,14 @@ export function sanitizeError(error: unknown): Error {
 			{
 				status: error.status,
 				statusText: error.statusText,
-				url: error.url,
+				url: error.url ? scrubUrl(error.url) : error.url,
 				ok,
 				body:
 					error.body !== undefined
 						? redactSensitiveData(error.body)
 						: undefined,
 			},
-			error.message,
+			error.message ? scrubUrl(error.message) : 'ApiError',
 			{
 				retryAfter: error.retryAfter,
 				rateLimitReset: error.rateLimitReset,

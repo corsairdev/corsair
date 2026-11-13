@@ -93,7 +93,7 @@ export const trackTransaction: GosquaredEndpoints['tracking.trackTransaction'] =
 		await logEventFromContext(
 			ctx,
 			'gosquared.tracking.trackTransaction',
-			{ transactionId: parsed.transaction.id },
+			{ success: true },
 			'completed',
 		);
 
