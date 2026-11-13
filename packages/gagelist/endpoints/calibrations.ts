@@ -1,4 +1,5 @@
 import type { GagelistEndpoints } from '..';
+import type { GagelistDocument } from '../client';
 import { segment } from '../client';
 import { call, listShape } from './call';
 import {
@@ -104,8 +105,8 @@ export const remove: GagelistEndpoints['calibrationsRemove'] = (ctx, input) =>
 		{ log: ({ id }) => ({ calibrationId: id }) },
 	);
 
-// The certificate comes back as a rendered document rather than JSON, so the
-// result carries it as a string instead of failing a parse.
+// The certificate is a rendered PDF. Its bytes come back base64-encoded; if
+// GageList answers JSON instead, that JSON is kept as a string.
 export const certificate: GagelistEndpoints['calibrationCertificate'] = (
 	ctx,
 	input,
@@ -121,14 +122,29 @@ export const certificate: GagelistEndpoints['calibrationCertificate'] = (
 		({ id }) => ({
 			method: 'GET',
 			path: `/GageList/api/Calibration/GetCertificate/${segment(id)}`,
+			binary: true,
 		}),
 		{
-			// unknown: the body is whatever the renderer sent, a JSON string when
-			// it answers JSON and a document otherwise, so it is stringified
-			// rather than parsed.
-			shape: (raw: unknown) => ({
-				certificate: typeof raw === 'string' ? raw : JSON.stringify(raw),
+			// unknown: the raw value is the GagelistDocument the client built.
+			shape: (raw: unknown) => {
+				const doc = raw as GagelistDocument;
+				if (doc.base64 !== undefined) {
+					return {
+						certificate: doc.base64,
+						encoding: 'base64',
+						contentType: doc.contentType,
+						byteLength: doc.byteLength,
+					};
+				}
+				return {
+					certificate:
+						typeof doc.json === 'string' ? doc.json : JSON.stringify(doc.json),
+					encoding: 'text',
+					contentType: doc.contentType,
+				};
+			},
+			log: (_, result) => ({
+				bytes: result.byteLength ?? result.certificate.length,
 			}),
-			log: (_, result) => ({ bytes: result.certificate.length }),
 		},
 	);

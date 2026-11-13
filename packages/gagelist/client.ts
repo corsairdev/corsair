@@ -156,6 +156,21 @@ export type GagelistRequest = {
 	// unknown: the endpoint's input schema has already validated the body, which
 	// is an object on most routes and a bare array on the custom-value route.
 	body?: unknown;
+	/**
+	 * The route answers a file (the certificate PDF). corsair/http reads any
+	 * non-JSON body with `text()`, which corrupts binary bytes, so such a route
+	 * is fetched directly and its bytes come back base64-encoded.
+	 */
+	binary?: boolean;
+};
+
+/** A file route's answer: base64 bytes, or the JSON it sent instead. */
+export type GagelistDocument = {
+	contentType: string;
+	base64?: string;
+	byteLength?: number;
+	// unknown: a JSON answer from a file route has no documented shape.
+	json?: unknown;
 };
 
 /** Encodes one path segment. */
@@ -274,14 +289,77 @@ async function tokenFor(credentials: GagelistCredentials): Promise<string> {
 	return fresh.token;
 }
 
-// unknown: callers parse the body with the endpoint's zod output schema. It is
-// a JSON string on the certificate route, which renders a PDF.
+/** Fetches a file route directly so its bytes survive. */
+async function fetchDocument(
+	credentials: GagelistCredentials,
+	token: string,
+	path: string,
+): Promise<GagelistDocument> {
+	let response: Response;
+	try {
+		response = await fetch(`${GAGELIST_API_BASE}${path}`, {
+			method: 'GET',
+			headers: {
+				Accept: 'application/pdf, application/json',
+				Authorization: `Bearer ${token}`,
+			},
+			signal: AbortSignal.timeout(GAGELIST_TIMEOUT_MS),
+		});
+	} catch (error) {
+		// A transport failure never had a response body, so its cause is safe.
+		if (error instanceof Error || error instanceof DOMException) {
+			throw new GagelistAPIError(error.message, {
+				cause: error,
+				method: 'GET',
+				transport: true,
+				timedOut: error.name === 'TimeoutError',
+			});
+		}
+		throw new GagelistAPIError('Unknown GageList error', {
+			method: 'GET',
+			transport: true,
+		});
+	}
+
+	const contentType =
+		response.headers.get('Content-Type')?.split(';')[0]?.trim() ??
+		'application/octet-stream';
+	const isJson = contentType.toLowerCase().includes('json');
+
+	if (!response.ok) {
+		if (response.status === 401) clearGagelistToken(credentials);
+		// unknown: an error body is one of the envelopes readFailure handles.
+		const errorBody: unknown = isJson
+			? await response.json().catch(() => undefined)
+			: undefined;
+		throw new GagelistAPIError(
+			describeGagelistError(
+				response.status,
+				errorBody,
+				response.statusText || 'Request failed',
+			),
+			{ status: response.status, method: 'GET' },
+		);
+	}
+
+	if (isJson) return { contentType, json: await response.json() };
+	const bytes = await response.arrayBuffer();
+	return {
+		contentType,
+		base64: Buffer.from(bytes).toString('base64'),
+		byteLength: bytes.byteLength,
+	};
+}
+
+// unknown: callers parse the body with the endpoint's zod output schema. A
+// `binary` route answers a GagelistDocument instead.
 export async function makeGagelistRequest(
 	credentials: GagelistCredentials,
-	{ method, path, query, body }: GagelistRequest,
+	{ method, path, query, body, binary }: GagelistRequest,
 	// unknown: see the note above the signature.
 ): Promise<unknown> {
 	const token = await tokenFor(credentials);
+	if (binary) return fetchDocument(credentials, token, path);
 
 	const config: OpenAPIConfig = {
 		BASE: GAGELIST_API_BASE,

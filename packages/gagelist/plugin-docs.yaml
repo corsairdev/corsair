@@ -13,7 +13,7 @@ overviewNote: |
   - **An update replaces the record.** `gages.update` and `calibrations.update` take the whole object with its `Id`, so a field left out is not "unchanged" in the way a PATCH would leave it. Read the record with `gages.get` or `calibrations.get`, change the fields you mean to change, and send the whole record back.
   - **Deletes are POSTs.** GageList deletes with `POST` to a `Delete/{id}` path rather than an HTTP DELETE, and a gage is marked deleted rather than erased.
   - **The custom-value route takes a bare array.** `customFields.updateValues` posts `[{ FieldId, RefID, RefType, FieldValue }]`, not the usual object wrapper. `RefType` is `1` for a gage and `2` for a calibration, and a wrong one writes to the other table, so it is constrained to those two values.
-  - **A certificate is a rendered document, not JSON.** `calibrations.certificate` returns it as a string on the result, which is what the renderer sends.
+  - **A certificate is a PDF, not JSON.** `calibrations.certificate` returns the file's bytes base64-encoded in `certificate`, with `encoding`, `contentType` and `byteLength`; decode it before saving the file.
   - **No webhooks.** GageList does not push; a caller polls.
 examples:
   read:
@@ -70,5 +70,5 @@ apiNotes:
   gages.create: 'Field names are PascalCase and bind case-sensitively. GageList spells the acquisition date `DateAquired`.'
   gages.update: 'The body is the whole record with its `Id`, not a partial patch: read it with `gages.get` and send it back with your change.'
   calibrations.update: 'The body is the whole record with its `Id`, not a partial patch: read it with `calibrations.get` and send it back with your change.'
-  calibrations.certificate: 'Returns the rendered document as a string rather than JSON.'
+  calibrations.certificate: 'Returns the PDF base64-encoded in `certificate`, with `encoding`, `contentType` and `byteLength`.'
   customFields.updateValues: 'Posts a bare JSON array. `RefType` is `1` for a gage and `2` for a calibration.'

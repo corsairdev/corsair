@@ -13,7 +13,7 @@ pnpm add @corsair-dev/gagelist
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `account.status` | `gagelist.api.account.status` | `read` | The site’s plan limits and usage: gage and user counts, gages due and past due, and what the client may change |
-| `calibrations.certificate` | `gagelist.api.calibrations.certificate` | `read` | Render a calibration certificate for a record, returned as the document GageList produces |
+| `calibrations.certificate` | `gagelist.api.calibrations.certificate` | `read` | Render a calibration certificate PDF for a record, returned base64-encoded with its content type |
 | `calibrations.create` | `gagelist.api.calibrations.create` | `write` | Record a calibration against a gage, with the readings, standard used and next due date |
 | `calibrations.delete` | `gagelist.api.calibrations.delete` | `destructive` | Delete a calibration record |
 | `calibrations.get` | `gagelist.api.calibrations.get` | `read` | One calibration record with its as-found and as-left readings |

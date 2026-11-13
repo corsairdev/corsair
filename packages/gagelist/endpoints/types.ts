@@ -376,10 +376,19 @@ export type CalibrationCertificateInput = z.input<
 	typeof CalibrationCertificateInputSchema
 >;
 
-// The certificate route renders a PDF and answers it as a string, so the result
-// carries that string rather than pretending to be JSON.
+// The certificate route renders a PDF. Its bytes are carried base64-encoded,
+// because a text decode would corrupt them.
 const CertificateResponseSchema = z.object({
-	certificate: z.string(),
+	certificate: z
+		.string()
+		.describe(
+			'The certificate: base64 bytes when `encoding` is `base64`, otherwise the text GageList sent.',
+		),
+	encoding: z.enum(['base64', 'text']),
+	contentType: z
+		.string()
+		.describe('The Content-Type GageList sent, usually `application/pdf`.'),
+	byteLength: z.number().optional().describe('Size of the decoded file.'),
 });
 
 export type CertificateResponse = z.infer<typeof CertificateResponseSchema>;

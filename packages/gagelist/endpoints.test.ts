@@ -525,16 +525,45 @@ describe('calibrations', () => {
 		});
 	});
 
-	it('renders a certificate as a string', async () => {
+	it('returns the certificate PDF bytes intact, base64-encoded', async () => {
+		respondToken();
+		// A PDF header followed by the binary marker bytes a text decode mangles.
+		const pdf = new Uint8Array([
+			0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34, 0x0a, 0x25, 0xe2, 0xe3,
+			0xcf, 0xd3, 0x0a,
+		]);
+		fetchMock.mockResolvedValueOnce(
+			new Response(pdf, {
+				status: 200,
+				headers: { 'Content-Type': 'application/pdf' },
+			}),
+		);
+
+		await expect(
+			invoke(Calibrations.certificate, { id: 500 }),
+		).resolves.toEqual({
+			certificate: Buffer.from(pdf).toString('base64'),
+			encoding: 'base64',
+			contentType: 'application/pdf',
+			byteLength: pdf.byteLength,
+		});
+		expect(lastRequest()).toMatchObject({
+			method: 'GET',
+			path: '/GageList/api/Calibration/GetCertificate/500',
+		});
+		expect(lastRequest().headers.get('Authorization')).toBe('Bearer token-1');
+	});
+
+	it('keeps a JSON string answer as text', async () => {
 		respondToken();
 		respond('JVBERi0xLjQK');
 
 		await expect(
 			invoke(Calibrations.certificate, { id: 500 }),
-		).resolves.toEqual({ certificate: 'JVBERi0xLjQK' });
-		expect(lastRequest()).toMatchObject({
-			method: 'GET',
-			path: '/GageList/api/Calibration/GetCertificate/500',
+		).resolves.toEqual({
+			certificate: 'JVBERi0xLjQK',
+			encoding: 'text',
+			contentType: 'application/json',
 		});
 	});
 
@@ -544,7 +573,20 @@ describe('calibrations', () => {
 
 		await expect(
 			invoke(Calibrations.certificate, { id: 500 }),
-		).resolves.toEqual({ certificate: '{"href":"/files/cert-500.pdf"}' });
+		).resolves.toMatchObject({
+			certificate: '{"href":"/files/cert-500.pdf"}',
+			encoding: 'text',
+		});
+	});
+
+	it('surfaces an unknown record on the certificate route', async () => {
+		respondToken();
+		respond(notFound, 404);
+
+		const error = await caught(invoke(Calibrations.certificate, { id: 9 }));
+		expect(error).toBeInstanceOf(GagelistAPIError);
+		expect(error).toMatchObject({ status: 404 });
+		expect((error as Error).message).toBe('GageList 404: Record not found');
 	});
 });
 

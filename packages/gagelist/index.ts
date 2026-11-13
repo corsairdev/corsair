@@ -260,7 +260,7 @@ const gagelistEndpointMeta = {
 	'calibrations.certificate': {
 		riskLevel: 'read',
 		description:
-			'Render a calibration certificate for a record, returned as the document GageList produces',
+			'Render a calibration certificate PDF for a record, returned base64-encoded with its content type',
 	},
 	'manufacturers.list': {
 		riskLevel: 'read',
