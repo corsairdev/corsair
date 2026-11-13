@@ -2,10 +2,12 @@ import { logEventFromContext } from 'corsair/core';
 import type { GigasheetEndpoints } from '..';
 import { makeGigasheetRequest } from '../client';
 import {
-	type ExportsCreateResponse,
-	type ExportsDownloadResponse,
 	GigasheetEndpointInputSchemas,
 	GigasheetEndpointOutputSchemas,
+} from './types';
+import type {
+	ExportsCreateResponse,
+	ExportsDownloadResponse,
 } from './types';
 
 export const create: GigasheetEndpoints['exports.create'] = async (

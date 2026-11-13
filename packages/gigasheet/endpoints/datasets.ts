@@ -4,11 +4,13 @@ import { makeGigasheetRequest } from '../client';
 import {
 	GigasheetEndpointInputSchemas,
 	GigasheetEndpointOutputSchemas,
-	type DatasetsDeleteResponse,
-	type DatasetsGetColumnsResponse,
-	type DatasetsGetOperationStatusResponse,
-	type DatasetsGetResponse,
-	type DatasetsListResponse,
+} from './types';
+import type {
+	DatasetsDeleteResponse,
+	DatasetsGetColumnsResponse,
+	DatasetsGetOperationStatusResponse,
+	DatasetsGetResponse,
+	DatasetsListResponse,
 } from './types';
 
 export const get: GigasheetEndpoints['datasets.get'] = async (ctx, input) => {
@@ -22,8 +24,7 @@ export const get: GigasheetEndpoints['datasets.get'] = async (ctx, input) => {
 		},
 	);
 
-	const parsed =
-		GigasheetEndpointOutputSchemas['datasets.get'].parse(response);
+	const parsed = GigasheetEndpointOutputSchemas['datasets.get'].parse(response);
 
 	await logEventFromContext(
 		ctx,
@@ -127,9 +128,7 @@ export const list: GigasheetEndpoints['datasets.list'] = async (ctx, input) => {
 export const getOperationStatus: GigasheetEndpoints['datasets.getOperationStatus'] =
 	async (ctx, input) => {
 		const parsedInput =
-			GigasheetEndpointInputSchemas['datasets.getOperationStatus'].parse(
-				input,
-			);
+			GigasheetEndpointInputSchemas['datasets.getOperationStatus'].parse(input);
 		const response =
 			await makeGigasheetRequest<DatasetsGetOperationStatusResponse>(
 				`/dataset/${encodeURIComponent(parsedInput.handle)}/operation-status`,

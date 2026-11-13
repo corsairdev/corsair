@@ -4,9 +4,11 @@ import { makeGigasheetRequest } from '../client';
 import {
 	GigasheetEndpointInputSchemas,
 	GigasheetEndpointOutputSchemas,
-	type RowsAppendByNameResponse,
-	type RowsDeleteRowsResponse,
-	type RowsInsertBlankRowResponse,
+} from './types';
+import type {
+	RowsAppendByNameResponse,
+	RowsDeleteRowsResponse,
+	RowsInsertBlankRowResponse,
 } from './types';
 
 export const appendByName: GigasheetEndpoints['rows.appendByName'] = async (

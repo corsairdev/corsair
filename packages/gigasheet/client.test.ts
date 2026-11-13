@@ -56,7 +56,10 @@ beforeEach(() => {
 
 describe('makeGigasheetRequest', () => {
 	it('sends X-GIGASHEET-TOKEN header and targets base URL', async () => {
-		mockRequest.mockResolvedValue({ username: 'testuser', authenticated: true });
+		mockRequest.mockResolvedValue({
+			username: 'testuser',
+			authenticated: true,
+		});
 
 		const res = await makeGigasheetRequest<{ username: string }>(
 			'/user/whoami',
@@ -122,14 +125,10 @@ describe('makeGigasheetRequest', () => {
 		mockRequest.mockRejectedValue(rateLimited);
 
 		// `unknown` because caught error has no static type until checked.
-		const error = await makeGigasheetRequest(
-			'/upload/url',
-			'test-key',
-			{
-				method: 'POST',
-				body: { apiKey: 'secret_key_12345' },
-			},
-		).catch((caught: unknown) => caught);
+		const error = await makeGigasheetRequest('/upload/url', 'test-key', {
+			method: 'POST',
+			body: { apiKey: 'secret_key_12345' },
+		}).catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(ApiError);
 		const apiErr = error as ApiError;
@@ -141,9 +140,9 @@ describe('makeGigasheetRequest', () => {
 			message: 'Rate limit exceeded',
 		});
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(apiErr)).toBe(true);
-		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(),
-		).resolves.toEqual({ maxRetries: 0 });
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
 	});
 
 	it('wraps unknown non-Error rejection values into GigasheetAPIError', async () => {
@@ -155,9 +154,7 @@ describe('makeGigasheetRequest', () => {
 		}).catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(GigasheetAPIError);
-		expect((error as GigasheetAPIError).message).toBe(
-			'Unknown error occurred',
-		);
+		expect((error as GigasheetAPIError).message).toBe('Unknown error occurred');
 	});
 });
 
@@ -250,10 +247,7 @@ describe('real transport Retry-After handling', () => {
 
 		try {
 			// `unknown` because real transport response is typed as Promise<unknown>.
-			const result: unknown = await actualHttp.request(
-				config,
-				requestOptions,
-			);
+			const result: unknown = await actualHttp.request(config, requestOptions);
 			expect(result).toEqual({ username: 'testuser', authenticated: true });
 			expect(mockFetch).toHaveBeenCalledTimes(2);
 		} finally {

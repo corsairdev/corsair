@@ -4,8 +4,10 @@ import { makeGigasheetRequest } from '../client';
 import {
 	GigasheetEndpointInputSchemas,
 	GigasheetEndpointOutputSchemas,
-	type ViewsGetResponse,
-	type ViewsListResponse,
+} from './types';
+import type {
+	ViewsGetResponse,
+	ViewsListResponse,
 } from './types';
 
 export const list: GigasheetEndpoints['views.list'] = async (ctx, input) => {

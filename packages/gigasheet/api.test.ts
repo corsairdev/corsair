@@ -8,15 +8,16 @@
 import { makeGigasheetRequest } from './client';
 import {
 	DatasetsListOutputSchema,
-	type DatasetsListResponse,
 	UserGetDetailsOutputSchema,
-	type UserGetDetailsResponse,
 	UserGetEnrichmentCreditsOutputSchema,
-	type UserGetEnrichmentCreditsResponse,
 	UserGetSpaceUsedOutputSchema,
-	type UserGetSpaceUsedResponse,
 	UserWhoamiOutputSchema,
-	type UserWhoamiResponse,
+} from './endpoints/types';
+import type {
+	DatasetsListResponse,
+	UserGetDetailsResponse,
+	UserGetEnrichmentCreditsResponse,
+	UserWhoamiResponse,
 } from './endpoints/types';
 
 const LIVE_KEY = process.env.GIGASHEET_API_KEY ?? '';

@@ -4,8 +4,10 @@ import { makeGigasheetRequest } from '../client';
 import {
 	GigasheetEndpointInputSchemas,
 	GigasheetEndpointOutputSchemas,
-	type UploadDirectResponse,
-	type UploadFromUrlResponse,
+} from './types';
+import type {
+	UploadDirectResponse,
+	UploadFromUrlResponse,
 } from './types';
 
 export const fromUrl: GigasheetEndpoints['upload.fromUrl'] = async (

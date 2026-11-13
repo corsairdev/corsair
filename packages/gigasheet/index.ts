@@ -1,17 +1,17 @@
-import {
-	AuthMissingError,
-	type AuthTypes,
-	type BindEndpoints,
-	type CorsairEndpoint,
-	type CorsairErrorHandler,
-	type CorsairPlugin,
-	type CorsairPluginContext,
-	type KeyBuilderContext,
-	type PickAuth,
-	type PluginAuthConfig,
-	type PluginPermissionsConfig,
-	type RequiredPluginEndpointMeta,
-	type RequiredPluginEndpointSchemas,
+import { AuthMissingError } from 'corsair/core';
+import type {
+	AuthTypes,
+	BindEndpoints,
+	CorsairEndpoint,
+	CorsairErrorHandler,
+	CorsairPlugin,
+	CorsairPluginContext,
+	KeyBuilderContext,
+	PickAuth,
+	PluginAuthConfig,
+	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { Datasets, Exports, Rows, Upload, User, Views } from './endpoints';
 import type {

@@ -4,9 +4,11 @@ import { makeGigasheetRequest } from '../client';
 import {
 	GigasheetEndpointInputSchemas,
 	GigasheetEndpointOutputSchemas,
-	type UserGetDetailsResponse,
-	type UserGetEnrichmentCreditsResponse,
-	type UserWhoamiResponse,
+} from './types';
+import type {
+	UserGetDetailsResponse,
+	UserGetEnrichmentCreditsResponse,
+	UserWhoamiResponse,
 } from './types';
 
 export const whoami: GigasheetEndpoints['user.whoami'] = async (ctx, input) => {
@@ -20,8 +22,7 @@ export const whoami: GigasheetEndpoints['user.whoami'] = async (ctx, input) => {
 		},
 	);
 
-	const parsed =
-		GigasheetEndpointOutputSchemas['user.whoami'].parse(response);
+	const parsed = GigasheetEndpointOutputSchemas['user.whoami'].parse(response);
 
 	await logEventFromContext(
 		ctx,
@@ -65,13 +66,9 @@ export const getSpaceUsed: GigasheetEndpoints['user.getSpaceUsed'] = async (
 ) => {
 	GigasheetEndpointInputSchemas['user.getSpaceUsed'].parse(input);
 	// `unknown` because /user/space-used returns either a raw integer byte count or a wrapped object.
-	const raw = await makeGigasheetRequest<unknown>(
-		'/user/space-used',
-		ctx.key,
-		{
-			method: 'GET',
-		},
-	);
+	const raw = await makeGigasheetRequest<unknown>('/user/space-used', ctx.key, {
+		method: 'GET',
+	});
 
 	const normalized =
 		typeof raw === 'number'
