@@ -656,7 +656,7 @@ export const squareEndpointMeta = {
 	'orders.calculate': {
 		riskLevel: 'read',
 		description:
-			"Enables applications to preview order pricing without creating an order. Beta in Square's API; it may change.",
+			"Enables applications to preview order pricing without creating an order. A fulfillment's pickup_details, shipment_details or in_store_details is required when its type is PICKUP, SHIPMENT or IN_STORE. A line item modifier's base_price_money is required for ad hoc modifiers. Beta in Square's API; it may change.",
 	},
 	'invoices.cancel': {
 		riskLevel: 'destructive',
@@ -687,7 +687,7 @@ export const squareEndpointMeta = {
 	'customAttributeDefinitions.customer.create': {
 		riskLevel: 'write',
 		description:
-			'Creates a customer-related custom attribute definition for a Square seller account. Use this endpoint to define a custom attribute that can be associated with customer profiles. Pass the same idempotency_key to retry safely.',
+			'Creates a customer-related custom attribute definition for a Square seller account. Use this endpoint to define a custom attribute that can be associated with customer profiles. The definition name is required if visibility is VISIBILITY_READ_ONLY or VISIBILITY_READ_WRITE_VALUES. Pass the same idempotency_key to retry safely.',
 	},
 	'customerGroups.create': {
 		riskLevel: 'write',
@@ -717,7 +717,7 @@ export const squareEndpointMeta = {
 	'customAttributeDefinitions.location.create': {
 		riskLevel: 'write',
 		description:
-			"Creates a location-related custom attribute definition for a Square seller account. Use this endpoint to define a custom attribute that can be associated with locations. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.",
+			"Creates a location-related custom attribute definition for a Square seller account. Use this endpoint to define a custom attribute that can be associated with locations. The definition name is required if visibility is VISIBILITY_READ_ONLY or VISIBILITY_READ_WRITE_VALUES. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.",
 	},
 	'customers.delete': {
 		riskLevel: 'destructive',
@@ -1036,12 +1036,12 @@ export const squareEndpointMeta = {
 	'checkout.updateLocationSettings': {
 		riskLevel: 'write',
 		description:
-			"Updates the location-level settings for a Square-hosted checkout page. Beta in Square's API; it may change.",
+			"Updates the location-level settings for a Square-hosted checkout page. A policy's title is required when setting its description. Beta in Square's API; it may change.",
 	},
 	'orders.update': {
 		riskLevel: 'write',
 		description:
-			"Updates an open order by adding, replacing, or deleting fields. Orders with a `COMPLETED` or `CANCELED` state cannot be updated. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.",
+			"Updates an open order by adding, replacing, or deleting fields. Orders with a `COMPLETED` or `CANCELED` state cannot be updated. A fulfillment's pickup_details, shipment_details or in_store_details is required when its type is PICKUP, SHIPMENT or IN_STORE. A line item modifier's base_price_money is required for ad hoc modifiers. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.",
 	},
 	'webhookSubscriptions.update': {
 		riskLevel: 'write',
@@ -1070,7 +1070,7 @@ export const squareEndpointMeta = {
 	'payments.create': {
 		riskLevel: 'write',
 		description:
-			'Creates a payment using the provided source. Moves money. Pass the same idempotency_key to retry safely.',
+			'Creates a payment using the provided source. customer_id is required if source_id is a card on file created with the Cards API. Moves money. Pass the same idempotency_key to retry safely.',
 	},
 	'payments.get': {
 		riskLevel: 'read',
@@ -1090,7 +1090,7 @@ export const squareEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Refunds a payment. You can refund the entire payment amount or a portion of it. You can use this endpoint to refund a card payment or record a refund of a cash or external payment. Moves money. Pass the same idempotency_key to retry safely. Cannot be undone.',
+			'Refunds a payment. You can refund the entire payment amount or a portion of it. You can use this endpoint to refund a card payment or record a refund of a cash or external payment. customer_id is required if destination_id is a card on file created with the Cards API, and is only allowed when unlinked=true. Moves money. Pass the same idempotency_key to retry safely. Cannot be undone.',
 	},
 	'refunds.get': {
 		riskLevel: 'read',
@@ -1104,7 +1104,7 @@ export const squareEndpointMeta = {
 	'orders.create': {
 		riskLevel: 'write',
 		description:
-			'Creates a new order that can include information about products for purchase and settings to apply to the purchase. Pass the same idempotency_key to retry safely.',
+			"Creates a new order that can include information about products for purchase and settings to apply to the purchase. A fulfillment's pickup_details, shipment_details or in_store_details is required when its type is PICKUP, SHIPMENT or IN_STORE. A line item modifier's base_price_money is required for ad hoc modifiers. Pass the same idempotency_key to retry safely.",
 	},
 	'orders.pay': {
 		riskLevel: 'write',
@@ -1114,7 +1114,7 @@ export const squareEndpointMeta = {
 	'paymentLinks.create': {
 		riskLevel: 'write',
 		description:
-			'Creates a Square-hosted checkout page. Applications can share the resulting payment link with their buyer to pay for goods and services. Pass the same idempotency_key to retry safely.',
+			"Creates a Square-hosted checkout page. Applications can share the resulting payment link with their buyer to pay for goods and services. A fulfillment's pickup_details, shipment_details or in_store_details is required when its type is PICKUP, SHIPMENT or IN_STORE. A line item modifier's base_price_money is required for ad hoc modifiers. Pass the same idempotency_key to retry safely.",
 	},
 	'paymentLinks.list': {
 		riskLevel: 'read',
@@ -1128,7 +1128,7 @@ export const squareEndpointMeta = {
 	'invoices.create': {
 		riskLevel: 'write',
 		description:
-			'Creates a draft invoice for an order created using the Orders API. Pass the same idempotency_key to retry safely.',
+			'Creates a draft invoice for an order created using the Orders API. Give delivery_method (recommended) or the deprecated request_method on each payment request; the schema does not require delivery_method for that reason. Pass the same idempotency_key to retry safely.',
 	},
 	'invoices.publish': {
 		riskLevel: 'write',
@@ -1220,7 +1220,7 @@ export const squareEndpointMeta = {
 	'customAttributeDefinitions.merchant.create': {
 		riskLevel: 'write',
 		description:
-			"Creates a merchant-related custom attribute definition for a Square seller account. Use this endpoint to define a custom attribute that can be associated with a merchant connecting to your application. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.",
+			"Creates a merchant-related custom attribute definition for a Square seller account. Use this endpoint to define a custom attribute that can be associated with a merchant connecting to your application. The definition name is required if visibility is VISIBILITY_READ_ONLY or VISIBILITY_READ_WRITE_VALUES. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.",
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof squareEndpointsNested>;
 

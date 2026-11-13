@@ -17,16 +17,16 @@ import {
 	ChannelStatusSchema as InChannelStatusSchema,
 	CompletePaymentRequestSchema as InCompletePaymentRequestSchema,
 	CreateCardRequestSchema as InCreateCardRequestSchema,
-	CreateCustomerCustomAttributeDefinitionRequestSchema as InCreateCustomerCustomAttributeDefinitionRequestSchema,
+	CreateCustomerCustomAttributeDefinitionRequestForCreateSchema as InCreateCustomerCustomAttributeDefinitionRequestForCreateSchema,
 	CreateCustomerGroupRequestSchema as InCreateCustomerGroupRequestSchema,
 	CreateCustomerRequestSchema as InCreateCustomerRequestSchema,
 	CreateDisputeEvidenceFileRequestSchema as InCreateDisputeEvidenceFileRequestSchema,
 	CreateDisputeEvidenceTextRequestSchema as InCreateDisputeEvidenceTextRequestSchema,
 	CreateInvoiceAttachmentRequestSchema as InCreateInvoiceAttachmentRequestSchema,
-	CreateInvoiceRequestSchema as InCreateInvoiceRequestSchema,
-	CreateLocationCustomAttributeDefinitionRequestSchema as InCreateLocationCustomAttributeDefinitionRequestSchema,
+	CreateInvoiceRequestForCreateSchema as InCreateInvoiceRequestForCreateSchema,
+	CreateLocationCustomAttributeDefinitionRequestForCreateSchema as InCreateLocationCustomAttributeDefinitionRequestForCreateSchema,
 	CreateLocationRequestSchema as InCreateLocationRequestSchema,
-	CreateMerchantCustomAttributeDefinitionRequestSchema as InCreateMerchantCustomAttributeDefinitionRequestSchema,
+	CreateMerchantCustomAttributeDefinitionRequestForCreateSchema as InCreateMerchantCustomAttributeDefinitionRequestForCreateSchema,
 	CreateOrderRequestSchema as InCreateOrderRequestSchema,
 	CreatePaymentLinkRequestSchema as InCreatePaymentLinkRequestSchema,
 	CreatePaymentRequestSchema as InCreatePaymentRequestSchema,
@@ -229,7 +229,7 @@ export const SquareEndpointInputSchemas = {
 	cardsCreate: InCreateCardRequestSchema,
 	customersCreate: InCreateCustomerRequestSchema,
 	customAttributeDefinitionsCustomerCreate:
-		InCreateCustomerCustomAttributeDefinitionRequestSchema,
+		InCreateCustomerCustomAttributeDefinitionRequestForCreateSchema,
 	customerGroupsCreate: InCreateCustomerGroupRequestSchema,
 	disputesCreateEvidenceFile: InCreateDisputeEvidenceFileRequestSchema.extend({
 		dispute_id: z
@@ -275,7 +275,7 @@ export const SquareEndpointInputSchemas = {
 	}),
 	locationsCreate: InCreateLocationRequestSchema,
 	customAttributeDefinitionsLocationCreate:
-		InCreateLocationCustomAttributeDefinitionRequestSchema,
+		InCreateLocationCustomAttributeDefinitionRequestForCreateSchema,
 	customersDelete: z.object({
 		customer_id: z.string().describe('The ID of the customer to delete.'),
 		version: z
@@ -1079,7 +1079,7 @@ export const SquareEndpointInputSchemas = {
 	paymentLinksDelete: z.object({
 		id: z.string().describe('The ID of the payment link to delete.'),
 	}),
-	invoicesCreate: InCreateInvoiceRequestSchema,
+	invoicesCreate: InCreateInvoiceRequestForCreateSchema,
 	invoicesPublish: InPublishInvoiceRequestSchema.extend({
 		invoice_id: z.string().describe('The ID of the invoice to publish.'),
 	}),
@@ -1217,7 +1217,7 @@ export const SquareEndpointInputSchemas = {
 		id: z.string().describe('The ID of the payment link to update.'),
 	}),
 	customAttributeDefinitionsMerchantCreate:
-		InCreateMerchantCustomAttributeDefinitionRequestSchema,
+		InCreateMerchantCustomAttributeDefinitionRequestForCreateSchema,
 } as const;
 
 export const SquareEndpointOutputSchemas = {

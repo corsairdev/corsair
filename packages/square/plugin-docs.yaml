@@ -105,7 +105,10 @@ apiExamples:
     args: *a1
   customAttributeDefinitions.customer.create:
     args:
-      custom_attribute_definition: {}
+      custom_attribute_definition:
+        key: <key>
+        schema:
+          $ref: https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String
   customerGroups.create:
     args:
       group:
@@ -131,7 +134,10 @@ apiExamples:
     args: {}
   customAttributeDefinitions.location.create:
     args:
-      custom_attribute_definition: {}
+      custom_attribute_definition:
+        key: <key>
+        schema:
+          $ref: https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String
   customers.delete:
     args:
       customer_id: <customer id>
@@ -448,7 +454,13 @@ apiExamples:
       id: <id>
   invoices.create:
     args:
-      invoice: {}
+      invoice:
+        order_id: <order id>
+        payment_requests:
+          - request_type: BALANCE
+            due_date: 2026-11-30
+        accepted_payment_methods:
+          card: true
   invoices.publish:
     args:
       invoice_id: <invoice id>
@@ -517,4 +529,7 @@ apiExamples:
         version: 1
   customAttributeDefinitions.merchant.create:
     args:
-      custom_attribute_definition: {}
+      custom_attribute_definition:
+        key: <key>
+        schema:
+          $ref: https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String

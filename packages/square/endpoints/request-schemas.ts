@@ -12,7 +12,7 @@ const FreeForm = z.record(z.string(), z.unknown());
 // unknown: the spec points at these types but never defines them.
 const UnspecifiedObject = z.record(z.string(), z.unknown());
 
-// unknown: objects nested more than 3 levels below a request stay open, and so does the edge
+// unknown: objects nested more than 4 levels below a request stay open, and so does the edge
 // that closes a cycle (a catalog item holds catalog objects). The levels above
 // are fully typed; Square checks what is inside.
 const OpenObject = z.record(z.string(), z.unknown());
@@ -644,6 +644,17 @@ export const OrderSourceSchema = z.object({
 		.optional(),
 });
 
+export const MeasurementUnitCustomSchema = z.object({
+	name: z
+		.string()
+		.describe('The name of the custom unit, for example "bushel".'),
+	abbreviation: z
+		.string()
+		.describe(
+			'The abbreviation of the custom unit, such as "bsh" (bushel). This appears in the cart for the Point of Sale app, and in reports.',
+		),
+});
+
 export const MeasurementUnitAreaSchema = z.enum([
 	'IMPERIAL_ACRE',
 	'IMPERIAL_SQUARE_INCH',
@@ -709,7 +720,7 @@ export const MeasurementUnitUnitTypeSchema = z.enum([
 ]);
 
 export const MeasurementUnitSchema = z.object({
-	custom_unit: OpenObject.describe(
+	custom_unit: MeasurementUnitCustomSchema.describe(
 		'A custom unit of measurement defined by the seller using the Point of Sale app or ad-hoc as an order line item.',
 	).optional(),
 	area_unit: MeasurementUnitAreaSchema.describe(
@@ -1094,21 +1105,97 @@ export const OrderLineItemAppliedServiceChargeSchema = z.object({
 	).optional(),
 });
 
+export const OrderLineItemPricingBlocklistsBlockedDiscountSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe('A unique ID of the `BlockedDiscount` within the order.')
+		.optional(),
+	discount_uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			'The `uid` of the discount that should be blocked. Use this field to block ad hoc discounts. For catalog discounts, use the `discount_catalog_object_id` field.',
+		)
+		.optional(),
+	discount_catalog_object_id: z
+		.string()
+		.max(192)
+		.nullable()
+		.describe(
+			'The `catalog_object_id` of the discount that should be blocked. Use this field to block catalog discounts. For ad hoc discounts, use the `discount_uid` field.',
+		)
+		.optional(),
+});
+
+export const OrderLineItemPricingBlocklistsBlockedTaxSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe('A unique ID of the `BlockedTax` within the order.')
+		.optional(),
+	tax_uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			'The `uid` of the tax that should be blocked. Use this field to block ad hoc taxes. For catalog, taxes use the `tax_catalog_object_id` field.',
+		)
+		.optional(),
+	tax_catalog_object_id: z
+		.string()
+		.max(192)
+		.nullable()
+		.describe(
+			'The `catalog_object_id` of the tax that should be blocked. Use this field to block catalog taxes. For ad hoc taxes, use the `tax_uid` field.',
+		)
+		.optional(),
+});
+
+export const OrderLineItemPricingBlocklistsBlockedServiceChargeSchema =
+	z.object({
+		uid: z
+			.string()
+			.max(60)
+			.nullable()
+			.describe('A unique ID of the `BlockedServiceCharge` within the order.')
+			.optional(),
+		service_charge_uid: z
+			.string()
+			.max(60)
+			.nullable()
+			.describe(
+				'The `uid` of the service charge that should be blocked. Use this field to block ad hoc service charges.',
+			)
+			.optional(),
+		service_charge_catalog_object_id: z
+			.string()
+			.max(192)
+			.nullable()
+			.describe(
+				'The `catalog_object_id` of the service charge that should be blocked. Use this field to block catalog service charges.',
+			)
+			.optional(),
+	});
+
 export const OrderLineItemPricingBlocklistsSchema = z.object({
 	blocked_discounts: z
-		.array(OpenObject)
+		.array(OrderLineItemPricingBlocklistsBlockedDiscountSchema)
 		.nullable()
 		.describe('A list of discounts blocked from applying to the line item.')
 		.optional(),
 	blocked_taxes: z
-		.array(OpenObject)
+		.array(OrderLineItemPricingBlocklistsBlockedTaxSchema)
 		.nullable()
 		.describe(
 			'A list of taxes blocked from applying to the line item. Taxes can be blocked by the `tax_uid` (for ad hoc taxes) or the `tax_catalog_object_id` (for catalog taxes).',
 		)
 		.optional(),
 	blocked_service_charges: z
-		.array(OpenObject)
+		.array(OrderLineItemPricingBlocklistsBlockedServiceChargeSchema)
 		.nullable()
 		.describe(
 			'A list of service charges blocked from applying to the line item.',
@@ -1517,13 +1604,65 @@ export const FulfillmentFulfillmentEntrySchema = z.object({
 		.optional(),
 });
 
+export const FulfillmentRecipientSchema = z.object({
+	customer_id: z
+		.string()
+		.max(191)
+		.nullable()
+		.describe('The ID of the customer associated with the fulfillment.')
+		.optional(),
+	display_name: z
+		.string()
+		.max(255)
+		.nullable()
+		.describe(
+			'The display name of the fulfillment recipient. This field is required.',
+		)
+		.optional(),
+	email_address: z
+		.string()
+		.max(255)
+		.nullable()
+		.describe('The email address of the fulfillment recipient.')
+		.optional(),
+	phone_number: z
+		.string()
+		.max(18)
+		.nullable()
+		.describe(
+			'The phone number of the fulfillment recipient. This field is required.',
+		)
+		.optional(),
+	address: AddressSchema.describe(
+		'The address of the fulfillment recipient. This field is required.',
+	).optional(),
+});
+
 export const FulfillmentPickupDetailsScheduleTypeSchema = z.enum([
 	'SCHEDULED',
 	'ASAP',
 ]);
 
+export const FulfillmentPickupDetailsCurbsidePickupDetailsSchema = z.object({
+	curbside_details: z
+		.string()
+		.max(250)
+		.nullable()
+		.describe(
+			'Specific details for curbside pickup, such as parking number and vehicle model.',
+		)
+		.optional(),
+	buyer_arrived_at: z
+		.string()
+		.nullable()
+		.describe(
+			'The timestamp indicating when the buyer arrived and is waiting for pickup. The timestamp must be in RFC 3339 format (for example, "2016-09-04T23:59:33.123Z").',
+		)
+		.optional(),
+});
+
 export const FulfillmentPickupDetailsSchema = z.object({
-	recipient: OpenObject.describe(
+	recipient: FulfillmentRecipientSchema.describe(
 		'Information about the person to pick up this fulfillment from a physical location.',
 	).optional(),
 	expires_at: z
@@ -1629,13 +1768,14 @@ export const FulfillmentPickupDetailsSchema = z.object({
 			'If set to `true`, indicates that this pickup order is for curbside pickup, not in-store pickup.',
 		)
 		.optional(),
-	curbside_pickup_details: OpenObject.describe(
-		'Specific details for curbside pickup. These details can only be populated if `is_curbside_pickup` is set to `true`.',
-	).optional(),
+	curbside_pickup_details:
+		FulfillmentPickupDetailsCurbsidePickupDetailsSchema.describe(
+			'Specific details for curbside pickup. These details can only be populated if `is_curbside_pickup` is set to `true`.',
+		).optional(),
 });
 
 export const FulfillmentShipmentDetailsSchema = z.object({
-	recipient: OpenObject.describe(
+	recipient: FulfillmentRecipientSchema.describe(
 		'Information about the person to receive this shipment fulfillment.',
 	).optional(),
 	carrier: z
@@ -1736,7 +1876,7 @@ export const FulfillmentDeliveryDetailsOrderFulfillmentDeliveryDetailsScheduleTy
 	z.enum(['SCHEDULED', 'ASAP']);
 
 export const FulfillmentDeliveryDetailsSchema = z.object({
-	recipient: OpenObject.describe(
+	recipient: FulfillmentRecipientSchema.describe(
 		'The contact information for the person to receive the fulfillment.',
 	).optional(),
 	schedule_type:
@@ -1888,7 +2028,7 @@ export const FulfillmentInStoreDetailsSchema = z.object({
 			'A note to provide additional instructions about the in-store fulfillment displayed in the Square Point of Sale application and set by the API.',
 		)
 		.optional(),
-	recipient: OpenObject.describe(
+	recipient: FulfillmentRecipientSchema.describe(
 		'Information about the person to receive this in-store fulfillment.',
 	).optional(),
 	placed_at: z
@@ -1966,6 +2106,58 @@ export const FulfillmentSchema = z.object({
 	).optional(),
 });
 
+export const OrderReturnLineItemModifierSchema = z.object({
+	uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			'A unique ID that identifies the return modifier only within this order.',
+		)
+		.optional(),
+	source_modifier_uid: z
+		.string()
+		.max(60)
+		.nullable()
+		.describe(
+			"The modifier `uid` from the order's line item that contains the original sale of this line item modifier.",
+		)
+		.optional(),
+	catalog_object_id: z
+		.string()
+		.max(192)
+		.nullable()
+		.describe('The catalog object ID referencing CatalogModifier.')
+		.optional(),
+	catalog_version: z
+		.number()
+		.int()
+		.nullable()
+		.describe(
+			'The version of the catalog object that this line item modifier references.',
+		)
+		.optional(),
+	name: z
+		.string()
+		.max(255)
+		.nullable()
+		.describe('The name of the item modifier.')
+		.optional(),
+	base_price_money: MoneySchema.describe(
+		'The base price for the modifier.',
+	).optional(),
+	total_price_money: MoneySchema.describe(
+		"The total price of the item modifier for its line item. This is the modifier's `base_price_money` multiplied by the line item's quantity.",
+	).optional(),
+	quantity: z
+		.string()
+		.nullable()
+		.describe(
+			'The quantity of the line item modifier. The modifier quantity can be 0 or more. For example, suppose a restaurant offers a cheeseburger on the menu.',
+		)
+		.optional(),
+});
+
 export const OrderReturnLineItemSchema = z.object({
 	uid: z
 		.string()
@@ -2025,7 +2217,7 @@ export const OrderReturnLineItemSchema = z.object({
 		'The type of line item: an itemized return, a non-itemized return (custom amount), or the return of an unactivated gift card sale. See OrderLineItemItemType for possible values',
 	).optional(),
 	return_modifiers: z
-		.array(OpenObject)
+		.array(OrderReturnLineItemModifierSchema)
 		.nullable()
 		.describe('The CatalogModifiers applied to this line item.')
 		.optional(),
@@ -3150,18 +3342,70 @@ export const CreateCustomerRequestSchema = z.object({
 	).optional(),
 });
 
-export const CreateCustomerCustomAttributeDefinitionRequestSchema = z.object({
-	custom_attribute_definition: CustomAttributeDefinitionSchema.describe(
-		'The custom attribute definition to create.',
-	),
-	idempotency_key: z
+export const CustomAttributeDefinitionForCreateSchema = z.object({
+	key: z
 		.string()
-		.max(45)
+		.min(1)
 		.describe(
-			'A unique identifier for this request, used to ensure idempotency. For more information, see Idempotency.',
+			'The identifier of the custom attribute definition and its corresponding custom attributes.',
+		),
+	schema: FreeForm.describe(
+		'The JSON schema for the custom attribute definition, which determines the data type of the corresponding custom attributes. For more information, see Custom Attributes Overview.',
+	),
+	name: z
+		.string()
+		.max(255)
+		.nullable()
+		.describe(
+			'The name of the custom attribute definition for API and seller-facing UI purposes. The name must be unique within the seller and application pair.',
+		)
+		.optional(),
+	description: z
+		.string()
+		.max(255)
+		.nullable()
+		.describe(
+			'Seller-oriented description of the custom attribute definition, including any constraints that the seller should observe. May be displayed as a tooltip in Square UIs.',
+		)
+		.optional(),
+	visibility: CustomAttributeDefinitionVisibilitySchema.describe(
+		'Specifies how the custom attribute definition and its values should be shared with the seller and other applications.',
+	).optional(),
+	version: z
+		.number()
+		.int()
+		.describe(
+			'Read only. The current version of the custom attribute definition. The value is incremented each time the custom attribute definition is updated.',
+		)
+		.optional(),
+	updated_at: z
+		.string()
+		.describe(
+			'The timestamp that indicates when the custom attribute definition was created or most recently updated, in RFC 3339 format.',
+		)
+		.optional(),
+	created_at: z
+		.string()
+		.describe(
+			'The timestamp that indicates when the custom attribute definition was created, in RFC 3339 format.',
 		)
 		.optional(),
 });
+
+export const CreateCustomerCustomAttributeDefinitionRequestForCreateSchema =
+	z.object({
+		custom_attribute_definition:
+			CustomAttributeDefinitionForCreateSchema.describe(
+				'The custom attribute definition to create.',
+			),
+		idempotency_key: z
+			.string()
+			.max(45)
+			.describe(
+				'A unique identifier for this request, used to ensure idempotency. For more information, see Idempotency.',
+			)
+			.optional(),
+	});
 
 export const CustomerGroupSchema = z.object({
 	id: z
@@ -3541,18 +3785,20 @@ export const CreateLocationRequestSchema = z.object({
 	).optional(),
 });
 
-export const CreateLocationCustomAttributeDefinitionRequestSchema = z.object({
-	custom_attribute_definition: CustomAttributeDefinitionSchema.describe(
-		'The custom attribute definition to create.',
-	),
-	idempotency_key: z
-		.string()
-		.max(45)
-		.describe(
-			'A unique identifier for this request, used to ensure idempotency. For more information, see Idempotency.',
-		)
-		.optional(),
-});
+export const CreateLocationCustomAttributeDefinitionRequestForCreateSchema =
+	z.object({
+		custom_attribute_definition:
+			CustomAttributeDefinitionForCreateSchema.describe(
+				'The custom attribute definition to create.',
+			),
+		idempotency_key: z
+			.string()
+			.max(45)
+			.describe(
+				'A unique identifier for this request, used to ensure idempotency. For more information, see Idempotency.',
+			)
+			.optional(),
+	});
 
 export const BulkDeleteLocationCustomAttributesRequestLocationCustomAttributeDeleteRequestSchema =
 	z.object({
@@ -3729,9 +3975,19 @@ export const FilterValueSchema = z.object({
 		.optional(),
 });
 
+export const CustomerCustomAttributeFilterSchema = z.object({
+	key: z.string().describe('The `key` of the custom attribute to filter by.'),
+	filter: OpenObject.describe(
+		'A filter that corresponds to the data type of the target custom attribute.',
+	).optional(),
+	updated_at: TimeRangeSchema.describe(
+		'The date range for when the custom attribute was last updated. The date range can include `start_at`, `end_at`, or both. Range boundaries are inclusive.',
+	).optional(),
+});
+
 export const CustomerCustomAttributeFiltersSchema = z.object({
 	filters: z
-		.array(OpenObject)
+		.array(CustomerCustomAttributeFilterSchema)
 		.nullable()
 		.describe(
 			'The custom attribute filters. Each filter must specify `key` and include the `filter` field with a type-specific filter, the `updated_at` field, or both.',
@@ -5830,7 +6086,7 @@ export const InvoicePaymentReminderSchema = z.object({
 		.optional(),
 });
 
-export const InvoicePaymentRequestSchema = z.object({
+export const InvoicePaymentRequestForCreateSchema = z.object({
 	uid: z
 		.string()
 		.min(1)
@@ -5843,14 +6099,12 @@ export const InvoicePaymentRequestSchema = z.object({
 	).optional(),
 	request_type: InvoiceRequestTypeSchema.describe(
 		'Identifies the payment request type. This type defines how the payment request amount is determined. This field is required to create a payment request.',
-	).optional(),
+	),
 	due_date: z
 		.string()
-		.nullable()
 		.describe(
 			"The due date (in the invoice's time zone) for the payment request, in `YYYY-MM-DD` format. This field is required to create a payment request.",
-		)
-		.optional(),
+		),
 	fixed_amount_requested_money: MoneySchema.describe(
 		'If the payment request specifies `DEPOSIT` or `INSTALLMENT` as the `request_type`, this indicates the request amount.',
 	).optional(),
@@ -6020,6 +6274,243 @@ export const InvoiceAttachmentSchema = z.object({
 		.optional(),
 });
 
+export const InvoiceForCreateSchema = z.object({
+	id: z.string().describe('The Square-assigned ID of the invoice.').optional(),
+	version: z
+		.number()
+		.int()
+		.describe(
+			'The Square-assigned version number, which is incremented each time an update is committed to the invoice.',
+		)
+		.optional(),
+	location_id: z
+		.string()
+		.min(1)
+		.max(255)
+		.nullable()
+		.describe('The ID of the location that this invoice is associated with.')
+		.optional(),
+	order_id: z
+		.string()
+		.min(1)
+		.max(255)
+		.describe(
+			'The ID of the order for which the invoice is created. This field is required when creating an invoice, and the order must be in the `OPEN` state.',
+		),
+	primary_recipient: InvoiceRecipientSchema.describe(
+		'The customer who receives the invoice. This customer data is displayed on the invoice and used by Square to deliver the invoice.',
+	).optional(),
+	payment_requests: z
+		.array(InvoicePaymentRequestForCreateSchema)
+		.describe(
+			'The payment schedule: at least one payment request. Required when creating; the requests must add up to the order total.',
+		),
+	delivery_method: InvoiceDeliveryMethodSchema.describe(
+		'The delivery method that Square uses to send the invoice, reminders, and receipts to the customer.',
+	).optional(),
+	invoice_number: z
+		.string()
+		.min(1)
+		.max(191)
+		.nullable()
+		.describe(
+			'A user-friendly invoice number that is displayed on the invoice. The value is unique within a location. If not provided when creating an invoice, Square assigns a value.',
+		)
+		.optional(),
+	title: z
+		.string()
+		.min(1)
+		.max(255)
+		.nullable()
+		.describe('The title of the invoice, which is displayed on the invoice.')
+		.optional(),
+	description: z
+		.string()
+		.min(1)
+		.max(65536)
+		.nullable()
+		.describe(
+			'The description of the invoice, which is displayed on the invoice.',
+		)
+		.optional(),
+	scheduled_at: z
+		.string()
+		.nullable()
+		.describe(
+			'The timestamp when the invoice is scheduled for processing, in RFC 3339 format.',
+		)
+		.optional(),
+	public_url: z
+		.string()
+		.describe(
+			'A temporary link to the Square-hosted payment page where the customer can pay the invoice.',
+		)
+		.optional(),
+	next_payment_amount_money: MoneySchema.describe(
+		'The current amount due for the invoice. In addition to the amount due on the next payment request, this includes any overdue payment amounts.',
+	).optional(),
+	status: InvoiceStatusSchema.describe(
+		'The status of the invoice. See InvoiceStatus for possible values',
+	).optional(),
+	timezone: z
+		.string()
+		.describe(
+			'The time zone used to interpret calendar dates on the invoice, such as `due_date`.',
+		)
+		.optional(),
+	created_at: z
+		.string()
+		.describe('The timestamp when the invoice was created, in RFC 3339 format.')
+		.optional(),
+	updated_at: z
+		.string()
+		.describe(
+			'The timestamp when the invoice was last updated, in RFC 3339 format.',
+		)
+		.optional(),
+	accepted_payment_methods: InvoiceAcceptedPaymentMethodsSchema.describe(
+		'The payment methods customers can use on the Square-hosted invoice page. Required when creating; set at least one method to `true`.',
+	),
+	custom_fields: z
+		.array(InvoiceCustomFieldSchema)
+		.nullable()
+		.describe(
+			'Additional seller-defined fields that are displayed on the invoice. For more information, see Custom fields.',
+		)
+		.optional(),
+	subscription_id: z
+		.string()
+		.describe(
+			'The ID of the subscription associated with the invoice. This field is present only on subscription billing invoices.',
+		)
+		.optional(),
+	sale_or_service_date: z
+		.string()
+		.nullable()
+		.describe(
+			'The date of the sale or the date that the service is rendered, in `YYYY-MM-DD` format. This field can be used to specify a past or future date which is displayed on the invoice.',
+		)
+		.optional(),
+	payment_conditions: z
+		.string()
+		.min(1)
+		.max(2000)
+		.nullable()
+		.describe(
+			'**France only.** The payment terms and conditions that are displayed on the invoice. For more information, see Payment conditions.',
+		)
+		.optional(),
+	store_payment_method_enabled: z
+		.boolean()
+		.nullable()
+		.describe(
+			'Indicates whether to allow a customer to save a credit or debit card as a card on file or a bank transfer as a bank account on file.',
+		)
+		.optional(),
+	attachments: z
+		.array(InvoiceAttachmentSchema)
+		.describe(
+			'Metadata about the attachments on the invoice. Invoice attachments are managed using the CreateInvoiceAttachment and DeleteInvoiceAttachment endpoints.',
+		)
+		.optional(),
+	creator_team_member_id: z
+		.string()
+		.describe(
+			'The ID of the team member who created the invoice. This field is present only on invoices created in the Square Dashboard or Square Invoices app by a logged-in team member.',
+		)
+		.optional(),
+});
+
+export const CreateInvoiceRequestForCreateSchema = z.object({
+	invoice: InvoiceForCreateSchema.describe('The invoice to create.'),
+	idempotency_key: z
+		.string()
+		.max(128)
+		.describe('A unique string that identifies the `CreateInvoice` request.')
+		.optional(),
+});
+
+export const PublishInvoiceRequestSchema = z.object({
+	version: z
+		.number()
+		.int()
+		.describe(
+			'The version of the invoice to publish. This must match the current version of the invoice; otherwise, the request is rejected.',
+		),
+	idempotency_key: z
+		.string()
+		.max(128)
+		.nullable()
+		.describe('A unique string that identifies the `PublishInvoice` request.')
+		.optional(),
+});
+
+export const InvoicePaymentRequestSchema = z.object({
+	uid: z
+		.string()
+		.min(1)
+		.max(255)
+		.nullable()
+		.describe('The Square-generated ID of the payment request in an invoice.')
+		.optional(),
+	request_method: InvoiceRequestMethodSchema.describe(
+		'Indicates how Square processes the payment request. DEPRECATED at version 2021-01-21. Replaced by the `Invoice.delivery_method` and `InvoicePaymentRequest.',
+	).optional(),
+	request_type: InvoiceRequestTypeSchema.describe(
+		'Identifies the payment request type. This type defines how the payment request amount is determined. This field is required to create a payment request.',
+	).optional(),
+	due_date: z
+		.string()
+		.nullable()
+		.describe(
+			"The due date (in the invoice's time zone) for the payment request, in `YYYY-MM-DD` format. This field is required to create a payment request.",
+		)
+		.optional(),
+	fixed_amount_requested_money: MoneySchema.describe(
+		'If the payment request specifies `DEPOSIT` or `INSTALLMENT` as the `request_type`, this indicates the request amount.',
+	).optional(),
+	percentage_requested: z
+		.string()
+		.nullable()
+		.describe('Specifies the amount for the payment request in percentage:')
+		.optional(),
+	tipping_enabled: z
+		.boolean()
+		.nullable()
+		.describe(
+			'If set to true, the Square-hosted invoice page (the `public_url` field of the invoice) provides a place for the customer to pay a tip.',
+		)
+		.optional(),
+	automatic_payment_source: InvoiceAutomaticPaymentSourceSchema.describe(
+		'The payment method for an automatic payment.',
+	).optional(),
+	card_id: z
+		.string()
+		.min(1)
+		.max(255)
+		.nullable()
+		.describe(
+			'The ID of the credit or debit card on file to charge for the payment request.',
+		)
+		.optional(),
+	reminders: z
+		.array(InvoicePaymentReminderSchema)
+		.nullable()
+		.describe(
+			'A list of one or more reminders to send for the payment request.',
+		)
+		.optional(),
+	computed_amount_money: MoneySchema.describe(
+		'The amount of the payment request, computed using the order amount and information from the various payment request fields (`request_type`, `fixed_amount_requested_money`, and `pe…',
+	).optional(),
+	total_completed_amount_money: MoneySchema.describe(
+		'The amount of money already paid for the specific payment request.',
+	).optional(),
+	rounding_adjustment_included_money: MoneySchema.describe(
+		'If the most recent payment was a cash payment in a currency that rounds cash payments (such as, `CAD` or `AUD`) and the payment is rounded from `computed_amount_money` in the paym…',
+	).optional(),
+});
+
 export const InvoiceSchema = z.object({
 	id: z.string().describe('The Square-assigned ID of the invoice.').optional(),
 	version: z
@@ -6168,30 +6659,6 @@ export const InvoiceSchema = z.object({
 		.describe(
 			'The ID of the team member who created the invoice. This field is present only on invoices created in the Square Dashboard or Square Invoices app by a logged-in team member.',
 		)
-		.optional(),
-});
-
-export const CreateInvoiceRequestSchema = z.object({
-	invoice: InvoiceSchema.describe('The invoice to create.'),
-	idempotency_key: z
-		.string()
-		.max(128)
-		.describe('A unique string that identifies the `CreateInvoice` request.')
-		.optional(),
-});
-
-export const PublishInvoiceRequestSchema = z.object({
-	version: z
-		.number()
-		.int()
-		.describe(
-			'The version of the invoice to publish. This must match the current version of the invoice; otherwise, the request is rejected.',
-		),
-	idempotency_key: z
-		.string()
-		.max(128)
-		.nullable()
-		.describe('A unique string that identifies the `PublishInvoice` request.')
 		.optional(),
 });
 
@@ -6622,6 +7089,26 @@ export const CatalogModifierToggleOverrideTypeSchema = z.enum([
 	'NOT_SET',
 ]);
 
+export const CatalogModifierOverrideSchema = z.object({
+	modifier_id: z
+		.string()
+		.min(1)
+		.describe(
+			'The ID of the `CatalogModifier` whose default behavior is being overridden.',
+		),
+	on_by_default: z
+		.boolean()
+		.nullable()
+		.describe('__Deprecated__: Use `on_by_default_override` instead.')
+		.optional(),
+	hidden_online_override: CatalogModifierToggleOverrideTypeSchema.describe(
+		'If `YES`, this setting overrides the `hidden_online` setting on the `CatalogModifier` object, and the modifier is always hidden from online sales channels.',
+	).optional(),
+	on_by_default_override: CatalogModifierToggleOverrideTypeSchema.describe(
+		'If `YES`, this setting overrides the `on_by_default` setting on the `CatalogModifier` object, and the modifier is always selected by default for the catalog item.',
+	).optional(),
+});
+
 export const CatalogItemModifierListInfoSchema = z.object({
 	modifier_list_id: z
 		.string()
@@ -6630,7 +7117,7 @@ export const CatalogItemModifierListInfoSchema = z.object({
 			'The ID of the `CatalogModifierList` controlled by this `CatalogModifierListInfo`.',
 		),
 	modifier_overrides: z
-		.array(OpenObject)
+		.array(CatalogModifierOverrideSchema)
 		.nullable()
 		.describe(
 			'A set of `CatalogModifierOverride` objects that override default modifier settings for this item.',
@@ -6727,6 +7214,73 @@ export const CatalogEcomSeoDataSchema = z.object({
 		.optional(),
 });
 
+export const CatalogItemFoodAndBeverageDetailsDietaryPreferenceTypeSchema =
+	z.enum(['STANDARD', 'CUSTOM']);
+
+export const CatalogItemFoodAndBeverageDetailsDietaryPreferenceStandardDietaryPreferenceSchema =
+	z.enum([
+		'DAIRY_FREE',
+		'GLUTEN_FREE',
+		'HALAL',
+		'KOSHER',
+		'NUT_FREE',
+		'VEGAN',
+		'VEGETARIAN',
+	]);
+
+export const CatalogItemFoodAndBeverageDetailsDietaryPreferenceSchema =
+	z.object({
+		type: CatalogItemFoodAndBeverageDetailsDietaryPreferenceTypeSchema.describe(
+			'The dietary preference type. Supported values include `STANDARD` and `CUSTOM` as specified in `FoodAndBeverageDetails.DietaryPreferenceType`.',
+		).optional(),
+		standard_name:
+			CatalogItemFoodAndBeverageDetailsDietaryPreferenceStandardDietaryPreferenceSchema.describe(
+				"The name of the dietary preference from a standard pre-defined list. This should be null if it's a custom dietary preference. See StandardDietaryPreference for possible values",
+			).optional(),
+		custom_name: z
+			.string()
+			.nullable()
+			.describe(
+				"The name of a user-defined custom dietary preference. This should be null if it's a standard dietary preference.",
+			)
+			.optional(),
+	});
+
+export const CatalogItemFoodAndBeverageDetailsIngredientStandardIngredientSchema =
+	z.enum([
+		'CELERY',
+		'CRUSTACEANS',
+		'EGGS',
+		'FISH',
+		'GLUTEN',
+		'LUPIN',
+		'MILK',
+		'MOLLUSCS',
+		'MUSTARD',
+		'PEANUTS',
+		'SESAME',
+		'SOY',
+		'SULPHITES',
+		'TREE_NUTS',
+	]);
+
+export const CatalogItemFoodAndBeverageDetailsIngredientSchema = z.object({
+	type: CatalogItemFoodAndBeverageDetailsDietaryPreferenceTypeSchema.describe(
+		'The dietary preference type of the ingredient. Supported values include `STANDARD` and `CUSTOM` as specified in `FoodAndBeverageDetails.DietaryPreferenceType`.',
+	).optional(),
+	standard_name:
+		CatalogItemFoodAndBeverageDetailsIngredientStandardIngredientSchema.describe(
+			"The name of the ingredient from a standard pre-defined list. This should be null if it's a custom dietary preference. See StandardIngredient for possible values",
+		).optional(),
+	custom_name: z
+		.string()
+		.nullable()
+		.describe(
+			"The name of a custom user-defined ingredient. This should be null if it's a standard dietary preference.",
+		)
+		.optional(),
+});
+
 export const CatalogItemFoodAndBeverageDetailsSchema = z.object({
 	calorie_count: z
 		.number()
@@ -6737,12 +7291,12 @@ export const CatalogItemFoodAndBeverageDetailsSchema = z.object({
 		)
 		.optional(),
 	dietary_preferences: z
-		.array(OpenObject)
+		.array(CatalogItemFoodAndBeverageDetailsDietaryPreferenceSchema)
 		.nullable()
 		.describe('The dietary preferences for the `FOOD_AND_BEV` item.')
 		.optional(),
 	ingredients: z
-		.array(OpenObject)
+		.array(CatalogItemFoodAndBeverageDetailsIngredientSchema)
 		.nullable()
 		.describe('The ingredients for the `FOOD_AND_BEV` type item.')
 		.optional(),
@@ -7780,6 +8334,22 @@ export const SubscriptionCadenceSchema = z.enum([
 	'EVERY_TWO_YEARS',
 ]);
 
+export const SubscriptionPricingTypeSchema = z.enum(['STATIC', 'RELATIVE']);
+
+export const SubscriptionPricingSchema = z.object({
+	type: SubscriptionPricingTypeSchema.describe(
+		'RELATIVE or STATIC See SubscriptionPricingType for possible values',
+	).optional(),
+	discount_ids: z
+		.array(z.string())
+		.nullable()
+		.describe('The ids of the discount catalog objects')
+		.optional(),
+	price_money: MoneySchema.describe(
+		'The price of the subscription, if STATIC',
+	).optional(),
+});
+
 export const SubscriptionPhaseSchema = z.object({
 	uid: z
 		.string()
@@ -7810,7 +8380,9 @@ export const SubscriptionPhaseSchema = z.object({
 			'The position this phase appears in the sequence of phases defined for the plan, indexed from 0. This field cannot be changed after a `SubscriptionPhase` is created.',
 		)
 		.optional(),
-	pricing: OpenObject.describe('The subscription pricing.').optional(),
+	pricing: SubscriptionPricingSchema.describe(
+		'The subscription pricing.',
+	).optional(),
 });
 
 export const CatalogSubscriptionPlanSchema = z.object({
@@ -7991,6 +8563,16 @@ export const CatalogCustomAttributeDefinitionNumberConfigSchema = z.object({
 		.optional(),
 });
 
+export const CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelectionSchema =
+	z.object({
+		uid: z.string().nullable().describe('Unique ID set by Square.').optional(),
+		name: z
+			.string()
+			.min(1)
+			.max(255)
+			.describe('Selection name, unique within `allowed_selections`.'),
+	});
+
 export const CatalogCustomAttributeDefinitionSelectionConfigSchema = z.object({
 	max_allowed_selections: z
 		.number()
@@ -8002,7 +8584,9 @@ export const CatalogCustomAttributeDefinitionSelectionConfigSchema = z.object({
 		)
 		.optional(),
 	allowed_selections: z
-		.array(OpenObject)
+		.array(
+			CatalogCustomAttributeDefinitionSelectionConfigCustomAttributeSelectionSchema,
+		)
 		.nullable()
 		.describe(
 			'The set of valid `CatalogCustomAttributeSelections`. Up to a maximum of 100 selections can be defined. Can be modified.',
@@ -8458,15 +9042,17 @@ export const UpdatePaymentLinkRequestSchema = z.object({
 	),
 });
 
-export const CreateMerchantCustomAttributeDefinitionRequestSchema = z.object({
-	custom_attribute_definition: CustomAttributeDefinitionSchema.describe(
-		'The custom attribute definition to create.',
-	),
-	idempotency_key: z
-		.string()
-		.max(45)
-		.describe(
-			'A unique identifier for this request, used to ensure idempotency. For more information, see Idempotency.',
-		)
-		.optional(),
-});
+export const CreateMerchantCustomAttributeDefinitionRequestForCreateSchema =
+	z.object({
+		custom_attribute_definition:
+			CustomAttributeDefinitionForCreateSchema.describe(
+				'The custom attribute definition to create.',
+			),
+		idempotency_key: z
+			.string()
+			.max(45)
+			.describe(
+				'A unique identifier for this request, used to ensure idempotency. For more information, see Idempotency.',
+			)
+			.optional(),
+	});

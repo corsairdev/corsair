@@ -3392,7 +3392,12 @@ Replaces the whole object: any field left out of the request is cleared, nested 
     tax_ids?: string[] | null,
     modifier_list_info?: {
       modifier_list_id: string,
-      modifier_overrides?: Record<string, any>[] | null,
+      modifier_overrides?: {
+        modifier_id: string,
+        on_by_default?: boolean | null,
+        hidden_online_override?: NO | YES | NOT_SET,
+        on_by_default_override?: NO | YES | NOT_SET
+      }[] | null,
       min_selected_modifiers?: number | null,
       max_selected_modifiers?: number | null,
       enabled?: boolean | null,
@@ -3427,8 +3432,16 @@ Replaces the whole object: any field left out of the request is cleared, nested 
     },
     food_and_beverage_details?: {
       calorie_count?: number | null,
-      dietary_preferences?: Record<string, any>[] | null,
-      ingredients?: Record<string, any>[] | null
+      dietary_preferences?: {
+        type?: STANDARD | CUSTOM,
+        standard_name?: DAIRY_FREE | GLUTEN_FREE | HALAL | KOSHER | NUT_FREE | VEGAN | VEGETARIAN,
+        custom_name?: string | null
+      }[] | null,
+      ingredients?: {
+        type?: STANDARD | CUSTOM,
+        standard_name?: CELERY | CRUSTACEANS | EGGS | FISH | GLUTEN | LUPIN | MILK | MOLLUSCS | MUSTARD | PEANUTS | SESAME | SOY | SULPHITES | TREE_NUTS,
+        custom_name?: string | null
+      }[] | null
     },
     reporting_category?: {
       id?: string,
@@ -3614,7 +3627,10 @@ Replaces the whole object: any field left out of the request is cleared, nested 
   },
   measurement_unit_data?: {
     measurement_unit?: {
-      custom_unit?: Record<string, any>,
+      custom_unit?: {
+        name: string,
+        abbreviation: string
+      },
       area_unit?: IMPERIAL_ACRE | IMPERIAL_SQUARE_INCH | IMPERIAL_SQUARE_FOOT | IMPERIAL_SQUARE_YARD | IMPERIAL_SQUARE_MILE | METRIC_SQUARE_CENTIMETER | METRIC_SQUARE_METER | METRIC_SQUARE_KILOMETER,
       length_unit?: IMPERIAL_INCH | IMPERIAL_FOOT | IMPERIAL_YARD | IMPERIAL_MILE | METRIC_MILLIMETER | METRIC_CENTIMETER | METRIC_METER | METRIC_KILOMETER,
       volume_unit?: GENERIC_FLUID_OUNCE | GENERIC_SHOT | GENERIC_CUP | GENERIC_PINT | GENERIC_QUART | GENERIC_GALLON | IMPERIAL_CUBIC_INCH | IMPERIAL_CUBIC_FOOT | IMPERIAL_CUBIC_YARD | METRIC_MILLILITER | METRIC_LITER,
@@ -3636,7 +3652,14 @@ Replaces the whole object: any field left out of the request is cleared, nested 
         currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
       },
       ordinal?: number | null,
-      pricing?: Record<string, any>
+      pricing?: {
+        type?: STATIC | RELATIVE,
+        discount_ids?: string[] | null,
+        price_money?: {
+          amount?: number | null,
+          currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
+        }
+      }
     }[] | null,
     subscription_plan_variations?: Record<string, any>[] | null,
     eligible_item_ids?: string[] | null,
@@ -3677,7 +3700,10 @@ Replaces the whole object: any field left out of the request is cleared, nested 
     },
     selection_config?: {
       max_allowed_selections?: number | null,
-      allowed_selections?: Record<string, any>[] | null
+      allowed_selections?: {
+        uid?: string | null,
+        name: string
+      }[] | null
     },
     custom_attribute_usage_count?: number,
     key?: string | null
@@ -3706,7 +3732,14 @@ Replaces the whole object: any field left out of the request is cleared, nested 
         currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
       },
       ordinal?: number | null,
-      pricing?: Record<string, any>
+      pricing?: {
+        type?: STATIC | RELATIVE,
+        discount_ids?: string[] | null,
+        price_money?: {
+          amount?: number | null,
+          currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
+        }
+      }
     }[],
     subscription_plan_id?: string | null,
     monthly_billing_anchor_date?: number | null,
@@ -4425,7 +4458,7 @@ await corsair.square.api.checkout.getLocationSettings({ location_id: '<location 
 
 `checkout.updateLocationSettings`
 
-Updates the location-level settings for a Square-hosted checkout page. Beta in Square's API; it may change.
+Updates the location-level settings for a Square-hosted checkout page. A policy's title is required when setting its description. Beta in Square's API; it may change.
 
 **Risk:** `write`
 
@@ -4552,13 +4585,16 @@ await corsair.square.api.checkout.updateLocationSettings({
 
 `customAttributeDefinitions.customer.create`
 
-Creates a customer-related custom attribute definition for a Square seller account. Use this endpoint to define a custom attribute that can be associated with customer profiles. Pass the same idempotency_key to retry safely.
+Creates a customer-related custom attribute definition for a Square seller account. Use this endpoint to define a custom attribute that can be associated with customer profiles. The definition name is required if visibility is VISIBILITY_READ_ONLY or VISIBILITY_READ_WRITE_VALUES. Pass the same idempotency_key to retry safely.
 
 **Risk:** `write`
 
 ```ts
 await corsair.square.api.customAttributeDefinitions.customer.create({
-	custom_attribute_definition: {},
+	custom_attribute_definition: {
+		key: '<key>',
+		schema: { $ref: 'https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String' },
+	},
 });
 ```
 
@@ -4574,8 +4610,8 @@ await corsair.square.api.customAttributeDefinitions.customer.create({
 
 ```ts
 {
-  key?: string | null,
-  schema?: Record<string, any> | null,
+  key: string,
+  schema: Record<string, any>,
   name?: string | null,
   description?: string | null,
   visibility?: VISIBILITY_HIDDEN | VISIBILITY_READ_ONLY | VISIBILITY_READ_WRITE_VALUES,
@@ -4887,13 +4923,16 @@ await corsair.square.api.customAttributeDefinitions.customer.update({
 
 `customAttributeDefinitions.location.create`
 
-Creates a location-related custom attribute definition for a Square seller account. Use this endpoint to define a custom attribute that can be associated with locations. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.
+Creates a location-related custom attribute definition for a Square seller account. Use this endpoint to define a custom attribute that can be associated with locations. The definition name is required if visibility is VISIBILITY_READ_ONLY or VISIBILITY_READ_WRITE_VALUES. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.
 
 **Risk:** `write`
 
 ```ts
 await corsair.square.api.customAttributeDefinitions.location.create({
-	custom_attribute_definition: {},
+	custom_attribute_definition: {
+		key: '<key>',
+		schema: { $ref: 'https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String' },
+	},
 });
 ```
 
@@ -4909,8 +4948,8 @@ await corsair.square.api.customAttributeDefinitions.location.create({
 
 ```ts
 {
-  key?: string | null,
-  schema?: Record<string, any> | null,
+  key: string,
+  schema: Record<string, any>,
   name?: string | null,
   description?: string | null,
   visibility?: VISIBILITY_HIDDEN | VISIBILITY_READ_ONLY | VISIBILITY_READ_WRITE_VALUES,
@@ -5223,13 +5262,16 @@ await corsair.square.api.customAttributeDefinitions.location.update({
 
 `customAttributeDefinitions.merchant.create`
 
-Creates a merchant-related custom attribute definition for a Square seller account. Use this endpoint to define a custom attribute that can be associated with a merchant connecting to your application. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.
+Creates a merchant-related custom attribute definition for a Square seller account. Use this endpoint to define a custom attribute that can be associated with a merchant connecting to your application. The definition name is required if visibility is VISIBILITY_READ_ONLY or VISIBILITY_READ_WRITE_VALUES. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.
 
 **Risk:** `write`
 
 ```ts
 await corsair.square.api.customAttributeDefinitions.merchant.create({
-	custom_attribute_definition: {},
+	custom_attribute_definition: {
+		key: '<key>',
+		schema: { $ref: 'https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String' },
+	},
 });
 ```
 
@@ -5245,8 +5287,8 @@ await corsair.square.api.customAttributeDefinitions.merchant.create({
 
 ```ts
 {
-  key?: string | null,
-  schema?: Record<string, any> | null,
+  key: string,
+  schema: Record<string, any>,
   name?: string | null,
   description?: string | null,
   visibility?: VISIBILITY_HIDDEN | VISIBILITY_READ_ONLY | VISIBILITY_READ_WRITE_VALUES,
@@ -8211,7 +8253,14 @@ await corsair.square.api.customers.search({
       none?: string[] | null
     },
     custom_attribute?: {
-      filters?: Record<string, any>[] | null
+      filters?: {
+        key: string,
+        filter?: Record<string, any>,
+        updated_at?: {
+          start_at?: string | null,
+          end_at?: string | null
+        }
+      }[] | null
     },
     segment_ids?: {
       all?: string[] | null,
@@ -9469,13 +9518,17 @@ await corsair.square.api.invoices.cancel({ invoice_id: '<invoice id>', version: 
 
 `invoices.create`
 
-Creates a draft invoice for an order created using the Orders API. Pass the same idempotency_key to retry safely.
+Creates a draft invoice for an order created using the Orders API. Give delivery_method (recommended) or the deprecated request_method on each payment request; the schema does not require delivery_method for that reason. Pass the same idempotency_key to retry safely.
 
 **Risk:** `write`
 
 ```ts
 await corsair.square.api.invoices.create({
-	invoice: {},
+	invoice: {
+		order_id: '<order id>',
+		payment_requests: [{ request_type: 'BALANCE', due_date: '2026-11-30' }],
+		accepted_payment_methods: { card: true },
+	},
 });
 ```
 
@@ -9494,7 +9547,7 @@ await corsair.square.api.invoices.create({
   id?: string,
   version?: number,
   location_id?: string | null,
-  order_id?: string | null,
+  order_id: string,
   primary_recipient?: {
     customer_id?: string | null,
     given_name?: string,
@@ -9522,11 +9575,11 @@ await corsair.square.api.invoices.create({
       eu_vat?: string
     }
   },
-  payment_requests?: {
+  payment_requests: {
     uid?: string | null,
     request_method?: EMAIL | CHARGE_CARD_ON_FILE | SHARE_MANUALLY | CHARGE_BANK_ON_FILE | SMS | SMS_CHARGE_CARD_ON_FILE | SMS_CHARGE_BANK_ON_FILE,
-    request_type?: BALANCE | DEPOSIT | INSTALLMENT,
-    due_date?: string | null,
+    request_type: BALANCE | DEPOSIT | INSTALLMENT,
+    due_date: string,
     fixed_amount_requested_money?: {
       amount?: number | null,
       currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
@@ -9554,7 +9607,7 @@ await corsair.square.api.invoices.create({
       amount?: number | null,
       currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
     }
-  }[] | null,
+  }[],
   delivery_method?: EMAIL | SHARE_MANUALLY | SMS,
   invoice_number?: string | null,
   title?: string | null,
@@ -9569,7 +9622,7 @@ await corsair.square.api.invoices.create({
   timezone?: string,
   created_at?: string,
   updated_at?: string,
-  accepted_payment_methods?: {
+  accepted_payment_methods: {
     card?: boolean | null,
     square_gift_card?: boolean | null,
     bank_account?: boolean | null,
@@ -11603,7 +11656,7 @@ Reports the scopes and expiry of the access token the plugin is using.
 
 `orders.calculate`
 
-Enables applications to preview order pricing without creating an order. Beta in Square's API; it may change.
+Enables applications to preview order pricing without creating an order. A fulfillment's pickup_details, shipment_details or in_store_details is required when its type is PICKUP, SHIPMENT or IN_STORE. A line item modifier's base_price_money is required for ad hoc modifiers. Beta in Square's API; it may change.
 
 **Risk:** `read`
 
@@ -11638,7 +11691,10 @@ await corsair.square.api.orders.calculate({
     quantity: string,
     quantity_unit?: {
       measurement_unit?: {
-        custom_unit?: Record<string, any>,
+        custom_unit?: {
+          name: string,
+          abbreviation: string
+        },
         area_unit?: IMPERIAL_ACRE | IMPERIAL_SQUARE_INCH | IMPERIAL_SQUARE_FOOT | IMPERIAL_SQUARE_YARD | IMPERIAL_SQUARE_MILE | METRIC_SQUARE_CENTIMETER | METRIC_SQUARE_METER | METRIC_SQUARE_KILOMETER,
         length_unit?: IMPERIAL_INCH | IMPERIAL_FOOT | IMPERIAL_YARD | IMPERIAL_MILE | METRIC_MILLIMETER | METRIC_CENTIMETER | METRIC_METER | METRIC_KILOMETER,
         volume_unit?: GENERIC_FLUID_OUNCE | GENERIC_SHOT | GENERIC_CUP | GENERIC_PINT | GENERIC_QUART | GENERIC_GALLON | IMPERIAL_CUBIC_INCH | IMPERIAL_CUBIC_FOOT | IMPERIAL_CUBIC_YARD | METRIC_MILLILITER | METRIC_LITER,
@@ -11724,9 +11780,21 @@ await corsair.square.api.orders.calculate({
       currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
     },
     pricing_blocklists?: {
-      blocked_discounts?: Record<string, any>[] | null,
-      blocked_taxes?: Record<string, any>[] | null,
-      blocked_service_charges?: Record<string, any>[] | null
+      blocked_discounts?: {
+        uid?: string | null,
+        discount_uid?: string | null,
+        discount_catalog_object_id?: string | null
+      }[] | null,
+      blocked_taxes?: {
+        uid?: string | null,
+        tax_uid?: string | null,
+        tax_catalog_object_id?: string | null
+      }[] | null,
+      blocked_service_charges?: {
+        uid?: string | null,
+        service_charge_uid?: string | null,
+        service_charge_catalog_object_id?: string | null
+      }[] | null
     },
     total_service_charge_money?: {
       amount?: number | null,
@@ -11819,7 +11887,28 @@ await corsair.square.api.orders.calculate({
     }[],
     metadata?: Record<string, string> | null,
     pickup_details?: {
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       expires_at?: string | null,
       auto_complete_duration?: string | null,
       schedule_type?: SCHEDULED | ASAP,
@@ -11836,10 +11925,34 @@ await corsair.square.api.orders.calculate({
       canceled_at?: string,
       cancel_reason?: string | null,
       is_curbside_pickup?: boolean | null,
-      curbside_pickup_details?: Record<string, any>
+      curbside_pickup_details?: {
+        curbside_details?: string | null,
+        buyer_arrived_at?: string | null
+      }
     },
     shipment_details?: {
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       carrier?: string | null,
       shipping_note?: string | null,
       shipping_type?: string | null,
@@ -11856,7 +11969,28 @@ await corsair.square.api.orders.calculate({
       failure_reason?: string | null
     },
     delivery_details?: {
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       schedule_type?: SCHEDULED | ASAP,
       placed_at?: string,
       deliver_at?: string | null,
@@ -11882,7 +12016,28 @@ await corsair.square.api.orders.calculate({
     },
     in_store_details?: {
       note?: string | null,
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       placed_at?: string | null,
       completed_at?: string,
       in_progress_at?: string,
@@ -11900,7 +12055,10 @@ await corsair.square.api.orders.calculate({
       quantity: string,
       quantity_unit?: {
         measurement_unit?: {
-          custom_unit?: Record<string, any>,
+          custom_unit?: {
+            name: string,
+            abbreviation: string
+          },
           area_unit?: IMPERIAL_ACRE | IMPERIAL_SQUARE_INCH | IMPERIAL_SQUARE_FOOT | IMPERIAL_SQUARE_YARD | IMPERIAL_SQUARE_MILE | METRIC_SQUARE_CENTIMETER | METRIC_SQUARE_METER | METRIC_SQUARE_KILOMETER,
           length_unit?: IMPERIAL_INCH | IMPERIAL_FOOT | IMPERIAL_YARD | IMPERIAL_MILE | METRIC_MILLIMETER | METRIC_CENTIMETER | METRIC_METER | METRIC_KILOMETER,
           volume_unit?: GENERIC_FLUID_OUNCE | GENERIC_SHOT | GENERIC_CUP | GENERIC_PINT | GENERIC_QUART | GENERIC_GALLON | IMPERIAL_CUBIC_INCH | IMPERIAL_CUBIC_FOOT | IMPERIAL_CUBIC_YARD | METRIC_MILLILITER | METRIC_LITER,
@@ -11918,7 +12076,22 @@ await corsair.square.api.orders.calculate({
       catalog_version?: number | null,
       variation_name?: string | null,
       item_type?: ITEM | CUSTOM_AMOUNT | GIFT_CARD,
-      return_modifiers?: Record<string, any>[] | null,
+      return_modifiers?: {
+        uid?: string | null,
+        source_modifier_uid?: string | null,
+        catalog_object_id?: string | null,
+        catalog_version?: number | null,
+        name?: string | null,
+        base_price_money?: {
+          amount?: number | null,
+          currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
+        },
+        total_price_money?: {
+          amount?: number | null,
+          currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
+        },
+        quantity?: string | null
+      }[] | null,
       applied_taxes?: {
         uid?: string | null,
         tax_uid: string,
@@ -13017,7 +13190,7 @@ await corsair.square.api.orders.calculate({
 
 `orders.create`
 
-Creates a new order that can include information about products for purchase and settings to apply to the purchase. Pass the same idempotency_key to retry safely.
+Creates a new order that can include information about products for purchase and settings to apply to the purchase. A fulfillment's pickup_details, shipment_details or in_store_details is required when its type is PICKUP, SHIPMENT or IN_STORE. A line item modifier's base_price_money is required for ad hoc modifiers. Pass the same idempotency_key to retry safely.
 
 **Risk:** `write`
 
@@ -13060,7 +13233,10 @@ await corsair.square.api.orders.create({
     quantity: string,
     quantity_unit?: {
       measurement_unit?: {
-        custom_unit?: Record<string, any>,
+        custom_unit?: {
+          name: string,
+          abbreviation: string
+        },
         area_unit?: IMPERIAL_ACRE | IMPERIAL_SQUARE_INCH | IMPERIAL_SQUARE_FOOT | IMPERIAL_SQUARE_YARD | IMPERIAL_SQUARE_MILE | METRIC_SQUARE_CENTIMETER | METRIC_SQUARE_METER | METRIC_SQUARE_KILOMETER,
         length_unit?: IMPERIAL_INCH | IMPERIAL_FOOT | IMPERIAL_YARD | IMPERIAL_MILE | METRIC_MILLIMETER | METRIC_CENTIMETER | METRIC_METER | METRIC_KILOMETER,
         volume_unit?: GENERIC_FLUID_OUNCE | GENERIC_SHOT | GENERIC_CUP | GENERIC_PINT | GENERIC_QUART | GENERIC_GALLON | IMPERIAL_CUBIC_INCH | IMPERIAL_CUBIC_FOOT | IMPERIAL_CUBIC_YARD | METRIC_MILLILITER | METRIC_LITER,
@@ -13146,9 +13322,21 @@ await corsair.square.api.orders.create({
       currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
     },
     pricing_blocklists?: {
-      blocked_discounts?: Record<string, any>[] | null,
-      blocked_taxes?: Record<string, any>[] | null,
-      blocked_service_charges?: Record<string, any>[] | null
+      blocked_discounts?: {
+        uid?: string | null,
+        discount_uid?: string | null,
+        discount_catalog_object_id?: string | null
+      }[] | null,
+      blocked_taxes?: {
+        uid?: string | null,
+        tax_uid?: string | null,
+        tax_catalog_object_id?: string | null
+      }[] | null,
+      blocked_service_charges?: {
+        uid?: string | null,
+        service_charge_uid?: string | null,
+        service_charge_catalog_object_id?: string | null
+      }[] | null
     },
     total_service_charge_money?: {
       amount?: number | null,
@@ -13241,7 +13429,28 @@ await corsair.square.api.orders.create({
     }[],
     metadata?: Record<string, string> | null,
     pickup_details?: {
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       expires_at?: string | null,
       auto_complete_duration?: string | null,
       schedule_type?: SCHEDULED | ASAP,
@@ -13258,10 +13467,34 @@ await corsair.square.api.orders.create({
       canceled_at?: string,
       cancel_reason?: string | null,
       is_curbside_pickup?: boolean | null,
-      curbside_pickup_details?: Record<string, any>
+      curbside_pickup_details?: {
+        curbside_details?: string | null,
+        buyer_arrived_at?: string | null
+      }
     },
     shipment_details?: {
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       carrier?: string | null,
       shipping_note?: string | null,
       shipping_type?: string | null,
@@ -13278,7 +13511,28 @@ await corsair.square.api.orders.create({
       failure_reason?: string | null
     },
     delivery_details?: {
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       schedule_type?: SCHEDULED | ASAP,
       placed_at?: string,
       deliver_at?: string | null,
@@ -13304,7 +13558,28 @@ await corsair.square.api.orders.create({
     },
     in_store_details?: {
       note?: string | null,
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       placed_at?: string | null,
       completed_at?: string,
       in_progress_at?: string,
@@ -13322,7 +13597,10 @@ await corsair.square.api.orders.create({
       quantity: string,
       quantity_unit?: {
         measurement_unit?: {
-          custom_unit?: Record<string, any>,
+          custom_unit?: {
+            name: string,
+            abbreviation: string
+          },
           area_unit?: IMPERIAL_ACRE | IMPERIAL_SQUARE_INCH | IMPERIAL_SQUARE_FOOT | IMPERIAL_SQUARE_YARD | IMPERIAL_SQUARE_MILE | METRIC_SQUARE_CENTIMETER | METRIC_SQUARE_METER | METRIC_SQUARE_KILOMETER,
           length_unit?: IMPERIAL_INCH | IMPERIAL_FOOT | IMPERIAL_YARD | IMPERIAL_MILE | METRIC_MILLIMETER | METRIC_CENTIMETER | METRIC_METER | METRIC_KILOMETER,
           volume_unit?: GENERIC_FLUID_OUNCE | GENERIC_SHOT | GENERIC_CUP | GENERIC_PINT | GENERIC_QUART | GENERIC_GALLON | IMPERIAL_CUBIC_INCH | IMPERIAL_CUBIC_FOOT | IMPERIAL_CUBIC_YARD | METRIC_MILLILITER | METRIC_LITER,
@@ -13340,7 +13618,22 @@ await corsair.square.api.orders.create({
       catalog_version?: number | null,
       variation_name?: string | null,
       item_type?: ITEM | CUSTOM_AMOUNT | GIFT_CARD,
-      return_modifiers?: Record<string, any>[] | null,
+      return_modifiers?: {
+        uid?: string | null,
+        source_modifier_uid?: string | null,
+        catalog_object_id?: string | null,
+        catalog_version?: number | null,
+        name?: string | null,
+        base_price_money?: {
+          amount?: number | null,
+          currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
+        },
+        total_price_money?: {
+          amount?: number | null,
+          currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
+        },
+        quantity?: string | null
+      }[] | null,
       applied_taxes?: {
         uid?: string | null,
         tax_uid: string,
@@ -16664,7 +16957,7 @@ await corsair.square.api.orders.search({ cursor: '<cursor>', limit: 1 });
 
 `orders.update`
 
-Updates an open order by adding, replacing, or deleting fields. Orders with a `COMPLETED` or `CANCELED` state cannot be updated. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.
+Updates an open order by adding, replacing, or deleting fields. Orders with a `COMPLETED` or `CANCELED` state cannot be updated. A fulfillment's pickup_details, shipment_details or in_store_details is required when its type is PICKUP, SHIPMENT or IN_STORE. A line item modifier's base_price_money is required for ad hoc modifiers. Pass the same idempotency_key to retry safely. Beta in Square's API; it may change.
 
 **Risk:** `write`
 
@@ -16699,7 +16992,10 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
     quantity: string,
     quantity_unit?: {
       measurement_unit?: {
-        custom_unit?: Record<string, any>,
+        custom_unit?: {
+          name: string,
+          abbreviation: string
+        },
         area_unit?: IMPERIAL_ACRE | IMPERIAL_SQUARE_INCH | IMPERIAL_SQUARE_FOOT | IMPERIAL_SQUARE_YARD | IMPERIAL_SQUARE_MILE | METRIC_SQUARE_CENTIMETER | METRIC_SQUARE_METER | METRIC_SQUARE_KILOMETER,
         length_unit?: IMPERIAL_INCH | IMPERIAL_FOOT | IMPERIAL_YARD | IMPERIAL_MILE | METRIC_MILLIMETER | METRIC_CENTIMETER | METRIC_METER | METRIC_KILOMETER,
         volume_unit?: GENERIC_FLUID_OUNCE | GENERIC_SHOT | GENERIC_CUP | GENERIC_PINT | GENERIC_QUART | GENERIC_GALLON | IMPERIAL_CUBIC_INCH | IMPERIAL_CUBIC_FOOT | IMPERIAL_CUBIC_YARD | METRIC_MILLILITER | METRIC_LITER,
@@ -16785,9 +17081,21 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
       currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
     },
     pricing_blocklists?: {
-      blocked_discounts?: Record<string, any>[] | null,
-      blocked_taxes?: Record<string, any>[] | null,
-      blocked_service_charges?: Record<string, any>[] | null
+      blocked_discounts?: {
+        uid?: string | null,
+        discount_uid?: string | null,
+        discount_catalog_object_id?: string | null
+      }[] | null,
+      blocked_taxes?: {
+        uid?: string | null,
+        tax_uid?: string | null,
+        tax_catalog_object_id?: string | null
+      }[] | null,
+      blocked_service_charges?: {
+        uid?: string | null,
+        service_charge_uid?: string | null,
+        service_charge_catalog_object_id?: string | null
+      }[] | null
     },
     total_service_charge_money?: {
       amount?: number | null,
@@ -16880,7 +17188,28 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
     }[],
     metadata?: Record<string, string> | null,
     pickup_details?: {
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       expires_at?: string | null,
       auto_complete_duration?: string | null,
       schedule_type?: SCHEDULED | ASAP,
@@ -16897,10 +17226,34 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
       canceled_at?: string,
       cancel_reason?: string | null,
       is_curbside_pickup?: boolean | null,
-      curbside_pickup_details?: Record<string, any>
+      curbside_pickup_details?: {
+        curbside_details?: string | null,
+        buyer_arrived_at?: string | null
+      }
     },
     shipment_details?: {
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       carrier?: string | null,
       shipping_note?: string | null,
       shipping_type?: string | null,
@@ -16917,7 +17270,28 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
       failure_reason?: string | null
     },
     delivery_details?: {
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       schedule_type?: SCHEDULED | ASAP,
       placed_at?: string,
       deliver_at?: string | null,
@@ -16943,7 +17317,28 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
     },
     in_store_details?: {
       note?: string | null,
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       placed_at?: string | null,
       completed_at?: string,
       in_progress_at?: string,
@@ -16961,7 +17356,10 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
       quantity: string,
       quantity_unit?: {
         measurement_unit?: {
-          custom_unit?: Record<string, any>,
+          custom_unit?: {
+            name: string,
+            abbreviation: string
+          },
           area_unit?: IMPERIAL_ACRE | IMPERIAL_SQUARE_INCH | IMPERIAL_SQUARE_FOOT | IMPERIAL_SQUARE_YARD | IMPERIAL_SQUARE_MILE | METRIC_SQUARE_CENTIMETER | METRIC_SQUARE_METER | METRIC_SQUARE_KILOMETER,
           length_unit?: IMPERIAL_INCH | IMPERIAL_FOOT | IMPERIAL_YARD | IMPERIAL_MILE | METRIC_MILLIMETER | METRIC_CENTIMETER | METRIC_METER | METRIC_KILOMETER,
           volume_unit?: GENERIC_FLUID_OUNCE | GENERIC_SHOT | GENERIC_CUP | GENERIC_PINT | GENERIC_QUART | GENERIC_GALLON | IMPERIAL_CUBIC_INCH | IMPERIAL_CUBIC_FOOT | IMPERIAL_CUBIC_YARD | METRIC_MILLILITER | METRIC_LITER,
@@ -16979,7 +17377,22 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
       catalog_version?: number | null,
       variation_name?: string | null,
       item_type?: ITEM | CUSTOM_AMOUNT | GIFT_CARD,
-      return_modifiers?: Record<string, any>[] | null,
+      return_modifiers?: {
+        uid?: string | null,
+        source_modifier_uid?: string | null,
+        catalog_object_id?: string | null,
+        catalog_version?: number | null,
+        name?: string | null,
+        base_price_money?: {
+          amount?: number | null,
+          currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
+        },
+        total_price_money?: {
+          amount?: number | null,
+          currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
+        },
+        quantity?: string | null
+      }[] | null,
       applied_taxes?: {
         uid?: string | null,
         tax_uid: string,
@@ -18070,7 +18483,7 @@ await corsair.square.api.orders.update({ order_id: '<order id>' });
 
 `paymentLinks.create`
 
-Creates a Square-hosted checkout page. Applications can share the resulting payment link with their buyer to pay for goods and services. Pass the same idempotency_key to retry safely.
+Creates a Square-hosted checkout page. Applications can share the resulting payment link with their buyer to pay for goods and services. A fulfillment's pickup_details, shipment_details or in_store_details is required when its type is PICKUP, SHIPMENT or IN_STORE. A line item modifier's base_price_money is required for ad hoc modifiers. Pass the same idempotency_key to retry safely.
 
 **Risk:** `write`
 
@@ -18122,7 +18535,10 @@ await corsair.square.api.paymentLinks.create({});
     quantity: string,
     quantity_unit?: {
       measurement_unit?: {
-        custom_unit?: Record<string, any>,
+        custom_unit?: {
+          name: string,
+          abbreviation: string
+        },
         area_unit?: IMPERIAL_ACRE | IMPERIAL_SQUARE_INCH | IMPERIAL_SQUARE_FOOT | IMPERIAL_SQUARE_YARD | IMPERIAL_SQUARE_MILE | METRIC_SQUARE_CENTIMETER | METRIC_SQUARE_METER | METRIC_SQUARE_KILOMETER,
         length_unit?: IMPERIAL_INCH | IMPERIAL_FOOT | IMPERIAL_YARD | IMPERIAL_MILE | METRIC_MILLIMETER | METRIC_CENTIMETER | METRIC_METER | METRIC_KILOMETER,
         volume_unit?: GENERIC_FLUID_OUNCE | GENERIC_SHOT | GENERIC_CUP | GENERIC_PINT | GENERIC_QUART | GENERIC_GALLON | IMPERIAL_CUBIC_INCH | IMPERIAL_CUBIC_FOOT | IMPERIAL_CUBIC_YARD | METRIC_MILLILITER | METRIC_LITER,
@@ -18208,9 +18624,21 @@ await corsair.square.api.paymentLinks.create({});
       currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
     },
     pricing_blocklists?: {
-      blocked_discounts?: Record<string, any>[] | null,
-      blocked_taxes?: Record<string, any>[] | null,
-      blocked_service_charges?: Record<string, any>[] | null
+      blocked_discounts?: {
+        uid?: string | null,
+        discount_uid?: string | null,
+        discount_catalog_object_id?: string | null
+      }[] | null,
+      blocked_taxes?: {
+        uid?: string | null,
+        tax_uid?: string | null,
+        tax_catalog_object_id?: string | null
+      }[] | null,
+      blocked_service_charges?: {
+        uid?: string | null,
+        service_charge_uid?: string | null,
+        service_charge_catalog_object_id?: string | null
+      }[] | null
     },
     total_service_charge_money?: {
       amount?: number | null,
@@ -18303,7 +18731,28 @@ await corsair.square.api.paymentLinks.create({});
     }[],
     metadata?: Record<string, string> | null,
     pickup_details?: {
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       expires_at?: string | null,
       auto_complete_duration?: string | null,
       schedule_type?: SCHEDULED | ASAP,
@@ -18320,10 +18769,34 @@ await corsair.square.api.paymentLinks.create({});
       canceled_at?: string,
       cancel_reason?: string | null,
       is_curbside_pickup?: boolean | null,
-      curbside_pickup_details?: Record<string, any>
+      curbside_pickup_details?: {
+        curbside_details?: string | null,
+        buyer_arrived_at?: string | null
+      }
     },
     shipment_details?: {
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       carrier?: string | null,
       shipping_note?: string | null,
       shipping_type?: string | null,
@@ -18340,7 +18813,28 @@ await corsair.square.api.paymentLinks.create({});
       failure_reason?: string | null
     },
     delivery_details?: {
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       schedule_type?: SCHEDULED | ASAP,
       placed_at?: string,
       deliver_at?: string | null,
@@ -18366,7 +18860,28 @@ await corsair.square.api.paymentLinks.create({});
     },
     in_store_details?: {
       note?: string | null,
-      recipient?: Record<string, any>,
+      recipient?: {
+        customer_id?: string | null,
+        display_name?: string | null,
+        email_address?: string | null,
+        phone_number?: string | null,
+        address?: {
+          address_line_1?: string | null,
+          address_line_2?: string | null,
+          address_line_3?: string | null,
+          locality?: string | null,
+          sublocality?: string | null,
+          sublocality_2?: string | null,
+          sublocality_3?: string | null,
+          administrative_district_level_1?: string | null,
+          administrative_district_level_2?: string | null,
+          administrative_district_level_3?: string | null,
+          postal_code?: string | null,
+          country?: ZZ | AD | AE | AF | AG | AI | AL | AM | AO | AQ | AR | AS | AT | AU | AW | AX | AZ | BA | BB | BD | BE | BF | BG | BH | BI | BJ | BL | BM | BN | BO | BQ | BR | BS | BT | BV | BW | BY | BZ | CA | CC | CD | CF | CG | CH | CI | CK | CL | CM | CN | CO | CR | CU | CV | CW | CX | CY | CZ | DE | DJ | DK | DM | DO | DZ | EC | EE | EG | EH | ER | ES | ET | FI | FJ | FK | FM | FO | FR | GA | GB | GD | GE | GF | GG | GH | GI | GL | GM | GN | GP | GQ | GR | GS | GT | GU | GW | GY | HK | HM | HN | HR | HT | HU | ID | IE | IL | IM | IN | IO | IQ | IR | IS | IT | JE | JM | JO | JP | KE | KG | KH | KI | KM | KN | KP | KR | KW | KY | KZ | LA | LB | LC | LI | LK | LR | LS | LT | LU | LV | LY | MA | MC | MD | ME | MF | MG | MH | MK | ML | MM | MN | MO | MP | MQ | MR | MS | MT | MU | MV | MW | MX | MY | MZ | NA | NC | NE | NF | NG | NI | NL | NO | NP | NR | NU | NZ | OM | PA | PE | PF | PG | PH | PK | PL | PM | PN | PR | PS | PT | PW | PY | QA | RE | RO | RS | RU | RW | SA | SB | SC | SD | SE | SG | SH | SI | SJ | SK | SL | SM | SN | SO | SR | SS | ST | SV | SX | SY | SZ | TC | TD | TF | TG | TH | TJ | TK | TL | TM | TN | TO | TR | TT | TV | TW | TZ | UA | UG | UM | US | UY | UZ | VA | VC | VE | VG | VI | VN | VU | WF | WS | YE | YT | ZA | ZM | ZW,
+          first_name?: string | null,
+          last_name?: string | null
+        }
+      },
       placed_at?: string | null,
       completed_at?: string,
       in_progress_at?: string,
@@ -18384,7 +18899,10 @@ await corsair.square.api.paymentLinks.create({});
       quantity: string,
       quantity_unit?: {
         measurement_unit?: {
-          custom_unit?: Record<string, any>,
+          custom_unit?: {
+            name: string,
+            abbreviation: string
+          },
           area_unit?: IMPERIAL_ACRE | IMPERIAL_SQUARE_INCH | IMPERIAL_SQUARE_FOOT | IMPERIAL_SQUARE_YARD | IMPERIAL_SQUARE_MILE | METRIC_SQUARE_CENTIMETER | METRIC_SQUARE_METER | METRIC_SQUARE_KILOMETER,
           length_unit?: IMPERIAL_INCH | IMPERIAL_FOOT | IMPERIAL_YARD | IMPERIAL_MILE | METRIC_MILLIMETER | METRIC_CENTIMETER | METRIC_METER | METRIC_KILOMETER,
           volume_unit?: GENERIC_FLUID_OUNCE | GENERIC_SHOT | GENERIC_CUP | GENERIC_PINT | GENERIC_QUART | GENERIC_GALLON | IMPERIAL_CUBIC_INCH | IMPERIAL_CUBIC_FOOT | IMPERIAL_CUBIC_YARD | METRIC_MILLILITER | METRIC_LITER,
@@ -18402,7 +18920,22 @@ await corsair.square.api.paymentLinks.create({});
       catalog_version?: number | null,
       variation_name?: string | null,
       item_type?: ITEM | CUSTOM_AMOUNT | GIFT_CARD,
-      return_modifiers?: Record<string, any>[] | null,
+      return_modifiers?: {
+        uid?: string | null,
+        source_modifier_uid?: string | null,
+        catalog_object_id?: string | null,
+        catalog_version?: number | null,
+        name?: string | null,
+        base_price_money?: {
+          amount?: number | null,
+          currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
+        },
+        total_price_money?: {
+          amount?: number | null,
+          currency?: UNKNOWN_CURRENCY | AED | AFN | ALL | AMD | ANG | AOA | ARS | AUD | AWG | AZN | BAM | BBD | BDT | BGN | BHD | BIF | BMD | BND | BOB | BOV | BRL | BSD | BTN | BWP | BYR | BZD | CAD | CDF | CHE | CHF | CHW | CLF | CLP | CNY | COP | COU | CRC | CUC | CUP | CVE | CZK | DJF | DKK | DOP | DZD | EGP | ERN | ETB | EUR | FJD | FKP | GBP | GEL | GHS | GIP | GMD | GNF | GTQ | GYD | HKD | HNL | HRK | HTG | HUF | IDR | ILS | INR | IQD | IRR | ISK | JMD | JOD | JPY | KES | KGS | KHR | KMF | KPW | KRW | KWD | KYD | KZT | LAK | LBP | LKR | LRD | LSL | LTL | LVL | LYD | MAD | MDL | MGA | MKD | MMK | MNT | MOP | MRO | MUR | MVR | MWK | MXN | MXV | MYR | MZN | NAD | NGN | NIO | NOK | NPR | NZD | OMR | PAB | PEN | PGK | PHP | PKR | PLN | PYG | QAR | RON | RSD | RUB | RWF | SAR | SBD | SCR | SDG | SEK | SGD | SHP | SLL | SLE | SOS | SRD | SSP | STD | SVC | SYP | SZL | THB | TJS | TMT | TND | TOP | TRY | TTD | TWD | TZS | UAH | UGX | USD | USN | USS | UYI | UYU | UZS | VEF | VND | VUV | WST | XAF | XAG | XAU | XBA | XBB | XBC | XBD | XCD | XDR | XOF | XPD | XPF | XPT | XTS | XXX | YER | ZAR | ZMK | ZMW | BTC | XUS
+        },
+        quantity?: string | null
+      }[] | null,
       applied_taxes?: {
         uid?: string | null,
         tax_uid: string,
@@ -21128,7 +21661,7 @@ await corsair.square.api.payments.complete({ payment_id: '<payment id>' });
 
 `payments.create`
 
-Creates a payment using the provided source. Moves money. Pass the same idempotency_key to retry safely.
+Creates a payment using the provided source. customer_id is required if source_id is a card on file created with the Cards API. Moves money. Pass the same idempotency_key to retry safely.
 
 **Risk:** `write`
 
@@ -22267,7 +22800,7 @@ await corsair.square.api.payments.list({ cursor: '<cursor>', limit: 1 });
 
 `payments.refund`
 
-Refunds a payment. You can refund the entire payment amount or a portion of it. You can use this endpoint to refund a card payment or record a refund of a cash or external payment. Moves money. Pass the same idempotency_key to retry safely. Cannot be undone.
+Refunds a payment. You can refund the entire payment amount or a portion of it. You can use this endpoint to refund a card payment or record a refund of a cash or external payment. customer_id is required if destination_id is a card on file created with the Cards API, and is only allowed when unlinked=true. Moves money. Pass the same idempotency_key to retry safely. Cannot be undone.
 
 **Risk:** `destructive` · **Irreversible**
 

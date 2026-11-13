@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import {
 	square,
 	squareAuthConfig,
@@ -58,6 +59,72 @@ const MONEY_MOVING = [
 	'payments.create',
 	'payments.refund',
 	'payments.update',
+];
+
+type Node = z.core.$ZodType;
+
+/** Looks through optional, nullable and array wrappers to the object inside. */
+function unwrap(node: Node): Node {
+	if (node instanceof z.ZodOptional || node instanceof z.ZodNullable) {
+		return unwrap(node.unwrap());
+	}
+	if (node instanceof z.ZodArray) return unwrap(node.element);
+	return node;
+}
+
+/** The schema of the field at `path` below `schema`, or undefined when there is none. */
+function fieldAt(schema: Node, path: string[]): Node | undefined {
+	let node: Node | undefined = schema;
+	for (const key of path) {
+		const object: Node | undefined = node && unwrap(node);
+		if (!(object instanceof z.ZodObject)) return undefined;
+		node = object.shape[key];
+	}
+	return node;
+}
+
+/** True when the field may be left out, false when it is required, undefined when there is no such field. */
+function isOptional(field: Node | undefined): boolean | undefined {
+	return field && field._zod.optin === 'optional';
+}
+
+/**
+ * Square shares one schema between create and update, so the fields only
+ * creating needs are not in its required list. The plugin requires them on the
+ * create operations (which is what these tables name) and on no other.
+ */
+const CREATE_ONLY: Array<{
+	path: string[];
+	fields: string[];
+	create: string[];
+	update: string[];
+}> = [
+	{
+		path: ['invoice'],
+		fields: ['order_id', 'payment_requests', 'accepted_payment_methods'],
+		create: ['invoices.create'],
+		update: ['invoices.update'],
+	},
+	{
+		path: ['invoice', 'payment_requests'],
+		fields: ['request_type', 'due_date'],
+		create: ['invoices.create'],
+		update: ['invoices.update'],
+	},
+	{
+		path: ['custom_attribute_definition'],
+		fields: ['key', 'schema'],
+		create: [
+			'customAttributeDefinitions.customer.create',
+			'customAttributeDefinitions.location.create',
+			'customAttributeDefinitions.merchant.create',
+		],
+		update: [
+			'customAttributeDefinitions.customer.update',
+			'customAttributeDefinitions.location.update',
+			'customAttributeDefinitions.merchant.update',
+		],
+	},
 ];
 
 const by = (level: string) =>
@@ -144,6 +211,38 @@ describe('Square plugin definition', () => {
 		] as const) {
 			expect(meta[op].description).toContain('idempotency_key');
 		}
+	});
+
+	it('requires the fields only creating needs on create operations, and on no others', () => {
+		const inputs = Object.entries(squareEndpointSchemas);
+		for (const { path, fields, create, update } of CREATE_ONLY) {
+			for (const field of fields) {
+				const where = (optional: boolean) =>
+					inputs
+						.filter(
+							([, { input }]) =>
+								input !== undefined &&
+								isOptional(fieldAt(input, [...path, field])) === optional,
+						)
+						.map(([op]) => op)
+						.sort();
+				expect(where(false)).toEqual(create);
+				expect(where(true)).toEqual(expect.arrayContaining(update));
+			}
+		}
+		for (const { create } of CREATE_ONLY) {
+			for (const op of create) expect(op).toMatch(/\.create$/);
+		}
+	});
+
+	it('leaves delivery_method optional, since request_method can stand in', () => {
+		const input = squareEndpointSchemas['invoices.create'].input;
+		expect(input).toBeDefined();
+		const delivery = input && fieldAt(input, ['invoice', 'delivery_method']);
+		expect(isOptional(delivery)).toBe(true);
+		expect(meta['invoices.create'].description).toContain(
+			'the schema does not require delivery_method',
+		);
 	});
 
 	it('offers an access token and OAuth, and needs nothing else', () => {

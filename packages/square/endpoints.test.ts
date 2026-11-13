@@ -330,13 +330,23 @@ const cases: Case[] = [
 	{
 		op: 'customAttributeDefinitions.customer.create',
 		input: {
-			custom_attribute_definition: {},
+			custom_attribute_definition: {
+				key: 'key-1',
+				schema: {
+					$ref: 'https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String',
+				},
+			},
 		},
 		method: 'POST',
 		path: '/v2/customers/custom-attribute-definitions',
 		query: {},
 		body: {
-			custom_attribute_definition: {},
+			custom_attribute_definition: {
+				key: 'key-1',
+				schema: {
+					$ref: 'https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String',
+				},
+			},
 		},
 		reply: {
 			custom_attribute_definition: {
@@ -466,13 +476,23 @@ const cases: Case[] = [
 	{
 		op: 'customAttributeDefinitions.location.create',
 		input: {
-			custom_attribute_definition: {},
+			custom_attribute_definition: {
+				key: 'key-1',
+				schema: {
+					$ref: 'https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String',
+				},
+			},
 		},
 		method: 'POST',
 		path: '/v2/locations/custom-attribute-definitions',
 		query: {},
 		body: {
-			custom_attribute_definition: {},
+			custom_attribute_definition: {
+				key: 'key-1',
+				schema: {
+					$ref: 'https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String',
+				},
+			},
 		},
 		reply: {
 			custom_attribute_definition: {
@@ -1864,13 +1884,35 @@ const cases: Case[] = [
 	{
 		op: 'invoices.create',
 		input: {
-			invoice: {},
+			invoice: {
+				order_id: 'order_id-1',
+				payment_requests: [
+					{
+						request_type: 'BALANCE',
+						due_date: '2026-11-30',
+					},
+				],
+				accepted_payment_methods: {
+					card: true,
+				},
+			},
 		},
 		method: 'POST',
 		path: '/v2/invoices',
 		query: {},
 		body: {
-			invoice: {},
+			invoice: {
+				order_id: 'order_id-1',
+				payment_requests: [
+					{
+						request_type: 'BALANCE',
+						due_date: '2026-11-30',
+					},
+				],
+				accepted_payment_methods: {
+					card: true,
+				},
+			},
 		},
 		reply: {
 			invoice: {
@@ -2206,13 +2248,23 @@ const cases: Case[] = [
 	{
 		op: 'customAttributeDefinitions.merchant.create',
 		input: {
-			custom_attribute_definition: {},
+			custom_attribute_definition: {
+				key: 'key-1',
+				schema: {
+					$ref: 'https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String',
+				},
+			},
 		},
 		method: 'POST',
 		path: '/v2/merchants/custom-attribute-definitions',
 		query: {},
 		body: {
-			custom_attribute_definition: {},
+			custom_attribute_definition: {
+				key: 'key-1',
+				schema: {
+					$ref: 'https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String',
+				},
+			},
 		},
 		reply: {
 			custom_attribute_definition: {
@@ -2423,6 +2475,141 @@ describe('Square request details', () => {
 			endpoint(api(), 'orders.search')({ limit: 'many' }),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	// Square's create and update share one schema, so what only creating needs is
+	// not in its required list. The plugin requires it on the create operations.
+	describe('fields only creating needs', () => {
+		const invoice = {
+			order_id: 'ORDER1',
+			payment_requests: [
+				{ request_type: 'BALANCE' as const, due_date: '2026-11-30' },
+			],
+			accepted_payment_methods: { card: true },
+		};
+		const without = (from: Record<string, unknown>, field: string) =>
+			Object.fromEntries(Object.entries(from).filter(([k]) => k !== field));
+
+		it('sends a complete invoice, without a delivery_method', async () => {
+			fetchMock.mockResolvedValueOnce(
+				jsonResponse({ invoice: { id: 'INV1' } }),
+			);
+			await api().invoices.create({ idempotency_key: 'inv-1', invoice });
+			expect(jsonBody(sentRequest(fetchMock))).toEqual({
+				idempotency_key: 'inv-1',
+				invoice,
+			});
+		});
+
+		it.each(['order_id', 'payment_requests', 'accepted_payment_methods'])(
+			'refuses invoices.create without %s, before calling Square',
+			async (field) => {
+				await expect(
+					endpoint(
+						api(),
+						'invoices.create',
+					)({
+						idempotency_key: 'inv-1',
+						invoice: without(invoice, field),
+					}),
+				).rejects.toThrow();
+				expect(fetchMock).toHaveBeenCalledTimes(0);
+			},
+		);
+
+		it.each(['request_type', 'due_date'])(
+			'refuses a payment request without %s, before calling Square',
+			async (field) => {
+				await expect(
+					endpoint(
+						api(),
+						'invoices.create',
+					)({
+						idempotency_key: 'inv-1',
+						invoice: {
+							...invoice,
+							payment_requests: [
+								without(
+									{ request_type: 'BALANCE', due_date: '2026-11-30' },
+									field,
+								),
+							],
+						},
+					}),
+				).rejects.toThrow();
+				expect(fetchMock).toHaveBeenCalledTimes(0);
+			},
+		);
+
+		it.each(['customer', 'location', 'merchant'])(
+			'refuses a %s attribute definition without key or schema, before calling Square',
+			async (kind) => {
+				const definition = {
+					key: 'loyalty-tier',
+					schema: {
+						$ref: 'https://developer-production-s.squarecdn.com/schemas/v1/common.json#squareup.common.String',
+					},
+				};
+				for (const field of ['key', 'schema']) {
+					await expect(
+						endpoint(
+							api(),
+							`customAttributeDefinitions.${kind}.create`,
+						)({
+							idempotency_key: 'def-1',
+							custom_attribute_definition: without(definition, field),
+						}),
+					).rejects.toThrow();
+				}
+				expect(fetchMock).toHaveBeenCalledTimes(0);
+
+				fetchMock.mockResolvedValueOnce(
+					jsonResponse({
+						custom_attribute_definition: { key: 'loyalty-tier' },
+					}),
+				);
+				await endpoint(
+					api(),
+					`customAttributeDefinitions.${kind}.create`,
+				)({
+					idempotency_key: 'def-1',
+					custom_attribute_definition: definition,
+				});
+				expect(fetchMock).toHaveBeenCalledTimes(1);
+			},
+		);
+
+		it('lets invoices.update send a partial invoice', async () => {
+			fetchMock.mockResolvedValueOnce(
+				jsonResponse({ invoice: { id: 'INV1' } }),
+			);
+			await api().invoices.update({
+				invoice_id: 'INV1',
+				invoice: { title: 'November' },
+			});
+			expect(jsonBody(sentRequest(fetchMock))).toEqual({
+				invoice: { title: 'November' },
+			});
+		});
+
+		it.each(['customer', 'location', 'merchant'])(
+			'lets the %s attribute definition update send a partial definition',
+			async (kind) => {
+				fetchMock.mockResolvedValueOnce(
+					jsonResponse({ custom_attribute_definition: { key: 'k' } }),
+				);
+				await endpoint(
+					api(),
+					`customAttributeDefinitions.${kind}.update`,
+				)({
+					key: 'k',
+					custom_attribute_definition: { description: 'Updated' },
+				});
+				expect(jsonBody(sentRequest(fetchMock))).toEqual({
+					custom_attribute_definition: { description: 'Updated' },
+				});
+			},
+		);
 	});
 
 	it('drops fields that are not in the spec instead of sending them', async () => {
