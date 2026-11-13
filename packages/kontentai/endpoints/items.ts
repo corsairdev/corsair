@@ -2,6 +2,7 @@ import type { KontentEndpoints } from '..';
 import { definedQuery, segment } from '../client';
 import { call, listShape } from './call';
 import {
+	filterParams,
 	KontentEndpointInputSchemas as Inputs,
 	KONTENT_DEFAULT_LIMIT,
 	KontentEndpointOutputSchemas as Outputs,
@@ -25,12 +26,15 @@ export const list: KontentEndpoints['itemsList'] = (ctx, input) =>
 				limit: parsed.limit,
 				depth: parsed.depth,
 				order: parsed.order,
-				type: parsed.type,
+				// Kontent ignores a bare `type` or `collection` parameter and
+				// answers every item, so both go out as system-property filters.
+				'system.type': parsed.type,
 				language: parsed.language,
-				collection: parsed.collection,
-				// Kontent calls the filter parameter `in_filter`, not `filter`.
-				in_filter: parsed.in_filter,
-				elements: parsed.elements,
+				'system.collection': parsed.collection,
+				// Each filter is its own parameter (`elements.price[gt]=10`).
+				...(parsed.in_filter ? filterParams(parsed.in_filter) : {}),
+				// Repeated `elements` keys get a 400; Kontent wants one list.
+				elements: parsed.elements?.join(','),
 			}),
 		}),
 		{
@@ -56,7 +60,11 @@ export const get: KontentEndpoints['itemsGet'] = (ctx, input) =>
 			method: 'GET',
 			path: `/items/${segment(codename)}`,
 			previewToken: preview,
-			query: definedQuery({ depth, language, elements }),
+			query: definedQuery({
+				depth,
+				language,
+				elements: elements?.join(','),
+			}),
 		}),
 		{
 			log: (_, result) => ({

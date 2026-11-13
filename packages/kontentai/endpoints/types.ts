@@ -49,7 +49,7 @@ const PaginationInputSchema = z.object({
 		.max(KONTENT_MAX_LIMIT)
 		.optional()
 		.describe(
-			`Items per page. Defaults to ${KONTENT_DEFAULT_LIMIT}, and ${KONTENT_MAX_LIMIT} is the maximum.`,
+			`Items per page, at most ${KONTENT_MAX_LIMIT}. Without it Kontent returns everything from \`skip\` on in one answer.`,
 		),
 });
 
@@ -77,7 +77,7 @@ const ListInputBase = PaginationInputSchema.extend({
 		.min(1)
 		.optional()
 		.describe(
-			'A sort, such as `system.last_modified` or `elements.price[asc]`. Prefix a field with `-` or suffix it with `[desc]` to reverse it.',
+			'A sort, such as `system.last_modified` or `elements.price[asc]`. Suffix the field with `[desc]` to reverse it; a `-` prefix is refused with a 400.',
 		),
 	preview: PREVIEW_TOKEN_SCHEMA.optional(),
 });
@@ -134,31 +134,59 @@ export const KontentItemSchema = z
 
 export type KontentItem = z.infer<typeof KontentItemSchema>;
 
+// One Kontent filter is `system.<property>` or `elements.<codename>`, an
+// optional operator such as `[gt]` or `[in]`, then `=value` unless the operator
+// takes none (`[empty]`, `[nempty]`). Filters are joined with `&`.
+const FILTER = String.raw`(?:system|elements)\.[A-Za-z0-9_]+(?:\[[a-z]+\])?(?:=[^&]*)?`;
+const FILTER_EXPRESSIONS = new RegExp(`^${FILTER}(?:&${FILTER})*$`);
+
+/** Splits `in_filter` into the query parameters Kontent reads, one per filter. */
+export function filterParams(expression: string): Record<string, string> {
+	const params: Record<string, string> = {};
+	for (const filter of expression.split('&')) {
+		const at = filter.indexOf('=');
+		if (at === -1) params[filter] = '';
+		else params[filter.slice(0, at)] = filter.slice(at + 1);
+	}
+	return params;
+}
+
 const ItemsListInputSchema = ListInputBase.extend({
 	depth: DEPTH_SCHEMA,
 	type: z
 		.string()
 		.min(1)
 		.optional()
-		.describe('Only items of this content type codename.'),
+		.describe(
+			'Only items of this content type codename, sent as `system.type`.',
+		),
 	language: z
 		.string()
 		.min(1)
 		.optional()
 		.describe('Only this language codename, such as `en-US`.'),
-	collection: z.string().min(1).optional().describe('Only this collection.'),
-	in_filter: z
+	collection: z
 		.string()
 		.min(1)
 		.optional()
+		.describe('Only this collection codename, sent as `system.collection`.'),
+	in_filter: z
+		.string()
+		.regex(
+			FILTER_EXPRESSIONS,
+			'Use Kontent filters such as `elements.price[gt]=10`, joined with `&`',
+		)
+		.optional()
 		.describe(
-			'A filter expression, such as `elements.price[gt]=10`. Kontent’s own syntax, passed through.',
+			'Kontent filters, such as `elements.price[gt]=10` or `system.type[in]=article,coffee&elements.title[nempty]`. Each `&`-separated filter is sent as its own query parameter, and an item must match all of them.',
 		),
 	elements: z
 		.array(z.string().min(1))
 		.min(1)
 		.optional()
-		.describe('Return only these element codenames.'),
+		.describe(
+			'Return only these element codenames. Sent as one comma-separated `elements` value.',
+		),
 });
 
 export type ItemsListInput = z.input<typeof ItemsListInputSchema>;
@@ -183,7 +211,13 @@ const ItemGetInputSchema = z.object({
 	codename: CodenameSchema,
 	depth: DEPTH_SCHEMA,
 	language: z.string().min(1).optional(),
-	elements: z.array(z.string().min(1)).min(1).optional(),
+	elements: z
+		.array(z.string().min(1))
+		.min(1)
+		.optional()
+		.describe(
+			'Return only these element codenames. Sent as one comma-separated `elements` value.',
+		),
 	preview: PREVIEW_TOKEN_SCHEMA.optional(),
 });
 
@@ -216,7 +250,17 @@ const TypeElementSchema = z
 		type: z.string(),
 		name: z.string().nullish(),
 		taxonomy_group: z.string().nullish(),
-		options: z.array(z.record(z.string(), z.unknown())).nullish(),
+		// Only a `multiple_choice` element has options.
+		options: z
+			.array(
+				z
+					.object({
+						name: z.string().nullish(),
+						codename: z.string().nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
 	})
 	.loose();
 
@@ -249,6 +293,8 @@ const TypeGetInputSchema = z.object({
 
 export type TypeGetInput = z.input<typeof TypeGetInputSchema>;
 
+// Kontent answers the type itself, with `system` at the root; the handler wraps
+// it as `{ type }`, the way `items.get` answers `{ item }`.
 const TypeGetResponseSchema = z.object({ type: KontentTypeSchema }).loose();
 
 export type TypeGetResponse = z.infer<typeof TypeGetResponseSchema>;

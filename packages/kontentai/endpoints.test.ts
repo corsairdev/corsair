@@ -29,10 +29,21 @@ const mockLog = jest.mocked(logEventFromContext);
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
 // unknown: negative cases pass values no schema accepts.
-function invoke(endpoint: AnyEndpoint, input: unknown) {
+function invoke(
+	endpoint: AnyEndpoint,
+	input: unknown,
+	deliveryApiKey: string | null = null,
+) {
 	// The fake context only carries what the endpoints read: the environment ID
-	// is the key, since the Delivery API has no other credential.
-	return endpoint({ key: ENVIRONMENT_ID } as never, input as never);
+	// is the key, and the account may store a Delivery API key.
+	return endpoint(
+		{
+			key: ENVIRONMENT_ID,
+			options: {},
+			keys: { get_delivery_api_key: async () => deliveryApiKey },
+		} as never,
+		input as never,
+	);
 }
 
 let fetchMock: jest.SpyInstance;
@@ -126,12 +137,38 @@ describe('items.list', () => {
 		expect(sent.query.limit).toBe('20');
 		expect(sent.query.depth).toBe('2');
 		expect(sent.query.order).toBe('system.last_modified');
-		expect(sent.query.type).toBe('about_us');
 		expect(sent.query.language).toBe('en-US');
-		expect(sent.query.collection).toBe('default');
-		// The filter parameter is `in_filter`, not `filter`.
-		expect(sent.query.in_filter).toBe('elements.price[gt]=10');
-		expect(sent.allElements).toEqual(['facts', 'url_pattern']);
+		// Kontent ignores bare `type`, `collection` and `in_filter` parameters
+		// and answers every item (live probe of the sample environment).
+		expect(sent.query['system.type']).toBe('about_us');
+		expect(sent.query['system.collection']).toBe('default');
+		expect(sent.query['elements.price[gt]']).toBe('10');
+		expect(sent.query).not.toHaveProperty('type');
+		expect(sent.query).not.toHaveProperty('collection');
+		expect(sent.query).not.toHaveProperty('in_filter');
+		// Repeated `elements` keys get a 400; Kontent wants one list.
+		expect(sent.allElements).toEqual(['facts,url_pattern']);
+	});
+
+	it('sends each &-joined filter as its own parameter', async () => {
+		respond(items);
+
+		await invoke(Items.list, {
+			in_filter: 'system.type[in]=article,coffee&elements.title[nempty]',
+		});
+
+		const sent = lastRequest();
+		expect(sent.query['system.type[in]']).toBe('article,coffee');
+		expect(sent.query['elements.title[nempty]']).toBe('');
+	});
+
+	it.each([
+		['price>10'],
+		['elements.price[gt]=10&'],
+		['filter=elements.price'],
+	])('rejects the filter %j before calling Kontent', async (in_filter) => {
+		await expect(invoke(Items.list, { in_filter })).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
 	it('reads the next skip out of the full next_page URL', async () => {
@@ -339,7 +376,11 @@ describe('languages.list', () => {
 
 describe('the environment ID', () => {
 	it('fails before a request when none is configured', async () => {
-		const ctx = { key: '', options: {} };
+		const ctx = {
+			key: '',
+			options: {},
+			keys: { get_delivery_api_key: async () => null },
+		};
 
 		const error = await caught(
 			(Items.list as never as AnyEndpoint)(ctx as never, {} as never),
