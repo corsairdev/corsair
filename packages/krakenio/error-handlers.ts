@@ -23,10 +23,12 @@ export const errorHandlers = {
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// 401 is an unknown key or an inactive account. Regenerating a key in the
+	// 401 is an unknown key or an inactive account (and /user_status says 404
+	// "User not found" for a wrong pair). Regenerating a key in the
 	// dashboard replaces the old one, so a 401 usually means it was rotated.
 	AUTH_ERROR: {
-		match: (error: Error) => statusOf(error) === 401,
+		match: (error: Error) =>
+			error instanceof KrakenAPIError && error.isAuthError,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 403 is a spent quota or a plan that does not allow the request.

@@ -10,6 +10,7 @@ import {
 	quotaExceeded,
 	refusedOn200,
 	unknownKey,
+	userNotFound,
 	userStatusNoAuth,
 	waitRequired,
 } from './test-fixtures';
@@ -496,6 +497,24 @@ describe('error envelopes', () => {
 			status: 422,
 			message: 'Kraken 422: auth is required',
 		});
+	});
+
+	it('treats the 404 "User not found" from /user_status as an auth error', async () => {
+		respond(userNotFound, 404);
+
+		await expect(invoke(Kraken.account, {})).rejects.toMatchObject({
+			status: 404,
+			isAuthError: true,
+			message: 'Kraken 404: User not found',
+		});
+	});
+
+	it('does not call a 404 on another route an auth error', async () => {
+		respond({ success: false, message: '404 Not Found' }, 404);
+
+		await expect(
+			invoke(Kraken.url, { url: 'https://acme.example/a.jpg', wait: true }),
+		).rejects.toMatchObject({ status: 404, isAuthError: false });
 	});
 
 	it('reads the `error` field that /user_status uses', async () => {

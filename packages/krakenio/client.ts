@@ -74,6 +74,8 @@ export class KrakenAPIError extends Error {
 	readonly method?: string;
 	readonly transport: boolean;
 	readonly timedOut: boolean;
+	/** Kraken refused the key or secret, whatever status it used to say so. */
+	readonly authFailure: boolean;
 
 	constructor(
 		message: string,
@@ -84,6 +86,7 @@ export class KrakenAPIError extends Error {
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
+			authFailure?: boolean;
 		} = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
@@ -93,15 +96,19 @@ export class KrakenAPIError extends Error {
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
+		this.authFailure = options.authFailure ?? false;
 	}
 
 	get isRateLimit(): boolean {
 		return this.status === 429;
 	}
 
-	/** An unknown API key, or an account that is not active. */
+	/**
+	 * An unknown API key or a wrong secret. The optimize routes say 401;
+	 * `/user_status` says 404 "User not found" (seen live on 11-14).
+	 */
 	get isAuthError(): boolean {
-		return this.status === 401;
+		return this.status === 401 || this.authFailure;
 	}
 
 	/** The plan's quota is spent, which no retry can fix. */
@@ -227,6 +234,9 @@ export async function makeKrakenRequest(
 					status: error.status,
 					retryAfter: error.retryAfter,
 					method: 'POST',
+					// The route is fixed, so a 404 here is Kraken not finding the
+					// account behind the key and secret.
+					authFailure: path === '/user_status' && error.status === 404,
 				},
 			);
 		}

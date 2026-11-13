@@ -50,6 +50,9 @@ export const userStatusNoAuth = {
 		'Incoming request body does not contain a valid auth.api_key or auth.api_secret',
 };
 
+/** `/user_status` with a wrong secret or key, seen live on 11-14 (404). */
+export const userNotFound = { success: false, error: 'User not found' };
+
 /** The 401 body for a key Kraken does not know. */
 export const unknownKey = {
 	message: 'Unknown API Key. Please check your API key and try again.',
