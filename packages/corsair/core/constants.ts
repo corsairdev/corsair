@@ -755,6 +755,7 @@ export const ProviderDisplayNames = {
 	dropboxsign: 'Dropbox Sign',
 	dropcontact: 'Dropcontact',
 	dynapictures: 'Dynapictures',
+	e2b: 'E2B',
 	elevenlabs: 'ElevenLabs',
 	emailoctopus: 'EmailOctopus',
 	emelia: 'Emelia',
