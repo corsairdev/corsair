@@ -437,8 +437,7 @@ describe('Companies schemas', () => {
 		).toBe(true);
 
 		expect(
-			CompaniesListInputSchema.safeParse({ limit: 50, search: 'Acme' })
-				.success,
+			CompaniesListInputSchema.safeParse({ limit: 50, search: 'Acme' }).success,
 		).toBe(true);
 	});
 });

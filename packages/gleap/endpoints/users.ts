@@ -6,10 +6,7 @@ import type {
 	UsersListOutput,
 	UsersUpdateOutput,
 } from './types';
-import {
-	GleapEndpointInputSchemas,
-	GleapEndpointOutputSchemas,
-} from './types';
+import { GleapEndpointInputSchemas, GleapEndpointOutputSchemas } from './types';
 
 export const getMe: GleapEndpoints['usersGetMe'] = async (ctx, input) => {
 	GleapEndpointInputSchemas.usersGetMe.parse(input);
@@ -22,7 +19,12 @@ export const getMe: GleapEndpoints['usersGetMe'] = async (ctx, input) => {
 		},
 	);
 	const output = GleapEndpointOutputSchemas.usersGetMe.parse(response);
-	await logEventFromContext(ctx, 'gleap.users.getMe', { me: true }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'gleap.users.getMe',
+		{ me: true },
+		'completed',
+	);
 	return output;
 };
 

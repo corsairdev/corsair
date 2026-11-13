@@ -9,10 +9,7 @@ import type {
 	MessagesListOutput,
 	MessagesUpdateOutput,
 } from './types';
-import {
-	GleapEndpointInputSchemas,
-	GleapEndpointOutputSchemas,
-} from './types';
+import { GleapEndpointInputSchemas, GleapEndpointOutputSchemas } from './types';
 
 export const list: GleapEndpoints['messagesList'] = async (ctx, input) => {
 	const parsed = GleapEndpointInputSchemas.messagesList.parse(input);
@@ -35,12 +32,7 @@ export const list: GleapEndpoints['messagesList'] = async (ctx, input) => {
 	);
 	const output = GleapEndpointOutputSchemas.messagesList.parse(response);
 	const count = Array.isArray(output) ? output.length : output.items.length;
-	await logEventFromContext(
-		ctx,
-		'gleap.messages.list',
-		{ count },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'gleap.messages.list', { count }, 'completed');
 	return output;
 };
 

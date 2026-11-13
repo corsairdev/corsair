@@ -7,10 +7,7 @@ import type {
 	BoardsListOutput,
 	BoardsUpdateOutput,
 } from './types';
-import {
-	GleapEndpointInputSchemas,
-	GleapEndpointOutputSchemas,
-} from './types';
+import { GleapEndpointInputSchemas, GleapEndpointOutputSchemas } from './types';
 
 export const list: GleapEndpoints['boardsList'] = async (ctx, input) => {
 	const parsed = GleapEndpointInputSchemas.boardsList.parse(input);
@@ -70,12 +67,7 @@ export const update: GleapEndpoints['boardsUpdate'] = async (ctx, input) => {
 		},
 	);
 	const output = GleapEndpointOutputSchemas.boardsUpdate.parse(response);
-	await logEventFromContext(
-		ctx,
-		'gleap.boards.update',
-		{ type },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'gleap.boards.update', { type }, 'completed');
 	return output;
 };
 

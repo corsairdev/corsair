@@ -10,10 +10,7 @@ import type {
 	TicketsSearchOutput,
 	TicketsUpdateOutput,
 } from './types';
-import {
-	GleapEndpointInputSchemas,
-	GleapEndpointOutputSchemas,
-} from './types';
+import { GleapEndpointInputSchemas, GleapEndpointOutputSchemas } from './types';
 
 export const list: GleapEndpoints['ticketsList'] = async (ctx, input) => {
 	const parsed = GleapEndpointInputSchemas.ticketsList.parse(input);
@@ -45,12 +42,7 @@ export const list: GleapEndpoints['ticketsList'] = async (ctx, input) => {
 	);
 	const output = GleapEndpointOutputSchemas.ticketsList.parse(response);
 	const count = Array.isArray(output) ? output.length : output.items.length;
-	await logEventFromContext(
-		ctx,
-		'gleap.tickets.list',
-		{ count },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'gleap.tickets.list', { count }, 'completed');
 	return output;
 };
 

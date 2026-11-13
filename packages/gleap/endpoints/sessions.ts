@@ -11,10 +11,7 @@ import type {
 	SessionsSearchOutput,
 	SessionsUpdateOutput,
 } from './types';
-import {
-	GleapEndpointInputSchemas,
-	GleapEndpointOutputSchemas,
-} from './types';
+import { GleapEndpointInputSchemas, GleapEndpointOutputSchemas } from './types';
 
 export const list: GleapEndpoints['sessionsList'] = async (ctx, input) => {
 	const parsed = GleapEndpointInputSchemas.sessionsList.parse(input);
@@ -34,15 +31,8 @@ export const list: GleapEndpoints['sessionsList'] = async (ctx, input) => {
 		},
 	);
 	const output = GleapEndpointOutputSchemas.sessionsList.parse(response);
-	const count = Array.isArray(output)
-		? output.length
-		: output.sessions.length;
-	await logEventFromContext(
-		ctx,
-		'gleap.sessions.list',
-		{ count },
-		'completed',
-	);
+	const count = Array.isArray(output) ? output.length : output.sessions.length;
+	await logEventFromContext(ctx, 'gleap.sessions.list', { count }, 'completed');
 	return output;
 };
 
@@ -81,8 +71,7 @@ export const getByUserId: GleapEndpoints['sessionsGetByUserId'] = async (
 			baseUrl: ctx.options?.baseUrl,
 		},
 	);
-	const output =
-		GleapEndpointOutputSchemas.sessionsGetByUserId.parse(response);
+	const output = GleapEndpointOutputSchemas.sessionsGetByUserId.parse(response);
 	await logEventFromContext(
 		ctx,
 		'gleap.sessions.getByUserId',
@@ -204,8 +193,7 @@ export const activities: GleapEndpoints['sessionsActivities'] = async (
 			baseUrl: ctx.options?.baseUrl,
 		},
 	);
-	const output =
-		GleapEndpointOutputSchemas.sessionsActivities.parse(response);
+	const output = GleapEndpointOutputSchemas.sessionsActivities.parse(response);
 	const count = Array.isArray(output)
 		? output.length
 		: (output.activities?.length ?? 0);

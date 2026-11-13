@@ -68,7 +68,11 @@ describe('Tickets endpoints', () => {
 		expect(result).toEqual(mockTickets);
 		expect(mockedRequest).toHaveBeenCalledWith('/tickets', 'test-api-key', {
 			method: 'GET',
-			query: expect.objectContaining({ type: 'BUG', status: 'OPEN', limit: 10 }),
+			query: expect.objectContaining({
+				type: 'BUG',
+				status: 'OPEN',
+				limit: 10,
+			}),
 			projectId: undefined,
 		});
 		expect(mockedLogEvent).toHaveBeenCalledWith(
@@ -321,10 +325,14 @@ describe('Sessions endpoints', () => {
 
 		const result = await Sessions.get(ctx, { sessionId: 's_1' });
 		expect(result).toEqual(mockSession);
-		expect(mockedRequest).toHaveBeenCalledWith('/sessions/s_1', 'test-api-key', {
-			method: 'GET',
-			projectId: undefined,
-		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/sessions/s_1',
+			'test-api-key',
+			{
+				method: 'GET',
+				projectId: undefined,
+			},
+		);
 	});
 
 	it('sessions.getByUserId retrieves session by custom user ID', async () => {
@@ -369,11 +377,15 @@ describe('Sessions endpoints', () => {
 			name: 'Bobby',
 		});
 		expect(result).toEqual(mockUpdated);
-		expect(mockedRequest).toHaveBeenCalledWith('/sessions/s_1', 'test-api-key', {
-			method: 'PUT',
-			body: { name: 'Bobby' },
-			projectId: undefined,
-		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/sessions/s_1',
+			'test-api-key',
+			{
+				method: 'PUT',
+				body: { name: 'Bobby' },
+				projectId: undefined,
+			},
+		);
 	});
 
 	it('sessions.delete deletes contact session', async () => {
@@ -381,10 +393,14 @@ describe('Sessions endpoints', () => {
 
 		const result = await Sessions.del(ctx, { sessionId: 's_1' });
 		expect(result).toEqual({ success: true });
-		expect(mockedRequest).toHaveBeenCalledWith('/sessions/s_1', 'test-api-key', {
-			method: 'DELETE',
-			projectId: undefined,
-		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/sessions/s_1',
+			'test-api-key',
+			{
+				method: 'DELETE',
+				projectId: undefined,
+			},
+		);
 	});
 
 	it('sessions.search searches sessions', async () => {
@@ -685,15 +701,11 @@ describe('Companies endpoints', () => {
 
 		const listRes = await Companies.list(ctx, { limit: 10 });
 		expect(listRes).toEqual(mockCompanies);
-		expect(mockedRequest).toHaveBeenCalledWith(
-			'/companies',
-			'test-api-key',
-			{
-				method: 'GET',
-				query: expect.objectContaining({ limit: 10 }),
-				projectId: undefined,
-			},
-		);
+		expect(mockedRequest).toHaveBeenCalledWith('/companies', 'test-api-key', {
+			method: 'GET',
+			query: expect.objectContaining({ limit: 10 }),
+			projectId: undefined,
+		});
 
 		const mockCompany = { companyId: 'c_1', name: 'Acme' };
 		mockedRequest.mockResolvedValue(mockCompany);

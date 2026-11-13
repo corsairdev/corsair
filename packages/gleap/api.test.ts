@@ -27,9 +27,13 @@ const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
 
 describeLive('Gleap live API (env-gated)', () => {
 	it('GET /users/me retrieves current user profile', async () => {
-		const res = await makeGleapRequest<UsersGetMeOutput>('/users/me', LIVE_KEY, {
-			method: 'GET',
-		});
+		const res = await makeGleapRequest<UsersGetMeOutput>(
+			'/users/me',
+			LIVE_KEY,
+			{
+				method: 'GET',
+			},
+		);
 		const parsed = UsersGetMeOutputSchema.parse(res);
 		expect(parsed).toBeDefined();
 	});

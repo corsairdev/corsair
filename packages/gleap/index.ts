@@ -433,10 +433,10 @@ export function gleap<const T extends GleapPluginOptions>(
 export default gleap;
 
 export type {
-	GleapEndpointInputs,
-	GleapEndpointOutputs,
 	Board,
 	Company,
+	GleapEndpointInputs,
+	GleapEndpointOutputs,
 	Message,
 	Session,
 	Survey,

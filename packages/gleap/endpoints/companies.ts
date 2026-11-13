@@ -7,10 +7,7 @@ import type {
 	CompaniesGetOutput,
 	CompaniesListOutput,
 } from './types';
-import {
-	GleapEndpointInputSchemas,
-	GleapEndpointOutputSchemas,
-} from './types';
+import { GleapEndpointInputSchemas, GleapEndpointOutputSchemas } from './types';
 
 export const list: GleapEndpoints['companiesList'] = async (ctx, input) => {
 	const parsed = GleapEndpointInputSchemas.companiesList.parse(input);
@@ -30,9 +27,7 @@ export const list: GleapEndpoints['companiesList'] = async (ctx, input) => {
 		},
 	);
 	const output = GleapEndpointOutputSchemas.companiesList.parse(response);
-	const count = Array.isArray(output)
-		? output.length
-		: output.companies.length;
+	const count = Array.isArray(output) ? output.length : output.companies.length;
 	await logEventFromContext(
 		ctx,
 		'gleap.companies.list',
@@ -63,31 +58,32 @@ export const get: GleapEndpoints['companiesGet'] = async (ctx, input) => {
 	return output;
 };
 
-export const createOrUpdate: GleapEndpoints['companiesCreateOrUpdate'] =
-	async (ctx, input) => {
-		const parsed =
-			GleapEndpointInputSchemas.companiesCreateOrUpdate.parse(input);
-		const { companyId, project, ...body } = parsed;
-		const response = await makeGleapRequest<CompaniesCreateOrUpdateOutput>(
-			`/companies/${encodeURIComponent(companyId)}`,
-			ctx.key,
-			{
-				method: 'PUT',
-				body,
-				projectId: project ?? ctx.options?.projectId,
-				baseUrl: ctx.options?.baseUrl,
-			},
-		);
-		const output =
-			GleapEndpointOutputSchemas.companiesCreateOrUpdate.parse(response);
-		await logEventFromContext(
-			ctx,
-			'gleap.companies.createOrUpdate',
-			{ companyId },
-			'completed',
-		);
-		return output;
-	};
+export const createOrUpdate: GleapEndpoints['companiesCreateOrUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = GleapEndpointInputSchemas.companiesCreateOrUpdate.parse(input);
+	const { companyId, project, ...body } = parsed;
+	const response = await makeGleapRequest<CompaniesCreateOrUpdateOutput>(
+		`/companies/${encodeURIComponent(companyId)}`,
+		ctx.key,
+		{
+			method: 'PUT',
+			body,
+			projectId: project ?? ctx.options?.projectId,
+			baseUrl: ctx.options?.baseUrl,
+		},
+	);
+	const output =
+		GleapEndpointOutputSchemas.companiesCreateOrUpdate.parse(response);
+	await logEventFromContext(
+		ctx,
+		'gleap.companies.createOrUpdate',
+		{ companyId },
+		'completed',
+	);
+	return output;
+};
 
 export const del: GleapEndpoints['companiesDelete'] = async (ctx, input) => {
 	const parsed = GleapEndpointInputSchemas.companiesDelete.parse(input);

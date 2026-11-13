@@ -9,10 +9,7 @@ import type {
 	FeedbackSurveysResponsesOutput,
 	FeedbackSurveysStatsOutput,
 } from './types';
-import {
-	GleapEndpointInputSchemas,
-	GleapEndpointOutputSchemas,
-} from './types';
+import { GleapEndpointInputSchemas, GleapEndpointOutputSchemas } from './types';
 
 export const rateConversation: GleapEndpoints['feedbackRateConversation'] =
 	async (ctx, input) => {
@@ -54,8 +51,7 @@ export const rateMessage: GleapEndpoints['feedbackRateMessage'] = async (
 			baseUrl: ctx.options?.baseUrl,
 		},
 	);
-	const output =
-		GleapEndpointOutputSchemas.feedbackRateMessage.parse(response);
+	const output = GleapEndpointOutputSchemas.feedbackRateMessage.parse(response);
 	await logEventFromContext(
 		ctx,
 		'gleap.feedback.rateMessage',
@@ -85,8 +81,7 @@ export const surveysList: GleapEndpoints['feedbackSurveysList'] = async (
 			baseUrl: ctx.options?.baseUrl,
 		},
 	);
-	const output =
-		GleapEndpointOutputSchemas.feedbackSurveysList.parse(response);
+	const output = GleapEndpointOutputSchemas.feedbackSurveysList.parse(response);
 	const count = Array.isArray(output) ? output.length : output.items.length;
 	await logEventFromContext(
 		ctx,
@@ -111,8 +106,7 @@ export const surveysGet: GleapEndpoints['feedbackSurveysGet'] = async (
 			baseUrl: ctx.options?.baseUrl,
 		},
 	);
-	const output =
-		GleapEndpointOutputSchemas.feedbackSurveysGet.parse(response);
+	const output = GleapEndpointOutputSchemas.feedbackSurveysGet.parse(response);
 	await logEventFromContext(
 		ctx,
 		'gleap.feedback.surveysGet',
@@ -130,22 +124,19 @@ export const surveysResponses: GleapEndpoints['feedbackSurveysResponses'] =
 			skip: parsed.skip,
 			limit: parsed.limit,
 		};
-		const response =
-			await makeGleapRequest<FeedbackSurveysResponsesOutput>(
-				`/engagement/surveys/${encodeURIComponent(parsed.surveyId)}/responses`,
-				ctx.key,
-				{
-					method: 'GET',
-					query,
-					projectId: parsed.project ?? ctx.options?.projectId,
-					baseUrl: ctx.options?.baseUrl,
-				},
-			);
+		const response = await makeGleapRequest<FeedbackSurveysResponsesOutput>(
+			`/engagement/surveys/${encodeURIComponent(parsed.surveyId)}/responses`,
+			ctx.key,
+			{
+				method: 'GET',
+				query,
+				projectId: parsed.project ?? ctx.options?.projectId,
+				baseUrl: ctx.options?.baseUrl,
+			},
+		);
 		const output =
 			GleapEndpointOutputSchemas.feedbackSurveysResponses.parse(response);
-		const count = Array.isArray(output)
-			? output.length
-			: output.items.length;
+		const count = Array.isArray(output) ? output.length : output.items.length;
 		await logEventFromContext(
 			ctx,
 			'gleap.feedback.surveysResponses',

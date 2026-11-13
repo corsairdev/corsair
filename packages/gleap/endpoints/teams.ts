@@ -7,22 +7,15 @@ import type {
 	TeamsListOutput,
 	TeamsUpdateOutput,
 } from './types';
-import {
-	GleapEndpointInputSchemas,
-	GleapEndpointOutputSchemas,
-} from './types';
+import { GleapEndpointInputSchemas, GleapEndpointOutputSchemas } from './types';
 
 export const list: GleapEndpoints['teamsList'] = async (ctx, input) => {
 	const parsed = GleapEndpointInputSchemas.teamsList.parse(input);
-	const response = await makeGleapRequest<TeamsListOutput>(
-		'/teams',
-		ctx.key,
-		{
-			method: 'GET',
-			projectId: parsed.project ?? ctx.options?.projectId,
-			baseUrl: ctx.options?.baseUrl,
-		},
-	);
+	const response = await makeGleapRequest<TeamsListOutput>('/teams', ctx.key, {
+		method: 'GET',
+		projectId: parsed.project ?? ctx.options?.projectId,
+		baseUrl: ctx.options?.baseUrl,
+	});
 	const output = GleapEndpointOutputSchemas.teamsList.parse(response);
 	await logEventFromContext(
 		ctx,
@@ -70,12 +63,7 @@ export const update: GleapEndpoints['teamsUpdate'] = async (ctx, input) => {
 		},
 	);
 	const output = GleapEndpointOutputSchemas.teamsUpdate.parse(response);
-	await logEventFromContext(
-		ctx,
-		'gleap.teams.update',
-		{ teamId },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'gleap.teams.update', { teamId }, 'completed');
 	return output;
 };
 

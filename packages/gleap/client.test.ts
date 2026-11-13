@@ -122,9 +122,7 @@ describe('makeGleapRequest', () => {
 		expect((err as ApiError).status).toBe(429);
 		expect((err as ApiError).retryAfter).toBe(3000);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(err as ApiError)).toBe(true);
-		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(),
-		).resolves.toEqual({
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
 			maxRetries: 0,
 		});
 	});
@@ -236,9 +234,7 @@ describe('real-transport rate-limit Retry-After integration', () => {
 			// 4 seconds parsed to 4000ms
 			expect(apiErr.retryAfter).toBe(4000);
 			// Confirms the single-owner rate limit error handler returns maxRetries: 0
-			await expect(
-				errorHandlers.RATE_LIMIT_ERROR.handler(),
-			).resolves.toEqual({
+			await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
 				maxRetries: 0,
 			});
 		} finally {
