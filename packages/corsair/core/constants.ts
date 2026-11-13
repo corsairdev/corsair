@@ -208,6 +208,7 @@ export const BaseProviders = [
 	'dnsfilter',
 	'dockerhub',
 	'docmosis',
+	'docsbotai',
 	'docsumo',
 	'docupost',
 	'docusign',
@@ -743,6 +744,7 @@ export const ProviderDisplayNames = {
 	dnsfilter: 'DNSFilter',
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
+	docsbotai: 'DocsBot AI',
 	docsumo: 'Docsumo',
 	docupost: 'Docupost',
 	docusign: 'DocuSign',
@@ -1285,6 +1287,7 @@ export type AllProviders =
 	| 'dnsfilter'
 	| 'dockerhub'
 	| 'docmosis'
+	| 'docsbotai'
 	| 'docsumo'
 	| 'docupost'
 	| 'docusign'
