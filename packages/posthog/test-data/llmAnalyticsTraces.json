@@ -1,0 +1,22 @@
+{
+  "cache_key": "cache_309833_47287dbb64822b9fe597c566d7173bb7bc5fd2e6e760a578ff875763b36abe21",
+  "cache_target_age": "2026-11-12T13:42:51.666540Z",
+  "calculation_trigger": null,
+  "columns": [],
+  "error": null,
+  "hasMore": false,
+  "is_cached": false,
+  "last_refresh": "2026-11-12T13:37:51.666540Z",
+  "limit": 2,
+  "next_allowed_client_refresh": "2026-11-12T13:38:51.666540Z",
+  "offset": 0,
+  "query_scan": null,
+  "query_status": null,
+  "resolved_compare_date_range": null,
+  "resolved_date_range": null,
+  "results": [],
+  "timezone": "UTC",
+  "used_data_warehouse_sources": null,
+  "warehouse_suggestions": null,
+  "warnings": null
+}

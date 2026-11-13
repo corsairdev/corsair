@@ -1,0 +1,117 @@
+import type { WatiEndpoints } from '..';
+import { target } from '../client';
+import { call } from './call';
+import {
+	WatiEndpointInputSchemas as Inputs,
+	WatiEndpointOutputSchemas as Outputs,
+} from './types';
+
+export const create: WatiEndpoints['contactsCreate'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'contacts.create',
+			input: Inputs.contactsCreate,
+			output: Outputs.contactsCreate,
+		},
+		input,
+		({ whatsapp_number, name, custom_params }) => ({
+			method: 'POST',
+			path: '/contacts',
+			body: { whatsapp_number, name, custom_params },
+		}),
+		{
+			// The number and the name identify a person, so only the new id and
+			// how many custom attributes were sent are logged.
+			log: (parsed, result) => ({
+				id: result.id ?? undefined,
+				customParams: parsed.custom_params?.length ?? 0,
+			}),
+		},
+	);
+
+export const get: WatiEndpoints['contactsGet'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'contacts.get',
+			input: Inputs.contactsGet,
+			output: Outputs.contactsGet,
+		},
+		input,
+		({ target: who }) => ({
+			method: 'GET',
+			path: `/contacts/${target(who)}`,
+		}),
+		{
+			// The contact id only; the name is personal data.
+			log: (_, result) => ({ id: result.id ?? undefined }),
+		},
+	);
+
+export const list: WatiEndpoints['contactsList'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'contacts.list',
+			input: Inputs.contactsList,
+			output: Outputs.contactsList,
+		},
+		input,
+		({ page_number, page_size }) => ({
+			method: 'GET',
+			path: '/contacts',
+			query: { page_number, page_size },
+		}),
+		{
+			log: (_, result) => ({
+				count: result.contact_list?.length ?? 0,
+				page: result.page_number ?? undefined,
+				total: result.total ?? undefined,
+			}),
+		},
+	);
+
+export const count: WatiEndpoints['contactsCount'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'contacts.count',
+			input: Inputs.contactsCount,
+			output: Outputs.contactsCount,
+		},
+		input,
+		() => ({ method: 'GET', path: '/contacts/count' }),
+		{
+			log: (_, result) => ({
+				count: result.contact_count ?? undefined,
+			}),
+		},
+	);
+
+/**
+ * WATI documents this as a soft delete: the contact leaves the workspace, but
+ * it is not a physical (GDPR) erasure.
+ */
+export const remove: WatiEndpoints['contactsDelete'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'contacts.delete',
+			input: Inputs.contactsDelete,
+			output: Outputs.contactsDelete,
+		},
+		input,
+		({ target: who }) => ({
+			method: 'DELETE',
+			path: `/contacts/${target(who)}`,
+		}),
+		{
+			shape: (raw) => ({
+				...(typeof raw === 'object' && raw !== null ? raw : {}),
+				success: true,
+			}),
+			// The target is a phone number, so it is not logged.
+			log: () => ({ deleted: true }),
+		},
+	);

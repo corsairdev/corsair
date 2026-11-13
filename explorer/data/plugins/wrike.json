@@ -1,0 +1,1391 @@
+{
+  "id": "wrike",
+  "displayName": "Wrike",
+  "description": "Work management with Wrike - search and manage tasks, work with folders and projects, log and read time entries, comment on tasks, and read contacts and account settings.",
+  "npmPackageName": "@corsair-dev/wrike",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 23,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "wrike.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read the account, including the virtual root folder id that a task or folder create needs as its parent",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, dateFormat?: string | null, firstDayOfWeek?: string | null, workDays?: string[] | null, rootFolderId?: string | null, recycleBinId?: string | null, timezone?: string | null, locale?: string | null, subscription?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Post a comment on a task",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The comment text, sent as plain text: Wrike strips any HTML tags rather than rendering them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, text?: string | null, authorId?: string | null, type?: string | null, createdDate?: string | null, updatedDate?: string | null, taskId?: string | null, folderId?: string | null, rootCommentId?: string | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Delete a comment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List comments across the account, up to a limit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The most comments to return. Wrike returns up to 1000 by default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, text?: string | null, authorId?: string | null, type?: string | null, createdDate?: string | null, updatedDate?: string | null, taskId?: string | null, folderId?: string | null, rootCommentId?: string | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.comments.task",
+      "shortPath": "comments.task",
+      "description": "List the comments on a task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, text?: string | null, authorId?: string | null, type?: string | null, createdDate?: string | null, updatedDate?: string | null, taskId?: string | null, folderId?: string | null, rootCommentId?: string | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.comments.update",
+      "shortPath": "comments.update",
+      "description": "Edit the text of a comment you wrote; Wrike allows it only in the 5 minutes after posting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "Plain text, as on create. Wrike allows an edit only in the 5 minutes after posting."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, text?: string | null, authorId?: string | null, type?: string | null, createdDate?: string | null, updatedDate?: string | null, taskId?: string | null, folderId?: string | null, rootCommentId?: string | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Read one contact by id, or `me` for the one behind the token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "A contact id, or `me` for the contact behind the token."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, firstName?: string | null, lastName?: string | null, primaryEmail?: string | null, title?: string | null, companyName?: string | null, phone?: string | null, location?: string | null, timezone?: string | null, locale?: string | null, type?: string | null, avatarUrl?: string | null, deleted?: boolean | null, me?: boolean | null, myTeam?: boolean | null, profiles?: Record<string, any>[] | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List the contacts on the account, optionally only active ones or only yourself",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "me",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only the contact behind the token."
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only contacts who have not been deleted."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "A JSON array of optional fields to include, e.g. `[\"attachmentCount\"]`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, firstName?: string | null, lastName?: string | null, primaryEmail?: string | null, title?: string | null, companyName?: string | null, phone?: string | null, location?: string | null, timezone?: string | null, locale?: string | null, type?: string | null, avatarUrl?: string | null, deleted?: boolean | null, me?: boolean | null, myTeam?: boolean | null, profiles?: Record<string, any>[] | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a folder inside another, or in the account root when given its virtual root id",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parentId",
+            "optional": false,
+            "type": "string",
+            "description": "The parent folder id. Use the Root Folder API id for the account root."
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shareds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contact ids to share with."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, childIds?: string[] | null, scope?: string | null, space?: boolean | null, color?: string | null, customItemTypeId?: string | null, project?: { status?: string | null, ownerIds?: string[] | null, startDate?: string | null, endDate?: string | null, createdDate?: string | null, completedDate?: string | null } | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.folders.delete",
+      "shortPath": "folders.delete",
+      "description": "Move a folder and every folder and task inside it to the recycle bin unless they have parents outside the deleted folder; Wrike does not refuse a folder with contents",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.folders.get",
+      "shortPath": "folders.get",
+      "description": "Read one folder or project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, childIds?: string[] | null, scope?: string | null, space?: boolean | null, color?: string | null, customItemTypeId?: string | null, project?: { status?: string | null, ownerIds?: string[] | null, startDate?: string | null, endDate?: string | null, createdDate?: string | null, completedDate?: string | null } | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List folders and projects, each with its parent and scope",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000."
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string",
+            "description": "The token the previous page returned, to read the next."
+          },
+          {
+            "key": "project",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only projects (true) or only plain folders (false)."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "A substring of the title."
+          },
+          {
+            "key": "permalink",
+            "optional": true,
+            "type": "string",
+            "description": "A folder permalink, exact match."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "A JSON array of optional fields to include, e.g. `[\"attachmentCount\"]`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, childIds?: string[] | null, scope?: string | null, space?: boolean | null, color?: string | null, customItemTypeId?: string | null, project?: { status?: string | null, ownerIds?: string[] | null, startDate?: string | null, endDate?: string | null, createdDate?: string | null, completedDate?: string | null } | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.folders.tasks",
+      "shortPath": "folders.tasks",
+      "description": "List the tasks in a folder, optionally including every descendant folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The folder id."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000."
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string",
+            "description": "The token the previous page returned, to read the next."
+          },
+          {
+            "key": "descendants",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also search every descendant folder."
+          },
+          {
+            "key": "sortField",
+            "optional": true,
+            "type": "Status | Importance | Title | StartFinishInterval | DueDate | CreatedDate | UpdatedDate | CompletedDate | LastAccessDate"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "Asc | Desc"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "A JSON array of optional fields to include, e.g. `[\"attachmentCount\"]`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, status?: string | null, importance?: string | null, permalink?: string | null, dates?: { type?: string | null, duration?: number | null, start?: string | null, due?: string | null } | null, parentIds?: string[] | null, subTaskIds?: string[] | null, superTaskIds?: string[] | null, authorIds?: string[] | null, responsibleIds?: string[] | null, followerIds?: string[] | null, sharedIds?: string[] | null, hasAttachments?: boolean | null, recurrent?: boolean | null, createdDate?: string | null, updatedDate?: string | null, completedDate?: string | null, customFields?: Record<string, any>[] | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.folders.update",
+      "shortPath": "folders.update",
+      "description": "Rename a folder, change its description or move it between parents",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "addParents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "removeParents",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, childIds?: string[] | null, scope?: string | null, space?: boolean | null, color?: string | null, customItemTypeId?: string | null, project?: { status?: string | null, ownerIds?: string[] | null, startDate?: string | null, endDate?: string | null, createdDate?: string | null, completedDate?: string | null } | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.tasks.create",
+      "shortPath": "tasks.create",
+      "description": "Create a task in a folder, with assignees, dates, custom fields and metadata; Wrike has no account-level create",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "The parent folder id. Use the Root Folder API id for the account root."
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Active | Deferred | Completed | Cancelled"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "High | Low | Normal"
+          },
+          {
+            "key": "responsibles",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contact ids to assign."
+          },
+          {
+            "key": "followers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "Shorthand for `dates.start`, as yyyy-MM-dd."
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string",
+            "description": "Shorthand for `dates.due`, as yyyy-MM-dd."
+          },
+          {
+            "key": "dates",
+            "optional": true,
+            "type": "{ type?: Backlog | Milestone | Planned, start?: string, due?: string, duration?: number }",
+            "description": "Wrike schedules a task through this object; startDate and dueDate are folded into it."
+          },
+          {
+            "key": "parents",
+            "optional": true,
+            "type": "string[]",
+            "description": "Additional parent folders, beyond the one in the path."
+          },
+          {
+            "key": "superTasks",
+            "optional": true,
+            "type": "string[]",
+            "description": "Parent task ids for a subtask. Use the Root Folder API id as folderId."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, status?: string | null, importance?: string | null, permalink?: string | null, dates?: { type?: string | null, duration?: number | null, start?: string | null, due?: string | null } | null, parentIds?: string[] | null, subTaskIds?: string[] | null, superTaskIds?: string[] | null, authorIds?: string[] | null, responsibleIds?: string[] | null, followerIds?: string[] | null, sharedIds?: string[] | null, hasAttachments?: boolean | null, recurrent?: boolean | null, createdDate?: string | null, updatedDate?: string | null, completedDate?: string | null, customFields?: Record<string, any>[] | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.tasks.delete",
+      "shortPath": "tasks.delete",
+      "description": "Move a task to the recycle bin, which a later update with restore can undo",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Read one task with its status, dates, assignees and custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The task id, including its IEAA prefix."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, status?: string | null, importance?: string | null, permalink?: string | null, dates?: { type?: string | null, duration?: number | null, start?: string | null, due?: string | null } | null, parentIds?: string[] | null, subTaskIds?: string[] | null, superTaskIds?: string[] | null, authorIds?: string[] | null, responsibleIds?: string[] | null, followerIds?: string[] | null, sharedIds?: string[] | null, hasAttachments?: boolean | null, recurrent?: boolean | null, createdDate?: string | null, updatedDate?: string | null, completedDate?: string | null, customFields?: Record<string, any>[] | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "Search tasks account-wide by title, status, dates, author or assignee, with paging and sorting",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000."
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string",
+            "description": "The token the previous page returned, to read the next."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "A substring of the title."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(Active | Deferred | Completed | Cancelled)[]"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "High | Low | Normal"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, or a range as `{start},{end}`."
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, or a range as `{start},{end}`."
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "completedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "authors",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contact ids: only tasks created by any of them."
+          },
+          {
+            "key": "responsibles",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contact ids: only tasks assigned to any of them."
+          },
+          {
+            "key": "permalink",
+            "optional": true,
+            "type": "string",
+            "description": "A task permalink, exact match."
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "Milestone | Backlog | Planned"
+          },
+          {
+            "key": "subTasks",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include subtasks in the scope."
+          },
+          {
+            "key": "withInvitations",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include invitations in the shared and responsible id lists."
+          },
+          {
+            "key": "sortField",
+            "optional": true,
+            "type": "Status | Importance | Title | StartFinishInterval | DueDate | CreatedDate | UpdatedDate | CompletedDate | LastAccessDate"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "Asc | Desc"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "A JSON array of optional fields to include, e.g. `[\"attachmentCount\"]`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, status?: string | null, importance?: string | null, permalink?: string | null, dates?: { type?: string | null, duration?: number | null, start?: string | null, due?: string | null } | null, parentIds?: string[] | null, subTaskIds?: string[] | null, superTaskIds?: string[] | null, authorIds?: string[] | null, responsibleIds?: string[] | null, followerIds?: string[] | null, sharedIds?: string[] | null, hasAttachments?: boolean | null, recurrent?: boolean | null, createdDate?: string | null, updatedDate?: string | null, completedDate?: string | null, customFields?: Record<string, any>[] | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.tasks.update",
+      "shortPath": "tasks.update",
+      "description": "Change a task title, status, dates, assignees or followers, or restore it from the recycle bin",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Active | Deferred | Completed | Cancelled"
+          },
+          {
+            "key": "importance",
+            "optional": true,
+            "type": "High | Low | Normal"
+          },
+          {
+            "key": "addResponsibles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "removeResponsibles",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "addFollowers",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "Shorthand for `dates.start`, as yyyy-MM-dd."
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string",
+            "description": "Shorthand for `dates.due`, as yyyy-MM-dd."
+          },
+          {
+            "key": "dates",
+            "optional": true,
+            "type": "{ type?: Backlog | Milestone | Planned, start?: string, due?: string, duration?: number }",
+            "description": "Reschedule the task; `{ type: \"Backlog\" }` clears its dates."
+          },
+          {
+            "key": "restore",
+            "optional": true,
+            "type": "boolean",
+            "description": "Restore a task from the recycle bin."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, title?: string | null, description?: string | null, status?: string | null, importance?: string | null, permalink?: string | null, dates?: { type?: string | null, duration?: number | null, start?: string | null, due?: string | null } | null, parentIds?: string[] | null, subTaskIds?: string[] | null, superTaskIds?: string[] | null, authorIds?: string[] | null, responsibleIds?: string[] | null, followerIds?: string[] | null, sharedIds?: string[] | null, hasAttachments?: boolean | null, recurrent?: boolean | null, createdDate?: string | null, updatedDate?: string | null, completedDate?: string | null, customFields?: Record<string, any>[] | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.timelogs.create",
+      "shortPath": "timelogs.create",
+      "description": "Log hours against a task for a tracked date, with a comment (Wrike requires one, which may be empty) and an optional category",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hours",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "trackedDate",
+            "optional": false,
+            "type": "string",
+            "description": "The day the work belongs to, as yyyy-MM-dd."
+          },
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "string",
+            "description": "Wrike requires a comment on every time entry; it may be empty."
+          },
+          {
+            "key": "categoryId",
+            "optional": true,
+            "type": "string",
+            "description": "A timelog category id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, taskId?: string | null, userId?: string | null, hours?: number | null, trackedDate?: string | null, comment?: string | null, billingType?: string | null, createdDate?: string | null, updatedDate?: string | null, approvalStatus?: string | null, lockStatus?: string | null, categoryId?: string | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.timelogs.delete",
+      "shortPath": "timelogs.delete",
+      "description": "Delete a logged time entry",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.timelogs.list",
+      "shortPath": "timelogs.list",
+      "description": "List the time logged on the account, filtered by tracked or created date, or only your own",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000."
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string",
+            "description": "The token the previous page returned, to read the next."
+          },
+          {
+            "key": "me",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only the time logged by the user behind the token."
+          },
+          {
+            "key": "trackedDate",
+            "optional": true,
+            "type": "string",
+            "description": "A date, or a range as `{start},{end}`."
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, taskId?: string | null, userId?: string | null, hours?: number | null, trackedDate?: string | null, comment?: string | null, billingType?: string | null, createdDate?: string | null, updatedDate?: string | null, approvalStatus?: string | null, lockStatus?: string | null, categoryId?: string | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "wrike.api.timelogs.task",
+      "shortPath": "timelogs.task",
+      "description": "List the time logged against one task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Items per page, up to 1000."
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string",
+            "description": "The token the previous page returned, to read the next."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, taskId?: string | null, userId?: string | null, hours?: number | null, trackedDate?: string | null, comment?: string | null, billingType?: string | null, createdDate?: string | null, updatedDate?: string | null, approvalStatus?: string | null, lockStatus?: string | null, categoryId?: string | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass this back as `nextPageToken` to read the next page."
+          },
+          {
+            "key": "responseSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The total number of matches across every page."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
