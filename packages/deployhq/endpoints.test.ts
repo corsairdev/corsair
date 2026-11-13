@@ -137,6 +137,24 @@ describe('DeployHQ REST operations', () => {
 		},
 	);
 
+	it.each(['.', '..'])(
+		'rejects the %s path segment before a request is sent',
+		async (id) => {
+			const operationKey = 'servers.deleteProjectServer';
+			const operation = deployHQOperations[operationKey];
+			const input = {
+				...operation.inputSchema.parse(
+					deployHQOperationFixtures[operationKey].input,
+				),
+				id,
+			};
+			await expect(
+				runDeployHQOperation(operationKey, input, credentials),
+			).rejects.toThrow('dot segment');
+			expect(mockedFetch).not.toHaveBeenCalled();
+		},
+	);
+
 	it('encodes path identifiers and preserves query values without logging request data', async () => {
 		const operationKey = deployHQOperationKeys.find(
 			(key) =>

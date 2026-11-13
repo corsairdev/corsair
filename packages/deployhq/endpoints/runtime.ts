@@ -64,6 +64,11 @@ export async function runDeployHQOperation<Key extends DeployHQOperationKey>(
 		if (typeof value !== 'string' && typeof value !== 'number') {
 			throw new Error(`Missing DeployHQ path parameter: ${parameter}`);
 		}
+		if (value === '.' || value === '..') {
+			throw new Error(
+				`DeployHQ path parameter ${parameter} cannot be a dot segment.`,
+			);
+		}
 		path = path.replaceAll(`{${parameter}}`, encodeURIComponent(String(value)));
 	}
 	const query: Record<string, DeployHQQueryValue> = {};
