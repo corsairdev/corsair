@@ -1,0 +1,150 @@
+---
+title: "ServiceM8 plugin"
+sidebarTitle: "Overview"
+description: "Manage ServiceM8 jobs, clients, notes, payments, and field-service resources."
+---
+
+Use **ServiceM8** through Corsair: one client, typed API calls.
+
+The [ServiceM8 API](https://developer.servicem8.com/reference) supports API keys for private applications and OAuth 2.0 for public applications. Set `authType: 'oauth_2'` when providing an OAuth access token. Custom-field deletion requires OAuth and is not available with private API keys.
+
+List operations accept `$filter` and `cursor`; start paginating with `cursor: '-1'`, then use the `nextCursor` returned by each page. Create operations return the API result and `recordUuid` from the `x-record-uuid` response header. Notes use `/note.json` for list/create and `/dbonote/{uuid}.json` for individual operations as documented by ServiceM8.
+
+Webhook subscriptions, inbound callbacks, and additional resources outside these 28 operations are excluded. Requests are not automatically retried. Creating jobs can incur ServiceM8 account charges.
+
+ServiceM8's authentication guide lists `manage_templates` but the document-template endpoint reference specifies `read_templates`; its OAuth security scheme lists both. Confirm the permissions granted to your application if template reads fail.
+
+The forms and job-payment operations require `read_forms`, `read_job_payments`, or `manage_job_payments`. The default OAuth configuration does not request these scopes; obtain an appropriately scoped access token separately when needed.
+
+**What you get:**
+
+- 28 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/servicem8 better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/servicem8 better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/servicem8 better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/servicem8 better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { servicem8 } from '@corsair-dev/servicem8';
+
+export const corsair = createCorsair({
+	plugins: [
+		servicem8(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+servicem8()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your ServiceM8 OAuth app.
+
+```ts
+servicem8({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'servicem8',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`jobs.list`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.servicem8.api.jobs.list({ cursor: '-1' });
+```
+
+
+**`notes.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.servicem8.api.notes.create({ related_object: 'job', related_object_uuid: '550e8400-e29b-41d4-a716-446655440000', note: 'Example' });
+```
+
+
+See the full list on the [API](/plugins/servicem8/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/servicem8/api">
+    Every `servicem8.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -3633,6 +3633,14 @@
                 ]
               },
               {
+                "group": "ServiceM8",
+                "pages": [
+                  "plugins/servicem8/overview",
+                  "plugins/servicem8/api",
+                  "plugins/servicem8/database"
+                ]
+              },
+              {
                 "group": "ServiceNow",
                 "pages": [
                   "plugins/servicenow/overview",

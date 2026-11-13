@@ -1,0 +1,40 @@
+displayName: ServiceM8
+description: Manage ServiceM8 jobs, clients, notes, payments, and field-service resources.
+domain: servicem8.com
+overviewNote: |
+  The [ServiceM8 API](https://developer.servicem8.com/reference) supports API keys for private applications and OAuth 2.0 for public applications. Set `authType: 'oauth_2'` when providing an OAuth access token. Custom-field deletion requires OAuth and is not available with private API keys.
+
+  List operations accept `$filter` and `cursor`; start paginating with `cursor: '-1'`, then use the `nextCursor` returned by each page. Create operations return the API result and `recordUuid` from the `x-record-uuid` response header. Notes use `/note.json` for list/create and `/dbonote/{uuid}.json` for individual operations as documented by ServiceM8.
+
+  Webhook subscriptions, inbound callbacks, and additional resources outside these 28 operations are excluded. Requests are not automatically retried. Creating jobs can incur ServiceM8 account charges.
+
+  ServiceM8's authentication guide lists `manage_templates` but the document-template endpoint reference specifies `read_templates`; its OAuth security scheme lists both. Confirm the permissions granted to your application if template reads fail.
+
+  The forms and job-payment operations require `read_forms`, `read_job_payments`, or `manage_job_payments`. The default OAuth configuration does not request these scopes; obtain an appropriately scoped access token separately when needed.
+examples:
+  read:
+    path: jobs.list
+    args: { cursor: "-1" }
+  write:
+    path: notes.create
+    args: { related_object: job, related_object_uuid: "550e8400-e29b-41d4-a716-446655440000", note: Example }
+apiExamples:
+  # Raw call avoids the docs generator's enum-string validation bug.
+  jobs.create: { call: "{ status: 'Quote' }" }
+  jobs.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
+  clients.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
+  forms.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
+  notes.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
+  notes.create: { related_object: job, related_object_uuid: "550e8400-e29b-41d4-a716-446655440000", note: Example }
+  notes.update: { uuid: "550e8400-e29b-41d4-a716-446655440000", body: { note: Updated } }
+  notes.delete: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
+  queues.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
+  locations.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
+  materials.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
+  jobActivities.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
+  jobPayments.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
+  jobPayments.create: { job_uuid: "550e8400-e29b-41d4-a716-446655440000", amount: "12.00", method: Cash }
+  jobPayments.update: { uuid: "550e8400-e29b-41d4-a716-446655440000", body: { amount: "13.00" } }
+  jobPayments.delete: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
+  staff.retrieve: { uuid: "550e8400-e29b-41d4-a716-446655440000" }
+  customFields.delete: { UUID: "550e8400-e29b-41d4-a716-446655440000" }
