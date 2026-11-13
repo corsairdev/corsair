@@ -4,6 +4,7 @@ import {
 	EncodianEndpointOutputSchemas,
 	EncodianOperationIds,
 } from './endpoints/generated';
+import { EncodianEndpointMeta } from './endpoints/plugin-registration';
 import {
 	EncodianInputFixtures,
 	EncodianOutputFixtures,
@@ -96,6 +97,12 @@ describe('Encodian operation schemas', () => {
 				recipients: [{ emailAddress: 'x', id: 'added-later' }],
 			}).success,
 		).toBe(true);
+	});
+
+	it('keeps buying credits at write risk, like other purchases', () => {
+		expect(EncodianEndpointMeta['general.buyAdditionalCredits'].riskLevel).toBe(
+			'write',
+		);
 	});
 
 	it('rejects undocumented request properties at both operation and DTO levels', () => {

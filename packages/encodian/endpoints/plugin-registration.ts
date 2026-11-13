@@ -300,8 +300,9 @@ export const EncodianEndpointMeta = {
 		description: 'File - Replace Text with Image',
 	},
 	'general.buyAdditionalCredits': {
-		riskLevel: 'destructive',
-		description: 'Subscription - Buy Additional Credits',
+		riskLevel: 'write',
+		description:
+			'Subscription - Buy Additional Credits (charges the subscription for extra Flowr credits)',
 	},
 	'general.getSubscriptionStatus': {
 		riskLevel: 'read',

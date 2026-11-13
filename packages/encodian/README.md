@@ -43,7 +43,7 @@ The ten specifications expose 363 route operations in total. The 262 operations 
 - Internal dynamic-schema and operation-status endpoints are not exposed; they are connector plumbing, not Flowr actions.
 - Webhook/trigger routes are excluded by scope. This plugin registers no webhooks.
 - `Utilities.SendHttpRequest` is excluded because it proxies caller-supplied URLs and credentials, creating arbitrary outbound-request/SSRF risk.
-- The Flowr API also exposes subscription credit purchase; this operation is included as a destructive operation and is not automatically retried.
+- The Flowr API also exposes subscription credit purchase; this operation is included at `write` risk (like other purchases) and is not automatically retried. It charges the subscription.
 - The catalog listing is not the coverage source; official Swagger specifications are.
 
 ## Official references
