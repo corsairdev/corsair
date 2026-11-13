@@ -2116,6 +2116,14 @@
                 ]
               },
               {
+                "group": "ForceManager",
+                "pages": [
+                  "plugins/forcemanager/overview",
+                  "plugins/forcemanager/api",
+                  "plugins/forcemanager/database"
+                ]
+              },
+              {
                 "group": "Formbricks",
                 "pages": [
                   "plugins/formbricks/overview",

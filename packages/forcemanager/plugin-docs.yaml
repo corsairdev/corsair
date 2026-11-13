@@ -1,0 +1,1121 @@
+displayName: ForceManager
+description: Manage Sage Sales Management v4 CRM records, sales resources, activities, products, orders, users, and reference data.
+apiExamples:
+  accountAddresses.accountAddressesSchema:
+    query:
+      page: 0
+  accountAddresses.listAccountAddresses:
+    query:
+      page: 0
+  accountAddresses.createAccountAddress:
+    body:
+      accountId: 1
+      address1: Main office
+  accountAddresses.getAccountAddress:
+    path:
+      id: 1
+  accountAddresses.updateAccountAddress:
+    path:
+      id: 1
+    body: {}
+  accountAddresses.deleteAccountAddress:
+    path:
+      id: 1
+  accountsEntity.accountsSchema: {}
+  accountsEntity.listAccounts:
+    query:
+      page: 0
+    headers:
+      count: 1
+  accountsEntity.createAccount:
+    body:
+      branchId: 1
+      name: sample
+      salesRepId1: 1
+  accountsEntity.getAccount:
+    path:
+      id: 1
+    headers:
+      extraFieldDescription: "0"
+  accountsEntity.updateAccount:
+    path:
+      id: 1
+    body: {}
+  accountsEntity.deleteAccount:
+    path:
+      id: 1
+  accountsTypes.accountTypesSchema: {}
+  accountsTypes.listAccountTypes:
+    query:
+      page: 0
+    headers:
+      count: 1
+  accountsTypes.createAccountType:
+    body: {}
+  accountsTypes.getAccountType:
+    path:
+      id: 1
+    query:
+      page: 0
+  accountsTypes.updateAccountType:
+    path:
+      id: 1
+    body: {}
+  accountsTypes.deleteAccountType:
+    path:
+      id: 1
+  accountsSegments.accountSegmentsSchema: {}
+  accountsSegments.listAccountSegments:
+    query:
+      page: 0
+    headers:
+      count: 1
+  accountsSegments.createAccountSegment:
+    body: {}
+  accountsSegments.getAccountSegment:
+    path:
+      id: 1
+    query:
+      page: 0
+  accountsSegments.updateAccountSegment:
+    path:
+      id: 1
+    body: {}
+  accountsSegments.deleteAccountSegment:
+    path:
+      id: 1
+  accountsStatuses.accountStatusesSchema: {}
+  accountsStatuses.listAccountStatuses:
+    query:
+      page: 0
+    headers:
+      count: 1
+  accountsStatuses.createAccountStatus:
+    body: {}
+  accountsStatuses.getAccountStatus:
+    path:
+      id: 1
+    query:
+      page: 0
+  accountsStatuses.updateAccountStatus:
+    path:
+      id: 1
+    body: {}
+  accountsStatuses.deleteAccountStatus:
+    path:
+      id: 1
+  activitiesEntity.activitiesSchema: {}
+  activitiesEntity.listActivities:
+    query:
+      page: 0
+    headers:
+      count: 1
+  activitiesEntity.createActivity:
+    body: {}
+  activitiesEntity.getActivity:
+    path:
+      id: 1
+    headers:
+      extraFieldDescription: "0"
+  activitiesEntity.updateActivity:
+    path:
+      id: 1
+    body: {}
+  activitiesEntity.deleteActivity:
+    path:
+      id: 1
+  activitiesTypes.activityTypesSchema: {}
+  activitiesTypes.listActivityTypes:
+    query:
+      page: 0
+    headers:
+      count: 1
+  activitiesTypes.createActivityType:
+    body: {}
+  activitiesTypes.getActivityType:
+    path:
+      id: 1
+    query:
+      page: 0
+  activitiesTypes.updateActivityType:
+    path:
+      id: 1
+    body: {}
+  activitiesTypes.deleteActivityType:
+    path:
+      id: 1
+  activitiesPoints.listActivityPoints:
+    query:
+      page: 0
+  activitiesPoints.updateActivityPoints:
+    body: {}
+  branches.branchesSchema: {}
+  branches.listBranches:
+    query:
+      page: 0
+  branches.getBranch:
+    path:
+      id: 1
+  branches.deleteBranch:
+    path:
+      id: 1
+  bulks.bulkCreateResources:
+    path:
+      value: sample
+    body: []
+  bulks.bulkUpdateResources:
+    path:
+      value: sample
+    body: []
+  bulks.bulkDeleteResources:
+    path:
+      value: sample
+  calls.listCalls:
+    query:
+      page: 0
+    headers:
+      count: 1
+  calls.createCallByUserId:
+    body: {}
+  calls.createCallByUserPhoneNumber:
+    body: {}
+  calls.getCall:
+    path:
+      id: 1
+  calls.updateCall:
+    path:
+      id: 1
+    body: {}
+  calls.deleteCall:
+    path:
+      id: 1
+  calls.getResourcesByPhoneNumber:
+    path:
+      value: sample
+  campaignsEntity.listCampaigns:
+    query:
+      page: 0
+    headers:
+      count: 1
+  campaignsEntity.createCampaign:
+    body: {}
+  campaignsEntity.getCampaign:
+    path:
+      id: 1
+  campaignsEntity.updateCampaign:
+    path:
+      id: 1
+    body: {}
+  campaignsEntity.deleteCampaign:
+    path:
+      id: 1
+  opportunitiesTypes.listOpportunityTypes:
+    query:
+      page: 0
+    headers:
+      count: 1
+  opportunitiesTypes.createOpportunityType:
+    body: {}
+  campaignsStatuses.listCampaignStatuses:
+    query:
+      page: 0
+    headers:
+      count: 1
+  campaignsAccounts.listCampaignAccounts:
+    path:
+      id: 1
+    query:
+      page: 0
+    headers:
+      count: 1
+  campaignsAccounts.createCampaignAccount:
+    path:
+      id: 1
+      value: sample
+    body: {}
+  campaignsAccounts.getCampaignAccount:
+    path:
+      id: 1
+      value: sample
+  campaignsAccounts.updateCampaignAccount:
+    path:
+      id: 1
+      value: sample
+    body: {}
+  campaignsAccounts.deleteCampaignAccount:
+    path:
+      id: 1
+      value: sample
+  campaignsQuestions.listCampaignQuestions:
+    query:
+      page: 0
+    headers:
+      count: 1
+  campaignsQuestions.createCampaignQuestion:
+    body: []
+  campaignsQuestions.getCampaignQuestion:
+    path:
+      id: 1
+    query:
+      page: 0
+  campaignsQuestions.updateCampaignQuestion:
+    path:
+      id: 1
+    body: {}
+  campaignsQuestions.deleteCampaignQuestion:
+    path:
+      id: 1
+  campaignsQuestionAnswers.listQuestionAnswers:
+    path:
+      value: sample
+    query:
+      page: 0
+    headers:
+      count: 1
+  campaignsQuestionAnswers.createQuestionAnswer:
+    path:
+      value: sample
+    body: {}
+  campaignsQuestionAnswers.getQuestionAnswer:
+    path:
+      value: sample
+      id: 1
+  campaignsQuestionAnswers.updateQuestionAnswer:
+    path:
+      value: sample
+      id: 1
+    body: {}
+  campaignsQuestionAnswers.deleteQuestionAnswer:
+    path:
+      value: sample
+      id: 1
+  campaignsQuestionValues.listQuestionValues:
+    path:
+      value: sample
+    query:
+      page: 0
+    headers:
+      count: 1
+  campaignsQuestionValues.createQuestionValue:
+    path:
+      id: 1
+    body: {}
+  campaignsQuestionValues.getQuestionValue:
+    path:
+      value: sample
+      id: 1
+  campaignsQuestionValues.updateQuestionValue:
+    path:
+      value: sample
+      id: 1
+    body: {}
+  campaignsQuestionValues.deleteQuestionValue:
+    path:
+      value: sample
+      id: 1
+  contactsEntity.contactsSchema: {}
+  contactsEntity.listContacts:
+    query:
+      page: 0
+    headers:
+      count: 1
+  contactsEntity.createContact:
+    body:
+      accountId: 1
+      firstName: sample
+      lastName: sample
+      salesRepId: 1
+  contactsEntity.getContact:
+    path:
+      id: 1
+  contactsEntity.updateContact:
+    path:
+      id: 1
+    body: {}
+  contactsEntity.deleteContact:
+    path:
+      id: 1
+  contactsTypes.contactTypesSchema: {}
+  contactsTypes.listContactTypes:
+    query:
+      page: 0
+    headers:
+      extraFieldDescription: "0"
+  contactsTypes.createContactType:
+    body: {}
+  contactsTypes.getContactType:
+    path:
+      id: 1
+    query:
+      page: 0
+  contactsTypes.updateContactType:
+    path:
+      id: 1
+    body: {}
+  contactsTypes.deleteContactType:
+    path:
+      id: 1
+  countries.countriesSchema: {}
+  countries.listCountries:
+    query:
+      page: 0
+  currencies.currenciesSchema: {}
+  currencies.listCurrencies:
+    query:
+      page: 0
+  documentsEntity.listDocuments:
+    query:
+      page: 0
+    headers:
+      count: 1
+  documentsEntity.listDocumentsOfAResource:
+    path:
+      value: sample
+      value2: sample
+    query:
+      page: 0
+    headers:
+      count: 1
+  productsCarousel.deletePicture:
+    path:
+      id: 1
+  documentsFolders.listFolders:
+    query:
+      page: 0
+    headers:
+      count: 1
+  documentsFolders.createFolder:
+    body: {}
+  documentsFolders.listFoldersOfAResource:
+    path:
+      value: sample
+      value2: sample
+    query:
+      page: 0
+    headers:
+      count: 1
+  documentsFolders.createFolderForAResource:
+    path:
+      value: sample
+      value2: sample
+    body: {}
+  emails.emailsSchema: {}
+  emails.listEmails:
+    query:
+      page: 0
+    headers:
+      count: 1
+  emails.createEmail:
+    body: {}
+  emails.getEmail:
+    path:
+      id: 1
+  entityContacts.entityContactsSchema: {}
+  entityContacts.listEntityContacts:
+    query:
+      page: 0
+  entityOwners.entityOwnersSchema: {}
+  entityOwners.listEntityOwners:
+    query:
+      page: 0
+  eventsTasks.calendarSchema: {}
+  eventsTasks.listCalendar:
+    query:
+      page: 0
+    headers:
+      count: 1
+  eventsTasks.createCalendar:
+    body: {}
+  eventsTasks.getCalendar:
+    path:
+      id: 1
+    headers:
+      extraFieldDescription: "0"
+  eventsTasks.updateCalendar:
+    path:
+      id: 1
+    body: {}
+  eventsTasks.deleteCalendar:
+    path:
+      id: 1
+  extraFieldsEntity.extraFieldsSchemaByResource:
+    path:
+      value: sample
+    query:
+      page: 0
+  extraFieldsEntity.listExtraFieldsByResource:
+    path:
+      value: sample
+    query:
+      page: 0
+  extraFieldsEntity.createExtraFieldForResource:
+    path:
+      value: sample
+    body: {}
+  extraFieldsTabs.listTabs:
+    query:
+      page: 0
+  extraFieldsTabs.createTabs:
+    body: {}
+  extraFieldsTabs.getTabs:
+    path:
+      id: 1
+    query:
+      page: 0
+  extraFieldsTabs.updateTabs:
+    path:
+      id: 1
+    body: {}
+  extraFieldsTabs.deleteTabs:
+    path:
+      id: 1
+  formsEntity.getForm:
+    path:
+      id: 1
+  formsStates.getFormState:
+    path:
+      id: 1
+    query:
+      page: 0
+  formsTemplates.getFormTemplate:
+    path:
+      id: 1
+  news.listNews:
+    query:
+      page: 0
+  opportunitiesEntity.opportunitiesSchema: {}
+  opportunitiesEntity.listOpportunities:
+    query:
+      page: 0
+    headers:
+      count: 1
+  opportunitiesEntity.createOpportunity:
+    body:
+      branchId: 1
+      reference: sample
+      salesProbability: 1
+      salesRepId: 1
+      statusId: 1
+  opportunitiesEntity.getOpportunity:
+    path:
+      id: 1
+  opportunitiesEntity.updateOpportunity:
+    path:
+      id: 1
+    body:
+      salesProbability: 1
+  opportunitiesEntity.deleteOpportunity:
+    path:
+      id: 1
+  opportunitiesTypes.opportunityTypesSchema: {}
+  opportunitiesTypes.getOpportunityTypes:
+    path:
+      id: 1
+    query:
+      page: 0
+  opportunitiesTypes.updateOpportunityType:
+    path:
+      id: 1
+    body: {}
+  opportunitiesTypes.deleteOpportunityType:
+    path:
+      id: 1
+  opportunitiesStatuses.opportunityStatusesSchema: {}
+  opportunitiesStatuses.listOpportunityStatuses:
+    query:
+      page: 0
+  opportunitiesStatuses.createOpportunityStatus:
+    body: {}
+  opportunitiesStatuses.getOpportunityStatus:
+    path:
+      id: 1
+    query:
+      page: 0
+  opportunitiesStatuses.updateOpportunityStatus:
+    path:
+      id: 1
+    body: {}
+  opportunitiesStatuses.deleteOpportunityStatus:
+    path:
+      id: 1
+  ordersEntity.orderHeadersSchema:
+    query:
+      page: 0
+  ordersEntity.listOrderHeaders:
+    query:
+      page: 0
+    headers:
+      count: 1
+  ordersEntity.createOrderHeader:
+    body:
+      branchId: 1
+      reference: sample
+      salesRepId: 1
+  ordersEntity.getOrderHeader:
+    path:
+      id: 1
+    query:
+      page: 0
+  ordersEntity.updateOrderHeader:
+    path:
+      id: 1
+    body: {}
+  ordersEntity.deleteOrderHeader:
+    path:
+      id: 1
+  ordersEntity.orderLinesSchema:
+    query:
+      page: 0
+  ordersEntity.listOrderLines:
+    query:
+      page: 0
+    headers:
+      count: 1
+  ordersEntity.createOrderLine:
+    body:
+      price: 1
+      productId: 1
+      quantity: 1
+  ordersEntity.getOrderLine:
+    path:
+      id: 1
+    query:
+      page: 0
+  ordersEntity.updateOrderLine:
+    path:
+      id: 1
+    body: {}
+  ordersEntity.deleteOrderLine:
+    path:
+      id: 1
+  ordersStatuses.orderStatusesSchema:
+    query:
+      page: 0
+  ordersStatuses.listOrderStatuses:
+    query:
+      page: 0
+  ordersStatuses.createOrderStatus:
+    body: {}
+  ordersStatuses.getOrderStatus:
+    path:
+      id: 1
+    query:
+      page: 0
+  ordersStatuses.updateOrderStatus:
+    path:
+      id: 1
+    body: {}
+  ordersStatuses.deleteOrderStatus:
+    path:
+      id: 1
+  ordersTypes.orderTypesSchema:
+    query:
+      page: 0
+  ordersTypes.listOrderTypes:
+    query:
+      page: 0
+  ordersTypes.createOrderTypes:
+    body:
+      descriptionEN: sample
+  ordersTypes.getOrderTypes:
+    path:
+      id: 1
+    query:
+      page: 0
+  ordersTypes.updateOrderTypes:
+    path:
+      id: 1
+    body: {}
+  ordersTypes.deleteOrderTypes:
+    path:
+      id: 1
+  productsEntity.productsSchema: {}
+  productsEntity.listProducts:
+    query:
+      page: 0
+    headers:
+      count: 1
+  productsEntity.createProduct:
+    body: {}
+  productsEntity.getProduct:
+    path:
+      id: 1
+    headers:
+      extraFieldDescription: "0"
+  productsEntity.updateProduct:
+    path:
+      id: 1
+    body: {}
+  productsEntity.deleteProduct:
+    path:
+      id: 1
+  productsEntity.bulkCreateProducts:
+    body: []
+  productsEntity.bulkUpdateProducts:
+    body: []
+  productsEntity.bulkDeleteProducts: {}
+  productsFamilies.productFamiliesSchema: {}
+  productsFamilies.listProductFamilies:
+    query:
+      page: 0
+    headers:
+      count: 1
+  productsFamilies.createProductFamily:
+    body: {}
+  productsFamilies.getProductFamily:
+    path:
+      id: 1
+  productsFamilies.updateProductFamily:
+    path:
+      id: 1
+    body: {}
+  productUnitsOfMeasure.productUnitsOfMeasureSchema:
+    query:
+      page: 0
+  productUnitsOfMeasure.listProductUnitsOfMeasure:
+    query:
+      page: 0
+  productUnitsOfMeasure.createProductUnitOfMeasure:
+    body:
+      idProducto: 1
+      idUnitOfMeasure: 1
+      factor: 1
+  productUnitsOfMeasure.getProductUnitOfMeasure:
+    path:
+      id: 1
+    query:
+      page: 0
+  productUnitsOfMeasure.updateProductUnitOfMeasure:
+    path:
+      id: 1
+    body: {}
+  productUnitsOfMeasure.deleteProductUnitOfMeasure:
+    path:
+      id: 1
+  unitsOfMeasure.unitsOfMeasureSchema:
+    query:
+      page: 0
+  unitsOfMeasure.listUnitsOfMeasure:
+    query:
+      page: 0
+  unitsOfMeasure.createUnitOfMeasure:
+    body:
+      descriptionES: sample
+  unitsOfMeasure.getUnitOfMeasure:
+    path:
+      id: 1
+    query:
+      page: 0
+  unitsOfMeasure.updateUnitOfMeasure:
+    path:
+      id: 1
+    body: {}
+  unitsOfMeasure.deleteUnitOfMeasure:
+    path:
+      id: 1
+  taxRates.taxRatesSchema:
+    query:
+      page: 0
+  taxRates.listTaxRates:
+    query:
+      page: 0
+  taxRates.createTaxRate:
+    body:
+      Descripcion: sample
+      percentage: 1
+  taxRates.getTaxRate:
+    path:
+      id: 1
+    query:
+      page: 0
+  taxRates.updateTaxRate:
+    path:
+      id: 1
+    body: {}
+  taxRates.deleteTaxRate:
+    path:
+      id: 1
+  taxProfiles.taxProfilesSchema:
+    query:
+      page: 0
+  taxProfiles.listTaxProfiles:
+    query:
+      page: 0
+  taxProfiles.getTaxProfile:
+    path:
+      id: 1
+    query:
+      page: 0
+  productFamiliesBranches.productFamiliesBranchesSchema:
+    query:
+      page: 0
+  productFamiliesBranches.listProductFamiliesBranches:
+    query:
+      page: 0
+  productFamiliesBranches.createProductFamiliesBranch:
+    body:
+      productFamilyId: 1
+      branchId: 1
+  productFamiliesBranches.getProductFamiliesBranch:
+    path:
+      id: 1
+  productFamiliesBranches.updateProductFamiliesBranch:
+    path:
+      id: 1
+    body: {}
+  productFamiliesBranches.deleteProductFamiliesBranch:
+    path:
+      id: 1
+  productEnvironments.productEnvironmentsSchema:
+    query:
+      page: 0
+  productEnvironments.listProductEnvironments:
+    query:
+      page: 0
+  productEnvironments.createProductEnvironment:
+    body: {}
+  productEnvironments.getProductEnvironment:
+    path:
+      id: 1
+  productEnvironments.updateProductEnvironment:
+    path:
+      id: 1
+    body: {}
+  productEnvironments.deleteProductEnvironment:
+    path:
+      id: 1
+  productsCategories.productCategoriesSchema: {}
+  productsCategories.listProductCategories:
+    query:
+      page: 0
+    headers:
+      count: 1
+  productsCategories.createProductCategory:
+    body: {}
+  productsCategories.getProductCategory:
+    path:
+      id: 1
+  productsCategories.updateProductCategory:
+    path:
+      id: 1
+    body: {}
+  productsCategories.deleteProductCategory:
+    path:
+      id: 1
+  productsRates.productRatesSchema: {}
+  productsRates.listProductRates:
+    query:
+      page: 0
+    headers:
+      count: 1
+  productsRates.createProductRate:
+    body: {}
+  productsRates.getProductRate:
+    path:
+      id: 1
+  productsRates.updateProductRate:
+    path:
+      id: 1
+    body: {}
+  productsRates.deleteProductRate:
+    path:
+      id: 1
+  rates.ratesSchema: {}
+  rates.listRates:
+    query:
+      page: 0
+    headers:
+      count: 1
+  rates.createRate:
+    body: {}
+  rates.getRate:
+    path:
+      id: 1
+  rates.updateRate:
+    path:
+      id: 1
+    body: {}
+  rates.deleteRate:
+    path:
+      id: 1
+  relatedAccountsEntity.relatedAccountsSchema: {}
+  relatedAccountsEntity.listRelatedAccounts:
+    query:
+      page: 0
+    headers:
+      count: 1
+  relatedAccountsEntity.createRelatedAccount:
+    body: {}
+  relatedAccountsEntity.retrieveRelatedAccount:
+    path:
+      id: 1
+  relatedAccountsEntity.updateRelatedAccount:
+    path:
+      id: 1
+    body: {}
+  relatedAccountsEntity.deleteRelatedAccount:
+    path:
+      id: 1
+  relatedAccountsTypes.relatedAccountTypesSchema: {}
+  relatedAccountsTypes.listRelatedAccountTypes:
+    query:
+      page: 0
+    headers:
+      count: 1
+  relatedAccountsTypes.createRelatedAccountType:
+    body: {}
+  relatedAccountsTypes.retrieveRelatedAccountType:
+    path:
+      id: 1
+  relatedAccountsTypes.updateRelatedAccountType:
+    path:
+      id: 1
+    body: {}
+  relatedAccountsTypes.deleteRelatedAccountType:
+    path:
+      id: 1
+  resources.getResources:
+    query:
+      page: 0
+  roles.rolesSchema: {}
+  roles.listRoles:
+    query:
+      page: 0
+    headers:
+      count: 1
+  roles.getRole:
+    path:
+      id: 1
+    query:
+      page: 0
+  roles.listRolesOfUser:
+    path:
+      id: 1
+    query:
+      page: 0
+  roles.addRolesInUser:
+    path:
+      id: 1
+    body: {}
+  roles.deleteRolesInUser:
+    path:
+      id: 1
+  roles.listUsersInRole:
+    path:
+      id: 1
+    query:
+      page: 0
+  sales.salesSchema:
+    headers:
+      count: 1
+  sales.listSales:
+    query:
+      page: 0
+    headers:
+      count: 1
+  sales.createSale:
+    body: {}
+  sales.getSale:
+    path:
+      id: 1
+  sales.updateSale:
+    path:
+      id: 1
+    body: {}
+  sales.deleteSale:
+    path:
+      id: 1
+  timeZones.listTimezones:
+    query:
+      page: 0
+  usersEntity.usersSchema: {}
+  usersEntity.listUsers:
+    query:
+      page: 0
+    headers:
+      count: 1
+  usersEntity.createUser:
+    body: {}
+  usersEntity.getUser:
+    path:
+      id: 1
+    query:
+      page: 0
+  usersEntity.updateUser:
+    path:
+      id: 1
+    body: {}
+  usersEntity.deleteUser:
+    path:
+      id: 1
+  usersEntity.listUserHierarchy:
+    path:
+      id: 1
+  usersEntity.listUsersScores:
+    query:
+      page: 0
+  usersTypes.userTypesSchema: {}
+  usersTypes.listUserTypes:
+    query:
+      page: 0
+    headers:
+      count: 1
+  usersTypes.createUserType:
+    body: {}
+  usersTypes.getUserType:
+    path:
+      id: 1
+    query:
+      page: 0
+  usersTypes.updateUserType:
+    path:
+      id: 1
+    body: {}
+  valueListsEntity.listLists:
+    query:
+      page: 0
+  valueListsEntity.createList:
+    body: {}
+  valueListsEntity.updateList:
+    path:
+      value: sample
+    body: {}
+  valueListsEntity.deleteList:
+    path:
+      value: sample
+  valueListsValues.listValues:
+    path:
+      value: sample
+    query:
+      page: 0
+  valueListsValues.createValue:
+    path:
+      value: sample
+    body: {}
+  valueListsValues.valuesListSchema:
+    path:
+      value: sample
+  valueListsValues.getValue:
+    path:
+      value: sample
+      id: 1
+    query:
+      page: 0
+  valueListsValues.updateValue:
+    path:
+      value: sample
+      id: 1
+    body: {}
+  valueListsValues.deleteValue:
+    path:
+      value: sample
+      id: 1
+  warnings.listWarningsOfAResource:
+    path:
+      value: sample
+      value2: sample
+    query:
+      page: 0
+  warnings.createWarningForAResourceCopy:
+    path:
+      value: sample
+      value2: sample
+    body: {}
+  warnings.updateWarningOfAResource:
+    path:
+      value: sample
+      value2: sample
+      value3: sample
+    body: {}
+  warnings.deleteWarningOfAResource:
+    path:
+      value: sample
+      value2: sample
+      value3: sample
+apiNotes:
+  accountAddresses.deleteAccountAddress: Review the target identifier and business impact before deleting this ForceManager record.
+  accountsEntity.deleteAccount: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  accountsTypes.deleteAccountType: Review the target identifier and business impact before deleting this ForceManager record.
+  accountsSegments.deleteAccountSegment: Review the target identifier and business impact before deleting this ForceManager record.
+  accountsStatuses.deleteAccountStatus: Review the target identifier and business impact before deleting this ForceManager record.
+  activitiesEntity.deleteActivity: Review the target identifier and business impact before deleting this ForceManager record.
+  activitiesTypes.deleteActivityType: Review the target identifier and business impact before deleting this ForceManager record.
+  branches.deleteBranch: Deletes the selected record permanently or archives it per ForceManager resource behavior; review
+    the target ID before calling.
+  bulks.bulkDeleteResources: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  calls.deleteCall: Deletes the selected record permanently or archives it per ForceManager resource behavior; review the
+    target ID before calling.
+  campaignsEntity.deleteCampaign: Review the target identifier and business impact before deleting this ForceManager record.
+  campaignsAccounts.deleteCampaignAccount: Deletes the selected record permanently or archives it per ForceManager
+    resource behavior; review the target ID before calling.
+  campaignsQuestions.deleteCampaignQuestion: Deletes the selected record permanently or archives it per ForceManager
+    resource behavior; review the target ID before calling.
+  campaignsQuestionAnswers.deleteQuestionAnswer: Deletes the selected record permanently or archives it per ForceManager
+    resource behavior; review the target ID before calling.
+  campaignsQuestionValues.deleteQuestionValue: Deletes the selected record permanently or archives it per ForceManager
+    resource behavior; review the target ID before calling.
+  contactsEntity.deleteContact: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  contactsTypes.deleteContactType: Review the target identifier and business impact before deleting this ForceManager record.
+  productsCarousel.deletePicture: Review the target identifier and business impact before deleting this ForceManager record.
+  eventsTasks.deleteCalendar: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  extraFieldsTabs.deleteTabs: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  opportunitiesEntity.deleteOpportunity: Review the target identifier and business impact before deleting this ForceManager record.
+  opportunitiesTypes.deleteOpportunityType: Deletes the selected record permanently or archives it per ForceManager
+    resource behavior; review the target ID before calling.
+  opportunitiesStatuses.deleteOpportunityStatus: Deletes the selected record permanently or archives it per ForceManager
+    resource behavior; review the target ID before calling.
+  ordersEntity.deleteOrderHeader: Review the target identifier and business impact before deleting this ForceManager record.
+  ordersEntity.deleteOrderLine: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  ordersStatuses.deleteOrderStatus: Review the target identifier and business impact before deleting this ForceManager record.
+  ordersTypes.deleteOrderTypes: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  productsEntity.deleteProduct: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  productsEntity.bulkDeleteProducts: Review the target identifier and business impact before deleting this ForceManager record.
+  productUnitsOfMeasure.deleteProductUnitOfMeasure: Deletes the selected record permanently or archives it per
+    ForceManager resource behavior; review the target ID before calling.
+  unitsOfMeasure.deleteUnitOfMeasure: Review the target identifier and business impact before deleting this ForceManager record.
+  taxRates.deleteTaxRate: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  productFamiliesBranches.deleteProductFamiliesBranch: Deletes the selected record permanently or archives it per
+    ForceManager resource behavior; review the target ID before calling.
+  productEnvironments.deleteProductEnvironment: Deletes the selected record permanently or archives it per ForceManager
+    resource behavior; review the target ID before calling.
+  productsCategories.deleteProductCategory: Deletes the selected record permanently or archives it per ForceManager
+    resource behavior; review the target ID before calling.
+  productsRates.deleteProductRate: Review the target identifier and business impact before deleting this ForceManager record.
+  rates.deleteRate: Deletes the selected record permanently or archives it per ForceManager resource behavior; review the
+    target ID before calling.
+  relatedAccountsEntity.deleteRelatedAccount: Deletes the selected record permanently or archives it per ForceManager
+    resource behavior; review the target ID before calling.
+  relatedAccountsTypes.deleteRelatedAccountType: Deletes the selected record permanently or archives it per ForceManager
+    resource behavior; review the target ID before calling.
+  roles.deleteRolesInUser: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  sales.deleteSale: Deletes the selected record permanently or archives it per ForceManager resource behavior; review the
+    target ID before calling.
+  usersEntity.deleteUser: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  valueListsEntity.deleteList: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  valueListsValues.deleteValue: Deletes the selected record permanently or archives it per ForceManager resource behavior;
+    review the target ID before calling.
+  warnings.deleteWarningOfAResource: Review the target identifier and business impact before deleting this ForceManager record.
+examples:
+  write:
+    path: accountAddresses.createAccountAddress
+    title: Create an account address
+    args:
+      body:
+        accountId: 1
+        address1: Main office
+overviewNote: 'Configure the stored API key as the ForceManager session key sent in X-Session-Key. Obtain that session
+  key by calling POST /login with your public and private API credentials outside this plugin. Set environment to
+  sandbox to target the documented sandbox host. The plugin does not manage webhooks or perform the binary upload step
+  returned by document and picture upload-initiation routes.'
