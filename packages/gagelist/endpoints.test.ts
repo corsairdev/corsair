@@ -32,7 +32,10 @@ type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
 // unknown: negative cases pass values no schema accepts.
 function invoke(endpoint: AnyEndpoint, input: unknown) {
-	return endpoint(contextFor(CLIENT_ID, CLIENT_SECRET) as never, input as never);
+	return endpoint(
+		contextFor(CLIENT_ID, CLIENT_SECRET) as never,
+		input as never,
+	);
 }
 
 // The endpoints read the client pair the key builder put in `ctx.key`.

@@ -76,8 +76,7 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof GagelistAPIError && error.timedOut,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof GagelistAPIError && error.replayable ? 1 : 0,
+			maxRetries: error instanceof GagelistAPIError && error.replayable ? 1 : 0,
 			retryStrategy: 'linear_2s' as const,
 		}),
 	},
@@ -85,8 +84,7 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof GagelistAPIError && error.transport,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof GagelistAPIError && error.replayable ? 2 : 0,
+			maxRetries: error instanceof GagelistAPIError && error.replayable ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

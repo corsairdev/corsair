@@ -1,8 +1,4 @@
-import {
-	AuthMissingError,
-	asRecord,
-	logEventFromContext,
-} from 'corsair/core';
+import { AuthMissingError, asRecord, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { GagelistContext } from '..';
 import type { GagelistCredentials, GagelistRequest } from '../client';
