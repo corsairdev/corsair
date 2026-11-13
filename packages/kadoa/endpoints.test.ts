@@ -230,6 +230,21 @@ describe('workflows.list', () => {
 		});
 		expect(mockLog).not.toHaveBeenCalled();
 	});
+
+	it.each([
+		['an empty body', ''],
+		['a body that is not JSON', '{"workflows": ['],
+	])('rejects %s instead of reporting no workflows', async (_label, text) => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(text, {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+
+		await expect(invoke(Workflows.list, {})).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
 });
 
 describe('workflows.get', () => {
@@ -369,6 +384,7 @@ describe('workflows.create', () => {
 					name: 'category',
 					fieldType: 'SCHEMA',
 					dataType: 'STRING',
+					description: 'The product category',
 					isKey: true,
 				},
 			],
@@ -388,6 +404,7 @@ describe('workflows.create', () => {
 					name: 'category',
 					fieldType: 'SCHEMA',
 					dataType: 'STRING',
+					description: 'The product category',
 					isKey: true,
 				},
 			],
@@ -882,6 +899,39 @@ describe('workflows.history', () => {
 		await expect(invoke(Workflows.history, input)).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
+
+	it('reads who stopped a run, which Kadoa sends as an object', async () => {
+		respond({
+			...history,
+			workflowRuns: [
+				{
+					id: 'run_03',
+					state: 'STOPPED',
+					startedBy: 'API',
+					stoppedBy: { kind: 'user', name: 'Ada', via: 'dashboard' },
+				},
+			],
+		});
+
+		await expect(
+			invoke(Workflows.history, { workflowId: 'wf' }),
+		).resolves.toMatchObject({
+			workflowRuns: [{ id: 'run_03', stoppedBy: { kind: 'user' } }],
+		});
+	});
+
+	it('rejects a page with no workflowRuns instead of reporting no runs', async () => {
+		respond({
+			workflowId: 'wf',
+			totalCount: 3,
+			pagination: history.pagination,
+		});
+
+		await expect(
+			invoke(Workflows.history, { workflowId: 'wf' }),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(mockLog).not.toHaveBeenCalled();
+	});
 });
 
 describe('workflows.data', () => {
@@ -982,6 +1032,42 @@ describe('workflows.data', () => {
 	])('rejects %j before calling Kadoa', async (input) => {
 		await expect(invoke(Workflows.data, input)).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('sends an IN filter with an array and an IS_NULL filter with no value', async () => {
+		respond(workflowData);
+
+		await invoke(Workflows.data, {
+			workflowId: 'wf',
+			filters: [
+				{ field: 'department', operator: 'IN', value: ['Sales', 'Marketing'] },
+				{ field: 'closedAt', operator: 'IS_NULL' },
+				{ field: 'postedAt', operator: 'WITHIN_LAST_DAYS', value: 7 },
+			],
+		});
+
+		expect(lastRequest().query.filters).toBe(
+			'[{"field":"department","operator":"IN","value":["Sales","Marketing"]},{"field":"closedAt","operator":"IS_NULL"},{"field":"postedAt","operator":"WITHIN_LAST_DAYS","value":7}]',
+		);
+	});
+
+	it('gives a streamed read the five minutes Kadoa allows', async () => {
+		const timeout = jest.spyOn(AbortSignal, 'timeout');
+		respond({ ...workflowData, pagination: undefined });
+
+		await invoke(Workflows.data, { workflowId: 'wf', limit: 0 });
+
+		expect(timeout).toHaveBeenCalledWith(300_000);
+		timeout.mockRestore();
+	});
+
+	it('rejects a page with no data array instead of reporting no rows', async () => {
+		respond({ workflowId: 'wf', pagination: { totalCount: 40, page: 1 } });
+
+		await expect(
+			invoke(Workflows.data, { workflowId: 'wf' }),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(mockLog).not.toHaveBeenCalled();
 	});
 });
 
@@ -1233,6 +1319,22 @@ describe('schemas.create', () => {
 		await expect(invoke(Schemas.create, input)).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
+
+	it.each([
+		[
+			'a SCHEMA field with no description',
+			{ name: 'title', fieldType: 'SCHEMA', dataType: 'STRING' },
+		],
+		[
+			'a CLASSIFICATION field with no categories',
+			{ name: 'kind', fieldType: 'CLASSIFICATION' },
+		],
+	])('rejects %s before calling Kadoa', async (_label, field) => {
+		await expect(
+			invoke(Schemas.create, { name: 'Product', fields: [field] }),
+		).rejects.toMatchObject({ name: 'ZodError' });
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });
 
 describe('schemas.update', () => {
@@ -1248,8 +1350,18 @@ describe('schemas.update', () => {
 			invoke(Schemas.update, {
 				schemaId: 'sch_01HZX8',
 				fields: [
-					{ name: 'title', fieldType: 'SCHEMA', dataType: 'STRING' },
-					{ name: 'price', fieldType: 'SCHEMA', dataType: 'MONEY' },
+					{
+						name: 'title',
+						fieldType: 'SCHEMA',
+						dataType: 'STRING',
+						description: 'Product title',
+					},
+					{
+						name: 'price',
+						fieldType: 'SCHEMA',
+						dataType: 'MONEY',
+						description: 'Listed price',
+					},
 				],
 			}),
 		).resolves.toMatchObject({ updatedSchema: { id: 'sch_01HZX8' } });
@@ -1258,8 +1370,18 @@ describe('schemas.update', () => {
 			path: '/v4/schemas/sch_01HZX8',
 			body: {
 				fields: [
-					{ name: 'title', fieldType: 'SCHEMA', dataType: 'STRING' },
-					{ name: 'price', fieldType: 'SCHEMA', dataType: 'MONEY' },
+					{
+						name: 'title',
+						fieldType: 'SCHEMA',
+						dataType: 'STRING',
+						description: 'Product title',
+					},
+					{
+						name: 'price',
+						fieldType: 'SCHEMA',
+						dataType: 'MONEY',
+						description: 'Listed price',
+					},
 				],
 			},
 		});
@@ -1280,6 +1402,14 @@ describe('schemas.update', () => {
 	])('rejects %j before calling Kadoa', async (input) => {
 		await expect(invoke(Schemas.update, input)).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('clears the entity with null', async () => {
+		respond({ error: false, success: true, message: 'Schema updated' });
+
+		await invoke(Schemas.update, { schemaId: 'sch', entity: null });
+
+		expect(lastRequest().body).toEqual({ entity: null });
 	});
 });
 
@@ -1354,11 +1484,44 @@ describe('changes.list', () => {
 	it.each([
 		[{ workflowIds: [] }],
 		[{ limit: 0 }],
+		[{ limit: 101 }],
 		[{ skip: -1 }],
 		[{ exclude: ['data', 'history'] }],
 	])('rejects %j before calling Kadoa', async (input) => {
 		await expect(invoke(Changes.list, input)).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('offers the next skip after a full page of the default size', async () => {
+		const page = Array.from({ length: 25 }, (_, index) => ({
+			...changes.changes[0],
+			id: `chg_${index}`,
+		}));
+		respond({ changesCount: 25, changes: page });
+
+		await expect(invoke(Changes.list, {})).resolves.toMatchObject({
+			nextSkip: 25,
+		});
+	});
+
+	it('follows totalCount when Kadoa sends one', async () => {
+		respond({
+			...changes,
+			pagination: { totalCount: 3, page: 1, totalPages: 1, limit: 1 },
+		});
+
+		await expect(
+			invoke(Changes.list, { skip: 1, limit: 1 }),
+		).resolves.toMatchObject({ nextSkip: 2 });
+	});
+
+	it('rejects a body with no changes array instead of reporting no changes', async () => {
+		respond({ changesCount: 50 });
+
+		await expect(invoke(Changes.list, {})).rejects.toMatchObject({
+			name: 'ZodError',
+		});
+		expect(mockLog).not.toHaveBeenCalled();
 	});
 });
 
@@ -1652,7 +1815,14 @@ describe('error envelopes', () => {
 		await expect(
 			invoke(Schemas.create, {
 				name: 'Product',
-				fields: [{ name: 'title', fieldType: 'SCHEMA', dataType: 'STRING' }],
+				fields: [
+					{
+						name: 'title',
+						fieldType: 'SCHEMA',
+						dataType: 'STRING',
+						description: 'Product title',
+					},
+				],
 			}),
 		).rejects.toMatchObject({
 			status: 400,

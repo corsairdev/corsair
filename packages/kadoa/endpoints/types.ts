@@ -376,7 +376,7 @@ const FieldSchema = z
 			.min(1)
 			.optional()
 			.describe(
-				'The field meaning, extraction instructions and sample values.',
+				'The field meaning, extraction instructions and sample values. Required for `SCHEMA` fields.',
 			),
 		dataType: z
 			.enum(KADOA_FIELD_DATA_TYPES)
@@ -419,6 +419,20 @@ const FieldSchema = z
 				code: 'custom',
 				path: ['dataType'],
 				message: 'A SCHEMA field needs a `dataType`.',
+			});
+		}
+		if (field.fieldType === 'SCHEMA' && !field.description) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['description'],
+				message: 'A SCHEMA field needs a `description`.',
+			});
+		}
+		if (field.fieldType === 'CLASSIFICATION' && !field.categories) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['categories'],
+				message: 'A CLASSIFICATION field needs `categories`.',
 			});
 		}
 		if (field.fieldType === 'SCHEMA' && field.categories) {
@@ -768,7 +782,15 @@ const WorkflowRunSchema = z
 		screenshot: z.string().nullish(),
 		records: z.number().nullish(),
 		startedBy: z.string().nullish(),
-		stoppedBy: z.string().nullish(),
+		// Who stopped the run: an object, not a name.
+		stoppedBy: z
+			.object({
+				kind: z.string().nullish(),
+				name: z.string().nullish(),
+				via: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
 		errors: z.array(WorkflowErrorSchema).nullish(),
 	})
 	.loose();
@@ -824,13 +846,22 @@ export type WorkflowsHistoryResponse = z.infer<
 
 export const KADOA_DEFAULT_DATA_LIMIT = 25;
 
+const DataFilterValueSchema = z.union([z.string(), z.number(), z.boolean()]);
+
 const DataFilterSchema = z.object({
 	field: z.string().min(1),
 	operator: z
 		.string()
 		.min(1)
-		.describe('A comparison such as `CONTAINS` or `GREATER_THAN`.'),
-	value: z.string(),
+		.describe(
+			'A comparison such as `CONTAINS`, `GREATER_THAN`, `IN` or `IS_NULL`.',
+		),
+	value: z
+		.union([DataFilterValueSchema, z.array(DataFilterValueSchema).min(1)])
+		.optional()
+		.describe(
+			'The value to compare with: an array for `IN` and `NOT_IN`, a day count for `WITHIN_LAST_DAYS`, and none for `IS_NULL`, `IS_NOT_NULL`, `IS_EMPTY` and `IS_NOT_EMPTY`.',
+		),
 });
 
 const WorkflowsDataInputSchema = z.object({
@@ -1019,7 +1050,12 @@ const SchemaUpdateInputSchema = z
 	.object({
 		schemaId: SchemaIdSchema,
 		name: z.string().min(1).max(255).optional(),
-		entity: z.string().min(1).optional(),
+		entity: z
+			.string()
+			.min(1)
+			.nullable()
+			.optional()
+			.describe('The entity name. Send null to clear it.'),
 		fields: z
 			.array(FieldSchema)
 			.min(1)
@@ -1107,6 +1143,8 @@ export const KadoaChangeSchema = z
 
 export type KadoaChange = z.infer<typeof KadoaChangeSchema>;
 
+export const KADOA_DEFAULT_CHANGES_LIMIT = 25;
+
 const ChangesListInputSchema = z.object({
 	workflowIds: z
 		.array(z.string().min(1))
@@ -1126,7 +1164,15 @@ const ChangesListInputSchema = z.object({
 			'Latest change, as an ISO date or date-time. A date alone covers that whole day.',
 		),
 	skip: z.number().int().min(0).optional().describe('Changes to skip.'),
-	limit: z.number().int().min(1).optional().describe('Changes to return.'),
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.max(100)
+		.optional()
+		.describe(
+			`Changes to return, at most 100. Defaults to ${KADOA_DEFAULT_CHANGES_LIMIT}.`,
+		),
 	exclude: z
 		.array(z.enum(['data', 'differences']))
 		.min(1)

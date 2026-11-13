@@ -1,6 +1,6 @@
 import { asRecord } from 'corsair/core';
 import type { KadoaEndpoints } from '..';
-import { messageResult, segment } from '../client';
+import { KADOA_STREAM_TIMEOUT_MS, messageResult, segment } from '../client';
 import { call, definedQuery } from './call';
 import {
 	KadoaEndpointInputSchemas as Inputs,
@@ -18,17 +18,15 @@ function pageLimit(limit: number | undefined): number {
 // Kadoa answers `{ workflows, pagination }` and pages by offset, not by cursor.
 // `nextSkip` is derived here rather than through a transform, because the docs
 // generator reads a transform's input side and would never show the field.
-// A body that is present without a `workflows` array is left as it is, so the
-// output schema rejects it rather than reporting an empty page.
+// A missing or unreadable body, or one without a `workflows` array, is left as
+// it is, so the output schema rejects it rather than reporting an empty page.
 // unknown: the raw body is an untyped JSON envelope until the output schema runs.
 function listShape(
 	raw: unknown,
 	parsed: { skip?: number | undefined; limit?: number | undefined },
 ) {
-	if (raw === undefined || raw === null) {
-		return { workflows: [], nextSkip: null };
-	}
-	const record = asRecord(raw) ?? {};
+	const record = asRecord(raw);
+	if (!record) return raw;
 	const workflows = record.workflows;
 	const full =
 		Array.isArray(workflows) && workflows.length >= pageLimit(parsed.limit);
@@ -304,16 +302,16 @@ export const history: KadoaEndpoints['workflowsHistory'] = (ctx, input) =>
 			query: definedQuery({ ...query }),
 		}),
 		{
+			// A body without a `workflowRuns` array is passed on unchanged, so the
+			// output schema rejects it instead of reporting no runs.
 			shape: (raw, parsed) => {
 				const record = asRecord(raw);
-				const runs = Array.isArray(record?.workflowRuns)
-					? record.workflowRuns
-					: [];
+				const runs = record?.workflowRuns;
+				if (!record || !Array.isArray(runs)) return raw;
 				const page = parsed.page ?? 1;
 				const limit = parsed.limit ?? KADOA_DEFAULT_HISTORY_LIMIT;
 				return {
 					...record,
-					workflowRuns: runs,
 					nextPage: nextPageFrom(raw, page, runs.length, limit),
 				};
 			},
@@ -327,13 +325,16 @@ export const history: KadoaEndpoints['workflowsHistory'] = (ctx, input) =>
 // `limit: 0` streams the whole result set, so no further page exists then.
 // Otherwise the page is full when it holds as many rows as were asked for, and
 // the docs' default of 25 applies when the caller named no limit.
+// A body without a `data` array is passed on unchanged, so the output schema
+// rejects it instead of reporting no rows.
 // unknown: the raw body is an untyped envelope until the output schema runs.
 function dataShape(
 	raw: unknown,
 	parsed: { page?: number | undefined; limit?: number | undefined },
 ) {
 	const record = asRecord(raw);
-	const rows = Array.isArray(record?.data) ? record.data : [];
+	const rows = record?.data;
+	if (!record || !Array.isArray(rows)) return raw;
 	const limit = parsed.limit;
 	const page = parsed.page ?? 1;
 	const totalPages = asRecord(record?.pagination)?.totalPages;
@@ -374,6 +375,8 @@ export const data: KadoaEndpoints['workflowsData'] = (ctx, input) =>
 					filters && filters.length > 0 ? JSON.stringify(filters) : undefined,
 				rowIds: rowIds && rowIds.length > 0 ? rowIds.join(',') : undefined,
 			}),
+			// `limit: 0` streams every row inline, which Kadoa allows five minutes.
+			timeoutMs: query.limit === 0 ? KADOA_STREAM_TIMEOUT_MS : undefined,
 		}),
 		{
 			shape: dataShape,

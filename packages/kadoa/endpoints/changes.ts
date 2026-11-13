@@ -4,26 +4,32 @@ import { segment } from '../client';
 import { call, definedQuery } from './call';
 import {
 	KadoaEndpointInputSchemas as Inputs,
+	KADOA_DEFAULT_CHANGES_LIMIT,
 	KadoaEndpointOutputSchemas as Outputs,
 } from './types';
 
-/** One page is full when it holds as many changes as were asked for. */
+/**
+ * Another page exists while `pagination.totalCount` says more changes remain,
+ * or, without it, while this page came back full. Kadoa's default page size
+ * applies when the caller named no limit. A body without a `changes` array is
+ * passed on unchanged, so the output schema rejects it instead of reporting no
+ * changes.
+ */
 // unknown: the raw body is an untyped envelope until the output schema runs.
 function changesShape(
 	raw: unknown,
 	parsed: { skip?: number | undefined; limit?: number | undefined },
 ) {
 	const record = asRecord(raw);
-	const changes = Array.isArray(record?.changes) ? record.changes : [];
-	const limit = parsed.limit;
-	return {
-		...record,
-		changes,
-		nextSkip:
-			limit !== undefined && changes.length >= limit
-				? (parsed.skip ?? 0) + changes.length
-				: null,
-	};
+	const changes = record?.changes;
+	if (!record || !Array.isArray(changes)) return raw;
+	const next = (parsed.skip ?? 0) + changes.length;
+	const totalCount = asRecord(record.pagination)?.totalCount;
+	const more =
+		typeof totalCount === 'number'
+			? next < totalCount && changes.length > 0
+			: changes.length >= (parsed.limit ?? KADOA_DEFAULT_CHANGES_LIMIT);
+	return { ...record, nextSkip: more ? next : null };
 }
 
 export const list: KadoaEndpoints['changesList'] = (ctx, input) =>
