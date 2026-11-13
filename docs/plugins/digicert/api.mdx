@@ -34,8 +34,8 @@ Uses the DigiCert ONE service-user token stored in `digicert_one_api_key`, sent 
 
 ```ts
 {
-  code?: de_DE | en_US | es_ES | fr_FR | it_IT | ja_JP | ko_KR | pt_PT | ru_RU | zh_CN | zh_TW,
-  language?: Deutsch | English | Español | Français | Italiano | 日本語 | 한국어 | Português | Русский | 简体中文 | 繁體中文
+  code?: de_DE | en_US | es_ES | fr_FR | it_IT | ja_JP | ko_KR | pt_PT | ru_RU | zh_CN | zh_TW | string,
+  language?: Deutsch | English | Español | Français | Italiano | 日本語 | 한국어 | Português | Русский | 简体中文 | 繁體中文 | string
 }[]
 ```
 </Accordion>
@@ -408,8 +408,8 @@ await corsair.digicert.api.accountManagerApi.createUser({});
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `email` | `string` | No | — |
-| `status` | `ACTIVE \| DELETED \| PENDING \| LOCKED` | No | — |
-| `access_scope` | `account` | No | — |
+| `status` | `ACTIVE \| DELETED \| PENDING \| LOCKED \| string` | No | — |
+| `access_scope` | `account \| string` | No | — |
 | `primary_account_id` | `string` | No | — |
 | `created_at` | `string` | No | — |
 | `friendly_name` | `string` | No | — |
@@ -459,20 +459,20 @@ await corsair.digicert.api.accountManagerApi.createUser({});
     status?: string
   }[],
   sign_in_methods?: {
-    mfaStatus?: enabled | disabled,
-    signInMethod?: standard | sso,
-    status?: enabled | disabled,
+    mfaStatus?: enabled | disabled | string,
+    signInMethod?: standard | sso | string,
+    status?: enabled | disabled | string,
     clientAuthCertLoginEnabled?: boolean
   }[],
   oauth_clients?: {
     id?: string,
     name?: string,
-    status?: ENABLED | DISABLED,
+    status?: ENABLED | DISABLED | string,
     oauthClientId?: string,
     oauthClientAccountId?: string
   }[],
   locale?: string,
-  type?: standard | partner,
+  type?: standard | partner | string,
   federated_account_id?: string,
   packages?: {
     package_code?: string,
@@ -799,7 +799,7 @@ await corsair.digicert.api.accountManagerApi.getAccountDetails({
 | `sign_in_methods` | `object[]` | No | — |
 | `oauth_clients` | `object[]` | No | — |
 | `locale` | `string` | No | — |
-| `type` | `standard \| partner` | No | — |
+| `type` | `standard \| partner \| string` | No | — |
 | `federated_account_id` | `string` | No | — |
 | `packages` | `object[]` | No | — |
 
@@ -839,9 +839,9 @@ await corsair.digicert.api.accountManagerApi.getAccountDetails({
 
 ```ts
 {
-  mfaStatus?: enabled | disabled,
-  signInMethod?: standard | sso,
-  status?: enabled | disabled,
+  mfaStatus?: enabled | disabled | string,
+  signInMethod?: standard | sso | string,
+  status?: enabled | disabled | string,
   clientAuthCertLoginEnabled?: boolean
 }[]
 ```
@@ -853,7 +853,7 @@ await corsair.digicert.api.accountManagerApi.getAccountDetails({
 {
   id?: string,
   name?: string,
-  status?: ENABLED | DISABLED,
+  status?: ENABLED | DISABLED | string,
   oauthClientId?: string,
   oauthClientAccountId?: string
 }[]
@@ -1205,13 +1205,13 @@ await corsair.digicert.api.accountManagerApi.getUserDetails({
 | `last_name` | `string` | No | — |
 | `email` | `string` | No | — |
 | `phone` | `string` | No | — |
-| `status` | `ACTIVE \| DELETED \| PENDING \| LOCKED` | No | — |
-| `access_scope` | `account` | No | — |
+| `status` | `ACTIVE \| DELETED \| PENDING \| LOCKED \| string` | No | — |
+| `access_scope` | `account \| string` | No | — |
 | `active` | `boolean` | No | — |
 | `primary_account_id` | `string` | No | — |
 | `created_at` | `string` | No | — |
 | `created_by` | `string` | No | — |
-| `user_type` | `standard \| service` | No | — |
+| `user_type` | `standard \| service \| string` | No | — |
 | `friendly_name` | `string` | No | — |
 | `description` | `string` | No | — |
 | `end_date` | `string` | No | — |
@@ -1245,20 +1245,20 @@ await corsair.digicert.api.accountManagerApi.getUserDetails({
     status?: string
   }[],
   sign_in_methods?: {
-    mfaStatus?: enabled | disabled,
-    signInMethod?: standard | sso,
-    status?: enabled | disabled,
+    mfaStatus?: enabled | disabled | string,
+    signInMethod?: standard | sso | string,
+    status?: enabled | disabled | string,
     clientAuthCertLoginEnabled?: boolean
   }[],
   oauth_clients?: {
     id?: string,
     name?: string,
-    status?: ENABLED | DISABLED,
+    status?: ENABLED | DISABLED | string,
     oauthClientId?: string,
     oauthClientAccountId?: string
   }[],
   locale?: string,
-  type?: standard | partner,
+  type?: standard | partner | string,
   federated_account_id?: string,
   packages?: {
     package_code?: string,
@@ -1358,20 +1358,20 @@ await corsair.digicert.api.accountManagerApi.listAccounts({});
     status?: string
   }[],
   sign_in_methods?: {
-    mfaStatus?: enabled | disabled,
-    signInMethod?: standard | sso,
-    status?: enabled | disabled,
+    mfaStatus?: enabled | disabled | string,
+    signInMethod?: standard | sso | string,
+    status?: enabled | disabled | string,
     clientAuthCertLoginEnabled?: boolean
   }[],
   oauth_clients?: {
     id?: string,
     name?: string,
-    status?: ENABLED | DISABLED,
+    status?: ENABLED | DISABLED | string,
     oauthClientId?: string,
     oauthClientAccountId?: string
   }[],
   locale?: string,
-  type?: standard | partner,
+  type?: standard | partner | string,
   federated_account_id?: string,
   packages?: {
     package_code?: string,
@@ -1462,13 +1462,13 @@ await corsair.digicert.api.accountManagerApi.listAllUsers({});
   last_name?: string,
   email?: string,
   phone?: string,
-  status?: ACTIVE | DELETED | PENDING | LOCKED,
-  access_scope?: account,
+  status?: ACTIVE | DELETED | PENDING | LOCKED | string,
+  access_scope?: account | string,
   active?: boolean,
   primary_account_id?: string,
   created_at?: string,
   created_by?: string,
-  user_type?: standard | service,
+  user_type?: standard | service | string,
   friendly_name?: string,
   description?: string,
   end_date?: string,
@@ -1496,20 +1496,20 @@ await corsair.digicert.api.accountManagerApi.listAllUsers({});
       status?: string
     }[],
     sign_in_methods?: {
-      mfaStatus?: enabled | disabled,
-      signInMethod?: standard | sso,
-      status?: enabled | disabled,
+      mfaStatus?: enabled | disabled | string,
+      signInMethod?: standard | sso | string,
+      status?: enabled | disabled | string,
       clientAuthCertLoginEnabled?: boolean
     }[],
     oauth_clients?: {
       id?: string,
       name?: string,
-      status?: ENABLED | DISABLED,
+      status?: ENABLED | DISABLED | string,
       oauthClientId?: string,
       oauthClientAccountId?: string
     }[],
     locale?: string,
-    type?: standard | partner,
+    type?: standard | partner | string,
     federated_account_id?: string,
     packages?: {
       package_code?: string,
@@ -1705,7 +1705,7 @@ await corsair.digicert.api.accountManagerApi.listAuditLogs({});
   },
   timestamp?: string,
   description?: string,
-  status?: success | failure,
+  status?: success | failure | string,
   client_ip?: string
 }[]
 ```
@@ -1877,13 +1877,13 @@ await corsair.digicert.api.accountManagerApi.listSelectUsers({});
   last_name?: string,
   email?: string,
   phone?: string,
-  status?: ACTIVE | DELETED | PENDING | LOCKED,
-  access_scope?: account,
+  status?: ACTIVE | DELETED | PENDING | LOCKED | string,
+  access_scope?: account | string,
   active?: boolean,
   primary_account_id?: string,
   created_at?: string,
   created_by?: string,
-  user_type?: standard | service,
+  user_type?: standard | service | string,
   friendly_name?: string,
   description?: string,
   end_date?: string,
@@ -1911,20 +1911,20 @@ await corsair.digicert.api.accountManagerApi.listSelectUsers({});
       status?: string
     }[],
     sign_in_methods?: {
-      mfaStatus?: enabled | disabled,
-      signInMethod?: standard | sso,
-      status?: enabled | disabled,
+      mfaStatus?: enabled | disabled | string,
+      signInMethod?: standard | sso | string,
+      status?: enabled | disabled | string,
       clientAuthCertLoginEnabled?: boolean
     }[],
     oauth_clients?: {
       id?: string,
       name?: string,
-      status?: ENABLED | DISABLED,
+      status?: ENABLED | DISABLED | string,
       oauthClientId?: string,
       oauthClientAccountId?: string
     }[],
     locale?: string,
-    type?: standard | partner,
+    type?: standard | partner | string,
     federated_account_id?: string,
     packages?: {
       package_code?: string,
@@ -2020,8 +2020,8 @@ await corsair.digicert.api.accountManagerApi.listUserRoles({});
   display_name?: string,
   description?: string,
   type?: string,
-  status?: ACTIVE | ARCHIVED,
-  access_scope?: account
+  status?: ACTIVE | ARCHIVED | string,
+  access_scope?: account | string
 }[]
 ```
 </Accordion>
@@ -2035,8 +2035,8 @@ await corsair.digicert.api.accountManagerApi.listUserRoles({});
   display_name?: string,
   description?: string,
   type?: string,
-  status?: ACTIVE | ARCHIVED,
-  access_scope?: account
+  status?: ACTIVE | ARCHIVED | string,
+  access_scope?: account | string
 }[]
 ```
 </Accordion>
@@ -2050,8 +2050,8 @@ await corsair.digicert.api.accountManagerApi.listUserRoles({});
   display_name?: string,
   description?: string,
   type?: string,
-  status?: ACTIVE | ARCHIVED,
-  access_scope?: account
+  status?: ACTIVE | ARCHIVED | string,
+  access_scope?: account | string
 }[]
 ```
 </Accordion>
@@ -2065,8 +2065,8 @@ await corsair.digicert.api.accountManagerApi.listUserRoles({});
   display_name?: string,
   description?: string,
   type?: string,
-  status?: ACTIVE | ARCHIVED,
-  access_scope?: account
+  status?: ACTIVE | ARCHIVED | string,
+  access_scope?: account | string
 }[]
 ```
 </Accordion>
@@ -2080,8 +2080,8 @@ await corsair.digicert.api.accountManagerApi.listUserRoles({});
   display_name?: string,
   description?: string,
   type?: string,
-  status?: ACTIVE | ARCHIVED,
-  access_scope?: account
+  status?: ACTIVE | ARCHIVED | string,
+  access_scope?: account | string
 }[]
 ```
 </Accordion>
@@ -2095,8 +2095,8 @@ await corsair.digicert.api.accountManagerApi.listUserRoles({});
   display_name?: string,
   description?: string,
   type?: string,
-  status?: ACTIVE | ARCHIVED,
-  access_scope?: account
+  status?: ACTIVE | ARCHIVED | string,
+  access_scope?: account | string
 }[]
 ```
 </Accordion>
@@ -2110,8 +2110,8 @@ await corsair.digicert.api.accountManagerApi.listUserRoles({});
   display_name?: string,
   description?: string,
   type?: string,
-  status?: ACTIVE | ARCHIVED,
-  access_scope?: account
+  status?: ACTIVE | ARCHIVED | string,
+  access_scope?: account | string
 }[]
 ```
 </Accordion>
@@ -2218,7 +2218,7 @@ await corsair.digicert.api.accountManagerApi.updateAccount({
 | `sign_in_methods` | `object[]` | No | — |
 | `oauth_clients` | `object[]` | No | — |
 | `locale` | `string` | No | — |
-| `type` | `standard \| partner` | No | — |
+| `type` | `standard \| partner \| string` | No | — |
 | `federated_account_id` | `string` | No | — |
 | `packages` | `object[]` | No | — |
 
@@ -2258,9 +2258,9 @@ await corsair.digicert.api.accountManagerApi.updateAccount({
 
 ```ts
 {
-  mfaStatus?: enabled | disabled,
-  signInMethod?: standard | sso,
-  status?: enabled | disabled,
+  mfaStatus?: enabled | disabled | string,
+  signInMethod?: standard | sso | string,
+  status?: enabled | disabled | string,
   clientAuthCertLoginEnabled?: boolean
 }[]
 ```
@@ -2272,7 +2272,7 @@ await corsair.digicert.api.accountManagerApi.updateAccount({
 {
   id?: string,
   name?: string,
-  status?: ENABLED | DISABLED,
+  status?: ENABLED | DISABLED | string,
   oauthClientId?: string,
   oauthClientAccountId?: string
 }[]
@@ -2474,8 +2474,8 @@ await corsair.digicert.api.accountManagerApi.updateUser({
 |------|------|----------|-------------|
 | `id` | `string` | No | — |
 | `email` | `string` | No | — |
-| `status` | `ACTIVE \| DELETED \| PENDING \| LOCKED` | No | — |
-| `access_scope` | `account` | No | — |
+| `status` | `ACTIVE \| DELETED \| PENDING \| LOCKED \| string` | No | — |
+| `access_scope` | `account \| string` | No | — |
 | `primary_account_id` | `string` | No | — |
 | `created_at` | `string` | No | — |
 | `friendly_name` | `string` | No | — |
@@ -2525,20 +2525,20 @@ await corsair.digicert.api.accountManagerApi.updateUser({
     status?: string
   }[],
   sign_in_methods?: {
-    mfaStatus?: enabled | disabled,
-    signInMethod?: standard | sso,
-    status?: enabled | disabled,
+    mfaStatus?: enabled | disabled | string,
+    signInMethod?: standard | sso | string,
+    status?: enabled | disabled | string,
     clientAuthCertLoginEnabled?: boolean
   }[],
   oauth_clients?: {
     id?: string,
     name?: string,
-    status?: ENABLED | DISABLED,
+    status?: ENABLED | DISABLED | string,
     oauthClientId?: string,
     oauthClientAccountId?: string
   }[],
   locale?: string,
-  type?: standard | partner,
+  type?: standard | partner | string,
   federated_account_id?: string,
   packages?: {
     package_code?: string,
@@ -4233,7 +4233,7 @@ await corsair.digicert.api.certcentralApi.cancelUnitOrder({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -4244,6 +4244,7 @@ await corsair.digicert.api.certcentralApi.cancelUnitOrder({});
 
 ```ts
 {
+  order_id: string
 }
 ```
 </Accordion>
@@ -6770,13 +6771,13 @@ await corsair.digicert.api.certcentralApi.deleteOidcSsoConfiguration({});
 
 `certcentralApi.deleteOrderDeleteOrder`
 
-Delete order — Delete order
+Delete order — Permanently delete an eligible inactive order; set query.revoke to also revoke its certificate
 
 **Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.certcentralApi.deleteOrderDeleteOrder({
-	path: { order_id: 'example', note_id: 'example' },
+	path: { order_id: 'example' },
 });
 ```
 
@@ -6794,8 +6795,7 @@ await corsair.digicert.api.certcentralApi.deleteOrderDeleteOrder({
 
 ```ts
 {
-  order_id: string,
-  note_id: string
+  order_id: string
 }
 ```
 </Accordion>
@@ -6804,6 +6804,7 @@ await corsair.digicert.api.certcentralApi.deleteOrderDeleteOrder({
 
 ```ts
 {
+  revoke?: boolean
 }
 ```
 </Accordion>
@@ -7043,7 +7044,7 @@ await corsair.digicert.api.certcentralApi.deleteVerifiedContactDelegation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -7053,6 +7054,7 @@ await corsair.digicert.api.certcentralApi.deleteVerifiedContactDelegation({});
 
 ```ts
 {
+  delegation_id: string
 }
 ```
 </Accordion>
@@ -8479,6 +8481,7 @@ Edit guest access (order)
 
 ```ts
 await corsair.digicert.api.certcentralApi.editGuestAccessOrder({
+	path: { order_id: 'example' },
 	body: { enable_guest_access: 1 },
 });
 ```
@@ -8487,7 +8490,7 @@ await corsair.digicert.api.certcentralApi.editGuestAccessOrder({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -8498,6 +8501,7 @@ await corsair.digicert.api.certcentralApi.editGuestAccessOrder({
 
 ```ts
 {
+  order_id: string
 }
 ```
 </Accordion>
@@ -9107,7 +9111,7 @@ await corsair.digicert.api.certcentralApi.emailValidationStatus({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -9117,6 +9121,7 @@ await corsair.digicert.api.certcentralApi.emailValidationStatus({});
 
 ```ts
 {
+  order_id: string
 }
 ```
 </Accordion>
@@ -10217,7 +10222,7 @@ await corsair.digicert.api.certcentralApi.getVmcOrCmcLogo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -10227,6 +10232,7 @@ await corsair.digicert.api.certcentralApi.getVmcOrCmcLogo({});
 
 ```ts
 {
+  order_id: string
 }
 ```
 </Accordion>
@@ -12431,7 +12437,7 @@ List subaccount domains
 
 ```ts
 await corsair.digicert.api.certcentralApi.listSubaccountDomains({
-	query: {},
+	path: { subaccount_id: 'example' },
 });
 ```
 
@@ -12439,7 +12445,7 @@ await corsair.digicert.api.certcentralApi.listSubaccountDomains({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `Record<string, JsonValue>` | Yes | — |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -12449,6 +12455,7 @@ await corsair.digicert.api.certcentralApi.listSubaccountDomains({
 
 ```ts
 {
+  subaccount_id: string
 }
 ```
 </Accordion>
@@ -12577,7 +12584,7 @@ List subaccount organizations
 
 ```ts
 await corsair.digicert.api.certcentralApi.listSubaccountOrganizations({
-	query: {},
+	path: { subaccount_id: 'example' },
 });
 ```
 
@@ -12585,7 +12592,7 @@ await corsair.digicert.api.certcentralApi.listSubaccountOrganizations({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `Record<string, JsonValue>` | Yes | — |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -12595,6 +12602,7 @@ await corsair.digicert.api.certcentralApi.listSubaccountOrganizations({
 
 ```ts
 {
+  subaccount_id: string
 }
 ```
 </Accordion>
@@ -23256,7 +23264,7 @@ await corsair.digicert.api.certcentralApi.resendVerifiedContactDelegationEmail({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -23267,6 +23275,7 @@ await corsair.digicert.api.certcentralApi.resendVerifiedContactDelegationEmail({
 
 ```ts
 {
+  delegation_id: string
 }
 ```
 </Accordion>
@@ -24584,7 +24593,7 @@ await corsair.digicert.api.certcentralApi.unitOrderDetails({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -24594,6 +24603,7 @@ await corsair.digicert.api.certcentralApi.unitOrderDetails({});
 
 ```ts
 {
+  order_id: string
 }
 ```
 </Accordion>
@@ -24969,6 +24979,7 @@ Update auto-reissue settings
 
 ```ts
 await corsair.digicert.api.certcentralApi.updateAutoReissueSettings({
+	path: { order_id: 'example' },
 	body: { auto_reissue: 1 },
 });
 ```
@@ -24977,7 +24988,7 @@ await corsair.digicert.api.certcentralApi.updateAutoReissueSettings({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -24988,6 +24999,7 @@ await corsair.digicert.api.certcentralApi.updateAutoReissueSettings({
 
 ```ts
 {
+  order_id: string
 }
 ```
 </Accordion>
@@ -25904,7 +25916,7 @@ Update renewal notification recipients
 
 ```ts
 await corsair.digicert.api.certcentralApi.updateRenewalNotificationRecipients({
-	query: { container_id: 1 },
+	path: { container_id: 'example' },
 	body: {
 		name: 'example',
 		value: 'example',
@@ -25918,8 +25930,8 @@ await corsair.digicert.api.certcentralApi.updateRenewalNotificationRecipients({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
-| `query` | `object` | Yes | — |
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
 | `body` | `object` | Yes | — |
@@ -25929,6 +25941,7 @@ await corsair.digicert.api.certcentralApi.updateRenewalNotificationRecipients({
 
 ```ts
 {
+  container_id: string
 }
 ```
 </Accordion>
@@ -25937,7 +25950,6 @@ await corsair.digicert.api.certcentralApi.updateRenewalNotificationRecipients({
 
 ```ts
 {
-  container_id: number
 }
 ```
 </Accordion>
@@ -26217,7 +26229,7 @@ await corsair.digicert.api.certcentralApi.updateSiteSealSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -26228,6 +26240,7 @@ await corsair.digicert.api.certcentralApi.updateSiteSealSettings({});
 
 ```ts
 {
+  order_id: string
 }
 ```
 </Accordion>
@@ -26400,7 +26413,7 @@ await corsair.digicert.api.certcentralApi.updateVmcOrCmcOrders({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -26411,6 +26424,7 @@ await corsair.digicert.api.certcentralApi.updateVmcOrCmcOrders({});
 
 ```ts
 {
+  order_id: string
 }
 ```
 </Accordion>
@@ -26463,7 +26477,7 @@ await corsair.digicert.api.certcentralApi.uploadSiteSealLogo({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -26474,6 +26488,7 @@ await corsair.digicert.api.certcentralApi.uploadSiteSealLogo({});
 
 ```ts
 {
+  order_id: string
 }
 ```
 </Accordion>
@@ -26526,7 +26541,7 @@ await corsair.digicert.api.certcentralApi.uploadVmcOrCmcLogoEncoded({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -26537,6 +26552,7 @@ await corsair.digicert.api.certcentralApi.uploadVmcOrCmcLogoEncoded({});
 
 ```ts
 {
+  order_id: string
 }
 ```
 </Accordion>
@@ -26597,7 +26613,7 @@ await corsair.digicert.api.certcentralApi.uploadVmcOrCmcLogoSvg({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -26608,6 +26624,7 @@ await corsair.digicert.api.certcentralApi.uploadVmcOrCmcLogoSvg({});
 
 ```ts
 {
+  order_id: string
 }
 ```
 </Accordion>
@@ -27337,7 +27354,7 @@ await corsair.digicert.api.certcentralApi.viewKeyLockerSignatures({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `object` | No | Defaults to &#123;&#125;. |
+| `path` | `object` | Yes | — |
 | `query` | `object` | No | Defaults to &#123;&#125;. |
 | `headers` | `object` | No | Defaults to &#123;&#125;. |
 | `cookies` | `object` | No | Defaults to &#123;&#125;. |
@@ -27347,6 +27364,7 @@ await corsair.digicert.api.certcentralApi.viewKeyLockerSignatures({});
 
 ```ts
 {
+  order_id: string
 }
 ```
 </Accordion>
@@ -27926,7 +27944,7 @@ await corsair.digicert.api.contentTrustApi.approve({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -27944,13 +27962,13 @@ await corsair.digicert.api.contentTrustApi.approve({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -28127,7 +28145,7 @@ await corsair.digicert.api.contentTrustApi.approvePendingSignerApproval({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -28145,13 +28163,13 @@ await corsair.digicert.api.contentTrustApi.approvePendingSignerApproval({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -28328,7 +28346,7 @@ await corsair.digicert.api.contentTrustApi.approveValidationOrganization({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -28346,13 +28364,13 @@ await corsair.digicert.api.contentTrustApi.approveValidationOrganization({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -28804,7 +28822,7 @@ await corsair.digicert.api.contentTrustApi.cancelValidation({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -28822,13 +28840,13 @@ await corsair.digicert.api.contentTrustApi.cancelValidation({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -29345,7 +29363,7 @@ await corsair.digicert.api.contentTrustApi.createValidation({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -29363,13 +29381,13 @@ await corsair.digicert.api.contentTrustApi.createValidation({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -30015,7 +30033,7 @@ await corsair.digicert.api.contentTrustApi.disableValidation({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -30033,13 +30051,13 @@ await corsair.digicert.api.contentTrustApi.disableValidation({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -30231,7 +30249,7 @@ await corsair.digicert.api.contentTrustApi.enableValidation({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -30249,13 +30267,13 @@ await corsair.digicert.api.contentTrustApi.enableValidation({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -30686,10 +30704,10 @@ await corsair.digicert.api.contentTrustApi.getById({
 | `resource_type` | `VALIDATION \| SIGNATURE \| LICENSE \| CREDENTIAL \| TIMESTAMP \| MANAGER_CONFIG \| DSE_ACCOUNT \| DSE_PROFILE \| CERTIFICATE_PROFILE \| SIGNING_PROVIDER \| DOCUMENT \| CERTIFICATE \| SELF_ENROLLMENT_LINK \| VALIDATION_PROFILE \| DSM_CERTIFICATE_TEMPLATE \| DSM_CERTIFICATE_PROFILE \| MIGRATION \| PRODUCT \| ONBOARDING \| SIGNER \| USER` | No | — |
 | `resource_id` | `string` | No | — |
 | `action` | `SIGN \| UPDATE \| CREATE \| DELETE \| EMAIL_SENT \| FETCH \| AUTHORIZE \| SEND_OTP \| ENABLE \| DISABLE \| CANCEL \| REVOKE \| SIGNING_HUB_USER_CREATION \| HASH_ENHANCEMENT \| SIGNATURE_ENHANCEMENT` | No | — |
-| `auth_type` | `BASIC \| API_TOKEN \| INTERNAL` | No | — |
+| `auth_type` | `BASIC \| API_TOKEN \| INTERNAL \| string` | No | — |
 | `timestamp` | `string` | No | — |
 | `description` | `string` | No | — |
-| `status` | `SUCCESS \| FAILURE` | No | — |
+| `status` | `SUCCESS \| FAILURE \| string` | No | — |
 | `error_message` | `string` | No | — |
 | `data` | `string` | No | — |
 | `userId` | `string` | No | — |
@@ -31049,7 +31067,7 @@ await corsair.digicert.api.contentTrustApi.getValidation({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -31067,13 +31085,13 @@ await corsair.digicert.api.contentTrustApi.getValidation({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -31378,7 +31396,7 @@ await corsair.digicert.api.contentTrustApi.invalidateValidation({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -31396,13 +31414,13 @@ await corsair.digicert.api.contentTrustApi.invalidateValidation({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -31516,10 +31534,10 @@ await corsair.digicert.api.contentTrustApi.listAuditLogsWithCursor({});
   resource_type?: VALIDATION | SIGNATURE | LICENSE | CREDENTIAL | TIMESTAMP | MANAGER_CONFIG | DSE_ACCOUNT | DSE_PROFILE | CERTIFICATE_PROFILE | SIGNING_PROVIDER | DOCUMENT | CERTIFICATE | SELF_ENROLLMENT_LINK | VALIDATION_PROFILE | DSM_CERTIFICATE_TEMPLATE | DSM_CERTIFICATE_PROFILE | MIGRATION | PRODUCT | ONBOARDING | SIGNER | USER,
   resource_id?: string,
   action?: SIGN | UPDATE | CREATE | DELETE | EMAIL_SENT | FETCH | AUTHORIZE | SEND_OTP | ENABLE | DISABLE | CANCEL | REVOKE | SIGNING_HUB_USER_CREATION | HASH_ENHANCEMENT | SIGNATURE_ENHANCEMENT,
-  auth_type?: BASIC | API_TOKEN | INTERNAL,
+  auth_type?: BASIC | API_TOKEN | INTERNAL | string,
   timestamp?: string,
   description?: string,
-  status?: SUCCESS | FAILURE,
+  status?: SUCCESS | FAILURE | string,
   error_message?: string,
   data?: string,
   userId?: string,
@@ -31859,7 +31877,7 @@ await corsair.digicert.api.contentTrustApi.listValidations({
     id?: string,
     validationId?: string,
     reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-    status?: APPROVED | REJECTED,
+    status?: APPROVED | REJECTED | string,
     reason?: string,
     reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
     userId?: string,
@@ -31887,7 +31905,7 @@ await corsair.digicert.api.contentTrustApi.listValidations({
       name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
       value?: boolean
     }[],
-    status?: ACTIVE | DISABLED,
+    status?: ACTIVE | DISABLED | string,
     modified_on?: string,
     created_by?: string,
     created_on?: string,
@@ -32257,7 +32275,7 @@ await corsair.digicert.api.contentTrustApi.reject({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -32275,13 +32293,13 @@ await corsair.digicert.api.contentTrustApi.reject({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -32469,7 +32487,7 @@ await corsair.digicert.api.contentTrustApi.rejectPendingSignerApproval({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -32487,13 +32505,13 @@ await corsair.digicert.api.contentTrustApi.rejectPendingSignerApproval({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -32681,7 +32699,7 @@ await corsair.digicert.api.contentTrustApi.rejectValidationOrganization({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -32699,13 +32717,13 @@ await corsair.digicert.api.contentTrustApi.rejectValidationOrganization({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -32977,7 +32995,7 @@ await corsair.digicert.api.contentTrustApi.resendEmail({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -32995,13 +33013,13 @@ await corsair.digicert.api.contentTrustApi.resendEmail({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -33245,7 +33263,7 @@ await corsair.digicert.api.contentTrustApi.revalidate({
   id?: string,
   validationId?: string,
   reviewed_validation_status?: VALIDATION_CREATED | VALIDATION_ERROR | INVITE_SENT | INVITE_FAILED | PENDING_IDENTITY_PROOFING | APPROVED | REJECTED | ABORTED | DOCUMENT_VERIFICATION_ERROR | EXPIRED | PENDING_MANUAL_REVIEW | PENDING_SIGNER_APPROVAL | PENDING_ORG_REVIEW | DISABLED | CANCELLED,
-  status?: APPROVED | REJECTED,
+  status?: APPROVED | REJECTED | string,
   reason?: string,
   reason_code?: VALIDATION_IN_PROCESS | VALIDATION_COMPLETED,
   userId?: string,
@@ -33263,13 +33281,13 @@ await corsair.digicert.api.contentTrustApi.revalidate({
   credential_profile_ids?: string[],
   default_credential_profile_id?: string,
   validation_method?: f2f | remote | RA | manual | remote_manual,
-  validation_type?: advanced+ | qualified | basic,
+  validation_type?: advanced+ | qualified | basic | string,
   nickname?: string,
   policies?: {
     name?: organization_details_required | title_detail_required | create_user | issue_credential | suppress_validation_approval_email | add_san_value_to_certificate | blocklist_transaction_number_required | allow_opt_out | register_notary_profession_validation | organization_identifier_required,
     value?: boolean
   }[],
-  status?: ACTIVE | DISABLED,
+  status?: ACTIVE | DISABLED | string,
   modified_on?: string,
   created_by?: string,
   created_on?: string,
@@ -34481,7 +34499,7 @@ await corsair.digicert.api.contentTrustApi.verifyAuditLog({
 |------|------|----------|-------------|
 | `calculated_hash` | `string` | No | — |
 | `stored_hash` | `string` | No | — |
-| `status` | `SUCCESS \| FAILURE` | No | — |
+| `status` | `SUCCESS \| FAILURE \| string` | No | — |
 
 
 
@@ -35568,7 +35586,7 @@ await corsair.digicert.api.privateCAApi.getGetACa({
 | `issue_types` | `string[]` | No | — |
 | `issuer` | `object` | No | — |
 | `key_generation` | `object` | No | — |
-| `key_type` | `rsa \| ecc` | No | — |
+| `key_type` | `rsa \| ecc \| string` | No | — |
 | `name` | `string` | No | — |
 | `notification` | `object` | No | — |
 | `number_of_ica` | `number` | No | — |
@@ -35580,7 +35598,7 @@ await corsair.digicert.api.privateCAApi.getGetACa({
 | `revocation_requests` | `object[]` | No | — |
 | `serial_number` | `string` | No | — |
 | `signature_algorithm` | `string` | No | — |
-| `status` | `active \| pending_sign \| disabled` | No | — |
+| `status` | `active \| pending_sign \| disabled \| string` | No | — |
 | `subject` | `object` | No | — |
 | `template` | `string` | No | — |
 | `template_id` | `string` | No | — |
@@ -35666,7 +35684,7 @@ await corsair.digicert.api.privateCAApi.getGetACa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -35740,7 +35758,7 @@ await corsair.digicert.api.privateCAApi.getGetACa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     end_validity_years?: number,
@@ -35762,7 +35780,7 @@ await corsair.digicert.api.privateCAApi.getGetACa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -36033,7 +36051,7 @@ await corsair.digicert.api.privateCAApi.getGetACa({
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -36441,7 +36459,7 @@ await corsair.digicert.api.privateCAApi.getGetACertificateTemplate({
 | `accounts` | `object[]` | No | — |
 | `active` | `boolean` | No | — |
 | `category` | `string` | No | — |
-| `cert_type` | `root \| intermediate \| end_entity` | No | — |
+| `cert_type` | `root \| intermediate \| end_entity \| string` | No | — |
 | `created_date` | `string` | No | — |
 | `id` | `string` | No | — |
 | `install_type` | `string` | No | — |
@@ -38004,7 +38022,7 @@ await corsair.digicert.api.privateCAApi.getGetAnOcspResponder({
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -38311,7 +38329,7 @@ await corsair.digicert.api.privateCAApi.getGetCaAiaIssuerConfiguration({
   created_date?: string,
   id?: string,
   name?: string,
-  scheme?: http | https | ldap,
+  scheme?: http | https | ldap | string,
   type?: string[]
 }[]
 ```
@@ -38613,7 +38631,7 @@ await corsair.digicert.api.privateCAApi.getGetCaCrlIssuanceConfig({
   created_date?: string,
   id?: string,
   name?: string,
-  scheme?: http | https | ldap,
+  scheme?: http | https | ldap | string,
   type?: string[]
 }[]
 ```
@@ -38795,7 +38813,7 @@ await corsair.digicert.api.privateCAApi.getGetCaOcspConfig({
   created_date?: string,
   id?: string,
   name?: string,
-  scheme?: http | https | ldap,
+  scheme?: http | https | ldap | string,
   type?: string[]
 }[]
 ```
@@ -38965,7 +38983,7 @@ await corsair.digicert.api.privateCAApi.getGetCaOcspIssuanceConfig({
   created_date?: string,
   id?: string,
   name?: string,
-  scheme?: http | https | ldap,
+  scheme?: http | https | ldap | string,
   type?: string[]
 }[]
 ```
@@ -39072,7 +39090,7 @@ await corsair.digicert.api.privateCAApi.getGetCaOcspResponderConfig({
   }[],
   active?: boolean,
   category?: string,
-  cert_type?: root | intermediate | end_entity,
+  cert_type?: root | intermediate | end_entity | string,
   created_date?: string,
   id?: string,
   install_type?: string,
@@ -39994,7 +40012,7 @@ await corsair.digicert.api.privateCAApi.getGetCertificateTemplateValidationSchem
 | `accounts` | `object[]` | No | — |
 | `active` | `boolean` | No | — |
 | `category` | `string` | No | — |
-| `cert_type` | `root \| intermediate \| end_entity` | No | — |
+| `cert_type` | `root \| intermediate \| end_entity \| string` | No | — |
 | `created_date` | `string` | No | — |
 | `id` | `string` | No | — |
 | `install_type` | `string` | No | — |
@@ -40086,7 +40104,7 @@ await corsair.digicert.api.privateCAApi.getGetCertificateTemplateValidationSchem
 | `accounts` | `object[]` | No | — |
 | `active` | `boolean` | No | — |
 | `category` | `string` | No | — |
-| `cert_type` | `root \| intermediate \| end_entity` | No | — |
+| `cert_type` | `root \| intermediate \| end_entity \| string` | No | — |
 | `created_date` | `string` | No | — |
 | `id` | `string` | No | — |
 | `install_type` | `string` | No | — |
@@ -41768,7 +41786,7 @@ await corsair.digicert.api.privateCAApi.getShowAllCas({});
       rsa_key_bits?: number,
       sphincs_key_size?: string
     },
-    key_type?: rsa | ecc,
+    key_type?: rsa | ecc | string,
     name?: string,
     notification?: {
       enabled?: boolean,
@@ -41811,7 +41829,7 @@ await corsair.digicert.api.privateCAApi.getShowAllCas({});
     }[],
     serial_number?: string,
     signature_algorithm?: string,
-    status?: active | pending_sign | disabled,
+    status?: active | pending_sign | disabled | string,
     subject?: {
       common_name?: string,
       country?: string,
@@ -43115,7 +43133,7 @@ await corsair.digicert.api.privateCAApi.postCreateACa({
 | `issue_types` | `string[]` | No | — |
 | `issuer` | `object` | No | — |
 | `key_generation` | `object` | No | — |
-| `key_type` | `rsa \| ecc` | No | — |
+| `key_type` | `rsa \| ecc \| string` | No | — |
 | `name` | `string` | No | — |
 | `notification` | `object` | No | — |
 | `number_of_ica` | `number` | No | — |
@@ -43127,7 +43145,7 @@ await corsair.digicert.api.privateCAApi.postCreateACa({
 | `revocation_requests` | `object[]` | No | — |
 | `serial_number` | `string` | No | — |
 | `signature_algorithm` | `string` | No | — |
-| `status` | `active \| pending_sign \| disabled` | No | — |
+| `status` | `active \| pending_sign \| disabled \| string` | No | — |
 | `subject` | `object` | No | — |
 | `template` | `string` | No | — |
 | `template_id` | `string` | No | — |
@@ -43213,7 +43231,7 @@ await corsair.digicert.api.privateCAApi.postCreateACa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -43287,7 +43305,7 @@ await corsair.digicert.api.privateCAApi.postCreateACa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     end_validity_years?: number,
@@ -43309,7 +43327,7 @@ await corsair.digicert.api.privateCAApi.postCreateACa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -43580,7 +43598,7 @@ await corsair.digicert.api.privateCAApi.postCreateACa({
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -43825,7 +43843,7 @@ await corsair.digicert.api.privateCAApi.postCreateACustomCertificateTemplate({
 | `accounts` | `object[]` | No | — |
 | `active` | `boolean` | No | — |
 | `category` | `string` | No | — |
-| `cert_type` | `root \| intermediate \| end_entity` | No | — |
+| `cert_type` | `root \| intermediate \| end_entity \| string` | No | — |
 | `created_date` | `string` | No | — |
 | `id` | `string` | No | — |
 | `install_type` | `string` | No | — |
@@ -44434,7 +44452,7 @@ await corsair.digicert.api.privateCAApi.postCreateAnOcspResponder({
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -45079,7 +45097,7 @@ await corsair.digicert.api.privateCAApi.postCreateAPendingDelegatedOcspResponder
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -45724,7 +45742,7 @@ await corsair.digicert.api.privateCAApi.postCreateAPendingOcspResponder({
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -47931,7 +47949,7 @@ await corsair.digicert.api.privateCAApi.postImportACa({
 | `issue_types` | `string[]` | No | — |
 | `issuer` | `object` | No | — |
 | `key_generation` | `object` | No | — |
-| `key_type` | `rsa \| ecc` | No | — |
+| `key_type` | `rsa \| ecc \| string` | No | — |
 | `name` | `string` | No | — |
 | `notification` | `object` | No | — |
 | `number_of_ica` | `number` | No | — |
@@ -47943,7 +47961,7 @@ await corsair.digicert.api.privateCAApi.postImportACa({
 | `revocation_requests` | `object[]` | No | — |
 | `serial_number` | `string` | No | — |
 | `signature_algorithm` | `string` | No | — |
-| `status` | `active \| pending_sign \| disabled` | No | — |
+| `status` | `active \| pending_sign \| disabled \| string` | No | — |
 | `subject` | `object` | No | — |
 | `template` | `string` | No | — |
 | `template_id` | `string` | No | — |
@@ -48029,7 +48047,7 @@ await corsair.digicert.api.privateCAApi.postImportACa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -48103,7 +48121,7 @@ await corsair.digicert.api.privateCAApi.postImportACa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     end_validity_years?: number,
@@ -48125,7 +48143,7 @@ await corsair.digicert.api.privateCAApi.postImportACa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -48396,7 +48414,7 @@ await corsair.digicert.api.privateCAApi.postImportACa({
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -49748,7 +49766,7 @@ await corsair.digicert.api.privateCAApi.postImportAnOcspResponder({
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -50410,7 +50428,7 @@ await corsair.digicert.api.privateCAApi.postImportAnOfflineCa({
 | `issue_types` | `string[]` | No | — |
 | `issuer` | `object` | No | — |
 | `key_generation` | `object` | No | — |
-| `key_type` | `rsa \| ecc` | No | — |
+| `key_type` | `rsa \| ecc \| string` | No | — |
 | `name` | `string` | No | — |
 | `notification` | `object` | No | — |
 | `number_of_ica` | `number` | No | — |
@@ -50422,7 +50440,7 @@ await corsair.digicert.api.privateCAApi.postImportAnOfflineCa({
 | `revocation_requests` | `object[]` | No | — |
 | `serial_number` | `string` | No | — |
 | `signature_algorithm` | `string` | No | — |
-| `status` | `active \| pending_sign \| disabled` | No | — |
+| `status` | `active \| pending_sign \| disabled \| string` | No | — |
 | `subject` | `object` | No | — |
 | `template` | `string` | No | — |
 | `template_id` | `string` | No | — |
@@ -50508,7 +50526,7 @@ await corsair.digicert.api.privateCAApi.postImportAnOfflineCa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -50582,7 +50600,7 @@ await corsair.digicert.api.privateCAApi.postImportAnOfflineCa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     end_validity_years?: number,
@@ -50604,7 +50622,7 @@ await corsair.digicert.api.privateCAApi.postImportAnOfflineCa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -50875,7 +50893,7 @@ await corsair.digicert.api.privateCAApi.postImportAnOfflineCa({
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -51626,7 +51644,7 @@ await corsair.digicert.api.privateCAApi.postImportAThirdPartyCa({
 | `issue_types` | `string[]` | No | — |
 | `issuer` | `object` | No | — |
 | `key_generation` | `object` | No | — |
-| `key_type` | `rsa \| ecc` | No | — |
+| `key_type` | `rsa \| ecc \| string` | No | — |
 | `name` | `string` | No | — |
 | `notification` | `object` | No | — |
 | `number_of_ica` | `number` | No | — |
@@ -51638,7 +51656,7 @@ await corsair.digicert.api.privateCAApi.postImportAThirdPartyCa({
 | `revocation_requests` | `object[]` | No | — |
 | `serial_number` | `string` | No | — |
 | `signature_algorithm` | `string` | No | — |
-| `status` | `active \| pending_sign \| disabled` | No | — |
+| `status` | `active \| pending_sign \| disabled \| string` | No | — |
 | `subject` | `object` | No | — |
 | `template` | `string` | No | — |
 | `template_id` | `string` | No | — |
@@ -51724,7 +51742,7 @@ await corsair.digicert.api.privateCAApi.postImportAThirdPartyCa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -51798,7 +51816,7 @@ await corsair.digicert.api.privateCAApi.postImportAThirdPartyCa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     end_validity_years?: number,
@@ -51820,7 +51838,7 @@ await corsair.digicert.api.privateCAApi.postImportAThirdPartyCa({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -52091,7 +52109,7 @@ await corsair.digicert.api.privateCAApi.postImportAThirdPartyCa({
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -52995,7 +53013,7 @@ await corsair.digicert.api.privateCAApi.postLinkACaKey({
 | `issue_types` | `string[]` | No | — |
 | `issuer` | `object` | No | — |
 | `key_generation` | `object` | No | — |
-| `key_type` | `rsa \| ecc` | No | — |
+| `key_type` | `rsa \| ecc \| string` | No | — |
 | `name` | `string` | No | — |
 | `notification` | `object` | No | — |
 | `number_of_ica` | `number` | No | — |
@@ -53007,7 +53025,7 @@ await corsair.digicert.api.privateCAApi.postLinkACaKey({
 | `revocation_requests` | `object[]` | No | — |
 | `serial_number` | `string` | No | — |
 | `signature_algorithm` | `string` | No | — |
-| `status` | `active \| pending_sign \| disabled` | No | — |
+| `status` | `active \| pending_sign \| disabled \| string` | No | — |
 | `subject` | `object` | No | — |
 | `template` | `string` | No | — |
 | `template_id` | `string` | No | — |
@@ -53093,7 +53111,7 @@ await corsair.digicert.api.privateCAApi.postLinkACaKey({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -53167,7 +53185,7 @@ await corsair.digicert.api.privateCAApi.postLinkACaKey({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     end_validity_years?: number,
@@ -53189,7 +53207,7 @@ await corsair.digicert.api.privateCAApi.postLinkACaKey({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -53460,7 +53478,7 @@ await corsair.digicert.api.privateCAApi.postLinkACaKey({
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -53795,7 +53813,7 @@ await corsair.digicert.api.privateCAApi.postRecertifiesACaWithANewImportedCertif
 | `issue_types` | `string[]` | No | — |
 | `issuer` | `object` | No | — |
 | `key_generation` | `object` | No | — |
-| `key_type` | `rsa \| ecc` | No | — |
+| `key_type` | `rsa \| ecc \| string` | No | — |
 | `name` | `string` | No | — |
 | `notification` | `object` | No | — |
 | `number_of_ica` | `number` | No | — |
@@ -53807,7 +53825,7 @@ await corsair.digicert.api.privateCAApi.postRecertifiesACaWithANewImportedCertif
 | `revocation_requests` | `object[]` | No | — |
 | `serial_number` | `string` | No | — |
 | `signature_algorithm` | `string` | No | — |
-| `status` | `active \| pending_sign \| disabled` | No | — |
+| `status` | `active \| pending_sign \| disabled \| string` | No | — |
 | `subject` | `object` | No | — |
 | `template` | `string` | No | — |
 | `template_id` | `string` | No | — |
@@ -53893,7 +53911,7 @@ await corsair.digicert.api.privateCAApi.postRecertifiesACaWithANewImportedCertif
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -53967,7 +53985,7 @@ await corsair.digicert.api.privateCAApi.postRecertifiesACaWithANewImportedCertif
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     end_validity_years?: number,
@@ -53989,7 +54007,7 @@ await corsair.digicert.api.privateCAApi.postRecertifiesACaWithANewImportedCertif
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -54260,7 +54278,7 @@ await corsair.digicert.api.privateCAApi.postRecertifiesACaWithANewImportedCertif
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -54517,7 +54535,7 @@ await corsair.digicert.api.privateCAApi.postRecertifiesExistingCaByCaId({
 | `issue_types` | `string[]` | No | — |
 | `issuer` | `object` | No | — |
 | `key_generation` | `object` | No | — |
-| `key_type` | `rsa \| ecc` | No | — |
+| `key_type` | `rsa \| ecc \| string` | No | — |
 | `name` | `string` | No | — |
 | `notification` | `object` | No | — |
 | `number_of_ica` | `number` | No | — |
@@ -54529,7 +54547,7 @@ await corsair.digicert.api.privateCAApi.postRecertifiesExistingCaByCaId({
 | `revocation_requests` | `object[]` | No | — |
 | `serial_number` | `string` | No | — |
 | `signature_algorithm` | `string` | No | — |
-| `status` | `active \| pending_sign \| disabled` | No | — |
+| `status` | `active \| pending_sign \| disabled \| string` | No | — |
 | `subject` | `object` | No | — |
 | `template` | `string` | No | — |
 | `template_id` | `string` | No | — |
@@ -54615,7 +54633,7 @@ await corsair.digicert.api.privateCAApi.postRecertifiesExistingCaByCaId({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -54689,7 +54707,7 @@ await corsair.digicert.api.privateCAApi.postRecertifiesExistingCaByCaId({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     end_validity_years?: number,
@@ -54711,7 +54729,7 @@ await corsair.digicert.api.privateCAApi.postRecertifiesExistingCaByCaId({
       created_date?: string,
       id?: string,
       name?: string,
-      scheme?: http | https | ldap,
+      scheme?: http | https | ldap | string,
       type?: string[]
     }[],
     include?: string,
@@ -54982,7 +55000,7 @@ await corsair.digicert.api.privateCAApi.postRecertifiesExistingCaByCaId({
 
 ```ts
 {
-  hosted_type?: online | offline | third_party,
+  hosted_type?: online | offline | third_party | string,
   id?: string,
   name?: string,
   valid_from?: string,
@@ -55837,7 +55855,7 @@ await corsair.digicert.api.privateCAApi.putActivateACustomCertificateTemplate({
 | `accounts` | `object[]` | No | — |
 | `active` | `boolean` | No | — |
 | `category` | `string` | No | — |
-| `cert_type` | `root \| intermediate \| end_entity` | No | — |
+| `cert_type` | `root \| intermediate \| end_entity \| string` | No | — |
 | `created_date` | `string` | No | — |
 | `id` | `string` | No | — |
 | `install_type` | `string` | No | — |
@@ -55932,7 +55950,7 @@ await corsair.digicert.api.privateCAApi.putDeactivateACustomCertificateTemplate(
 | `accounts` | `object[]` | No | — |
 | `active` | `boolean` | No | — |
 | `category` | `string` | No | — |
-| `cert_type` | `root \| intermediate \| end_entity` | No | — |
+| `cert_type` | `root \| intermediate \| end_entity \| string` | No | — |
 | `created_date` | `string` | No | — |
 | `id` | `string` | No | — |
 | `install_type` | `string` | No | — |
@@ -57495,7 +57513,7 @@ await corsair.digicert.api.privateCAApi.putUpdateACustomCertificateTemplate({
 | `accounts` | `object[]` | No | — |
 | `active` | `boolean` | No | — |
 | `category` | `string` | No | — |
-| `cert_type` | `root \| intermediate \| end_entity` | No | — |
+| `cert_type` | `root \| intermediate \| end_entity \| string` | No | — |
 | `created_date` | `string` | No | — |
 | `id` | `string` | No | — |
 | `install_type` | `string` | No | — |
@@ -60785,7 +60803,7 @@ await corsair.digicert.api.trustLifecycleApi.deleteDeleteSeat({
 
 Delete past system scan instance
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.trustLifecycleApi.deletePastSystemScanUsingPostpublic({
@@ -60994,7 +61012,7 @@ await corsair.digicert.api.trustLifecycleApi.deleteResumeSuspendedCertificate({
 
 Delete scan
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.trustLifecycleApi.deleteScanUsingPost({
@@ -61430,7 +61448,7 @@ await corsair.digicert.api.trustLifecycleApi.getAttributesOfRenewableCertificate
   },
   key_escrow_policy?: {
     dual_admin_recovery?: any,
-    key_escrow_deployment_mode?: CLOUD | LOCAL,
+    key_escrow_deployment_mode?: CLOUD | LOCAL | string,
     key_escrow_enabled?: any
   },
   max_number_of_bad_attempts?: any,
@@ -61439,11 +61457,11 @@ await corsair.digicert.api.trustLifecycleApi.getAttributesOfRenewableCertificate
       modifiable?: any,
       providers?: any
     },
-    end_entity_type?: machine | user,
+    end_entity_type?: machine | user | string,
     enroll_on_behalf_of?: any,
     enroll_on_behalf_of_modifiable?: any,
     enrollment_mode?: {
-      mode: inform_user | silent,
+      mode: inform_user | silent | string,
       modifiable?: any
     },
     key_spec?: at_keyexchange | at_signature | xcn_at_none,
@@ -61473,8 +61491,8 @@ await corsair.digicert.api.trustLifecycleApi.getAttributesOfRenewableCertificate
     sp_certificate?: any
   },
   scep_settings?: {
-    encryption_algorithm: aes128WithCBC | aes128WithGCM | aes256WithCBC | aes256WithGCM | desEDEWith3CBC | desWithCBC,
-    standard: DRAFT_NOURSE_SCEP_23 | RFC_8894_DRAFT_GUTMANN_SCEP_16
+    encryption_algorithm: aes128WithCBC | aes128WithGCM | aes256WithCBC | aes256WithGCM | desEDEWith3CBC | desWithCBC | string,
+    standard: DRAFT_NOURSE_SCEP_23 | RFC_8894_DRAFT_GUTMANN_SCEP_16 | string
   },
   seat_id_mapping?: common_name | dns_names | email | other_name_guid | registered_ids | san_emails | serial_number | subject_email | unique_identifier | upn,
   seat_type_id?: any,
@@ -61483,7 +61501,7 @@ await corsair.digicert.api.trustLifecycleApi.getAttributesOfRenewableCertificate
   template?: {
     id: any,
     name?: any,
-    trust_type?: private | public
+    trust_type?: private | public | string
   },
   use_custom_contact?: any
 }
@@ -61734,7 +61752,7 @@ await corsair.digicert.api.trustLifecycleApi.getAutomationDetailsUsingGet({
 |------|------|----------|-------------|
 | `id` | `any` | No | — |
 | `automation_flow_details` | `object` | No | — |
-| `automation_status` | `(ACME_ACCOUNT_CREATED \| ACME_CLIENT_APP_UPGRADE_IN_PROGRESS \| ACTION_REQUIRED \| AGENT_ERROR \| AUTOMATED_BY_AGENT \| AUTOMATED_BY_AGENTLESS \| AUTOMATION_AT_RISK \| AUTOMATION_FAILED \| AUTOMATION_PROFILE_BLOCKED \| AUTOMATION_REQUESTED \| AUTOMATION_SCHEDULED \| AUTOMATION_SUCCESSFUL \| AUTO_RENEW_SCHEDULED \| CERT_PENDING_APPROVAL \| CERT_READY_TO_INSTALL \| CERT_REQ_DENIED_BY_CIS \| CONFIGURATION_ERROR \| CONFIGURATION_IN_PROGRESS \| CONFIGURED \| CONFLICTED \| CSR_GENERATION_FAILED \| CSR_GENERATION_IN_PROGRESS \| CSR_GENERATION_SUCCEEDED \| DELETED \| DISABLED_FOR_AUTOMATION \| DNS_INTEGRATION_FAILED \| IGNORED \| INSTALL_FAILED \| INSTALL_IN_PROGRESS \| INSTALL_SUCCEEDED \| INSTALL_VALIDATED \| INSTALL_VALIDATION_FAILED \| INSTALL_VALIDATION_IN_PROGRESS \| IS_UPGRADE \| NOT_CONFIGURED \| NOT_SCANNED \| POST_CSR_FAILED \| REMOVED \| SCAN_IN_PROGRESS) & any` | No | — |
+| `automation_status` | `(ACME_ACCOUNT_CREATED \| ACME_CLIENT_APP_UPGRADE_IN_PROGRESS \| ACTION_REQUIRED \| AGENT_ERROR \| AUTOMATED_BY_AGENT \| AUTOMATED_BY_AGENTLESS \| AUTOMATION_AT_RISK \| AUTOMATION_FAILED \| AUTOMATION_PROFILE_BLOCKED \| AUTOMATION_REQUESTED \| AUTOMATION_SCHEDULED \| AUTOMATION_SUCCESSFUL \| AUTO_RENEW_SCHEDULED \| CERT_PENDING_APPROVAL \| CERT_READY_TO_INSTALL \| CERT_REQ_DENIED_BY_CIS \| CONFIGURATION_ERROR \| CONFIGURATION_IN_PROGRESS \| CONFIGURED \| CONFLICTED \| CSR_GENERATION_FAILED \| CSR_GENERATION_IN_PROGRESS \| CSR_GENERATION_SUCCEEDED \| DELETED \| DISABLED_FOR_AUTOMATION \| DNS_INTEGRATION_FAILED \| IGNORED \| INSTALL_FAILED \| INSTALL_IN_PROGRESS \| INSTALL_SUCCEEDED \| INSTALL_VALIDATED \| INSTALL_VALIDATION_FAILED \| INSTALL_VALIDATION_IN_PROGRESS \| IS_UPGRADE \| NOT_CONFIGURED \| NOT_SCANNED \| POST_CSR_FAILED \| REMOVED \| SCAN_IN_PROGRESS \| string) & any` | No | — |
 | `certificate_details` | `object` | No | — |
 
 <AccordionGroup>
@@ -61825,7 +61843,7 @@ await corsair.digicert.api.trustLifecycleApi.getAutomationDetailsUsingGet({
 
 Get certificate counts for deletion preview
 
-**Risk:** `write`
+**Risk:** `read`
 
 ```ts
 await corsair.digicert.api.trustLifecycleApi.getCertificateCountsBySourceTypes({
@@ -62747,7 +62765,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetAuditLogEventById({
 | `user` | `object` | No | — |
 | `timestamp` | `any` | No | — |
 | `description` | `any` | No | — |
-| `status` | `success \| warning \| failure` | No | — |
+| `status` | `success \| warning \| failure \| string` | No | — |
 | `error_message` | `any` | No | — |
 | `detailed_error_message` | `any` | No | — |
 | `data` | `any` | No | — |
@@ -63016,7 +63034,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetCertificateBySerialNumber({
 | `certificate` | `any` | No | — |
 | `ica` | `object` | No | — |
 | `common_name` | `any` | No | — |
-| `status` | `issued \| revoked \| expired \| suspended` | No | — |
+| `status` | `issued \| revoked \| expired \| suspended \| string` | No | — |
 | `serial_number` | `any` | No | — |
 | `thumbprint` | `any` | No | — |
 | `valid_from` | `any` | No | — |
@@ -63433,7 +63451,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetDevice({
 | `deviceName` | `any` | No | — |
 | `serialNumber` | `any` | No | — |
 | `udid` | `any` | No | — |
-| `status` | `ACTIVE \| INACTIVE` | No | — |
+| `status` | `ACTIVE \| INACTIVE \| string` | No | — |
 | `profileIds` | `any` | No | — |
 | `profiles` | `any` | No | — |
 | `createdAt` | `any` | No | — |
@@ -64033,7 +64051,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetProfileById({
 | `renewal_period_days` | `any` | No | — |
 | `duplicate_cert_policy` | `any` | No | — |
 | `override_cert_validity_via_api` | `any` | No | — |
-| `certificate_delivery_format` | `x509 \| pkcs7 \| pkcs12` | No | — |
+| `certificate_delivery_format` | `x509 \| pkcs7 \| pkcs12 \| string` | No | — |
 | `account_id` | `any` | No | — |
 | `business_unit_id` | `any` | No | — |
 | `business_unit_name` | `any` | No | — |
@@ -64055,7 +64073,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetProfileById({
 | `tags` | `any` | No | — |
 | `useCustomContact` | `any` | No | — |
 | `duplicate_certificate_allowed` | `any` | No | — |
-| `cert_delivery_format` | `x509 \| pkcs7 \| pkcs12` | No | — |
+| `cert_delivery_format` | `x509 \| pkcs7 \| pkcs12 \| string` | No | — |
 | `notifyRequestor` | `any` | No | — |
 | `custom_extended_key_usages` | `any` | No | — |
 | `certificate` | `object` | No | — |
@@ -64087,7 +64105,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetProfileById({
 ```ts
 {
   key_escrow_enabled: any,
-  key_escrow_deployment_mode?: CLOUD | LOCAL,
+  key_escrow_deployment_mode?: CLOUD | LOCAL | string,
   dual_admin_recovery: any
 }
 ```
@@ -64153,7 +64171,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetProfileById({
 {
   id?: any,
   name?: any,
-  trust_type?: private | public
+  trust_type?: private | public | string
 }
 ```
 </Accordion>
@@ -64274,7 +64292,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetProfileById_2316fef({
   },
   key_escrow_policy?: {
     key_escrow_enabled: any,
-    key_escrow_deployment_mode?: CLOUD | LOCAL,
+    key_escrow_deployment_mode?: CLOUD | LOCAL | string,
     dual_admin_recovery: any
   },
   private_key_attributes?: {
@@ -64287,7 +64305,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetProfileById_2316fef({
   tags?: any,
   useCustomContact?: any,
   duplicate_certificate_allowed?: any,
-  cert_delivery_format?: x509 | pkcs7 | pkcs12,
+  cert_delivery_format?: x509 | pkcs7 | pkcs12 | string,
   notifyRequestor?: any,
   custom_extended_key_usages?: any,
   certificate?: {
@@ -64321,7 +64339,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetProfileById_2316fef({
   template?: {
     id?: any,
     name?: any,
-    trust_type?: private | public
+    trust_type?: private | public | string
   },
   allowed_key_sizes?: any,
   fields?: {
@@ -64365,7 +64383,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetProfileById_2316fef({
   },
   key_escrow_policy?: {
     key_escrow_enabled: any,
-    key_escrow_deployment_mode?: CLOUD | LOCAL,
+    key_escrow_deployment_mode?: CLOUD | LOCAL | string,
     dual_admin_recovery: any
   },
   private_key_attributes?: {
@@ -64383,7 +64401,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetProfileById_2316fef({
   tags?: any,
   useCustomContact?: any,
   duplicate_certificate_allowed?: any,
-  cert_delivery_format?: x509 | pkcs7 | pkcs12,
+  cert_delivery_format?: x509 | pkcs7 | pkcs12 | string,
   notifyRequestor?: any,
   custom_extended_key_usages?: any,
   certificate?: {
@@ -64417,7 +64435,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetProfileById_2316fef({
   template?: {
     id?: any,
     name?: any,
-    trust_type?: private | public
+    trust_type?: private | public | string
   },
   allowed_list?: any,
   allowed_key_sizes?: any,
@@ -64517,7 +64535,7 @@ await corsair.digicert.api.trustLifecycleApi.getGetRuleById({
 | `name` | `any` | Yes | — |
 | `account_id` | `any` | Yes | — |
 | `rule_id` | `any` | No | — |
-| `type` | `certificate \| asset` | No | — |
+| `type` | `certificate \| asset \| string` | No | — |
 | `description` | `any` | No | — |
 | `status` | `any` | No | — |
 | `created_at` | `any` | No | — |
@@ -64980,7 +64998,7 @@ any & {
     renewalStartDate?: any,
     secondaryActions?: any
   },
-  automation_status?: (ACME_ACCOUNT_CREATED | ACME_CLIENT_APP_UPGRADE_IN_PROGRESS | ACTION_REQUIRED | AGENT_ERROR | AUTOMATED_BY_AGENT | AUTOMATED_BY_AGENTLESS | AUTOMATION_AT_RISK | AUTOMATION_FAILED | AUTOMATION_PROFILE_BLOCKED | AUTOMATION_REQUESTED | AUTOMATION_SCHEDULED | AUTOMATION_SUCCESSFUL | AUTO_RENEW_SCHEDULED | CERT_PENDING_APPROVAL | CERT_READY_TO_INSTALL | CERT_REQ_DENIED_BY_CIS | CONFIGURATION_ERROR | CONFIGURATION_IN_PROGRESS | CONFIGURED | CONFLICTED | CSR_GENERATION_FAILED | CSR_GENERATION_IN_PROGRESS | CSR_GENERATION_SUCCEEDED | DELETED | DISABLED_FOR_AUTOMATION | DNS_INTEGRATION_FAILED | IGNORED | INSTALL_FAILED | INSTALL_IN_PROGRESS | INSTALL_SUCCEEDED | INSTALL_VALIDATED | INSTALL_VALIDATION_FAILED | INSTALL_VALIDATION_IN_PROGRESS | IS_UPGRADE | NOT_CONFIGURED | NOT_SCANNED | POST_CSR_FAILED | REMOVED | SCAN_IN_PROGRESS)& any,
+  automation_status?: (ACME_ACCOUNT_CREATED | ACME_CLIENT_APP_UPGRADE_IN_PROGRESS | ACTION_REQUIRED | AGENT_ERROR | AUTOMATED_BY_AGENT | AUTOMATED_BY_AGENTLESS | AUTOMATION_AT_RISK | AUTOMATION_FAILED | AUTOMATION_PROFILE_BLOCKED | AUTOMATION_REQUESTED | AUTOMATION_SCHEDULED | AUTOMATION_SUCCESSFUL | AUTO_RENEW_SCHEDULED | CERT_PENDING_APPROVAL | CERT_READY_TO_INSTALL | CERT_REQ_DENIED_BY_CIS | CONFIGURATION_ERROR | CONFIGURATION_IN_PROGRESS | CONFIGURED | CONFLICTED | CSR_GENERATION_FAILED | CSR_GENERATION_IN_PROGRESS | CSR_GENERATION_SUCCEEDED | DELETED | DISABLED_FOR_AUTOMATION | DNS_INTEGRATION_FAILED | IGNORED | INSTALL_FAILED | INSTALL_IN_PROGRESS | INSTALL_SUCCEEDED | INSTALL_VALIDATED | INSTALL_VALIDATION_FAILED | INSTALL_VALIDATION_IN_PROGRESS | IS_UPGRADE | NOT_CONFIGURED | NOT_SCANNED | POST_CSR_FAILED | REMOVED | SCAN_IN_PROGRESS | string)& any,
   business_unit?: {
     id: any,
     name?: any
@@ -65015,9 +65033,9 @@ any & {
     organization_contact?: {
       id: any,
       name: any,
-      contact_type: organization_contact | technical_contact | verified_contact
+      contact_type: organization_contact | technical_contact | verified_contact | string
     },
-    product_type: cloud_dv_geotrust | code_signing | code_signing_ev | private_ssl_flex | private_ssl_multi_domain | private_ssl_plus | private_ssl_wildcard | ssl_basic | ssl_cloud_wildcard | ssl_dv_geotrust | ssl_dv_geotrust_flex | ssl_dv_rapidssl | ssl_dv_thawte | ssl_ev_basic | ssl_ev_geotrust_truebizid | ssl_ev_multi_domain | ssl_ev_plus | ssl_ev_securesite | ssl_ev_securesite_flex | ssl_ev_securesite_multi_domain | ssl_ev_securesite_pro | ssl_ev_thawte_webserver | ssl_geotrust_truebizid | ssl_multi_domain | ssl_plus | ssl_securesite | ssl_securesite_flex | ssl_securesite_multi_domain | ssl_securesite_pro | ssl_securesite_wildcard | ssl_thawte_webserver | ssl_wildcard | wildcard_dv_geotrust | wildcard_dv_rapidssl,
+    product_type: cloud_dv_geotrust | code_signing | code_signing_ev | private_ssl_flex | private_ssl_multi_domain | private_ssl_plus | private_ssl_wildcard | ssl_basic | ssl_cloud_wildcard | ssl_dv_geotrust | ssl_dv_geotrust_flex | ssl_dv_rapidssl | ssl_dv_thawte | ssl_ev_basic | ssl_ev_geotrust_truebizid | ssl_ev_multi_domain | ssl_ev_plus | ssl_ev_securesite | ssl_ev_securesite_flex | ssl_ev_securesite_multi_domain | ssl_ev_securesite_pro | ssl_ev_thawte_webserver | ssl_geotrust_truebizid | ssl_multi_domain | ssl_plus | ssl_securesite | ssl_securesite_flex | ssl_securesite_multi_domain | ssl_securesite_pro | ssl_securesite_wildcard | ssl_thawte_webserver | ssl_wildcard | wildcard_dv_geotrust | wildcard_dv_rapidssl | string,
     signature_algorithm?: {
       id?: any,
       name?: any
@@ -65070,7 +65088,7 @@ any & {
     seat_name?: any,
     seat_type?: {
       id?: any,
-      name?: ((USER_SEAT | DISCOVERY_SEAT | SERVER_SEAT | DEVICE_SEAT | IMPORTED_SEAT | ORGANIZATION_SEAT | CERTIFICATE_MANAGEMENT_SEAT)& any)& any
+      name?: ((USER_SEAT | DISCOVERY_SEAT | SERVER_SEAT | DEVICE_SEAT | IMPORTED_SEAT | ORGANIZATION_SEAT | CERTIFICATE_MANAGEMENT_SEAT | string)& any)& any
     }
   },
   serial_number?: any,
@@ -66167,73 +66185,73 @@ await corsair.digicert.api.trustLifecycleApi.getQueryServiceHealth({});
 ```ts
 {
   db_service?: {
-    status?: UP | DOWN | NOT_AVAILABLE,
+    status?: UP | DOWN | NOT_AVAILABLE | string,
     details?: {
       error?: any
     }
   },
   am_service?: {
-    status?: UP | DOWN | NOT_AVAILABLE,
+    status?: UP | DOWN | NOT_AVAILABLE | string,
     details?: {
       error?: any
     }
   },
   ca_service?: {
-    status?: UP | DOWN | NOT_AVAILABLE,
+    status?: UP | DOWN | NOT_AVAILABLE | string,
     details?: {
       error?: any
     }
   },
   smtp_service?: {
-    status?: UP | DOWN | NOT_AVAILABLE,
+    status?: UP | DOWN | NOT_AVAILABLE | string,
     details?: {
       error?: any
     }
   },
   ldap_service?: {
-    status?: UP | DOWN | NOT_AVAILABLE,
+    status?: UP | DOWN | NOT_AVAILABLE | string,
     details?: {
       error?: any
     }
   },
   dta_web_service?: {
-    status?: UP | DOWN | NOT_AVAILABLE,
+    status?: UP | DOWN | NOT_AVAILABLE | string,
     details?: {
       error?: any
     }
   },
   scheduled_jobs?: {
-    status?: UP | DOWN | NOT_AVAILABLE,
+    status?: UP | DOWN | NOT_AVAILABLE | string,
     details?: {
       error?: any
     }
   },
   ticket_service?: {
-    status?: UP | DOWN | NOT_AVAILABLE,
+    status?: UP | DOWN | NOT_AVAILABLE | string,
     details?: {
       error?: any
     }
   },
   ticket_service_heart_beat?: {
-    status?: UP | DOWN | NOT_AVAILABLE,
+    status?: UP | DOWN | NOT_AVAILABLE | string,
     details?: {
       error?: any
     }
   },
   ts_upload_ticket_job?: {
-    status?: UP | DOWN | NOT_AVAILABLE,
+    status?: UP | DOWN | NOT_AVAILABLE | string,
     details?: {
       error?: any
     }
   },
   critical_services_overall_status?: {
-    status?: UP | DOWN | NOT_AVAILABLE,
+    status?: UP | DOWN | NOT_AVAILABLE | string,
     details?: {
       error?: any
     }
   },
   non_critical_service_overall_status?: {
-    status?: UP | DOWN | NOT_AVAILABLE,
+    status?: UP | DOWN | NOT_AVAILABLE | string,
     details?: {
       error?: any
     }
@@ -67823,7 +67841,7 @@ await corsair.digicert.api.trustLifecycleApi.postApproveEscrowedCertificateRecov
 
 Bulk replace tags
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.digicert.api.trustLifecycleApi.postBulkReplaceTags({
@@ -68233,7 +68251,7 @@ await corsair.digicert.api.trustLifecycleApi.postCreateANewProfile({
 | `renewal_period_days` | `any` | No | — |
 | `duplicate_cert_policy` | `any` | No | — |
 | `override_cert_validity_via_api` | `any` | No | — |
-| `certificate_delivery_format` | `x509 \| pkcs7 \| pkcs12` | No | — |
+| `certificate_delivery_format` | `x509 \| pkcs7 \| pkcs12 \| string` | No | — |
 | `account_id` | `any` | No | — |
 | `business_unit_id` | `any` | No | — |
 | `business_unit_name` | `any` | No | — |
@@ -68255,7 +68273,7 @@ await corsair.digicert.api.trustLifecycleApi.postCreateANewProfile({
 | `tags` | `any` | No | — |
 | `useCustomContact` | `any` | No | — |
 | `duplicate_certificate_allowed` | `any` | No | — |
-| `cert_delivery_format` | `x509 \| pkcs7 \| pkcs12` | No | — |
+| `cert_delivery_format` | `x509 \| pkcs7 \| pkcs12 \| string` | No | — |
 | `notifyRequestor` | `any` | No | — |
 | `custom_extended_key_usages` | `any` | No | — |
 | `certificate` | `object` | No | — |
@@ -68287,7 +68305,7 @@ await corsair.digicert.api.trustLifecycleApi.postCreateANewProfile({
 ```ts
 {
   key_escrow_enabled: any,
-  key_escrow_deployment_mode?: CLOUD | LOCAL,
+  key_escrow_deployment_mode?: CLOUD | LOCAL | string,
   dual_admin_recovery: any
 }
 ```
@@ -68353,7 +68371,7 @@ await corsair.digicert.api.trustLifecycleApi.postCreateANewProfile({
 {
   id?: any,
   name?: any,
-  trust_type?: private | public
+  trust_type?: private | public | string
 }
 ```
 </Accordion>
@@ -69595,7 +69613,7 @@ await corsair.digicert.api.trustLifecycleApi.postPickUpCertificate({
 | `serial_number` | `any` | No | — |
 | `delivery_format` | `x509 \| pkcs7 \| pkcs12 \| pkcs12_pem` | No | — |
 | `certificate` | `any` | No | — |
-| `status` | `ISSUED \| PENDING \| REJECTED` | No | — |
+| `status` | `ISSUED \| PENDING \| REJECTED \| string` | No | — |
 
 
 
@@ -69830,7 +69848,7 @@ await corsair.digicert.api.trustLifecycleApi.postRecoverEscrowedCertificateBySer
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `delivery_format` | `pkcs12` | No | — |
+| `delivery_format` | `pkcs12 \| string` | No | — |
 | `certificate` | `any` | No | — |
 | `pkcs12_password` | `any` | No | — |
 
@@ -70302,7 +70320,7 @@ await corsair.digicert.api.trustLifecycleApi.postRenewCertificate({
     id: any,
     name?: any
   },
-  product_type: cloud_dv_geotrust | code_signing | code_signing_ev | private_ssl_flex | private_ssl_multi_domain | private_ssl_plus | private_ssl_wildcard | ssl_basic | ssl_cloud_wildcard | ssl_dv_geotrust | ssl_dv_geotrust_flex | ssl_dv_rapidssl | ssl_dv_thawte | ssl_ev_basic | ssl_ev_geotrust_truebizid | ssl_ev_multi_domain | ssl_ev_plus | ssl_ev_securesite | ssl_ev_securesite_flex | ssl_ev_securesite_multi_domain | ssl_ev_securesite_pro | ssl_ev_thawte_webserver | ssl_geotrust_truebizid | ssl_multi_domain | ssl_plus | ssl_securesite | ssl_securesite_flex | ssl_securesite_multi_domain | ssl_securesite_pro | ssl_securesite_wildcard | ssl_thawte_webserver | ssl_wildcard | wildcard_dv_geotrust | wildcard_dv_rapidssl,
+  product_type: cloud_dv_geotrust | code_signing | code_signing_ev | private_ssl_flex | private_ssl_multi_domain | private_ssl_plus | private_ssl_wildcard | ssl_basic | ssl_cloud_wildcard | ssl_dv_geotrust | ssl_dv_geotrust_flex | ssl_dv_rapidssl | ssl_dv_thawte | ssl_ev_basic | ssl_ev_geotrust_truebizid | ssl_ev_multi_domain | ssl_ev_plus | ssl_ev_securesite | ssl_ev_securesite_flex | ssl_ev_securesite_multi_domain | ssl_ev_securesite_pro | ssl_ev_thawte_webserver | ssl_geotrust_truebizid | ssl_multi_domain | ssl_plus | ssl_securesite | ssl_securesite_flex | ssl_securesite_multi_domain | ssl_securesite_pro | ssl_securesite_wildcard | ssl_thawte_webserver | ssl_wildcard | wildcard_dv_geotrust | wildcard_dv_rapidssl | string,
   signature_algorithm?: {
     id: any,
     name?: any
@@ -70348,8 +70366,8 @@ await corsair.digicert.api.trustLifecycleApi.postRenewCertificate({
   enrollment_method?: any,
   id: any,
   name?: any,
-  status?: action_needed | active | suspended,
-  trust_type?: private | public
+  status?: action_needed | active | suspended | string,
+  trust_type?: private | public | string
 }
 ```
 </Accordion>
@@ -72753,7 +72771,7 @@ await corsair.digicert.api.trustLifecycleApi.putUpdateDevice({
 | `deviceName` | `any` | No | — |
 | `serialNumber` | `any` | No | — |
 | `udid` | `any` | No | — |
-| `status` | `ACTIVE \| INACTIVE` | No | — |
+| `status` | `ACTIVE \| INACTIVE \| string` | No | — |
 | `profileIds` | `any` | No | — |
 | `profiles` | `any` | No | — |
 | `createdAt` | `any` | No | — |
@@ -73038,7 +73056,7 @@ await corsair.digicert.api.trustLifecycleApi.putUpdateProfile({
 | `renewal_period_days` | `any` | No | — |
 | `duplicate_cert_policy` | `any` | No | — |
 | `override_cert_validity_via_api` | `any` | No | — |
-| `certificate_delivery_format` | `x509 \| pkcs7 \| pkcs12` | No | — |
+| `certificate_delivery_format` | `x509 \| pkcs7 \| pkcs12 \| string` | No | — |
 | `business_unit_id` | `any` | No | — |
 | `account_id` | `any` | No | — |
 | `enrollment_method` | `digicert_desktop_client \| android \| browser_pkcs12 \| csr \| est \| ios \| os_browser \| pki_client \| rest_api \| scep \| acme \| acme_device_attestation` | No | — |
@@ -73060,7 +73078,7 @@ await corsair.digicert.api.trustLifecycleApi.putUpdateProfile({
 ```ts
 {
   key_escrow_enabled: any,
-  key_escrow_deployment_mode?: CLOUD | LOCAL,
+  key_escrow_deployment_mode?: CLOUD | LOCAL | string,
   dual_admin_recovery: any
 }
 ```
@@ -73118,7 +73136,7 @@ await corsair.digicert.api.trustLifecycleApi.putUpdateProfile({
 {
   id?: any,
   name?: any,
-  trust_type?: private | public
+  trust_type?: private | public | string
 }
 ```
 </Accordion>
@@ -75135,3 +75153,4 @@ Uses offset and limit pagination; `without_container` controls whether the neste
 
 
 ---
+
