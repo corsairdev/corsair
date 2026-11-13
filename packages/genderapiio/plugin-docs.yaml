@@ -7,12 +7,12 @@ overviewNote: |
 
   Things to know before you call:
 
-  - **A key is optional.** A live probe with no key still answered, because GenderAPI.io falls back to an IP-scoped trial of 10 credits per 24 hours. `meta.access.mode` says which one was used: `api_key` or `ip_trial`. A disabled, expired or restricted key does **not** fall back and answers 403.
+  - **A key is optional, so Corsair does not prompt for one.** With no key connected, GenderAPI.io falls back to an IP-scoped trial of 10 credits per 24 hours, shared by every caller behind the same public IP (on a shared server, every tenant without a key). Connect the key with a connect link or the `key` option before paid use. `meta.access.mode` says which one was used: `api_key` or `ip_trial`. A missing or unknown key falls back too, while a disabled, expired or restricted key does **not** and answers 403. A trial batch takes at most 10 items.
   - **An unknown gender is a billed result, not an error.** The answer is HTTP 200 with `gender: null`, `result_status: "unknown"` and a `reason` such as `not_found` or `ambiguous`.
   - **`source` says who answered.** `dataset` means the name was in the database, `ai` means a model inferred it, and `none` means nothing could. `confidence_kind` follows: `observed_frequency` for the dataset, `model_reported` for AI.
-  - **AI costs more.** `ai_mode: 'fallback'` is the default for a single request and costs 2 credits, while a dataset hit costs 1. A batch defaults to `off`, so pass `ai_mode` explicitly when a batch needs AI.
+  - **What a call costs.** A single request defaults to `ai_mode: 'fallback'`, which costs 1 credit in total whether the dataset or AI answers. `ai_mode: 'always'` costs 2, and so does a `forceToGenderize` call that AI answers. A batch defaults to `off`, so pass `ai_mode` (for the batch or per item) when a batch needs AI. Phone validation costs 1, and so does an unknown result.
   - **A batch item can fail without failing the batch.** Only successful items are billed, and `meta.summary` counts `total`, `succeeded`, `unknown` and `failed`.
-  - **A failed prediction may already be charged.** The error catalog says to inspect `billing_status` before retrying, because a retry starts a new billed operation. The plugin does not retry those automatically.
+  - **A failed prediction may already be charged.** The error catalog says to inspect `billing_status` before retrying, because a retry starts a new billed operation. The plugin does not retry a prediction or phone call after a 5xx, a timeout or a dropped connection; the error carries `billingStatus` when the API sent one. Only the free GET routes and a 429 are retried.
   - **`usage`, `capabilities` and `errorCatalog` are free.** They are safe to poll: the first gives the balance, the second the batch limit and AI availability, the third every error code with what to do about it.
   - **Confidence is not a calibrated probability.** The docs say so explicitly, so treat it as a ranking signal rather than a certainty.
 examples:
@@ -46,7 +46,7 @@ apiExamples:
   account.errorCatalog:
     call: "{}"
 apiNotes:
-  gender.infer: '`ai_mode` defaults to `fallback` here, which costs 2 credits when AI answers.'
-  gender.batch: 'Up to 50 items; defaults to `ai_mode: off`, unlike a single request.'
+  gender.infer: '`ai_mode` defaults to `fallback` here (1 credit in total); `always` costs 2.'
+  gender.batch: 'Up to 50 items (10 on the IP trial); defaults to `ai_mode: off`, unlike a single request.'
   phone.validate: 'Returns the E.164 form, or null when the number cannot be formatted.'
   account.usage: 'Free, and `meta.access.mode` tells an IP trial from a keyed call.'

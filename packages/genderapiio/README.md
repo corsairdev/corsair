@@ -21,7 +21,7 @@ pnpm add @corsair-dev/genderapiio
 
 ## Auth
 
-Auth: API key. Corsair prompts your tenant for credentials on first use.
+Auth: API key, optional. Without one, GenderAPI.io serves an IP-scoped trial (10 credits per 24 hours), so Corsair does not prompt for a key: connect it with a connect link or the `key` option.
 
 ## Webhooks
 
