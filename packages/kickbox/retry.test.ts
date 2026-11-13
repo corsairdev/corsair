@@ -138,7 +138,7 @@ describe('retry behaviour', () => {
 		}
 	});
 
-	it('replays a check after a 5xx, which cannot be billed twice', async () => {
+	it('replays a check after a 5xx, which Kickbox answered without a verdict', async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient({ key: API_KEY });
 		try {
@@ -151,6 +151,24 @@ describe('retry behaviour', () => {
 
 			expect(result.result).toBe('deliverable');
 			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does not replay a dropped connection on a paid verification', async () => {
+		jest.useFakeTimers();
+		const { corsair, testDb } = await createClient({ key: API_KEY });
+		try {
+			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+			respond(deliverable);
+
+			await expect(
+				withFakeTimers(
+					corsair.kickbox.api.verify.verify({ email: 'test@example.com' }),
+				),
+			).rejects.toThrow('fetch failed');
+			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}

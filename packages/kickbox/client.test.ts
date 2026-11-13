@@ -246,4 +246,28 @@ describe('makeKickboxRequest', () => {
 			}),
 		).rejects.toMatchObject({ timedOut: true, transport: true });
 	});
+
+	it('marks a failure on the verification host as paid', async () => {
+		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+
+		await expect(
+			makeKickboxRequest(API_KEY, {
+				method: 'GET',
+				base: 'https://api.kickbox.com',
+				path: '/v2/verify',
+			}),
+		).rejects.toMatchObject({ paid: true });
+	});
+
+	it('marks a failure on the open host as free', async () => {
+		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+
+		await expect(
+			makeKickboxRequest(API_KEY, {
+				method: 'GET',
+				base: 'https://open.kickbox.com',
+				path: '/v1/disposable/google.com',
+			}),
+		).rejects.toMatchObject({ paid: false });
+	});
 });

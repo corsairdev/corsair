@@ -9,6 +9,7 @@ function apiError(options: {
 	transport?: boolean;
 	timedOut?: boolean;
 	retryAfter?: number;
+	paid?: boolean;
 }) {
 	return new KickboxAPIError('failed', options);
 }
@@ -39,6 +40,37 @@ async function resolve(
 	}
 	return undefined;
 }
+
+describe('paid verification after an uncertain outcome', () => {
+	it('does not replay a timed-out verification, which may have been charged', async () => {
+		await expect(
+			resolve(
+				apiError({
+					transport: true,
+					timedOut: true,
+					method: 'GET',
+					paid: true,
+				}),
+			),
+		).resolves.toMatchObject({ maxRetries: 0 });
+	});
+
+	it('does not replay a dropped verification, which may have been charged', async () => {
+		await expect(
+			resolve(apiError({ transport: true, method: 'GET', paid: true })),
+		).resolves.toMatchObject({ maxRetries: 0 });
+	});
+});
+
+describe('a refused key on a 200', () => {
+	it('is matched as an auth error, not left to DEFAULT', () => {
+		expect(
+			errorHandlers.AUTH_ERROR.match(
+				apiError({ status: 200, code: 'FORBIDDEN', method: 'GET' }),
+			),
+		).toBe(true);
+	});
+});
 
 describe('error handler selection', () => {
 	it('does not retry a spent balance', async () => {

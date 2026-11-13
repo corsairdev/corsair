@@ -21,9 +21,10 @@ export const KICKBOX_EU_API_BASE = 'https://api.eu.kickbox.com';
 export const KICKBOX_OPEN_BASE = 'https://open.kickbox.com';
 
 // Verification reaches an SMTP server, and Kickbox's own default timeout is six
-// seconds with a ceiling of thirty. The 20 second default in corsair/http is
-// enough, but naming it here keeps the two in step.
-const KICKBOX_TIMEOUT_MS = 30_000;
+// seconds with a ceiling of thirty. The HTTP timeout sits five seconds above that
+// ceiling, so a check that uses all thirty still has time to send its answer
+// back instead of being aborted after Kickbox has charged for it.
+const KICKBOX_TIMEOUT_MS = 35_000;
 
 /**
  * Kickbox answers a failure with the same envelope as a success:
@@ -81,6 +82,11 @@ export class KickboxAPIError extends Error {
 	readonly method?: string;
 	readonly transport: boolean;
 	readonly timedOut: boolean;
+	/**
+	 * True when the request went to the paid verification host. A dropped or
+	 * timed-out paid request may still have been charged, so it is not replayed.
+	 */
+	readonly paid: boolean;
 
 	constructor(
 		message: string,
@@ -92,6 +98,7 @@ export class KickboxAPIError extends Error {
 			method?: string;
 			transport?: boolean;
 			timedOut?: boolean;
+			paid?: boolean;
 		} = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
@@ -102,6 +109,7 @@ export class KickboxAPIError extends Error {
 		this.method = options.method;
 		this.transport = options.transport ?? false;
 		this.timedOut = options.timedOut ?? false;
+		this.paid = options.paid ?? false;
 	}
 
 	get isRateLimit(): boolean {
@@ -171,6 +179,9 @@ export async function makeKickboxRequest(
 		HEADERS: { Accept: 'application/json' },
 	};
 
+	// Everything except the open host spends a verification credit.
+	const paid = base !== KICKBOX_OPEN_BASE;
+
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
@@ -187,7 +198,7 @@ export async function makeKickboxRequest(
 		if (failure.success === false) {
 			throw new KickboxAPIError(
 				describeKickboxError(undefined, body, 'Kickbox refused the request'),
-				{ status: 200, code: failure.code, method },
+				{ status: 200, code: failure.code, method, paid },
 			);
 		}
 		return body;
@@ -202,6 +213,7 @@ export async function makeKickboxRequest(
 					code: fields.code,
 					retryAfter: error.retryAfter,
 					method,
+					paid,
 				},
 			);
 		}
@@ -213,11 +225,13 @@ export async function makeKickboxRequest(
 				method,
 				transport: true,
 				timedOut: error.name === 'TimeoutError',
+				paid,
 			});
 		}
 		throw new KickboxAPIError('Unknown Kickbox error', {
 			method,
 			transport: true,
+			paid,
 		});
 	}
 }

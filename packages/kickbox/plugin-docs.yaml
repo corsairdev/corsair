@@ -12,6 +12,7 @@ overviewNote: |
   - **The four results.** `deliverable` means accepted by the SMTP server; `undeliverable` rejected; `risky` accepted but with a quality problem such as an accept-all domain; `unknown` when the server could not be reached. `reason` says which of those applied.
   - **Accept-all domains.** `accept_all: true` means the domain accepts every address, so `deliverable` there is weaker evidence than elsewhere. Kickbox usually reports that as `risky`.
   - **The Sendex score** runs from 0 (no quality) to 1 (perfect) and is a different measure from the verdict: a `deliverable` address can still score low.
+  - **No automatic replay of a paid check.** A verification that times out or loses its connection is not retried, because Kickbox may already have charged for it; retry it yourself if you want to. A 429 or a 5xx, which carry no verdict, are retried. The free disposable check is retried on any of these.
   - **A refused key is a 403 `FORBIDDEN`** with no retry. Regenerating a key in the dashboard kills the old one, so a 403 usually means it was replaced.
   - **The EU host.** An account created at `app.eu.kickbox.com` is served from `api.eu.kickbox.com`, so set the `region` option to `eu` or every verification answers 401.
   - **The address never reaches a log.** The plugin logs the domain and the verdict rather than the address, because an email is personal data.

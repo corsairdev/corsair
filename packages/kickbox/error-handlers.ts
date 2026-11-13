@@ -31,11 +31,10 @@ export const errorHandlers = {
 	},
 	// A refused or missing key. Regenerating one in the dashboard kills the old
 	// key, so a 403 usually means it was replaced.
+	// Kickbox can also send the FORBIDDEN code on a 200, which isAuthError covers.
 	AUTH_ERROR: {
-		match: (error: Error) => {
-			const status = statusOf(error);
-			return status === 401 || status === 403;
-		},
+		match: (error: Error) =>
+			error instanceof KickboxAPIError && error.isAuthError,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 and 422 are an address or timeout Kickbox will not accept. A retry
@@ -47,8 +46,8 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 500 and 503 are Kickbox's own failures. Both operations here are GETs, so
-	// replaying one cannot change anything at Kickbox and cannot be billed twice.
+	// 500 and 503 are Kickbox's own failures, answered without a verdict. Both
+	// operations here are GETs, so replaying one cannot change anything at Kickbox.
 	SERVER_ERROR: {
 		match: (error: Error) =>
 			error instanceof KickboxAPIError &&
@@ -59,20 +58,22 @@ export const errorHandlers = {
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// A dropped connection never reached Kickbox, so the check can be repeated.
+	// A timeout or a dropped connection does not prove the request never reached
+	// Kickbox. The free disposable check is replayed; a paid verification is not,
+	// because its answer may have been lost after Kickbox charged a credit for it.
 	// TIMEOUT sits first because a timeout is also a transport failure.
 	TIMEOUT_ERROR: {
 		match: (error: Error) => error instanceof KickboxAPIError && error.timedOut,
-		handler: async () => ({
-			maxRetries: 1,
+		handler: async (error: Error) => ({
+			maxRetries: error instanceof KickboxAPIError && error.paid ? 0 : 1,
 			retryStrategy: 'linear_2s' as const,
 		}),
 	},
 	NETWORK_ERROR: {
 		match: (error: Error) =>
 			error instanceof KickboxAPIError && error.transport,
-		handler: async () => ({
-			maxRetries: 2,
+		handler: async (error: Error) => ({
+			maxRetries: error instanceof KickboxAPIError && error.paid ? 0 : 2,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
