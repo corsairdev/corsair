@@ -597,7 +597,17 @@ The input base64 string is converted to the provider-required multipart `file` f
 
 
 
-**Output:** _empty object_
+**Output:** `boolean \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+boolean | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -1226,19 +1236,9 @@ await corsair.fireberry.api.records.update({ object: 'account', id: '00000000-00
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `string` | Yes | — |
 | `message` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  Record: Record<string, JsonValue>
-}
-```
-</Accordion>
-</AccordionGroup>
+| `record` | `Record<string, JsonValue>` | Yes | — |
 
 
 
