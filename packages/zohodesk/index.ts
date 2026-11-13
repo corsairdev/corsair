@@ -289,6 +289,9 @@ export function zohodesk<const T extends ZohoDeskPluginOptions>(
 		oauthWebhookTenantLinkResolver: (tokens) =>
 			resolveZohoDeskOAuthTenantLink(tokens, region),
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
+		// Endpoints refresh after a 401 themselves, and skip it for a 401 that a
+		// new token can't fix (a missing scope): core must not refresh again.
+		refreshOnUnauthorized: false,
 		keyBuilder: async (ctx: ZohoDeskKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
