@@ -192,6 +192,14 @@ export async function makeFormdeskRequest(
 	if (response.status === 204) return { payload: null, creditsRemaining };
 	// `unknown` because provider JSON is untrusted until the JSON-value schema
 	// confirms that it contains only serializable JSON data.
-	const body: unknown = await response.json();
+	let body: unknown;
+	try {
+		body = await response.json();
+	} catch (error: unknown) {
+		// `unknown` because a response body can fail after headers arrive; keep
+		// transport errors sanitized and classifiable like binary read failures.
+		if (error instanceof FormdeskAPIError) throw error;
+		throw transportError(error, options.retryable ?? false);
+	}
 	return { payload: z.json().parse(body), creditsRemaining };
 }

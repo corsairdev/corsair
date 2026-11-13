@@ -138,6 +138,44 @@ describe('Formdesk REST client', () => {
 		expect(error.message).toBe('Formdesk request timed out');
 	});
 
+	it.each([
+		{
+			name: 'timeout',
+			failure: new DOMException('Sensitive body-read detail', 'TimeoutError'),
+			code: 'TIMEOUT',
+			message: 'Formdesk request timed out',
+		},
+		{
+			name: 'network failure',
+			failure: new TypeError('Sensitive socket detail'),
+			code: 'NETWORK_ERROR',
+			message: 'Formdesk request failed before a response was received',
+		},
+	])(
+		'sanitizes JSON body-read $name after headers arrive',
+		async ({ failure, code, message }) => {
+			const response = new Response(null, { status: 200 });
+			jest.spyOn(response, 'json').mockRejectedValue(failure);
+			mockFetch.mockResolvedValue(response);
+
+			await expect(
+				makeFormdeskRequest('fd7.formdesk.com', {
+					method: 'GET',
+					path: '/forms',
+					domain: 'tenant',
+					apiKey: 'secret-key',
+					retryable: true,
+				}),
+			).rejects.toMatchObject({
+				name: 'FormdeskAPIError',
+				code,
+				retryable: true,
+				message,
+			});
+			expect(response.json).toHaveBeenCalledTimes(1);
+		},
+	);
+
 	it('sanitizes HTTP failures rather than propagating provider response data', async () => {
 		mockFetch.mockResolvedValue(
 			new Response('{"reason":"sensitive submitted data"}', {
