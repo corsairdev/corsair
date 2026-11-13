@@ -160,7 +160,8 @@ const fomoEndpointMeta = {
 	},
 	'events.create': {
 		riskLevel: 'write',
-		description: 'Create a new Fomo event notification',
+		description:
+			"Create a new Fomo event; it shows as a social-proof notification on the site's live feed",
 	},
 	'events.update': {
 		riskLevel: 'write',
@@ -196,11 +197,13 @@ const fomoEndpointMeta = {
 	},
 	'application.get': {
 		riskLevel: 'read',
-		description: 'Get Fomo application settings',
+		description:
+			"Get Fomo application settings for the token's own site, or pass id to read another site of the same user",
 	},
 	'application.update': {
 		riskLevel: 'write',
-		description: 'Update Fomo application settings',
+		description:
+			"Update Fomo application settings for the token's own site, or pass id to update another site of the same user",
 	},
 	'application.getStats': {
 		riskLevel: 'read',
