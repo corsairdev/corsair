@@ -17,6 +17,7 @@ import { createCorsair } from 'corsair';
 import { getprospect } from '@corsair-dev/getprospect';
 
 const corsair = createCorsair({
+	multiTenancy: true,
 	plugins: [getprospect({ key: process.env.GETPROSPECT_API_KEY })],
 });
 
