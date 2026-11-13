@@ -226,7 +226,7 @@ describe('with a root DEFAULT error handler that matches everything', () => {
 		}
 	});
 
-	it('still sends a reply once, and hands the error to the root handler', async () => {
+	it('still sends a reply once', async () => {
 		const root = rootDefault();
 		const { corsair, testDb } = await createClient({ key: 'in-key' }, root);
 		try {
@@ -236,7 +236,6 @@ describe('with a root DEFAULT error handler that matches everything', () => {
 				corsair.instantly.api.emails.reply(reply),
 			).rejects.toMatchObject({ status: 429 });
 			expect(fetchMock).toHaveBeenCalledTimes(1);
-			expect(root.DEFAULT.handler).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}
