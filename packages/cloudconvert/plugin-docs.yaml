@@ -46,20 +46,59 @@ apiNotes:
     downloadable file. Read `result.files[].url` from the finished export task;
     use `jobs.get` for status polling on long jobs. The generic task schema
     rejects credential fields such as `private_key` and `secret_access_key`.
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
   jobs.createAndWait: >-
     This example includes an `export/url` task. Read `result.files[].url` from
     the completed export task. Synchronous calls are bounded by `syncTimeoutMs`
     (5 minutes by default, up to 10 minutes); use async jobs for long work.
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  jobs.get: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  jobs.wait: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  jobs.list: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  tasks.list: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  tasks.get: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  tasks.wait: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  tasks.cancel: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  tasks.retry: >-
+    Response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
+  operations.list: >-
+    `options[].type` is a string discriminator, not a TypeScript primitive or
+    identifier union. Its literal values are `"string"`, `"boolean"`,
+    `"integer"`, `"float"`, `"enum"`, and `"dictionary"`.
+  formats.listSupported: >-
+    `options[].type` is a string discriminator, not a TypeScript primitive or
+    identifier union. Its literal values are `"string"`, `"boolean"`,
+    `"integer"`, `"float"`, `"enum"`, and `"dictionary"`.
   tasks.createExportGoogleCloudStorage: >-
     Before calling, store `export_gcs_project_id`, `export_gcs_client_email`,
     and `export_gcs_private_key` with the tenant's CloudConvert key manager.
     The private key is encrypted at rest and is resolved after approval; it is
-    not part of this endpoint's arguments.
+    not part of this endpoint's arguments. The response `status` values are
+    the string literals `"waiting"`, `"processing"`, `"finished"`, and `"error"`.
   tasks.createExportS3: >-
     Before calling, store `export_s3_access_key_id` and
     `export_s3_secret_access_key` with the tenant's CloudConvert key manager.
     Store `export_s3_session_token` when using temporary credentials. These
     credential fields are encrypted at rest and are not endpoint arguments.
+    The response `status` values are the string literals `"waiting"`,
+    `"processing"`, `"finished"`, and `"error"`.
 apiExamples:
   jobs.create:
     tasks:
