@@ -19,7 +19,11 @@ export const Comments = {
 		await logEventFromContext(
 			ctx,
 			'felt.comments.export',
-			{ map_id: input.map_id, count: parsed.length },
+			{
+				map_id: input.map_id,
+				format: input.format ?? 'json',
+				...(Array.isArray(parsed) ? { count: parsed.length } : {}),
+			},
 			'completed',
 		);
 		return parsed;

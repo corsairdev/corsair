@@ -565,7 +565,8 @@ const feltEndpointMeta = {
 	},
 	'layers.addFromSource': {
 		riskLevel: 'write',
-		description: 'Add a layer to a map from a connected data source dataset',
+		description:
+			'Add a layer to a map from a source: one of its datasets, a SQL query or a STAC asset',
 	},
 	'layers.refresh': {
 		riskLevel: 'write',

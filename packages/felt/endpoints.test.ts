@@ -222,7 +222,8 @@ describe('Maps endpoints', () => {
 
 		const result = await Maps.exportImage(ctx, {
 			map_id: 'm_1',
-			legend: true,
+			legend: { visible: true },
+			output: { width_px: 800, height_px: 600 },
 		});
 		expect(result).toEqual(mockExp);
 		expect(mockedRequest).toHaveBeenCalledWith(
@@ -230,7 +231,10 @@ describe('Maps endpoints', () => {
 			'test-token',
 			{
 				method: 'POST',
-				body: { legend: true },
+				body: {
+					legend: { visible: true },
+					output: { width_px: 800, height_px: 600 },
+				},
 			},
 		);
 	});
@@ -351,31 +355,43 @@ describe('Layers endpoints', () => {
 	});
 
 	it('layers.addFromSource calls POST /maps/:id/add_source_layer', async () => {
-		mockedRequest.mockResolvedValue({ status: 'queued' });
+		mockedRequest.mockResolvedValue({ status: 'accepted' });
 
 		const result = await Layers.addFromSource(ctx, {
 			map_id: 'm_1',
+			from: 'sql',
 			source_id: 's_1',
+			query: 'select * from parcels',
 		});
-		expect(result).toEqual({ status: 'queued' });
+		expect(result).toEqual({ status: 'accepted' });
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/maps/m_1/add_source_layer',
 			'test-token',
 			{
 				method: 'POST',
-				body: { source_id: 's_1' },
+				body: {
+					from: 'sql',
+					source_id: 's_1',
+					query: 'select * from parcels',
+				},
 			},
 		);
 	});
 
 	it('layers.refresh calls POST /maps/:id/layers/:layer_id/refresh', async () => {
-		mockedRequest.mockResolvedValue({ id: 'l_1' });
+		const refreshRes = {
+			type: 'upload_response',
+			layer_id: 'l_1',
+			url: null,
+			presigned_attributes: null,
+		};
+		mockedRequest.mockResolvedValue(refreshRes);
 
 		const result = await Layers.refresh(ctx, {
 			map_id: 'm_1',
 			layer_id: 'l_1',
 		});
-		expect(result).toEqual({ id: 'l_1' });
+		expect(result).toEqual(refreshRes);
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/maps/m_1/layers/l_1/refresh',
 			'test-token',
@@ -484,7 +500,7 @@ describe('Layers endpoints', () => {
 		mockedRequest.mockResolvedValue({ layers: [{ id: 'l_2' }] });
 
 		const result = await Layers.duplicate(ctx, {
-			layers: [{ layer_id: 'l_1', destination_map_id: 'm_2' }],
+			layers: [{ source_layer_id: 'l_1', destination_map_id: 'm_2' }],
 		});
 		expect(result).toEqual({ layers: [{ id: 'l_2' }] });
 		expect(mockedRequest).toHaveBeenCalledWith(
@@ -492,7 +508,7 @@ describe('Layers endpoints', () => {
 			'test-token',
 			{
 				method: 'POST',
-				body: [{ layer_id: 'l_1', destination_map_id: 'm_2' }],
+				body: [{ source_layer_id: 'l_1', destination_map_id: 'm_2' }],
 			},
 		);
 	});
@@ -763,10 +779,10 @@ describe('Projects endpoints', () => {
 		});
 
 		mockedRequest.mockResolvedValue({ id: 'p_1', name: 'New Project' });
-		await Projects.create(ctx, { name: 'New Project' });
+		await Projects.create(ctx, { name: 'New Project', visibility: 'private' });
 		expect(mockedRequest).toHaveBeenCalledWith('/projects', 'test-token', {
 			method: 'POST',
-			body: { name: 'New Project' },
+			body: { name: 'New Project', visibility: 'private' },
 		});
 
 		mockedRequest.mockResolvedValue({ id: 'p_1', name: 'My Project' });
@@ -848,6 +864,7 @@ describe('Sources endpoints', () => {
 		await Sources.createCredential(ctx, {
 			source_id: 's_1',
 			name: 'Cred',
+			use_case: 'source_authentication',
 			credential: { password: 'top-secret-password' },
 		});
 		expect(mockedRequest).toHaveBeenCalledWith(
@@ -855,7 +872,11 @@ describe('Sources endpoints', () => {
 			'test-token',
 			{
 				method: 'POST',
-				body: { name: 'Cred', credential: { password: 'top-secret-password' } },
+				body: {
+					name: 'Cred',
+					use_case: 'source_authentication',
+					credential: { password: 'top-secret-password' },
+				},
 			},
 		);
 		// Ensure secret credentials are NOT logged in event context
@@ -910,13 +931,17 @@ describe('PrintPages endpoints', () => {
 		);
 
 		mockedRequest.mockResolvedValue({ id: 'pl_1' });
-		await PrintPages.createLayout(ctx, { map_id: 'm_1', name: 'Layout 1' });
+		await PrintPages.createLayout(ctx, {
+			map_id: 'm_1',
+			page_id: 'pp_1',
+			name: 'Layout 1',
+		});
 		expect(mockedRequest).toHaveBeenCalledWith(
 			'/maps/m_1/print_layouts',
 			'test-token',
 			{
 				method: 'POST',
-				body: { name: 'Layout 1' },
+				body: { page_id: 'pp_1', name: 'Layout 1' },
 			},
 		);
 

@@ -112,7 +112,7 @@ describe('Maps schemas', () => {
 		const valid = {
 			map_id: 'm1',
 			units: 'metric' as const,
-			output: { format: 'png' as const, width_px: 1920 },
+			output: { format: 'png' as const, width_px: 1920, height_px: 1080 },
 		};
 		expect(FeltEndpointInputSchemas.mapsExportImage.parse(valid)).toEqual(
 			valid,
@@ -302,7 +302,7 @@ describe('Elements schemas', () => {
 
 describe('Comments schemas', () => {
 	it('validates comments export, resolve and delete schemas', () => {
-		const expIn = { map_id: 'm1', format: 'json' };
+		const expIn = { map_id: 'm1', format: 'json' as const };
 		expect(FeltEndpointInputSchemas.commentsExport.parse(expIn)).toEqual(expIn);
 
 		const resIn = { map_id: 'm1', comment_id: 'c1' };
@@ -354,6 +354,7 @@ describe('Sources schemas', () => {
 		const credIn = {
 			source_id: 's1',
 			name: 'DB Password',
+			use_case: 'source_authentication' as const,
 			credential: { password: 'secret-password' },
 		};
 		expect(
@@ -373,7 +374,7 @@ describe('Sources schemas', () => {
 
 describe('Print Pages schemas', () => {
 	it('validates print layouts and pages schemas', () => {
-		const layoutIn = { map_id: 'm1', name: 'Poster Layout' };
+		const layoutIn = { map_id: 'm1', page_id: 'pg1', name: 'Poster Layout' };
 		expect(
 			FeltEndpointInputSchemas.printPagesCreateLayout.parse(layoutIn),
 		).toEqual(layoutIn);

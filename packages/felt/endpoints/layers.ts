@@ -135,7 +135,7 @@ export const Layers = {
 		await logEventFromContext(
 			ctx,
 			'felt.layers.addFromSource',
-			{ map_id, source_id: input.source_id },
+			{ map_id, from: input.from },
 			'completed',
 		);
 		return parsed;
@@ -143,7 +143,7 @@ export const Layers = {
 
 	refresh: (async (ctx, rawInput) => {
 		const input = FeltEndpointInputSchemas.layersRefresh.parse(rawInput);
-		const response = await makeFeltRequest<FeltLayer>(
+		const response = await makeFeltRequest<UploadResponse>(
 			`/maps/${encodeURIComponent(input.map_id)}/layers/${encodeURIComponent(input.layer_id)}/refresh`,
 			ctx.key,
 			{

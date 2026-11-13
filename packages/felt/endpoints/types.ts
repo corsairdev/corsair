@@ -3,6 +3,20 @@ import { z } from 'zod';
 // Shared ID schema
 export const FeltIdSchema = z.string().min(1);
 
+// Felt documents timestamps on sources and credentials as unix integers; a string is accepted too so a format change does not break parsing.
+const FeltTimestampSchema = z.union([z.number(), z.string()]);
+
+// GeoJSON FeatureCollection, as returned for map elements and element groups.
+export const GeoJsonSchema = z
+	.object({
+		type: z.string(),
+		// `unknown` because GeoJSON features contain arbitrary geometry and property objects.
+		features: z.array(z.record(z.string(), z.unknown())).optional(),
+	})
+	.passthrough();
+
+export type GeoJson = z.infer<typeof GeoJsonSchema>;
+
 // Standard deleted response schema for 204 No Content endpoints
 export const FeltDeletedResponseSchema = z
 	.object({
@@ -69,8 +83,8 @@ export const MapSchema = z
 		layers: z.array(z.unknown()).optional(),
 		// `unknown` because element groups in map detail can contain arbitrary GeoJSON styling objects.
 		element_groups: z.array(z.unknown()).optional(),
-		// `unknown` because elements in map detail can contain arbitrary GeoJSON features.
-		elements: z.array(z.unknown()).optional(),
+		// Felt returns the map's elements as one GeoJSON FeatureCollection, not an array.
+		elements: GeoJsonSchema.optional(),
 		// `unknown` because layer groups in map detail can contain nested layer definitions.
 		layer_groups: z.array(z.unknown()).optional(),
 		table_settings: MapTableSettingsSchema.optional(),
@@ -194,18 +208,26 @@ export type MapsMoveResponse = z.infer<typeof MapsMoveResponseSchema>;
 
 export const MapImageExportParamsSchema = z
 	.object({
-		legend: z.boolean().optional(),
+		legend: z
+			.object({
+				visible: z.boolean().optional(),
+				show_title: z.boolean().optional(),
+				show_description: z.boolean().optional(),
+				show_components: z.boolean().optional(),
+			})
+			.strict()
+			.optional(),
 		show_scale_bar: z.boolean().optional(),
-		units: z.enum(['imperial', 'metric', 'nautical']).optional(),
+		units: z.enum(['metric', 'us_standard']).optional(),
 		output: z
 			.object({
-				format: z.enum(['png', 'jpg', 'pdf']).optional(),
-				width_px: z.number().optional(),
-				height_px: z.number().optional(),
+				format: z.enum(['png', 'jpg', 'pdf', 'svg']).optional(),
+				width_px: z.number(),
+				height_px: z.number(),
 				pixel_ratio: z.number().optional(),
 				jpg_quality: z.number().optional(),
 			})
-			.optional(),
+			.strict(),
 		// `unknown` because view object accepts arbitrary viewport bounds or center/zoom coordinates.
 		view: z.record(z.string(), z.unknown()).optional(),
 	})
@@ -214,18 +236,26 @@ export const MapImageExportParamsSchema = z
 export const MapsExportImageInputSchema = z
 	.object({
 		map_id: FeltIdSchema,
-		legend: z.boolean().optional(),
+		legend: z
+			.object({
+				visible: z.boolean().optional(),
+				show_title: z.boolean().optional(),
+				show_description: z.boolean().optional(),
+				show_components: z.boolean().optional(),
+			})
+			.strict()
+			.optional(),
 		show_scale_bar: z.boolean().optional(),
-		units: z.enum(['imperial', 'metric', 'nautical']).optional(),
+		units: z.enum(['metric', 'us_standard']).optional(),
 		output: z
 			.object({
-				format: z.enum(['png', 'jpg', 'pdf']).optional(),
-				width_px: z.number().optional(),
-				height_px: z.number().optional(),
+				format: z.enum(['png', 'jpg', 'pdf', 'svg']).optional(),
+				width_px: z.number(),
+				height_px: z.number(),
 				pixel_ratio: z.number().optional(),
 				jpg_quality: z.number().optional(),
 			})
-			.optional(),
+			.strict(),
 		// `unknown` because view object accepts arbitrary viewport bounds or center/zoom coordinates.
 		view: z.record(z.string(), z.unknown()).optional(),
 	})
@@ -240,6 +270,9 @@ export const MapImageExportSchema = z
 		download_url: z.string().nullable().optional(),
 		status: z.string().optional(),
 		expires_at: z.string().optional(),
+		// `unknown` because the echoed output settings mirror the request and may gain fields.
+		output: z.record(z.string(), z.unknown()).optional(),
+		rendered_bounds: z.array(z.number()).optional(),
 	})
 	.passthrough();
 
@@ -301,6 +334,7 @@ export const LayerAttributeSchema = z
 				'DATETIME',
 				'GEOMETRY',
 			])
+			.or(z.string())
 			.optional(),
 	})
 	.passthrough();
@@ -313,14 +347,23 @@ export const LayerSchema = z
 		caption: z.string().nullable().optional(),
 		geometry_type: z
 			.enum(['Line', 'Point', 'Polygon', 'Raster'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		hide_from_legend: z.boolean().optional(),
 		is_spreadsheet: z.boolean().nullable().optional(),
 		last_refreshed_at: z.string().nullable().optional(),
 		next_refresh_at: z.string().nullable().optional(),
-		legend_display: z.enum(['default', 'name_only']).nullable().optional(),
-		legend_visibility: z.enum(['hide', 'show']).nullable().optional(),
+		legend_display: z
+			.enum(['default', 'name_only'])
+			.or(z.string())
+			.nullable()
+			.optional(),
+		legend_visibility: z
+			.enum(['hide', 'show'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		ordering_key: z.number().nullable().optional(),
 		paused_reason: z.string().nullable().optional(),
 		progress: z.number().optional(),
@@ -365,6 +408,7 @@ export const LayerUpdateItemSchema = z
 		id: z.string(),
 		name: z.string().optional(),
 		caption: z.string().optional(),
+		subtitle: z.string().optional(),
 		layer_group_id: z.string().nullable().optional(),
 		legend_display: z.enum(['default', 'name_only']).optional(),
 		legend_visibility: z.enum(['hide', 'show']).optional(),
@@ -429,10 +473,14 @@ export const UploadResponseSchema = z
 	.object({
 		layer_id: z.string(),
 		layer_group_id: z.string().optional(),
-		url: z.string().optional(),
+		// Felt returns null url and presigned_attributes for URL imports and URL refreshes.
+		url: z.string().nullable().optional(),
 		type: z.string().optional(),
 		// `unknown` because presigned attributes are provider-specific S3 parameters.
-		presigned_attributes: z.record(z.string(), z.unknown()).optional(),
+		presigned_attributes: z
+			.record(z.string(), z.unknown())
+			.nullable()
+			.optional(),
 	})
 	.passthrough();
 
@@ -440,14 +488,32 @@ export type UploadResponse = z.infer<typeof UploadResponseSchema>;
 export const LayersUploadResponseSchema = UploadResponseSchema;
 export type LayersUploadResponse = z.infer<typeof LayersUploadResponseSchema>;
 
-export const LayersAddFromSourceInputSchema = z
-	.object({
-		map_id: FeltIdSchema,
-		source_id: FeltIdSchema,
-		dataset_id: z.string().optional(),
-		name: z.string().optional(),
-	})
-	.strict();
+// Felt picks the import by `from`: a dataset of a source, a SQL query on a source, or a STAC asset.
+export const LayersAddFromSourceInputSchema = z.discriminatedUnion('from', [
+	z
+		.object({
+			map_id: FeltIdSchema,
+			from: z.literal('dataset'),
+			dataset_id: FeltIdSchema,
+		})
+		.strict(),
+	z
+		.object({
+			map_id: FeltIdSchema,
+			from: z.literal('sql'),
+			source_id: FeltIdSchema,
+			query: z.string().min(1),
+		})
+		.strict(),
+	z
+		.object({
+			map_id: FeltIdSchema,
+			from: z.literal('stac'),
+			source_id: FeltIdSchema,
+			stac_asset_url: z.string().min(1),
+		})
+		.strict(),
+]);
 
 export type LayersAddFromSourceInput = z.infer<
 	typeof LayersAddFromSourceInputSchema
@@ -477,7 +543,8 @@ export const LayersRefreshInputSchema = z
 	.strict();
 
 export type LayersRefreshInput = z.infer<typeof LayersRefreshInputSchema>;
-export const LayersRefreshResponseSchema = LayerSchema;
+// Felt answers a refresh with an upload response (presigned S3 fields for file layers), not the layer.
+export const LayersRefreshResponseSchema = UploadResponseSchema;
 export type LayersRefreshResponse = z.infer<typeof LayersRefreshResponseSchema>;
 
 export const LayersUpdateStyleInputSchema = z
@@ -516,8 +583,8 @@ export const LayersCreateCustomExportInputSchema = z
 		layer_id: FeltIdSchema,
 		output_format: z.string(),
 		email_on_completion: z.boolean().optional(),
-		// `unknown` because filters accept arbitrary spatial/attribute filter expressions.
-		filters: z.record(z.string(), z.unknown()).optional(),
+		// `unknown` because each filter is a Felt filter expression (a nested array of operands).
+		filters: z.array(z.unknown()).optional(),
 	})
 	.strict();
 
@@ -556,8 +623,8 @@ export const CustomExportRequestStatusSchema = z
 		export_id: z.string(),
 		status: z.string(),
 		download_url: z.string().nullable().optional(),
-		// `unknown` because filters mirror the submitted filter structure.
-		filters: z.record(z.string(), z.unknown()).optional(),
+		// `unknown` because filters echo the submitted Felt filter expressions (an array).
+		filters: z.array(z.unknown()).nullable().optional(),
 	})
 	.passthrough();
 
@@ -595,11 +662,22 @@ export type LayersGetExportLinkResponse = z.infer<
 
 export const LayersDuplicateInputSchema = z
 	.object({
+		// Each item copies one layer (`source_layer_id`) or one layer group (`source_layer_group_id`).
 		layers: z.array(
-			z.object({
-				layer_id: z.string(),
-				destination_map_id: z.string(),
-			}),
+			z.union([
+				z
+					.object({
+						source_layer_id: FeltIdSchema,
+						destination_map_id: FeltIdSchema,
+					})
+					.strict(),
+				z
+					.object({
+						source_layer_group_id: FeltIdSchema,
+						destination_map_id: FeltIdSchema,
+					})
+					.strict(),
+			]),
 		),
 	})
 	.strict();
@@ -655,9 +733,14 @@ export const LayerGroupSchema = z
 		name: z.string(),
 		caption: z.string().nullable().optional(),
 		ordering_key: z.number().nullable().optional(),
-		legend_visibility: z.enum(['hide', 'show']).nullable().optional(),
+		legend_visibility: z
+			.enum(['hide', 'show'])
+			.or(z.string())
+			.nullable()
+			.optional(),
 		visibility_interaction: z
 			.enum(['default', 'slider', 'select', 'multi_select'])
+			.or(z.string())
 			.nullable()
 			.optional(),
 		layers: z.array(LayerSchema).optional(),
@@ -697,6 +780,7 @@ export const LayerGroupUpdateItemSchema = z
 		id: z.string(),
 		name: z.string().optional(),
 		caption: z.string().optional(),
+		subtitle: z.string().optional(),
 		legend_visibility: z.enum(['hide', 'show']).optional(),
 		visibility_interaction: z
 			.enum(['default', 'slider', 'select', 'multi_select'])
@@ -712,6 +796,7 @@ export const LayerGroupsUpdateInputSchema = z
 		layer_group_id: FeltIdSchema,
 		name: z.string().optional(),
 		caption: z.string().optional(),
+		subtitle: z.string().optional(),
 		legend_visibility: z.enum(['hide', 'show']).optional(),
 		visibility_interaction: z
 			.enum(['default', 'slider', 'select', 'multi_select'])
@@ -873,16 +958,6 @@ export type LayerComponentsDeleteResponse = z.infer<
 
 // ── Elements ───────────────────────────────────────────────────────────────
 
-export const GeoJsonSchema = z
-	.object({
-		type: z.string(),
-		// `unknown` because GeoJSON features contain arbitrary geometry and property objects.
-		features: z.array(z.record(z.string(), z.unknown())).optional(),
-	})
-	.passthrough();
-
-export type GeoJson = z.infer<typeof GeoJsonSchema>;
-
 export const ElementsListInputSchema = z
 	.object({
 		map_id: FeltIdSchema,
@@ -924,11 +999,11 @@ export type ElementsDeleteResponse = z.infer<
 export const ElementGroupSchema = z
 	.object({
 		id: z.string(),
-		name: z.string().optional(),
+		name: z.string().nullable().optional(),
 		color: z.string().optional(),
-		symbol: z.string().optional(),
-		// `unknown` because elements in group can contain arbitrary GeoJSON elements.
-		elements: z.array(z.unknown()).optional(),
+		symbol: z.string().nullable().optional(),
+		// Felt returns a group's elements as one GeoJSON FeatureCollection.
+		elements: GeoJsonSchema.optional(),
 	})
 	.passthrough();
 
@@ -1001,12 +1076,17 @@ export const CommentSchema = z
 export const CommentsExportInputSchema = z
 	.object({
 		map_id: FeltIdSchema,
-		format: z.string().optional(),
+		format: z.enum(['csv', 'json', 'geojson']).optional(),
 	})
 	.strict();
 
 export type CommentsExportInput = z.infer<typeof CommentsExportInputSchema>;
-export const CommentsExportResponseSchema = z.array(CommentSchema);
+// json (default) is an array of threads, geojson a FeatureCollection, csv the file as text.
+export const CommentsExportResponseSchema = z.union([
+	z.array(CommentSchema),
+	GeoJsonSchema,
+	z.string(),
+]);
 export type CommentsExportResponse = z.infer<
 	typeof CommentsExportResponseSchema
 >;
@@ -1052,9 +1132,10 @@ export const ProjectSchema = z
 		id: z.string(),
 		type: z.string().optional(),
 		name: z.string(),
-		visibility: z.enum(['workspace', 'private']).optional(),
+		visibility: z.enum(['workspace', 'private']).or(z.string()).optional(),
 		max_inherited_permission: z
 			.enum(['view_only', 'view_and_contribute', 'view_and_edit'])
+			.or(z.string())
 			.optional(),
 		maps: z.array(MapReferenceSchema).optional(),
 	})
@@ -1087,7 +1168,7 @@ export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
 export const ProjectsCreateInputSchema = z
 	.object({
 		name: z.string(),
-		visibility: z.enum(['workspace', 'private']).optional(),
+		visibility: z.enum(['workspace', 'private']),
 		max_inherited_permission: z
 			.enum(['view_only', 'view_and_contribute', 'view_and_edit'])
 			.optional(),
@@ -1145,7 +1226,8 @@ export const SourceDatasetSchema = z
 	.object({
 		id: z.string(),
 		name: z.string(),
-		created_at: z.string().optional(),
+		created_at: FeltTimestampSchema.optional(),
+		updated_at: FeltTimestampSchema.optional(),
 		description: z.string().nullable().optional(),
 		geometry_type: z.string().nullable().optional(),
 		inspection_status: z.string().optional(),
@@ -1157,11 +1239,12 @@ export const SourceSchema = z
 		id: z.string(),
 		name: z.string(),
 		type: z.string().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
-		last_synced_at: z.string().nullable().optional(),
+		created_at: FeltTimestampSchema.nullable().optional(),
+		updated_at: FeltTimestampSchema.nullable().optional(),
+		last_synced_at: FeltTimestampSchema.nullable().optional(),
 		sync_status: z.string().optional(),
-		automatic_sync: z.boolean().optional(),
+		// Felt sends "enabled" or "paused".
+		automatic_sync: z.string().optional(),
 		owner_id: z.string().optional(),
 		workspace_id: z.string().optional(),
 		// `unknown` because connection settings vary widely per database/warehouse provider.
@@ -1177,9 +1260,12 @@ export const SourceReferenceSchema = z
 		id: z.string(),
 		name: z.string().optional(),
 		connection_type: z.string().optional(),
-		created_at: z.string().optional(),
-		last_synced_at: z.string().nullable().optional(),
-		automatic_sync: z.boolean().optional(),
+		created_at: FeltTimestampSchema.nullable().optional(),
+		updated_at: FeltTimestampSchema.nullable().optional(),
+		last_synced_at: FeltTimestampSchema.nullable().optional(),
+		sync_status: z.string().optional(),
+		// Felt sends "enabled" or "paused".
+		automatic_sync: z.string().optional(),
 	})
 	.passthrough();
 
@@ -1259,8 +1345,9 @@ export const SourceCredentialSchema = z
 		id: z.string(),
 		source_id: z.string().optional(),
 		name: z.string().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
+		use_case: z.string().optional(),
+		created_at: FeltTimestampSchema.nullable().optional(),
+		updated_at: FeltTimestampSchema.nullable().optional(),
 		// `unknown` because credential parameters vary by secret type.
 		credential: z.record(z.string(), z.unknown()).optional(),
 	})
@@ -1271,8 +1358,12 @@ export type SourceCredential = z.infer<typeof SourceCredentialSchema>;
 export const SourcesCreateCredentialInputSchema = z
 	.object({
 		source_id: FeltIdSchema,
-		name: z.string().optional(),
-		use_case: z.string().optional(),
+		name: z.string(),
+		use_case: z.enum([
+			'source_authentication',
+			'stac_api_authentication',
+			'stac_asset_fetching',
+		]),
 		// `unknown` because credential details depend on authentication type.
 		credential: z.record(z.string(), z.unknown()),
 	})
@@ -1327,7 +1418,7 @@ export const PrintLayoutSchema = z
 		id: z.string(),
 		name: z.string().optional(),
 		kind: z.string().optional(),
-		orientation: z.string().optional(),
+		orientation: z.string().nullable().optional(),
 		// `unknown` because contents represent layout template specifications.
 		contents: z.record(z.string(), z.unknown()).optional(),
 	})
@@ -1352,8 +1443,9 @@ export type PrintPagesListLayoutsResponse = z.infer<
 export const PrintPagesCreateLayoutInputSchema = z
 	.object({
 		map_id: FeltIdSchema,
-		name: z.string(),
-		page_id: z.string().optional(),
+		// The page to save as a layout; Felt requires it.
+		page_id: FeltIdSchema,
+		name: z.string().optional(),
 	})
 	.strict();
 
@@ -1402,15 +1494,16 @@ export const PrintPageItemSchema = z
 		id: z.string().optional(),
 		type: z.string().optional(),
 		align: z.string().optional(),
-		color: z.string().optional(),
-		border: z.string().optional(),
+		color: z.string().nullable().optional(),
+		// `unknown` because a border is an object of color and width that Felt may extend.
+		border: z.record(z.string(), z.unknown()).nullable().optional(),
 	})
 	.passthrough();
 
 export const PrintPageSchema = z
 	.object({
 		id: z.string(),
-		name: z.string().optional(),
+		name: z.string().nullable().optional(),
 		url: z.string().optional(),
 		// `unknown` because page dimensions and margins are flexible JSON objects.
 		page: z.record(z.string(), z.unknown()).optional(),
@@ -1424,7 +1517,7 @@ export type PrintPage = z.infer<typeof PrintPageSchema>;
 export const PrintPageDetailSchema = z
 	.object({
 		id: z.string(),
-		name: z.string().optional(),
+		name: z.string().nullable().optional(),
 		url: z.string().optional(),
 		// `unknown` because page dimensions and margins are flexible JSON objects.
 		page: z.record(z.string(), z.unknown()).optional(),
