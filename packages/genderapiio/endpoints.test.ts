@@ -254,10 +254,20 @@ describe('genderapiio.gender.infer', () => {
 			forceToGenderize: true,
 		});
 
-		expect(lastRequest().body).toMatchObject({
-			ai_mode: 'always',
+		// The v2 POST schema refuses a top-level ai_mode with a 422.
+		const body = lastRequest().body as Record<string, unknown>;
+		expect(body).toMatchObject({
+			options: { ai_mode: 'always' },
 			forceToGenderize: true,
 		});
+		expect(body).not.toHaveProperty('ai_mode');
+	});
+
+	it('sends no options object when ai_mode is not set', async () => {
+		respond(sophiaResponse);
+		await invoke(gender, { type: 'name', value: 'Sophia' });
+
+		expect(lastRequest().body).not.toHaveProperty('options');
 	});
 
 	it('rejects an unknown type before making a request', async () => {
@@ -318,6 +328,38 @@ describe('genderapiio.gender.batch', () => {
 		expect(result.data).toHaveLength(2);
 		expect(result.data[0]?.index).toBe(0);
 		expect(result.data[1]?.index).toBe(1);
+	});
+
+	it('sends ai_mode under each item, with an item's own mode winning', async () => {
+		respond(batch);
+		await invoke(genderBatch, {
+			ai_mode: 'fallback',
+			items: [
+				{ type: 'name', value: 'Sophia' },
+				{ type: 'username', value: 'xX_darklord_Xx', ai_mode: 'always' },
+			],
+		});
+
+		// The batch schema has no top-level ai_mode; each item takes options.ai_mode.
+		const body = lastRequest().body as {
+			items: Array<Record<string, unknown>>;
+		};
+		expect(body).not.toHaveProperty('ai_mode');
+		expect(body.items[0]).toEqual({
+			type: 'name',
+			value: 'Sophia',
+			options: { ai_mode: 'fallback' },
+		});
+		expect(body.items[1]).toMatchObject({ options: { ai_mode: 'always' } });
+		expect(body.items[1]).not.toHaveProperty('ai_mode');
+	});
+
+	it('sends batch items without options when no ai_mode is set', async () => {
+		respond(batch);
+		await invoke(genderBatch, { items: [{ type: 'name', value: 'Sophia' }] });
+
+		const body = lastRequest().body as { items: Array<Record<string, unknown>> };
+		expect(body.items[0]).toEqual({ type: 'name', value: 'Sophia' });
 	});
 
 	it('keeps a per-item ID so a response can be matched to a row', async () => {

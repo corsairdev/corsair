@@ -165,7 +165,7 @@ const ErrorCatalogResponseSchema = z.object({
 const AiModeSchema = z
 	.enum(['off', 'fallback', 'always'])
 	.describe(
-		'`fallback` lets AI answer when the dataset cannot, and costs 2 credits; `off` is dataset only; `always` forces AI',
+		'`fallback` lets AI answer when the dataset cannot (1 credit in total); `off` is dataset only; `always` forces AI (2 credits)',
 	);
 
 const CountrySchema = z
@@ -215,6 +215,9 @@ const GenderBatchInputSchema = z.object({
 				value: z.string().min(1).max(254),
 				country: CountrySchema.optional(),
 				forceToGenderize: z.boolean().optional(),
+				ai_mode: AiModeSchema.optional().describe(
+					'AI mode for this item only, overriding the batch-wide `ai_mode`',
+				),
 			}),
 		)
 		.min(1, 'Send at least one item')
@@ -223,7 +226,7 @@ const GenderBatchInputSchema = z.object({
 			'Items to infer, answered in the same order, each with its own charge. An item can fail without failing the batch',
 		),
 	ai_mode: AiModeSchema.optional().describe(
-		'A batch defaults to `off`, where a single request defaults to `fallback`',
+		'Applies to every item without its own `ai_mode`. A batch defaults to `off`, where a single request defaults to `fallback`',
 	),
 });
 

@@ -19,9 +19,13 @@ function resolveCredentials(ctx: GenderApiIoContext): GenderApiIoCredentials {
 
 /**
  * The single lookup works as a GET with query parameters and as a POST with a
- * JSON body. The plugin uses POST, so the body carries the enum fields exactly
- * as documented; the docs say to avoid the v1 field names on this route.
+ * JSON body. The plugin uses POST, where the v2 schema takes `ai_mode` only
+ * under `options` and refuses unknown top-level fields with a 422.
  */
+function aiOptions(aiMode: string | undefined) {
+	return aiMode === undefined ? undefined : { ai_mode: aiMode };
+}
+
 export const gender: GenderApiIoEndpoints['gender']['infer'] = async (
 	ctx,
 	input,
@@ -37,6 +41,7 @@ export const gender: GenderApiIoEndpoints['gender']['infer'] = async (
 			country: parsed.country,
 			ai_mode: parsed.ai_mode,
 			forceToGenderize: parsed.forceToGenderize,
+			options: aiOptions(parsed.ai_mode),
 		},
 	});
 
@@ -70,8 +75,12 @@ export const genderBatch: GenderApiIoEndpoints['gender']['batch'] = async (
 		method: 'POST',
 		path: '/api/v2/gender/batch',
 		body: {
-			items: parsed.items,
-			ai_mode: parsed.ai_mode,
+			// The batch schema has no top-level `ai_mode`: each item carries its own
+			// under `options`. An item's own mode wins over the batch-wide one.
+			items: parsed.items.map(({ ai_mode, ...item }) => ({
+				...item,
+				options: aiOptions(ai_mode ?? parsed.ai_mode),
+			})),
 		},
 	});
 
