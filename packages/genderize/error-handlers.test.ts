@@ -47,6 +47,18 @@ describe('error handler selection', () => {
 		});
 	});
 
+	it('does not retry an exhausted quota, which lasts until the window resets', async () => {
+		await expect(
+			resolve(apiError({ status: 429, reason: 'Request limit reached' })),
+		).resolves.toEqual({ maxRetries: 0 });
+	});
+
+	it('still retries the short-term throttle', async () => {
+		await expect(
+			resolve(apiError({ status: 429, reason: 'Request too low to process' })),
+		).resolves.toMatchObject({ maxRetries: 2 });
+	});
+
 	it('waits a Retry-After header when one arrives', async () => {
 		await expect(
 			resolve(apiError({ status: 429, retryAfter: 30_000 })),

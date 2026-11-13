@@ -8,18 +8,28 @@ function statusOf(error: Error): number | undefined {
 // Genderize documents 401, 402, 422 and 429, and carries a JSON `error` string
 // on each. Reference: https://genderize.io/documentation/api
 export const errorHandlers = {
-	// The monthly quota and the short-term throttle both answer 429. A retry with
-	// the same body either waits out the window or fails again, so the handler
-	// honours Retry-After when Genderize sends one and otherwise backs off.
+	// The monthly quota (or the keyless per-IP allowance) and the short-term
+	// throttle both answer 429. `Request limit reached` is the exhausted quota:
+	// it lasts until the window resets, hours away, so a retry only fails again.
+	// Anything else is the throttle, which honours Retry-After when Genderize
+	// sends one and otherwise backs off.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			error instanceof GenderizeAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 2,
-			headersRetryAfterMs:
-				error instanceof GenderizeAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) => {
+			if (
+				error instanceof GenderizeAPIError &&
+				error.reason === 'Request limit reached'
+			) {
+				return { maxRetries: 0 };
+			}
+			return {
+				maxRetries: 2,
+				headersRetryAfterMs:
+					error instanceof GenderizeAPIError ? error.retryAfter : undefined,
+				retryStrategy: 'exponential_backoff' as const,
+			};
+		},
 	},
 	// A key the account refused. Retrying sends the same key.
 	AUTH_ERROR: {
