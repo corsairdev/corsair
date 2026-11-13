@@ -6,12 +6,14 @@ rss: true
 
 Written from merged pull requests each time packages are released.
 
-<Update label="Week of November 9, 2026" description="corsair 0.1.182" tags={["SDK", "Plugins", "Cloud"]}>
+<Update label="Week of November 9, 2026" description="corsair 0.1.183" tags={["SDK", "Plugins", "Cloud"]}>
 
-## SDK: corsair 0.1.182
+## SDK: corsair 0.1.183
 
-Also released: `@corsair-dev/cli` 0.1.50, `@corsair-dev/langchain` 0.1.25, `@corsair-dev/llamaindex` 0.1.25, `@corsair-dev/mastra` 0.1.25, `@corsair-dev/mcp` 0.1.53, `@corsair-dev/studio` 0.1.34, `@corsair-dev/ui` 0.1.30.
+Also released: `@corsair-dev/cli` 0.1.51, `@corsair-dev/langchain` 0.1.26, `@corsair-dev/llamaindex` 0.1.26, `@corsair-dev/mastra` 0.1.26, `@corsair-dev/mcp` 0.1.54, `@corsair-dev/studio` 0.1.35, `@corsair-dev/ui` 0.1.31.
 
+- Retry a 401 for every OAuth plugin and tell a revoked grant from a broken app ([#2324](https://github.com/corsairdev/corsair/pull/2324))
+- Plugin error handlers first, kek check before the call, honest webhook results ([#2335](https://github.com/corsairdev/corsair/pull/2335))
 - Keep the error body on failed calls and redact more key names ([#2320](https://github.com/corsairdev/corsair/pull/2320))
 - Let endpoints refresh an OAuth token after a 401 ([#2319](https://github.com/corsairdev/corsair/pull/2319))
 - Render catalog and docs types as the schemas declare them ([#2090](https://github.com/corsairdev/corsair/pull/2090))
