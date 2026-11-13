@@ -2148,6 +2148,14 @@
                 ]
               },
               {
+                "group": "Gigasheet",
+                "pages": [
+                  "plugins/gigasheet/overview",
+                  "plugins/gigasheet/api",
+                  "plugins/gigasheet/database"
+                ]
+              },
+              {
                 "group": "GIPHY",
                 "pages": [
                   "plugins/giphy/overview",
