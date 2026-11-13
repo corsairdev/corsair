@@ -1,0 +1,992 @@
+{
+  "id": "scrapedo",
+  "displayName": "Scrape.do",
+  "description": "Web scraping with Scrape.do - fetch pages as HTML, Markdown, JSON network reports or screenshots through rotating proxies, and run bulk URL jobs asynchronously.",
+  "npmPackageName": "@corsair-dev/scrapedo",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "scrapedo.api.account.asyncInfo",
+      "shortPath": "account.asyncInfo",
+      "description": "Read the async pool concurrency, active jobs and credits left; costs nothing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_concurrency",
+            "optional": false,
+            "type": "number",
+            "description": "The plan's concurrency limit."
+          },
+          {
+            "key": "free_concurrency",
+            "optional": false,
+            "type": "number",
+            "description": "Slots free in the async pool right now."
+          },
+          {
+            "key": "active_jobs",
+            "optional": false,
+            "type": "number",
+            "description": "Jobs running or queued."
+          },
+          {
+            "key": "available_credits",
+            "optional": false,
+            "type": "number",
+            "description": "Credits left. The provider spells this `AvaliableCredits` in its answer; the plugin uses the correct spelling."
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapedo.api.account.info",
+      "shortPath": "account.info",
+      "description": "Read the subscription state, concurrency limit and requests left this month; costs nothing but is limited to 10 calls a minute",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_active",
+            "optional": false,
+            "type": "boolean",
+            "description": "Always true on a result: a rejected token makes `account.info` throw a 401 `ScrapeDoAPIError` instead."
+          },
+          {
+            "key": "concurrent_request",
+            "optional": false,
+            "type": "number",
+            "description": "The plan's concurrency limit."
+          },
+          {
+            "key": "max_monthly_request",
+            "optional": false,
+            "type": "number",
+            "description": "Requests the plan allows per month."
+          },
+          {
+            "key": "remaining_concurrent_request",
+            "optional": false,
+            "type": "number",
+            "description": "Concurrency slots free right now."
+          },
+          {
+            "key": "remaining_monthly_request",
+            "optional": false,
+            "type": "number",
+            "description": "Requests left this month."
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapedo.api.jobs.cancel",
+      "shortPath": "jobs.cancel",
+      "description": "Cancel a queued or running job; a finished job cannot be cancelled",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "The job to cancel."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "canceled"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapedo.api.jobs.get",
+      "shortPath": "jobs.get",
+      "description": "Read an async job with its status and one entry per target",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "The `job_id` from `jobs.start`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Poll until the status is success, error or canceled; queuing, queued, pending and rotating all mean the job is still running."
+          },
+          {
+            "key": "tasks",
+            "optional": false,
+            "type": "{ task_id: string, url?: string | null, status: string }[]"
+          },
+          {
+            "key": "job",
+            "optional": false,
+            "type": "{ job_id: string, status: string, start_time?: string | null, end_time?: string | null, canceled?: boolean | null, tasks: { task_id: string, url?: string | null, status: string }[] }",
+            "description": "The job as sent, with its timing and tasks."
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapedo.api.jobs.list",
+      "shortPath": "jobs.list",
+      "description": "List async jobs with paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageNumber",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page. Defaults to 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Jobs per page. Defaults to 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobs",
+            "optional": false,
+            "type": "{ job_id: string, status: string, start_time?: string | null, end_time?: string | null, canceled?: boolean | null, tasks: { task_id: string, url?: string | null, status: string }[] }[]"
+          },
+          {
+            "key": "total_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_number",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapedo.api.jobs.result",
+      "shortPath": "jobs.result",
+      "description": "Read one task result with the page content, its status and when it expires",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "The job the task belongs to."
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string",
+            "description": "The task id from `jobs.get`, one per target."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "success or error."
+          },
+          {
+            "key": "status_code",
+            "optional": true,
+            "type": "number | null",
+            "description": "The target's HTTP status."
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null",
+            "description": "The page body. Absent on a failed task, and base64-encoded when `base64_encoded` is true."
+          },
+          {
+            "key": "base64_encoded",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when `content` is base64 rather than text."
+          },
+          {
+            "key": "error_message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Why the task failed, when it did."
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When Scrape.do drops this result, so read it before then."
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapedo.api.jobs.start",
+      "shortPath": "jobs.start",
+      "description": "Start an async job for up to 100 URLs and return its job and task ids; results are held by Scrape.do until they expire",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "job_id",
+        "status": {
+          "op": "jobs.get",
+          "idArg": "jobId",
+          "statusPath": "status",
+          "done": ["success"],
+          "failed": ["error", "canceled"]
+        },
+        "cancel": {
+          "op": "jobs.cancel",
+          "idArg": "jobId"
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "targets",
+            "optional": false,
+            "type": "string[]",
+            "description": "The URLs to fetch. Scrape.do documents a batch per job; each becomes one task."
+          },
+          {
+            "key": "super",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use the residential and mobile proxy pool for every target."
+          },
+          {
+            "key": "geoCode",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter proxy country code for every target."
+          },
+          {
+            "key": "render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Render every target in the headless browser."
+          },
+          {
+            "key": "webhookUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Where Scrape.do should POST the results when the job finishes, instead of polling."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string",
+            "description": "Pass this to `jobs.get` to read the job back."
+          },
+          {
+            "key": "task_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "One task per target, in request order."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapedo.api.scrape.html",
+      "shortPath": "scrape.html",
+      "description": "Fetch a page through the proxy with its status code; costs credits that vary by proxy and rendering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to fetch."
+          },
+          {
+            "key": "super",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use the residential and mobile proxy pool instead of datacenter. Defaults to false; costs more credits and raises the success rate on sites that block datacenter IPs."
+          },
+          {
+            "key": "geoCode",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter code of the proxy country, as the provider documents it: us, de and so on. Sent unchanged."
+          },
+          {
+            "key": "regionalGeoCode",
+            "optional": true,
+            "type": "string",
+            "description": "Continent to route through, for a country the provider does not offer: europe, asia, north-america and so on."
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "number",
+            "description": "A number that pins every request carrying it to the same proxy IP, which is how a multi-step flow keeps one session."
+          },
+          {
+            "key": "setCookies",
+            "optional": true,
+            "type": "string",
+            "description": "Cookies for the target, in `name=value; name2=value2` form."
+          },
+          {
+            "key": "disableRedirection",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the redirect response itself instead of following it. Defaults to false."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds Scrape.do may spend on the request, from 5000 to 120000. Defaults to 60000. The API answers `400` naming the bounds for a value outside them."
+          },
+          {
+            "key": "disableRetry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turn off Scrape.do's own retry mechanism, which otherwise resends through a new IP before answering. Defaults to false."
+          },
+          {
+            "key": "render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use the managed headless browser to run JavaScript and wait for the page. Defaults to false; costs more credits."
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | tablet",
+            "description": "Emulated device. Defaults to desktop."
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number",
+            "description": "Browser viewport width in pixels. Defaults to 1920."
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number",
+            "description": "Browser viewport height in pixels. Defaults to 1080."
+          },
+          {
+            "key": "blockResources",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip CSS, images and fonts in the browser. Defaults to true; set false only when the page needs them."
+          },
+          {
+            "key": "transparentResponse",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the target's own status code and body untouched instead of Scrape.do's processed answer. With this on, a target 404 arrives as a 404 rather than as the page content."
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle | networkidle0 | networkidle2 | commit",
+            "description": "When the browser stops waiting. Defaults to domcontentloaded. Needs `render`."
+          },
+          {
+            "key": "customWait",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds to wait after the page loads. Defaults to 0. Needs `render`."
+          },
+          {
+            "key": "waitSelector",
+            "optional": true,
+            "type": "string",
+            "description": "CSS selector to wait for before answering. Needs `render`."
+          },
+          {
+            "key": "output",
+            "optional": true,
+            "type": "raw | markdown",
+            "description": "Return the page as it is (`raw`, the default) or converted to Markdown (`markdown`)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": false,
+            "type": "string",
+            "description": "The fetched body: the page, usually HTML."
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number",
+            "description": "The target's HTTP status. A 404 or 410 arrives here with the page body and still costs a credit, which is why it is reported rather than thrown."
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "The content type Scrape.do returned."
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapedo.api.scrape.json",
+      "shortPath": "scrape.json",
+      "description": "Fetch a page as a JSON report with its status, content and network requests",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to fetch as a JSON report."
+          },
+          {
+            "key": "super",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use the residential and mobile proxy pool instead of datacenter. Defaults to false; costs more credits and raises the success rate on sites that block datacenter IPs."
+          },
+          {
+            "key": "geoCode",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter code of the proxy country, as the provider documents it: us, de and so on. Sent unchanged."
+          },
+          {
+            "key": "regionalGeoCode",
+            "optional": true,
+            "type": "string",
+            "description": "Continent to route through, for a country the provider does not offer: europe, asia, north-america and so on."
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "number",
+            "description": "A number that pins every request carrying it to the same proxy IP, which is how a multi-step flow keeps one session."
+          },
+          {
+            "key": "setCookies",
+            "optional": true,
+            "type": "string",
+            "description": "Cookies for the target, in `name=value; name2=value2` form."
+          },
+          {
+            "key": "disableRedirection",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the redirect response itself instead of following it. Defaults to false."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds Scrape.do may spend on the request, from 5000 to 120000. Defaults to 60000. The API answers `400` naming the bounds for a value outside them."
+          },
+          {
+            "key": "disableRetry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turn off Scrape.do's own retry mechanism, which otherwise resends through a new IP before answering. Defaults to false."
+          },
+          {
+            "key": "render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use the managed headless browser to run JavaScript and wait for the page. Defaults to false; costs more credits."
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | tablet",
+            "description": "Emulated device. Defaults to desktop."
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number",
+            "description": "Browser viewport width in pixels. Defaults to 1920."
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number",
+            "description": "Browser viewport height in pixels. Defaults to 1080."
+          },
+          {
+            "key": "blockResources",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip CSS, images and fonts in the browser. Defaults to true; set false only when the page needs them."
+          },
+          {
+            "key": "transparentResponse",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the target's own status code and body untouched instead of Scrape.do's processed answer. With this on, a target 404 arrives as a 404 rather than as the page content."
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle | networkidle0 | networkidle2 | commit",
+            "description": "When the browser stops waiting. Defaults to domcontentloaded. Needs `render`."
+          },
+          {
+            "key": "customWait",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds to wait after the page loads. Defaults to 0. Needs `render`."
+          },
+          {
+            "key": "waitSelector",
+            "optional": true,
+            "type": "string",
+            "description": "CSS selector to wait for before answering. Needs `render`."
+          },
+          {
+            "key": "showFrames",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include iframe content. Needs `render`."
+          },
+          {
+            "key": "showWebsocketRequests",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include WebSocket traffic. Needs `render`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number",
+            "description": "The target's HTTP status."
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "The page body as a string."
+          },
+          {
+            "key": "network_requests",
+            "optional": false,
+            "type": "{ url?: string | null, status?: number | null, method?: string | null, headers?: Record<string, any> | null, body?: string | null }[]",
+            "description": "The XHR and fetch calls the page made. Empty without the browser."
+          },
+          {
+            "key": "websocket_requests",
+            "optional": true,
+            "type": "{}[] | null",
+            "description": "WebSocket traffic, when `showWebsocketRequests` was set."
+          },
+          {
+            "key": "frames",
+            "optional": true,
+            "type": "{ url?: string | null, content?: string | null }[] | null",
+            "description": "Each iframe on the page, when `showFrames` was set."
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapedo.api.scrape.markdown",
+      "shortPath": "scrape.markdown",
+      "description": "Fetch a page and return it converted to Markdown",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to convert."
+          },
+          {
+            "key": "super",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use the residential and mobile proxy pool instead of datacenter. Defaults to false; costs more credits and raises the success rate on sites that block datacenter IPs."
+          },
+          {
+            "key": "geoCode",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter code of the proxy country, as the provider documents it: us, de and so on. Sent unchanged."
+          },
+          {
+            "key": "regionalGeoCode",
+            "optional": true,
+            "type": "string",
+            "description": "Continent to route through, for a country the provider does not offer: europe, asia, north-america and so on."
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "number",
+            "description": "A number that pins every request carrying it to the same proxy IP, which is how a multi-step flow keeps one session."
+          },
+          {
+            "key": "setCookies",
+            "optional": true,
+            "type": "string",
+            "description": "Cookies for the target, in `name=value; name2=value2` form."
+          },
+          {
+            "key": "disableRedirection",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the redirect response itself instead of following it. Defaults to false."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds Scrape.do may spend on the request, from 5000 to 120000. Defaults to 60000. The API answers `400` naming the bounds for a value outside them."
+          },
+          {
+            "key": "disableRetry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turn off Scrape.do's own retry mechanism, which otherwise resends through a new IP before answering. Defaults to false."
+          },
+          {
+            "key": "render",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use the managed headless browser to run JavaScript and wait for the page. Defaults to false; costs more credits."
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | tablet",
+            "description": "Emulated device. Defaults to desktop."
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number",
+            "description": "Browser viewport width in pixels. Defaults to 1920."
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number",
+            "description": "Browser viewport height in pixels. Defaults to 1080."
+          },
+          {
+            "key": "blockResources",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip CSS, images and fonts in the browser. Defaults to true; set false only when the page needs them."
+          },
+          {
+            "key": "transparentResponse",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the target's own status code and body untouched instead of Scrape.do's processed answer. With this on, a target 404 arrives as a 404 rather than as the page content."
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle | networkidle0 | networkidle2 | commit",
+            "description": "When the browser stops waiting. Defaults to domcontentloaded. Needs `render`."
+          },
+          {
+            "key": "customWait",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds to wait after the page loads. Defaults to 0. Needs `render`."
+          },
+          {
+            "key": "waitSelector",
+            "optional": true,
+            "type": "string",
+            "description": "CSS selector to wait for before answering. Needs `render`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "markdown",
+            "optional": false,
+            "type": "string",
+            "description": "The page as Markdown, with its metadata at the top as `- Meta:` and `- Title:` lines followed by the body."
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number",
+            "description": "The target's HTTP status."
+          }
+        ]
+      }
+    },
+    {
+      "path": "scrapedo.api.scrape.screenshot",
+      "shortPath": "scrape.screenshot",
+      "description": "Render a page in the headless browser and return base64 PNG screenshots",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to capture."
+          },
+          {
+            "key": "super",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use the residential and mobile proxy pool instead of datacenter. Defaults to false; costs more credits and raises the success rate on sites that block datacenter IPs."
+          },
+          {
+            "key": "geoCode",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter code of the proxy country, as the provider documents it: us, de and so on. Sent unchanged."
+          },
+          {
+            "key": "regionalGeoCode",
+            "optional": true,
+            "type": "string",
+            "description": "Continent to route through, for a country the provider does not offer: europe, asia, north-america and so on."
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "number",
+            "description": "A number that pins every request carrying it to the same proxy IP, which is how a multi-step flow keeps one session."
+          },
+          {
+            "key": "setCookies",
+            "optional": true,
+            "type": "string",
+            "description": "Cookies for the target, in `name=value; name2=value2` form."
+          },
+          {
+            "key": "disableRedirection",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the redirect response itself instead of following it. Defaults to false."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds Scrape.do may spend on the request, from 5000 to 120000. Defaults to 60000. The API answers `400` naming the bounds for a value outside them."
+          },
+          {
+            "key": "disableRetry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turn off Scrape.do's own retry mechanism, which otherwise resends through a new IP before answering. Defaults to false."
+          },
+          {
+            "key": "render",
+            "optional": false,
+            "type": "true",
+            "description": "Required: the API refuses a screenshot without the headless browser."
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "desktop | mobile | tablet",
+            "description": "Emulated device. Defaults to desktop."
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number",
+            "description": "Browser viewport width in pixels. Defaults to 1920."
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number",
+            "description": "Browser viewport height in pixels. Defaults to 1080."
+          },
+          {
+            "key": "blockResources",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip CSS, images and fonts in the browser. Defaults to true; set false only when the page needs them."
+          },
+          {
+            "key": "transparentResponse",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the target's own status code and body untouched instead of Scrape.do's processed answer. With this on, a target 404 arrives as a 404 rather than as the page content."
+          },
+          {
+            "key": "waitUntil",
+            "optional": true,
+            "type": "load | domcontentloaded | networkidle | networkidle0 | networkidle2 | commit",
+            "description": "When the browser stops waiting. Defaults to domcontentloaded. Needs `render`."
+          },
+          {
+            "key": "customWait",
+            "optional": true,
+            "type": "number",
+            "description": "Milliseconds to wait after the page loads. Defaults to 0. Needs `render`."
+          },
+          {
+            "key": "waitSelector",
+            "optional": true,
+            "type": "string",
+            "description": "CSS selector to wait for before answering. Needs `render`."
+          },
+          {
+            "key": "fullPage",
+            "optional": true,
+            "type": "boolean",
+            "description": "Capture the whole scrollable page instead of the viewport. Defaults to false."
+          },
+          {
+            "key": "selector",
+            "optional": true,
+            "type": "string",
+            "description": "CSS selector of one element to capture, such as `h1` or `#price-table`. Mutually exclusive with `fullPage`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "screenshots",
+            "optional": false,
+            "type": "string[]",
+            "description": "Base64-encoded PNG images, one per element the request asked for. Usually a single entry."
+          },
+          {
+            "key": "status_code",
+            "optional": false,
+            "type": "number",
+            "description": "The target's HTTP status."
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
