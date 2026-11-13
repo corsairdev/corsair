@@ -59,11 +59,11 @@ await corsair.felt.api.comments.export({ map_id: 'a1b2c3d4e5' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `map_id` | `string` | Yes | — |
-| `format` | `string` | No | — |
+| `format` | `csv \| json \| geojson` | No | — |
 
 
 
-**Output:** `object[]`
+**Output:** `object[] \| object \| string`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -75,7 +75,10 @@ await corsair.felt.api.comments.export({ map_id: 'a1b2c3d4e5' });
   author?: Record<string, any>,
   created_at?: string,
   resolved?: boolean
-}[]
+}[] | {
+  type: string,
+  features?: Record<string, any>[]
+} | string
 ```
 </Accordion>
 </AccordionGroup>
@@ -120,7 +123,7 @@ await corsair.felt.api.comments.resolve({ map_id: 'a1b2c3d4e5', comment_id: 'com
 
 `elements.delete`
 
-Delete a drawn element from a map
+Delete a drawn element from a map; the element id is the feature's `felt:id` property
 
 **Risk:** `destructive`
 
@@ -239,10 +242,13 @@ await corsair.felt.api.elements.listGroups({ map_id: 'a1b2c3d4e5' });
 ```ts
 {
   id: string,
-  name?: string,
+  name?: string | null,
   color?: string,
-  symbol?: string,
-  elements?: any[]
+  symbol?: string | null,
+  elements?: {
+    type: string,
+    features?: Record<string, any>[]
+  }
 }[]
 ```
 </Accordion>
@@ -340,10 +346,13 @@ await corsair.felt.api.elements.upsertGroups({
 ```ts
 {
   id: string,
-  name?: string,
+  name?: string | null,
   color?: string,
-  symbol?: string,
-  elements?: any[]
+  symbol?: string | null,
+  elements?: {
+    type: string,
+    features?: Record<string, any>[]
+  }
 }[]
 ```
 </Accordion>
@@ -601,8 +610,8 @@ await corsair.felt.api.layerGroups.get({ map_id: 'a1b2c3d4e5', layer_group_id: '
 | `name` | `string` | Yes | — |
 | `caption` | `string \| null` | No | — |
 | `ordering_key` | `number \| null` | No | — |
-| `legend_visibility` | `hide \| show \| null` | No | — |
-| `visibility_interaction` | `default \| slider \| select \| multi_select \| null` | No | — |
+| `legend_visibility` | `hide \| show \| string \| null` | No | — |
+| `visibility_interaction` | `default \| slider \| select \| multi_select \| string \| null` | No | — |
 | `layers` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -614,13 +623,13 @@ await corsair.felt.api.layerGroups.get({ map_id: 'a1b2c3d4e5', layer_group_id: '
   type?: string,
   name?: string,
   caption?: string | null,
-  geometry_type?: Line | Point | Polygon | Raster | null,
-  hide_from_legend?: boolean,
+  geometry_type?: Line | Point | Polygon | Raster | string | null,
+  hide_from_legend?: boolean | null,
   is_spreadsheet?: boolean | null,
   last_refreshed_at?: string | null,
   next_refresh_at?: string | null,
-  legend_display?: default | name_only | null,
-  legend_visibility?: hide | show | null,
+  legend_display?: default | name_only | string | null,
+  legend_visibility?: hide | show | string | null,
   ordering_key?: number | null,
   paused_reason?: string | null,
   progress?: number,
@@ -641,7 +650,7 @@ await corsair.felt.api.layerGroups.get({ map_id: 'a1b2c3d4e5', layer_group_id: '
   },
   attributes?: {
     name: string,
-    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
+    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string
   }[] | null
 }[]
 ```
@@ -684,20 +693,20 @@ await corsair.felt.api.layerGroups.list({ map_id: 'a1b2c3d4e5' });
   name: string,
   caption?: string | null,
   ordering_key?: number | null,
-  legend_visibility?: hide | show | null,
-  visibility_interaction?: default | slider | select | multi_select | null,
+  legend_visibility?: hide | show | string | null,
+  visibility_interaction?: default | slider | select | multi_select | string | null,
   layers?: {
     id: string,
     type?: string,
     name?: string,
     caption?: string | null,
-    geometry_type?: Line | Point | Polygon | Raster | null,
-    hide_from_legend?: boolean,
+    geometry_type?: Line | Point | Polygon | Raster | string | null,
+    hide_from_legend?: boolean | null,
     is_spreadsheet?: boolean | null,
     last_refreshed_at?: string | null,
     next_refresh_at?: string | null,
-    legend_display?: default | name_only | null,
-    legend_visibility?: hide | show | null,
+    legend_display?: default | name_only | string | null,
+    legend_visibility?: hide | show | string | null,
     ordering_key?: number | null,
     paused_reason?: string | null,
     progress?: number,
@@ -718,7 +727,7 @@ await corsair.felt.api.layerGroups.list({ map_id: 'a1b2c3d4e5' });
     },
     attributes?: {
       name: string,
-      type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
+      type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string
     }[] | null
   }[]
 }[]
@@ -760,8 +769,8 @@ await corsair.felt.api.layerGroups.publish({ map_id: 'a1b2c3d4e5', layer_group_i
 | `name` | `string` | Yes | — |
 | `caption` | `string \| null` | No | — |
 | `ordering_key` | `number \| null` | No | — |
-| `legend_visibility` | `hide \| show \| null` | No | — |
-| `visibility_interaction` | `default \| slider \| select \| multi_select \| null` | No | — |
+| `legend_visibility` | `hide \| show \| string \| null` | No | — |
+| `visibility_interaction` | `default \| slider \| select \| multi_select \| string \| null` | No | — |
 | `layers` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -773,13 +782,13 @@ await corsair.felt.api.layerGroups.publish({ map_id: 'a1b2c3d4e5', layer_group_i
   type?: string,
   name?: string,
   caption?: string | null,
-  geometry_type?: Line | Point | Polygon | Raster | null,
-  hide_from_legend?: boolean,
+  geometry_type?: Line | Point | Polygon | Raster | string | null,
+  hide_from_legend?: boolean | null,
   is_spreadsheet?: boolean | null,
   last_refreshed_at?: string | null,
   next_refresh_at?: string | null,
-  legend_display?: default | name_only | null,
-  legend_visibility?: hide | show | null,
+  legend_display?: default | name_only | string | null,
+  legend_visibility?: hide | show | string | null,
   ordering_key?: number | null,
   paused_reason?: string | null,
   progress?: number,
@@ -800,7 +809,7 @@ await corsair.felt.api.layerGroups.publish({ map_id: 'a1b2c3d4e5', layer_group_i
   },
   attributes?: {
     name: string,
-    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
+    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string
   }[] | null
 }[]
 ```
@@ -831,6 +840,7 @@ await corsair.felt.api.layerGroups.update({ map_id: 'a1b2c3d4e5', layer_group_id
 | `layer_group_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `caption` | `string` | No | — |
+| `subtitle` | `string` | No | — |
 | `legend_visibility` | `hide \| show` | No | — |
 | `visibility_interaction` | `default \| slider \| select \| multi_select \| null` | No | — |
 | `ordering_key` | `number` | No | — |
@@ -845,8 +855,8 @@ await corsair.felt.api.layerGroups.update({ map_id: 'a1b2c3d4e5', layer_group_id
 | `name` | `string` | Yes | — |
 | `caption` | `string \| null` | No | — |
 | `ordering_key` | `number \| null` | No | — |
-| `legend_visibility` | `hide \| show \| null` | No | — |
-| `visibility_interaction` | `default \| slider \| select \| multi_select \| null` | No | — |
+| `legend_visibility` | `hide \| show \| string \| null` | No | — |
+| `visibility_interaction` | `default \| slider \| select \| multi_select \| string \| null` | No | — |
 | `layers` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -858,13 +868,13 @@ await corsair.felt.api.layerGroups.update({ map_id: 'a1b2c3d4e5', layer_group_id
   type?: string,
   name?: string,
   caption?: string | null,
-  geometry_type?: Line | Point | Polygon | Raster | null,
-  hide_from_legend?: boolean,
+  geometry_type?: Line | Point | Polygon | Raster | string | null,
+  hide_from_legend?: boolean | null,
   is_spreadsheet?: boolean | null,
   last_refreshed_at?: string | null,
   next_refresh_at?: string | null,
-  legend_display?: default | name_only | null,
-  legend_visibility?: hide | show | null,
+  legend_display?: default | name_only | string | null,
+  legend_visibility?: hide | show | string | null,
   ordering_key?: number | null,
   paused_reason?: string | null,
   progress?: number,
@@ -885,7 +895,7 @@ await corsair.felt.api.layerGroups.update({ map_id: 'a1b2c3d4e5', layer_group_id
   },
   attributes?: {
     name: string,
-    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
+    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string
   }[] | null
 }[]
 ```
@@ -926,6 +936,7 @@ await corsair.felt.api.layerGroups.updateBulk({
   id: string,
   name?: string,
   caption?: string,
+  subtitle?: string,
   legend_visibility?: hide | show,
   visibility_interaction?: default | slider | select | multi_select | null,
   ordering_key?: number
@@ -947,20 +958,20 @@ await corsair.felt.api.layerGroups.updateBulk({
   name: string,
   caption?: string | null,
   ordering_key?: number | null,
-  legend_visibility?: hide | show | null,
-  visibility_interaction?: default | slider | select | multi_select | null,
+  legend_visibility?: hide | show | string | null,
+  visibility_interaction?: default | slider | select | multi_select | string | null,
   layers?: {
     id: string,
     type?: string,
     name?: string,
     caption?: string | null,
-    geometry_type?: Line | Point | Polygon | Raster | null,
-    hide_from_legend?: boolean,
+    geometry_type?: Line | Point | Polygon | Raster | string | null,
+    hide_from_legend?: boolean | null,
     is_spreadsheet?: boolean | null,
     last_refreshed_at?: string | null,
     next_refresh_at?: string | null,
-    legend_display?: default | name_only | null,
-    legend_visibility?: hide | show | null,
+    legend_display?: default | name_only | string | null,
+    legend_visibility?: hide | show | string | null,
     ordering_key?: number | null,
     paused_reason?: string | null,
     progress?: number,
@@ -981,7 +992,7 @@ await corsair.felt.api.layerGroups.updateBulk({
     },
     attributes?: {
       name: string,
-      type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
+      type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string
     }[] | null
   }[]
 }[]
@@ -998,23 +1009,38 @@ await corsair.felt.api.layerGroups.updateBulk({
 
 `layers.addFromSource`
 
-Add a layer to a map from a connected data source dataset
+Add a layer to a map from a source: one of its datasets, a SQL query or a STAC asset
 
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.layers.addFromSource({ map_id: 'a1b2c3d4e5', source_id: 'src_123' });
+await corsair.felt.api.layers.addFromSource({ map_id: 'a1b2c3d4e5', from: 'dataset', dataset_id: 'dataset_123' });
 ```
 
-**Input**
+**Input:** `object`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `map_id` | `string` | Yes | — |
-| `source_id` | `string` | Yes | — |
-| `dataset_id` | `string` | No | — |
-| `name` | `string` | No | — |
+<AccordionGroup>
+<Accordion title="Input full type">
 
+```ts
+{
+  map_id: string,
+  from: dataset,
+  dataset_id: string
+} | {
+  map_id: string,
+  from: sql,
+  source_id: string,
+  query: string
+} | {
+  map_id: string,
+  from: stac,
+  source_id: string,
+  stac_asset_url: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 **Output**
@@ -1048,7 +1074,7 @@ await corsair.felt.api.layers.createCustomExport({ map_id: 'a1b2c3d4e5', layer_i
 | `layer_id` | `string` | Yes | — |
 | `output_format` | `string` | Yes | — |
 | `email_on_completion` | `boolean` | No | — |
-| `filters` | `Record<string, any>` | No | — |
+| `filters` | `any[]` | No | — |
 
 
 
@@ -1105,7 +1131,7 @@ Duplicate layers across maps
 
 ```ts
 await corsair.felt.api.layers.duplicate({
-	layers: [{ destination_map_id: 'a1b2c3d4e5', layer_id: 'layer_123' }],
+	layers: [{ destination_map_id: 'a1b2c3d4e5', source_layer_id: 'layer_123' }],
 });
 ```
 
@@ -1119,10 +1145,15 @@ await corsair.felt.api.layers.duplicate({
 <Accordion title="layers full type">
 
 ```ts
-{
-  layer_id: string,
-  destination_map_id: string
-}[]
+(
+  {
+    source_layer_id: string,
+    destination_map_id: string
+  } | {
+    source_layer_group_id: string,
+    destination_map_id: string
+  }
+)[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1145,13 +1176,13 @@ await corsair.felt.api.layers.duplicate({
   type?: string,
   name?: string,
   caption?: string | null,
-  geometry_type?: Line | Point | Polygon | Raster | null,
-  hide_from_legend?: boolean,
+  geometry_type?: Line | Point | Polygon | Raster | string | null,
+  hide_from_legend?: boolean | null,
   is_spreadsheet?: boolean | null,
   last_refreshed_at?: string | null,
   next_refresh_at?: string | null,
-  legend_display?: default | name_only | null,
-  legend_visibility?: hide | show | null,
+  legend_display?: default | name_only | string | null,
+  legend_visibility?: hide | show | string | null,
   ordering_key?: number | null,
   paused_reason?: string | null,
   progress?: number,
@@ -1172,7 +1203,7 @@ await corsair.felt.api.layers.duplicate({
   },
   attributes?: {
     name: string,
-    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
+    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string
   }[] | null
 }[]
 ```
@@ -1212,13 +1243,13 @@ await corsair.felt.api.layers.get({ map_id: 'a1b2c3d4e5', layer_id: 'layer_123' 
 | `type` | `string` | No | — |
 | `name` | `string` | No | — |
 | `caption` | `string \| null` | No | — |
-| `geometry_type` | `Line \| Point \| Polygon \| Raster \| null` | No | — |
-| `hide_from_legend` | `boolean` | No | — |
+| `geometry_type` | `Line \| Point \| Polygon \| Raster \| string \| null` | No | — |
+| `hide_from_legend` | `boolean \| null` | No | — |
 | `is_spreadsheet` | `boolean \| null` | No | — |
 | `last_refreshed_at` | `string \| null` | No | — |
 | `next_refresh_at` | `string \| null` | No | — |
-| `legend_display` | `default \| name_only \| null` | No | — |
-| `legend_visibility` | `hide \| show \| null` | No | — |
+| `legend_display` | `default \| name_only \| string \| null` | No | — |
+| `legend_visibility` | `hide \| show \| string \| null` | No | — |
 | `ordering_key` | `number \| null` | No | — |
 | `paused_reason` | `string \| null` | No | — |
 | `progress` | `number` | No | — |
@@ -1252,7 +1283,7 @@ await corsair.felt.api.layers.get({ map_id: 'a1b2c3d4e5', layer_id: 'layer_123' 
 ```ts
 {
   name: string,
-  type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
+  type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string
 }[] | null
 ```
 </Accordion>
@@ -1325,13 +1356,13 @@ await corsair.felt.api.layers.list({ map_id: 'a1b2c3d4e5' });
   type?: string,
   name?: string,
   caption?: string | null,
-  geometry_type?: Line | Point | Polygon | Raster | null,
-  hide_from_legend?: boolean,
+  geometry_type?: Line | Point | Polygon | Raster | string | null,
+  hide_from_legend?: boolean | null,
   is_spreadsheet?: boolean | null,
   last_refreshed_at?: string | null,
   next_refresh_at?: string | null,
-  legend_display?: default | name_only | null,
-  legend_visibility?: hide | show | null,
+  legend_display?: default | name_only | string | null,
+  legend_visibility?: hide | show | string | null,
   ordering_key?: number | null,
   paused_reason?: string | null,
   progress?: number,
@@ -1352,7 +1383,7 @@ await corsair.felt.api.layers.list({ map_id: 'a1b2c3d4e5' });
   },
   attributes?: {
     name: string,
-    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
+    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string
   }[] | null
 }[]
 ```
@@ -1399,13 +1430,13 @@ await corsair.felt.api.layers.listLibrary({});
   type?: string,
   name?: string,
   caption?: string | null,
-  geometry_type?: Line | Point | Polygon | Raster | null,
-  hide_from_legend?: boolean,
+  geometry_type?: Line | Point | Polygon | Raster | string | null,
+  hide_from_legend?: boolean | null,
   is_spreadsheet?: boolean | null,
   last_refreshed_at?: string | null,
   next_refresh_at?: string | null,
-  legend_display?: default | name_only | null,
-  legend_visibility?: hide | show | null,
+  legend_display?: default | name_only | string | null,
+  legend_visibility?: hide | show | string | null,
   ordering_key?: number | null,
   paused_reason?: string | null,
   progress?: number,
@@ -1426,7 +1457,7 @@ await corsair.felt.api.layers.listLibrary({});
   },
   attributes?: {
     name: string,
-    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
+    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string
   }[] | null
 }[]
 ```
@@ -1466,7 +1497,7 @@ await corsair.felt.api.layers.pollCustomExport({ map_id: 'a1b2c3d4e5', layer_id:
 | `export_id` | `string` | Yes | — |
 | `status` | `string` | Yes | — |
 | `download_url` | `string \| null` | No | — |
-| `filters` | `Record<string, any>` | No | — |
+| `filters` | `any[] \| null` | No | — |
 
 
 
@@ -1503,13 +1534,13 @@ await corsair.felt.api.layers.publish({ map_id: 'a1b2c3d4e5', layer_id: 'layer_1
 | `type` | `string` | No | — |
 | `name` | `string` | No | — |
 | `caption` | `string \| null` | No | — |
-| `geometry_type` | `Line \| Point \| Polygon \| Raster \| null` | No | — |
-| `hide_from_legend` | `boolean` | No | — |
+| `geometry_type` | `Line \| Point \| Polygon \| Raster \| string \| null` | No | — |
+| `hide_from_legend` | `boolean \| null` | No | — |
 | `is_spreadsheet` | `boolean \| null` | No | — |
 | `last_refreshed_at` | `string \| null` | No | — |
 | `next_refresh_at` | `string \| null` | No | — |
-| `legend_display` | `default \| name_only \| null` | No | — |
-| `legend_visibility` | `hide \| show \| null` | No | — |
+| `legend_display` | `default \| name_only \| string \| null` | No | — |
+| `legend_visibility` | `hide \| show \| string \| null` | No | — |
 | `ordering_key` | `number \| null` | No | — |
 | `paused_reason` | `string \| null` | No | — |
 | `progress` | `number` | No | — |
@@ -1543,7 +1574,7 @@ await corsair.felt.api.layers.publish({ map_id: 'a1b2c3d4e5', layer_id: 'layer_1
 ```ts
 {
   name: string,
-  type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
+  type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string
 }[] | null
 ```
 </Accordion>
@@ -1578,55 +1609,11 @@ await corsair.felt.api.layers.refresh({ map_id: 'a1b2c3d4e5', layer_id: 'layer_1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | — |
+| `layer_id` | `string` | Yes | — |
+| `layer_group_id` | `string` | No | — |
+| `url` | `string \| null` | No | — |
 | `type` | `string` | No | — |
-| `name` | `string` | No | — |
-| `caption` | `string \| null` | No | — |
-| `geometry_type` | `Line \| Point \| Polygon \| Raster \| null` | No | — |
-| `hide_from_legend` | `boolean` | No | — |
-| `is_spreadsheet` | `boolean \| null` | No | — |
-| `last_refreshed_at` | `string \| null` | No | — |
-| `next_refresh_at` | `string \| null` | No | — |
-| `legend_display` | `default \| name_only \| null` | No | — |
-| `legend_visibility` | `hide \| show \| null` | No | — |
-| `ordering_key` | `number \| null` | No | — |
-| `paused_reason` | `string \| null` | No | — |
-| `progress` | `number` | No | — |
-| `refresh_period` | `string` | No | — |
-| `refresh_status` | `string` | No | — |
-| `status` | `string` | No | — |
-| `style` | `Record<string, any>` | No | — |
-| `tile_url` | `string \| null` | No | — |
-| `metadata` | `object` | No | — |
-| `attributes` | `object[] \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-  attribution_text?: string | null,
-  attribution_url?: string | null,
-  description?: string | null,
-  license?: string | null,
-  source_abbreviation?: string | null,
-  source_name?: string | null,
-  source_url?: string | null,
-  updated_at?: string | null
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
-  name: string,
-  type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
-}[] | null
-```
-</Accordion>
-</AccordionGroup>
+| `presigned_attributes` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -1662,6 +1649,7 @@ await corsair.felt.api.layers.update({
   id: string,
   name?: string,
   caption?: string,
+  subtitle?: string,
   layer_group_id?: string | null,
   legend_display?: default | name_only,
   legend_visibility?: hide | show,
@@ -1695,13 +1683,13 @@ await corsair.felt.api.layers.update({
   type?: string,
   name?: string,
   caption?: string | null,
-  geometry_type?: Line | Point | Polygon | Raster | null,
-  hide_from_legend?: boolean,
+  geometry_type?: Line | Point | Polygon | Raster | string | null,
+  hide_from_legend?: boolean | null,
   is_spreadsheet?: boolean | null,
   last_refreshed_at?: string | null,
   next_refresh_at?: string | null,
-  legend_display?: default | name_only | null,
-  legend_visibility?: hide | show | null,
+  legend_display?: default | name_only | string | null,
+  legend_visibility?: hide | show | string | null,
   ordering_key?: number | null,
   paused_reason?: string | null,
   progress?: number,
@@ -1722,7 +1710,7 @@ await corsair.felt.api.layers.update({
   },
   attributes?: {
     name: string,
-    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
+    type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string
   }[] | null
 }[]
 ```
@@ -1766,13 +1754,13 @@ await corsair.felt.api.layers.updateStyle({
 | `type` | `string` | No | — |
 | `name` | `string` | No | — |
 | `caption` | `string \| null` | No | — |
-| `geometry_type` | `Line \| Point \| Polygon \| Raster \| null` | No | — |
-| `hide_from_legend` | `boolean` | No | — |
+| `geometry_type` | `Line \| Point \| Polygon \| Raster \| string \| null` | No | — |
+| `hide_from_legend` | `boolean \| null` | No | — |
 | `is_spreadsheet` | `boolean \| null` | No | — |
 | `last_refreshed_at` | `string \| null` | No | — |
 | `next_refresh_at` | `string \| null` | No | — |
-| `legend_display` | `default \| name_only \| null` | No | — |
-| `legend_visibility` | `hide \| show \| null` | No | — |
+| `legend_display` | `default \| name_only \| string \| null` | No | — |
+| `legend_visibility` | `hide \| show \| string \| null` | No | — |
 | `ordering_key` | `number \| null` | No | — |
 | `paused_reason` | `string \| null` | No | — |
 | `progress` | `number` | No | — |
@@ -1806,7 +1794,7 @@ await corsair.felt.api.layers.updateStyle({
 ```ts
 {
   name: string,
-  type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY
+  type?: INTEGER | REAL | TEXT | BOOLEAN | DATE | DATETIME | GEOMETRY | string
 }[] | null
 ```
 </Accordion>
@@ -1869,9 +1857,9 @@ Imports spatial data into a Felt map from a publicly accessible URL or pre-signe
 |------|------|----------|-------------|
 | `layer_id` | `string` | Yes | — |
 | `layer_group_id` | `string` | No | — |
-| `url` | `string` | No | — |
+| `url` | `string \| null` | No | — |
 | `type` | `string` | No | — |
-| `presigned_attributes` | `Record<string, any>` | No | — |
+| `presigned_attributes` | `Record<string, any> \| null` | No | — |
 
 
 
@@ -1932,19 +1920,29 @@ Creates a new Felt map. You can optionally supply initial coordinates and zoom l
 | `visited_at` | `string \| null` | No | — |
 | `layers` | `any[]` | No | — |
 | `element_groups` | `any[]` | No | — |
-| `elements` | `any[]` | No | — |
+| `elements` | `object` | No | — |
 | `layer_groups` | `any[]` | No | — |
-| `table_settings` | `object` | No | — |
-| `viewer_permissions` | `object` | No | — |
+| `table_settings` | `object \| null` | No | — |
+| `viewer_permissions` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+  type: string,
+  features?: Record<string, any>[]
+}
+```
+</Accordion>
+
 <Accordion title="table_settings full type">
 
 ```ts
 {
   default_table_layer_id?: string | null,
-  viewers_can_open_table?: boolean
-}
+  viewers_can_open_table?: boolean | null
+} | null
 ```
 </Accordion>
 
@@ -1952,10 +1950,10 @@ Creates a new Felt map. You can optionally supply initial coordinates and zoom l
 
 ```ts
 {
-  can_duplicate_map?: boolean,
-  can_export_data?: boolean,
-  can_see_map_presence?: boolean
-}
+  can_duplicate_map?: boolean | null,
+  can_export_data?: boolean | null,
+  can_see_map_presence?: boolean | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2079,19 +2077,29 @@ await corsair.felt.api.maps.duplicate({ map_id: 'a1b2c3d4e5', title: 'Duplicate 
 | `visited_at` | `string \| null` | No | — |
 | `layers` | `any[]` | No | — |
 | `element_groups` | `any[]` | No | — |
-| `elements` | `any[]` | No | — |
+| `elements` | `object` | No | — |
 | `layer_groups` | `any[]` | No | — |
-| `table_settings` | `object` | No | — |
-| `viewer_permissions` | `object` | No | — |
+| `table_settings` | `object \| null` | No | — |
+| `viewer_permissions` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+  type: string,
+  features?: Record<string, any>[]
+}
+```
+</Accordion>
+
 <Accordion title="table_settings full type">
 
 ```ts
 {
   default_table_layer_id?: string | null,
-  viewers_can_open_table?: boolean
-}
+  viewers_can_open_table?: boolean | null
+} | null
 ```
 </Accordion>
 
@@ -2099,10 +2107,10 @@ await corsair.felt.api.maps.duplicate({ map_id: 'a1b2c3d4e5', title: 'Duplicate 
 
 ```ts
 {
-  can_duplicate_map?: boolean,
-  can_export_data?: boolean,
-  can_see_map_presence?: boolean
-}
+  can_duplicate_map?: boolean | null,
+  can_export_data?: boolean | null,
+  can_see_map_presence?: boolean | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2131,20 +2139,32 @@ await corsair.felt.api.maps.exportImage({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `map_id` | `string` | Yes | — |
-| `legend` | `boolean` | No | — |
+| `legend` | `object` | No | — |
 | `show_scale_bar` | `boolean` | No | — |
-| `units` | `imperial \| metric \| nautical` | No | — |
-| `output` | `object` | No | — |
+| `units` | `metric \| us_standard` | No | — |
+| `output` | `object` | Yes | — |
 | `view` | `Record<string, any>` | No | — |
 
 <AccordionGroup>
+<Accordion title="legend full type">
+
+```ts
+{
+  visible?: boolean,
+  show_title?: boolean,
+  show_description?: boolean,
+  show_components?: boolean
+}
+```
+</Accordion>
+
 <Accordion title="output full type">
 
 ```ts
 {
-  format?: png | jpg | pdf,
-  width_px?: number,
-  height_px?: number,
+  format?: png | jpg | pdf | svg,
+  width_px: number,
+  height_px: number,
   pixel_ratio?: number,
   jpg_quality?: number
 }
@@ -2163,6 +2183,8 @@ await corsair.felt.api.maps.exportImage({
 | `download_url` | `string \| null` | No | — |
 | `status` | `string` | No | — |
 | `expires_at` | `string` | No | — |
+| `output` | `Record<string, any>` | No | — |
+| `rendered_bounds` | `number[]` | No | — |
 
 
 
@@ -2206,19 +2228,29 @@ await corsair.felt.api.maps.get({ map_id: 'a1b2c3d4e5' });
 | `visited_at` | `string \| null` | No | — |
 | `layers` | `any[]` | No | — |
 | `element_groups` | `any[]` | No | — |
-| `elements` | `any[]` | No | — |
+| `elements` | `object` | No | — |
 | `layer_groups` | `any[]` | No | — |
-| `table_settings` | `object` | No | — |
-| `viewer_permissions` | `object` | No | — |
+| `table_settings` | `object \| null` | No | — |
+| `viewer_permissions` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+  type: string,
+  features?: Record<string, any>[]
+}
+```
+</Accordion>
+
 <Accordion title="table_settings full type">
 
 ```ts
 {
   default_table_layer_id?: string | null,
-  viewers_can_open_table?: boolean
-}
+  viewers_can_open_table?: boolean | null
+} | null
 ```
 </Accordion>
 
@@ -2226,10 +2258,10 @@ await corsair.felt.api.maps.get({ map_id: 'a1b2c3d4e5' });
 
 ```ts
 {
-  can_duplicate_map?: boolean,
-  can_export_data?: boolean,
-  can_see_map_presence?: boolean
-}
+  can_duplicate_map?: boolean | null,
+  can_export_data?: boolean | null,
+  can_see_map_presence?: boolean | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2278,19 +2310,29 @@ await corsair.felt.api.maps.move({ map_id: 'a1b2c3d4e5', project_id: 'proj_123' 
 | `visited_at` | `string \| null` | No | — |
 | `layers` | `any[]` | No | — |
 | `element_groups` | `any[]` | No | — |
-| `elements` | `any[]` | No | — |
+| `elements` | `object` | No | — |
 | `layer_groups` | `any[]` | No | — |
-| `table_settings` | `object` | No | — |
-| `viewer_permissions` | `object` | No | — |
+| `table_settings` | `object \| null` | No | — |
+| `viewer_permissions` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+  type: string,
+  features?: Record<string, any>[]
+}
+```
+</Accordion>
+
 <Accordion title="table_settings full type">
 
 ```ts
 {
   default_table_layer_id?: string | null,
-  viewers_can_open_table?: boolean
-}
+  viewers_can_open_table?: boolean | null
+} | null
 ```
 </Accordion>
 
@@ -2298,10 +2340,10 @@ await corsair.felt.api.maps.move({ map_id: 'a1b2c3d4e5', project_id: 'proj_123' 
 
 ```ts
 {
-  can_duplicate_map?: boolean,
-  can_export_data?: boolean,
-  can_see_map_presence?: boolean
-}
+  can_duplicate_map?: boolean | null,
+  can_export_data?: boolean | null,
+  can_see_map_presence?: boolean | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2377,19 +2419,29 @@ await corsair.felt.api.maps.update({ map_id: 'a1b2c3d4e5', title: 'Updated SF La
 | `visited_at` | `string \| null` | No | — |
 | `layers` | `any[]` | No | — |
 | `element_groups` | `any[]` | No | — |
-| `elements` | `any[]` | No | — |
+| `elements` | `object` | No | — |
 | `layer_groups` | `any[]` | No | — |
-| `table_settings` | `object` | No | — |
-| `viewer_permissions` | `object` | No | — |
+| `table_settings` | `object \| null` | No | — |
+| `viewer_permissions` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="elements full type">
+
+```ts
+{
+  type: string,
+  features?: Record<string, any>[]
+}
+```
+</Accordion>
+
 <Accordion title="table_settings full type">
 
 ```ts
 {
   default_table_layer_id?: string | null,
-  viewers_can_open_table?: boolean
-}
+  viewers_can_open_table?: boolean | null
+} | null
 ```
 </Accordion>
 
@@ -2397,10 +2449,10 @@ await corsair.felt.api.maps.update({ map_id: 'a1b2c3d4e5', title: 'Updated SF La
 
 ```ts
 {
-  can_duplicate_map?: boolean,
-  can_export_data?: boolean,
-  can_see_map_presence?: boolean
-}
+  can_duplicate_map?: boolean | null,
+  can_export_data?: boolean | null,
+  can_see_map_presence?: boolean | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2420,7 +2472,7 @@ Save a print page as a reusable layout template
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.printPages.createLayout({ map_id: 'a1b2c3d4e5', name: 'Landscape Layout' });
+await corsair.felt.api.printPages.createLayout({ map_id: 'a1b2c3d4e5', page_id: 'page_123', name: 'Landscape Layout' });
 ```
 
 **Input**
@@ -2428,8 +2480,8 @@ await corsair.felt.api.printPages.createLayout({ map_id: 'a1b2c3d4e5', name: 'La
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `map_id` | `string` | Yes | — |
-| `name` | `string` | Yes | — |
-| `page_id` | `string` | No | — |
+| `page_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
 
 
 
@@ -2440,7 +2492,7 @@ await corsair.felt.api.printPages.createLayout({ map_id: 'a1b2c3d4e5', name: 'La
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `kind` | `string` | No | — |
-| `orientation` | `string` | No | — |
+| `orientation` | `string \| null` | No | — |
 | `contents` | `Record<string, any>` | No | — |
 
 
@@ -2478,7 +2530,7 @@ await corsair.felt.api.printPages.createPage({ map_id: 'a1b2c3d4e5', name: 'Over
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `page` | `Record<string, any>` | No | — |
 | `output` | `Record<string, any>` | No | — |
@@ -2492,8 +2544,8 @@ await corsair.felt.api.printPages.createPage({ map_id: 'a1b2c3d4e5', name: 'Over
   id?: string,
   type?: string,
   align?: string,
-  color?: string,
-  border?: string
+  color?: string | null,
+  border?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2661,7 +2713,7 @@ await corsair.felt.api.printPages.getPage({ map_id: 'a1b2c3d4e5', page_id: 'page
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `page` | `Record<string, any>` | No | — |
 | `output` | `Record<string, any>` | No | — |
@@ -2675,8 +2727,8 @@ await corsair.felt.api.printPages.getPage({ map_id: 'a1b2c3d4e5', page_id: 'page
   id?: string,
   type?: string,
   align?: string,
-  color?: string,
-  border?: string
+  color?: string | null,
+  border?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2716,7 +2768,7 @@ await corsair.felt.api.printPages.listLayouts({ map_id: 'a1b2c3d4e5' });
   id: string,
   name?: string,
   kind?: string,
-  orientation?: string,
+  orientation?: string | null,
   contents?: Record<string, any>
 }[]
 ```
@@ -2754,7 +2806,7 @@ await corsair.felt.api.printPages.listPages({ map_id: 'a1b2c3d4e5' });
 ```ts
 {
   id: string,
-  name?: string,
+  name?: string | null,
   url?: string,
   page?: Record<string, any>,
   output?: Record<string, any>
@@ -2796,7 +2848,7 @@ await corsair.felt.api.printPages.updateLayout({ map_id: 'a1b2c3d4e5', layout_id
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `kind` | `string` | No | — |
-| `orientation` | `string` | No | — |
+| `orientation` | `string \| null` | No | — |
 | `contents` | `Record<string, any>` | No | — |
 
 
@@ -2833,7 +2885,7 @@ await corsair.felt.api.printPages.updatePage({ map_id: 'a1b2c3d4e5', page_id: 'p
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `page` | `Record<string, any>` | No | — |
 | `output` | `Record<string, any>` | No | — |
@@ -2847,8 +2899,8 @@ await corsair.felt.api.printPages.updatePage({ map_id: 'a1b2c3d4e5', page_id: 'p
   id?: string,
   type?: string,
   align?: string,
-  color?: string,
-  border?: string
+  color?: string | null,
+  border?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2889,7 +2941,7 @@ await corsair.felt.api.printPages.upsertItems({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `name` | `string` | No | — |
+| `name` | `string \| null` | No | — |
 | `url` | `string` | No | — |
 | `page` | `Record<string, any>` | No | — |
 | `output` | `Record<string, any>` | No | — |
@@ -2903,8 +2955,8 @@ await corsair.felt.api.printPages.upsertItems({
   id?: string,
   type?: string,
   align?: string,
-  color?: string,
-  border?: string
+  color?: string | null,
+  border?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -2925,7 +2977,7 @@ Create a new project in the workspace
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.projects.create({ name: 'Regional Planning' });
+await corsair.felt.api.projects.create({ name: 'Regional Planning', visibility: 'workspace' });
 ```
 
 **Input**
@@ -2933,7 +2985,7 @@ await corsair.felt.api.projects.create({ name: 'Regional Planning' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
-| `visibility` | `workspace \| private` | No | — |
+| `visibility` | `string` | Yes | — |
 | `max_inherited_permission` | `view_only \| view_and_contribute \| view_and_edit` | No | — |
 
 
@@ -2945,8 +2997,8 @@ await corsair.felt.api.projects.create({ name: 'Regional Planning' });
 | `id` | `string` | Yes | — |
 | `type` | `string` | No | — |
 | `name` | `string` | Yes | — |
-| `visibility` | `workspace \| private` | No | — |
-| `max_inherited_permission` | `view_only \| view_and_contribute \| view_and_edit` | No | — |
+| `visibility` | `workspace \| private \| string` | No | — |
+| `max_inherited_permission` | `view_only \| view_and_contribute \| view_and_edit \| string` | No | — |
 | `maps` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -3028,8 +3080,8 @@ await corsair.felt.api.projects.get({ project_id: 'proj_123' });
 | `id` | `string` | Yes | — |
 | `type` | `string` | No | — |
 | `name` | `string` | Yes | — |
-| `visibility` | `workspace \| private` | No | — |
-| `max_inherited_permission` | `view_only \| view_and_contribute \| view_and_edit` | No | — |
+| `visibility` | `workspace \| private \| string` | No | — |
+| `max_inherited_permission` | `view_only \| view_and_contribute \| view_and_edit \| string` | No | — |
 | `maps` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -3123,8 +3175,8 @@ await corsair.felt.api.projects.update({ project_id: 'proj_123', name: 'Statewid
 | `id` | `string` | Yes | — |
 | `type` | `string` | No | — |
 | `name` | `string` | Yes | — |
-| `visibility` | `workspace \| private` | No | — |
-| `max_inherited_permission` | `view_only \| view_and_contribute \| view_and_edit` | No | — |
+| `visibility` | `workspace \| private \| string` | No | — |
+| `max_inherited_permission` | `view_only \| view_and_contribute \| view_and_edit \| string` | No | — |
 | `maps` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -3161,7 +3213,14 @@ Connect a new cloud database or warehouse data source
 ```ts
 await corsair.felt.api.sources.create({
 	name: 'Enterprise PostGIS',
-	connection: { host: 'db.example.com' },
+	connection: {
+		type: 'postgresql',
+		host: 'db.example.com',
+		port: 5432,
+		database: 'gis',
+		user: 'felt_reader',
+		password: '<password>',
+	},
 });
 ```
 
@@ -3182,9 +3241,11 @@ await corsair.felt.api.sources.create({
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `connection_type` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `last_synced_at` | `string \| null` | No | — |
-| `automatic_sync` | `boolean` | No | — |
+| `created_at` | `number \| string \| null` | No | — |
+| `updated_at` | `number \| string \| null` | No | — |
+| `last_synced_at` | `number \| string \| null` | No | — |
+| `sync_status` | `string` | No | — |
+| `automatic_sync` | `string` | No | — |
 
 
 
@@ -3201,7 +3262,9 @@ Add an authentication credential to a data source
 ```ts
 await corsair.felt.api.sources.createCredential({
 	source_id: 'src_123',
-	credential: { username: 'felt_user' },
+	name: 'Snowflake token',
+	use_case: 'source_authentication',
+	credential: { type: 'snowflake_pat', token: '<snowflake-token>' },
 });
 ```
 
@@ -3210,11 +3273,11 @@ await corsair.felt.api.sources.createCredential({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `source_id` | `string` | Yes | — |
-| `name` | `string` | No | — |
-| `use_case` | `string` | No | — |
+| `name` | `string` | Yes | — |
+| `use_case` | `string` | Yes | — |
 | `credential` | `Record<string, any>` | Yes | — |
 
-Configures database connection credentials (PostGIS/Snowflake/BigQuery). Credentials are strictly redacted from event logs.
+Adds a credential a source uses to authenticate (AWS role, Azure connection string, custom headers, GCP service account, key pair or Snowflake token). Secret values are redacted from errors and event logs.
 
 
 
@@ -3225,8 +3288,9 @@ Configures database connection credentials (PostGIS/Snowflake/BigQuery). Credent
 | `id` | `string` | Yes | — |
 | `source_id` | `string` | No | — |
 | `name` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `use_case` | `string` | No | — |
+| `created_at` | `number \| string \| null` | No | — |
+| `updated_at` | `number \| string \| null` | No | — |
 | `credential` | `Record<string, any>` | No | — |
 
 
@@ -3323,11 +3387,11 @@ await corsair.felt.api.sources.get({ source_id: 'src_123' });
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `type` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
-| `last_synced_at` | `string \| null` | No | — |
+| `created_at` | `number \| string \| null` | No | — |
+| `updated_at` | `number \| string \| null` | No | — |
+| `last_synced_at` | `number \| string \| null` | No | — |
 | `sync_status` | `string` | No | — |
-| `automatic_sync` | `boolean` | No | — |
+| `automatic_sync` | `string` | No | — |
 | `owner_id` | `string` | No | — |
 | `workspace_id` | `string` | No | — |
 | `connection` | `Record<string, any>` | No | — |
@@ -3340,7 +3404,8 @@ await corsair.felt.api.sources.get({ source_id: 'src_123' });
 {
   id: string,
   name: string,
-  created_at?: string,
+  created_at?: number | string,
+  updated_at?: number | string,
   description?: string | null,
   geometry_type?: string | null,
   inspection_status?: string
@@ -3383,9 +3448,11 @@ await corsair.felt.api.sources.list({});
   id: string,
   name?: string,
   connection_type?: string,
-  created_at?: string,
-  last_synced_at?: string | null,
-  automatic_sync?: boolean
+  created_at?: number | string | null,
+  updated_at?: number | string | null,
+  last_synced_at?: number | string | null,
+  sync_status?: string,
+  automatic_sync?: string
 }[]
 ```
 </Accordion>
@@ -3421,9 +3488,11 @@ await corsair.felt.api.sources.sync({ source_id: 'src_123' });
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `connection_type` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `last_synced_at` | `string \| null` | No | — |
-| `automatic_sync` | `boolean` | No | — |
+| `created_at` | `number \| string \| null` | No | — |
+| `updated_at` | `number \| string \| null` | No | — |
+| `last_synced_at` | `number \| string \| null` | No | — |
+| `sync_status` | `string` | No | — |
+| `automatic_sync` | `string` | No | — |
 
 
 
@@ -3459,9 +3528,11 @@ await corsair.felt.api.sources.update({ source_id: 'src_123', name: 'Updated Pos
 | `id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `connection_type` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `last_synced_at` | `string \| null` | No | — |
-| `automatic_sync` | `boolean` | No | — |
+| `created_at` | `number \| string \| null` | No | — |
+| `updated_at` | `number \| string \| null` | No | — |
+| `last_synced_at` | `number \| string \| null` | No | — |
+| `sync_status` | `string` | No | — |
+| `automatic_sync` | `string` | No | — |
 
 
 
@@ -3476,11 +3547,7 @@ Update an authentication credential on a data source
 **Risk:** `write`
 
 ```ts
-await corsair.felt.api.sources.updateCredential({
-	source_id: 'src_123',
-	credential_id: 'cred_123',
-	credential: { username: 'felt_user' },
-});
+await corsair.felt.api.sources.updateCredential({ source_id: 'src_123', credential_id: 'cred_123', name: 'Snowflake token (rotated)' });
 ```
 
 **Input**
@@ -3502,8 +3569,9 @@ await corsair.felt.api.sources.updateCredential({
 | `id` | `string` | Yes | — |
 | `source_id` | `string` | No | — |
 | `name` | `string` | No | — |
-| `created_at` | `string` | No | — |
-| `updated_at` | `string` | No | — |
+| `use_case` | `string` | No | — |
+| `created_at` | `number \| string \| null` | No | — |
+| `updated_at` | `number \| string \| null` | No | — |
 | `credential` | `Record<string, any>` | No | — |
 
 
@@ -3538,3 +3606,4 @@ await corsair.felt.api.users.getCurrent({});
 
 
 ---
+
