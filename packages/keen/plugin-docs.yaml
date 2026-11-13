@@ -24,11 +24,16 @@ overviewNote: |
   - **Webhooks.** The plugin does not receive Keen webhooks; none are configured here.
 examples:
   read:
-    path: queries.run
-    title: Count purchases in the last week
+    path: queries.multiAnalysis
+    title: Count purchases and sum revenue in the last week
     args:
-      analysis_type: count
       event_collection: purchases
+      analyses:
+        purchases:
+          analysis_type: count
+        revenue:
+          analysis_type: sum
+          target_property: price
       timeframe: this_7_days
   write:
     path: events.record

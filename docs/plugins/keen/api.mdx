@@ -135,7 +135,7 @@ await corsair.keen.api.datasets.get({ datasetName: 'count-purchases-by-country-d
 | `dataset_name` | `string` | Yes | — |
 | `display_name` | `string \| null` | No | — |
 | `query` | `Record<string, any> \| null` | No | — |
-| `index_by` | `string[] \| null` | No | — |
+| `index_by` | `string \| string[] \| null` | No | — |
 | `last_scheduled_date` | `string \| null` | No | — |
 | `latest_subtimeframe_available` | `string \| null` | No | — |
 | `milliseconds_behind` | `number \| null` | No | — |
@@ -186,7 +186,7 @@ Pages by cursor. Pass `next_after_name` back as `after_name`; it is null on the 
   dataset_name: string,
   display_name?: string | null,
   query?: Record<string, any> | null,
-  index_by?: string[] | null,
+  index_by?: string | string[] | null,
   last_scheduled_date?: string | null,
   latest_subtimeframe_available?: string | null,
   milliseconds_behind?: number | null,
@@ -217,10 +217,10 @@ await corsair.keen.api.datasets.result({ datasetName: 'count-purchases-by-countr
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `datasetName` | `string` | Yes | The cached dataset name. |
-| `index_by` | `Record<string, string>` | No | Values for the dataset’s `index_by` properties, which select the rows to return. |
-| `timeframe` | `string \| object` | No | A relative name, or an object with `start` and `end`. |
+| `index_by` | `string \| Record<string, string \| number \| boolean>` | Yes | The index value that selects the rows: a string for a single string index property, or an object of property name to value when there are several or the value is not a string. |
+| `timeframe` | `string \| object` | Yes | A relative timeframe in the dataset’s own unit, or an absolute window that lines up with its intervals. |
 
-The `index_by` values select the rows. A timeframe object is sent JSON-encoded; a relative one goes as it is.
+Both `index_by` and `timeframe` are required. A string `index_by` goes as it is; an object (several index properties, or a number or boolean value) and an absolute timeframe are sent JSON-encoded.
 
 <AccordionGroup>
 <Accordion title="timeframe full type">
@@ -240,7 +240,7 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `number \| string \| (number \| string \| Record<string, any>)[]` | Yes | — |
+| `result` | `number \| string \| boolean \| null \| (number \| string \| boolean \| null \| Record<string, any>)[] \| Record<string, any>` | Yes | — |
 
 
 
@@ -362,7 +362,7 @@ Run up to 10 analyses over one collection in one request, each under its own lab
 **Risk:** `read`
 
 ```ts
-await corsair.keen.api.queries.multiAnalysis({ event_collection: 'purchases', analyses: { purchases: { analysis_type: 'count', event_collection: 'purchases' }, revenue: { analysis_type: 'sum', event_collection: 'purchases', target_property: 'price' } }, timeframe: 'this_7_days' });
+await corsair.keen.api.queries.multiAnalysis({ event_collection: 'purchases', analyses: { purchases: { analysis_type: 'count' }, revenue: { analysis_type: 'sum', target_property: 'price' } }, timeframe: 'this_7_days' });
 ```
 
 **Input**
@@ -383,7 +383,33 @@ await corsair.keen.api.queries.multiAnalysis({ event_collection: 'purchases', an
 ```ts
 Record<string, {
   analysis_type: count | count_unique | minimum | maximum | sum | average | median | percentile | select_unique | standard_deviation | funnel,
-  event_collection: string,
+  event_collection?: string,
+  steps?: {
+    event_collection: string,
+    actor_property: string,
+    timeframe?: string | {
+      start: string,
+      end: string
+    },
+    timezone?: string,
+    filters?: (
+      {
+        operator: or,
+        operands: {
+          property_name: string,
+          operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+          property_value: any
+        }[]
+      } | {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }
+    )[],
+    optional?: boolean,
+    inverted?: boolean,
+    with_actors?: boolean
+  }[],
   target_property?: string,
   timeframe?: string | {
     start: string,
@@ -391,11 +417,20 @@ Record<string, {
   },
   interval?: minutely | hourly | daily | weekly | monthly | yearly,
   timezone?: string,
-  filters?: {
-    property_name: string,
-    operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
-    property_value: any
-  }[],
+  filters?: (
+    {
+      operator: or,
+      operands: {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }[]
+    } | {
+      property_name: string,
+      operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+      property_value: any
+    }
+  )[],
   group_by?: (string | Record<string, any>)[],
   order_by?: {
     property_name: string,
@@ -421,11 +456,20 @@ string | {
 <Accordion title="filters full type">
 
 ```ts
-{
-  property_name: string,
-  operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
-  property_value: any
-}[]
+(
+  {
+    operator: or,
+    operands: {
+      property_name: string,
+      operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+      property_value: any
+    }[]
+  } | {
+    property_name: string,
+    operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+    property_value: any
+  }
+)[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -459,7 +503,8 @@ await corsair.keen.api.queries.run({ analysis_type: 'sum', event_collection: 'pu
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `analysis_type` | `count \| count_unique \| minimum \| maximum \| sum \| average \| median \| percentile \| select_unique \| standard_deviation \| funnel` | Yes | — |
-| `event_collection` | `string` | Yes | The event collection, such as `purchases`. |
+| `event_collection` | `string` | No | The collection to analyze. Required for every analysis but `funnel`, whose steps name their own; inside a multi-analysis it comes from the outer request. |
+| `steps` | `object[]` | No | Required for `funnel`: the steps, in order. |
 | `target_property` | `string` | No | Required for every analysis except `count` and `funnel`. |
 | `timeframe` | `string \| object` | No | A relative name, or an object with `start` and `end`. |
 | `interval` | `minutely \| hourly \| daily \| weekly \| monthly \| yearly` | No | Split the result into one value per interval. |
@@ -474,6 +519,38 @@ await corsair.keen.api.queries.run({ analysis_type: 'sum', event_collection: 'pu
 Every analysis but `count` and `funnel` needs a `target_property`; `percentile` also needs `percentile`. Both are checked before the request.
 
 <AccordionGroup>
+<Accordion title="steps full type">
+
+```ts
+{
+  event_collection: string,
+  actor_property: string,
+  timeframe?: string | {
+    start: string,
+    end: string
+  },
+  timezone?: string,
+  filters?: (
+    {
+      operator: or,
+      operands: {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }[]
+    } | {
+      property_name: string,
+      operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+      property_value: any
+    }
+  )[],
+  optional?: boolean,
+  inverted?: boolean,
+  with_actors?: boolean
+}[]
+```
+</Accordion>
+
 <Accordion title="timeframe full type">
 
 ```ts
@@ -487,11 +564,20 @@ string | {
 <Accordion title="filters full type">
 
 ```ts
-{
-  property_name: string,
-  operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
-  property_value: any
-}[]
+(
+  {
+    operator: or,
+    operands: {
+      property_name: string,
+      operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+      property_value: any
+    }[]
+  } | {
+    property_name: string,
+    operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+    property_value: any
+  }
+)[]
 ```
 </Accordion>
 
@@ -512,7 +598,7 @@ string | {
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `result` | `number \| string \| (number \| string \| Record<string, any>)[]` | Yes | — |
+| `result` | `number \| string \| boolean \| null \| (number \| string \| boolean \| null \| Record<string, any>)[] \| Record<string, any>` | Yes | — |
 
 
 
@@ -538,10 +624,10 @@ await corsair.keen.api.savedQueries.create({ queryName: 'weekly-purchases', refr
 |------|------|----------|-------------|
 | `queryName` | `string` | Yes | The saved query name, which is also its identifier. |
 | `query` | `object` | Yes | — |
-| `refresh_rate` | `number` | Yes | Seconds between refreshes. `0` caches nothing; anything above 0 must be at least four hours. |
+| `refresh_rate` | `number` | Yes | Seconds between refreshes. `0` caches nothing; a cached query refreshes every 14400 (four hours) to 86400 (24 hours) seconds. |
 | `metadata` | `object` | No | — |
 
-A PUT keyed by name, so the same name replaces the definition. A `refresh_rate` above 0 must be at least four hours.
+A PUT keyed by name, so the same name replaces the definition. `refresh_rate` is 0, or 14400 to 86400 seconds.
 
 <AccordionGroup>
 <Accordion title="query full type">
@@ -549,7 +635,33 @@ A PUT keyed by name, so the same name replaces the definition. A `refresh_rate` 
 ```ts
 {
   analysis_type: count | count_unique | minimum | maximum | sum | average | median | percentile | select_unique | standard_deviation | funnel,
-  event_collection: string,
+  event_collection?: string,
+  steps?: {
+    event_collection: string,
+    actor_property: string,
+    timeframe?: string | {
+      start: string,
+      end: string
+    },
+    timezone?: string,
+    filters?: (
+      {
+        operator: or,
+        operands: {
+          property_name: string,
+          operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+          property_value: any
+        }[]
+      } | {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }
+    )[],
+    optional?: boolean,
+    inverted?: boolean,
+    with_actors?: boolean
+  }[],
   target_property?: string,
   timeframe?: string | {
     start: string,
@@ -557,11 +669,20 @@ A PUT keyed by name, so the same name replaces the definition. A `refresh_rate` 
   },
   interval?: minutely | hourly | daily | weekly | monthly | yearly,
   timezone?: string,
-  filters?: {
-    property_name: string,
-    operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
-    property_value: any
-  }[],
+  filters?: (
+    {
+      operator: or,
+      operands: {
+        property_name: string,
+        operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+        property_value: any
+      }[]
+    } | {
+      property_name: string,
+      operator: eq | ne | lt | lte | gt | gte | exists | in | contains | not_contains | within | regex,
+      property_value: any
+    }
+  )[],
   group_by?: (string | Record<string, any>)[],
   order_by?: {
     property_name: string,
@@ -768,7 +889,7 @@ await corsair.keen.api.savedQueries.result({ queryName: 'weekly-purchases' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query_name` | `string` | Yes | — |
-| `result` | `number \| string \| (number \| string \| Record<string, any>)[]` | Yes | — |
+| `result` | `number \| string \| boolean \| null \| (number \| string \| boolean \| null \| Record<string, any>)[] \| Record<string, any>` | Yes | — |
 | `refresh_rate` | `number \| null` | No | — |
 | `query` | `Record<string, any> \| null` | No | — |
 | `created_date` | `string \| null` | No | — |
