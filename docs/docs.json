@@ -3423,14 +3423,6 @@
                 ]
               },
               {
-                "group": "Postiz",
-                "pages": [
-                  "plugins/postiz/overview",
-                  "plugins/postiz/api",
-                  "plugins/postiz/database"
-                ]
-              },
-              {
                 "group": "PostHog",
                 "pages": [
                   "plugins/posthog/overview",
@@ -3438,6 +3430,14 @@
                   "plugins/posthog/api",
                   "plugins/posthog/database",
                   "plugins/posthog/webhooks"
+                ]
+              },
+              {
+                "group": "Postiz",
+                "pages": [
+                  "plugins/postiz/overview",
+                  "plugins/postiz/api",
+                  "plugins/postiz/database"
                 ]
               },
               {

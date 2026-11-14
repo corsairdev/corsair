@@ -19,7 +19,7 @@ Read one channel's analytics rows for a period
 **Risk:** `read`
 
 ```ts
-await corsair.postiz.api.analytics.platform({ integration: 'cm4ean69r0003w8w1cdomox9n', date: 'last_30_days' });
+await corsair.postiz.api.analytics.platform({ integration: 'cm4ean69r0003w8w1cdomox9n', date: '30' });
 ```
 
 **Input**
@@ -27,7 +27,7 @@ await corsair.postiz.api.analytics.platform({ integration: 'cm4ean69r0003w8w1cdo
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `integration` | `string` | Yes | The integration id to read analytics for. |
-| `date` | `string` | Yes | The period to read, which the API takes as its own window token. |
+| `date` | `string` | Yes | How many days to look back, such as `7`, `30` or `90`. |
 
 
 
@@ -44,7 +44,10 @@ await corsair.postiz.api.analytics.platform({ integration: 'cm4ean69r0003w8w1cdo
 {
   label?: string | null,
   percentageChange?: number | null,
-  data?: number[] | null
+  data?: {
+    total?: string | number | null,
+    date?: string | null
+  }[] | null
 }[]
 ```
 </Accordion>
@@ -167,7 +170,7 @@ await corsair.postiz.api.integrations.list({});
 
 `media.list`
 
-Page through the organization's media library
+Page through the organization's media library, optionally filtered by file name
 
 **Risk:** `read`
 
@@ -179,7 +182,8 @@ await corsair.postiz.api.media.list({ page: 1 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | No | Page number. The library returns 18 files per page. |
+| `page` | `number` | No | Page number, starting at 1. The library returns 18 files per page. |
+| `search` | `string` | No | Case-insensitive filter on the original file name. |
 
 
 
@@ -187,15 +191,17 @@ await corsair.postiz.api.media.list({ page: 1 });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `media` | `object[]` | Yes | — |
+| `pages` | `number \| null` | No | The total number of pages. |
+| `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="media full type">
+<Accordion title="results full type">
 
 ```ts
 {
   id?: string | null,
   name?: string | null,
+  originalName?: string | null,
   path?: string | null,
   thumbnail?: string | null,
   alt?: string | null,
@@ -204,6 +210,43 @@ await corsair.postiz.api.media.list({ page: 1 });
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+### uploadFromUrl
+
+`media.uploadFromUrl`
+
+Copy a file from a public URL into the media library, for use as a post attachment
+
+**Risk:** `write`
+
+```ts
+await corsair.postiz.api.media.uploadFromUrl({ url: 'https://example.com/image.png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | A public http(s) URL Postiz downloads the file from. |
+| `adjust` | `boolean` | No | Resize and re-encode the file to the platforms' limits after the upload. Runs in the background; the result's `status` is `processing` until it is done. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The uploaded media id. |
+| `name` | `string \| null` | No | — |
+| `path` | `string` | Yes | The hosted URL of the file. |
+| `organizationId` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `status` | `string \| null` | No | `processing` while `adjust` runs, otherwise `ready`. |
 
 
 
@@ -220,14 +263,14 @@ Page through the organization notifications, newest first
 **Risk:** `read`
 
 ```ts
-await corsair.postiz.api.notifications.list({ page: 1 });
+await corsair.postiz.api.notifications.list({ page: 0 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | No | Page number. The API returns 100 notifications per page. |
+| `page` | `number` | No | Page number, starting at 0. The API returns 100 notifications per page. |
 
 
 
@@ -236,6 +279,10 @@ await corsair.postiz.api.notifications.list({ page: 1 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `notifications` | `object[]` | Yes | — |
+| `total` | `number \| null` | No | Notifications across all pages. |
+| `page` | `number \| null` | No | This page, starting at 0. |
+| `limit` | `number \| null` | No | — |
+| `hasMore` | `boolean \| null` | No | True when another page exists. |
 
 <AccordionGroup>
 <Accordion title="notifications full type">
@@ -261,9 +308,9 @@ await corsair.postiz.api.notifications.list({ page: 1 });
 
 `posts.changeStatus`
 
-Move a post between draft and scheduled, without touching its content or date
+Move a post between draft and scheduled. Scheduling queues it to publish at its stored date to every channel it targets
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.postiz.api.posts.changeStatus({ id: 'post-123', status: 'draft' });
@@ -361,21 +408,8 @@ await corsair.postiz.api.posts.create({ type: 'schedule', date: '2024-12-14T10:0
 
 ```ts
 {
-  id?: string | null,
-  content?: string | null,
-  settings?: {
-    __type?: string | null
-  } | null,
-  publishDate?: string | null,
-  releaseURL?: string | null,
-  state?: string | null,
-  error?: string | null,
-  integration?: {
-    id?: string | null,
-    providerIdentifier?: string | null,
-    name?: string | null,
-    picture?: string | null
-  } | null
+  postId?: string | null,
+  integration?: string | null
 }[]
 ```
 </Accordion>
