@@ -1,0 +1,136 @@
+---
+title: "Eventee plugin"
+sidebarTitle: "Overview"
+description: "Manage an Eventee event program, partners, attendees, registrations, groups and session reviews through the public REST API."
+---
+
+Use **Eventee** through Corsair: one client, typed API calls.
+
+Install with `pnpm add corsair @corsair-dev/eventee`. Before calling this plugin, generate a per-event API token in the Eventee admin and configure it as the plugin API key. The generated API-key prompt only stores a token you already created; it does not provision Eventee credentials. API access is available on selected Eventee plans. The token scopes all requests to one event.
+
+**What you get:**
+
+- 31 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/eventee better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/eventee better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/eventee better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/eventee better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { eventee } from '@corsair-dev/eventee';
+
+export const corsair = createCorsair({
+	plugins: [
+		eventee(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Eventee API key before the first call: `pnpm corsair setup --plugin=eventee --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+First create an API token in the Eventee admin settings for the target event, then enter it when Corsair prompts for the API key. Corsair cannot create or regenerate this provider token.
+
+```ts
+eventee()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'eventee',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`attendees.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.eventee.api.attendees.get({});
+```
+
+
+**`session.post`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.eventee.api.session.post({
+	name: 'Opening Keynote',
+	start: '2024-06-01 09:00:00',
+	end: '2024-06-01 10:00:00',
+	hall_id: 1,
+});
+```
+
+
+See the full list on the [API](/plugins/eventee/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/eventee/api">
+    Every `eventee.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

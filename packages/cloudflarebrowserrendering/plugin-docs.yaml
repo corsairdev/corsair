@@ -1,0 +1,150 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "Cloudflare Browser Run"
+description: Render and inspect pages, capture screenshots and PDFs, crawl sites, and manage Browser Rendering sessions and targets through REST.
+recommendedAuth: api_key
+factory:
+  options:
+    authType: api_key
+overviewNote: |
+  This plugin exposes 24 REST operations: `content.fetch`, `markdown.convert`, `snapshot.capture`, `accessibilityTree.capture`, `scrape.extract`, `json.extract`, `links.list`, `screenshot.capture`, `pdf.render`, `crawl.start`, `crawl.get`, `crawl.cancel`, `sessions.list`, `sessions.get`, `browser.create`, `browser.close`, `browser.version`, `browser.protocol`, `browser.liveView.create`, `targets.create`, `targets.list`, `targets.get`, `targets.activate`, and `targets.close`.
+
+  Quick Actions use the current `/browser-run` paths; DevTools use the generated API reference's `/browser-rendering/devtools` paths. Screenshot/PDF bytes are returned as base64 JSON. Browser DevTools WebSocket/CDP transport, Workers Bindings, and inbound webhooks are not implemented.
+examples:
+  read:
+    path: content.fetch
+    title: Fetch rendered HTML
+    args:
+      accountId: acct-123
+      body:
+        url: https://example.com
+  write:
+    path: browser.create
+    title: Create a browser session
+    args:
+      accountId: acct-123
+      keepAlive: 60000
+      guardrails:
+        allowedDomains:
+          - example.com
+apiExamples:
+  content.fetch:
+    args:
+      accountId: acct-123
+      body:
+        url: https://example.com
+  markdown.convert:
+    args:
+      accountId: acct-123
+      body:
+        url: https://example.com
+  snapshot.capture:
+    args:
+      accountId: acct-123
+      body:
+        url: https://example.com
+        formats: [content, screenshot]
+  accessibilityTree.capture:
+    args:
+      accountId: acct-123
+      body:
+        url: https://example.com
+        interestingOnly: true
+  scrape.extract:
+    args:
+      accountId: acct-123
+      body:
+        url: https://example.com
+        elements:
+          - selector: h1
+  json.extract:
+    args:
+      accountId: acct-123
+      body:
+        url: https://example.com
+        prompt: Extract the page title and a short summary as JSON.
+  links.list:
+    args:
+      accountId: acct-123
+      body:
+        url: https://example.com
+  screenshot.capture:
+    call: >-
+      { accountId: 'acct-123', browser: 'kitesurf', cacheTTL: 30, body: { url: 'https://example.com', screenshotOptions: { fullPage: true } } }
+  pdf.render:
+    call: >-
+      { accountId: 'acct-123', browser: 'kitesurf', cacheTTL: 0, body: { url: 'https://example.com', pdfOptions: { format: 'a4' } } }
+  crawl.start:
+    args:
+      accountId: acct-123
+      body:
+        url: https://example.com
+        limit: 3
+        source: links
+  crawl.get:
+    call: >-
+      { accountId: 'acct-123', jobId: 'job-123', cursor: '10', limit: 10, status: 'completed' }
+  crawl.cancel:
+    args:
+      accountId: acct-123
+      jobId: job-123
+  sessions.list:
+    args:
+      accountId: acct-123
+      limit: 20
+      offset: 5
+  sessions.get:
+    args:
+      accountId: acct-123
+      sessionId: 182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e
+  browser.create:
+    args:
+      accountId: acct-123
+      keepAlive: 60000
+      lab: true
+      liveViewUrlExpiresInMs: 120000
+      recording: true
+      targets: true
+      guardrails:
+        allowedDomains:
+          - example.com
+  browser.close:
+    args:
+      accountId: acct-123
+      sessionId: 182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e
+  browser.version:
+    args:
+      accountId: acct-123
+      sessionId: 182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e
+  browser.protocol:
+    args:
+      accountId: acct-123
+      sessionId: 182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e
+  browser.liveView.create:
+    call: >-
+      { accountId: 'acct-123', sessionId: '182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e', expiresInMs: 300000, guardrails: { mode: 'readonly' }, mode: 'tab', targetId: 'target-123' }
+  targets.create:
+    args:
+      accountId: acct-123
+      sessionId: 182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e
+      liveViewUrlExpiresInMs: 600000
+      url: https://example.com
+  targets.list:
+    args:
+      accountId: acct-123
+      sessionId: 182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e
+      liveViewUrlExpiresInMs: 60000
+  targets.get:
+    args:
+      accountId: acct-123
+      sessionId: 182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e
+      targetId: target-123
+  targets.activate:
+    args:
+      accountId: acct-123
+      sessionId: 182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e
+      targetId: target-123
+  targets.close:
+    args:
+      accountId: acct-123
+      sessionId: 182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e
+      targetId: target-123

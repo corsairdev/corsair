@@ -67,7 +67,9 @@ describe('jumpcloud plugin registry', () => {
 describe('jumpcloud keyBuilder', () => {
 	it('prefers the explicit options key for endpoint calls', async () => {
 		const keyed = jumpcloud({ key: 'jc-explicit-key' });
-		const ctx = { authType: 'api_key' } as unknown as JumpCloudKeyBuilderContext;
+		const ctx = {
+			authType: 'api_key',
+		} as unknown as JumpCloudKeyBuilderContext;
 
 		await expect(keyed.keyBuilder!(ctx as never, 'endpoint')).resolves.toBe(
 			'jc-explicit-key',
