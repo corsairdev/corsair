@@ -13,6 +13,14 @@ export const list: HelpScoutEndpoints['customers.list'] = async (
 ) => {
 	const parsedInput =
 		HelpScoutEndpointInputSchemas['customers.list'].parse(input);
+	// Help Scout ignores an `email` parameter; email search goes through `query`.
+	let query = parsedInput.query;
+	if (parsedInput.email) {
+		const emailClause = `email:"${parsedInput.email.replace(/"/g, '')}"`;
+		query = query
+			? `(${emailClause} AND ${query.replace(/^\((.*)\)$/s, '$1')})`
+			: `(${emailClause})`;
+	}
 	const response = await makeHelpscoutRequest<
 		HelpScoutEndpointOutputs['customers.list']
 	>('/customers', ctx.key, {
@@ -21,8 +29,8 @@ export const list: HelpScoutEndpoints['customers.list'] = async (
 			mailbox: parsedInput.mailbox,
 			firstName: parsedInput.firstName,
 			lastName: parsedInput.lastName,
-			email: parsedInput.email,
-			query: parsedInput.query,
+			modifiedSince: parsedInput.modifiedSince,
+			query,
 			sortField: parsedInput.sortField,
 			sortOrder: parsedInput.sortOrder,
 			page: parsedInput.page,
@@ -78,6 +86,7 @@ export const create: HelpScoutEndpoints['customers.create'] = async (
 		HelpScoutEndpointOutputs['customers.create']
 	>('/customers', ctx.key, {
 		method: 'POST',
+		resourceId: true,
 		body: parsedInput,
 	});
 
@@ -130,13 +139,14 @@ export const patch: HelpScoutEndpoints['customers.patch'] = async (
 ) => {
 	const parsedInput =
 		HelpScoutEndpointInputSchemas['customers.patch'].parse(input);
-	const { customerId, ...body } = parsedInput;
+	const { customerId, ...operation } = parsedInput;
 
+	// Help Scout rejects a bare operation: the body must be a JSON Patch array.
 	const response = await makeHelpscoutRequest<
 		HelpScoutEndpointOutputs['customers.patch']
 	>(`/customers/${encodeURIComponent(String(customerId))}`, ctx.key, {
 		method: 'PATCH',
-		body,
+		body: [operation],
 	});
 
 	const parsed = HelpScoutEndpointOutputSchemas['customers.patch'].parse(
@@ -279,6 +289,7 @@ export const createEmail: HelpScoutEndpoints['customers.createEmail'] = async (
 		HelpScoutEndpointOutputs['customers.createEmail']
 	>(`/customers/${encodeURIComponent(String(customerId))}/emails`, ctx.key, {
 		method: 'POST',
+		resourceId: true,
 		body,
 	});
 
@@ -372,6 +383,7 @@ export const createPhone: HelpScoutEndpoints['customers.createPhone'] = async (
 		HelpScoutEndpointOutputs['customers.createPhone']
 	>(`/customers/${encodeURIComponent(String(customerId))}/phones`, ctx.key, {
 		method: 'POST',
+		resourceId: true,
 		body,
 	});
 
@@ -465,6 +477,7 @@ export const createChat: HelpScoutEndpoints['customers.createChat'] = async (
 		HelpScoutEndpointOutputs['customers.createChat']
 	>(`/customers/${encodeURIComponent(String(customerId))}/chats`, ctx.key, {
 		method: 'POST',
+		resourceId: true,
 		body,
 	});
 
@@ -561,6 +574,7 @@ export const createSocialProfile: HelpScoutEndpoints['customers.createSocialProf
 			ctx.key,
 			{
 				method: 'POST',
+				resourceId: true,
 				body,
 			},
 		);
@@ -656,6 +670,7 @@ export const createWebsite: HelpScoutEndpoints['customers.createWebsite'] =
 			ctx.key,
 			{
 				method: 'POST',
+				resourceId: true,
 				body,
 			},
 		);

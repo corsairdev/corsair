@@ -53,6 +53,7 @@ export const createReply: HelpScoutEndpoints['threads.createReply'] = async (
 		ctx.key,
 		{
 			method: 'POST',
+			resourceId: true,
 			body,
 		},
 	);
@@ -86,6 +87,7 @@ export const createNote: HelpScoutEndpoints['threads.createNote'] = async (
 		ctx.key,
 		{
 			method: 'POST',
+			resourceId: true,
 			body,
 		},
 	);
@@ -119,6 +121,7 @@ export const createChat: HelpScoutEndpoints['threads.createChat'] = async (
 		ctx.key,
 		{
 			method: 'POST',
+			resourceId: true,
 			body,
 		},
 	);
@@ -152,6 +155,7 @@ export const createPhone: HelpScoutEndpoints['threads.createPhone'] = async (
 		ctx.key,
 		{
 			method: 'POST',
+			resourceId: true,
 			body,
 		},
 	);
@@ -183,6 +187,7 @@ export const createCustomer: HelpScoutEndpoints['threads.createCustomer'] =
 			ctx.key,
 			{
 				method: 'POST',
+				resourceId: true,
 				body,
 			},
 		);

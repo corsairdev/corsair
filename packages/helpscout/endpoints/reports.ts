@@ -162,10 +162,7 @@ export const getDocs: HelpScoutEndpoints['reports.getDocs'] = async (
 			end: parsedInput.end,
 			previousStart: parsedInput.previousStart,
 			previousEnd: parsedInput.previousEnd,
-			mailboxes: parsedInput.mailboxes,
-			tags: parsedInput.tags,
-			types: parsedInput.types,
-			folders: parsedInput.folders,
+			sites: parsedInput.sites,
 		},
 	});
 

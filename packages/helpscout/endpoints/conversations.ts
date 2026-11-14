@@ -88,6 +88,7 @@ export const create: HelpScoutEndpoints['conversations.create'] = async (
 		HelpScoutEndpointOutputs['conversations.create']
 	>('/conversations', ctx.key, {
 		method: 'POST',
+		resourceId: true,
 		body: parsedInput,
 	});
 

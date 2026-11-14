@@ -96,7 +96,7 @@ describe('Help Scout Schema & Types', () => {
 				name: 'Account Tier',
 				type: 'dropdown',
 				required: true,
-				options: [{ id: 1, name: 'VIP', order: 1 }],
+				options: [{ id: 1, label: 'VIP', order: 1 }],
 			};
 			expect(CustomFieldSchema.parse(validField)).toMatchObject(validField);
 		});
@@ -145,6 +145,7 @@ describe('Help Scout Schema & Types', () => {
 			const valid = {
 				subject: 'Payment Question',
 				type: 'email' as const,
+				status: 'active' as const,
 				mailboxId: 10,
 				customer: { email: 'customer@example.com', firstName: 'Bob' },
 				threads: [

@@ -31,6 +31,11 @@ export const EmptyResponseSchema = z
 	.optional()
 	.default({});
 
+// Create calls return 201 with the new resource's id in the Resource-ID header.
+export const CreatedResourceResponseSchema = z.object({
+	id: z.number().int().optional(),
+});
+
 // ── Mailboxes ────────────────────────────────────────────────────────────────
 
 export const MailboxSchema = z
@@ -98,7 +103,7 @@ export const ListFoldersResponseSchema = z
 export const CustomFieldOptionSchema = z
 	.object({
 		id: z.number().int(),
-		name: z.string(),
+		label: z.string(),
 		order: z.number().int().optional(),
 	})
 	.passthrough();
@@ -260,9 +265,13 @@ export const CreateConversationInputSchema = z.object({
 		firstName: z.string().optional(),
 		lastName: z.string().optional(),
 	}),
-	status: z.enum(['active', 'pending', 'closed', 'spam']).optional(),
+	status: z.enum(['active', 'pending', 'closed', 'spam']),
 	assignTo: z.number().int().optional(),
 	createdAt: z.string().optional(),
+	// true creates a historical conversation: no emails or notifications go out
+	imported: z.boolean().optional(),
+	autoReply: z.boolean().optional(),
+	user: z.number().int().optional(),
 	threads: z.array(InitialThreadInputSchema).min(1),
 	tags: z.array(z.string()).optional(),
 	fields: z
@@ -275,7 +284,7 @@ export const CreateConversationInputSchema = z.object({
 		.optional(),
 });
 
-export const CreateConversationResponseSchema = EmptyResponseSchema;
+export const CreateConversationResponseSchema = CreatedResourceResponseSchema;
 
 export const UpdateConversationInputSchema = z.object({
 	conversationId: z.union([z.number().int(), z.string().regex(/^\d+$/)]),
@@ -366,6 +375,9 @@ export const CreateReplyThreadInputSchema = z.object({
 	text: z.string().min(1),
 	user: z.number().int().optional(),
 	draft: z.boolean().optional(),
+	// true records the reply without emailing the customer
+	imported: z.boolean().optional(),
+	createdAt: z.string().optional(),
 	status: z.enum(['active', 'pending', 'closed', 'spam']).optional(),
 	assignTo: z.number().int().optional(),
 	cc: z.array(z.string().email()).optional(),
@@ -373,7 +385,7 @@ export const CreateReplyThreadInputSchema = z.object({
 	attachments: z.array(AttachmentInputSchema).optional(),
 });
 
-export const CreateReplyThreadResponseSchema = EmptyResponseSchema;
+export const CreateReplyThreadResponseSchema = CreatedResourceResponseSchema;
 
 export const CreateNoteThreadInputSchema = z.object({
 	conversationId: z.union([z.number().int(), z.string().regex(/^\d+$/)]),
@@ -383,7 +395,7 @@ export const CreateNoteThreadInputSchema = z.object({
 	attachments: z.array(AttachmentInputSchema).optional(),
 });
 
-export const CreateNoteThreadResponseSchema = EmptyResponseSchema;
+export const CreateNoteThreadResponseSchema = CreatedResourceResponseSchema;
 
 export const CreateChatThreadInputSchema = z.object({
 	conversationId: z.union([z.number().int(), z.string().regex(/^\d+$/)]),
@@ -395,7 +407,7 @@ export const CreateChatThreadInputSchema = z.object({
 	attachments: z.array(AttachmentInputSchema).optional(),
 });
 
-export const CreateChatThreadResponseSchema = EmptyResponseSchema;
+export const CreateChatThreadResponseSchema = CreatedResourceResponseSchema;
 
 export const CreatePhoneThreadInputSchema = z.object({
 	conversationId: z.union([z.number().int(), z.string().regex(/^\d+$/)]),
@@ -408,7 +420,7 @@ export const CreatePhoneThreadInputSchema = z.object({
 	attachments: z.array(AttachmentInputSchema).optional(),
 });
 
-export const CreatePhoneThreadResponseSchema = EmptyResponseSchema;
+export const CreatePhoneThreadResponseSchema = CreatedResourceResponseSchema;
 
 export const CreateCustomerThreadInputSchema = z.object({
 	conversationId: z.union([z.number().int(), z.string().regex(/^\d+$/)]),
@@ -420,7 +432,7 @@ export const CreateCustomerThreadInputSchema = z.object({
 	attachments: z.array(AttachmentInputSchema).optional(),
 });
 
-export const CreateCustomerThreadResponseSchema = EmptyResponseSchema;
+export const CreateCustomerThreadResponseSchema = CreatedResourceResponseSchema;
 
 export const UpdateThreadInputSchema = z.object({
 	conversationId: z.union([z.number().int(), z.string().regex(/^\d+$/)]),
@@ -439,7 +451,7 @@ export const GetOriginalSourceInputSchema = z.object({
 
 export const GetOriginalSourceResponseSchema = z
 	.object({
-		data: z.string().optional(),
+		original: z.string().optional(),
 	})
 	.passthrough();
 
@@ -514,9 +526,13 @@ export const ListCustomersInputSchema = z.object({
 	mailbox: z.union([z.number().int(), z.string()]).optional(),
 	firstName: z.string().optional(),
 	lastName: z.string().optional(),
+	// Help Scout has no email filter; sent as query=(email:"...")
 	email: z.string().optional(),
+	modifiedSince: z.string().optional(),
 	query: z.string().optional(),
-	sortField: z.enum(['createdAt', 'modifiedAt', 'score']).optional(),
+	sortField: z
+		.enum(['createdAt', 'firstName', 'lastName', 'modifiedAt'])
+		.optional(),
 	sortOrder: z.enum(['asc', 'desc']).optional(),
 	page: z.number().int().min(1).optional(),
 });
@@ -565,8 +581,8 @@ export const CreateCustomerInputSchema = z.object({
 		.optional(),
 	address: z
 		.object({
-			address: z.string().optional(),
-			address2: z.string().optional(),
+			// street lines; Help Scout has no address/address2 fields
+			lines: z.array(z.string()).optional(),
 			city: z.string().optional(),
 			state: z.string().optional(),
 			postalCode: z.string().optional(),
@@ -575,7 +591,7 @@ export const CreateCustomerInputSchema = z.object({
 		.optional(),
 });
 
-export const CreateCustomerResponseSchema = EmptyResponseSchema;
+export const CreateCustomerResponseSchema = CreatedResourceResponseSchema;
 
 export const UpdateCustomerInputSchema = z.object({
 	customerId: z.union([z.number().int(), z.string().regex(/^\d+$/)]),
@@ -586,6 +602,12 @@ export const UpdateCustomerInputSchema = z.object({
 	photoUrl: z.string().url().optional(),
 	photoType: z.string().optional(),
 	organization: z.string().optional(),
+	// PUT clears every field it doesn't receive, so all documented fields are accepted
+	organizationId: z.number().int().optional(),
+	background: z.string().optional(),
+	location: z.string().optional(),
+	gender: z.string().optional(),
+	age: z.string().optional(),
 });
 
 export const UpdateCustomerResponseSchema = EmptyResponseSchema;
@@ -594,7 +616,17 @@ export const PatchCustomerInputSchema = z.object({
 	customerId: z.union([z.number().int(), z.string().regex(/^\d+$/)]),
 	op: z.enum(['replace', 'add', 'remove']),
 	path: z.string(),
-	value: z.union([z.string(), z.number(), z.boolean()]).optional(),
+	value: z
+		.union([
+			z.string(),
+			z.number(),
+			z.boolean(),
+			// `/address/lines`
+			z.array(z.string()),
+			// `/emails`, `/phones`, `/chats`, ... take { type, value }
+			z.object({ type: z.string().optional(), value: z.string() }),
+		])
+		.optional(),
 });
 
 export const PatchCustomerResponseSchema = EmptyResponseSchema;
@@ -607,8 +639,8 @@ export const DeleteCustomerResponseSchema = EmptyResponseSchema;
 
 export const CustomerAddressInputSchema = z.object({
 	customerId: z.union([z.number().int(), z.string().regex(/^\d+$/)]),
-	address: z.string().optional(),
-	address2: z.string().optional(),
+	// street lines; Help Scout has no address/address2 fields
+	lines: z.array(z.string()).optional(),
 	city: z.string().optional(),
 	state: z.string().optional(),
 	postalCode: z.string().optional(),
@@ -792,7 +824,7 @@ export const CreateSavedReplyInputSchema = z.object({
 	chatText: z.string().optional(),
 });
 
-export const CreateSavedReplyResponseSchema = EmptyResponseSchema;
+export const CreateSavedReplyResponseSchema = CreatedResourceResponseSchema;
 
 export const UpdateSavedReplyInputSchema = z.object({
 	mailboxId: z.union([z.number().int(), z.string().regex(/^\d+$/)]),
@@ -822,6 +854,15 @@ export const ReportInputSchema = z.object({
 	tags: z.string().optional(),
 	types: z.enum(['email', 'chat', 'phone']).optional(),
 	folders: z.string().optional(),
+});
+
+export const DocsReportInputSchema = z.object({
+	start: z.string(),
+	end: z.string(),
+	previousStart: z.string().optional(),
+	previousEnd: z.string().optional(),
+	// comma-separated Docs site ids
+	sites: z.string().optional(),
 });
 
 // `unknown` because Help Scout reporting metrics return complex nested numerical statistical envelopes.
@@ -893,7 +934,7 @@ export const HelpScoutEndpointInputSchemas = {
 	'reports.getCompany': ReportInputSchema,
 	'reports.getEmail': ReportInputSchema,
 	'reports.getChat': ReportInputSchema,
-	'reports.getDocs': ReportInputSchema,
+	'reports.getDocs': DocsReportInputSchema,
 } as const;
 
 export const HelpScoutEndpointOutputSchemas = {
@@ -931,19 +972,19 @@ export const HelpScoutEndpointOutputSchemas = {
 	'customers.createAddress': CustomerAddressResponseSchema,
 	'customers.updateAddress': CustomerAddressResponseSchema,
 	'customers.deleteAddress': DeleteCustomerAddressResponseSchema,
-	'customers.createEmail': EmptyResponseSchema,
+	'customers.createEmail': CreatedResourceResponseSchema,
 	'customers.updateEmail': EmptyResponseSchema,
 	'customers.deleteEmail': EmptyResponseSchema,
-	'customers.createPhone': EmptyResponseSchema,
+	'customers.createPhone': CreatedResourceResponseSchema,
 	'customers.updatePhone': EmptyResponseSchema,
 	'customers.deletePhone': EmptyResponseSchema,
-	'customers.createChat': EmptyResponseSchema,
+	'customers.createChat': CreatedResourceResponseSchema,
 	'customers.updateChat': EmptyResponseSchema,
 	'customers.deleteChat': EmptyResponseSchema,
-	'customers.createSocialProfile': EmptyResponseSchema,
+	'customers.createSocialProfile': CreatedResourceResponseSchema,
 	'customers.updateSocialProfile': EmptyResponseSchema,
 	'customers.deleteSocialProfile': EmptyResponseSchema,
-	'customers.createWebsite': EmptyResponseSchema,
+	'customers.createWebsite': CreatedResourceResponseSchema,
 	'customers.updateWebsite': EmptyResponseSchema,
 	'customers.deleteWebsite': EmptyResponseSchema,
 	// tags

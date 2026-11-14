@@ -26,7 +26,7 @@ apiExamples:
   conversations.get:
     call: "{ conversationId: 1000 }"
   conversations.create:
-    call: "{ subject: 'Support request', type: 'email', mailboxId: 100, customer: { email: 'customer@example.com' }, threads: [{ type: 'customer', text: 'Need assistance' }] }"
+    call: "{ subject: 'Support request', type: 'email', status: 'active', mailboxId: 100, customer: { email: 'customer@example.com' }, threads: [{ type: 'customer', text: 'Need assistance' }] }"
   conversations.update:
     call: "{ conversationId: 1000, op: 'replace', path: '/status', value: 'closed' }"
   conversations.delete:

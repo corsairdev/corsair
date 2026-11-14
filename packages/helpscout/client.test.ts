@@ -180,11 +180,8 @@ describe('Help Scout Client & Transport', () => {
 			// Headers redacted
 			expect(err.request?.headers?.Authorization).toBe('[redacted]');
 
-			// `unknown` because request body is parsed as dynamic JSON in tests.
-			const reqBody = err.request?.body as Record<string, unknown>;
-			expect(reqBody.token).toBe('[redacted]');
-			expect(reqBody.clientSecret).toBe('[redacted]');
-			expect(reqBody.normalField).toBe('safe-value');
+			// Request body dropped: it can hold customer data as well as secrets
+			expect(err.request?.body).toBeUndefined();
 
 			// `unknown` because response body is parsed as dynamic JSON in tests.
 			const resBody = err.body as Record<string, unknown>;
@@ -273,6 +270,71 @@ describe('Help Scout Client & Transport', () => {
 			} finally {
 				global.fetch = originalFetch;
 			}
+		});
+	});
+
+	describe('created resource ids', () => {
+		it('asks core for the Resource-ID header and returns it as a number', async () => {
+			mockRequest.mockResolvedValueOnce('4321');
+			const result = await makeHelpscoutRequest<{ id?: number }>(
+				'/customers',
+				'k',
+				{ method: 'POST', body: { firstName: 'A' }, resourceId: true },
+			);
+			expect(result).toEqual({ id: 4321 });
+			expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+				responseHeader: 'Resource-ID',
+			});
+		});
+
+		it('returns an empty object when the header is missing', async () => {
+			mockRequest.mockResolvedValueOnce('{"threadIds":[1]}');
+			const result = await makeHelpscoutRequest<{ id?: number }>(
+				'/conversations',
+				'k',
+				{ method: 'POST', body: {}, resourceId: true },
+			);
+			expect(result).toEqual({});
+		});
+	});
+
+	describe('customer data in errors', () => {
+		it('drops request body, query and echoed values from a failed call', async () => {
+			const rawError = new ApiError(
+				{
+					method: 'GET',
+					url: '/customers',
+					query: { firstName: 'Jane' },
+					body: { emails: [{ value: 'jane@example.com' }] },
+				},
+				{
+					url: 'https://api.helpscout.net/v2/customers?firstName=Jane',
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: {
+						message: 'Bad request',
+						_embedded: {
+							errors: [{ path: 'emails', rejectedValue: 'jane@example.com' }],
+						},
+					},
+				},
+				'Bad Request',
+			);
+			mockRequest.mockRejectedValueOnce(rawError);
+			const caught = (await makeHelpscoutRequest('/customers', 'k').catch(
+				(e: unknown) => e,
+			)) as ApiError;
+			expect(caught).toBe(rawError);
+			expect(caught.status).toBe(400);
+			const dump = JSON.stringify({
+				url: caught.url,
+				request: caught.request,
+				body: caught.body,
+				message: caught.message,
+			});
+			expect(dump).not.toContain('jane@example.com');
+			expect(dump).not.toContain('Jane');
 		});
 	});
 });

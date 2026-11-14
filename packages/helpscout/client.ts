@@ -14,6 +14,9 @@ export class HelpScoutAPIError extends Error {
 
 export const HELPSCOUT_API_BASE = 'https://api.helpscout.net/v2';
 
+// Help Scout validation errors echo the rejected input (names, emails, text).
+const ECHOED_INPUT_KEYS = new Set(['rejectedvalue']);
+
 const SENSITIVE_KEY_NAMES = new Set([
 	'authorization',
 	'apikey',
@@ -60,7 +63,7 @@ export function redactValue(value: unknown, secrets: string[]): unknown {
 		const obj = value as Record<string, unknown>;
 		const sanitized: Record<string, unknown> = {};
 		for (const [k, v] of Object.entries(obj)) {
-			if (isSensitiveKey(k)) {
+			if (isSensitiveKey(k) || ECHOED_INPUT_KEYS.has(k.toLowerCase())) {
 				sanitized[k] = '[redacted]';
 			} else {
 				sanitized[k] = redactValue(v, secrets);
@@ -101,11 +104,13 @@ export function redactApiErrorInPlace(error: ApiError, apiKey?: string): void {
 			}
 			mutableRequest.headers = headers;
 		}
-		if (error.request.body !== undefined) {
-			// `unknown` because request bodies can be arbitrary records or strings.
-			const redactedReqBody: unknown = redactValue(error.request.body, secrets);
-			mutableRequest.body = redactedReqBody;
-		}
+		// Request bodies and query strings carry customer names, emails and
+		// message text; the status, path and provider message are enough to debug.
+		mutableRequest.body = undefined;
+		(mutableRequest as { query?: unknown }).query = undefined;
+	}
+	if (typeof error.url === 'string' && error.url.includes('?')) {
+		(error as { url: string }).url = error.url.split('?')[0] ?? error.url;
 	}
 }
 
@@ -119,9 +124,12 @@ export async function makeHelpscoutRequest<T>(
 		// `unknown` because request bodies can be arbitrary JSON objects or arrays.
 		body?: Record<string, unknown> | unknown[];
 		query?: Record<string, string | number | boolean | undefined>;
+		// Create calls answer 201 with the new id in the Resource-ID header;
+		// true returns `{ id }` read from that header.
+		resourceId?: boolean;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, resourceId = false } = options;
 
 	// Fail fast on an explicitly empty key; public or keyless callers pass undefined.
 	if (apiKey !== undefined && apiKey.trim().length === 0) {
@@ -153,10 +161,19 @@ export async function makeHelpscoutRequest<T>(
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query,
+		...(resourceId ? { responseHeader: 'Resource-ID' } : {}),
 	};
 
 	try {
 		const res = await request<T>(config, requestOptions);
+		if (resourceId) {
+			// The header replaces the body on success; a missing header leaves the body.
+			const id =
+				typeof res === 'string' && /^\d+$/.test(res.trim())
+					? Number(res.trim())
+					: undefined;
+			return (id === undefined ? {} : { id }) as T;
+		}
 		if (typeof res === 'string') {
 			try {
 				return JSON.parse(res) as T;

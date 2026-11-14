@@ -226,6 +226,7 @@ describe('Help Scout Endpoints', () => {
 			const payload = {
 				subject: 'Billing inquiry',
 				type: 'email' as const,
+				status: 'active' as const,
 				mailboxId: 101,
 				customer: {
 					email: 'customer@example.com',
@@ -245,6 +246,7 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'POST',
+					resourceId: true,
 					body: payload,
 				},
 			);
@@ -334,6 +336,7 @@ describe('Help Scout Endpoints', () => {
 			const invalidInput = {
 				subject: '',
 				type: 'email' as const,
+				status: 'active' as const,
 				mailboxId: 101,
 				customer: { email: 'invalid-email' },
 				threads: [
@@ -389,6 +392,7 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'POST',
+					resourceId: true,
 					body: {
 						customer: { email: 'user@example.com' },
 						text: 'Thank you for contacting us.',
@@ -410,6 +414,7 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'POST',
+					resourceId: true,
 					body: { text: 'Internal note for team' },
 				},
 			);
@@ -429,6 +434,7 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'POST',
+					resourceId: true,
 					body: {
 						customer: { email: 'chatuser@example.com' },
 						text: 'Live chat transcript',
@@ -451,6 +457,7 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'POST',
+					resourceId: true,
 					body: {
 						customer: { email: 'caller@example.com' },
 						text: 'Inbound phone call notes',
@@ -473,6 +480,7 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'POST',
+					resourceId: true,
 					body: {
 						customer: { email: 'customer@example.com' },
 						text: 'Follow-up customer message',
@@ -540,7 +548,9 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				expect.objectContaining({
 					method: 'GET',
-					query: expect.objectContaining({ email: 'jane@example.com' }),
+					query: expect.objectContaining({
+						query: '(email:"jane@example.com")',
+					}),
 				}),
 			);
 		});
@@ -569,6 +579,7 @@ describe('Help Scout Endpoints', () => {
 
 			expect(mockedRequest).toHaveBeenCalledWith('/customers', 'test-api-key', {
 				method: 'POST',
+				resourceId: true,
 				body: {
 					firstName: 'Bob',
 					emails: [{ value: 'bob@example.com' }],
@@ -609,11 +620,13 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'PATCH',
-					body: {
-						op: 'replace',
-						path: '/firstName',
-						value: 'Janice',
-					},
+					body: [
+						{
+							op: 'replace',
+							path: '/firstName',
+							value: 'Janice',
+						},
+					],
 				},
 			);
 		});
@@ -684,6 +697,7 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'POST',
+					resourceId: true,
 					body: { value: 'new@example.com' },
 				},
 			);
@@ -721,6 +735,7 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'POST',
+					resourceId: true,
 					body: { value: '555-1234' },
 				},
 			);
@@ -758,6 +773,7 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'POST',
+					resourceId: true,
 					body: { value: 'chat_handle' },
 				},
 			);
@@ -795,6 +811,7 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'POST',
+					resourceId: true,
 					body: { value: 'twitter.com/acme' },
 				},
 			);
@@ -835,6 +852,7 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'POST',
+					resourceId: true,
 					body: { value: 'https://example.com' },
 				},
 			);
@@ -945,6 +963,7 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				{
 					method: 'POST',
+					resourceId: true,
 					body: {
 						name: 'Greeting',
 						text: 'Hello there!',
@@ -1058,6 +1077,177 @@ describe('Help Scout Endpoints', () => {
 				'test-api-key',
 				expect.objectContaining({ method: 'GET' }),
 			);
+		});
+	});
+
+	describe('Review fixes', () => {
+		const conversation = {
+			subject: 'Billing inquiry',
+			type: 'email' as const,
+			mailboxId: 101,
+			customer: { email: 'customer@example.com' },
+			threads: [{ type: 'customer' as const, text: 'Question' }],
+		};
+
+		it('conversations.create requires status, which Help Scout requires', async () => {
+			await expect(
+				Conversations.create(
+					ctx,
+					conversation as Parameters<typeof Conversations.create>[1],
+				),
+			).rejects.toThrow();
+			expect(mockedRequest).not.toHaveBeenCalled();
+		});
+
+		it('conversations.create keeps imported and autoReply and returns the new id', async () => {
+			mockedRequest.mockResolvedValueOnce({ id: 555 });
+			const result = await Conversations.create(ctx, {
+				...conversation,
+				status: 'closed',
+				imported: true,
+				autoReply: false,
+			});
+			expect(result).toEqual({ id: 555 });
+			const sent = mockedRequest.mock.calls[0]?.[2];
+			expect(sent?.resourceId).toBe(true);
+			expect(sent?.body).toMatchObject({ imported: true, autoReply: false });
+		});
+
+		it('threads.createReply keeps imported so a historical reply is not emailed', async () => {
+			mockedRequest.mockResolvedValueOnce({ id: 9 });
+			const result = await Threads.createReply(ctx, {
+				conversationId: 1,
+				customer: { id: 2 },
+				text: 'Old reply',
+				imported: true,
+			});
+			expect(result).toEqual({ id: 9 });
+			expect(mockedRequest.mock.calls[0]?.[2]?.body).toMatchObject({
+				imported: true,
+			});
+		});
+
+		it('every create call asks the client for the Resource-ID', async () => {
+			mockedRequest.mockResolvedValue({ id: 1 });
+			await Threads.createNote(ctx, { conversationId: 1, text: 'n' });
+			await Customers.create(ctx, { firstName: 'A' });
+			await Customers.createEmail(ctx, {
+				customerId: 1,
+				value: 'a@example.com',
+			});
+			await SavedReplies.create(ctx, { mailboxId: 1, name: 'r' });
+			for (const call of mockedRequest.mock.calls) {
+				expect(call[2]?.resourceId).toBe(true);
+			}
+			expect(mockedRequest).toHaveBeenCalledTimes(4);
+		});
+
+		it('customers.list never sends an email parameter Help Scout ignores', async () => {
+			mockedRequest.mockResolvedValueOnce({ _embedded: { customers: [] } });
+			await Customers.list(ctx, {
+				email: 'jane@example.com',
+				query: '(firstName:"Jane")',
+				sortField: 'firstName',
+			});
+			const query = mockedRequest.mock.calls[0]?.[2]?.query;
+			expect(query).not.toHaveProperty('email');
+			expect(query).toMatchObject({
+				query: '(email:"jane@example.com" AND firstName:"Jane")',
+				sortField: 'firstName',
+			});
+		});
+
+		it('customers.patch accepts an email object value and sends an array', async () => {
+			mockedRequest.mockResolvedValueOnce(undefined);
+			await Customers.patch(ctx, {
+				customerId: 7,
+				op: 'add',
+				path: '/emails',
+				value: { type: 'other', value: 'bear@example.com' },
+			});
+			expect(mockedRequest.mock.calls[0]?.[2]?.body).toEqual([
+				{
+					op: 'add',
+					path: '/emails',
+					value: { type: 'other', value: 'bear@example.com' },
+				},
+			]);
+		});
+
+		it('customer address calls keep street lines', async () => {
+			mockedRequest.mockResolvedValue(undefined);
+			await Customers.createAddress(ctx, {
+				customerId: 7,
+				lines: ['1 Main St', 'Suite 2'],
+				city: 'Austin',
+				state: 'TX',
+				postalCode: '78701',
+				country: 'US',
+			});
+			await Customers.updateAddress(ctx, {
+				customerId: 7,
+				lines: ['2 Main St'],
+			});
+			expect(mockedRequest.mock.calls[0]?.[2]?.body).toMatchObject({
+				lines: ['1 Main St', 'Suite 2'],
+			});
+			expect(mockedRequest.mock.calls[1]?.[2]?.body).toEqual({
+				lines: ['2 Main St'],
+			});
+		});
+
+		it('customers.update keeps every overwrite field so PUT does not clear them', async () => {
+			mockedRequest.mockResolvedValueOnce(undefined);
+			const profile = {
+				firstName: 'Vernon',
+				background: 'Long-time customer',
+				location: 'Dallas',
+				gender: 'male',
+				age: '30-35',
+				organizationId: 35,
+			};
+			await Customers.update(ctx, { customerId: 7, ...profile });
+			expect(mockedRequest.mock.calls[0]?.[2]?.body).toEqual(profile);
+		});
+
+		it('customFields.list parses dropdown options with label', async () => {
+			mockedRequest.mockResolvedValueOnce({
+				_embedded: {
+					fields: [
+						{
+							id: 104,
+							required: false,
+							order: 1,
+							type: 'dropdown',
+							name: 'Beers',
+							options: [{ id: 168, order: 1, label: 'IPA' }],
+						},
+					],
+				},
+			});
+			const result = await CustomFields.list(ctx, { mailboxId: 1 });
+			expect(result._embedded.fields[0]?.options?.[0]?.label).toBe('IPA');
+		});
+
+		it('threads.getOriginalSource returns the original field', async () => {
+			mockedRequest.mockResolvedValueOnce({ original: 'Received: from x' });
+			const result = await Threads.getOriginalSource(ctx, {
+				conversationId: 1,
+				threadId: 2,
+			});
+			expect(result.original).toBe('Received: from x');
+		});
+
+		it('reports.getDocs forwards the sites filter', async () => {
+			mockedRequest.mockResolvedValueOnce({});
+			await Reports.getDocs(ctx, {
+				start: '2026-01-01T00:00:00Z',
+				end: '2026-01-31T23:59:59Z',
+				sites: '12,34',
+			});
+			expect(mockedRequest.mock.calls[0]?.[2]?.query).toMatchObject({
+				sites: '12,34',
+			});
 		});
 	});
 });

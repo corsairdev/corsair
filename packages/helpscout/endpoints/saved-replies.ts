@@ -91,6 +91,7 @@ export const create: HelpScoutEndpoints['savedReplies.create'] = async (
 		ctx.key,
 		{
 			method: 'POST',
+			resourceId: true,
 			body,
 		},
 	);
