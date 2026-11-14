@@ -187,7 +187,10 @@ describe('Fireberry endpoint schemas', () => {
 			objectType: 1,
 			fields: [{ name: 'revenue' }],
 			filter: [
-				{ type: 'AND', conditions: [{ fieldName: 'revenue', operator, value }] },
+				{
+					type: 'AND',
+					conditions: [{ fieldName: 'revenue', operator, value }],
+				},
 			],
 		});
 		for (const value of [[], [100], [1, 2, 3]]) {

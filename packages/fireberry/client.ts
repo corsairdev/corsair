@@ -33,7 +33,12 @@ function sanitizedApiError(error: ApiError): ApiError {
 	const url = new URL(error.url, FIREBERRY_API_BASE);
 	url.search = '';
 	return new ApiError(
-		{ ...error.request, body: undefined, formData: undefined, query: undefined },
+		{
+			...error.request,
+			body: undefined,
+			formData: undefined,
+			query: undefined,
+		},
 		{
 			url: url.toString(),
 			ok: false,
