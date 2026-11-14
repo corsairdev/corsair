@@ -1,8 +1,28 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ProabonoAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isCredentialRejection,
+	ProabonoAPIError,
+	readValidationErrors,
+} from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof ProabonoAPIError ? error.status : undefined;
+	if (error instanceof ProabonoAPIError) return error.status;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ProabonoAPIError) return error.method;
+	return error instanceof ApiError ? error.request.method : undefined;
+}
+
+function hasValidationErrors(error: Error): boolean {
+	if (error instanceof ProabonoAPIError) {
+		return error.validationErrors !== undefined;
+	}
+	return error instanceof ApiError
+		? readValidationErrors(error.body) !== undefined
+		: false;
 }
 
 // ProAbono has a small error taxonomy: a 401 for bad credentials, a 403 for a
@@ -11,8 +31,13 @@ function statusOf(error: Error): number | undefined {
 export const errorHandlers = {
 	// `Error.AuthenticationFailed`.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof ProabonoAPIError && error.credentialsRejected,
+		match: (error: Error) => {
+			if (error instanceof ProabonoAPIError) return error.credentialsRejected;
+			return (
+				error instanceof ApiError &&
+				isCredentialRejection(error.status, error.body)
+			);
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// Any other 401: ProAbono refused the pair, which no retry changes.
@@ -32,7 +57,7 @@ export const errorHandlers = {
 		handler: async (error: Error) => ({
 			maxRetries: 3,
 			headersRetryAfterMs:
-				error instanceof ProabonoAPIError ? error.retryAfter : undefined,
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff_jitter' as const,
 		}),
 	},
@@ -45,8 +70,7 @@ export const errorHandlers = {
 				status === 400 ||
 				status === 404 ||
 				status === 422 ||
-				(error instanceof ProabonoAPIError &&
-					error.validationErrors !== undefined)
+				hasValidationErrors(error)
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
@@ -57,17 +81,14 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof ProabonoAPIError && error.transport,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof ProabonoAPIError && error.method === 'GET' ? 2 : 0,
+			maxRetries: methodOf(error) === 'GET' ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// Only reads are replayed, for the same reason.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof ProabonoAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

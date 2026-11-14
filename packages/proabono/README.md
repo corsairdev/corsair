@@ -30,7 +30,7 @@ pnpm add @corsair-dev/proabono
 | `subscriptions.create` | `proabono.api.subscriptions.create` | `destructive` | Subscribe a customer to an offer, which starts billing when the offer is paid and the customer is billable. `TryStart: false` creates it without starting so it can be customised first |
 | `subscriptions.get` | `proabono.api.subscriptions.get` | `read` | Read one subscription with its state, period, next billing date and features. The docs warn against using this to check whether a user is a subscriber |
 | `subscriptions.list` | `proabono.api.subscriptions.list` | `read` | List subscriptions filtered by customer, offer or segment, one page at a time |
-| `subscriptions.start` | `proabono.api.subscriptions.start` | `write` | Start a subscription that was created without starting, which begins billing |
+| `subscriptions.start` | `proabono.api.subscriptions.start` | `destructive` | Start a subscription that was created without starting, which begins billing |
 | `subscriptions.suspend` | `proabono.api.subscriptions.suspend` | `write` | Suspend a subscription without terminating it |
 | `subscriptions.terminate` | `proabono.api.subscriptions.terminate` | `destructive` | Terminate a subscription, ending it for good. A later start cannot revive it |
 | `subscriptions.updateTerm` | `proabono.api.subscriptions.updateTerm` | `write` | Change a subscription's end date |

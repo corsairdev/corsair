@@ -39,8 +39,6 @@ export type ProabonoPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	/** The API key, sent as the Basic password. Overrides the stored `api_key`. */
 	apiKey?: string;
-	/** The agent key, sent as the Basic username. Overrides the stored `agent_key`. */
-	agentKey?: string;
 	/**
 	 * The account number from your API endpoint, such as `42` for
 	 * `api-42.proabono.com`. Every call needs it, since it forms the host.
@@ -332,7 +330,9 @@ const proabonoEndpointMeta = {
 			'List subscriptions filtered by customer, offer or segment, one page at a time',
 	},
 	'subscriptions.start': {
-		riskLevel: 'write',
+		// Starting a subscription begins billing, and R8 classifies an operation
+		// that spends money as destructive.
+		riskLevel: 'destructive',
 		description:
 			'Start a subscription that was created without starting, which begins billing',
 	},
@@ -407,6 +407,14 @@ export type InternalProabonoPlugin = BaseProabonoPlugin<ProabonoPluginOptions>;
 export type ExternalProabonoPlugin<T extends ProabonoPluginOptions> =
 	BaseProabonoPlugin<T>;
 
+/**
+ * The default is `{}` because every field of `ProabonoPluginOptions` is optional,
+ * so an empty object is a valid options bag. `T` is the caller's own literal type,
+ * inferred only from what they pass: on the no-argument call there is nothing of
+ * `T` to construct, so the assertion supplies exactly the empty base half and
+ * nothing can be missing. An overload would not remove the cast, because the
+ * implementation still needs one default for both call shapes.
+ */
 export function proabono<const T extends ProabonoPluginOptions>(
 	incomingOptions: ProabonoPluginOptions & T = {} as ProabonoPluginOptions & T,
 ): ExternalProabonoPlugin<T> {

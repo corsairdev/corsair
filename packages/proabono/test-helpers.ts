@@ -22,11 +22,10 @@ export function buildContext(
 		endpoints: {},
 		$getAccountId: () => Promise.resolve('test-account'),
 		key: apiKey,
-		options: {
-			apiKey,
-			agentKey,
-			account: overrides.account ?? '42',
-		},
+		// Only the account number is a plugin option. The two credentials are read
+		// from `ctx.key` and the account's `agent_key`, never from here, so leaving
+		// them out is what a real context looks like.
+		options: { account: overrides.account ?? '42' },
 		authType: 'api_key',
 		keys: {
 			get_dek: () => Promise.resolve('dek'),

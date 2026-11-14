@@ -111,15 +111,16 @@ describe('proabono plugin', () => {
 		expect(meta['customers.anonymize']?.irreversible).toBe(true);
 	});
 
-	it('marks billing-changing operations destructive', () => {
+	it('marks the operations that begin or change billing destructive', () => {
 		expect(meta['subscriptions.create']?.riskLevel).toBe('destructive');
 		expect(meta['subscriptions.terminate']?.riskLevel).toBe('destructive');
 		expect(meta['subscriptions.upgrade']?.riskLevel).toBe('destructive');
+		// Starting a subscription begins charging it, so it is not a plain write.
+		expect(meta['subscriptions.start']?.riskLevel).toBe('destructive');
 	});
 
-	it('keeps a suspend and a start at write, since both are reversible', () => {
+	it('keeps a suspension at write, since it is reversible', () => {
 		expect(meta['subscriptions.suspend']?.riskLevel).toBe('write');
-		expect(meta['subscriptions.start']?.riskLevel).toBe('write');
 		expect(meta['customers.suspend']?.riskLevel).toBe('write');
 	});
 

@@ -1064,7 +1064,7 @@ await corsair.proabono.api.subscriptions.list({ ReferenceCustomer: 'cust-42' });
 
 Start a subscription that was created without starting, which begins billing
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.proabono.api.subscriptions.start({ IdSubscription: 44082 });

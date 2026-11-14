@@ -230,19 +230,9 @@ export async function makeProabonoRequest(
 			rateLimitConfig: PROABONO_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new ProabonoAPIError(
-				describeProabonoError(error.status, error.body, error.statusText),
-				{
-					status: error.status,
-					code: readErrorCode(error.body),
-					retryAfter: error.retryAfter,
-					method,
-					credentialsRejected: isCredentialRejection(error.status, error.body),
-					validationErrors: readValidationErrors(error.body),
-				},
-			);
-		}
+		// Core's ApiError goes through (R8) so its status, Retry-After and
+		// validation body stay readable to callers and handlers alike.
+		if (error instanceof ApiError) throw error;
 		// DOMException (fetch aborts and timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new ProabonoAPIError(error.message, {

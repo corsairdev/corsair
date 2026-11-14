@@ -13,8 +13,15 @@ type Untyped = unknown; // unknown: see the note above.
  * Reads the two credentials and the account number the host is built from.
  * ProAbono uses the agent key as the HTTP Basic username and the API key as the
  * password, so both are required, and neither is optional on any route.
+ *
+ * The API key is `ctx.key`, which the binder resolved after hooks and the
+ * per-tenant lookup, so a saved key reaches the request. The agent key is the
+ * account's second field, read through its accessor. Neither comes from
+ * `ctx.options`, which R8 forbids for a credential.
  */
-export function credentialsOf(ctx: ProabonoContext): ProabonoCredentials {
+export async function credentialsOf(
+	ctx: ProabonoContext,
+): Promise<ProabonoCredentials> {
 	const account = ctx.options?.account?.trim() ?? '';
 	if (!account) {
 		// The account number forms the host, so no call can be made without it.
@@ -22,11 +29,11 @@ export function credentialsOf(ctx: ProabonoContext): ProabonoCredentials {
 			'Set `account` in the plugin options to the number in your API endpoint, such as `42` for api-42.proabono.com.',
 		);
 	}
-	return {
-		account,
-		agentKey: ctx.options?.agentKey?.trim() ?? '',
-		apiKey: ctx.options?.apiKey?.trim() ?? '',
-	};
+	const apiKey = ctx.key?.trim() ?? '';
+	const agentKey = ctx.keys?.get_agent_key
+		? ((await ctx.keys.get_agent_key()) ?? '').trim()
+		: '';
+	return { account, agentKey, apiKey };
 }
 
 /**
@@ -59,7 +66,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const credentials = credentialsOf(ctx);
+	const credentials = await credentialsOf(ctx);
 	const request = toRequest(parsed);
 	const raw = await makeProabonoRequest(credentials, request);
 
@@ -83,8 +90,13 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 
 /**
  * Wraps an array a route answers bare under the key its output schema expects.
+ *
+ * A response that is not an array is passed through unchanged rather than
+ * replaced with `[]`: an empty list would read as "the account has no records",
+ * while the output schema rejecting the shape tells the caller the response was
+ * malformed. An absent body is already handled by `emptyValue`.
  */
-// unknown: the route's bare array before the output schema parses it.
+// unknown: the route's bare body before the output schema parses it.
 export function asList(key: string): (raw: Untyped) => Untyped {
-	return (raw) => ({ [key]: Array.isArray(raw) ? raw : [] });
+	return (raw) => (Array.isArray(raw) ? { [key]: raw } : raw);
 }

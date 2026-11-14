@@ -100,6 +100,14 @@ describe('customers endpoints', () => {
 		expect(result.customers).toHaveLength(1);
 	});
 
+	it('customers.list rejects a malformed body instead of reporting an empty list', async () => {
+		// A body that is not an array is a provider problem, not "no customers":
+		// resolving `[]` would tell the caller the account is empty.
+		mockedRequest.mockResolvedValue({ error: 'unexpected shape' });
+
+		await expect(Customers.list(ctx, {})).rejects.toThrow();
+	});
+
 	it('customers.update posts the fields given', async () => {
 		mockedRequest.mockResolvedValue(customer);
 
@@ -124,6 +132,18 @@ describe('customers endpoints', () => {
 			path: '/v1/Customer/Anonymization',
 			body: { ReferenceCustomer: 'cust-42' },
 		});
+	});
+
+	it('keeps the customer reference out of the anonymize event', async () => {
+		mockedRequest.mockResolvedValue({ Id: 133700 });
+
+		await Customers.anonymize(ctx, { ReferenceCustomer: 'jane@example.com' });
+
+		// The reference can hold personal data, and an anonymization that logged it
+		// would keep a copy of what it just erased.
+		const [, , payload] = mockedLog.mock.calls[0] ?? [];
+		expect(JSON.stringify(payload)).not.toContain('jane@example.com');
+		expect(payload).toEqual({});
 	});
 
 	it('customers.invalidate posts to the invalidation path', async () => {

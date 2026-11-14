@@ -92,7 +92,10 @@ export const anonymize: ProabonoEndpoints['customersAnonymize'] = (
 			path: '/v1/Customer/Anonymization',
 			body: { ReferenceCustomer },
 		}),
-		{ log: ({ ReferenceCustomer }) => ({ reference: ReferenceCustomer }) },
+		// The reference is the caller's own customer string and can hold personal
+		// data, so it stays out of the event: an anonymization that logged it would
+		// keep a copy of what it just erased.
+		{ log: () => ({}) },
 	);
 
 /** Invalidating stops the customer's subscriptions and links. */
@@ -113,7 +116,10 @@ export const invalidate: ProabonoEndpoints['customersInvalidate'] = (
 			path: '/v1/Customer/Invalidation',
 			body: { ReferenceCustomer },
 		}),
-		{ log: ({ ReferenceCustomer }) => ({ reference: ReferenceCustomer }) },
+		// The reference is the caller's own customer string and can hold personal
+		// data, so it stays out of the event: an anonymization that logged it would
+		// keep a copy of what it just erased.
+		{ log: () => ({}) },
 	);
 
 /** Suspending pauses the customer without deleting anything. */
@@ -131,5 +137,8 @@ export const suspend: ProabonoEndpoints['customersSuspend'] = (ctx, input) =>
 			path: '/v1/Customer/Suspension',
 			body: { ReferenceCustomer },
 		}),
-		{ log: ({ ReferenceCustomer }) => ({ reference: ReferenceCustomer }) },
+		// The reference is the caller's own customer string and can hold personal
+		// data, so it stays out of the event: an anonymization that logged it would
+		// keep a copy of what it just erased.
+		{ log: () => ({}) },
 	);

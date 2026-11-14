@@ -179,11 +179,11 @@ describe('makeProabonoRequest', () => {
 			makeProabonoRequest(CREDENTIALS, { method: 'GET', path: '/v1/Offers' }),
 		);
 
-		expect(error).toBeInstanceOf(ProabonoAPIError);
-		if (!(error instanceof ProabonoAPIError)) return;
+		// Core's ApiError passes through, with the code still on its body.
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(401);
-		expect(error.code).toBe('Error.AuthenticationFailed');
-		expect(error.credentialsRejected).toBe(true);
+		expect(readErrorCode(error.body)).toBe('Error.AuthenticationFailed');
 		// The keys rode in a header, so nothing on the error may repeat them.
 		expect(JSON.stringify(error)).not.toContain('api-key');
 		expect(JSON.stringify(error)).not.toContain('agent-key');
@@ -204,12 +204,12 @@ describe('makeProabonoRequest', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(ProabonoAPIError);
-		if (!(error instanceof ProabonoAPIError)) return;
-		expect(error.validationErrors).toEqual([
+		// The 422 list rides on the core error's body, where the handler reads it.
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
+		expect(readValidationErrors(error.body)).toEqual([
 			{ Code: 'Error.Required', Message: 'ReferenceCustomer is required' },
 		]);
-		expect(error.message).toContain('ReferenceCustomer is required');
 	});
 
 	it('flags a dropped connection as a transport failure with its method', async () => {
