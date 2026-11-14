@@ -6,6 +6,11 @@ import {
 } from './endpoints/types';
 
 const KEY = process.env.CLOUDLAYER_API_KEY ?? '';
+if (KEY.length === 0) {
+	console.warn(
+		'Skipping Cloudlayer live tests: set CLOUDLAYER_API_KEY to run them.',
+	);
+}
 const describeLive = KEY.length > 0 ? describe : describe.skip;
 
 describeLive('Cloudlayer live API (env-gated, read-only)', () => {
@@ -17,7 +22,10 @@ describeLive('Cloudlayer live API (env-gated, read-only)', () => {
 
 		expect(['limit', 'usage']).toContain(account.subType);
 		expect(typeof account.calls).toBe('number');
-		expect(typeof account.totalJobs).toBe('number');
+		// A fresh account omits totalJobs until its first job runs.
+		if (account.totalJobs !== undefined) {
+			expect(typeof account.totalJobs).toBe('number');
+		}
 	});
 
 	it('GET /v2/assets returns a valid asset list', async () => {
