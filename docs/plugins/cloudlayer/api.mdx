@@ -140,7 +140,7 @@ await corsair.cloudlayer.api.assets.list({});
 
 Render base64 HTML to a PNG, JPG, WebP or SVG image; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/html-to-image/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.html.toImage({ html: 'PGgxPkhlbGxvPC9oMT4=' });
@@ -241,7 +241,7 @@ V2 returns a JSON job; `async: false` waits for completion and returns the compl
 
 Render base64 HTML to an image using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/html-to-image/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.html.toImageV1({ html: 'PGgxPkhlbGxvPC9oMT4=' });
@@ -324,7 +324,7 @@ The v1 response is binary and is returned as a base64-encoded `BinaryArtifact`. 
 
 Render base64 HTML to a PDF; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/html-to-pdf/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.html.toPdf({ html: 'PGgxPkhlbGxvPC9oMT4=' });
@@ -489,7 +489,7 @@ V2 returns a JSON job; `async: false` waits for completion and returns the compl
 
 Render base64 HTML to a PDF using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/html-to-pdf/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.html.toPdfV1({ html: 'PGgxPkhlbGxvPC9oMT4=' });
@@ -929,7 +929,7 @@ await corsair.cloudlayer.api.storage.remove({ id: 'storage-id' });
 
 Render a gallery or base64 Nunjucks template with caller data to an image using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-image/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.template.toImage({
@@ -1028,7 +1028,7 @@ V2 returns a JSON job; `async: false` waits for completion and returns the compl
 
 Render a gallery or base64 Nunjucks template to an image using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/template-to-image/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.template.toImageV1({
@@ -1116,7 +1116,7 @@ The v1 response is binary and is returned as a base64-encoded `BinaryArtifact`. 
 
 Render a gallery or base64 Nunjucks template with caller data to a PDF using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-pdf/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.template.toPdf({
@@ -1251,7 +1251,7 @@ V2 returns a JSON job; `async: false` waits for completion and returns the compl
 
 Render a gallery or base64 Nunjucks template to a PDF using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/template-to-pdf/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.template.toPdfV1({
@@ -1405,7 +1405,7 @@ The v1 response is binary and is returned as a base64-encoded `BinaryArtifact`. 
 
 Screenshot a live web page with full viewport, cookie and auth control; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/url-to-image/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.url.toImage({ url: 'https://capture.invalid/report' });
@@ -1534,7 +1534,7 @@ V2 POST returns a JSON job; `async: false` waits for completion and returns the 
 
 GET convenience route that creates a JSON job for one URL image with only url and timeout. Docs: https://cloudlayer.io/docs/url-to-image/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.url.toImageQuick({ url: 'https://capture.invalid/report' });
@@ -1575,7 +1575,7 @@ The v2 GET shortcut returns a JSON job. `url.toImageQuickV1` exposes the v1 GET 
 
 GET v1 shortcut that screenshots one URL and returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-image/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.url.toImageQuickV1({ url: 'https://capture.invalid/report' });
@@ -1610,7 +1610,7 @@ The v1 GET response is binary and is returned as a base64-encoded `BinaryArtifac
 
 Screenshot a URL using the v1 POST route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-image/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.url.toImageV1({ url: 'https://capture.invalid/report' });
@@ -1721,7 +1721,7 @@ The v1 POST response is binary and is returned as a base64-encoded `BinaryArtifa
 
 Capture a live web page (or a batch of URLs) as a PDF; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/url-to-pdf/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.url.toPdf({ url: 'https://capture.invalid/report' });
@@ -1924,7 +1924,7 @@ V2 POST returns a JSON job; `async: false` waits for completion and returns the 
 
 GET convenience route that captures a single URL as a PDF with only url and timeout. Docs: https://cloudlayer.io/docs/url-to-pdf/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.url.toPdfQuick({ url: 'https://capture.invalid/report' });
@@ -1965,7 +1965,7 @@ The v2 GET shortcut returns a JSON job. `url.toPdfQuickV1` exposes the v1 GET ro
 
 GET v1 shortcut that captures one URL as a PDF and returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-pdf/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.url.toPdfQuickV1({ url: 'https://capture.invalid/report' });
@@ -2000,7 +2000,7 @@ The v1 GET response is binary and is returned as a base64-encoded `BinaryArtifac
 
 Capture a URL (or batch) as a PDF using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-pdf/
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.cloudlayer.api.url.toPdfV1({ url: 'https://capture.invalid/report' });

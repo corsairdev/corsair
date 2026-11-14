@@ -226,82 +226,82 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const cloudlayerEndpointMeta = {
 	'html.toPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Render base64 HTML to a PDF; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/html-to-pdf/',
 	},
 	'html.toPdfV1': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Render base64 HTML to a PDF using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/html-to-pdf/',
 	},
 	'html.toImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Render base64 HTML to a PNG, JPG, WebP or SVG image; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/html-to-image/',
 	},
 	'html.toImageV1': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Render base64 HTML to an image using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/html-to-image/',
 	},
 	'url.toPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Capture a live web page (or a batch of URLs) as a PDF; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/url-to-pdf/',
 	},
 	'url.toPdfV1': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Capture a URL (or batch) as a PDF using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-pdf/',
 	},
 	'url.toPdfQuick': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'GET convenience route that captures a single URL as a PDF with only url and timeout. Docs: https://cloudlayer.io/docs/url-to-pdf/',
 	},
 	'url.toPdfQuickV1': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'GET v1 shortcut that captures one URL as a PDF and returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-pdf/',
 	},
 	'url.toImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Screenshot a live web page with full viewport, cookie and auth control; v2 returns a job, including a completed job with async:false. Docs: https://cloudlayer.io/docs/url-to-image/',
 	},
 	'url.toImageV1': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Screenshot a URL using the v1 POST route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-image/',
 	},
 	'url.toImageQuick': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'GET convenience route that creates a JSON job for one URL image with only url and timeout. Docs: https://cloudlayer.io/docs/url-to-image/',
 	},
 	'url.toImageQuickV1': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'GET v1 shortcut that screenshots one URL and returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/url-to-image/',
 	},
 	'template.toPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Render a gallery or base64 Nunjucks template with caller data to a PDF using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-pdf/',
 	},
 	'template.toPdfV1': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Render a gallery or base64 Nunjucks template to a PDF using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/template-to-pdf/',
 	},
 	'template.toImage': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Render a gallery or base64 Nunjucks template with caller data to an image using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-image/',
 	},
 	'template.toImageV1': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Render a gallery or base64 Nunjucks template to an image using the v1 route; returns a base64-encoded binary artifact. Docs: https://cloudlayer.io/docs/template-to-image/',
 	},
