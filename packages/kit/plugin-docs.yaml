@@ -1,0 +1,68 @@
+displayName: Kit
+description: Email marketing with Kit (formerly ConvertKit) - manage subscribers, tags, custom fields and forms, subscribe an address through a form, unsubscribe a subscriber, and read the account with its plan and sending addresses.
+domain: kit.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in Kit under Settings, Developer, API Keys. It is sent in the `X-Kit-Api-Key` header, not as a Bearer token; that header is the OAuth path and a key sent that way is refused.
+
+  Things to know before you call:
+
+  - **Kit pages by cursor.** A list answers a `pagination` block with `end_cursor`, `start_cursor` and `has_next_page`. Pass `end_cursor` back as `after` for the next page, or `start_cursor` as `before` for the previous one, and stop when `has_next_page` is false.
+  - **Only active subscribers are returned by default.** `subscribers.list` takes `status`; pass `all` to widen it, or one of `active`, `inactive`, `bounced`, `complained`, `cancelled`.
+  - **`canceled_at` needs the cancelled status.** Asking for it beside any other status is refused, and the plugin checks that before the call rather than letting Kit answer 422.
+  - **Creating a subscriber with an address already on the list returns the existing one**, so a create is safe to repeat.
+  - **Custom field values go by `key`, not label.** A subscriber's `fields` map is keyed by the field's `key`, such as `last_name`. An unknown key is ignored and named in the response `warnings` array rather than failing, so read `warnings` when a value seems missing.
+  - **Tag and form subscribes need an existing subscriber.** `tags.tagSubscriber` and `forms.subscribe` find the subscriber by address and answer 404 when there is none, so call `subscribers.create` first for a new address. Subscribing through a form then applies the form's incentive and records `added_at`.
+  - **No bulk routes.** Kit only accepts its `/v4/bulk/*` routes with an OAuth token, and this plugin authenticates with an API key, so create subscribers one at a time with `subscribers.create`.
+  - **`subscribers.unsubscribe` cannot be undone from here.** It stops every future send to that person, and only they can resubscribe.
+  - **Rate limits.** Kit enforces two request windows and sends `Retry-After` on a 429, which the plugin honours before backing off.
+  - **Webhooks.** The plugin does not receive Kit webhooks; Kit has a separate endpoint-management API that is not wrapped here.
+examples:
+  read:
+    path: subscribers.list
+    title: List the first page of active subscribers
+    args:
+      per_page: 25
+  write:
+    path: subscribers.create
+    title: Add a subscriber
+    args:
+      email_address: jordan@acme.example
+      first_name: Jordan
+apiExamples:
+  account.get: {}
+  subscribers.list:
+    call: "{ per_page: 25, status: 'active', include: ['tags'] }"
+  subscribers.get:
+    call: "{ subscriberId: 1001 }"
+  subscribers.create:
+    call: "{ email_address: 'jordan@acme.example', first_name: 'Jordan', fields: { last_name: 'Lee' } }"
+  subscribers.update:
+    call: "{ subscriberId: 1001, email_address: 'jordan@acme.example', first_name: 'Jordy' }"
+  subscribers.unsubscribe:
+    call: "{ subscriberId: 1001 }"
+  tags.list:
+    call: "{ include: ['subscriber_count'] }"
+  tags.create:
+    call: "{ name: 'customer' }"
+  tags.update:
+    call: "{ tagId: 31, name: 'vip' }"
+  tags.tagSubscriber:
+    call: "{ tagId: 31, email_address: 'jordan@acme.example' }"
+  tags.untagSubscriber:
+    call: "{ tagId: 31, email_address: 'jordan@acme.example' }"
+  customFields.list: {}
+  customFields.create:
+    call: "{ label: 'Last name' }"
+  customFields.update:
+    call: "{ customFieldId: 7, label: 'Surname' }"
+  forms.list:
+    call: "{ include: ['subscriber_count'], status: 'active' }"
+  forms.subscribe:
+    call: "{ form_id: 12, email_address: 'jordan@acme.example', referrer: 'https://acme.example/blog' }"
+apiNotes:
+  subscribers.list: 'Pages by cursor: pass `pagination.end_cursor` back as `after`. Only active subscribers are returned unless `status` says otherwise.'
+  subscribers.create: 'An address already on the list returns the existing subscriber. An unknown custom field key is ignored and named in `warnings`.'
+  subscribers.unsubscribe: 'Stops every future send to that person. Only they can resubscribe.'
+  tags.tagSubscriber: 'The subscriber must already exist; call `subscribers.create` first for a new address. The result carries the subscriber ID.'
+  forms.subscribe: 'The subscriber must already exist; call `subscribers.create` first, then this to record the signup against the form, apply its incentive and set `added_at`.'

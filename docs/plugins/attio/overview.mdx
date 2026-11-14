@@ -77,7 +77,7 @@ More: [OAuth 2.0](/concepts/oauth)
 </Tab>
 <Tab title="API Key">
 
-No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+Store the Attio API key before the first call: `pnpm corsair setup --plugin=attio --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 attio({

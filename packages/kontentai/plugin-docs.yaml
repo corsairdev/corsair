@@ -1,0 +1,52 @@
+displayName: Kontent.ai
+description: Headless content delivery with Kontent.ai - read published content items by type, language, collection or filter, along with their content types, taxonomy terms and languages, from the Delivery API.
+domain: kontent.ai
+recommendedAuth: api_key
+overviewNote: |
+  Copy your environment ID from Kontent.ai under Environment settings, General. It is a GUID such as `975bf280-fd91-488c-994c-2f04416e5ee3`, and it is both the first path segment of every call and the only credential a published read needs.
+
+  Optionally store a Delivery API key (Project settings, API keys) as the account's `delivery_api_key`. It is needed for two things: `preview: true` reads, which go to the Preview API with a key that has preview access, and every read in an environment with secure access turned on. The key is stored encrypted with the account and is never a call argument.
+
+  Things to know before you call:
+
+  - **The Delivery API reads published content only.** It has no write routes, so every operation here is a read. Draft and unpublished content comes from a separate host, `preview-deliver.kontent.ai`; pass `preview: true` and the plugin sends the call there with the stored `delivery_api_key`. A key sent to the published host is ignored, so preview never works without the switch.
+  - **`depth` is bounded at 0 to 2, and Kontent clamps silently.** A live probe of `depth=99` answered `200` with depth 2 applied, so an out-of-range value looks like a complete answer. The plugin rejects anything outside 0 to 2 rather than returning a response that quietly disagrees with the request.
+  - **Paging is `skip` and `limit`.** A list answers a `pagination` block whose `next_page` is a full URL, or an empty string on the last page. The plugin returns `next_skip`, the number to pass back, and null when the page is the last.
+  - **An element's `value` type follows its `type`.** A `text` element is a string, a `number` a number, a `modular_content` an array of codenames, and an `asset` an array of objects. Some types carry no value at all: a `url_slug` element arrives as `{ type, name }` with no `value` key.
+  - **Linked items come back under `modular_content`**, keyed by codename, and only when `depth` is above 0.
+  - **Filters go in `in_filter`** in Kontent's own syntax, such as `elements.price[gt]=10`, with several joined by `&` (`system.type[in]=article,coffee&elements.title[nempty]`). Each filter becomes its own query parameter, which is what Kontent reads. `type` and `collection` are sent as `system.type` and `system.collection`, since Kontent ignores the bare names and answers every item.
+  - **`elements` is sent as one comma-separated value.** Kontent answers repeated `elements` keys with a 400.
+  - **Without `limit`, a list returns everything** from `skip` on in one answer.
+  - **A 404 does not say what is missing.** Three different codes answer 404: `105` is an unknown environment, which is a configuration mistake, while `100` and `101` are a missing item or type. A failed HTTP call is core's `ApiError` with Kontent's envelope as `body`, so `error.body.error_code` tells them apart, and `kontentErrorFields(error)` reads it out with an `isEnvironmentNotFound` flag. A call the plugin refuses before sending it (no environment ID, or `preview: true` without a stored key) and a network failure throw `KontentAPIError` instead, with no `body`; `kontentErrorFields` returns no code for those.
+  - **Keep the `request_id`.** Kontent support asks for it, so when Kontent returns one, the error message ends with it and it is in `error.body.request_id`.
+  - **No webhooks.** The Delivery API does not push; a caller polls, or uses Kontent's own webhook configuration outside this plugin.
+examples:
+  read:
+    path: items.list
+    title: List the first page of published items
+    args:
+      limit: 10
+      depth: 1
+  write:
+    path: items.get
+    title: Read one item by codename
+    args:
+      codename: about_us
+apiExamples:
+  items.list:
+    call: "{ limit: 10, depth: 1, type: 'article', language: 'en-US', order: 'elements.post_date[desc]', in_filter: 'elements.title[nempty]' }"
+  items.get:
+    call: "{ codename: 'about_us', depth: 2 }"
+  types.list:
+    call: "{ limit: 10 }"
+  types.get:
+    call: "{ codename: 'about_us' }"
+  taxonomies.list:
+    call: "{ limit: 10 }"
+  languages.list:
+    call: "{ limit: 10 }"
+apiNotes:
+  items.list: '`depth` is 0 to 2; Kontent silently clamps anything outside it, so the plugin rejects it instead. `next_skip` is the next page, and null on the last one.'
+  items.get: '`preview: true` reads the latest version, unpublished included, from the Preview API; it needs a stored `delivery_api_key` with preview access.'
+  types.list: 'Each type carries the element definitions an item of that type returns.'
+  taxonomies.list: 'Terms nest, so a term carries its own children.'

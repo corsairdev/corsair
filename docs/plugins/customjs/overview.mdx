@@ -1,0 +1,143 @@
+---
+title: "CustomJS plugin"
+sidebarTitle: "Overview"
+description: "Render HTML or Markdown to PDF, capture screenshots after browser automation, run inline JavaScript, scrape pages with exact steps or an AI agent, and publish hosted HTML pages."
+---
+
+Use **CustomJS** through Corsair: one client, typed API calls.
+
+Get the key from app.customjs.space: sign in, then copy the value under **API Key** on the dashboard. The free plan allows 20 renders and script runs a day (page calls are not counted).
+
+Things to know before you call:
+
+- **An exhausted window answers 403, not 429.** The body is `{"message":"Too Many Requests"}`, so the plugin classifies a 403 by its body: a wrong key and an exhausted window share the status. On the free plan that 403 means the day's quota is used up and carries no reset time, so the plugin reports `CustomjsAPIError` with `isRateLimit` at once instead of retrying. A 429, or a 403 with `Retry-After`, is retried up to three times.
+- **Files come back base64 encoded.** `pdf.fromHtml`, `pdf.fromMarkdown`, `screenshot.capture` and `javascript.runBinary` return `{ base64, contentType, byteLength }`. Decode `base64` to write a file.
+- **`javascript.run` returns text, not parsed JSON.** The route answers `text/plain` whatever the script returns, so an object arrives JSON encoded in `output` and a script with no `return` arrives empty.
+- **Missing required fields render blank files.** CustomJS answers 200 with an empty PDF or PNG when `html` or `url` is absent, so the input schema requires them.
+- **`scrape.agent` bills model tokens.** It drives a browser for up to `maxSteps` actions and returns its token usage. `scrape.page` runs your exact steps and spends none.
+- **Page names are not unique.** `pages.create` publishes a new page every call, even with a name that already exists, so a retry duplicates it and the plugin never replays that call. `pages.delete` fails with a 404 for a page ID that does not exist.
+- **Stored functions are not wrapped.** The docs describe calling a saved script by ID; the route answered 500 with every ID tried, so this plugin only runs code inline.
+
+**What you get:**
+
+- 12 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/customjs better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/customjs better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/customjs better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/customjs better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { customjs } from '@corsair-dev/customjs';
+
+export const corsair = createCorsair({
+	plugins: [
+		customjs(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the CustomJS API key before the first call: `pnpm corsair setup --plugin=customjs --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+customjs()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'customjs',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Render HTML to PDF**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.customjs.api.pdf.fromHtml({
+	html: '<h1>Invoice #1042</h1><p>Total: {{ total }}</p>',
+	data: { total: 100 },
+	config: { pdfWidthMm: 210, pdfHeightMm: 297 },
+});
+```
+
+
+**Publish a page**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.customjs.api.pages.create({ name: 'Launch page', htmlContent: '<h1>Launch day</h1>' });
+```
+
+
+See the full list on the [API](/plugins/customjs/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/customjs/api">
+    Every `customjs.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

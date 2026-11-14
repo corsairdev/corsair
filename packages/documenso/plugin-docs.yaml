@@ -1,0 +1,263 @@
+displayName: Documenso
+description: Create and manage Documenso signing envelopes, legacy documents and templates, recipients, fields, folders, attachments, downloads, and embed tokens through the documented v2 REST API.
+recommendedAuth: api_key
+overviewNote: |
+  Generate a team-scoped API token in Documenso Team Settings / API Tokens and store it as the Corsair `api_key`. Documenso expects the raw token in `Authorization` (no Bearer prefix). The current base URL is `/api/v2`; set `baseUrl` for staging or a self-hosted instance. HTTPS is required except for localhost loopback development URLs.
+
+  The OpenAPI reference still lists deprecated v2 `/document/*`, `/template/*`, and matching field/recipient routes. They are included here for migration compatibility and scheduled for removal on 1 March 2027; use `/envelope/*` operations for new integrations. The plugin does not implement v1, v2-beta, or webhooks.
+
+  PDF downloads return `{ kind: "binary", contentType, base64, size }` and are limited to 20 MiB per response. PDF uploads use `files: [{ filename, contentType, contentBase64 }]` or the legacy single `file` shape; they are capped at 16 MiB per file and 32 MiB total per request for bounded transport. These plugin-side limits are not Documenso plan limits.
+
+  Standard requests time out after 20 seconds; multipart uploads and PDF downloads use a bounded 120-second timeout so permitted transfers can complete on slower links.
+references:
+  - title: Documenso v2 OpenAPI reference
+    url: https://openapi.documenso.com/reference/openapi.json
+  - title: Documenso API authentication
+    url: https://docs.documenso.com/docs/developers/getting-started/authentication
+  - title: Migrating to envelopes
+    url: https://docs.documenso.com/docs/developers/api/migrate-to-envelopes
+  - title: API rate limits
+    url: https://docs.documenso.com/docs/developers/api/rate-limits
+examples:
+  read:
+    path: envelopes.find.get
+    title: List envelopes
+    args:
+      perPage: 1
+  write:
+    path: envelopes.update.post
+    title: Update an envelope
+    args:
+      envelopeId: envelope_sample
+apiNotes:
+  documents.get.get: "Deprecated Documenso v2 route (`GET /document/{documentId}`); use the corresponding envelope-based operation for new integrations."
+  documents.getMany.post: "Deprecated Documenso v2 route (`POST /document/get-many`); use the corresponding envelope-based operation for new integrations."
+  documents.find.get: "Deprecated Documenso v2 route (`GET /document`); use the corresponding envelope-based operation for new integrations."
+  documents.create.post: "Deprecated Documenso v2 route (`POST /document/create`); use the corresponding envelope-based operation for new integrations."
+  documents.update.post: "Deprecated Documenso v2 route (`POST /document/update`); use the corresponding envelope-based operation for new integrations."
+  documents.delete.post: "Deprecated Documenso v2 route (`POST /document/delete`); use the corresponding envelope-based operation for new integrations."
+  documents.duplicate.post: "Deprecated Documenso v2 route (`POST /document/duplicate`); use the corresponding envelope-based operation for new integrations."
+  documents.distribute.post: "Deprecated Documenso v2 route (`POST /document/distribute`); use the corresponding envelope-based operation for new integrations."
+  documents.redistribute.post: "Deprecated Documenso v2 route (`POST /document/redistribute`); use the corresponding envelope-based operation for new integrations."
+  documents.download.get: "Deprecated Documenso v2 route (`GET /document/{documentId}/download`); use the corresponding envelope-based operation for new integrations."
+  documents.documentDownload.get: "Deprecated Documenso v2 route (`GET /document/{documentId}/download-beta`); use the corresponding envelope-based operation for new integrations."
+  documents.createV0.post: "Deprecated Documenso v2 route (`POST /document/create/beta`); use the corresponding envelope-based operation for new integrations."
+  documents.attachments.create.post: "Deprecated Documenso v2 route (`POST /document/attachment/create`); use the corresponding envelope-based operation for new integrations."
+  documents.attachments.update.post: "Deprecated Documenso v2 route (`POST /document/attachment/update`); use the corresponding envelope-based operation for new integrations."
+  documents.attachments.delete.post: "Deprecated Documenso v2 route (`POST /document/attachment/delete`); use the corresponding envelope-based operation for new integrations."
+  documents.attachments.find.get: "Deprecated Documenso v2 route (`GET /document/attachment`); use the corresponding envelope-based operation for new integrations."
+  documents.fields.get.get: "Deprecated Documenso v2 route (`GET /document/field/{fieldId}`); use the corresponding envelope-based operation for new integrations."
+  documents.fields.create.post: "Deprecated Documenso v2 route (`POST /document/field/create`); use the corresponding envelope-based operation for new integrations."
+  documents.fields.createMany.post: "Deprecated Documenso v2 route (`POST /document/field/create-many`); use the corresponding envelope-based operation for new integrations."
+  documents.fields.update.post: "Deprecated Documenso v2 route (`POST /document/field/update`); use the corresponding envelope-based operation for new integrations."
+  documents.fields.updateMany.post: "Deprecated Documenso v2 route (`POST /document/field/update-many`); use the corresponding envelope-based operation for new integrations."
+  documents.fields.delete.post: "Deprecated Documenso v2 route (`POST /document/field/delete`); use the corresponding envelope-based operation for new integrations."
+  templates.fields.create.post: "Deprecated Documenso v2 route (`POST /template/field/create`); use the corresponding envelope-based operation for new integrations."
+  templates.fields.get.get: "Deprecated Documenso v2 route (`GET /template/field/{fieldId}`); use the corresponding envelope-based operation for new integrations."
+  templates.fields.createMany.post: "Deprecated Documenso v2 route (`POST /template/field/create-many`); use the corresponding envelope-based operation for new integrations."
+  templates.fields.update.post: "Deprecated Documenso v2 route (`POST /template/field/update`); use the corresponding envelope-based operation for new integrations."
+  templates.fields.updateMany.post: "Deprecated Documenso v2 route (`POST /template/field/update-many`); use the corresponding envelope-based operation for new integrations."
+  templates.fields.delete.post: "Deprecated Documenso v2 route (`POST /template/field/delete`); use the corresponding envelope-based operation for new integrations."
+  documents.recipients.get.get: "Deprecated Documenso v2 route (`GET /document/recipient/{recipientId}`); use the corresponding envelope-based operation for new integrations."
+  documents.recipients.create.post: "Deprecated Documenso v2 route (`POST /document/recipient/create`); use the corresponding envelope-based operation for new integrations."
+  documents.recipients.createMany.post: "Deprecated Documenso v2 route (`POST /document/recipient/create-many`); use the corresponding envelope-based operation for new integrations."
+  documents.recipients.update.post: "Deprecated Documenso v2 route (`POST /document/recipient/update`); use the corresponding envelope-based operation for new integrations."
+  documents.recipients.updateMany.post: "Deprecated Documenso v2 route (`POST /document/recipient/update-many`); use the corresponding envelope-based operation for new integrations."
+  documents.recipients.delete.post: "Deprecated Documenso v2 route (`POST /document/recipient/delete`); use the corresponding envelope-based operation for new integrations."
+  templates.recipients.get.get: "Deprecated Documenso v2 route (`GET /template/recipient/{recipientId}`); use the corresponding envelope-based operation for new integrations."
+  templates.recipients.create.post: "Deprecated Documenso v2 route (`POST /template/recipient/create`); use the corresponding envelope-based operation for new integrations."
+  templates.recipients.createMany.post: "Deprecated Documenso v2 route (`POST /template/recipient/create-many`); use the corresponding envelope-based operation for new integrations."
+  templates.recipients.update.post: "Deprecated Documenso v2 route (`POST /template/recipient/update`); use the corresponding envelope-based operation for new integrations."
+  templates.recipients.updateMany.post: "Deprecated Documenso v2 route (`POST /template/recipient/update-many`); use the corresponding envelope-based operation for new integrations."
+  templates.recipients.delete.post: "Deprecated Documenso v2 route (`POST /template/recipient/delete`); use the corresponding envelope-based operation for new integrations."
+  templates.find.get: "Deprecated Documenso v2 route (`GET /template`); use the corresponding envelope-based operation for new integrations."
+  templates.get.get: "Deprecated Documenso v2 route (`GET /template/{templateId}`); use the corresponding envelope-based operation for new integrations."
+  templates.getMany.post: "Deprecated Documenso v2 route (`POST /template/get-many`); use the corresponding envelope-based operation for new integrations."
+  templates.create.post: "Deprecated Documenso v2 route (`POST /template/create`); use the corresponding envelope-based operation for new integrations."
+  templates.createTemplateTemporary.post: "Deprecated Documenso v2 route (`POST /template/create/beta`); use the corresponding envelope-based operation for new integrations."
+  templates.update.post: "Deprecated Documenso v2 route (`POST /template/update`); use the corresponding envelope-based operation for new integrations."
+  templates.duplicate.post: "Deprecated Documenso v2 route (`POST /template/duplicate`); use the corresponding envelope-based operation for new integrations."
+  templates.delete.post: "Deprecated Documenso v2 route (`POST /template/delete`); use the corresponding envelope-based operation for new integrations."
+  templates.use.post: "Deprecated Documenso v2 route (`POST /template/use`); use the corresponding envelope-based operation for new integrations."
+  templates.directLinks.create.post: "Deprecated Documenso v2 route (`POST /template/direct/create`); use the corresponding envelope-based operation for new integrations."
+  templates.directLinks.delete.post: "Deprecated Documenso v2 route (`POST /template/direct/delete`); use the corresponding envelope-based operation for new integrations."
+  templates.directLinks.toggle.post: "Deprecated Documenso v2 route (`POST /template/direct/toggle`); use the corresponding envelope-based operation for new integrations."
+apiExamples:
+  envelopes.attachments.find.get:
+    args: {"envelopeId":"sample"}
+  envelopes.attachments.create.post:
+    args: {"envelopeId":"sample","data":{"label":"sample","data":"https://documenso.invalid/resource"}}
+  envelopes.attachments.update.post:
+    args: {"id":"sample","data":{"label":"sample","data":"https://documenso.invalid/resource"}}
+  envelopes.attachments.delete.post:
+    args: {"id":"sample"}
+  envelopes.items.createMany.post:
+    args: {"payload":{"envelopeId":"sample"},"files":[{"filename":"contract.pdf","contentType":"application/pdf","contentBase64":"JVBERi0xLjQK"}]}
+  envelopes.items.updateMany.post:
+    args: {"envelopeId":"sample","data":[{"envelopeItemId":"sample"}]}
+  envelopes.items.delete.post:
+    args: {"envelopeId":"sample","envelopeItemId":"sample"}
+  envelopes.items.download.get:
+    args: {"envelopeItemId":"sample"}
+  envelopes.recipients.get.get:
+    args: {"recipientId":1}
+  envelopes.recipients.createMany.post:
+    args: {"envelopeId":"sample","data":[]}
+  envelopes.recipients.updateMany.post:
+    args: {"envelopeId":"sample","data":[]}
+  envelopes.recipients.delete.post:
+    args: {"recipientId":1}
+  envelopes.recipients.recipientRejectOnBehalfOf.post:
+    args: {"recipientId":1,"envelopeId":"sample","reason":"sample"}
+  envelopes.fields.get.get:
+    args: {"fieldId":1}
+  envelopes.fields.createMany.post:
+    args: {"envelopeId":"sample","data":[]}
+  envelopes.fields.updateMany.post:
+    args: {"envelopeId":"sample","data":[]}
+  envelopes.fields.delete.post:
+    args: {"fieldId":1}
+  envelopes.find.get:
+    args: {}
+  envelopes.auditLogFind.get:
+    args: {"envelopeId":"sample"}
+  envelopes.auditLogDownloadPdf.get:
+    args: {"envelopeId":"sample"}
+  envelopes.certificateDownloadPdf.get:
+    args: {"envelopeId":"sample"}
+  envelopes.get.get:
+    args: {"envelopeId":"sample"}
+  envelopes.getMany.post:
+    args: {"ids":{"type":"envelopeId","ids":["sample"]}}
+  envelopes.create.post:
+    args: {"payload":{"title":"sample","type":"DOCUMENT"},"files":[{"filename":"contract.pdf","contentType":"application/pdf","contentBase64":"JVBERi0xLjQK"}]}
+  envelopes.use.post:
+    args: {"payload":{"envelopeId":"sample"},"files":[{"filename":"contract.pdf","contentType":"application/pdf","contentBase64":"JVBERi0xLjQK"}]}
+  envelopes.update.post:
+    args: {"envelopeId":"sample"}
+  envelopes.delete.post:
+    args: {"envelopeId":"sample"}
+  envelopes.cancel.post:
+    args: {"envelopeId":"sample"}
+  envelopes.duplicate.post:
+    args: {"envelopeId":"sample"}
+  envelopes.distribute.post:
+    args: {"envelopeId":"sample"}
+  envelopes.redistribute.post:
+    args: {"envelopeId":"sample","recipients":[1]}
+  documents.get.get:
+    args: {"documentId":1}
+  documents.getMany.post:
+    args: {"documentIds":[1]}
+  documents.find.get:
+    args: {}
+  documents.create.post:
+    args: {"payload":{"title":"sample"},"file":{"filename":"contract.pdf","contentType":"application/pdf","contentBase64":"JVBERi0xLjQK"}}
+  documents.update.post:
+    args: {"documentId":1}
+  documents.delete.post:
+    args: {"documentId":1}
+  documents.duplicate.post:
+    args: {"documentId":1}
+  documents.distribute.post:
+    args: {"documentId":1}
+  documents.redistribute.post:
+    args: {"documentId":1,"recipients":[1]}
+  documents.download.get:
+    args: {"documentId":1}
+  documents.documentDownload.get:
+    args: {"documentId":1}
+  documents.createV0.post:
+    args: {"title":"sample"}
+  documents.attachments.create.post:
+    args: {"documentId":1,"data":{"label":"sample","data":"https://documenso.invalid/resource"}}
+  documents.attachments.update.post:
+    args: {"id":"sample","data":{"label":"sample","data":"https://documenso.invalid/resource"}}
+  documents.attachments.delete.post:
+    args: {"id":"sample"}
+  documents.attachments.find.get:
+    args: {"documentId":1}
+  documents.fields.get.get:
+    args: {"fieldId":1}
+  documents.fields.create.post:
+    args: {"documentId":1,"field":{"type":"SIGNATURE","recipientId":1,"pageNumber":1,"pageX":0,"pageY":0,"width":1,"height":1}}
+  documents.fields.createMany.post:
+    args: {"documentId":1,"fields":[]}
+  documents.fields.update.post:
+    args: {"documentId":1,"field":{"type":"SIGNATURE","id":1}}
+  documents.fields.updateMany.post:
+    args: {"documentId":1,"fields":[]}
+  documents.fields.delete.post:
+    args: {"fieldId":1}
+  templates.fields.create.post:
+    args: {"templateId":1,"field":{"type":"SIGNATURE","recipientId":1,"pageNumber":1,"pageX":0,"pageY":0,"width":1,"height":1}}
+  templates.fields.get.get:
+    args: {"fieldId":1}
+  templates.fields.createMany.post:
+    args: {"templateId":1,"fields":[]}
+  templates.fields.update.post:
+    args: {"templateId":1,"field":{"type":"SIGNATURE","id":1}}
+  templates.fields.updateMany.post:
+    args: {"templateId":1,"fields":[]}
+  templates.fields.delete.post:
+    args: {"fieldId":1}
+  folders.find.get:
+    args: {}
+  folders.create.post:
+    args: {"name":"sample"}
+  folders.update.post:
+    args: {"folderId":"sample","data":{}}
+  folders.delete.post:
+    args: {"folderId":"sample"}
+  documents.recipients.get.get:
+    args: {"recipientId":1}
+  documents.recipients.create.post:
+    args: {"documentId":1,"recipient":{"email":"signer@documenso.invalid","name":"sample","role":"CC"}}
+  documents.recipients.createMany.post:
+    args: {"documentId":1,"recipients":[]}
+  documents.recipients.update.post:
+    args: {"documentId":1,"recipient":{"id":1}}
+  documents.recipients.updateMany.post:
+    args: {"documentId":1,"recipients":[]}
+  documents.recipients.delete.post:
+    args: {"recipientId":1}
+  templates.recipients.get.get:
+    args: {"recipientId":1}
+  templates.recipients.create.post:
+    args: {"templateId":1,"recipient":{"email":"signer@documenso.invalid","name":"sample","role":"CC"}}
+  templates.recipients.createMany.post:
+    args: {"templateId":1,"recipients":[]}
+  templates.recipients.update.post:
+    args: {"templateId":1,"recipient":{"id":1}}
+  templates.recipients.updateMany.post:
+    args: {"templateId":1,"recipients":[]}
+  templates.recipients.delete.post:
+    args: {"recipientId":1}
+  templates.find.get:
+    args: {}
+  templates.get.get:
+    args: {"templateId":1}
+  templates.getMany.post:
+    args: {"templateIds":[1]}
+  templates.create.post:
+    args: {"payload":{"title":"sample"},"file":{"filename":"contract.pdf","contentType":"application/pdf","contentBase64":"JVBERi0xLjQK"}}
+  templates.createTemplateTemporary.post:
+    args: {"title":"sample"}
+  templates.update.post:
+    args: {"templateId":1}
+  templates.duplicate.post:
+    args: {"templateId":1}
+  templates.delete.post:
+    args: {"templateId":1}
+  templates.use.post:
+    args: {"templateId":1,"recipients":[]}
+  templates.directLinks.create.post:
+    args: {"templateId":1}
+  templates.directLinks.delete.post:
+    args: {"templateId":1}
+  templates.directLinks.toggle.post:
+    args: {"templateId":1,"enabled":false}
+  embedding.presignCreateEmbeddingPresignToken.post:
+    args: {}
+  embedding.presignVerifyEmbeddingPresignToken.post:
+    args: {"token":"sample"}
