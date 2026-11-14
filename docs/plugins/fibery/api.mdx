@@ -1,0 +1,994 @@
+---
+title: "Fibery API reference"
+sidebarTitle: "API"
+description: "API reference for the Fibery plugin in Corsair: every `fibery.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Collection
+
+### add
+
+`collection.add`
+
+Add existing entities to a Fibery collection field
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.collection.add({ type: 'CRM/Lead', field: 'CRM/Contacts', entityId: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', itemIds: ['019dcf9a-c294-71cc-b740-ccdbd5722322'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `field` | `string` | Yes | — |
+| `entityId` | `string` | Yes | — |
+| `itemIds` | `string[]` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### remove
+
+`collection.remove`
+
+Remove existing entities from a Fibery collection field
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.collection.remove({ type: 'CRM/Lead', field: 'CRM/Contacts', entityId: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', itemIds: ['019dcf9a-c294-71cc-b740-ccdbd5722322'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `field` | `string` | Yes | — |
+| `entityId` | `string` | Yes | — |
+| `itemIds` | `string[]` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### reset
+
+`collection.reset`
+
+Clear all items from a Fibery collection field
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fibery.api.collection.reset({ type: 'CRM/Lead', field: 'CRM/Contacts', entityId: '019dcf9a-c5ab-7292-9bdb-8956eea1b532' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `field` | `string` | Yes | — |
+| `entityId` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### set
+
+`collection.set`
+
+Replace the contents of a Fibery collection field, unlinking every item not in the new list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fibery.api.collection.set({ type: 'CRM/Lead', field: 'CRM/Contacts', entityId: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', itemIds: [] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `field` | `string` | Yes | — |
+| `entityId` | `string` | Yes | — |
+| `itemIds` | `string[]` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+## Document
+
+### get
+
+`document.get`
+
+Read a Fibery collaborative document in Markdown, HTML, JSON, or plain text
+
+**Risk:** `read`
+
+```ts
+await corsair.fibery.api.document.get({ secret: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', format: 'md' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret` | `string` | Yes | — |
+| `format` | `md \| html \| json \| plain-text` | No | — |
+
+Rich-text fields are collaborative documents; first query the related document secret from the entity field.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret` | `string` | Yes | — |
+| `content` | `string \| Record<string, JsonValue>` | Yes | — |
+| `modificationDate` | `string` | No | — |
+
+
+
+---
+
+### getBatch
+
+`document.getBatch`
+
+Read several Fibery collaborative documents in one request
+
+**Risk:** `read`
+
+```ts
+await corsair.fibery.api.document.getBatch({ secrets: ['019dcf9a-c5ab-7292-9bdb-8956eea1b532'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secrets` | `string[]` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  secret: string,
+  content: string | Record<string, JsonValue>,
+  modificationDate?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`document.update`
+
+Replace the content of a Fibery collaborative document
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.document.update({ secret: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', format: 'md', content: 'Sample document text' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret` | `string` | Yes | — |
+| `format` | `md \| html \| json` | No | — |
+| `content` | `string` | Yes | — |
+
+Rich-text fields are collaborative documents; first query the related document secret from the entity field.
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### updateBatch
+
+`document.updateBatch`
+
+Create or replace several Fibery collaborative documents in one request
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.document.updateBatch({ documents: [{ secret: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', content: 'Sample document text' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `format` | `md \| html \| json` | No | — |
+| `documents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  secret: string,
+  content: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+## Entity
+
+### create
+
+`entity.create`
+
+Create a Fibery entity with primitive and relation field values
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.entity.create({ type: 'CRM/Lead', entity: { 'CRM/Name': 'Sample Lead' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `entity` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### delete
+
+`entity.delete`
+
+Delete a Fibery entity by database and UUID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fibery.api.entity.delete({ type: 'CRM/Lead', id: '019dcf9a-c5ab-7292-9bdb-8956eea1b532' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### query
+
+`entity.query`
+
+Query Fibery entities with select, filter, order, and bounded pagination clauses
+
+**Risk:** `read`
+
+```ts
+await corsair.fibery.api.entity.query({ query: { 'q/from': 'CRM/Lead', 'q/select': ['fibery/id', 'CRM/Name'], 'q/limit': 100 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+| `params` | `Record<string, JsonValue>` | No | — |
+
+Entity queries return workspace-defined fields; select a bounded q/limit and follow Fibery's fibery/id cursor pagination pattern. Collection subqueries are limited to 100.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  q/from: string,
+  q/select: JsonValue[],
+  q/where?: JsonValue,
+  q/order-by?: JsonValue,
+  q/offset?: number,
+  q/limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, JsonValue>[] \| number`
+
+
+---
+
+### update
+
+`entity.update`
+
+Update primitive and relation field values on a Fibery entity
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.entity.update({ type: 'CRM/Lead', entity: { 'fibery/id': '019dcf9a-c5ab-7292-9bdb-8956eea1b532', 'CRM/Name': 'Updated Lead' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `entity` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+**Output:** `Record<string, JsonValue>`
+
+
+---
+
+### upsert
+
+`entity.upsert`
+
+Create or resolve duplicate Fibery entities using documented conflict actions
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.entity.upsert({ type: 'CRM/Lead', entities: [{ 'fibery/id': '019dcf9a-c5ab-7292-9bdb-8956eea1b532', 'CRM/Name': 'Sample Lead' }], conflictField: 'CRM/Name', conflictAction: 'skip-create' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `entities` | `object[]` | Yes | — |
+| `conflictField` | `string` | Yes | — |
+| `conflictAction` | `skip-create \| update-latest` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entities full type">
+
+```ts
+{
+  fibery/id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `JsonValue[]`
+
+
+---
+
+## File
+
+### download
+
+`file.download`
+
+Download a Fibery file as base64-encoded binary data
+
+**Risk:** `read`
+
+```ts
+await corsair.fibery.api.file.download({ secret: '019dcf9a-c5ab-7292-9bdb-8956eea1b532' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret` | `string` | Yes | — |
+
+Returns `{ kind: 'binary', contentType, base64 }`. Fibery's URL import endpoint is omitted because it fetches caller-provided URLs server-side.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
+
+
+---
+
+### signUrls
+
+`file.signUrls`
+
+Create temporary 60-minute public URLs for Fibery files
+
+**Risk:** `read`
+
+```ts
+await corsair.fibery.api.file.signUrls({ secrets: ['019dcf9a-c5ab-7292-9bdb-8956eea1b532'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secrets` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  secret: string,
+  url: string,
+  expiresAt: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`file.upload`
+
+Upload a base64-encoded file to Fibery storage
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.file.upload({ name: 'note.txt', contentType: 'text/plain', base64: 'SGVsbG8=' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+
+Supply the file bytes as base64 and provide the original file name and MIME content type.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fibery/id` | `string` | Yes | — |
+| `fibery/name` | `string` | Yes | — |
+| `fibery/content-type` | `string` | Yes | — |
+| `fibery/secret` | `string` | Yes | — |
+| `fibery/content-length` | `number` | Yes | — |
+| `fibery/rank` | `number` | Yes | — |
+
+
+
+---
+
+## History
+
+### search
+
+`history.search`
+
+Search paginated Fibery entity change history with filters and time bounds
+
+**Risk:** `read`
+
+```ts
+await corsair.fibery.api.history.search({ limit: 50, where: [], timeframe: { start: '2025-01-01T00:00:00.000Z', end: '2025-01-02T00:00:00.000Z' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `where` | `object[]` | No | — |
+| `timeframe` | `object` | No | — |
+| `limit` | `number` | Yes | — |
+| `excludeAutomaticChanges` | `(automations \| integrations \| formulas \| auto-linking)[]` | No | — |
+| `sinceItem` | `string` | No | — |
+
+Pages may be shorter than limit; continue only while nextPage.hasNext, passing nextPage.sinceItem. The timeframe maximum span is one year. Field and operator values are documented string literals; the reference generator omits quotes around enum values in rendered type tables.
+
+<AccordionGroup>
+<Accordion title="where full type">
+
+```ts
+{
+  field: id | action | entityPublicId | entityState | author | typeId | entityTypeId | entityName | entityId | field,
+  operator: = | in | contains | not-in | empty | not-empty,
+  value?: JsonValue
+}[]
+```
+</Accordion>
+
+<Accordion title="timeframe full type">
+
+```ts
+{
+  start: string,
+  end: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `Record<string, JsonValue>[]` | Yes | — |
+| `nextPage` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+## Schema
+
+### createDatabase
+
+`schema.createDatabase`
+
+Create a Fibery database with its documented fields and metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.schema.createDatabase({ database: { 'fibery/name': 'CRM/Lead', 'fibery/meta': { 'fibery/domain?': true, 'fibery/secured?': true }, 'fibery/fields': [{ 'fibery/name': 'fibery/id', 'fibery/type': 'fibery/uuid', 'fibery/meta': { 'fibery/id?': true, 'fibery/readonly?': true } }, { 'fibery/name': 'fibery/public-id', 'fibery/type': 'fibery/text', 'fibery/meta': { 'fibery/public-id?': true, 'fibery/readonly?': true } }, { 'fibery/name': 'fibery/creation-date', 'fibery/type': 'fibery/date-time', 'fibery/meta': { 'fibery/creation-date?': true, 'fibery/readonly?': true, 'fibery/default-value': '$now' } }, { 'fibery/name': 'fibery/modification-date', 'fibery/type': 'fibery/date-time', 'fibery/meta': { 'fibery/modification-date?': true, 'fibery/required?': true, 'fibery/readonly?': true, 'fibery/default-value': '$now' } }, { 'fibery/name': 'CRM/Name', 'fibery/type': 'fibery/text', 'fibery/meta': { 'ui/title?': true } }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `database` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### createEnum
+
+`schema.createEnum`
+
+Create a Fibery enum database for select-field options
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.schema.createEnum({ name: 'CRM/Status_CRM/Lead' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### createField
+
+`schema.createField`
+
+Create a primitive or relation field in a Fibery database
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.schema.createField({ holderType: 'CRM/Lead', name: 'CRM/Website', type: 'fibery/text' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `holderType` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `meta` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### deleteDatabase
+
+`schema.deleteDatabase`
+
+Delete a Fibery database and optionally its entities and related fields
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fibery.api.schema.deleteDatabase({ name: 'CRM/Prospect', deleteEntities: false, deleteRelatedFields: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `deleteEntities` | `boolean` | No | — |
+| `deleteRelatedFields` | `boolean` | No | — |
+
+This destructive operation can delete every entity in the database and related fields when the corresponding flags are enabled.
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### deleteField
+
+`schema.deleteField`
+
+Delete a Fibery field and optionally its stored values
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fibery.api.schema.deleteField({ holderType: 'CRM/Lead', name: 'CRM/Company URL', deleteValues: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `holderType` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `deleteValues` | `boolean` | No | — |
+
+Deleting a non-empty field requires deleteValues: true; removed values cannot be restored by this operation.
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### installMixins
+
+`schema.installMixins`
+
+Install documented Fibery mixins on databases
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.schema.installMixins({ types: { 'CRM/Lead': ['fibery/rank-mixin'] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `types` | `Record<string, string[]>` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### query
+
+`schema.query`
+
+Read Fibery workspace databases, fields, and schema metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.fibery.api.schema.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `withDescription` | `boolean` | No | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### renameDatabase
+
+`schema.renameDatabase`
+
+Rename a Fibery database
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.schema.renameDatabase({ fromName: 'CRM/Lead', toName: 'CRM/Prospect' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fromName` | `string` | Yes | — |
+| `toName` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### renameField
+
+`schema.renameField`
+
+Rename a field in a Fibery database
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.schema.renameField({ holderType: 'CRM/Lead', fromName: 'CRM/Website', toName: 'CRM/Company URL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `holderType` | `string` | Yes | — |
+| `fromName` | `string` | Yes | — |
+| `toName` | `string` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### setFieldMeta
+
+`schema.setFieldMeta`
+
+Set documented metadata on a Fibery database field
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.schema.setFieldMeta({ holderType: 'CRM/Lead', name: 'CRM/Company URL', key: 'fibery/required?', value: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `holderType` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `value` | `JsonValue` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+## Views
+
+### create
+
+`views.create`
+
+Create one or more Fibery views
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.views.create({ views: [{ 'fibery/id': '019dcf9a-c5ab-7292-9bdb-8956eea1b532', 'fibery/name': 'Lead Board', 'fibery/type': 'board', 'fibery/meta': {}, 'fibery/container-app': { 'fibery/id': '019dcf9a-c294-71cc-b740-ccdbd5722322' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `views` | `Record<string, JsonValue>[]` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### delete
+
+`views.delete`
+
+Delete Fibery views by UUID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fibery.api.views.delete({ ids: ['019dcf9a-c5ab-7292-9bdb-8956eea1b532'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output:** `JsonValue`
+
+
+---
+
+### query
+
+`views.query`
+
+Query Fibery views by UUID, public ID, privacy, or entity container
+
+**Risk:** `read`
+
+```ts
+await corsair.fibery.api.views.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | — |
+| `publicIds` | `string[]` | No | — |
+| `isPrivate` | `boolean` | No | — |
+| `container` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output:** `Record<string, JsonValue>[]`
+
+
+---
+
+### update
+
+`views.update`
+
+Update one or more Fibery views
+
+**Risk:** `write`
+
+```ts
+await corsair.fibery.api.views.update({ updates: [{ id: '019dcf9a-c5ab-7292-9bdb-8956eea1b532', values: { 'fibery/name': 'Updated Board' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updates` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="updates full type">
+
+```ts
+{
+  id: string,
+  values: Record<string, JsonValue>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `JsonValue`
+
+
+---
+

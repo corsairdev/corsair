@@ -2006,6 +2006,14 @@
                 ]
               },
               {
+                "group": "Fibery",
+                "pages": [
+                  "plugins/fibery/overview",
+                  "plugins/fibery/api",
+                  "plugins/fibery/database"
+                ]
+              },
+              {
                 "group": "Fidel",
                 "pages": [
                   "plugins/fidel/overview",
