@@ -1,0 +1,77 @@
+displayName: Endorsal
+description: Manage Endorsal contacts, testimonials, tags, widgets, Wall of Love, and AutoRequest campaigns.
+domain: endorsal.io
+recommendedAuth: api_key
+examples:
+  read:
+    path: autorequests.campaigns.byId.get
+    args:
+      id: campaign_123
+  write:
+    path: contacts.byId.delete
+    args:
+      id: contact_123
+overviewNote: |
+  Generate a property-specific key at https://app.endorsal.io/account/api. The plugin sends it as `Authorization: Bearer <key>` on every call. The reference marks GET keys as optional, but the API answers 401 to every route without one, so the plugin asks for a key before any call. The plugin uses the API host `https://api.endorsal.io` and never puts credentials in query parameters.
+
+  The published OpenAPI document currently defines 25 REST operations. List routes return the complete collection and expose no page or cursor parameters. Search conditions are AND-combined; `in` requires an array. Testimonial status fields (`approved`, `featured`) are numeric. `widgets.byId.get` and `wallOfLove.get` support `render: true`, which returns rendered HTML rather than the normal JSON resource.
+
+  The `POST /superlinks` route is not present in the current published OpenAPI document, so it is intentionally excluded. Webhooks are outside this integration's scope.
+references:
+  - title: Endorsal Public REST API
+    url: https://developers.endorsal.io/docs/endorsal/YXBpOjE2OTAxMDk-public-rest-api
+  - title: Published OpenAPI document
+    url: https://developers.endorsal.io/api/v1/projects/endorsal/endorsal/nodes/Public%20API/Endorsal.v1.json
+apiExamples:
+  testimonials.get: {}
+  testimonials.byId.get:
+    call: "{ id: 'testimonial_123' }"
+  testimonials.post:
+    call: "{ name: 'Jane Doe', propertyID: 'property_123', comments: 'Great service' }"
+  testimonials.byId.patch:
+    call: "{ id: 'testimonial_123', fields: { comments: 'Updated review' } }"
+  testimonials.byId.delete:
+    call: "{ id: 'testimonial_123' }"
+  testimonials.byId.tag.post:
+    call: "{ id: 'testimonial_123', tags: [{ _id: 'tag_123' }] }"
+  testimonials.search.post:
+    call: "{ query: [{ field: 'rating', operator: '=', value: 5 }] }"
+  contacts.get: {}
+  contacts.post:
+    call: "{ contact: { email: 'jane.doe@example.com' }, campaignID: 'campaign_123' }"
+  contacts.byId.get:
+    call: "{ id: 'contact_123' }"
+  contacts.byId.patch:
+    call: "{ id: 'contact_123', fields: { company: 'Example Inc' } }"
+  contacts.byId.delete:
+    call: "{ id: 'contact_123' }"
+  contacts.search.post:
+    call: "{ query: [{ field: 'name', operator: 'contains', value: 'Jane' }] }"
+  contacts.testimonials.get:
+    call: "{ id: 'contact_123' }"
+  tags.get: {}
+  tags.post:
+    call: "{ name: 'Favourite Reviews', type: 'tag' }"
+  tags.byId.get:
+    call: "{ id: 'tag_123' }"
+  tags.byId.patch:
+    call: "{ id: 'tag_123', fields: { description: 'Updated description' } }"
+  tags.byId.delete:
+    call: "{ id: 'tag_123' }"
+  tags.testimonials.get:
+    call: "{ id: 'tag_123' }"
+  widgets.get: {}
+  widgets.byId.get:
+    call: "{ id: 'widget_123', render: false }"
+  wallOfLove.get: {}
+  autorequests.campaigns.get: {}
+  autorequests.campaigns.byId.get:
+    call: "{ id: 'campaign_123' }"
+apiNotes:
+  testimonials.post: "`approved` and `featured` use numeric provider states: approved is 0, 1, or 2; featured is 0 or 1."
+  testimonials.byId.tag.post: "Each tag may be a new tag (`name` and `type`) or an existing tag reference (`_id`)."
+  contacts.post: "At least one of `contact.email` or `contact.phone` is required. `campaignID` is a query parameter, not part of the JSON body. Enrolling a contact in a campaign makes Endorsal email them a review request."
+  contacts.search.post: "`operator` accepts the TypeScript string-literal union `'=' | '>' | '>=' | '<' | '<=' | '!=' | 'contains' | 'in'`. The `in` comparison operator requires an array value. Match objects are combined with AND."
+  testimonials.search.post: "`operator` accepts the TypeScript string-literal union `'=' | '>' | '>=' | '<' | '<=' | '!=' | 'contains' | 'in'`. The `in` comparison operator requires an array value. Match objects are combined with AND."
+  widgets.byId.get: "With `render: true`, Endorsal returns rendered HTML; otherwise it returns a JSON widget response."
+  wallOfLove.get: "With `render: true`, Endorsal returns rendered HTML; otherwise it returns the Wall of Love JSON response."
