@@ -167,6 +167,7 @@ await corsair.googletasks.api.taskLists.list({ maxResults: 100 });
 </AccordionGroup>
 
 
+
 ---
 
 ### patch
@@ -354,7 +355,7 @@ await corsair.googletasks.api.tasks.get({ taskListId: '@default', taskId: 'task-
 | `webViewLink` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `etag` | `string` | No | — |
-| `status` | `needsAction \| completed` | No | — |
+| `status` | `needsAction \| completed \| string` | No | — |
 | `due` | `string` | No | — |
 | `completed` | `string` | No | — |
 | `parent` | `string` | No | — |
@@ -381,7 +382,7 @@ await corsair.googletasks.api.tasks.get({ taskListId: '@default', taskId: 'task-
 
 ```ts
 {
-  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE,
+  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE | string,
   linkToTask?: string,
   driveResourceInfo?: {
     driveFileId?: string,
@@ -450,7 +451,7 @@ await corsair.googletasks.api.tasks.insert({ taskListId: '@default', task: { tit
 | `webViewLink` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `etag` | `string` | No | — |
-| `status` | `needsAction \| completed` | No | — |
+| `status` | `needsAction \| completed \| string` | No | — |
 | `due` | `string` | No | — |
 | `completed` | `string` | No | — |
 | `parent` | `string` | No | — |
@@ -477,7 +478,7 @@ await corsair.googletasks.api.tasks.insert({ taskListId: '@default', task: { tit
 
 ```ts
 {
-  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE,
+  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE | string,
   linkToTask?: string,
   driveResourceInfo?: {
     driveFileId?: string,
@@ -549,7 +550,7 @@ await corsair.googletasks.api.tasks.list({ taskListId: '@default', maxResults: 1
   webViewLink?: string,
   kind?: string,
   etag?: string,
-  status?: needsAction | completed,
+  status?: needsAction | completed | string,
   due?: string,
   completed?: string,
   parent?: string,
@@ -563,7 +564,7 @@ await corsair.googletasks.api.tasks.list({ taskListId: '@default', maxResults: 1
     description?: string
   }[],
   assignmentInfo?: {
-    surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE,
+    surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE | string,
     linkToTask?: string,
     driveResourceInfo?: {
       driveFileId?: string,
@@ -617,7 +618,7 @@ await corsair.googletasks.api.tasks.move({ taskListId: '@default', taskId: 'task
 | `webViewLink` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `etag` | `string` | No | — |
-| `status` | `needsAction \| completed` | No | — |
+| `status` | `needsAction \| completed \| string` | No | — |
 | `due` | `string` | No | — |
 | `completed` | `string` | No | — |
 | `parent` | `string` | No | — |
@@ -644,7 +645,7 @@ await corsair.googletasks.api.tasks.move({ taskListId: '@default', taskId: 'task
 
 ```ts
 {
-  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE,
+  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE | string,
   linkToTask?: string,
   driveResourceInfo?: {
     driveFileId?: string,
@@ -682,6 +683,8 @@ await corsair.googletasks.api.tasks.patch({ taskListId: '@default', taskId: 'tas
 | `taskId` | `string` | Yes | — |
 | `task` | `object` | Yes | — |
 
+Send `due: null` to remove a due date; an omitted field keeps its value. To delete a task use `tasks.delete`: `update` and `patch` accept only `deleted: false`.
+
 <AccordionGroup>
 <Accordion title="task full type">
 
@@ -689,10 +692,10 @@ await corsair.googletasks.api.tasks.patch({ taskListId: '@default', taskId: 'tas
 {
   title?: string,
   notes?: string,
-  due?: string,
+  due?: string | null,
   completed?: string,
   status?: needsAction | completed,
-  deleted?: boolean,
+  deleted?: false,
   etag?: string
 }
 ```
@@ -712,7 +715,7 @@ await corsair.googletasks.api.tasks.patch({ taskListId: '@default', taskId: 'tas
 | `webViewLink` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `etag` | `string` | No | — |
-| `status` | `needsAction \| completed` | No | — |
+| `status` | `needsAction \| completed \| string` | No | — |
 | `due` | `string` | No | — |
 | `completed` | `string` | No | — |
 | `parent` | `string` | No | — |
@@ -739,7 +742,7 @@ await corsair.googletasks.api.tasks.patch({ taskListId: '@default', taskId: 'tas
 
 ```ts
 {
-  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE,
+  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE | string,
   linkToTask?: string,
   driveResourceInfo?: {
     driveFileId?: string,
@@ -787,7 +790,7 @@ await corsair.googletasks.api.tasks.update({ taskListId: '@default', taskId: 'ta
   due?: string,
   completed?: string,
   status?: needsAction | completed,
-  deleted?: boolean,
+  deleted?: false,
   etag?: string
 }
 ```
@@ -807,7 +810,7 @@ await corsair.googletasks.api.tasks.update({ taskListId: '@default', taskId: 'ta
 | `webViewLink` | `string` | No | — |
 | `kind` | `string` | No | — |
 | `etag` | `string` | No | — |
-| `status` | `needsAction \| completed` | No | — |
+| `status` | `needsAction \| completed \| string` | No | — |
 | `due` | `string` | No | — |
 | `completed` | `string` | No | — |
 | `parent` | `string` | No | — |
@@ -834,7 +837,7 @@ await corsair.googletasks.api.tasks.update({ taskListId: '@default', taskId: 'ta
 
 ```ts
 {
-  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE,
+  surfaceType?: CONTEXT_TYPE_UNSPECIFIED | GMAIL | DOCUMENT | SPACE | string,
   linkToTask?: string,
   driveResourceInfo?: {
     driveFileId?: string,
@@ -851,3 +854,4 @@ await corsair.googletasks.api.tasks.update({ taskListId: '@default', taskId: 'ta
 
 
 ---
+
