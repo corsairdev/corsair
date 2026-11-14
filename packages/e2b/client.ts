@@ -131,10 +131,21 @@ function collectSensitiveValues(value: unknown, parentName?: string): string[] {
 }
 
 function redactMessage(message: string, sensitiveValues: string[]): string {
-	return sensitiveValues.reduce(
-		(result, value) => result.split(value).join('[REDACTED]'),
-		message,
-	);
+	// Longest first, so a secret that is a prefix of another cannot leave the longer one's tail behind.
+	return [...sensitiveValues]
+		.sort((a, b) => b.length - a.length)
+		.reduce((result, value) => result.split(value).join('[REDACTED]'), message);
+}
+
+function withoutQuery(url: string): string {
+	try {
+		const parsed = new URL(url);
+		parsed.search = '';
+		parsed.hash = '';
+		return parsed.toString();
+	} catch {
+		return url.split(/[?#]/)[0] ?? '';
+	}
 }
 
 function sanitizeApiError(
@@ -143,13 +154,15 @@ function sanitizeApiError(
 ): ApiError {
 	const safeRequest: ApiRequestOptions = {
 		...error.request,
+		// Query values such as sandbox metadata can hold personal data.
+		query: undefined,
 		body: redactSensitive(error.request.body, sensitiveValues),
 		headers: redactRecord(error.request.headers),
 	};
 	return new ApiError(
 		safeRequest,
 		{
-			url: error.url,
+			url: withoutQuery(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
@@ -331,6 +344,12 @@ export async function makeE2bRequest(
 		: undefined;
 	const body = inputRecord.body;
 	const sensitiveValues = collectSensitiveValues(input);
+	for (const [name, value] of Object.entries(path ?? {})) {
+		// '.' or '..' survives encodeURIComponent and URL normalization would move the request to another route.
+		if (value === '.' || value === '..') {
+			throw new Error(`E2B path parameter ${name} cannot be '.' or '..'`);
+		}
+	}
 
 	if (route.auth === 'apiKey' && (!apiKey || apiKey.length === 0)) {
 		throw new AuthMissingError('e2b', 'api_key');

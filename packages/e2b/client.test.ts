@@ -311,4 +311,74 @@ describe('E2B API client', () => {
 		);
 		expect(calls[0]?.init?.method).toBe('DELETE');
 	});
+
+	it('rejects dot segments as path IDs before calling E2B', async () => {
+		globalThis.fetch = async (url, init) => {
+			calls.push({ url: String(url), init });
+			return new Response(null, { status: 204 });
+		};
+
+		for (const sandboxID of ['..', '.']) {
+			await expect(
+				makeE2bRequest(
+					e2bOperationRoutes['sandboxes.kill'],
+					'project-api-key',
+					{
+						path: { sandboxID },
+					},
+				),
+			).rejects.toThrow('sandboxID');
+		}
+		expect(calls).toHaveLength(0);
+	});
+
+	it('redacts a secret fully when a shorter secret is its prefix', async () => {
+		const longSecret = 'sk-secret-fixture';
+		globalThis.fetch = async () =>
+			new Response(
+				JSON.stringify({ code: 400, message: `bad env ${longSecret}` }),
+				{ status: 400, headers: { 'Content-Type': 'application/json' } },
+			);
+
+		// A caught rejection is unknown until it is narrowed to the transport error.
+		const result: unknown = await makeE2bRequest(
+			e2bOperationRoutes['sandboxes.create'],
+			'project-api-key',
+			{
+				body: {
+					templateID: 'base',
+					envVars: { PREFIX: 'sk-', KEY: longSecret },
+				},
+			},
+		).catch((error: unknown) => error);
+
+		expect(result).toBeInstanceOf(ApiError);
+		if (result instanceof ApiError) {
+			expect(JSON.stringify(result.body)).not.toContain('secret-fixture');
+			expect(result.message).not.toContain('secret-fixture');
+		}
+	});
+
+	it('keeps query values such as sandbox metadata out of propagated errors', async () => {
+		const email = 'alice@example.com';
+		globalThis.fetch = async () =>
+			new Response(JSON.stringify({ code: 400, message: 'bad query' }), {
+				status: 400,
+				headers: { 'Content-Type': 'application/json' },
+			});
+
+		// A caught rejection is unknown until it is narrowed to the transport error.
+		const result: unknown = await makeE2bRequest(
+			e2bOperationRoutes['sandboxes.list'],
+			'project-api-key',
+			{ query: { metadata: `owner=${email}` } },
+		).catch((error: unknown) => error);
+
+		expect(result).toBeInstanceOf(ApiError);
+		if (result instanceof ApiError) {
+			expect(JSON.stringify(result.request)).not.toContain('alice');
+			expect(result.url).not.toContain('alice');
+			expect(result.message).not.toContain('alice');
+		}
+	});
 });
