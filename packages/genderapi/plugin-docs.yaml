@@ -1,0 +1,49 @@
+displayName: Gender API
+description: Look up the gender behind a first name with Gender API - one name, up to 100 at once, an email address or a full name, each answer scored with its sample count and accuracy.
+domain: gender-api.com
+recommendedAuth: api_key
+overviewNote: |
+  Copy the server key from your Gender API account. The key travels as the `key` **query parameter**, which is where the simple API expects it, not as a header.
+
+  Things to know before you call:
+
+  - **A failure arrives with HTTP 200.** Gender API puts `errno` and `errmsg` in the body of every answer, with `0` on a good one. A live probe with a bad key answered **200** and `{"errno":40,"errmsg":"invalid or missing key"}`. The plugin throws whenever the code is non-zero, whatever the status was.
+  - **The documented codes are 10, 11, 20, 21, 30, 40 and 500.** They cover an invalid country code, a country count that does not match the name count, a missing name, more than 100 names, a used-up quota, an unknown key, and their own internal failure. `GenderApiAPIError` exposes `errno` so a caller can branch on them, and `GENDER_API_ERRNO` names each one.
+  - **The quota is `errno: 30`, not a 429.** A limit that ran out answers 200 with the code and a link to the pricing page, so it is not retried.
+  - **`gender` can be `unknown`.** The answer is still a success: `samples` and `accuracy` tell you how weak the data is. Gender API never returns a null gender.
+  - **A country changes the answer.** `Andrea` is male in Italy and female in Germany, and `multi` accepts one country for every name or one per name in the same order.
+  - **A name is normalized before lookup.** `name_sanitized` is the form the database actually matched, which is worth reading when a result looks wrong.
+  - **`fullName` returns a null last name under `strict`.** With `strict: true` Gender API returns a null `last_name` when it is not in the database, instead of guessing one.
+examples:
+  read:
+    path: lookup.name
+    title: Look up the gender behind one first name
+    args:
+      name: Andrea
+      country: IT
+  read2:
+    path: lookup.multi
+    title: Look up several names in one request
+    args:
+      names:
+        - lisa
+        - jess
+        - thomas
+apiExamples:
+  lookup.name:
+    call: "{ name: 'Andrea', country: 'IT' }"
+  lookup.multi:
+    call: "{ names: ['lisa', 'jess', 'thomas'] }"
+  email.lookup:
+    call: "{ email: 'markus.johnson@gmail.com' }"
+  fullName.split:
+    call: "{ split: 'theresa miller' }"
+  countryOfOrigin.get:
+    call: "{ name: 'Markus' }"
+  account.stats:
+    call: "{}"
+apiNotes:
+  lookup.name: 'Localizing with `country`, `locale` or `ip` changes the answer for names such as Andrea.'
+  lookup.multi: 'Up to 100 names; `countries` takes one code per name, or one for all of them.'
+  fullName.split: 'With `strict: true`, a last name that is not in the database comes back as null instead of a guess.'
+  countryOfOrigin.get: 'Each entry carries a probability, and the last one is often a catch-all with the code `--`.'

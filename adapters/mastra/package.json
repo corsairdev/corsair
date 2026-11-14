@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/mastra",
-  "version": "0.1.26",
+  "version": "0.1.28",
   "description": "Corsair ToolProvider for Mastra. Expose 200+ integrations to Mastra agents with managed OAuth and credentials that stay in your own database.",
   "keywords": [
     "mastra",

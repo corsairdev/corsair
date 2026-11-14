@@ -1,0 +1,135 @@
+---
+title: "Documenso plugin"
+sidebarTitle: "Overview"
+description: "Create and manage Documenso signing envelopes, legacy documents and templates, recipients, fields, folders, attachments, downloads, and embed tokens through the documented v2 REST API."
+---
+
+Use **Documenso** through Corsair: one client, typed API calls.
+
+Generate a team-scoped API token in Documenso Team Settings / API Tokens and store it as the Corsair `api_key`. Documenso expects the raw token in `Authorization` (no Bearer prefix). The current base URL is `/api/v2`; set `baseUrl` for staging or a self-hosted instance. HTTPS is required except for localhost loopback development URLs.
+
+The OpenAPI reference still lists deprecated v2 `/document/*`, `/template/*`, and matching field/recipient routes. They are included here for migration compatibility and scheduled for removal on 1 March 2027; use `/envelope/*` operations for new integrations. The plugin does not implement v1, v2-beta, or webhooks.
+
+PDF downloads return `{ kind: "binary", contentType, base64, size }` and are limited to 20 MiB per response. PDF uploads use `files: [{ filename, contentType, contentBase64 }]` or the legacy single `file` shape; they are capped at 16 MiB per file and 32 MiB total per request for bounded transport. These plugin-side limits are not Documenso plan limits.
+
+Standard requests time out after 20 seconds; multipart uploads and PDF downloads use a bounded 120-second timeout so permitted transfers can complete on slower links.
+
+**What you get:**
+
+- 89 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/documenso better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/documenso better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/documenso better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/documenso better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { documenso } from '@corsair-dev/documenso';
+
+export const corsair = createCorsair({
+	plugins: [
+		documenso(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Documenso API key before the first call: `pnpm corsair setup --plugin=documenso --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+documenso()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'documenso',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List envelopes**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.documenso.api.envelopes.find.get({ perPage: 1 });
+```
+
+
+**Update an envelope**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.documenso.api.envelopes.update.post({ envelopeId: 'envelope_sample' });
+```
+
+
+See the full list on the [API](/plugins/documenso/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/documenso/api">
+    Every `documenso.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

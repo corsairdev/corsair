@@ -159,9 +159,12 @@ export const BaseProviders = [
 	'cloro',
 	'close',
 	'cloudcart',
+	'cloudconvert',
 	'cloudflare',
 	'cloudflareapikey',
+	'cloudflarebrowserrendering',
 	'cloudinary',
+	'cloudlayer',
 	'coassemble',
 	'coda',
 	'codacy',
@@ -173,6 +176,7 @@ export const BaseProviders = [
 	'coinmarketcap',
 	'collegefootballdata',
 	'commcare',
+	'companyenrich',
 	'composio',
 	'confluence',
 	'connecteam',
@@ -180,6 +184,7 @@ export const BaseProviders = [
 	'contentfulgraphql',
 	'contextdev',
 	'contextsevenmcp',
+	'conversiontools',
 	'convex',
 	'convoloai',
 	'cosmic',
@@ -190,6 +195,7 @@ export const BaseProviders = [
 	'cursor',
 	'customerio',
 	'customgpt',
+	'customjs',
 	'cuttly',
 	'dadataru',
 	'daffy',
@@ -200,6 +206,7 @@ export const BaseProviders = [
 	'datarobot',
 	'deepseek',
 	'demio',
+	'deployhq',
 	'desktime',
 	'devinmcp',
 	'diffbot',
@@ -209,6 +216,7 @@ export const BaseProviders = [
 	'dockerhub',
 	'docmosis',
 	'docsumo',
+	'documenso',
 	'docupost',
 	'docusign',
 	'dodopayments',
@@ -256,6 +264,9 @@ export const BaseProviders = [
 	'foursquare',
 	'fundable',
 	'gemini',
+	'gamma',
+	'genderapi',
+	'genderize',
 	'giphy',
 	'github',
 	'gitlab',
@@ -306,11 +317,17 @@ export const BaseProviders = [
 	'jira',
 	'kaggle',
 	'keenable',
+	'keyword',
 	'kibana',
+	'kickbox',
+	'kit',
 	'klaviyo',
 	'klazify',
 	'kling',
 	'knack',
+	'kofi',
+	'kontentai',
+	'krakenio',
 	'leexi',
 	'leiga',
 	'lemonsqueezy',
@@ -695,9 +712,12 @@ export const ProviderDisplayNames = {
 	cloro: 'cloro',
 	close: 'Close',
 	cloudcart: 'CloudCart',
+	cloudconvert: 'CloudConvert',
 	cloudflare: 'Cloudflare',
 	cloudflareapikey: 'Cloudflare API Key',
+	cloudflarebrowserrendering: 'Cloudflare Browser Run',
 	cloudinary: 'Cloudinary',
+	cloudlayer: 'Cloudlayer',
 	coassemble: 'Coassemble',
 	coda: 'Coda',
 	codacy: 'Codacy',
@@ -709,6 +729,7 @@ export const ProviderDisplayNames = {
 	coinmarketcap: 'CoinMarketCap',
 	collegefootballdata: 'College Football Data',
 	commcare: 'CommCare',
+	companyenrich: 'CompanyEnrich',
 	composio: 'Composio',
 	confluence: 'Confluence',
 	connecteam: 'Connecteam',
@@ -716,6 +737,7 @@ export const ProviderDisplayNames = {
 	contentfulgraphql: 'Contentful GraphQL',
 	contextdev: 'Context.dev',
 	contextsevenmcp: 'Context7',
+	conversiontools: 'Conversion Tools',
 	convex: 'Convex',
 	convoloai: 'ConvoloAi',
 	cosmic: 'Cosmic',
@@ -726,6 +748,7 @@ export const ProviderDisplayNames = {
 	cursor: 'Cursor',
 	customerio: 'Customer.io',
 	customgpt: 'CustomGPT',
+	customjs: 'CustomJS',
 	cuttly: 'Cutt.ly',
 	dadataru: 'Dadataru',
 	daffy: 'Daffy',
@@ -736,6 +759,7 @@ export const ProviderDisplayNames = {
 	datarobot: 'DataRobot',
 	deepseek: 'DeepSeek',
 	demio: 'Demio',
+	deployhq: 'DeployHQ',
 	desktime: 'DeskTime',
 	devinmcp: 'Devin MCP',
 	diffbot: 'Diffbot',
@@ -745,6 +769,7 @@ export const ProviderDisplayNames = {
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
 	docsumo: 'Docsumo',
+	documenso: 'Documenso',
 	docupost: 'Docupost',
 	docusign: 'DocuSign',
 	dodopayments: 'Dodo Payments',
@@ -792,6 +817,9 @@ export const ProviderDisplayNames = {
 	foursquare: 'Foursquare',
 	fundable: 'Fundable',
 	gemini: 'Gemini',
+	gamma: 'Gamma',
+	genderapi: 'Gender API',
+	genderize: 'Genderize',
 	giphy: 'Giphy',
 	github: 'GitHub',
 	gitlab: 'GitLab',
@@ -842,11 +870,17 @@ export const ProviderDisplayNames = {
 	jira: 'Jira',
 	kaggle: 'Kaggle',
 	keenable: 'Keenable',
+	keyword: 'Keyword',
 	kibana: 'Kibana',
+	kickbox: 'Kickbox',
+	kit: 'Kit',
 	klaviyo: 'Klaviyo',
 	klazify: 'Klazify',
 	kling: 'Kling',
 	knack: 'Knack',
+	kofi: 'Ko-fi',
+	kontentai: 'Kontent.ai',
+	krakenio: 'Kraken.io',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
 	lemonsqueezy: 'Lemon Squeezy',
@@ -1238,9 +1272,12 @@ export type AllProviders =
 	| 'cloro'
 	| 'close'
 	| 'cloudcart'
+	| 'cloudconvert'
 	| 'cloudflare'
 	| 'cloudflareapikey'
+	| 'cloudflarebrowserrendering'
 	| 'cloudinary'
+	| 'cloudlayer'
 	| 'coassemble'
 	| 'coda'
 	| 'codacy'
@@ -1252,6 +1289,7 @@ export type AllProviders =
 	| 'coinmarketcap'
 	| 'collegefootballdata'
 	| 'commcare'
+	| 'companyenrich'
 	| 'composio'
 	| 'confluence'
 	| 'connecteam'
@@ -1259,6 +1297,7 @@ export type AllProviders =
 	| 'contentfulgraphql'
 	| 'contextdev'
 	| 'contextsevenmcp'
+	| 'conversiontools'
 	| 'convex'
 	| 'convoloai'
 	| 'cosmic'
@@ -1269,6 +1308,7 @@ export type AllProviders =
 	| 'cursor'
 	| 'customerio'
 	| 'customgpt'
+	| 'customjs'
 	| 'cuttly'
 	| 'dadataru'
 	| 'daffy'
@@ -1279,6 +1319,7 @@ export type AllProviders =
 	| 'datarobot'
 	| 'deepseek'
 	| 'demio'
+	| 'deployhq'
 	| 'desktime'
 	| 'devinmcp'
 	| 'diffbot'
@@ -1288,6 +1329,7 @@ export type AllProviders =
 	| 'dockerhub'
 	| 'docmosis'
 	| 'docsumo'
+	| 'documenso'
 	| 'docupost'
 	| 'docusign'
 	| 'dodopayments'
@@ -1335,6 +1377,9 @@ export type AllProviders =
 	| 'foursquare'
 	| 'fundable'
 	| 'gemini'
+	| 'gamma'
+	| 'genderapi'
+	| 'genderize'
 	| 'giphy'
 	| 'github'
 	| 'gitlab'
@@ -1385,11 +1430,17 @@ export type AllProviders =
 	| 'jira'
 	| 'kaggle'
 	| 'keenable'
+	| 'keyword'
 	| 'kibana'
+	| 'kickbox'
+	| 'kit'
 	| 'klaviyo'
 	| 'klazify'
 	| 'kling'
 	| 'knack'
+	| 'kofi'
+	| 'kontentai'
+	| 'krakenio'
 	| 'leexi'
 	| 'leiga'
 	| 'lemonsqueezy'

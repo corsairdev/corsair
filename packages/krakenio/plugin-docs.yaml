@@ -1,0 +1,43 @@
+displayName: Kraken.io
+description: Image and PDF optimization with Kraken.io - compress a file from a URL or a base64 upload, resize it, change its format, control the quality and keep chosen metadata, and read the account's plan and remaining quota.
+domain: kraken.io
+recommendedAuth: api_key
+overviewNote: |
+  Copy your API key and API secret from your Kraken.io account under API Credentials. Both are needed: Kraken authenticates with the pair, not with the key alone.
+
+  Things to know before you call:
+
+  - **The pair travels in the JSON body, not a header.** Every request carries `{"auth": {"api_key": ..., "api_secret": ...}}`. The plugin adds that block itself and never logs it, and it keeps no request body on an error, because the body holds the secret.
+  - **A call needs `wait` or a `callback_url`.** With `wait: true` the connection stays open and the answer carries the result. With a `callback_url` Kraken answers at once with only the job `id` (no `success` field) and posts the result, carrying the same `id`, later. A request with neither is refused, and the plugin rejects it before the call.
+  - **Quota is measured in bytes.** `account.status` returns `quota_total`, `quota_used` and `quota_remaining` in bytes, not in images, so divide by 1048576 for mebibytes.
+  - **A one-file answer is flat.** With `wait: true`, `file_name`, `kraked_url` and the sizes sit at the top level of the answer. Only a multi-size resize fills `results`, one entry per size, and there one entry can say `success: false` with a `message` while the top-level `success` is true.
+  - **`resize` needs a `strategy`.** Kraken refuses a resize without one, and the plugin rejects it before the call. `square` takes a `size`; the others take `width` and/or `height`. `fit` crops to fill the box; `fill` keeps the aspect ratio and pads with `background`.
+  - **Lossless is the default.** Leave out `lossy`, or set it to `false`, for lossless; `lossy: true` and an optional `quality` trade some fidelity for size.
+  - **A 200 with `success: false` is a failure.** Kraken also refuses a whole request that way, such as an unsupported format, and the plugin throws rather than returning a result with every field missing.
+  - **`kraked_url` is temporary.** Kraken serves an optimized file from `dl.kraken.io` for a limited time, so a caller that needs to keep it should download it.
+  - **Nothing is replayed.** Every call is a POST that spends quota, so a 5xx, a dropped connection or a timeout is never retried: the image may already have been fetched and billed.
+  - **The upload route takes base64.** A tool call carries text, so `upload.optimize` takes the file as a base64 string (a `data:` URL works too), decodes it, and sends it to Kraken as the multipart file part beside the JSON options, which is the form `/v1/upload` accepts.
+  - **No webhooks are handled.** A `callback_url` is where Kraken posts a result, and it is your endpoint to run, not this plugin's.
+examples:
+  read:
+    path: account.status
+    title: Read the plan and remaining quota
+    args: {}
+  write:
+    path: url.optimize
+    title: Optimize an image from a URL
+    args:
+      url: https://acme.example/header.jpg
+      wait: true
+      lossy: true
+      quality: 80
+apiExamples:
+  url.optimize:
+    call: "{ url: 'https://acme.example/header.jpg', wait: true, lossy: true, quality: 80, resize: { width: 800, strategy: 'fit' } }"
+  upload.optimize:
+    call: "{ data: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=', filename: 'pixel.png', wait: true, convert: { format: 'webp' } }"
+  account.status: {}
+apiNotes:
+  url.optimize: 'Needs `wait: true` or a `callback_url`. Spends quota. With a multi-size resize, a failure of one size appears in the `results` entry for that size; a whole-request refusal arrives as a 200 with `success: false`, which the plugin throws on.'
+  upload.optimize: 'Takes the file as base64 and sends it to Kraken as a multipart upload. Needs `wait: true` or a `callback_url`. Spends quota.'
+  account.status: 'Quota figures are in bytes.'
