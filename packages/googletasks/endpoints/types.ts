@@ -42,7 +42,7 @@ const TaskSchema = z.object({
 		)
 		.optional(),
 	assignmentInfo: z
-		.strictObject({
+		.object({
 			surfaceType: z
 				.union([
 					z.enum(['CONTEXT_TYPE_UNSPECIFIED', 'GMAIL', 'DOCUMENT', 'SPACE']),
@@ -51,7 +51,7 @@ const TaskSchema = z.object({
 				.optional(),
 			linkToTask: z.string().optional(),
 			driveResourceInfo: z
-				.strictObject({
+				.object({
 					driveFileId: z.string().optional(),
 					resourceKey: z.string().optional(),
 				})

@@ -135,7 +135,11 @@ describe('Google Tasks output schemas tolerate provider additions', () => {
 			id: 'task-1',
 			status: 'archived',
 			someNewField: { a: 1 },
-			assignmentInfo: { surfaceType: 'NEW_SURFACE' },
+			assignmentInfo: {
+				surfaceType: 'NEW_SURFACE',
+				newAssignmentField: true,
+				driveResourceInfo: { driveFileId: 'f', newDriveField: 1 },
+			},
 		});
 		expect(parsed.id).toBe('task-1');
 		expect(parsed.status).toBe('archived');
