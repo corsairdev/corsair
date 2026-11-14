@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { PrismicAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { prismic } from './index';
@@ -14,21 +15,31 @@ const CONTEXT = {
 // arguments they use. Typing it as the core map is what the runtime sees.
 const HANDLERS: CorsairErrorHandler = errorHandlers;
 
+/** Core's ApiError for a Prismic answer, which is what the handlers see. */
 function apiError(
 	status: number,
 	options: {
-		transport?: boolean;
-		method?: string;
-		credentialsRejected?: boolean;
-		fieldErrors?: { property: string; error: string }[];
+		method?: 'GET' | 'POST' | 'PUT';
+		// unknown: each Prismic API sends a different error shape.
+		body?: Untyped;
+		retryAfter?: number;
 	} = {},
 ) {
-	return new PrismicAPIError(`Prismic ${status}`, {
-		status,
-		method: 'GET',
-		...options,
-	});
+	return new ApiError(
+		{ method: options.method ?? 'GET', url: '/documents/search' },
+		{
+			url: 'https://my-cafe.cdn.prismic.io/api/v2/documents/search',
+			ok: false,
+			status,
+			statusText: 'error',
+			body: options.body,
+		},
+		`Prismic ${status}`,
+		{ retryAfter: options.retryAfter },
+	);
 }
+
+type Untyped = unknown; // unknown: see the note above.
 
 function route(error: Error): string {
 	const match = Object.entries(HANDLERS).find(([, entry]) =>
@@ -40,7 +51,9 @@ function route(error: Error): string {
 
 describe('Prismic errorHandlers', () => {
 	it('routes a rejected credential to AUTH_ERROR without a retry', async () => {
-		const error = apiError(401, { credentialsRejected: true });
+		const error = apiError(401, {
+			body: { type: 'api_security_error', message: 'Invalid access token' },
+		});
 
 		expect(route(error)).toBe('AUTH_ERROR');
 		await expect(HANDLERS.AUTH_ERROR?.handler(error, CONTEXT)).resolves.toEqual(
@@ -50,39 +63,44 @@ describe('Prismic errorHandlers', () => {
 		);
 	});
 
-	it('stops a bare 401 at UNAUTHORIZED_ERROR, which a missing repository answers', () => {
-		expect(route(apiError(401))).toBe('UNAUTHORIZED_ERROR');
+	it("routes the Migration API's access-denied 403 to AUTH_ERROR", () => {
+		const error = apiError(403, {
+			method: 'POST',
+			body: {
+				Message:
+					'User is not authorized to access this resource with an explicit deny in an identity-based policy',
+			},
+		});
+
+		expect(route(error)).toBe('AUTH_ERROR');
 	});
 
-	it('routes a 429 to RATE_LIMIT_ERROR with a one-second floor', async () => {
+	it('routes a 429 to RATE_LIMIT_ERROR without a second round of retries', async () => {
+		// Core's request() has already retried the 429 three times.
 		const error = apiError(429);
 
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');
 		await expect(
 			HANDLERS.RATE_LIMIT_ERROR?.handler(error, CONTEXT),
 		).resolves.toEqual({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs: undefined,
-			retryStrategy: 'linear_1s',
 		});
 	});
 
 	it('keeps a Retry-After when the rate limiter sends one', async () => {
-		const error = new PrismicAPIError('Prismic 429', {
-			status: 429,
-			method: 'POST',
-			retryAfter: 2000,
-		});
+		const error = apiError(429, { method: 'POST', retryAfter: 2000 });
 
 		const result = await HANDLERS.RATE_LIMIT_ERROR?.handler(error, CONTEXT);
 		expect(result?.headersRetryAfterMs).toBe(2000);
 	});
 
-	it('routes a field-error body to VALIDATION_ERROR even without a status', async () => {
-		// The Migration API reports bad fields in the body; the status may be 400
-		// or absent from a proxy, and either way the request must change.
-		const error = apiError(400, {
-			fieldErrors: [{ property: 'title', error: 'must be a string' }],
+	it('routes a field-error body to VALIDATION_ERROR whatever the status', async () => {
+		// The Migration API reports bad fields in the body; whatever status a
+		// proxy puts on it, the request must change.
+		const error = apiError(409, {
+			method: 'POST',
+			body: [{ property: 'title', error: 'must be a string' }],
 		});
 
 		expect(route(error)).toBe('VALIDATION_ERROR');
@@ -91,8 +109,8 @@ describe('Prismic errorHandlers', () => {
 		).resolves.toEqual({ maxRetries: 0 });
 	});
 
-	it('routes 404 and 422 to VALIDATION_ERROR with no retry', async () => {
-		for (const status of [404, 422]) {
+	it('routes 400, 404 and 422 to VALIDATION_ERROR with no retry', async () => {
+		for (const status of [400, 404, 422]) {
 			expect(route(apiError(status))).toBe('VALIDATION_ERROR');
 		}
 	});
@@ -127,10 +145,7 @@ describe('Prismic errorHandlers', () => {
 
 	it('replays a 5xx on a read and refuses to on a write', async () => {
 		const read = apiError(503);
-		const write = new PrismicAPIError('Prismic 503', {
-			status: 503,
-			method: 'PUT',
-		});
+		const write = apiError(503, { method: 'PUT' });
 
 		expect(route(read)).toBe('SERVER_ERROR');
 		await expect(

@@ -2,7 +2,6 @@ import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
 	contentBase,
-	describePrismicError,
 	isCredentialRejection,
 	makePrismicRequest,
 	nextPagePath,
@@ -62,9 +61,6 @@ describe('Prismic error bodies', () => {
 
 		expect(readErrorType(body)).toBe('api_security_error');
 		expect(readErrorMessage(body)).toBe('Invalid access token');
-		expect(describePrismicError(401, body, 'fallback')).toBe(
-			'Prismic 401 api_security_error: Invalid access token',
-		);
 	});
 
 	it('reads the Migration API field-error array', () => {
@@ -84,22 +80,6 @@ describe('Prismic error bodies', () => {
 					'Invalid block type. Supported block types are: paragraph, embed',
 			},
 		]);
-		expect(describePrismicError(400, body, 'fallback')).toBe(
-			'Prismic 400: data.richtext.2.type: Invalid block type. Supported block types are: paragraph, embed',
-		);
-	});
-
-	it('summarises at most three field errors, so the message stays readable', () => {
-		const body = Array.from({ length: 5 }, (_, index) => ({
-			property: `data.field${index}`,
-			error: 'is required',
-		}));
-
-		const message = describePrismicError(400, body, 'fallback');
-
-		expect(message).toContain('data.field0');
-		expect(message).toContain('data.field2');
-		expect(message).not.toContain('data.field3');
 	});
 
 	it('reads the Migration API 403 Message, which is capitalised', () => {
@@ -116,7 +96,7 @@ describe('Prismic error bodies', () => {
 		expect(isCredentialRejection(403, { message: 'Forbidden' })).toBe(false);
 	});
 
-	it('treats a bare 401 as an auth failure, since a missing repo answers one', () => {
+	it('treats a bare 401 as an auth failure', () => {
 		expect(isCredentialRejection(401, undefined)).toBe(true);
 	});
 
@@ -131,20 +111,58 @@ describe('Prismic error bodies', () => {
 });
 
 describe('nextPagePath', () => {
-	it('keeps only the path and query, so the call stays on the repository host', () => {
+	it('returns the search path relative to the Content base, and the query apart', () => {
+		// The Content base already ends in /api/v2, so the path must not repeat it,
+		// and the query goes to the client so it is serialised once.
 		expect(
 			nextPagePath(
 				'https://my-cafe.cdn.prismic.io/api/v2/documents/search?ref=X47BMBAAACAAVh4N&page=2&pageSize=2',
 			),
-		).toBe('/api/v2/documents/search?ref=X47BMBAAACAAVh4N&page=2&pageSize=2');
+		).toEqual({
+			url: '/documents/search',
+			query: { ref: 'X47BMBAAACAAVh4N', page: '2', pageSize: '2' },
+		});
 	});
 
-	it('keeps an access_token the URL carries, which authorises a private repository', () => {
-		const path = nextPagePath(
+	it('keeps every value of a repeated key', () => {
+		expect(
+			nextPagePath(
+				'https://my-cafe.cdn.prismic.io/api/v2/documents/search?ref=abc&q=a&q=b',
+			).query,
+		).toEqual({ ref: 'abc', q: ['a', 'b'] });
+	});
+
+	it("drops the URL's access_token, since the client adds the account's own", () => {
+		const { query } = nextPagePath(
 			'https://my-cafe.cdn.prismic.io/api/v2/documents/search?ref=abc&access_token=secret',
 		);
 
-		expect(path).toContain('access_token=secret');
+		expect(query).toEqual({ ref: 'abc' });
+	});
+
+	it('refuses a URL that is not a Prismic search page', () => {
+		expect(() =>
+			nextPagePath('https://my-cafe.cdn.prismic.io/api/v2/../admin?x=1'),
+		).toThrow(PrismicAPIError);
+	});
+
+	it('builds one well-formed URL with the access token on a private repository', async () => {
+		mockRequest.mockResolvedValue({ results: [] });
+
+		await makePrismicRequest(CREDENTIALS, {
+			method: 'GET',
+			api: 'content',
+			...nextPagePath(
+				'https://my-cafe.cdn.prismic.io/api/v2/documents/search?ref=abc&page=2',
+			),
+		});
+
+		const [config, options] = mockRequest.mock.calls[0] ?? [];
+		expect(config?.BASE).toBe('https://my-cafe.cdn.prismic.io/api/v2');
+		expect(options).toMatchObject({
+			url: '/documents/search',
+			query: { ref: 'abc', page: '2', access_token: 'access-token' },
+		});
 	});
 });
 
@@ -184,6 +202,9 @@ describe('makePrismicRequest', () => {
 		const [config, options] = mockRequest.mock.calls[0] ?? [];
 		// The Content host is the repository's own, not the migration host.
 		expect(config).toMatchObject({ BASE: contentBase('my-cafe') });
+		expect(contentBase('my-cafe')).toBe(
+			'https://my-cafe.cdn.prismic.io/api/v2',
+		);
 		expect(options).toMatchObject({
 			query: { pageSize: 2, access_token: 'access-token' },
 		});
@@ -239,14 +260,13 @@ describe('makePrismicRequest', () => {
 		).rejects.toThrow(/must not contain newlines/);
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
-	it('reports a rejected write token as a credential failure without echoing it', async () => {
-		mockRequest.mockRejectedValue(
-			apiError(
-				403,
-				{ Message: 'User is not authorized to access this resource' },
-				'POST',
-			),
+	it('lets core ApiError through unchanged, so handlers and core retries see it', async () => {
+		const rejected = apiError(
+			403,
+			{ Message: 'User is not authorized to access this resource' },
+			'POST',
 		);
+		mockRequest.mockRejectedValue(rejected);
 
 		const error = await captureError(
 			makePrismicRequest(CREDENTIALS, {
@@ -257,41 +277,12 @@ describe('makePrismicRequest', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(PrismicAPIError);
-		if (!(error instanceof PrismicAPIError)) return;
-		expect(error.status).toBe(403);
-		expect(error.credentialsRejected).toBe(true);
+		expect(error).toBe(rejected);
 		// The token rode in a header, so no error may repeat it.
 		expect(JSON.stringify(error)).not.toContain('write-token');
 	});
 
-	it('keeps the field errors from a Migration rejection', async () => {
-		mockRequest.mockRejectedValue(
-			apiError(
-				400,
-				[{ property: 'title', error: 'The value must be a string' }],
-				'POST',
-			),
-		);
-
-		const error = await captureError(
-			makePrismicRequest(CREDENTIALS, {
-				method: 'POST',
-				api: 'migration',
-				url: '/documents',
-				body: { title: 1 },
-			}),
-		);
-
-		expect(error).toBeInstanceOf(PrismicAPIError);
-		if (!(error instanceof PrismicAPIError)) return;
-		expect(error.fieldErrors).toEqual([
-			{ property: 'title', error: 'The value must be a string' },
-		]);
-		expect(error.message).toContain('title');
-	});
-
-	it('keeps a 429 and its Retry-After', async () => {
+	it('keeps a 429 and its Retry-After on the ApiError', async () => {
 		const rateLimited = new ApiError(
 			{ method: 'POST', url: '/documents' },
 			{
@@ -315,11 +306,10 @@ describe('makePrismicRequest', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(PrismicAPIError);
-		if (!(error instanceof PrismicAPIError)) return;
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(1000);
-		expect(error.credentialsRejected).toBe(false);
 	});
 
 	it('flags a dropped connection as a transport failure with its method', async () => {

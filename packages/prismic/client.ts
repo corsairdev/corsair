@@ -10,13 +10,13 @@ import { ApiError, request } from 'corsair/http';
  * Prismic has two APIs on two hosts, with different contracts:
  *
  * - The **Content API** reads published documents from
- *   `https://<repository>.prismic.io/api/v2`. It needs no credential for a public
+ *   `https://<repository>.cdn.prismic.io/api/v2`. It needs no credential for a public
  *   repository; a private one needs the repository's access token as `access_token`.
  * - The **Migration API** writes documents to `https://migration.prismic.io`. It
  *   needs a write token in `Authorization: Bearer <token>` and the repository id in
  *   a `repository` header.
  */
-export const PRISMIC_CONTENT_HOST_SUFFIX = '.prismic.io';
+export const PRISMIC_CONTENT_HOST_SUFFIX = '.cdn.prismic.io';
 export const PRISMIC_MIGRATION_BASE = 'https://migration.prismic.io';
 
 /** The Content API allows 200 requests per second per repository. */
@@ -29,54 +29,35 @@ const PRISMIC_RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * The two APIs report errors differently.
+ * The two APIs report errors differently, and both arrive as core's `ApiError`
+ * with the body on `error.body`; the readers below take that body apart.
  *
  * The Content API answers `{ type, message }`, such as
- * `{"type":"api_security_error","message":"Invalid access token"}`, and a plain
- * `401` when the repository does not exist.
+ * `{"type":"api_validation_error","message":"Please specify ref"}`, and a `404`
+ * when the repository does not exist.
  *
  * The Migration API answers an **array** of `{ property, value?, error }`,
  * naming each invalid field, and a `403` with
  * `{"Message":"User is not authorized ..."}` for a bad write token. Its 429 is
  * `{"message":"Rate limit exceeded.","request_id":"..."}`.
+ *
+ * `PrismicAPIError` is only for a request that got no answer (DNS, reset,
+ * abort) or one refused before it was sent, so it carries no status.
  */
 export class PrismicAPIError extends Error {
-	readonly status?: number;
-	/** The stable error kind, such as `api_security_error`. */
-	readonly code?: string;
-	/** Milliseconds from a Retry-After header, when Prismic sent one. */
-	readonly retryAfter?: number;
 	/** The request method, so handlers can refuse to replay a write. */
 	readonly method?: string;
 	/** Set when the request never reached Prismic (DNS, reset, abort). */
 	readonly transport: boolean;
-	/** Set when Prismic rejected the credential rather than the request. */
-	readonly credentialsRejected: boolean;
-	/** Per-field rejections the Migration API reported, when it sent them. */
-	readonly fieldErrors?: { property: string; error: string }[];
 
 	constructor(
 		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			code?: string;
-			retryAfter?: number;
-			method?: string;
-			transport?: boolean;
-			credentialsRejected?: boolean;
-			fieldErrors?: { property: string; error: string }[];
-		} = {},
+		options: { cause?: Error; method?: string; transport?: boolean } = {},
 	) {
 		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'PrismicAPIError';
-		this.status = options.status;
-		this.code = options.code;
-		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.transport = options.transport ?? false;
-		this.credentialsRejected = options.credentialsRejected ?? false;
-		this.fieldErrors = options.fieldErrors;
 	}
 }
 
@@ -144,28 +125,7 @@ export function isCredentialRejection(
 	return message !== undefined && /not authorized|accessdenied/i.test(message);
 }
 
-export function describePrismicError(
-	status: number | undefined,
-	body: Untyped,
-	fallback: string,
-): string {
-	const fieldErrors = readFieldErrors(body);
-	if (fieldErrors) {
-		// A field rejection names each bad property, which is what a caller needs.
-		const summary = fieldErrors
-			.slice(0, 3)
-			.map((entry) => `${entry.property}: ${entry.error}`)
-			.join('; ');
-		const label = status === undefined ? '' : `Prismic ${status}: `;
-		return `${label}${summary}`;
-	}
-	const message = readErrorMessage(body) ?? fallback;
-	const type = readErrorType(body);
-	const label = [status, type].filter((part) => part !== undefined).join(' ');
-	return label ? `Prismic ${label}: ${message}` : message;
-}
-
-/** A query value; a list is sent as the repeated key PostGrid-style, no brackets. */
+/** A query value; a list is sent as the repeated key, no brackets. */
 export type PrismicQuery = Record<
 	string,
 	string | number | boolean | readonly string[] | undefined
@@ -186,19 +146,37 @@ export type PrismicRequest = {
 	body?: Untyped;
 };
 
+/** The only Content API route a `next_page` link may point at. */
+const SEARCH_PATH = '/api/v2/documents/search';
+
 /**
- * Reads a Content API `next_page`, keeping only the path and query so the call
- * stays on the configured repository host.
+ * Reads a Content API `next_page` into a path relative to the Content base and
+ * its query, so the call stays on the configured repository host.
  *
- * Prismic prints an absolute CDN URL, such as
- * `https://<repo>.cdn.prismic.io/api/v2/documents/search?...`, and the API answers
- * on both hosts. Only the path and query are rebuilt here, with any `access_token`
- * the URL carried preserved, since it is what authorises a private repository.
+ * Prismic prints an absolute URL, such as
+ * `https://<repo>.cdn.prismic.io/api/v2/documents/search?ref=...&page=2`. The
+ * Content base already ends in `/api/v2`, so the path is returned without it, and
+ * the parameters go back as `query` for the client to serialise once. A repeated
+ * key keeps every value. `access_token` is dropped: the client adds the
+ * account's own token.
  */
-export function nextPagePath(nextUrl: string): string {
-	const url = new URL(nextUrl);
-	const search = url.searchParams.toString();
-	return search ? `${url.pathname}?${search}` : url.pathname;
+export function nextPagePath(nextUrl: string): {
+	url: string;
+	query: PrismicQuery;
+} {
+	const parsed = new URL(nextUrl);
+	if (parsed.pathname !== SEARCH_PATH) {
+		throw new PrismicAPIError(
+			`nextPage must be a Prismic search URL (${SEARCH_PATH}), as returned in next_page.`,
+		);
+	}
+	const query: Record<string, string | string[]> = {};
+	for (const key of new Set(parsed.searchParams.keys())) {
+		if (key === 'access_token') continue;
+		const values = parsed.searchParams.getAll(key);
+		query[key] = values.length === 1 ? (values[0] ?? '') : values;
+	}
+	return { url: '/documents/search', query };
 }
 
 /** Encodes one path segment. */
@@ -275,19 +253,9 @@ export async function makePrismicRequest(
 			rateLimitConfig: PRISMIC_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new PrismicAPIError(
-				describePrismicError(error.status, error.body, error.statusText),
-				{
-					status: error.status,
-					code: readErrorType(error.body),
-					retryAfter: error.retryAfter,
-					method,
-					credentialsRejected: isCredentialRejection(error.status, error.body),
-					fieldErrors: readFieldErrors(error.body),
-				},
-			);
-		}
+		// Prismic answered: core's ApiError carries the status, body, request and
+		// Retry-After the handlers and core's retries read, so it goes up as is.
+		if (error instanceof ApiError) throw error;
 		// DOMException (fetch aborts and timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new PrismicAPIError(error.message, {

@@ -1,40 +1,47 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PrismicAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isCredentialRejection,
+	PrismicAPIError,
+	readFieldErrors,
+} from './client';
 
+// Prismic's answers arrive as core's ApiError; PrismicAPIError is a request
+// that got no answer, so it has no status.
 function statusOf(error: Error): number | undefined {
-	return error instanceof PrismicAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+function methodOf(error: Error): string | undefined {
+	if (error instanceof ApiError) return error.request.method;
+	return error instanceof PrismicAPIError ? error.method : undefined;
 }
 
 // The two Prismic APIs share status codes with different meanings, so the
 // handlers read the body where the status alone would mislead.
 export const errorHandlers = {
-	// The Content API's `api_security_error`, or the Migration API's
-	// access-denied 403 on a bad write token.
+	// The Content API's 401 on a private repository without a valid access
+	// token, or the Migration API's access-denied 403 on a bad write token.
 	AUTH_ERROR: {
 		match: (error: Error) =>
-			error instanceof PrismicAPIError && error.credentialsRejected,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	// Any other 401: a repository that does not exist answers this way too, and
-	// no retry changes either case.
-	UNAUTHORIZED_ERROR: {
-		match: (error: Error) => statusOf(error) === 401,
+			error instanceof ApiError &&
+			isCredentialRejection(error.status, error.body),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A 429 on either API. The Content API allows 200 requests a second; the
-	// Migration API allows one a second per repository.
+	// Migration API allows one a second per repository. Core's request() has
+	// already retried it, honouring Retry-After, so it is not retried again.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs:
-				error instanceof PrismicAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'linear_1s' as const,
+				error instanceof ApiError ? error.retryAfter : undefined,
 		}),
 	},
-	// A body Prismic refused: the Migration API answers an array naming each bad
-	// property, which the error keeps as `fieldErrors`. A 400 or 422 from either
-	// API is the same kind of problem.
+	// A request Prismic refused: the Content API's `api_validation_error` (400),
+	// an unknown repository (404), or the Migration API's array naming each bad
+	// property. A retry sends the same request.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
@@ -43,7 +50,7 @@ export const errorHandlers = {
 				status === 400 ||
 				status === 404 ||
 				status === 422 ||
-				(error instanceof PrismicAPIError && error.fieldErrors !== undefined)
+				(error instanceof ApiError && readFieldErrors(error.body) !== undefined)
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
@@ -54,17 +61,14 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof PrismicAPIError && error.transport,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof PrismicAPIError && error.method === 'GET' ? 2 : 0,
+			maxRetries: methodOf(error) === 'GET' ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// Only reads are replayed, for the same reason.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof PrismicAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
+			methodOf(error) === 'GET' && (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
