@@ -3,6 +3,9 @@ import { makeRequest } from '../client';
 import type { MakeContext } from '../index';
 import * as schemas from './types';
 
+// Above Make's 40 s responsive-run window, so a finished run is not reported as a timeout.
+const LONG_REQUEST_TIMEOUT_MS = 60_000;
+
 export async function list(
 	ctx: MakeContext,
 	raw: import('zod').z.infer<typeof schemas.listInput>,
@@ -232,6 +235,8 @@ export async function run(
 		path: `/scenarios/${encodeURIComponent(String(input.scenarioId))}/run`,
 		query: {},
 		body: input.body,
+		// A responsive run waits up to 40 s for the execution to finish.
+		timeout: input.body?.responsive ? LONG_REQUEST_TIMEOUT_MS : undefined,
 	});
 	const result = schemas.runOutput.parse(response);
 	await logEventFromContext(ctx, 'make.scenarios.run', {}, 'completed');
@@ -247,6 +252,8 @@ export async function replay(
 		path: `/scenarios/${encodeURIComponent(String(input.scenarioId))}/replay`,
 		query: {},
 		body: input.body,
+		// Make queues up to 100 replays one by one before it answers.
+		timeout: LONG_REQUEST_TIMEOUT_MS,
 	});
 	const result = schemas.replayOutput.parse(response);
 	await logEventFromContext(ctx, 'make.scenarios.replay', {}, 'completed');

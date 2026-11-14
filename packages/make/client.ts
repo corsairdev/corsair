@@ -22,6 +22,8 @@ export async function makeRequest(
 		>;
 		// Different operations supply different validated, provider-defined JSON bodies.
 		body?: unknown;
+		// Milliseconds; core's default is 20 s, shorter than a responsive run's 40 s window.
+		timeout?: number;
 	},
 	// HTTP responses are untrusted and vary by operation; callers parse the result
 	// with their own output schema before exposing it.
@@ -37,6 +39,7 @@ export async function makeRequest(
 		VERSION: '2',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		TIMEOUT: options.timeout,
 		HEADERS: { Authorization: `Token ${ctx.key}`, Accept: 'application/json' },
 	};
 	const requestOptions: ApiRequestOptions = {
