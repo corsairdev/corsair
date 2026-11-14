@@ -1,9 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { GENDER_API_ERRNO, GenderApiAPIError } from './client';
-
-function errnoOf(error: Error): number | undefined {
-	return error instanceof GenderApiAPIError ? error.errno : undefined;
-}
+import { GENDER_API_ERRNO, genderApiErrorInfo } from './client';
 
 /**
  * Gender API reports its failures as `errno` inside a 200, not as a status, so
@@ -15,33 +11,24 @@ export const errorHandlers = {
 	// A used-up quota. It resets on its own, so a retry with the same key either
 	// waits out the month or fails again.
 	LIMIT_REACHED: {
-		match: (error: Error) =>
-			error instanceof GenderApiAPIError && error.isLimitReached,
+		match: (error: Error) => genderApiErrorInfo(error).isLimitReached,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// An unknown key, or none sent. A retry sends the same key.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiAPIError && error.isAuthError,
+		match: (error: Error) => genderApiErrorInfo(error).isAuthError,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A country code, its count, a missing name, or more than 100 names.
 	VALIDATION_ERROR: {
-		match: (error: Error) => {
-			const errno = errnoOf(error);
-			return (
-				error.name === 'ZodError' ||
-				(error instanceof GenderApiAPIError && error.isValidationError)
-			);
-		},
+		match: (error: Error) =>
+			error.name === 'ZodError' || genderApiErrorInfo(error).isValidationError,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// `errno: 500` is their internal failure. A read changed nothing, so a retry
 	// is safe.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiAPIError &&
-			(error.isServerError || (error.status ?? 0) >= 500),
+		match: (error: Error) => genderApiErrorInfo(error).isServerError,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
@@ -49,31 +36,28 @@ export const errorHandlers = {
 	},
 	// Any other failure the body reported on a 2xx. There is nothing to retry.
 	BODY_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiAPIError && error.bodyError,
+		match: (error: Error) => genderApiErrorInfo(error).bodyError,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// A real 429 only arrives from a proxy, since Gender API uses errno 30.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiAPIError && error.status === 429,
-		handler: async () => ({
+		match: (error: Error) => genderApiErrorInfo(error).status === 429,
+		handler: async (error: Error) => ({
 			maxRetries: 2,
+			headersRetryAfterMs: genderApiErrorInfo(error).retryAfter,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
 	// A timeout is also a transport failure, so it is matched first.
 	TIMEOUT_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiAPIError && error.timedOut,
+		match: (error: Error) => genderApiErrorInfo(error).timedOut,
 		handler: async () => ({
 			maxRetries: 1,
 			retryStrategy: 'linear_2s' as const,
 		}),
 	},
 	NETWORK_ERROR: {
-		match: (error: Error) =>
-			error instanceof GenderApiAPIError && error.transport,
+		match: (error: Error) => genderApiErrorInfo(error).transport,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

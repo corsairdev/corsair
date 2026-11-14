@@ -226,7 +226,12 @@ export function genderapi<const T extends GenderApiPluginOptions>(
 	} satisfies InternalGenderApiPlugin;
 }
 
-export { GENDER_API_ERRNO, GenderApiAPIError } from './client';
+export type { GenderApiErrorInfo } from './client';
+export {
+	GENDER_API_ERRNO,
+	GenderApiAPIError,
+	genderApiErrorInfo,
+} from './client';
 
 export type {
 	GenderApiCountryOfOriginEntry,

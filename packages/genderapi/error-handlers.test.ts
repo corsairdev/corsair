@@ -1,7 +1,12 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { GENDER_API_ERRNO, GenderApiAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
+/**
+ * An HTTP failure is core's ApiError, as `request()` throws it. A 200 that
+ * carries an errno, or a request that got no answer, is a GenderApiAPIError.
+ */
 function apiError(options: {
 	status?: number;
 	errno?: number;
@@ -9,8 +14,23 @@ function apiError(options: {
 	method?: string;
 	transport?: boolean;
 	timedOut?: boolean;
-}) {
-	return new GenderApiAPIError('failed', options);
+	retryAfter?: number;
+}): Error {
+	if (options.status === undefined) {
+		return new GenderApiAPIError('failed', options);
+	}
+	return new ApiError(
+		{ method: 'GET', url: '/gender' },
+		{
+			url: 'https://gender-api.com/gender',
+			ok: false,
+			status: options.status,
+			statusText: '',
+			body: options.errno === undefined ? {} : { errno: options.errno },
+		},
+		'failed',
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**
@@ -115,6 +135,12 @@ describe('error handler selection', () => {
 		await expect(resolve(apiError({ status: 429 }))).resolves.toMatchObject({
 			maxRetries: 2,
 		});
+	});
+
+	it('waits the Retry-After a proxy sends with its 429', async () => {
+		await expect(
+			resolve(apiError({ status: 429, retryAfter: 5000 })),
+		).resolves.toMatchObject({ maxRetries: 2, headersRetryAfterMs: 5000 });
 	});
 
 	it('retries a timeout once, and a timeout outranks the transport match', async () => {

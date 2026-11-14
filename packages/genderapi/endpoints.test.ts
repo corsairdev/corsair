@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import { GenderApiAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { GenderApiAPIError, genderApiErrorInfo } from './client';
 import {
 	countryOfOrigin,
 	email,
@@ -86,11 +87,11 @@ function lastRequest() {
 // unknown: the rejection value is untyped by definition.
 async function failure(
 	run: Promise<unknown>,
-): Promise<GenderApiAPIError & Error> {
+): Promise<Error & Partial<GenderApiAPIError> & Partial<ApiError>> {
 	try {
 		await run;
 	} catch (error) {
-		return error as GenderApiAPIError & Error;
+		return error as Error & Partial<GenderApiAPIError> & Partial<ApiError>;
 	}
 	throw new Error('expected the call to fail, but it resolved');
 }
@@ -173,6 +174,27 @@ describe('Gender API client', () => {
 		const error = await failure(invoke(name, { name: 'kim' }));
 
 		expect(error.isValidationError).toBe(true);
+	});
+
+	it('keeps an HTTP failure core ApiError, without the name, email or key', async () => {
+		respond({ errno: 500, errmsg: 'internal error' }, 502);
+		const error = await failure(
+			invoke(email, { email: 'zelophehad.quirinus@example.com' }),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(502);
+		const text = `${String(error)} ${JSON.stringify(error)}`;
+		expect(text).not.toContain('zelophehad');
+		expect(text).not.toContain(API_KEY);
+		expect(error.request?.query).toBeUndefined();
+		expect(error.url).not.toContain('?');
+		expect(error.body).toEqual({ errno: 500, errmsg: 'internal error' });
+		expect(genderApiErrorInfo(error)).toMatchObject({
+			status: 502,
+			errno: 500,
+			isServerError: true,
+		});
 	});
 
 	it('marks a dropped connection as a transport failure', async () => {
@@ -493,6 +515,8 @@ describe('genderapi.countryOfOrigin.get', () => {
 describe('genderapi.account.stats', () => {
 	it('does not hand the account key back to the caller', async () => {
 		respond(statsFixture);
+		// unknown: invoke returns every endpoint's shape; this test only checks
+		// that no `key` field comes back.
 		const result = (await invoke(stats, {})) as Record<string, unknown>;
 
 		expect(result).not.toHaveProperty('key');
