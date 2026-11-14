@@ -1,0 +1,17 @@
+displayName: LiveSession
+description: Session replay and product analytics API for listing recorded sessions, managing alerts and webhooks, and creating tracked websites.
+domain: livesession.io
+examples:
+  read:
+    path: sessions.list
+    title: List recorded sessions
+  write:
+    path: alerts.create
+    title: Create an alert
+    args:
+      name: Rage clicks
+      events:
+        - kind: 21
+          value: "5"
+      provider: webhooks
+      webhook_id: "542de45"
