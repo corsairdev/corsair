@@ -697,7 +697,7 @@ await corsair.grist.api.docs.modifyAccess({ docId: 'doc123example', users: { 'us
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `docId` | `string` | Yes | — |
-| `maxInheritedRole` | `owners \| editors \| viewers` | No | — |
+| `maxInheritedRole` | `owners \| editors \| viewers \| null` | No | — |
 | `users` | `Record<string, owners \| editors \| viewers \| members \| null>` | Yes | — |
 
 
@@ -1129,51 +1129,6 @@ await corsair.grist.api.orgs.update({ orgId: 'current', name: 'My Team' });
 
 ## Profile
 
-### createApiKey
-
-`profile.createApiKey`
-
-Create a user API key; with force: true it replaces the current key, which stops working
-
-**Risk:** `destructive`
-
-```ts
-await corsair.grist.api.profile.createApiKey({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `force` | `boolean` | No | — |
-
-
-
-**Output:** `string`
-
-
----
-
-### deleteApiKey
-
-`profile.deleteApiKey`
-
-Delete user API key
-
-**Risk:** `destructive`
-
-```ts
-await corsair.grist.api.profile.deleteApiKey({});
-```
-
-**Input:** _empty object_
-
-
-**Output:** `any`
-
-
----
-
 ### get
 
 `profile.get`
@@ -1198,26 +1153,6 @@ await corsair.grist.api.profile.get({});
 | `picture` | `string \| null` | No | — |
 | `email` | `string` | No | — |
 
-
-
----
-
-### getApiKey
-
-`profile.getApiKey`
-
-Get the current user API key
-
-**Risk:** `read`
-
-```ts
-await corsair.grist.api.profile.getApiKey({});
-```
-
-**Input:** _empty object_
-
-
-**Output:** `string`
 
 
 ---
@@ -1736,7 +1671,7 @@ await corsair.grist.api.session.getActive({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user` | `object` | No | — |
-| `org` | `object` | No | — |
+| `org` | `object \| null` | No | — |
 | `orgError` | `any` | No | — |
 
 <AccordionGroup>
@@ -1768,7 +1703,7 @@ await corsair.grist.api.session.getActive({});
   access?: owners | editors | viewers | members | guests | string | null,
   createdAt?: string,
   updatedAt?: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1832,37 +1767,6 @@ await corsair.grist.api.session.getAll({});
 ```
 </Accordion>
 </AccordionGroup>
-
-
-
----
-
-### setActive
-
-`session.setActive`
-
-Switch active user account for an organization
-
-**Risk:** `write`
-
-```ts
-await corsair.grist.api.session.setActive({ email: 'user@example.com' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `email` | `string` | Yes | — |
-| `org` | `string` | No | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `email` | `string` | No | — |
 
 
 
@@ -2530,7 +2434,7 @@ await corsair.grist.api.workspaces.modifyAccess({ workspaceId: 1, users: { 'user
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workspaceId` | `string \| number` | Yes | — |
-| `maxInheritedRole` | `owners \| editors \| viewers` | No | — |
+| `maxInheritedRole` | `owners \| editors \| viewers \| null` | No | — |
 | `users` | `Record<string, owners \| editors \| viewers \| members \| null>` | Yes | — |
 
 
