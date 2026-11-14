@@ -19,7 +19,7 @@ Create Category
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createCategory.post({"body":{"name":"foo"}});
+await corsair.shortcut.api.createCategory.post({"body":{"name":"Infrastructure"}});
 ```
 
 **Input**
@@ -74,7 +74,7 @@ Create Doc
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createDoc.post({"body":{"title":"foo","content":"foo"}});
+await corsair.shortcut.api.createDoc.post({"body":{"title":"Release notes","content":"# Release notes","content_format":"markdown"}});
 ```
 
 **Input**
@@ -123,7 +123,7 @@ Create Entity Template
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createEntityTemplate.post({"body":{"name":"foo","story_contents":{}}});
+await corsair.shortcut.api.createEntityTemplate.post({"body":{"name":"Bug report","story_contents":{"story_type":"bug"}}});
 ```
 
 **Input**
@@ -305,7 +305,7 @@ Create Epic
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createEpic.post({"body":{"name":"foo"}});
+await corsair.shortcut.api.createEpic.post({"body":{"name":"Checkout redesign"}});
 ```
 
 **Input**
@@ -364,7 +364,7 @@ await corsair.shortcut.api.createEpic.post({"body":{"name":"foo"}});
 | `labels` | `object[]` | Yes | — |
 | `mention_ids` | `string[]` | Yes | — |
 | `member_mention_ids` | `string[]` | Yes | — |
-| `associated_groups` | `object[]` | Yes | — |
+| `associated_groups` | `object[] \| null` | Yes | — |
 | `project_ids` | `number[]` | Yes | — |
 | `stories_without_projects` | `number` | Yes | — |
 | `completed_at_override` | `string \| null` | Yes | — |
@@ -427,7 +427,7 @@ await corsair.shortcut.api.createEpic.post({"body":{"name":"foo"}});
 {
   group_id: string,
   associated_stories_count?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -461,7 +461,7 @@ await corsair.shortcut.api.createEpic.post({"body":{"name":"foo"}});
   epic_id?: number,
   objective_id?: number,
   updated_at?: string,
-  status: At Risk | On Track | Off Track | No Health,
+  status: At Risk | On Track | Off Track | No Health | string,
   id: string | null,
   created_at?: string,
   text?: string
@@ -506,7 +506,7 @@ Create Epic Comment
 **Risk:** `destructive`
 
 ```ts
-await corsair.shortcut.api.createEpicComment.post({"path":{"epicPublicId":1},"body":{"text":"foo"}});
+await corsair.shortcut.api.createEpicComment.post({"path":{"epicPublicId":1},"body":{"text":"Looks good to me."}});
 ```
 
 **Input**
@@ -598,7 +598,7 @@ Create Epic Comment Comment
 **Risk:** `destructive`
 
 ```ts
-await corsair.shortcut.api.createEpicCommentComment.post({"path":{"epicPublicId":1,"commentPublicId":1},"body":{"text":"foo"}});
+await corsair.shortcut.api.createEpicCommentComment.post({"path":{"epicPublicId":1,"commentPublicId":1},"body":{"text":"Looks good to me."}});
 ```
 
 **Input**
@@ -733,7 +733,7 @@ await corsair.shortcut.api.createEpicHealth.post({"path":{"epicPublicId":1},"bod
 | `epic_id` | `number` | No | — |
 | `objective_id` | `number` | No | — |
 | `updated_at` | `string` | No | — |
-| `status` | `At Risk \| On Track \| Off Track \| No Health` | Yes | — |
+| `status` | `At Risk \| On Track \| Off Track \| No Health \| string` | Yes | — |
 | `id` | `string \| null` | Yes | — |
 | `created_at` | `string` | No | — |
 | `text` | `string` | No | — |
@@ -753,7 +753,7 @@ Create Group
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createGroup.post({"body":{"mention_name":"foo","name":"foo"}});
+await corsair.shortcut.api.createGroup.post({"body":{"mention_name":"platform-team","name":"Platform Team"}});
 ```
 
 **Input**
@@ -792,7 +792,7 @@ await corsair.shortcut.api.createGroup.post({"body":{"mention_name":"foo","name"
 | `description` | `string` | Yes | — |
 | `archived` | `boolean` | Yes | — |
 | `entity_type` | `string` | Yes | — |
-| `card_aging_mode` | `off \| gradual \| immediate \| null` | Yes | — |
+| `card_aging_mode` | `off \| gradual \| immediate \| string \| null` | Yes | — |
 | `color` | `string \| null` | Yes | — |
 | `card_aging_threshold_days` | `number \| null` | Yes | — |
 | `num_stories_started` | `number` | Yes | — |
@@ -806,7 +806,7 @@ await corsair.shortcut.api.createGroup.post({"body":{"mention_name":"foo","name"
 | `updated_at` | `string` | Yes | — |
 | `num_stories_backlog` | `number` | Yes | — |
 | `id` | `string` | Yes | — |
-| `display_icon` | `object` | Yes | — |
+| `display_icon` | `object \| null` | Yes | — |
 | `default_workflow_id` | `number \| null` | No | — |
 | `member_ids` | `string[]` | Yes | — |
 | `workflow_ids` | `number[]` | Yes | — |
@@ -822,7 +822,7 @@ await corsair.shortcut.api.createGroup.post({"body":{"mention_name":"foo","name"
   created_at: string,
   updated_at: string,
   url: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -842,7 +842,7 @@ Create Iteration
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createIteration.post({"body":{"name":"foo","start_date":"foo","end_date":"foo"}});
+await corsair.shortcut.api.createIteration.post({"body":{"name":"Sprint 12","start_date":"2026-12-01","end_date":"2026-12-14"}});
 ```
 
 **Input**
@@ -885,7 +885,7 @@ await corsair.shortcut.api.createIteration.post({"body":{"name":"foo","start_dat
 | `labels` | `object[]` | Yes | — |
 | `mention_ids` | `string[]` | Yes | — |
 | `member_mention_ids` | `string[]` | Yes | — |
-| `associated_groups` | `object[]` | Yes | — |
+| `associated_groups` | `object[] \| null` | Yes | — |
 | `name` | `string` | Yes | — |
 | `global_id` | `string` | Yes | — |
 | `label_ids` | `number[]` | Yes | — |
@@ -945,7 +945,7 @@ await corsair.shortcut.api.createIteration.post({"body":{"name":"foo","start_dat
 {
   group_id: string,
   associated_stories_count?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -986,7 +986,7 @@ Create Label
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createLabel.post({"body":{"name":"foo"}});
+await corsair.shortcut.api.createLabel.post({"body":{"name":"needs-review"}});
 ```
 
 **Input**
@@ -1070,7 +1070,7 @@ Create Linked File
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createLinkedFile.post({"body":{"name":"foo","type":"google","url":"foo"}});
+await corsair.shortcut.api.createLinkedFile.post({"body":{"name":"Design spec","type":"url","url":"https://example.com/design-spec"}});
 ```
 
 **Input**
@@ -1136,7 +1136,7 @@ Create Milestone
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createMilestone.post({"body":{"name":"foo"}});
+await corsair.shortcut.api.createMilestone.post({"body":{"name":"Q1 launch"}});
 ```
 
 **Input**
@@ -1238,7 +1238,7 @@ Create Multiple Stories
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createMultipleStories.post({"body":{"stories":[{"name":"foo"}]}});
+await corsair.shortcut.api.createMultipleStories.post({"body":{"stories":[{"name":"Fix login redirect","workflow_state_id":500000001}]}});
 ```
 
 **Input**
@@ -1439,7 +1439,7 @@ Create Objective
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createObjective.post({"body":{"name":"foo"}});
+await corsair.shortcut.api.createObjective.post({"body":{"name":"Reduce churn"}});
 ```
 
 **Input**
@@ -1583,7 +1583,7 @@ await corsair.shortcut.api.createObjectiveHealth.post({"path":{"objectivePublicI
 | `epic_id` | `number` | No | — |
 | `objective_id` | `number` | No | — |
 | `updated_at` | `string` | No | — |
-| `status` | `At Risk \| On Track \| Off Track \| No Health` | Yes | — |
+| `status` | `At Risk \| On Track \| Off Track \| No Health \| string` | Yes | — |
 | `id` | `string \| null` | Yes | — |
 | `created_at` | `string` | No | — |
 | `text` | `string` | No | — |
@@ -1603,7 +1603,7 @@ Create Project
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createProject.post({"body":{"name":"foo","team_id":1}});
+await corsair.shortcut.api.createProject.post({"body":{"name":"Mobile app","team_id":1}});
 ```
 
 **Input**
@@ -1688,7 +1688,7 @@ Create Story
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createStory.post({"body":{"name":"foo"}});
+await corsair.shortcut.api.createStory.post({"body":{"name":"Fix login redirect","workflow_state_id":500000001}});
 ```
 
 **Input**
@@ -2075,7 +2075,7 @@ await corsair.shortcut.api.createStory.post({"body":{"name":"foo"}});
   author_identity: {
     entity_type: string,
     name: string | null,
-    type: slack | github | gitlab | bitbucket | null
+    type: slack | github | gitlab | bitbucket | string | null
   },
   repository_id: number | null,
   created_at: string,
@@ -2134,7 +2134,7 @@ Create Story Comment
 **Risk:** `destructive`
 
 ```ts
-await corsair.shortcut.api.createStoryComment.post({"path":{"storyPublicId":1},"body":{"text":"foo"}});
+await corsair.shortcut.api.createStoryComment.post({"path":{"storyPublicId":1},"body":{"text":"Looks good to me."}});
 ```
 
 **Input**
@@ -2636,7 +2636,7 @@ await corsair.shortcut.api.createStoryFromTemplate.post({"body":{"story_template
   author_identity: {
     entity_type: string,
     name: string | null,
-    type: slack | github | gitlab | bitbucket | null
+    type: slack | github | gitlab | bitbucket | string | null
   },
   repository_id: number | null,
   created_at: string,
@@ -2808,7 +2808,7 @@ Create Task
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.createTask.post({"path":{"storyPublicId":1},"body":{"description":"foo"}});
+await corsair.shortcut.api.createTask.post({"path":{"storyPublicId":1},"body":{"description":"Add a regression test"}});
 ```
 
 **Input**
@@ -3854,7 +3854,7 @@ await corsair.shortcut.api.getCustomField.get({"path":{"customFieldPublicId":"12
 |------|------|----------|-------------|
 | `description` | `string` | No | — |
 | `icon_set_identifier` | `string` | No | — |
-| `entity_type` | `custom-field` | Yes | — |
+| `entity_type` | `custom-field \| string` | Yes | — |
 | `story_types` | `string[]` | No | — |
 | `last_edited_by_id` | `string \| null` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -3864,7 +3864,7 @@ await corsair.shortcut.api.getCustomField.get({"path":{"customFieldPublicId":"12
 | `id` | `string` | Yes | — |
 | `values` | `object[]` | No | — |
 | `last_edited_at` | `string \| null` | Yes | — |
-| `field_type` | `enum` | Yes | — |
+| `field_type` | `enum \| string` | Yes | — |
 | `position` | `number` | Yes | — |
 | `canonical_name` | `string` | No | — |
 | `enabled` | `boolean` | Yes | — |
@@ -3879,7 +3879,7 @@ await corsair.shortcut.api.getCustomField.get({"path":{"customFieldPublicId":"12
   value: string,
   position: number,
   color_key: string | null,
-  entity_type: custom-field-enum-value,
+  entity_type: custom-field-enum-value | string,
   enabled: boolean
 }[]
 ```
@@ -4139,7 +4139,7 @@ await corsair.shortcut.api.getEpic.get({"path":{"epicPublicId":1}});
 | `labels` | `object[]` | Yes | — |
 | `mention_ids` | `string[]` | Yes | — |
 | `member_mention_ids` | `string[]` | Yes | — |
-| `associated_groups` | `object[]` | Yes | — |
+| `associated_groups` | `object[] \| null` | Yes | — |
 | `project_ids` | `number[]` | Yes | — |
 | `stories_without_projects` | `number` | Yes | — |
 | `completed_at_override` | `string \| null` | Yes | — |
@@ -4202,7 +4202,7 @@ await corsair.shortcut.api.getEpic.get({"path":{"epicPublicId":1}});
 {
   group_id: string,
   associated_stories_count?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4236,7 +4236,7 @@ await corsair.shortcut.api.getEpic.get({"path":{"epicPublicId":1}});
   epic_id?: number,
   objective_id?: number,
   updated_at?: string,
-  status: At Risk | On Track | Off Track | No Health,
+  status: At Risk | On Track | Off Track | No Health | string,
   id: string | null,
   created_at?: string,
   text?: string
@@ -4391,7 +4391,7 @@ await corsair.shortcut.api.getEpicHealth.get({"path":{"epicPublicId":1}});
 | `epic_id` | `number` | No | — |
 | `objective_id` | `number` | No | — |
 | `updated_at` | `string` | No | — |
-| `status` | `At Risk \| On Track \| Off Track \| No Health` | Yes | — |
+| `status` | `At Risk \| On Track \| Off Track \| No Health \| string` | Yes | — |
 | `id` | `string \| null` | Yes | — |
 | `created_at` | `string` | No | — |
 | `text` | `string` | No | — |
@@ -4463,7 +4463,7 @@ Get External Link Stories
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.getExternalLinkStories.get({"query":{"external_link":"foo"}});
+await corsair.shortcut.api.getExternalLinkStories.get({"query":{"external_link":"https://github.com/acme/app/issues/42"}});
 ```
 
 **Input**
@@ -4685,7 +4685,7 @@ await corsair.shortcut.api.getGroup.get({"path":{"groupPublicId":"12345678-9012-
 | `description` | `string` | Yes | — |
 | `archived` | `boolean` | Yes | — |
 | `entity_type` | `string` | Yes | — |
-| `card_aging_mode` | `off \| gradual \| immediate \| null` | Yes | — |
+| `card_aging_mode` | `off \| gradual \| immediate \| string \| null` | Yes | — |
 | `color` | `string \| null` | Yes | — |
 | `card_aging_threshold_days` | `number \| null` | Yes | — |
 | `num_stories_started` | `number` | Yes | — |
@@ -4699,7 +4699,7 @@ await corsair.shortcut.api.getGroup.get({"path":{"groupPublicId":"12345678-9012-
 | `updated_at` | `string` | Yes | — |
 | `num_stories_backlog` | `number` | Yes | — |
 | `id` | `string` | Yes | — |
-| `display_icon` | `object` | Yes | — |
+| `display_icon` | `object \| null` | Yes | — |
 | `default_workflow_id` | `number \| null` | No | — |
 | `member_ids` | `string[]` | Yes | — |
 | `workflow_ids` | `number[]` | Yes | — |
@@ -4715,7 +4715,7 @@ await corsair.shortcut.api.getGroup.get({"path":{"groupPublicId":"12345678-9012-
   created_at: string,
   updated_at: string,
   url: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4767,7 +4767,7 @@ await corsair.shortcut.api.getIteration.get({"path":{"iterationPublicId":1}});
 | `labels` | `object[]` | Yes | — |
 | `mention_ids` | `string[]` | Yes | — |
 | `member_mention_ids` | `string[]` | Yes | — |
-| `associated_groups` | `object[]` | Yes | — |
+| `associated_groups` | `object[] \| null` | Yes | — |
 | `name` | `string` | Yes | — |
 | `global_id` | `string` | Yes | — |
 | `label_ids` | `number[]` | Yes | — |
@@ -4827,7 +4827,7 @@ await corsair.shortcut.api.getIteration.get({"path":{"iterationPublicId":1}});
 {
   group_id: string,
   associated_stories_count?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -4897,7 +4897,7 @@ await corsair.shortcut.api.getKeyResult.get({"path":{"keyResultPublicId":"123456
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `objective_id` | `number` | Yes | — |
-| `type` | `percent \| boolean \| numeric` | Yes | — |
+| `type` | `percent \| boolean \| numeric \| string` | Yes | — |
 | `initial_observed_value` | `object` | Yes | — |
 | `current_observed_value` | `object` | Yes | — |
 | `current_target_value` | `object` | Yes | — |
@@ -5129,7 +5129,7 @@ await corsair.shortcut.api.getMember.get({"path":{"memberPublicId":"12345678-901
 | `entity_type` | `string` | Yes | — |
 | `disabled` | `boolean` | Yes | — |
 | `global_id` | `string` | Yes | — |
-| `state` | `partial \| full \| disabled \| imported` | Yes | — |
+| `state` | `partial \| full \| disabled \| imported \| string` | Yes | — |
 | `updated_at` | `string \| null` | Yes | — |
 | `created_without_invite` | `boolean` | Yes | — |
 | `group_ids` | `string[]` | Yes | — |
@@ -5159,7 +5159,7 @@ await corsair.shortcut.api.getMember.get({"path":{"memberPublicId":"12345678-901
     created_at: string,
     updated_at: string,
     url: string
-  },
+  } | null,
   is_owner: boolean,
   is_assignable?: boolean,
   email_address: string | null
@@ -5400,7 +5400,7 @@ await corsair.shortcut.api.getObjectiveHealth.get({"path":{"objectivePublicId":1
 | `epic_id` | `number` | No | — |
 | `objective_id` | `number` | No | — |
 | `updated_at` | `string` | No | — |
-| `status` | `At Risk \| On Track \| Off Track \| No Health` | Yes | — |
+| `status` | `At Risk \| On Track \| Off Track \| No Health \| string` | Yes | — |
 | `id` | `string \| null` | Yes | — |
 | `created_at` | `string` | No | — |
 | `text` | `string` | No | — |
@@ -5523,7 +5523,7 @@ await corsair.shortcut.api.getRepository.get({"path":{"repoPublicId":1}});
 |------|------|----------|-------------|
 | `entity_type` | `string` | Yes | — |
 | `name` | `string \| null` | Yes | — |
-| `type` | `github \| gitlab \| bitbucket` | Yes | — |
+| `type` | `github \| gitlab \| bitbucket \| string` | Yes | — |
 | `updated_at` | `string \| null` | Yes | — |
 | `external_id` | `string \| null` | Yes | — |
 | `id` | `number \| null` | Yes | — |
@@ -5867,7 +5867,7 @@ await corsair.shortcut.api.getStory.get({"path":{"storyPublicId":1}});
   author_identity: {
     entity_type: string,
     name: string | null,
-    type: slack | github | gitlab | bitbucket | null
+    type: slack | github | gitlab | bitbucket | string | null
   },
   repository_id: number | null,
   created_at: string,
@@ -6446,7 +6446,7 @@ await corsair.shortcut.api.listCustomFields.get({});
 {
   description?: string,
   icon_set_identifier?: string,
-  entity_type: custom-field,
+  entity_type: custom-field | string,
   story_types?: string[],
   last_edited_by_id: string | null,
   name: string,
@@ -6459,11 +6459,11 @@ await corsair.shortcut.api.listCustomFields.get({});
     value: string,
     position: number,
     color_key: string | null,
-    entity_type: custom-field-enum-value,
+    entity_type: custom-field-enum-value | string,
     enabled: boolean
   }[],
   last_edited_at: string | null,
-  field_type: enum,
+  field_type: enum | string,
   position: number,
   canonical_name?: string,
   enabled: boolean,
@@ -6574,7 +6574,7 @@ await corsair.shortcut.api.listDocumentEpics.get({"path":{"docPublicId":"1234567
   associated_groups: {
     group_id: string,
     associated_stories_count?: number
-  }[],
+  }[] | null,
   project_ids: number[],
   stories_without_projects: number,
   completed_at_override: string | null,
@@ -6910,7 +6910,7 @@ await corsair.shortcut.api.listEpicHealths.get({"path":{"epicPublicId":1}});
   epic_id?: number,
   objective_id?: number,
   updated_at?: string,
-  status: At Risk | On Track | Off Track | No Health,
+  status: At Risk | On Track | Off Track | No Health | string,
   id: string | null,
   created_at?: string,
   text?: string
@@ -6985,7 +6985,7 @@ await corsair.shortcut.api.listEpics.get({"query":{}});
   associated_groups: {
     group_id: string,
     associated_stories_count?: number
-  }[],
+  }[] | null,
   project_ids: number[],
   stories_without_projects: number,
   completed_at_override: string | null,
@@ -7114,7 +7114,7 @@ This route supports `page` and `page_size`; values are forwarded without local p
   associated_groups: {
     group_id: string,
     associated_stories_count?: number
-  }[],
+  }[] | null,
   project_ids: number[],
   stories_without_projects: number,
   completed_at_override: string | null,
@@ -7407,7 +7407,7 @@ await corsair.shortcut.api.listGroups.get({"query":{}});
   description: string,
   archived: boolean,
   entity_type: string,
-  card_aging_mode: off | gradual | immediate | null,
+  card_aging_mode: off | gradual | immediate | string | null,
   color: string | null,
   card_aging_threshold_days: number | null,
   num_stories_started: number,
@@ -7427,7 +7427,7 @@ await corsair.shortcut.api.listGroups.get({"query":{}});
     created_at: string,
     updated_at: string,
     url: string
-  },
+  } | null,
   default_workflow_id?: number | null,
   member_ids: string[],
   workflow_ids: number[],
@@ -7649,7 +7649,7 @@ await corsair.shortcut.api.listIterations.get({});
   associated_groups: {
     group_id: string,
     associated_stories_count?: number
-  }[],
+  }[] | null,
   name: string,
   global_id: string,
   label_ids: number[],
@@ -7891,7 +7891,7 @@ await corsair.shortcut.api.listLabelEpics.get({"path":{"labelPublicId":1}});
   associated_groups: {
     group_id: string,
     associated_stories_count?: number
-  }[],
+  }[] | null,
   project_ids: number[],
   stories_without_projects: number,
   completed_at_override: string | null,
@@ -8261,7 +8261,7 @@ await corsair.shortcut.api.listMembers.get({"query":{}});
   entity_type: string,
   disabled: boolean,
   global_id: string,
-  state: partial | full | disabled | imported,
+  state: partial | full | disabled | imported | string,
   updated_at: string | null,
   created_without_invite: boolean,
   group_ids: string[],
@@ -8283,7 +8283,7 @@ await corsair.shortcut.api.listMembers.get({"query":{}});
       created_at: string,
       updated_at: string,
       url: string
-    },
+    } | null,
     is_owner: boolean,
     is_assignable?: boolean,
     email_address: string | null
@@ -8361,7 +8361,7 @@ await corsair.shortcut.api.listMilestoneEpics.get({"path":{"milestonePublicId":1
   associated_groups: {
     group_id: string,
     associated_stories_count?: number
-  }[],
+  }[] | null,
   project_ids: number[],
   stories_without_projects: number,
   completed_at_override: string | null,
@@ -8547,7 +8547,7 @@ await corsair.shortcut.api.listObjectiveEpics.get({"path":{"objectivePublicId":1
   associated_groups: {
     group_id: string,
     associated_stories_count?: number
-  }[],
+  }[] | null,
   project_ids: number[],
   stories_without_projects: number,
   completed_at_override: string | null,
@@ -8648,7 +8648,7 @@ await corsair.shortcut.api.listObjectiveHealths.get({"path":{"objectivePublicId"
   epic_id?: number,
   objective_id?: number,
   updated_at?: string,
-  status: At Risk | On Track | Off Track | No Health,
+  status: At Risk | On Track | Off Track | No Health | string,
   id: string | null,
   created_at?: string,
   text?: string
@@ -8809,7 +8809,7 @@ await corsair.shortcut.api.listRepositories.get({});
 {
   entity_type: string,
   name: string | null,
-  type: github | gitlab | bitbucket,
+  type: github | gitlab | bitbucket | string,
   updated_at: string | null,
   external_id: string | null,
   id: number | null,
@@ -9398,7 +9398,7 @@ Search
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.search.get({"query":{"query":"foo"}});
+await corsair.shortcut.api.search.get({"query":{"query":"login bug"}});
 ```
 
 **Input**
@@ -9465,7 +9465,7 @@ Continuation pagination uses the documented `next` query value and `page_size`.
     associated_groups: {
       group_id: string,
       associated_stories_count?: number
-    }[],
+    }[] | null,
     project_ids: number[],
     stories_without_projects: number,
     completed_at_override: string | null,
@@ -9515,7 +9515,7 @@ Continuation pagination uses the documented `next` query value and `page_size`.
       epic_id?: number,
       objective_id?: number,
       updated_at?: string,
-      status: At Risk | On Track | Off Track | No Health,
+      status: At Risk | On Track | Off Track | No Health | string,
       id: string | null,
       created_at?: string,
       text?: string
@@ -9771,7 +9771,7 @@ Continuation pagination uses the documented `next` query value and `page_size`.
       author_identity: {
         entity_type: string,
         name: string | null,
-        type: slack | github | gitlab | bitbucket | null
+        type: slack | github | gitlab | bitbucket | string | null
       },
       repository_id: number | null,
       created_at: string,
@@ -9859,7 +9859,7 @@ Continuation pagination uses the documented `next` query value and `page_size`.
     associated_groups: {
       group_id: string,
       associated_stories_count?: number
-    }[],
+    }[] | null,
     name: string,
     global_id: string,
     label_ids: number[],
@@ -9956,7 +9956,7 @@ Search Documents
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.searchDocuments.get({"query":{"title":"foo"}});
+await corsair.shortcut.api.searchDocuments.get({"query":{"title":"Release notes"}});
 ```
 
 **Input**
@@ -10021,7 +10021,7 @@ Search Epics
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.searchEpics.get({"query":{"query":"foo"}});
+await corsair.shortcut.api.searchEpics.get({"query":{"query":"login bug"}});
 ```
 
 **Input**
@@ -10085,7 +10085,7 @@ Continuation pagination uses the documented `next` query value and `page_size`.
   associated_groups: {
     group_id: string,
     associated_stories_count?: number
-  }[],
+  }[] | null,
   project_ids: number[],
   stories_without_projects: number,
   completed_at_override: string | null,
@@ -10135,7 +10135,7 @@ Continuation pagination uses the documented `next` query value and `page_size`.
     epic_id?: number,
     objective_id?: number,
     updated_at?: string,
-    status: At Risk | On Track | Off Track | No Health,
+    status: At Risk | On Track | Off Track | No Health | string,
     id: string | null,
     created_at?: string,
     text?: string
@@ -10179,7 +10179,7 @@ Search Iterations
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.searchIterations.get({"query":{"query":"foo"}});
+await corsair.shortcut.api.searchIterations.get({"query":{"query":"login bug"}});
 ```
 
 **Input**
@@ -10259,7 +10259,7 @@ Continuation pagination uses the documented `next` query value and `page_size`.
   associated_groups: {
     group_id: string,
     associated_stories_count?: number
-  }[],
+  }[] | null,
   name: string,
   global_id: string,
   label_ids: number[],
@@ -10307,7 +10307,7 @@ Search Milestones
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.searchMilestones.get({"query":{"query":"foo"}});
+await corsair.shortcut.api.searchMilestones.get({"query":{"query":"login bug"}});
 ```
 
 **Input**
@@ -10403,7 +10403,7 @@ Search Objectives
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.searchObjectives.get({"query":{"query":"foo"}});
+await corsair.shortcut.api.searchObjectives.get({"query":{"query":"login bug"}});
 ```
 
 **Input**
@@ -10499,7 +10499,7 @@ Search Stories
 **Risk:** `read`
 
 ```ts
-await corsair.shortcut.api.searchStories.get({"query":{"query":"foo"}});
+await corsair.shortcut.api.searchStories.get({"query":{"query":"login bug"}});
 ```
 
 **Input**
@@ -10760,7 +10760,7 @@ Continuation pagination uses the documented `next` query value and `page_size`.
     author_identity: {
       entity_type: string,
       name: string | null,
-      type: slack | github | gitlab | bitbucket | null
+      type: slack | github | gitlab | bitbucket | string | null
     },
     repository_id: number | null,
     created_at: string,
@@ -10889,7 +10889,7 @@ await corsair.shortcut.api.storyHistory.get({"path":{"storyPublicId":1}});
       entity_type: string,
       app_url: string,
       name: string,
-      story_type: feature | chore | bug,
+      story_type: feature | chore | bug | string,
       parent_story_id?: number
     } | {
       id: number | string,
@@ -10907,7 +10907,7 @@ await corsair.shortcut.api.storyHistory.get({"path":{"storyPublicId":1}});
     } | {
       id: number | string,
       entity_type: string,
-      type: started | backlog | unstarted | done,
+      type: started | backlog | unstarted | done | string,
       name: string
     } | {
       id: number | string,
@@ -10921,44 +10921,44 @@ await corsair.shortcut.api.storyHistory.get({"path":{"storyPublicId":1}});
       entity_type: string,
       name: string,
       url: string,
-      action: create
+      action: create | string
     } | {
       id: number,
       entity_type: string,
       name: string,
       url: string,
-      action: merge
+      action: merge | string
     } | {
       id: number,
       entity_type: string,
       name: string,
       url: string,
-      action: push
+      action: push | string
     } | {
       id: number,
       entity_type: string,
-      action: create,
+      action: create | string,
       app_url: string,
       name: string
     } | {
       id: number,
       entity_type: string,
-      action: update
+      action: update | string
     } | {
       id: number,
       entity_type: string,
-      action: delete,
+      action: delete | string,
       name: string
     } | {
       id: number,
       entity_type: string,
-      action: update,
+      action: update | string,
       app_url: string,
       name: string
     } | {
       id: number,
       entity_type: string,
-      action: open | update | reopen | close | sync | comment,
+      action: open | update | reopen | close | sync | comment | string,
       number: number,
       title: string,
       url: string
@@ -10968,7 +10968,7 @@ await corsair.shortcut.api.storyHistory.get({"path":{"storyPublicId":1}});
       started?: boolean,
       entity_type: string,
       task_ids?: number[],
-      story_type: feature | chore | bug,
+      story_type: feature | chore | bug | string,
       name: string,
       completed?: boolean,
       blocker?: boolean,
@@ -10986,14 +10986,14 @@ await corsair.shortcut.api.storyHistory.get({"path":{"storyPublicId":1}});
       parent_story_id?: number,
       estimate?: number,
       subject_story_link_ids?: number[],
-      action: create,
+      action: create | string,
       blocked?: boolean,
       project_id?: number,
       deadline?: string
     } | {
       id: number,
       entity_type: string,
-      action: update,
+      action: update | string,
       app_url: string,
       changes?: {
         description?: {
@@ -11106,33 +11106,33 @@ await corsair.shortcut.api.storyHistory.get({"path":{"storyPublicId":1}});
         }
       },
       name: string,
-      story_type: feature | chore | bug,
+      story_type: feature | chore | bug | string,
       parent_story_id?: number
     } | {
       id: number,
       entity_type: string,
-      action: delete,
+      action: delete | string,
       name: string,
-      story_type: feature | chore | bug,
+      story_type: feature | chore | bug | string,
       parent_story_id?: number
     } | {
       id: number,
       entity_type: string,
-      action: create,
+      action: create | string,
       app_url: string,
       author_id: string
     } | {
       id: number,
       entity_type: string,
-      action: create,
-      verb: blocks | duplicates | relates to,
+      action: create | string,
+      verb: blocks | duplicates | relates to | string,
       subject_id: number,
       object_id: number
     } | {
       id: number,
       entity_type: string,
-      action: update,
-      verb: blocks | duplicates | relates to,
+      action: update | string,
+      verb: blocks | duplicates | relates to | string,
       subject_id: number,
       object_id: number,
       changes: {
@@ -11152,8 +11152,8 @@ await corsair.shortcut.api.storyHistory.get({"path":{"storyPublicId":1}});
     } | {
       id: number,
       entity_type: string,
-      action: delete,
-      verb: blocks | duplicates | relates to,
+      action: delete | string,
+      verb: blocks | duplicates | relates to | string,
       subject_id: number | null,
       object_id: number | null
     } | {
@@ -11163,13 +11163,13 @@ await corsair.shortcut.api.storyHistory.get({"path":{"storyPublicId":1}});
       group_mention_ids?: string[],
       owner_ids?: string[],
       id: number,
-      action: create,
+      action: create | string,
       complete: boolean,
       deadline?: string
     } | {
       id: number,
       entity_type: string,
-      action: update,
+      action: update | string,
       changes: {
         complete?: {
           old?: boolean,
@@ -11194,19 +11194,19 @@ await corsair.shortcut.api.storyHistory.get({"path":{"storyPublicId":1}});
     } | {
       id: number,
       entity_type: string,
-      action: delete,
+      action: delete | string,
       description: string
     } | {
       id: string,
       entity_type: string,
-      action: bulk-update,
+      action: bulk-update | string,
       name: string
     }
   )[],
   member_id?: string,
   external_id?: string,
   id: string,
-  version: v1,
+  version: v1 | string,
   webhook_id?: string | null,
   automation_id?: string
 }[]
@@ -11454,7 +11454,7 @@ await corsair.shortcut.api.updateCustomField.put({"path":{"customFieldPublicId":
 |------|------|----------|-------------|
 | `description` | `string` | No | — |
 | `icon_set_identifier` | `string` | No | — |
-| `entity_type` | `custom-field` | Yes | — |
+| `entity_type` | `custom-field \| string` | Yes | — |
 | `story_types` | `string[]` | No | — |
 | `last_edited_by_id` | `string \| null` | Yes | — |
 | `name` | `string` | Yes | — |
@@ -11464,7 +11464,7 @@ await corsair.shortcut.api.updateCustomField.put({"path":{"customFieldPublicId":
 | `id` | `string` | Yes | — |
 | `values` | `object[]` | No | — |
 | `last_edited_at` | `string \| null` | Yes | — |
-| `field_type` | `enum` | Yes | — |
+| `field_type` | `enum \| string` | Yes | — |
 | `position` | `number` | Yes | — |
 | `canonical_name` | `string` | No | — |
 | `enabled` | `boolean` | Yes | — |
@@ -11479,7 +11479,7 @@ await corsair.shortcut.api.updateCustomField.put({"path":{"customFieldPublicId":
   value: string,
   position: number,
   color_key: string | null,
-  entity_type: custom-field-enum-value,
+  entity_type: custom-field-enum-value | string,
   enabled: boolean
 }[]
 ```
@@ -11825,7 +11825,7 @@ await corsair.shortcut.api.updateEpic.put({"path":{"epicPublicId":1},"body":{}})
 | `labels` | `object[]` | Yes | — |
 | `mention_ids` | `string[]` | Yes | — |
 | `member_mention_ids` | `string[]` | Yes | — |
-| `associated_groups` | `object[]` | Yes | — |
+| `associated_groups` | `object[] \| null` | Yes | — |
 | `project_ids` | `number[]` | Yes | — |
 | `stories_without_projects` | `number` | Yes | — |
 | `completed_at_override` | `string \| null` | Yes | — |
@@ -11888,7 +11888,7 @@ await corsair.shortcut.api.updateEpic.put({"path":{"epicPublicId":1},"body":{}})
 {
   group_id: string,
   associated_stories_count?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -11922,7 +11922,7 @@ await corsair.shortcut.api.updateEpic.put({"path":{"epicPublicId":1},"body":{}})
   epic_id?: number,
   objective_id?: number,
   updated_at?: string,
-  status: At Risk | On Track | Off Track | No Health,
+  status: At Risk | On Track | Off Track | No Health | string,
   id: string | null,
   created_at?: string,
   text?: string
@@ -11967,7 +11967,7 @@ Update Epic Comment
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.updateEpicComment.put({"path":{"epicPublicId":1,"commentPublicId":1},"body":{"text":"foo"}});
+await corsair.shortcut.api.updateEpicComment.put({"path":{"epicPublicId":1,"commentPublicId":1},"body":{"text":"Looks good to me."}});
 ```
 
 **Input**
@@ -12181,7 +12181,7 @@ await corsair.shortcut.api.updateGroup.put({"path":{"groupPublicId":"12345678-90
 | `description` | `string` | Yes | — |
 | `archived` | `boolean` | Yes | — |
 | `entity_type` | `string` | Yes | — |
-| `card_aging_mode` | `off \| gradual \| immediate \| null` | Yes | — |
+| `card_aging_mode` | `off \| gradual \| immediate \| string \| null` | Yes | — |
 | `color` | `string \| null` | Yes | — |
 | `card_aging_threshold_days` | `number \| null` | Yes | — |
 | `num_stories_started` | `number` | Yes | — |
@@ -12195,7 +12195,7 @@ await corsair.shortcut.api.updateGroup.put({"path":{"groupPublicId":"12345678-90
 | `updated_at` | `string` | Yes | — |
 | `num_stories_backlog` | `number` | Yes | — |
 | `id` | `string` | Yes | — |
-| `display_icon` | `object` | Yes | — |
+| `display_icon` | `object \| null` | Yes | — |
 | `default_workflow_id` | `number \| null` | No | — |
 | `member_ids` | `string[]` | Yes | — |
 | `workflow_ids` | `number[]` | Yes | — |
@@ -12211,7 +12211,7 @@ await corsair.shortcut.api.updateGroup.put({"path":{"groupPublicId":"12345678-90
   created_at: string,
   updated_at: string,
   url: string
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -12273,7 +12273,7 @@ await corsair.shortcut.api.updateHealth.put({"path":{"healthPublicId":"12345678-
 | `epic_id` | `number` | No | — |
 | `objective_id` | `number` | No | — |
 | `updated_at` | `string` | No | — |
-| `status` | `At Risk \| On Track \| Off Track \| No Health` | Yes | — |
+| `status` | `At Risk \| On Track \| Off Track \| No Health \| string` | Yes | — |
 | `id` | `string \| null` | Yes | — |
 | `created_at` | `string` | No | — |
 | `text` | `string` | No | — |
@@ -12346,7 +12346,7 @@ await corsair.shortcut.api.updateIteration.put({"path":{"iterationPublicId":1},"
 | `labels` | `object[]` | Yes | — |
 | `mention_ids` | `string[]` | Yes | — |
 | `member_mention_ids` | `string[]` | Yes | — |
-| `associated_groups` | `object[]` | Yes | — |
+| `associated_groups` | `object[] \| null` | Yes | — |
 | `name` | `string` | Yes | — |
 | `global_id` | `string` | Yes | — |
 | `label_ids` | `number[]` | Yes | — |
@@ -12406,7 +12406,7 @@ await corsair.shortcut.api.updateIteration.put({"path":{"iterationPublicId":1},"
 {
   group_id: string,
   associated_stories_count?: number
-}[]
+}[] | null
 ```
 </Accordion>
 
@@ -12498,7 +12498,7 @@ await corsair.shortcut.api.updateKeyResult.put({"path":{"keyResultPublicId":"123
 | `id` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
 | `objective_id` | `number` | Yes | — |
-| `type` | `percent \| boolean \| numeric` | Yes | — |
+| `type` | `percent \| boolean \| numeric \| string` | Yes | — |
 | `initial_observed_value` | `object` | Yes | — |
 | `current_observed_value` | `object` | Yes | — |
 | `current_target_value` | `object` | Yes | — |
@@ -13586,7 +13586,7 @@ await corsair.shortcut.api.updateStory.put({"path":{"storyPublicId":1},"body":{}
   author_identity: {
     entity_type: string,
     name: string | null,
-    type: slack | github | gitlab | bitbucket | null
+    type: slack | github | gitlab | bitbucket | string | null
   },
   repository_id: number | null,
   created_at: string,
@@ -13645,7 +13645,7 @@ Update Story Comment
 **Risk:** `write`
 
 ```ts
-await corsair.shortcut.api.updateStoryComment.put({"path":{"storyPublicId":1,"commentPublicId":1},"body":{"text":"foo"}});
+await corsair.shortcut.api.updateStoryComment.put({"path":{"storyPublicId":1,"commentPublicId":1},"body":{"text":"Looks good to me."}});
 ```
 
 **Input**
@@ -13922,3 +13922,4 @@ Provide at least `file0`; `file1` through `file3` are optional multipart file fi
 
 
 ---
+
