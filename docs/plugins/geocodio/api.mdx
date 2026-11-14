@@ -221,7 +221,9 @@ Up to 10,000 addresses in one POST, answered in order as `{ query, response: { r
         geocode?: Record<string, any>
       }[]
     }[],
-    _warnings?: string[]
+    _warnings?: string[],
+    error?: string,
+    reference?: string
   }
 }[]
 ```
@@ -310,7 +312,9 @@ await corsair.geocodio.api.geocode.batchReverse({ coordinates: ['38.886665,-77.0
         geocode?: Record<string, any>
       }[]
     }[],
-    _warnings?: string[]
+    _warnings?: string[],
+    error?: string,
+    reference?: string
   }
 }[]
 ```
