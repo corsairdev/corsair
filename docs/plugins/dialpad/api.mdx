@@ -2407,7 +2407,7 @@ await corsair.dialpad.api.call.participants.add({ path: {"id":1}, body: {"partic
 
 Call -- Transfer. Transfers call to another recipient. Rate limit: 1200 per minute.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.dialpad.api.call.transfer_call({ path: {"id":1}, body: {} });
@@ -9558,7 +9558,7 @@ await corsair.dialpad.api.number_tags.update({ body: {"phone":"sample-value"} })
 
 Dialpad Number -- Assign. Assigns a specific phone number to a target. Use this when the number to assign is already known; use the auto-assign endpoint to let Dialpad pick one. Valid targets are a user or department, an office, room, callcenter, callrouter, staffgroup, channel or coachinggroup. Rate limit: 1200 per minute.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.dialpad.api.numbers.assign({ path: {"number":"sample-value"}, body: {"target_id":1,"target_type":"callcenter"} });

@@ -1628,7 +1628,7 @@ const dialpadEndpointMetaValue = {
 			'Call -- Unassign All Call Operators. Unassigns all assigned operators from a call queued in a contact center. Only contact center calls are eligible for this operation. Rate limit: 12 per minute.',
 	},
 	'call.transfer_call': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Call -- Transfer. Transfers call to another recipient. Rate limit: 1200 per minute.',
 	},
@@ -2073,7 +2073,7 @@ const dialpadEndpointMetaValue = {
 			'Schedule -- Get. Gets a single scheduled message by ID. Rate limit: 1200 per minute.',
 	},
 	'numbers.assign': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Dialpad Number -- Assign. Assigns a specific phone number to a target. Use this when the number to assign is already known; use the auto-assign endpoint to let Dialpad pick one. Valid targets are a user or department, an office, room, callcenter, callrouter, staffgroup, channel or coachinggroup. Rate limit: 1200 per minute.',
 	},

@@ -19,6 +19,7 @@ const DESTRUCTIVE = {
 		'users.initiate_call',
 		'callback.enqueue',
 		'call.participants.add',
+		'call.transfer_call',
 		'powerdialer.updateCampaign',
 	],
 	// Use a paid license or seat, or allocate a new number or billed office.
@@ -29,6 +30,7 @@ const DESTRUCTIVE = {
 		'callcenters.operators.add',
 		'offices.create',
 		'numbers.auto_assign',
+		'numbers.assign',
 		'users.assign_number',
 		'numbers.assign_call_router_number.post',
 		'numbers.assign_office_number.post',
