@@ -2204,6 +2204,14 @@
                 ]
               },
               {
+                "group": "Gamma",
+                "pages": [
+                  "plugins/gamma/overview",
+                  "plugins/gamma/api",
+                  "plugins/gamma/database"
+                ]
+              },
+              {
                 "group": "Gemini",
                 "pages": [
                   "plugins/gemini/overview",
