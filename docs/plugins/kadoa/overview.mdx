@@ -1,0 +1,144 @@
+---
+title: "Kadoa plugin"
+sidebarTitle: "Overview"
+description: "Web data extraction with Kadoa - build and manage workflows that scrape a site on a schedule, read the extracted rows and the changes Kadoa detects between runs, and manage the schemas, variables and delivery destinations those workflows use."
+---
+
+Use **Kadoa** through Corsair: one client, typed API calls.
+
+Create a key in Kadoa under Settings, General, Generate API Key. It starts with `tk-` and belongs to the whole team, so every workflow that team owns is reachable with it.
+
+Things to know before you call:
+
+- **A workflow is built, then run.** `workflows.create` builds one from a natural-language prompt, an existing schema, inline fields, or a published template. Kadoa takes a sample and holds it for review, so a new workflow starts in `PREVIEW`. `workflows.resume` approves the preview and makes it `ACTIVE`.
+- **Sources must share one website.** Several URLs in one workflow have to be the same site, counting subdomains and country domains. Two unrelated sites are rejected with a 422.
+- **Runs are asynchronous.** `workflows.run` answers at once with a `jobId` and spends credits. Read it back with `workflows.jobStatus({ workflowId, jobId })`: `IN_PROGRESS` is not final, `FINISHED` is, and `FAILED`, `NOT_SUPPORTED` and `FAILED_INSUFFICIENT_FUNDS` ended without data. The plugin declares no job metadata because reading one back needs both IDs.
+- **Reading the rows.** `workflows.data` returns the rows of the latest published run: `pagination.totalPages` says whether another page exists, and `limit` above 0 pages. `limit: 0` streams every row in one answer and no next page exists. A workflow whose first run has not published data answers 409 `DATA_NOT_PUBLISHED`.
+- **Paging.** `workflows.list` and `changes.list` page by offset, so they return `nextSkip` while a page comes back full; pass it back as `skip`. `workflows.history` and `workflows.data` page by number and return `nextPage`.
+- **Deletes cannot be undone.** `workflows.delete`, `schemas.delete` and `variables.delete` are permanent. A workflow delete also removes its run history and stored data.
+- **Secrets.** A `SECRET` variable created with a value is written once and read back without it. A `CUSTOMER_MANAGED` secret instead names a Google Secret Manager connection and a resource, and takes no value. `variables.delete` answers 409 while a secret is still bound to a connection.
+- **Rate limits.** Kadoa answers 429 with `reason` `PIPELINE_CROWDED` when too many runs queue on the team, or `USER_RATE_LIMIT` when calls come too fast. Both are retried three times with backoff, and a real `Retry-After` is honoured. Only reads are replayed after a 5xx, because a create that failed mid-way could otherwise run twice.
+- **Webhooks.** The plugin does not receive deliveries. Notifications are configured in Kadoa itself.
+
+**What you get:**
+
+- 28 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/kadoa better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/kadoa better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/kadoa better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/kadoa better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { kadoa } from '@corsair-dev/kadoa';
+
+export const corsair = createCorsair({
+	plugins: [
+		kadoa(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Kadoa API key before the first call: `pnpm corsair setup --plugin=kadoa --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+kadoa()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'kadoa',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the workflows tagged pricing**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.kadoa.api.workflows.list({
+	tags: ['pricing'],
+	limit: 10,
+});
+```
+
+
+**Start a run**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.kadoa.api.workflows.run({ workflowId: '7f3c1a2e-9b4d-4c6e-8a1f-2d5e7b9c0a13' });
+```
+
+
+See the full list on the [API](/plugins/kadoa/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/kadoa/api">
+    Every `kadoa.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

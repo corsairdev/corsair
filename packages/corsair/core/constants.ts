@@ -303,6 +303,7 @@ export const BaseProviders = [
 	'intercom',
 	'jigsawstack',
 	'jira',
+	'kadoa',
 	'kaggle',
 	'keenable',
 	'kibana',
@@ -838,6 +839,7 @@ export const ProviderDisplayNames = {
 	intercom: 'Intercom',
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
+	kadoa: 'Kadoa',
 	kaggle: 'Kaggle',
 	keenable: 'Keenable',
 	kibana: 'Kibana',
@@ -1380,6 +1382,7 @@ export type AllProviders =
 	| 'intercom'
 	| 'jigsawstack'
 	| 'jira'
+	| 'kadoa'
 	| 'kaggle'
 	| 'keenable'
 	| 'kibana'
