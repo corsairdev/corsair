@@ -1,0 +1,106 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: CompanyEnrich
+description: B2B company and people data enrichment — look up firms by domain or properties, find work emails, and search or count companies and people with filters, semantic and lookalike queries.
+examples:
+  read:
+    path: account.me
+    title: Check the credit balance
+    args: {}
+  write:
+    path: companies.enrichByDomain
+    title: Enrich a company by domain (1 credit)
+    args:
+      domain: acme.example
+apiExamples:
+  account.me: {}
+  companies.autocomplete:
+    query: acme
+  companies.enrichBatch:
+    domains:
+      - acme.example
+      - northstar.example
+    expand:
+      - financial
+      - technologies
+    waitForEnrichment: true
+  companies.enrichByDomain:
+    domain: acme.example
+    expand:
+      - financial
+      - workforce
+    waitForEnrichment: true
+  companies.enrichByProperties:
+    name: Example Systems
+    expand:
+      - keywords
+      - technologies
+  companies.get:
+    companyId: 00000000-0000-4000-8000-000000000001
+    expand:
+      - financial
+      - workforce
+  companies.search:
+    pageSize: 10
+    filter:
+      domain: acme.example
+      type: private
+  companies.searchCount:
+    filter:
+      type: private
+      country: US
+  companies.searchPreview:
+    lookalike:
+      domains:
+        - acme.example
+      minScore: 0.8
+  companies.workforce:
+    id: 00000000-0000-4000-8000-000000000001
+  geo.getCountry:
+    countryCode: US
+  geo.regions: {}
+  geo.searchCities:
+    stateIds:
+      - 1
+    countryCodes:
+      - US
+    query: San Francisco
+    pageSize: 10
+  geo.searchCountries:
+    query: United
+    pageSize: 10
+  geo.searchStates:
+    countryCodes:
+      - US
+    query: California
+    pageSize: 10
+  industries.list: {}
+  keywords.autocomplete:
+    query: workflow automation
+  people.enrich:
+    email: alex.morgan@acme.example
+    expand:
+      - education
+  people.findEmail:
+    personId: 101
+    domain: acme.example
+  people.get:
+    personId: 101
+    expand:
+      - education
+  people.search:
+    pageSize: 10
+    filter:
+      domain: acme.example
+      position: Engineer
+  people.searchCount:
+    filter:
+      country: US
+      domain: acme.example
+  people.searchPreview:
+    filter:
+      position: Engineer
+      domain: acme.example
+  positions.autocomplete:
+    query: engineer
+  technologies.autocomplete:
+    query: TypeScript
