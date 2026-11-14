@@ -176,18 +176,41 @@ describe('resolvePolygonToken', () => {
 		expect(mockRequest).toHaveBeenCalledTimes(2);
 	});
 
-	it('keeps the secret out of the cache key that is held in memory', () => {
+	it('keeps the secret out of the cache key and checks it on lookup', async () => {
 		const key = client.tokenCacheKey('live', CREDENTIALS);
-
 		expect(key).not.toContain(CREDENTIALS.apiSecret);
-		expect(key).not.toContain(CREDENTIALS.apiKey);
-		// The pair still separates: one key with two secrets is two entries.
-		expect(
-			client.tokenCacheKey('live', {
+
+		mockRequest
+			.mockResolvedValueOnce({ accessToken: 'real-jwt' })
+			.mockResolvedValueOnce({ accessToken: 'other-jwt' })
+			.mockResolvedValueOnce({ accessToken: 'real-again-jwt' });
+		await resolvePolygonToken('live', CREDENTIALS);
+		await resolvePolygonToken('live', {
+			apiKey: CREDENTIALS.apiKey,
+			apiSecret: 'a-different-secret',
+		});
+		// The slot now holds the other secret's token, so the first pair mints again
+		// instead of receiving a token it did not authenticate for.
+		await expect(resolvePolygonToken('live', CREDENTIALS)).resolves.toBe(
+			'real-again-jwt',
+		);
+		expect(mockRequest).toHaveBeenCalledTimes(3);
+	});
+
+	it('does not share an in-flight mint with a different secret', async () => {
+		mockRequest
+			.mockResolvedValueOnce({ accessToken: 'real-jwt' })
+			.mockResolvedValueOnce({ accessToken: 'other-jwt' });
+
+		const tokens = await Promise.all([
+			resolvePolygonToken('live', CREDENTIALS),
+			resolvePolygonToken('live', {
 				apiKey: CREDENTIALS.apiKey,
 				apiSecret: 'a-different-secret',
 			}),
-		).not.toBe(key);
+		]);
+
+		expect(tokens).toEqual(['real-jwt', 'other-jwt']);
 	});
 
 	it('deduplicates concurrent mints into one request', async () => {
@@ -313,6 +336,39 @@ describe('makePolygonRequest', () => {
 		expect(error.retryAfter).toBe(2500);
 		expect(error.request.method).toBe('GET');
 		expect(JSON.stringify(error)).not.toContain('jwt');
+	});
+
+	it('drops the request body from the ApiError, since a customer write carries personal data', async () => {
+		// Core builds ApiError from the request it sent, body included.
+		mockRequest.mockImplementation(async (_config, options) => {
+			throw new ApiError(
+				options,
+				{
+					url: `${POLYGON_HOSTS.live}/customers`,
+					ok: false,
+					status: 400,
+					statusText: 'Bad Request',
+					body: { error: 'InvalidArgument', code: 2001, msg: 'invalid argument' },
+				},
+				'invalid argument',
+			);
+		});
+
+		const error = await captureError(
+			makePolygonRequest('live', 'jwt', {
+				method: 'POST',
+				path: '/customers',
+				body: { firstName: 'Jane', birthDate: '1990-01-01' },
+				idempotencyKey: 'idem-1',
+			}),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
+		expect(error.status).toBe(400);
+		expect(error.request.method).toBe('POST');
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('1990-01-01');
 	});
 
 	it('flags a dropped connection as a transport failure with its method', async () => {

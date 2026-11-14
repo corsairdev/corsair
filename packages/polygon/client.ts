@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { AuthMissingError } from 'corsair/core';
 import type {
 	ApiRequestOptions,
@@ -18,6 +17,19 @@ export const POLYGON_HOSTS = {
 } as const;
 
 export type PolygonEnvironment = keyof typeof POLYGON_HOSTS;
+
+/**
+ * OMS encodes the mode in the key: `sk_sdbx_` keys belong to the sandbox host and
+ * `sk_live_` keys to production. An explicit `environment` option wins; without
+ * one the key decides, so a stored sandbox key never goes to the live host.
+ */
+export function environmentForKey(
+	apiKey: string,
+	explicit?: PolygonEnvironment,
+): PolygonEnvironment {
+	if (explicit) return explicit;
+	return apiKey.startsWith('sk_sdbx_') ? 'sandbox' : 'live';
+}
 
 /** OMS documents 60 minutes; the response's own `expiresIn` wins when present. */
 const DEFAULT_TOKEN_LIFETIME_MS = 60 * 60 * 1000;
@@ -133,35 +145,60 @@ export function describePolygonError(
 	return label ? `Polygon ${label}: ${message}` : message;
 }
 
+/**
+ * Rebuilds core's ApiError without the request body and query. Core keeps the
+ * request it was built from on `error.request`, and on these routes that body is
+ * either the key and secret (`/auth/token`) or customer personal data (names,
+ * birth date, address). Status, body and rate-limit fields stay, so the 429
+ * handler and the 401 refresh still read them.
+ */
+export function withoutRequestBody(error: ApiError): ApiError {
+	return new ApiError(
+		{ ...error.request, body: undefined, query: undefined },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
 export type PolygonCredentials = {
 	apiKey: string;
 	apiSecret: string;
 };
 
-/** One cached bearer token per credential pair and host, within the process. */
-type CachedToken = { accessToken: string; expiresAt: number };
+/**
+ * One cached bearer token per key and host, within the process. The entry also
+ * holds the secret it was minted with, and a lookup only returns the token when
+ * the caller presents that same secret, so a wrong secret never reuses a token
+ * minted from the right one. The credentials are compared, not hashed: they are
+ * already in this process's memory, and a fast hash of a credential is what
+ * CodeQL flags as weak password hashing.
+ */
+type CachedToken = { apiSecret: string; accessToken: string; expiresAt: number };
 const tokenCache = new Map<string, CachedToken>();
 /** In-flight token requests, so parallel calls mint one token, not one each. */
-const inFlightTokens = new Map<string, Promise<string>>();
+const inFlightTokens = new Map<
+	string,
+	{ apiSecret: string; promise: Promise<string> }
+>();
 
-/** Identifies a cached token by host and the complete credential pair. The secret
- * is part of the identity but not part of the key that is stored: it goes
- * through SHA-256 so the cache holds no credential in readable form. Keeping it
- * out of the key was a real bug: a second caller presenting the same key with a
- * different secret used to receive the first caller's token.
- *
- * Exported so a test can assert that neither credential appears in the key.
- */
+/** Identifies a cache slot by host and key; the secret is checked on lookup. */
 export function tokenCacheKey(
 	environment: PolygonEnvironment,
 	credentials: PolygonCredentials,
 ): string {
-	const fingerprint = createHash('sha256')
-		.update(credentials.apiKey)
-		.update('\0')
-		.update(credentials.apiSecret)
-		.digest('hex');
-	return `${environment}:${fingerprint}`;
+	return `${environment}:${credentials.apiKey}`;
 }
 
 /** Clears the cached token, which a test uses to pin the refresh path. */
@@ -178,7 +215,10 @@ export function invalidatePolygonToken(
 	environment: PolygonEnvironment,
 	credentials: PolygonCredentials,
 ): void {
-	tokenCache.delete(tokenCacheKey(environment, credentials));
+	const key = tokenCacheKey(environment, credentials);
+	if (tokenCache.get(key)?.apiSecret === credentials.apiSecret) {
+		tokenCache.delete(key);
+	}
 }
 
 // unknown: the token response is untrusted until the fields below are read.
@@ -233,25 +273,7 @@ export async function mintPolygonToken(
 		// secret, and ApiError retains the request it was built from, so the
 		// request body is dropped when the error is rebuilt. Only the body held
 		// the credential: the headers stay, and none of them is the secret.
-		if (error instanceof ApiError) {
-			throw new ApiError(
-				{ ...requestOptions, body: undefined, query: undefined },
-				{
-					url: error.url,
-					ok: false,
-					status: error.status,
-					statusText: error.statusText,
-					body: error.body,
-				},
-				error.message,
-				{
-					retryAfter: error.retryAfter,
-					rateLimitReset: error.rateLimitReset,
-					rateLimitRemaining: error.rateLimitRemaining,
-					rateLimitLimit: error.rateLimitLimit,
-				},
-			);
-		}
+		if (error instanceof ApiError) throw withoutRequestBody(error);
 		// DOMException (fetch aborts and timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new PolygonAPIError(error.message, {
@@ -278,12 +300,18 @@ export async function resolvePolygonToken(
 
 	const key = tokenCacheKey(environment, credentials);
 	const cached = tokenCache.get(key);
-	if (cached && cached.expiresAt - TOKEN_REFRESH_MARGIN_MS > Date.now()) {
+	if (
+		cached &&
+		cached.apiSecret === credentials.apiSecret &&
+		cached.expiresAt - TOKEN_REFRESH_MARGIN_MS > Date.now()
+	) {
 		return cached.accessToken;
 	}
 
 	const pending = inFlightTokens.get(key);
-	if (pending) return pending;
+	if (pending && pending.apiSecret === credentials.apiSecret) {
+		return pending.promise;
+	}
 
 	const attempt = (async () => {
 		const { accessToken, expiresInSeconds } = await mintPolygonToken(
@@ -291,6 +319,7 @@ export async function resolvePolygonToken(
 			credentials,
 		);
 		tokenCache.set(key, {
+			apiSecret: credentials.apiSecret,
 			accessToken,
 			expiresAt:
 				Date.now() +
@@ -301,11 +330,13 @@ export async function resolvePolygonToken(
 		return accessToken;
 	})();
 
-	inFlightTokens.set(key, attempt);
+	const entry = { apiSecret: credentials.apiSecret, promise: attempt };
+	inFlightTokens.set(key, entry);
 	try {
 		return await attempt;
 	} finally {
-		inFlightTokens.delete(key);
+		// A mint for another secret may have replaced this entry meanwhile.
+		if (inFlightTokens.get(key) === entry) inFlightTokens.delete(key);
 	}
 }
 
@@ -381,8 +412,9 @@ export async function makePolygonRequest(
 			rateLimitConfig: POLYGON_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		// A real HTTP failure keeps core's ApiError (see mintPolygonToken).
-		if (error instanceof ApiError) throw error;
+		// A real HTTP failure keeps core's ApiError (see mintPolygonToken), minus
+		// the request body: a customer write carries personal data.
+		if (error instanceof ApiError) throw withoutRequestBody(error);
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new PolygonAPIError(error.message, {
 				cause: error,
