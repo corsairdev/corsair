@@ -6,7 +6,12 @@ import { kadoa } from './index';
 // through the operation's output schema before an assertion touches it, so a
 // field typed wrongly fails here as well as for a caller. Read-only: nothing
 // here starts a run or spends credits.
-const describeIfKey = process.env.KADOA_API_KEY ? describe : describe.skip;
+const describeIfKey = process.env.KADOA_API_KEY
+	? describe
+	: (() => {
+			console.warn('Skipping Kadoa live API tests: KADOA_API_KEY is not set.');
+			return describe.skip;
+		})();
 
 describeIfKey('Kadoa live API', () => {
 	const corsair = createCorsair({
