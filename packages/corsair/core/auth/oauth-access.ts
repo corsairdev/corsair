@@ -10,13 +10,22 @@ import {
 	refreshOAuthTokensLocal,
 } from './oauth-refresh-local';
 import { cacheRefreshedTokens, isAccessTokenFresh } from './oauth-token-cache';
-import { singleFlight } from './single-flight';
+import { flightStoreOf, singleFlight } from './single-flight';
 import type { AccountKeyManagerFor } from './types';
 
 export type OAuthAccessContext = {
 	keys: AccountKeyManagerFor<'oauth_2'>;
 	hub?: HubConfig | null;
 	tenantId: string;
+	/**
+	 * The database handle of the Corsair instance this request belongs to. It is the
+	 * same stable object for every tenant client created under that instance, so it
+	 * owns the refresh single-flight: two clients refreshing the same tenant
+	 * concurrently must share one provider exchange (the refresh_token rotates),
+	 * while different tenants and separate Corsair instances with separate
+	 * databases must not.
+	 */
+	database?: object;
 };
 
 export type OAuthAccessOptions = {
@@ -38,6 +47,11 @@ export async function getOAuthAccessToken(
 ): Promise<string> {
 	const credentials = await ctx.keys.get_integration_credentials();
 	const flightKey = `${opts.plugin}:${ctx.tenantId}`;
+	// Owner of the refresh flight: the instance-wide database handle when available,
+	// so clients of one instance share (disjoint across tenants and instances). The
+	// key manager carries the same handle if the caller did not put it on the ctx
+	// (renewal and managed paths); a hand-built manager still falls back to itself.
+	const flightStore = ctx.database ?? flightStoreOf(ctx.keys);
 
 	if (!credentials.client_secret) {
 		if (!ctx.hub) {
@@ -57,7 +71,7 @@ export async function getOAuthAccessToken(
 		// joiner never inherits a stale token.
 		const runHubRefresh = (force: boolean): Promise<string> =>
 			singleFlight(
-				ctx.keys,
+				flightStore,
 				flightKey,
 				async () =>
 					(await getHubAccessToken(hubContext, { forceRefresh: force }))
@@ -86,7 +100,7 @@ export async function getOAuthAccessToken(
 	// routine creator only got here after its own freshness check failed, so a
 	// shortcut hit means a concurrent refresh already minted a fresh token.
 	const runRefresh = (force: boolean): Promise<string> =>
-		singleFlight(ctx.keys, flightKey, async () => {
+		singleFlight(flightStore, flightKey, async () => {
 			const [currentAccess, expiresAt, refreshToken] = await Promise.all([
 				ctx.keys.get_access_token(),
 				ctx.keys.get_expires_at(),
