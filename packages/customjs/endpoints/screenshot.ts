@@ -36,7 +36,7 @@ export const capture: CustomjsEndpoints['screenshotCapture'] = (ctx, input) =>
 		}),
 		{
 			log: (parsed, result) => ({
-				url: parsed.url,
+				host: new URL(parsed.url).host,
 				commands: parsed.commands?.length ?? 0,
 				cropped: parsed.box !== undefined,
 				byteLength: result.byteLength,

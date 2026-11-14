@@ -340,11 +340,13 @@ describe('screenshot.capture', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('logs the URL and step count, never typed values', async () => {
+	// A URL can carry an access token in its query or path, so only the host is
+	// logged.
+	it('logs the host and step count, never the full URL or typed values', async () => {
 		respondBytes(PNG_BYTES, 'image/png');
 
 		await invoke(Screenshot.capture, {
-			url: 'https://example.com',
+			url: 'https://example.com/report?token=secret-token',
 			commands: [{ action: 'type', selector: '#password', value: 'hunter2' }],
 		});
 
@@ -352,7 +354,7 @@ describe('screenshot.capture', () => {
 			expect.anything(),
 			'customjs.screenshot.capture',
 			{
-				url: 'https://example.com',
+				host: 'example.com',
 				commands: 1,
 				cropped: false,
 				byteLength: PNG_BYTES.length,
@@ -360,6 +362,7 @@ describe('screenshot.capture', () => {
 			'completed',
 		);
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('hunter2');
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('secret-token');
 	});
 });
 
@@ -486,6 +489,23 @@ describe('javascript.runBinary', () => {
 });
 
 describe('scrape.page', () => {
+	it('logs the host, never the full URL', async () => {
+		respondJson(scrapeCommandResponse);
+
+		await invoke(Scrape.page, {
+			url: 'https://example.com/private?token=secret-token',
+			commands: [{ action: 'extract', selector: 'h1', as: 'heading' }],
+		});
+
+		expect(mockLog).toHaveBeenCalledWith(
+			expect.anything(),
+			'customjs.scrape.page',
+			expect.objectContaining({ host: 'example.com', commands: 1 }),
+			'completed',
+		);
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('secret-token');
+	});
+
 	it('POSTs the commands and returns the extractions', async () => {
 		respondJson(scrapeCommandResponse);
 
@@ -754,6 +774,24 @@ describe('pages.list', () => {
 });
 
 describe('pages.create', () => {
+	// The page name is free text and can name a customer, so it stays out of the
+	// event log.
+	it('logs the page ID and HTML length, never the name', async () => {
+		respondJson(pageCreated, 201);
+
+		await invoke(Pages.create, {
+			name: 'Quote for jane@example.com',
+			htmlContent: '<h1>hi</h1>',
+		});
+
+		const fields = mockLog.mock.calls.at(-1)?.[2];
+		expect(fields).toEqual({
+			pageId: pageCreated.pageId,
+			htmlLength: '<h1>hi</h1>'.length,
+		});
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('jane');
+	});
+
 	it('POSTs the page and accepts the 201 with shortId', async () => {
 		respondJson(pageCreated, 201);
 
@@ -999,6 +1037,24 @@ describe('error envelopes', () => {
 		const timeout = new Error('The operation timed out.');
 		timeout.name = 'TimeoutError';
 		fetchMock.mockRejectedValueOnce(timeout);
+
+		const error = await captureError(invoke(Pages.list, {}));
+
+		expect(error).toMatchObject({
+			isTransportError: true,
+			message: 'CustomJS request timed out after 30s',
+		});
+	});
+
+	it('names the pages host budget when reading a page response times out', async () => {
+		const timeout = new Error('The operation timed out.');
+		timeout.name = 'TimeoutError';
+		const res = new Response('[]', {
+			status: 200,
+			headers: { 'Content-Type': 'application/json' },
+		});
+		jest.spyOn(res, 'text').mockRejectedValueOnce(timeout);
+		fetchMock.mockResolvedValueOnce(res);
 
 		const error = await captureError(invoke(Pages.list, {}));
 

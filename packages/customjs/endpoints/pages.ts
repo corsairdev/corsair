@@ -54,7 +54,6 @@ export const create: CustomjsEndpoints['pagesCreate'] = (ctx, input) =>
 		}),
 		{
 			log: (parsed, result) => ({
-				name: parsed.name,
 				pageId: result.pageId,
 				htmlLength: parsed.htmlContent.length,
 			}),

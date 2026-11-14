@@ -41,7 +41,7 @@ export const page: CustomjsEndpoints['scrapePage'] = (ctx, input) =>
 		}),
 		{
 			log: (parsed, result) => ({
-				url: parsed.url,
+				host: parsed.url === undefined ? undefined : new URL(parsed.url).host,
 				commands: parsed.commands.length,
 				returnType: parsed.returnType ?? 'json',
 				steps: result.steps ?? undefined,
