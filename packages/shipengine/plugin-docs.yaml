@@ -133,11 +133,11 @@ apiExamples:
   "packageTypes.listPackageTypes":
     args: {}
   "packageTypes.createPackageType":
-    args: {"body":{"name":"example","package_code":"small_flat_rate_box"}}
+    args: {"body":{"name":"example","package_code":"custom_bigbox"}}
   "packageTypes.getPackageTypeById":
     args: {"path":{"package_id":"se-28529731"}}
   "packageTypes.updatePackageType":
-    args: {"path":{"package_id":"se-28529731"},"body":{"name":"example","package_code":"small_flat_rate_box"}}
+    args: {"path":{"package_id":"se-28529731"},"body":{"name":"example","package_code":"custom_bigbox"}}
   "packageTypes.deletePackageType":
     args: {"path":{"package_id":"se-28529731"}}
   "packagePickups.listScheduledPickups":
