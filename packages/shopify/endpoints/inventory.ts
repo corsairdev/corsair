@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import type {
 	ShopifyContext,
 	ShopifyEndpointInputs,
@@ -61,33 +62,23 @@ mutation InventoryAdjust($input: InventoryAdjustQuantitiesInput!, $idempotencyKe
 }`;
 
 /**
- * A key for one logical adjustment.
+ * A key for one logical adjustment: the caller's, or a fresh one per call.
  *
- * It cannot be random per call. Core retries by re-invoking the whole endpoint,
- * so a fresh key each time would differ on the retry and Shopify would apply
- * the change twice. The default is therefore derived from the change, which is
- * stable across retries of the same call.
+ * A key derived from the change itself (item, location, delta, reason) made two
+ * separate identical adjustments share a key, and Shopify replayed the first
+ * result for the second without applying it: verified live on 2026-11-15, two
+ * `+1` calls left the quantity at 1 while both reported success.
  *
- * That default has one limitation: two *separate* receipts that each add five
- * units to the same item and location produce the same key, and the second is
- * deduplicated. A caller making that kind of repeated identical adjustment must
- * pass `idempotencyKey` so each logical adjustment is distinct.
+ * A fresh key per call is safe with the plugin's retry rules. Core retries by
+ * re-invoking the endpoint, which only happens here for a THROTTLED answer, and
+ * Shopify rejects a throttled request before it runs. A 5xx or a dropped
+ * connection on this write is not retried at all (error-handlers.ts). A caller
+ * that retries on its own passes `idempotencyKey` and reuses it.
  */
 export function adjustmentIdempotencyKey(input: {
 	idempotencyKey?: string;
-	inventoryItemId: string;
-	locationId: string;
-	delta: number;
-	reason: string;
 }): string {
-	if (input.idempotencyKey) return input.idempotencyKey;
-	return [
-		'inventory-adjust',
-		input.inventoryItemId,
-		input.locationId,
-		String(input.delta),
-		input.reason,
-	].join(':');
+	return input.idempotencyKey ?? `inventory-adjust:${randomUUID()}`;
 }
 
 export const list = (
@@ -149,13 +140,7 @@ export const adjust = (
 						},
 					],
 				},
-				idempotencyKey: adjustmentIdempotencyKey({
-					idempotencyKey,
-					inventoryItemId,
-					locationId,
-					delta,
-					reason,
-				}),
+				idempotencyKey: adjustmentIdempotencyKey({ idempotencyKey }),
 			},
 			payloadKey: 'inventoryAdjustQuantities',
 		}),

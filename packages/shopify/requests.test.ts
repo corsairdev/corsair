@@ -293,9 +293,64 @@ describe('inventory', () => {
 				],
 			},
 		});
-		expect(variables.idempotencyKey).toBe(
-			'inventory-adjust:gid://shopify/InventoryItem/3:gid://shopify/Location/9:-4:correction',
+		expect(variables.idempotencyKey).toMatch(
+			/^inventory-adjust:[0-9a-f-]{36}$/,
 		);
+	});
+
+	// Live, 2026-11-15: with a key derived from the change, a second identical
+	// +1 was answered from the first call's result and the quantity stayed at
+	// 1. Two separate calls must send two different keys.
+	it('inventory.adjust sends a different key for each identical call', async () => {
+		const ctx = createContext();
+		const adjusted = {
+			data: {
+				inventoryAdjustQuantities: {
+					inventoryAdjustmentGroup: {
+						createdAt: '2026-01-01T00:00:00Z',
+						reason: 'correction',
+						changes: [{ name: 'available', delta: 1 }],
+					},
+					userErrors: [],
+				},
+			},
+		};
+		const input = {
+			inventoryItemId: 'gid://shopify/InventoryItem/3',
+			locationId: 'gid://shopify/Location/9',
+			delta: 1,
+			reason: 'correction',
+		};
+		harness.respond(adjusted);
+		await Shopify.inventory.adjust(ctx, input);
+		const first = sentGraphql().variables.idempotencyKey;
+		harness.respond(adjusted);
+		await Shopify.inventory.adjust(ctx, input);
+		const second = sentGraphql().variables.idempotencyKey;
+
+		expect(first).not.toBe(second);
+	});
+
+	it('inventory.adjust sends the caller key unchanged', async () => {
+		const ctx = createContext();
+		harness.respond({
+			data: {
+				inventoryAdjustQuantities: {
+					inventoryAdjustmentGroup: null,
+					userErrors: [],
+				},
+			},
+		});
+
+		await Shopify.inventory.adjust(ctx, {
+			inventoryItemId: 'gid://shopify/InventoryItem/3',
+			locationId: 'gid://shopify/Location/9',
+			delta: 1,
+			reason: 'received',
+			idempotencyKey: 'receipt-42',
+		});
+
+		expect(sentGraphql().variables.idempotencyKey).toBe('receipt-42');
 	});
 });
 

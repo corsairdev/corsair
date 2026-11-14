@@ -423,7 +423,7 @@ export const inventoryAdjustInput = z.object({
 		.min(1)
 		.optional()
 		.describe(
-			'Key that makes this adjustment safe to repeat. Generated per call when omitted; supply your own to make a retry of the same logical adjustment reuse it.',
+			'Key that makes this adjustment safe to repeat. A new key is generated for each call when omitted, so two identical adjustments both apply; pass the same key again only when retrying the same adjustment.',
 		),
 });
 
