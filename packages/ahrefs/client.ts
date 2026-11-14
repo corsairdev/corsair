@@ -53,11 +53,15 @@ const AHREFS_RATE_LIMIT_CONFIG: RateLimitConfig = {
 
 export type AhrefsQueryValue = string | number | boolean | undefined;
 
+export type AhrefsHttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
 export async function makeAhrefsRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
+		method?: AhrefsHttpMethod;
 		query?: Record<string, AhrefsQueryValue>;
+		body?: Record<string, unknown>;
 	} = {},
 ): Promise<T> {
 	const config: OpenAPIConfig = {
@@ -73,9 +77,12 @@ export async function makeAhrefsRequest<T>(
 	};
 
 	const requestOptions: ApiRequestOptions = {
-		method: 'GET',
+		method: options.method ?? 'GET',
 		url: endpoint,
 		query: options.query,
+		...(options.body
+			? { body: options.body, mediaType: 'application/json' }
+			: {}),
 	};
 
 	try {

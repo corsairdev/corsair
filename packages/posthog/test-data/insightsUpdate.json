@@ -1,0 +1,83 @@
+{
+  "id": 14017744,
+  "short_id": "zRCT3Vwl",
+  "name": "corsair-plugin-test-1794490650",
+  "derived_name": null,
+  "query": {
+    "kind": "InsightVizNode",
+    "source": {
+      "kind": "TrendsQuery",
+      "series": [
+        {
+          "kind": "EventsNode",
+          "math": "total",
+          "event": "$pageview"
+        }
+      ],
+      "dateRange": {
+        "date_from": "-7d"
+      },
+      "version": 4
+    }
+  },
+  "order": null,
+  "deleted": false,
+  "dashboards": [2342684],
+  "dashboard_tiles": [
+    {
+      "id": 15321483,
+      "dashboard_id": 2342684,
+      "deleted": null
+    }
+  ],
+  "last_refresh": null,
+  "cache_target_age": null,
+  "next_allowed_client_refresh": null,
+  "result": null,
+  "hasMore": null,
+  "columns": null,
+  "created_at": "2026-11-12T13:38:08.377975Z",
+  "created_by": {
+    "id": 823519,
+    "uuid": "01a17792-e2c3-0000-6440-326f9c1491f0",
+    "distinct_id": "distinct-id-1",
+    "first_name": "Test",
+    "last_name": "Test",
+    "email": "user@example.com",
+    "is_email_verified": true,
+    "hedgehog_config": null,
+    "role_at_organization": "engineering"
+  },
+  "description": "updated by corsair plugin test",
+  "updated_at": "2026-11-12T13:38:08.810314Z",
+  "favorited": false,
+  "saved": true,
+  "last_modified_at": "2026-11-12T13:38:08.807368Z",
+  "last_modified_by": {
+    "id": 823519,
+    "uuid": "01a17792-e2c3-0000-6440-326f9c1491f0",
+    "distinct_id": "distinct-id-1",
+    "first_name": "Test",
+    "last_name": "Test",
+    "email": "user@example.com",
+    "is_email_verified": true,
+    "hedgehog_config": null,
+    "role_at_organization": "engineering"
+  },
+  "is_sample": false,
+  "user_access_level": "manager",
+  "timezone": null,
+  "is_cached": false,
+  "query_status": null,
+  "types": null,
+  "resolved_date_range": null,
+  "resolved_compare_date_range": null,
+  "action_names": null,
+  "query_scan": null,
+  "warnings": null,
+  "alerts": [],
+  "filter_override_context": null,
+  "last_viewed_at": null,
+  "tags": [],
+  "filters_hash": "cache_309833_531a5574f8b5d9003c737b7cd74a0618f95dfa9d934cc3dded5505982f533003"
+}
