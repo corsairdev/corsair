@@ -684,9 +684,9 @@ await corsair.grist.api.docs.listSnapshots({ docId: 'doc123example' });
 
 `docs.modifyAccess`
 
-Change user access permissions for a document
+Change user access permissions for a document; sharing with a new email address sends that person an invitation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.grist.api.docs.modifyAccess({ docId: 'doc123example', users: { 'user@example.com': 'owners' } });
@@ -1079,9 +1079,9 @@ await corsair.grist.api.orgs.listAccess({ orgId: 'current' });
 
 `orgs.modifyAccess`
 
-Change user access roles for an organization
+Change user access roles for an organization; sharing with a new email address sends that person an invitation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.grist.api.orgs.modifyAccess({ orgId: 'current', users: { 'user@example.com': 'editors' } });
@@ -2421,9 +2421,9 @@ await corsair.grist.api.workspaces.listAccess({ workspaceId: 1 });
 
 `workspaces.modifyAccess`
 
-Change user access permissions for a workspace
+Change user access permissions for a workspace; sharing with a new email address sends that person an invitation
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.grist.api.workspaces.modifyAccess({ workspaceId: 1, users: { 'user@example.com': 'viewers' } });

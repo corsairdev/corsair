@@ -23,7 +23,7 @@ import {
 	WorkspacesCreateInputSchema,
 	WorkspacesGetInputSchema,
 } from './endpoints/types';
-import { gristEndpointSchemas } from './index';
+import { grist, gristEndpointSchemas } from './index';
 import { GristSchema } from './schema';
 import { gristEntities } from './schema/database';
 
@@ -226,5 +226,18 @@ describe('Grist endpoint input and output schemas', () => {
 			records: [{ fields: { id: 1, pet: 'cat' } }],
 		};
 		expect(SqlQueryOutputSchema.safeParse(sqlOutput).success).toBe(true);
+	});
+});
+
+describe('Grist risk levels', () => {
+	it('marks access changes destructive, since sharing with a new email sends an invitation', () => {
+		const meta = grist({}).endpointMeta;
+		for (const op of [
+			'orgs.modifyAccess',
+			'workspaces.modifyAccess',
+			'docs.modifyAccess',
+		] as const) {
+			expect(meta?.[op]?.riskLevel).toBe('destructive');
+		}
 	});
 });

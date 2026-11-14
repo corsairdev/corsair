@@ -31,7 +31,7 @@ pnpm add @corsair-dev/grist
 | `docs.get` | `grist.api.docs.get` | `read` | Describe document metadata and containing workspace |
 | `docs.listAccess` | `grist.api.docs.listAccess` | `read` | List users with access permissions to a document |
 | `docs.listSnapshots` | `grist.api.docs.listSnapshots` | `read` | List historical snapshots of a document |
-| `docs.modifyAccess` | `grist.api.docs.modifyAccess` | `write` | Change user access permissions for a document |
+| `docs.modifyAccess` | `grist.api.docs.modifyAccess` | `destructive` | Change user access permissions for a document |
 | `docs.move` | `grist.api.docs.move` | `write` | Move a document to a different workspace |
 | `docs.pin` | `grist.api.docs.pin` | `write` | Pin a document for quick access |
 | `docs.remove` | `grist.api.docs.remove` | `destructive` | Move a document to the trash |
@@ -44,7 +44,7 @@ pnpm add @corsair-dev/grist
 | `orgs.getUsage` | `grist.api.orgs.getUsage` | `read` | Get organization resource and storage usage summary |
 | `orgs.list` | `grist.api.orgs.list` | `read` | List organizations accessible to the authenticated user |
 | `orgs.listAccess` | `grist.api.orgs.listAccess` | `read` | List users with access permissions to an organization |
-| `orgs.modifyAccess` | `grist.api.orgs.modifyAccess` | `write` | Change user access roles for an organization |
+| `orgs.modifyAccess` | `grist.api.orgs.modifyAccess` | `destructive` | Change user access roles for an organization |
 | `orgs.update` | `grist.api.orgs.update` | `write` | Modify organization metadata such as its name |
 | `profile.get` | `grist.api.profile.get` | `read` | Get current authenticated user profile |
 | `profile.updateLocale` | `grist.api.profile.updateLocale` | `write` | Update user locale preference |
@@ -79,7 +79,7 @@ pnpm add @corsair-dev/grist
 | `workspaces.get` | `grist.api.workspaces.get` | `read` | Describe a workspace and its documents |
 | `workspaces.list` | `grist.api.workspaces.list` | `read` | List workspaces and their documents within an organization |
 | `workspaces.listAccess` | `grist.api.workspaces.listAccess` | `read` | List users with access permissions to a workspace |
-| `workspaces.modifyAccess` | `grist.api.workspaces.modifyAccess` | `write` | Change user access permissions for a workspace |
+| `workspaces.modifyAccess` | `grist.api.workspaces.modifyAccess` | `destructive` | Change user access permissions for a workspace |
 | `workspaces.remove` | `grist.api.workspaces.remove` | `destructive` | Move a workspace to the trash |
 | `workspaces.unremove` | `grist.api.workspaces.unremove` | `write` | Restore a workspace from the trash |
 | `workspaces.update` | `grist.api.workspaces.update` | `write` | Modify workspace name or settings |

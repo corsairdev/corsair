@@ -500,8 +500,9 @@ const gristEndpointMeta = {
 		description: 'List users with access permissions to an organization',
 	},
 	'orgs.modifyAccess': {
-		riskLevel: 'write',
-		description: 'Change user access roles for an organization',
+		riskLevel: 'destructive',
+		description:
+			'Change user access roles for an organization; sharing with a new email address sends that person an invitation',
 	},
 	'orgs.getUsage': {
 		riskLevel: 'read',
@@ -541,8 +542,9 @@ const gristEndpointMeta = {
 		description: 'List users with access permissions to a workspace',
 	},
 	'workspaces.modifyAccess': {
-		riskLevel: 'write',
-		description: 'Change user access permissions for a workspace',
+		riskLevel: 'destructive',
+		description:
+			'Change user access permissions for a workspace; sharing with a new email address sends that person an invitation',
 	},
 
 	'docs.create': {
@@ -598,8 +600,9 @@ const gristEndpointMeta = {
 		description: 'List users with access permissions to a document',
 	},
 	'docs.modifyAccess': {
-		riskLevel: 'write',
-		description: 'Change user access permissions for a document',
+		riskLevel: 'destructive',
+		description:
+			'Change user access permissions for a document; sharing with a new email address sends that person an invitation',
 	},
 	'docs.listSnapshots': {
 		riskLevel: 'read',
