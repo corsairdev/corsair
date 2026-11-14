@@ -6,10 +6,11 @@
 // schema a caller receives, so a field typed wrongly cannot pass silently. A
 // free key covers the market-status, reference and end-of-day routes only, so
 // real-time snapshots stay out.
+import { ApiError } from 'corsair/http';
 import {
+	isCredentialRejection,
 	makePolygonioRequest,
 	POLYGONIO_API_BASE,
-	PolygonioAPIError,
 } from './client';
 import {
 	ExchangeSchema,
@@ -28,6 +29,10 @@ if (LIVE_KEY.length === 0) {
 const describeLive = LIVE_KEY.length > 0 ? describe : describe.skip;
 
 describeLive('Polygon.io live API', () => {
+	// The free Basic plan allows 5 calls a minute, and core's 429 retries give
+	// up after about 7 seconds, so the suite spaces its calls instead.
+	beforeEach(() => new Promise((resolve) => setTimeout(resolve, 13_000)));
+
 	it('reads the current market status', async () => {
 		const raw = await makePolygonioRequest(LIVE_KEY, {
 			method: 'GET',
@@ -107,7 +112,8 @@ describeLive('Polygon.io live API', () => {
 			}),
 		);
 
-		if (raw instanceof PolygonioAPIError && raw.status === 403) {
+		// HTTP failures arrive as core's ApiError, which the client passes through.
+		if (raw instanceof ApiError && raw.status === 403) {
 			// A plan that does not include aggregates is documented behaviour, not a
 			// defect in the schema, so the run warns rather than failing on it.
 			console.warn(
@@ -115,7 +121,7 @@ describeLive('Polygon.io live API', () => {
 			);
 			return;
 		}
-		if (raw instanceof PolygonioAPIError) throw raw;
+		if (raw instanceof Error) throw raw;
 
 		const parsed = PolygonioEndpointOutputSchemas.bars.parse(raw);
 		// `results` is optional: a window with no qualifying trades omits it.
@@ -138,10 +144,10 @@ describeLive('Polygon.io live API', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(PolygonioAPIError);
-		if (!(error instanceof PolygonioAPIError)) return;
+		expect(error).toBeInstanceOf(ApiError);
+		if (!(error instanceof ApiError)) return;
 		expect(error.status).toBe(401);
-		expect(error.credentialsRejected).toBe(true);
+		expect(isCredentialRejection(error.status, error.body)).toBe(true);
 		// The key rode in the query string, so nothing may echo it back.
 		expect(JSON.stringify(error)).not.toContain('definitely-not-a-key');
 	});
