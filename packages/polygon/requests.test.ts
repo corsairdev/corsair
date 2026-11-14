@@ -163,24 +163,94 @@ describe('wallets endpoints', () => {
 		});
 	});
 
-	it('wallets.get reads a wallet by path', async () => {
-		mockedRequest.mockResolvedValue({ id: 'wlt_1', status: 'active' });
+	it('wallets.get reads a wallet by path and parses the customer reference', async () => {
+		// v0.13 WalletResourceCrypto: `customer` is an object, not an id string.
+		mockedRequest.mockResolvedValue({
+			id: 'wlt_1',
+			type: 'walletCrypto',
+			customer: { id: 'cst_1' },
+			status: 'active',
+			asset: 'usdc',
+			network: 'polygon',
+			address: '0xabc',
+			routing: { claimStatus: 'unclaimed' },
+			provider: 'custodian',
+			balances: [
+				{
+					asset: 'usdc',
+					network: 'polygon',
+					balance: '5.000000',
+					estimatedValueUsd: '5.00',
+				},
+			],
+			createdAt: '2026-01-01T00:00:00Z',
+			updatedAt: '2026-01-01T00:00:00Z',
+		});
 
-		await Wallets.get(ctx, { id: 'wlt_1' });
+		const result = await Wallets.get(ctx, { id: 'wlt_1' });
 
 		expect(sentRequest()).toEqual({ method: 'GET', path: '/wallets/wlt_1' });
+		expect(result.customer?.id).toBe('cst_1');
+		expect(result.balances?.[0]?.estimatedValueUsd).toBe('5.00');
 	});
 
-	it('wallets.create posts the asset and chain', async () => {
-		mockedRequest.mockResolvedValue({ id: 'wlt_new' });
+	it('wallets.create posts the documented customerId, type and details body', async () => {
+		mockedRequest.mockResolvedValue({ id: 'wlt_new', type: 'walletCrypto' });
 
-		await Wallets.create(ctx, { asset: 'usdc', chain: 'polygon' });
+		await Wallets.create(ctx, {
+			customerId: 'cst_1',
+			type: 'custodial',
+			details: { network: 'polygon', asset: 'usdc' },
+		});
 
 		const request = sentRequest();
 		expect(request?.method).toBe('POST');
 		expect(request?.path).toBe('/wallets');
-		expect(request?.body).toEqual({ asset: 'usdc', chain: 'polygon' });
+		expect(request?.body).toEqual({
+			customerId: 'cst_1',
+			type: 'custodial',
+			details: { network: 'polygon', asset: 'usdc' },
+			label: undefined,
+			metadata: undefined,
+		});
 		expect(request?.idempotencyKey).toBeDefined();
+	});
+
+	it('wallets.create parses the 202 pending wallet operation', async () => {
+		mockedRequest.mockResolvedValue({
+			operationId: 'wop_1',
+			object: 'wallet.operation',
+			customerId: 'cst_1',
+			status: 'pending',
+			pairs: [{ network: 'polygon', status: 'pending' }],
+			createdAt: '2026-01-01T00:00:00Z',
+		});
+
+		const result = await Wallets.create(ctx, {
+			customerId: 'cst_1',
+			type: 'noncustodial',
+			details: { networkFamily: 'evm' },
+		});
+
+		expect(result.operationId).toBe('wop_1');
+	});
+
+	it('wallets.create rejects details that do not match the wallet type', async () => {
+		await expect(
+			Wallets.create(ctx, {
+				customerId: 'cst_1',
+				type: 'custodial',
+				details: { networkFamily: 'evm' },
+			}),
+		).rejects.toThrow('details.network');
+		await expect(
+			Wallets.create(ctx, {
+				customerId: 'cst_1',
+				type: 'fiat',
+				details: { asset: 'eur' },
+			}),
+		).rejects.toThrow('asset: usd');
+		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
 	it('wallets.balance reads the balance sub-resource', async () => {

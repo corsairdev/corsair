@@ -273,8 +273,9 @@ const polygonEndpointMeta = {
 		description: 'Read one wallet by id',
 	},
 	'wallets.create': {
-		riskLevel: 'write',
-		description: 'Create a wallet for an asset on a chain',
+		riskLevel: 'destructive',
+		description:
+			'Create a custodial, noncustodial or fiat wallet for a customer. OMS has no route to delete a wallet, so a live wallet stays on the customer',
 	},
 	'wallets.balance': {
 		riskLevel: 'read',
@@ -422,6 +423,7 @@ export type {
 	WalletsBalanceInput,
 	WalletsBalanceOutput,
 	WalletsCreateInput,
+	WalletsCreateOutput,
 	WalletsGetInput,
 	WalletsListInput,
 	WalletsListOutput,

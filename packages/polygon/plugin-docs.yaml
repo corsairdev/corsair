@@ -58,7 +58,7 @@ apiExamples:
   wallets.get:
     call: "{ id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn' }"
   wallets.create:
-    call: "{ asset: 'usdc', chain: 'polygon' }"
+    call: "{ customerId: 'cst_vfa0nxw6zvyws9g237jrxn4y7k', type: 'custodial', details: { network: 'polygon', asset: 'usdc' } }"
   wallets.balance:
     call: "{ id: 'wlt_5h4jzzpr9xre3bamd9ca7qyghn' }"
   networks.list:

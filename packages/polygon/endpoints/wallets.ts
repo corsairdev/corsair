@@ -66,12 +66,17 @@ export const create: PolygonEndpoints['walletsCreate'] = (ctx, input) =>
 			requiresIdempotencyKey: true,
 		},
 		input,
-		({ idempotencyKey: _ignored, asset, chain }) => ({
+		({ idempotencyKey: _ignored, customerId, type, details, label, metadata }) => ({
 			method: 'POST',
 			path: '/wallets',
-			body: { asset, chain },
+			body: { customerId, type, details, label, metadata },
 		}),
-		{ log: (_, result) => ({ walletId: result.id ?? undefined }) },
+		{
+			log: (_, result) => ({
+				walletId: result.id ?? result.walletId ?? undefined,
+				operationId: result.operationId ?? undefined,
+			}),
+		},
 	);
 
 export const balance: PolygonEndpoints['walletsBalance'] = (ctx, input) =>

@@ -378,18 +378,40 @@ export type CustomersDeleteInput = z.infer<typeof CustomersDeleteInputSchema>;
 
 // ── wallets ───────────────────────────────────────────────────────────────
 
+/** One asset balance held in a wallet, as listed on the wallet itself. */
+export const WalletResourceBalanceSchema = z
+	.object({
+		asset: z.string().nullish(),
+		network: z.string().nullish(),
+		balance: z
+			.string()
+			.nullish()
+			.describe('Signed fixed-point decimal string; negative after a clawback.'),
+		estimatedValueUsd: z.string().nullish(),
+	})
+	.loose();
+
+/** A crypto or fiat wallet (v0.13 `WalletResourceCrypto` / `WalletResourceFiat`). */
 export const WalletSchema = z
 	.object({
 		id: IdSchema.nullish(),
 		object: z.string().nullish(),
-		customer: z.string().nullish(),
-		custodyType: z.string().nullish().describe('`custodial` or `embedded`.'),
-		blockchainAddress: z.string().nullish(),
-		networkFamily: z.string().nullish(),
+		type: z.string().nullish().describe('`walletCrypto` or `walletFiat`.'),
+		customer: z.object({ id: IdSchema.nullish() }).loose().nullish(),
 		status: z
 			.string()
 			.nullish()
-			.describe('`preallocated`, `active` or `suspended`.'),
+			.describe('`pending`, `active`, `frozen`, `suspended` or `closed`.'),
+		asset: z.string().nullish(),
+		network: z.string().nullish().describe('Crypto wallets only.'),
+		address: z.string().nullish().describe('Crypto wallets only.'),
+		// unknown: claim state of the wallet, whose fields vary by claimant.
+		routing: z.object({}).loose().nullish(),
+		provider: z.string().nullish(),
+		label: z.string().nullish(),
+		balances: z.array(WalletResourceBalanceSchema).nullish(),
+		// unknown: the caller's own key-value data.
+		metadata: z.object({}).loose().nullish(),
 		createdAt: TimestampSchema,
 		updatedAt: TimestampSchema,
 	})
@@ -425,10 +447,9 @@ const WalletsListInputSchema = z.object({
 		.optional()
 		.describe('Scope to one `cst_` customer.'),
 	type: z
-		.string()
-		.min(1)
+		.enum(['custodial', 'noncustodial', 'fiat'])
 		.optional()
-		.describe('A wallet variant, such as `custodial` or `fiat`.'),
+		.describe('Only wallets of this kind.'),
 	search: z
 		.string()
 		.min(1)
@@ -458,15 +479,69 @@ const WalletsListOutputSchema = z.object(paginationOutputFields).extend({
 
 export type WalletsListOutput = z.infer<typeof WalletsListOutputSchema>;
 
-const WalletsCreateInputSchema = z.object({
-	/** Reuse it to retry the same logical attempt instead of repeating the write. */
-	idempotencyKey: IdempotencyKeySchema,
-	asset: z
-		.string()
-		.min(1)
-		.describe('The asset the wallet holds, such as `usdc`.'),
-	chain: z.string().min(1).describe('The chain the wallet lives on.'),
+export const WALLET_CREATE_TYPES = ['custodial', 'noncustodial', 'fiat'] as const;
+
+export const WalletsCreateInputSchema = z
+	.object({
+		/** Reuse it to retry the same logical attempt instead of repeating the write. */
+		idempotencyKey: IdempotencyKeySchema,
+		customerId: IdSchema.describe('The `cst_` customer who owns the wallet.'),
+		type: z
+			.enum(WALLET_CREATE_TYPES)
+			.describe(
+				'`custodial` needs `details.network` and `details.asset`; `noncustodial` needs `details.networkFamily`; `fiat` needs `details.asset: usd`.',
+			),
+		details: z.object({
+			network: CryptoNetworkSchema.optional().describe('Custodial only.'),
+			asset: z
+				.string()
+				.min(1)
+				.optional()
+				.describe('Custodial: a crypto asset such as `usdc`. Fiat: `usd`.'),
+			networkFamily: z
+				.enum(['evm', 'solana', 'tron'])
+				.optional()
+				.describe('Noncustodial only.'),
+		}),
+		label: z.string().min(1).optional(),
+		metadata: z.record(z.string(), z.string()).optional(),
+	})
+	.superRefine((value, ctx) => {
+		const { network, asset, networkFamily } = value.details;
+		const issue = (message: string, field: string) =>
+			ctx.addIssue({ code: 'custom', message, path: ['details', field] });
+		if (value.type === 'custodial') {
+			if (network === undefined)
+				issue('A custodial wallet needs details.network.', 'network');
+			if (asset === undefined)
+				issue('A custodial wallet needs details.asset.', 'asset');
+			if (networkFamily !== undefined)
+				issue('networkFamily is for noncustodial wallets.', 'networkFamily');
+		} else if (value.type === 'noncustodial') {
+			if (networkFamily === undefined)
+				issue('A noncustodial wallet needs details.networkFamily.', 'networkFamily');
+			if (network !== undefined || asset !== undefined)
+				issue('A noncustodial wallet takes only details.networkFamily.', 'network');
+		} else {
+			if (asset !== 'usd') issue('A fiat wallet needs details.asset: usd.', 'asset');
+			if (network !== undefined || networkFamily !== undefined)
+				issue('A fiat wallet takes only details.asset.', 'network');
+		}
+	});
+
+/**
+ * 201 returns the wallet. 202 returns a pending `wallet.operation` instead, with
+ * `operationId` and `walletId` once known, so both shapes parse here.
+ */
+const WalletsCreateOutputSchema = WalletSchema.extend({
+	operationId: IdSchema.nullish(),
+	customerId: IdSchema.nullish(),
+	walletId: IdSchema.nullish(),
+	// unknown: per-network provisioning state of a pending operation.
+	pairs: z.array(z.object({}).loose()).nullish(),
 });
+
+export type WalletsCreateOutput = z.infer<typeof WalletsCreateOutputSchema>;
 
 export type WalletsCreateInput = z.infer<typeof WalletsCreateInputSchema>;
 
@@ -1184,7 +1259,7 @@ export type PolygonEndpointOutputs = {
 	customersDelete: PolygonCustomer;
 	walletsList: WalletsListOutput;
 	walletsGet: PolygonWallet;
-	walletsCreate: PolygonWallet;
+	walletsCreate: WalletsCreateOutput;
 	walletsBalance: WalletsBalanceOutput;
 	networksList: NetworksListOutput;
 	quotesCreate: PolygonQuote;
@@ -1232,7 +1307,7 @@ export const PolygonEndpointOutputSchemas = {
 	customersDelete: CustomerSchema,
 	walletsList: WalletsListOutputSchema,
 	walletsGet: WalletSchema,
-	walletsCreate: WalletSchema,
+	walletsCreate: WalletsCreateOutputSchema,
 	walletsBalance: WalletsBalanceOutputSchema,
 	networksList: NetworksListOutputSchema,
 	quotesCreate: QuoteSchema,
