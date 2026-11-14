@@ -29,7 +29,7 @@ await corsair.polygonio.api.aggregates.bars({ ticker: 'AAPL', multiplier: 1, tim
 | `nextUrl` | `string` | No | The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched, so none of them is required. |
 | `ticker` | `string` | No | A case-sensitive ticker, such as AAPL. |
 | `multiplier` | `number` | No | The size of each window, such as 5 for a 5-minute bar. |
-| `timespan` | `minute \| hour \| day \| week \| month \| quarter \| year` | No | The unit of the window. |
+| `timespan` | `second \| minute \| hour \| day \| week \| month \| quarter \| year` | No | The unit of the window. |
 | `from` | `string` | No | Start of the range, as YYYY-MM-DD or a millisecond timestamp. |
 | `to` | `string` | No | End of the range, inclusive, as YYYY-MM-DD or a millisecond timestamp. |
 | `adjusted` | `boolean` | No | Whether prices are adjusted for splits. The API adjusts by default. |
@@ -49,7 +49,7 @@ await corsair.polygonio.api.aggregates.bars({ ticker: 'AAPL', multiplier: 1, tim
 | `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
 | `request_id` | `string \| null` | No | — |
 | `count` | `number \| null` | No | The total number of matching rows. |
-| `next_url` | `string \| null` | No | Present while another page exists; pass it to the matching `nextPage`. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
 | `results` | `object[] \| null` | No | — |
 
 <AccordionGroup>
@@ -105,7 +105,7 @@ await corsair.polygonio.api.aggregates.dailySummary({ ticker: 'AAPL', date: '202
 | `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
 | `request_id` | `string \| null` | No | — |
 | `symbol` | `string \| null` | No | — |
-| `from` | `string \| null` | No | The trading date OMS resolved. |
+| `from` | `string \| null` | No | The trading date. |
 | `open` | `number \| null` | No | — |
 | `high` | `number \| null` | No | — |
 | `low` | `number \| null` | No | — |
@@ -122,23 +122,21 @@ await corsair.polygonio.api.aggregates.dailySummary({ ticker: 'AAPL', date: '202
 
 `aggregates.marketSummary`
 
-Read every US stock's OHLC and volume for one trading date, with `next_url` paging
+Read every US stock's OHLC and volume for one trading date, in a single page
 
 **Risk:** `read`
 
 ```ts
-await corsair.polygonio.api.aggregates.marketSummary({ date: '2026-01-09', limit: 100 });
+await corsair.polygonio.api.aggregates.marketSummary({ date: '2026-01-09', include_otc: false });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `nextUrl` | `string` | No | The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched, so `date` is not required. |
-| `date` | `string` | No | The trading date, as YYYY-MM-DD. A non-trading date returns no rows. |
+| `date` | `string` | Yes | The trading date, as YYYY-MM-DD. A non-trading date returns no rows. |
 | `adjusted` | `boolean` | No | Whether prices are adjusted for splits. The API adjusts by default. |
-| `sort` | `asc \| desc` | No | Order by timestamp. The API defaults to ascending. |
-| `limit` | `number` | No | How many base aggregates to read. Defaults to 5000, and the maximum is 50000. |
+| `include_otc` | `boolean` | No | Include OTC securities. The API excludes them by default. |
 
 
 
@@ -153,7 +151,7 @@ await corsair.polygonio.api.aggregates.marketSummary({ date: '2026-01-09', limit
 | `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
 | `request_id` | `string \| null` | No | — |
 | `count` | `number \| null` | No | The total number of matching rows. |
-| `next_url` | `string \| null` | No | Present while another page exists; pass it to the matching `nextPage`. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
 | `results` | `object[] \| null` | No | — |
 
 <AccordionGroup>
@@ -212,7 +210,7 @@ await corsair.polygonio.api.aggregates.previousDay({ ticker: 'AAPL', adjusted: t
 | `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
 | `request_id` | `string \| null` | No | — |
 | `count` | `number \| null` | No | The total number of matching rows. |
-| `next_url` | `string \| null` | No | Present while another page exists; pass it to the matching `nextPage`. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
 | `results` | `object[] \| null` | No | — |
 
 <AccordionGroup>
@@ -270,7 +268,7 @@ await corsair.polygonio.api.market.exchanges({ asset_class: 'stocks', locale: 'u
 | `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
 | `request_id` | `string \| null` | No | — |
 | `count` | `number \| null` | No | The total number of matching rows. |
-| `next_url` | `string \| null` | No | Present while another page exists; pass it to the matching `nextPage`. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -592,7 +590,7 @@ await corsair.polygonio.api.tickers.list({ market: 'stocks', active: true, limit
 |------|------|----------|-------------|
 | `nextUrl` | `string` | No | The previous answer's `next_url`. When set, the other parameters are ignored and that exact page is fetched. |
 | `ticker` | `string` | No | One exact ticker symbol. |
-| `type` | `string` | No | A ticker type code, as `tickerTypes.list` reports them. |
+| `type` | `string` | No | A ticker type code, as `tickers.types` reports them. |
 | `market` | `string` | No | A market, such as `stocks`, `crypto`, `fx` or `otc`. |
 | `exchange` | `string` | No | An ISO 10383 Market Identifier Code, such as XNYS. |
 | `cusip` | `string` | No | A CUSIP. The API accepts it but never returns it. |
@@ -617,7 +615,7 @@ await corsair.polygonio.api.tickers.list({ market: 'stocks', active: true, limit
 | `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
 | `request_id` | `string \| null` | No | — |
 | `count` | `number \| null` | No | The total number of matching rows. |
-| `next_url` | `string \| null` | No | Present while another page exists; pass it to the matching `nextPage`. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -676,7 +674,7 @@ await corsair.polygonio.api.tickers.overview({ ticker: 'AAPL' });
 | `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
 | `request_id` | `string \| null` | No | — |
 | `count` | `number \| null` | No | The total number of matching rows. |
-| `next_url` | `string \| null` | No | Present while another page exists; pass it to the matching `nextPage`. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
 | `results` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -697,7 +695,30 @@ await corsair.polygonio.api.tickers.overview({ ticker: 'AAPL' });
   share_class_figi?: string | null,
   list_date?: string | null,
   delisted_utc?: string | null,
-  last_updated_utc?: string | null
+  last_updated_utc?: string | null,
+  description?: string | null,
+  homepage_url?: string | null,
+  market_cap?: number | null,
+  total_employees?: number | null,
+  phone_number?: string | null,
+  sic_code?: string | null,
+  sic_description?: string | null,
+  round_lot?: number | null,
+  ticker_root?: string | null,
+  ticker_suffix?: string | null,
+  share_class_shares_outstanding?: number | null,
+  weighted_shares_outstanding?: number | null,
+  address?: {
+    address1?: string | null,
+    address2?: string | null,
+    city?: string | null,
+    state?: string | null,
+    postal_code?: string | null
+  } | null,
+  branding?: {
+    logo_url?: string | null,
+    icon_url?: string | null
+  } | null
 }
 ```
 </Accordion>
@@ -735,7 +756,7 @@ await corsair.polygonio.api.tickers.types({ asset_class: 'stocks' });
 | `status` | `string \| null` | No | `OK`, `DELAYED` when the plan delays data, or `ERROR`. |
 | `request_id` | `string \| null` | No | — |
 | `count` | `number \| null` | No | The total number of matching rows. |
-| `next_url` | `string \| null` | No | Present while another page exists; pass it to the matching `nextPage`. |
+| `next_url` | `string \| null` | No | Present while another page exists; pass it back to the same operation as `nextUrl`. |
 | `results` | `object[]` | Yes | — |
 
 <AccordionGroup>
