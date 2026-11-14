@@ -1398,9 +1398,8 @@ export type AccountMeInput = z.infer<typeof AccountMeInputSchema>;
 
 export const AccountMeResponseSchema = z.object({
 	userId: z.string().uuid(),
-	credits: z
-		.object({ used: z.number().int(), total: z.number().int() })
-		.loose(),
+	// ApiCreditV2Info: doubles, fractional credits included.
+	credits: z.object({ used: z.number(), total: z.number() }).loose(),
 	capabilities: z
 		.object({
 			lists: z.boolean(),

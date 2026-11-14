@@ -445,6 +445,17 @@ describe('Companyenrich schema', () => {
 		);
 	});
 
+	it('accepts fractional credit balances from account.me', () => {
+		// ApiCreditV2Info documents used/total as doubles that include
+		// fractional credits.
+		expect(
+			CompanyenrichEndpointOutputSchemas.accountMe.safeParse({
+				...validOutputs.accountMe,
+				credits: { used: 0.5, total: 100.25 },
+			}).success,
+		).toBe(true);
+	});
+
 	it('validates CompanyEnrich enum and UUID constraints', () => {
 		expect(CompanyExpandSchema.safeParse('workforce').success).toBe(true);
 		expect(CompanyExpandSchema.safeParse('employees').success).toBe(false);
