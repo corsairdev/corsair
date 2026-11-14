@@ -12,7 +12,13 @@ const nonEmpty = z.string().min(1);
 const status = z.object({ status: z.literal(1), request: z.string() });
 const noInput = z.object({});
 const flag = z.union([z.literal(0), z.literal(1)]);
-const user = z.object({ user: nonEmpty, device: z.string().optional() });
+// Omitted `user` means the connection owner's stored user key.
+const ownerOrUser = nonEmpty
+	.optional()
+	.describe(
+		"User or group key; defaults to the connected account's own user key",
+	);
+const user = z.object({ user: ownerOrUser, device: z.string().optional() });
 const groupPath = z.object({ group: pathSegment });
 const groupMember = groupPath.extend({
 	user: nonEmpty,
@@ -20,12 +26,12 @@ const groupMember = groupPath.extend({
 });
 const message = z
 	.object({
-		user: nonEmpty,
-		message: nonEmpty,
+		user: ownerOrUser,
+		message: nonEmpty.max(1024),
 		device: z.string().optional(),
-		title: z.string().optional(),
-		url: z.string().optional(),
-		url_title: z.string().optional(),
+		title: z.string().max(250).optional(),
+		url: z.string().max(512).optional(),
+		url_title: z.string().max(100).optional(),
 		html: flag.optional(),
 		monospace: flag.optional(),
 		priority: z

@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { joinPushoverKey } from './client';
 import {
 	Apps,
 	Glances,
@@ -39,6 +40,8 @@ export type PushoverPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	/** Application token, or a team token when calling team operations. */
 	key?: string;
+	/** The account owner's user key, used when an operation's `user` is omitted. */
+	userKey?: string;
 	hooks?: InternalPushoverPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof endpoints>;
@@ -159,11 +162,11 @@ const endpointMeta = {
 		description: 'Get an emergency notification receipt',
 	},
 	'receipts.cancel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Cancel retries for an emergency notification',
 	},
 	'receipts.cancelByTag': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Cancel emergency notification retries by tag',
 	},
 	'groups.create': {
@@ -230,8 +233,14 @@ const endpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof endpoints>;
 
 const defaultAuthType = 'api_key' as const;
+/**
+ * Pushover needs two values from the account: the application token (the key)
+ * and the owner's user key, shown on the Pushover dashboard. The user key is
+ * the default recipient, so a connection can notify its owner without the
+ * agent supplying a key.
+ */
 export const pushoverAuthConfig = {
-	api_key: { account: [] as const },
+	api_key: { account: ['user_key'] as const },
 } as const satisfies PluginAuthConfig;
 export type BasePushoverPlugin<T extends PushoverPluginOptions> = CorsairPlugin<
 	'pushover',
@@ -270,7 +279,12 @@ export function pushover<const T extends PushoverPluginOptions>(
 			const key = options.key ?? (await ctx.keys?.get_api_key());
 			if (!key || !key.trim())
 				throw new AuthMissingError('pushover', 'api_key');
-			return key;
+			// Resolved here, not in the endpoint, so a missing user key reaches
+			// core's connect-link handling the same way a missing token does.
+			const userKey = options.userKey ?? (await ctx.keys?.get_user_key());
+			if (!userKey || !userKey.trim())
+				throw new AuthMissingError('pushover', 'user_key');
+			return joinPushoverKey(key, userKey);
 		},
 	} satisfies InternalPushoverPlugin;
 }

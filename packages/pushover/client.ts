@@ -4,6 +4,33 @@ import type { ZodType } from 'zod';
 
 export const PUSHOVER_API_BASE = 'https://api.pushover.net/1';
 
+// NUL cannot appear in a token or user key, so the pair cannot be forged by a
+// value that contains the separator.
+const KEY_SEPARATOR = '\u0000';
+
+export function joinPushoverKey(token: string, userKey: string): string {
+	return `${token}${KEY_SEPARATOR}${userKey}`;
+}
+
+/** Splits the key built by the plugin's keyBuilder into token and user key. */
+export function splitPushoverKey(key: string): {
+	token: string;
+	userKey?: string;
+} {
+	const [token = '', userKey] = key.split(KEY_SEPARATOR);
+	return { token, userKey: userKey?.trim() ? userKey : undefined };
+}
+
+/**
+ * The `user` an operation targets: the caller's value, else the connection
+ * owner's stored user key.
+ */
+export function resolvePushoverUser(key: string, user?: string): string {
+	const target = user ?? splitPushoverKey(key).userKey;
+	if (!target) throw new AuthMissingError('pushover', 'user_key');
+	return target;
+}
+
 export async function makePushoverRequest<T>(
 	key: string,
 	method: 'GET' | 'POST',
@@ -11,7 +38,8 @@ export async function makePushoverRequest<T>(
 	parameters: Record<string, string | number | undefined>,
 	schema: ZodType<T>,
 ): Promise<T> {
-	if (!key || !key.trim()) throw new AuthMissingError('pushover', 'api_key');
+	const { token } = splitPushoverKey(key);
+	if (!token.trim()) throw new AuthMissingError('pushover', 'api_key');
 	// HTTP data is untrusted until validated; the shared transport cannot assume a response type.
 	try {
 		const response = await request<unknown>(
@@ -25,9 +53,9 @@ export async function makePushoverRequest<T>(
 				method,
 				url,
 				...(method === 'GET'
-					? { query: { ...parameters, token: key } }
+					? { query: { ...parameters, token } }
 					: {
-							body: { ...parameters, token: key },
+							body: { ...parameters, token },
 							mediaType: 'application/json',
 						}),
 			},

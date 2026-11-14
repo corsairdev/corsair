@@ -1,26 +1,33 @@
-import { makePushoverRequest } from '../client';
+import { makePushoverRequest, resolvePushoverUser } from '../client';
 import type { PushoverEndpoints } from '../index';
 import {
 	PushoverEndpointInputSchemas as inputs,
 	PushoverEndpointOutputSchemas as outputs,
 } from './types';
 
-const messagesSend: PushoverEndpoints['messagesSend'] = async (ctx, input) =>
-	makePushoverRequest(
+const messagesSend: PushoverEndpoints['messagesSend'] = async (ctx, input) => {
+	const { user, ...body } = inputs.messagesSend.parse(input);
+	return makePushoverRequest(
 		ctx.key,
 		'POST',
 		'messages.json',
-		inputs.messagesSend.parse(input),
+		{ user: resolvePushoverUser(ctx.key, user), ...body },
 		outputs.messagesSend,
 	);
-const usersValidate: PushoverEndpoints['usersValidate'] = async (ctx, input) =>
-	makePushoverRequest(
+};
+const usersValidate: PushoverEndpoints['usersValidate'] = async (
+	ctx,
+	input,
+) => {
+	const { user, ...body } = inputs.usersValidate.parse(input);
+	return makePushoverRequest(
 		ctx.key,
 		'POST',
 		'users/validate.json',
-		inputs.usersValidate.parse(input),
+		{ user: resolvePushoverUser(ctx.key, user), ...body },
 		outputs.usersValidate,
 	);
+};
 const soundsList: PushoverEndpoints['soundsList'] = async (ctx, input) =>
 	makePushoverRequest(
 		ctx.key,
@@ -161,14 +168,19 @@ const groupsRename: PushoverEndpoints['groupsRename'] = async (ctx, input) => {
 		outputs.groupsRename,
 	);
 };
-const glancesUpdate: PushoverEndpoints['glancesUpdate'] = async (ctx, input) =>
-	makePushoverRequest(
+const glancesUpdate: PushoverEndpoints['glancesUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const { user, ...body } = inputs.glancesUpdate.parse(input);
+	return makePushoverRequest(
 		ctx.key,
 		'POST',
 		'glances.json',
-		inputs.glancesUpdate.parse(input),
+		{ user: resolvePushoverUser(ctx.key, user), ...body },
 		outputs.glancesUpdate,
 	);
+};
 const subscriptionsMigrate: PushoverEndpoints['subscriptionsMigrate'] = async (
 	ctx,
 	input,
